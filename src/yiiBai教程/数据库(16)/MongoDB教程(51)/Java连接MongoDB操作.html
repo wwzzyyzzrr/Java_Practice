@@ -1,0 +1,423 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Java连接MongoDB操作</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>在本章中，我们将学习如何设置和使用MongoDB JDBC驱动程序。</p> 
+ <h2 id="h2--mongodb-jdbc-"><a name="安装 MongoDB JDBC驱动程序" class="reference-link"></a><span class="header-link octicon octicon-link"></span>安装 MongoDB JDBC驱动程序</h2>
+ <p>要在Java程序中使用MongoDB之前，需要确保在机器上设置了MongoDB JDBC驱动程序和Java。 可以在机器上检查Java环境可通过：<a target="_blank" href="http://www.yiibai.com/java/" title="Java教程">Java教程</a>。 现在，我们来看一下如何设置MongoDB JDBC驱动。</p> 
+ <ul> 
+  <li>下载 mongo.jar(<a target="_blank" href="http://mongodb.github.io/mongo-java-driver/)，确保下载最新版本。">http://mongodb.github.io/mongo-java-driver/)，确保下载最新版本。</a></li>
+  <li>将 mongo.jar 包含到类路径中。</li>
+ </ul> 
+ <h2 id="h2-u8FDEu63A5u5230u6570u636Eu5E93"><a name="连接到数据库" class="reference-link"></a><span class="header-link octicon octicon-link"></span>连接到数据库</h2>
+ <p>要连接数据库，需要指定数据库名称，如果数据库不存在，那么MongoDB会自动创建它。<br>使用 Eclipse 创建一个 Maven 工程 - <em>MongoDBJDBC</em> ，其目录结果如下所示 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201707/0207/948100749_44422.png" alt=""></p> 
+ <p>有关 <code>pom.xml</code> 文件的内容如下 - </p> 
+ <pre><code class="lang-xml">&lt;project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"&gt;
+    &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
+
+    &lt;groupId&gt;com.yiibai&lt;/groupId&gt;
+    &lt;artifactId&gt;MongoDBJDBC&lt;/artifactId&gt;
+    &lt;version&gt;0.0.1-SNAPSHOT&lt;/version&gt;
+    &lt;packaging&gt;jar&lt;/packaging&gt;
+
+    &lt;name&gt;MongoDBJDBC&lt;/name&gt;
+    &lt;url&gt;http://maven.apache.org&lt;/url&gt;
+
+    &lt;properties&gt;
+        &lt;project.build.sourceEncoding&gt;UTF-8&lt;/project.build.sourceEncoding&gt;
+    &lt;/properties&gt;
+
+    &lt;dependencies&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;junit&lt;/groupId&gt;
+            &lt;artifactId&gt;junit&lt;/artifactId&gt;
+            &lt;version&gt;3.8.1&lt;/version&gt;
+            &lt;scope&gt;test&lt;/scope&gt;
+        &lt;/dependency&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.mongodb&lt;/groupId&gt;
+            &lt;artifactId&gt;mongodb-driver&lt;/artifactId&gt;
+            &lt;version&gt;3.4.2&lt;/version&gt;
+        &lt;/dependency&gt;
+    &lt;/dependencies&gt;
+    &lt;build&gt;
+        &lt;defaultGoal&gt;compile&lt;/defaultGoal&gt;
+    &lt;/build&gt;
+&lt;/project&gt;
+</code></pre> 
+ <p>以下是连接到数据库的代码片段 -</p> 
+ <pre><code class="lang-shell">package com.yiibai.MongoDBJDBC;
+
+/**
+ * Hello world!
+ *
+ */
+import com.mongodb.MongoClient;
+import com.mongodb.client.MongoDatabase;
+
+public class App {
+
+    public static void main(String args[]) {
+
+        try {
+
+            // To connect to mongodb server
+            MongoClient mongoClient = new MongoClient("localhost", 27017);
+
+            // Now connect to your databases
+            MongoDatabase mgdb = mongoClient.getDatabase("mycol");
+
+            System.out.println("Connect to database successfully!");
+            System.out.println("MongoDatabase inof is : "+mgdb.getName());
+            // If MongoDB in secure mode, authentication is required.
+            // boolean auth = db.authenticate(myUserName, myPassword);
+            // System.out.println("Authentication: "+auth);
+
+        } catch (Exception e) {
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+        }
+    }
+}
+</code></pre> 
+ <p><strong>默认认证机制</strong></p> 
+ <pre><code class="lang-java">String user; // the user name
+String database; // the name of the database in which the user is defined
+char[] password; // the password as a character array
+// ...
+MongoCredential credential = MongoCredential.createCredential(user, database, password);
+MongoClient mongoClient = new MongoClient(new ServerAddress("host1", 27017),
+                                         Arrays.asList(credential));
+</code></pre> 
+ <p>或者使用连接字符串而不明确指定认证机制：</p> 
+ <pre><code class="lang-java">MongoClientURI uri = new MongoClientURI("mongodb://user1:pwd1@host1/?authSource=db1");
+MongoClient mongoClient = new MongoClient(uri);
+</code></pre> 
+ <p>执行上面代码，得到以下结果 - </p> 
+ <pre><code class="lang-shell">com.mongodb.diagnostics.logging.JULLogger log
+信息: Cluster created with settings {hosts=[localhost:27017], mode=SINGLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms', maxWaitQueueSize=500}
+Connect to database successfully!
+MongoDatabase inof is : mycol
+</code></pre> 
+ <h2 id="h2-u521Bu5EFAu548Cu5217u51FAu96C6u5408"><a name="创建和列出集合" class="reference-link"></a><span class="header-link octicon octicon-link"></span>创建和列出集合</h2>
+ <p>要创建集合，可使用 <code>com.mongodb.DB</code> 类的 <code>createCollection()</code>方法。</p> 
+ <p>以下是创建集合的代码片段 -</p> 
+ <pre><code class="lang-java">package com.yiibai.MongoDBJDBC;
+
+import org.bson.Document;
+import com.mongodb.DBCollection;
+import com.mongodb.client.model.CreateCollectionOptions;
+/**
+ * Hello world!
+ *
+ */
+import com.mongodb.MongoClient;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
+
+public class CreateCollection {
+
+    public static void main(String args[]) {
+
+        try {
+
+            // To connect to mongodb server
+            MongoClient mongoClient = new MongoClient("localhost", 27017);
+
+            // Now connect to your databases
+            MongoDatabase database = mongoClient.getDatabase("test");
+
+            //database.createCollection("NewCollection",new CreateCollectionOptions().capped(true).sizeInBytes(0x100000));
+
+            MongoCollection&lt;Document&gt; coll = database.getCollection("myTestCollection");
+
+            System.out.println("Collection created successfully");
+
+            System.out.println("当前数据库中的所有集合是：");
+
+            for (String name : database.listCollectionNames()) {
+                System.out.println(name);
+            }
+
+        } catch (Exception e) {
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+        }
+    }
+}
+</code></pre> 
+ <p>执行上面代码，得到以下结果 - </p> 
+ <pre><code class="lang-shell">Collection created successfully
+当前数据库中的所有集合是：
+mycol
+inventory
+post
+mycollection
+newcollection
+</code></pre> 
+ <h2 id="h2-u63D2u5165u6587u6863"><a name="插入文档" class="reference-link"></a><span class="header-link octicon octicon-link"></span>插入文档</h2>
+ <p>要将文档插入到MongoDB中，使用<code>com.mongodb.DBCollection</code>类的<code>insertOne()</code>方法。</p> 
+ <p>以下是插入文档的代码片段 -</p> 
+ <pre><code class="lang-shell">package com.yiibai.MongoDBJDBC;
+
+import java.util.Arrays;
+
+import org.bson.Document;
+
+import com.mongodb.BasicDBObject;
+import com.mongodb.Block;
+import com.mongodb.DBCollection;
+import com.mongodb.DBCursor;
+/**
+ * Hello world!
+ *
+ */
+import com.mongodb.MongoClient;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoCursor;
+import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.CreateCollectionOptions;
+
+public class InsertDocument {
+
+    public static void main(String args[]) {
+
+        try {
+
+            // To connect to mongodb server
+            MongoClient mongoClient = new MongoClient("localhost", 27017);
+
+            // Now connect to your databases
+            MongoDatabase database = mongoClient.getDatabase("test");
+
+            // database.createCollection("NewCollection", new
+            // CreateCollectionOptions().capped(true).sizeInBytes(0x100000));
+
+            System.out.println("Collection created successfully");
+
+            System.out.println("当前数据库中的所有集合是：");
+
+            for (String name : database.listCollectionNames()) {
+                System.out.println(name);
+            }
+
+            MongoCollection coll = database.getCollection("mycol");
+            System.out.println("Collection mycol selected successfully");
+            MongoCollection&lt;Document&gt; collection = database.getCollection("mycol");
+
+            Document document = new Document("_id", 1999).append("title", "MongoDB Insert Demo")
+                    .append("description","database")
+                    .append("likes", 30)
+                    .append("by", "yiibai point")
+                    .append("url", "http://www.yiibai.com/mongodb/");
+
+            collection.insertOne(document);
+
+            collection.find().forEach(printBlock);
+
+            System.out.println("Document inserted successfully");
+
+        } catch (Exception e) {
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+        }
+    }
+
+    static Block&lt;Document&gt; printBlock = new Block&lt;Document&gt;() {
+        public void apply(final Document document) {
+            System.out.println(document.toJson());
+        }
+    };
+}
+</code></pre> 
+ <p>执行上面代码，得到以下结果 - </p> 
+ <pre><code class="lang-shell">NewCollection
+mycol
+inventory
+post
+Collection
+mycollection
+newcollection
+Collection mycol selected successfully
+{ "_id" : 123.0, "title" : "MongoDB Overview", "description" : "MongoDB is no sql database", "by" : "yiibai tutorials", "url" : "http://www.yiibai.com", "tags" : ["mongodb", "database", "NoSQL"], "likes" : 100.0 }
+{ "_id" : 100.0, "title" : "MongoDB Overview", "description" : "MongoDB is no sql database", "by" : "yiibai tutorials", "url" : "http://www.yiibai.com", "tags" : ["mongodb", "database", "NoSQL"], "likes" : 100.0 }
+{ "_id" : 1999, "title" : "MongoDB Insert Demo", "description" : "database", "likes" : 30, "by" : "yiibai point", "url" : "http://www.yiibai.com/mongodb/" }
+Document inserted successfully
+</code></pre> 
+ <p><strong>如何插入多行？</strong></p> 
+ <pre><code class="lang-java">Document doc1 = new Document("name", "Amarcord Pizzeria")
+               .append("contact", new Document("phone", "264-555-0193")
+                                       .append("email", "amarcord.pizzeria@example.net")
+                                       .append("location",Arrays.asList(-73.88502, 40.749556)))
+               .append("stars", 2)
+               .append("categories", Arrays.asList("Pizzeria", "Italian", "Pasta"));
+
+
+Document doc2 = new Document("name", "Blue Coffee Bar")
+               .append("contact", new Document("phone", "604-555-0102")
+                                       .append("email", "bluecoffeebar@example.com")
+                                       .append("location",Arrays.asList(-73.97902, 40.8479556)))
+               .append("stars", 5)
+               .append("categories", Arrays.asList("Coffee", "Pastries"));
+
+List&lt;Document&gt; documents = new ArrayList&lt;Document&gt;();
+documents.add(doc1);
+documents.add(doc2);
+
+collection.insertMany(documents);
+</code></pre> 
+ <h2 id="h2-u66F4u65B0u6587u6863"><a name="更新文档" class="reference-link"></a><span class="header-link octicon octicon-link"></span>更新文档</h2>
+ <p>要从集合更新文档，使用<code>com.mongodb.DBCollection</code>类的<code>update()</code>和<code>updateMany()</code>方法。以下是选择第一个文档的代码片段 -</p>   
+ <pre><code class="lang-java">package com.yiibai.MongoDBJDBC;
+
+import org.bson.Document;
+
+import com.mongodb.Block;
+/**
+ * Hello world!
+ *
+ */
+import com.mongodb.MongoClient;
+import com.mongodb.MongoClientURI;
+import com.mongodb.ServerAddress;
+
+import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.MongoCollection;
+
+import org.bson.Document;
+
+import com.mongodb.client.MongoCursor;
+import static com.mongodb.client.model.Filters.*;
+import com.mongodb.client.result.DeleteResult;
+import static com.mongodb.client.model.Updates.*;
+import com.mongodb.client.result.UpdateResult;
+import java.util.ArrayList;
+import java.util.List;
+
+public class App {
+
+    public static void main(String args[]) {
+
+        try {
+
+            // To connect to mongodb server
+            MongoClient mongoClient = new MongoClient("127.0.0.1", 27017);
+
+            // Now connect to your databases
+            MongoDatabase database = mongoClient.getDatabase("mycol");
+
+            System.out.println("Connect to database successfully!");
+            System.out.println("MongoDatabase inof is : "+database.getName());
+
+            MongoCollection&lt;Document&gt; collection = database.getCollection("mycol");
+            //collection.updateOne(eq("_id", 1999),new Document("$set", new Document("title", "更新了标题2")));
+            Document document = new Document("_id", 9999).append("title", "MongoDB Insert Demo")
+                    .append("description","database")
+                    .append("likes", 30)
+                    .append("by", "yiibai point")
+                    .append("url", "http://www.yiibai.com/mongodb/");
+
+            collection.insertOne(document);
+            collection.find().forEach(printBlock);
+            collection.updateOne(eq("_id", 9999),new Document("$set", new Document("title", "更新了标题2")));
+            collection.find().forEach(printBlock);
+
+        } catch (Exception e) {
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+        }
+    }
+
+    static Block&lt;Document&gt; printBlock = new Block&lt;Document&gt;() {
+        public void apply(final Document document) {
+            System.out.println(document.toJson());
+        }
+    };
+}
+</code></pre> 
+ <p>执行上面代码，得到以下结果 - </p> 
+ <pre><code class="lang-shell">{ "_id" : 1999, "title" : "更新了标题2", "description" : "database", "likes" : 30, "by" : "yiibai point", "url" : "http://www.yiibai.com/mongodb/" }
+{ "_id" : 9999, "title" : "MongoDB Insert Demo", "description" : "database", "likes" : 30, "by" : "yiibai point", "url" : "http://www.yiibai.com/mongodb/" }
+{ "_id" : 1999, "title" : "更新了标题2", "description" : "database", "likes" : 30, "by" : "yiibai point", "url" : "http://www.yiibai.com/mongodb/" }
+{ "_id" : 9999, "title" : "更新了标题2", "description" : "database", "likes" : 30, "by" : "yiibai point", "url" : "http://www.yiibai.com/mongodb/" }
+</code></pre> 
+ <h2 id="h2-u5220u9664u6587u6863"><a name="删除文档" class="reference-link"></a><span class="header-link octicon octicon-link"></span>删除文档</h2>
+ <p>要从集合中删除第一个文档，需要首先使用<code>findOne()</code>方法选择文档，然后使用<code>com.mongodb.DBCollection</code>类的<code>remove()</code>方法。</p> 
+ <p>以下是删除第一个文档的代码片段 -</p> 
+ <pre><code class="lang-java">package com.yiibai.MongoDBJDBC;
+
+import org.bson.Document;
+
+import com.mongodb.Block;
+/**
+ * Hello world!
+ *
+ */
+import com.mongodb.MongoClient;
+import com.mongodb.MongoClientURI;
+import com.mongodb.ServerAddress;
+
+import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.MongoCollection;
+
+import org.bson.Document;
+
+import com.mongodb.client.MongoCursor;
+import static com.mongodb.client.model.Filters.*;
+import com.mongodb.client.result.DeleteResult;
+import static com.mongodb.client.model.Updates.*;
+import com.mongodb.client.result.UpdateResult;
+import java.util.ArrayList;
+import java.util.List;
+
+public class App {
+
+    public static void main(String args[]) {
+
+        try {
+
+            // To connect to mongodb server
+            MongoClient mongoClient = new MongoClient("127.0.0.1", 27017);
+
+            // Now connect to your databases
+            MongoDatabase database = mongoClient.getDatabase("mycol");
+
+            System.out.println("Connect to database successfully!");
+            System.out.println("MongoDatabase inof is : "+database.getName());
+
+            // 更新文档
+            MongoCollection&lt;Document&gt; collection = database.getCollection("mycol");
+            /**
+            Document document = new Document("_id", 9999).append("title", "MongoDB Insert Demo")
+                    .append("description","database")
+                    .append("likes", 30)
+                    .append("by", "yiibai point")
+                    .append("url", "http://www.yiibai.com/mongodb/");
+
+            collection.insertOne(document);
+            //collection.find().forEach(printBlock);
+            //collection.updateOne(eq("_id", 9999),new Document("$set", new Document("title", "更新了标题2")));
+
+            */
+            collection.find().forEach(printBlock);
+
+            // 删除文档
+            collection.deleteOne(eq("_id", 9999));
+            System.out.println("After Delete Document:");
+            collection.find().forEach(printBlock);
+
+        } catch (Exception e) {
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+        }
+    }
+
+    static Block&lt;Document&gt; printBlock = new Block&lt;Document&gt;() {
+        public void apply(final Document document) {
+            System.out.println(document.toJson());
+        }
+    };
+}
+</code></pre> 
+ <p>执行上面代码，得到以下结果 - </p> 
+ <pre><code class="lang-shell">{ "_id" : 1999, "title" : "更新了标题2", "description" : "database", "likes" : 30, "by" : "yiibai point", "url" : "http://www.yiibai.com/mongodb/" }
+{ "_id" : 9999, "title" : "更新了标题2", "description" : "database", "likes" : 30, "by" : "yiibai point", "url" : "http://www.yiibai.com/mongodb/" }
+After Delete Document:
+{ "_id" : 1999, "title" : "更新了标题2", "description" : "database", "likes" : 30, "by" : "yiibai point", "url" : "http://www.yiibai.com/mongodb/" }
+</code></pre>
+ <br>      
+</div></body></html>

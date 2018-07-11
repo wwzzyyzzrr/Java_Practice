@@ -1,0 +1,189 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Python字典</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>每个键与其值使用一个冒号(<code>:</code>)分开，这些键-值对是使用逗号分隔的，整个字典项目用大括号括起来。 没有任何项目的空字典只用两个花括号写成：<code>{}</code></p> 
+ <p>键在字典中是唯一的，而值可以不必是唯一的。字典的值可以是任何类型的，但是键必须是不可变的数据类型，例如字符串，数字或元组。</p> 
+ <h2 id="h2-1-"><a name="1.访问字典中的值" class="reference-link"></a><span class="header-link octicon octicon-link"></span>1.访问字典中的值</h2>
+ <p>要访问字典元素，可以使用熟悉的中括号以及键来获取其值。 以下是一个简单的例子 -</p> 
+ <pre><code class="lang-python">#!/usr/bin/python3
+
+dict = {'Name': 'Maxsu', 'Age': 7, 'Class': 'First'}
+print ("dict['Name']: ", dict['Name'])
+print ("dict['Age']: ", dict['Age'])
+</code></pre> 
+ <p>当执行上述代码时，会产生以下结果 -</p> 
+ <pre><code class="lang-shell">dict['Name']:  Maxsu
+dict['Age']:  7
+</code></pre> 
+ <p>如果尝试使用键(不是字典的一部分)访问数据项，会收到以下错误，如下示例 -</p> 
+ <pre><code class="lang-python">#!/usr/bin/python3
+
+dict = {'Name': 'Maxsu', 'Age': 7, 'Class': 'First'}
+print ("dict['Minsu']: ", dict['Minsu'])
+</code></pre> 
+ <p>当执行上述代码时，会产生以下结果 -</p> 
+ <pre><code class="lang-shell">Traceback (most recent call last):
+  File "&lt;stdin&gt;", line 1, in &lt;module&gt;
+KeyError: 'Minsu'
+</code></pre> 
+ <h2 id="h2-2-"><a name="2.更新字典" class="reference-link"></a><span class="header-link octicon octicon-link"></span>2.更新字典</h2>
+ <p>可以通过添加新数据项或键值对，修改现有数据项或删除现有数据项来更新字典，如下面给出的简单示例所示。</p> 
+ <pre><code class="lang-python">#!/usr/bin/python3
+
+dict = {'Name': 'Maxsu', 'Age': 7, 'Class': 'First'}
+dict['Age'] = 8; # update existing entry
+dict['School'] = "DPS School" # Add new entry
+
+print ("dict['Age']: ", dict['Age'])
+print ("dict['School']: ", dict['School'])
+</code></pre> 
+ <p>当执行上述代码时，会产生以下结果 -</p> 
+ <pre><code class="lang-shell">dict['Age']:  8
+dict['School']:  DPS School
+</code></pre> 
+ <h2 id="h2-3-"><a name="3.删除词典元素" class="reference-link"></a><span class="header-link octicon octicon-link"></span>3.删除词典元素</h2>
+ <p>可以删除单个字典元素或清除字典的全部内容。也可以在单个操作中删除整个字典。</p> 
+ <p>要显式删除整个字典，只需使用<code>del</code>语句。 以下是一个简单的例子 -</p> 
+ <pre><code class="lang-python">#!/usr/bin/python3
+
+dict = {'Name': 'Maxsu', 'Age': 7, 'Class': 'First'}
+
+del dict['Name'] # remove entry with key 'Name'
+dict.clear()     # remove all entries in dict
+del dict         # delete entire dictionary
+
+print ("dict['Age']: ", dict['Age'])
+print ("dict['School']: ", dict['School'])
+</code></pre> 
+ <p>这产生以下结果：程序抛出了一个例外，因为在执行<code>del dict</code>之后，字典不再存在。</p> 
+ <pre><code class="lang-shell">print ("dict['Age']: ", dict['Age'])
+Traceback (most recent call last):
+  File "&lt;stdin&gt;", line 1, in &lt;module&gt;
+TypeError: 'type' object is not subscriptable
+&gt;&gt;&gt; print ("dict['School']: ", dict['School'])
+Traceback (most recent call last):
+  File "&lt;stdin&gt;", line 1, in &lt;module&gt;
+TypeError: 'type' object is not subscriptable
+</code></pre> 
+ <blockquote> 
+  <p>注 - <code>del()</code>方法将在后续章节中讨论。</p> 
+ </blockquote> 
+ <h2 id="h2-4-"><a name="4. 字典键的属性" class="reference-link"></a><span class="header-link octicon octicon-link"></span>4. 字典键的属性</h2>
+ <p>字典值没有限制。它们可以是任意任意的Python对象，标准对象或用户定义的对象。 但是，对于键来说也是如此。</p> 
+ <p>关于字典的键有两个要点：</p> 
+ <p><strong>(a)</strong>. 不允许每键多于数据值。这意味着不允许重复的键。 在分配过程中遇到重复键时，则以最后一个赋值为准。 例如 -</p> 
+ <pre><code class="lang-python">#!/usr/bin/python3
+
+dict = {'Name': 'Maxsu', 'Age': 7, 'Name': 'Minlee'}
+print ("dict['Name']: ", dict['Name'])
+</code></pre> 
+ <p>当执行上述代码时，会产生以下结果 -</p> 
+ <pre><code class="lang-shell">dict['Name']:  Minlee
+</code></pre> 
+ <p><strong>(b)</strong>. 键必须是不可变的。 这意味着可以使用字符串，数字或元组作为字典键，但不允许使用<code>['key']</code>。 以下是一个简单的例子 -</p> 
+ <pre><code class="lang-python">#!/usr/bin/python3
+
+dict = {['Name']: 'Maxsu', 'Age': 7}
+print ("dict['Name']: ", dict['Name'])
+</code></pre> 
+ <p>当执行上述代码时，会产生以下结果 -</p> 
+ <pre><code class="lang-shell">Traceback (most recent call last):
+   File "test.py", line 3, in &lt;module&gt;
+      dict = {['Name']: 'Maxsu', 'Age': 7}
+TypeError: list objects are unhashable
+</code></pre> 
+ <h2 id="h2-5-"><a name="5.内置词典函数和方法" class="reference-link"></a><span class="header-link octicon octicon-link"></span>5.内置词典函数和方法</h2>
+ <p>Python包括以下字典函数 -</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>编号</th> 
+    <th>函数</th> 
+    <th>描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>1</td> 
+    <td>cmp(dict1, dict2)</td> 
+    <td>在<em>Python 3</em>中不再可用。</td> 
+   </tr> 
+   <tr> 
+    <td>2</td> 
+    <td><a target="_blank" href="http://www.yiibai.com/python/dictionary_len.html" title="len(dict)">len(dict)</a></td> 
+    <td>计算出字典的总长度。它将等于字典中的数据项数目。</td> 
+   </tr> 
+   <tr> 
+    <td>3</td> 
+    <td><a target="_blank" href="http://www.yiibai.com/python3/dictionary_str.html" title="str(dict)">str(dict)</a></td> 
+    <td>生成字典的可打印字符串表示形式</td> 
+   </tr> 
+   <tr> 
+    <td>4</td> 
+    <td><a target="_blank" href="http://www.yiibai.com/python/dictionary_type.html" title="type(variable)">type(variable)</a></td> 
+    <td>返回传递变量的类型。如果传递变量是字典，那么它将返回一个字典类型。</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p>Python包括以下字典方法 -</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>编号</th> 
+    <th>函数</th> 
+    <th>描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>1</td> 
+    <td><a target="_blank" href="http://www.yiibai.com/python/dictionary_clear.html" title="dict.clear()">dict.clear()</a></td> 
+    <td>删除字典<code>dict</code>的所有元素</td> 
+   </tr> 
+   <tr> 
+    <td>2</td> 
+    <td><a target="_blank" href="http://www.yiibai.com/python/dictionary_copy.html" title="dict.copy()">dict.copy()</a></td> 
+    <td>返回字典<code>dict</code>的浅拷贝</td> 
+   </tr> 
+   <tr> 
+    <td>3</td> 
+    <td><a target="_blank" href="http://www.yiibai.com/python/dictionary_fromkeys.html" title="dict.fromkeys()">dict.fromkeys()</a></td> 
+    <td>创建一个新的字典，其中包含<code>seq</code>的值和设置为<code>value</code>的值。</td> 
+   </tr> 
+   <tr> 
+    <td>4</td> 
+    <td><a target="_blank" href="http://www.yiibai.com/python/dictionary_get.html" title="dict.get(key, default=None)">dict.get(key, default=None)</a></td> 
+    <td>对于键(<code>key</code>)存在则返回其对应值，如果键不在字典中，则返回默认值</td> 
+   </tr> 
+   <tr> 
+    <td>5</td> 
+    <td><a target="_blank" href="http://www.yiibai.com/python/dictionary_has_key.html" title="dict.has_key(key)">dict.has_key(key)</a></td> 
+    <td>此方法已删除，使用<code>in</code>操作符代替</td> 
+   </tr> 
+   <tr> 
+    <td>6</td> 
+    <td><a target="_blank" href="http://www.yiibai.com/python/dictionary_items.html" title="dict.items()">dict.items()</a></td> 
+    <td>返回字典<code>dict</code>的<code>(key，value)</code>元组对的列表</td> 
+   </tr> 
+   <tr> 
+    <td>7</td> 
+    <td><a target="_blank" href="http://www.yiibai.com/python/dictionary_keys.html" title="dict.keys()">dict.keys()</a></td> 
+    <td>返回字典<code>dict</code>的键列表</td> 
+   </tr> 
+   <tr> 
+    <td>8</td> 
+    <td><a target="_blank" href="http://www.yiibai.com/python/dictionary_setdefault.html" title="dict.setdefault(key, default = None)">dict.setdefault(key, default = None)</a></td> 
+    <td>类似于<code>get()</code>，如果<code>key</code>不在字典<code>dict</code>中，则将执行赋值操作：<code>dict [key] = default</code></td> 
+   </tr> 
+   <tr> 
+    <td>9</td> 
+    <td><a target="_blank" href="http://www.yiibai.com/python/dictionary_update.html" title="dict.update(dict2)">dict.update(dict2)</a></td> 
+    <td>将字典<code>dict2</code>的键值对添加到字典<code>dict</code></td> 
+   </tr> 
+   <tr> 
+    <td>10</td> 
+    <td><a target="_blank" href="http://www.yiibai.com/python/dictionary_values.html" title="dict.values()">dict.values()</a></td> 
+    <td>返回字典<code>dict</code>的值列表</td> 
+   </tr> 
+  </tbody> 
+ </table>
+ <br>      
+</div></body></html>

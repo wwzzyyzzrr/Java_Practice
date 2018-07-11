@@ -1,0 +1,92 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Java模板模式</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>在模板模式中，抽象类公开了定义的方法/模板来执行它的方法。 它的子类可以根据需要重写方法实现，但调用的方式与抽象类定义的方式相同。 此模式属于行为模式类别。</p> 
+ <h2 id="h2-u5B9Eu73B0u5B9Eu4F8B"><a name="实现实例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实现实例</h2>
+ <p>在这个实现实例中，将创建一个<code>Game</code>抽象类，它定义了一个模板方法设置为<code>final</code>的操作，因此它不能被覆盖。 <code>Cricket</code> 和 <code>Football</code> 是扩展<code>Game</code>并覆盖它的方法的具体类。</p> 
+ <p><code>TemplatePatternDemo</code>是一个演示类，将使用<code>Game</code>演示使用模板模式。</p> 
+ <p>模板模式示例的结构如下图所示 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201612/09/648091259_30768.jpg" alt=""></p> 
+ <h3 id="h3--1-"><a name="第1步" class="reference-link"></a><span class="header-link octicon octicon-link"></span>第1步</h3>
+ <p>创建一个模板方法为<code>final</code>的抽象类。<br><em>Game.java</em></p> 
+ <pre><code class="lang-java">public abstract class Game {
+   abstract void initialize();
+   abstract void startPlay();
+   abstract void endPlay();
+
+   //template method
+   public final void play(){
+
+      //initialize the game
+      initialize();
+
+      //start game
+      startPlay();
+
+      //end game
+      endPlay();
+   }
+}
+</code></pre> 
+ <h3 id="h3--2-"><a name="第2步" class="reference-link"></a><span class="header-link octicon octicon-link"></span>第2步</h3>
+ <p>创建扩展上述类的具体类，其代码如下 -<br><em>Cricket.java</em></p> 
+ <pre><code class="lang-java">public class Cricket extends Game {
+
+   @Override
+   void endPlay() {
+      System.out.println("Cricket Game Finished!");
+   }
+
+   @Override
+   void initialize() {
+      System.out.println("Cricket Game Initialized! Start playing.");
+   }
+
+   @Override
+   void startPlay() {
+      System.out.println("Cricket Game Started. Enjoy the game!");
+   }
+}
+</code></pre> 
+ <p><em>Football.java</em></p>   
+ <pre><code class="lang-java">public class Football extends Game {
+
+   @Override
+   void endPlay() {
+      System.out.println("Football Game Finished!");
+   }
+
+   @Override
+   void initialize() {
+      System.out.println("Football Game Initialized! Start playing.");
+   }
+
+   @Override
+   void startPlay() {
+      System.out.println("Football Game Started. Enjoy the game!");
+   }
+}
+</code></pre> 
+ <h3 id="h3--3-"><a name="第3步" class="reference-link"></a><span class="header-link octicon octicon-link"></span>第3步</h3>
+ <p>使用游戏的模板方法-<code>play（）</code>演示一个定义的玩游戏的方式。<br><em>TemplatePatternDemo.java</em></p> 
+ <pre><code class="lang-java">public class TemplatePatternDemo {
+   public static void main(String[] args) {
+
+      Game game = new Cricket();
+      game.play();
+      System.out.println();
+      game = new Football();
+      game.play();
+   }
+}
+</code></pre> 
+ <h3 id="h3--4-"><a name="第4步" class="reference-link"></a><span class="header-link octicon octicon-link"></span>第4步</h3>
+ <p>验证输出，执行上面的代码得到以下结果 -</p> 
+ <pre><code class="lang-java">Cricket Game Initialized! Start playing.
+Cricket Game Started. Enjoy the game!
+Cricket Game Finished!
+
+Football Game Initialized! Start playing.
+Football Game Started. Enjoy the game!
+Football Game Finished!
+</code></pre>
+ <br>      
+</div></body></html>

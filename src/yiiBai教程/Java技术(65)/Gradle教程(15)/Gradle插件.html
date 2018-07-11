@@ -1,0 +1,174 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Gradle插件</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>插件只是一组任务，几乎所有的任务，如编译任务，设置域对象，设置源文件等都由插件处理。</p> 
+ <h2 id="h2-u63D2u4EF6u7C7Bu578B"><a name="插件类型" class="reference-link"></a><span class="header-link octicon octicon-link"></span>插件类型</h2>
+ <p>Gradle中有两种类型的插件：脚本插件和二进制插件。 脚本插件是一个额外的构建脚本，它提供了一种声明性方法来操作构建，通常在构建中使用。 二进制插件是实现插件接口并采用编程方法来操作构建的类。二进制插件可以驻留在插件JAR中的一个构建脚本和项目层次结构或外部。</p> 
+ <h2 id="h2-u5E94u7528u63D2u4EF6"><a name="应用插件" class="reference-link"></a><span class="header-link octicon octicon-link"></span>应用插件</h2>
+ <p>Project.apply（）API方法用于应用特定的插件。您可以多次使用相同的插件。有两种类型的插件：一种是脚本插件，第二种是二进制插件。</p> 
+ <h3 id="h3-u811Au672Cu63D2u4EF6"><a name="脚本插件" class="reference-link"></a><span class="header-link octicon octicon-link"></span>脚本插件</h3>
+ <p>脚本插件可以从本地文件系统上的脚本或远程位置应用。文件系统位置相对于项目目录，而远程脚本位置指定<code>HTTP URL</code>。看看下面的代码片段。它将<code>other.gradle</code>插件用于构建脚本。 在<code>build.gradle</code>文件中使用此代码如下。</p> 
+ <pre><code class="lang-shell">apply from: 'other.gradle'
+</code></pre> 
+ <h3 id="h3-u4E8Cu8FDBu5236u63D2u4EF6"><a name="二进制插件" class="reference-link"></a><span class="header-link octicon octicon-link"></span>二进制插件</h3>
+ <p>每个插件由插件标识。一些核心插件是使用短名称来应用它，一些社区插件是使用插件ID的完全限定名称。有时它允许指定一个插件类。<br>看看下面的代码片段。 它显示如何使用应用Java插件。 在<code>build.gradle</code>文件中使用此代码。</p> 
+ <pre><code class="lang-shell">apply plugin: JavaPlugin
+</code></pre> 
+ <p>看看下面的代码，使用短名称应用核心插件。 在<code>build.gradle</code>文件中使用此代码如下所示。</p> 
+ <pre><code class="lang-shell">plugins {
+   id 'java'
+}
+</code></pre> 
+ <p>看看下面的代码，使用短名称应用社区插件。 在<code>build.gradle</code>文件中使用此代码如下所示。</p> 
+ <pre><code class="lang-shell">plugins {
+   id "com.yiibai.bintray" version "0.1.0"
+}
+</code></pre> 
+ <h2 id="h2-u7F16u5199u81EAu5B9Au4E49u63D2u4EF6"><a name="编写自定义插件" class="reference-link"></a><span class="header-link octicon octicon-link"></span>编写自定义插件</h2>
+ <p>在创建自定义插件时，您需要编写一个插件的实现。 <code>Gradle</code>实例化插件并使用<code>Plugin.apply（）</code>方法调用插件实例。以下示例包含一个简单的<code>hello</code>插件，它将一个问候任务添加到项目中。看看下面的代码。 在<code>build.gradle</code>文件中使用此代码。</p> 
+ <pre><code class="lang-shell">apply plugin: HelloPlugin
+
+class HelloPlugin implements Plugin&lt;Project&gt; {
+   void apply(Project project) {
+      project.task('hello') &lt;&lt; {
+         println "Hello from the HelloPlugin."
+      }
+   }
+}
+</code></pre> 
+ <p>使用以下代码执行上述脚本。</p> 
+ <pre><code class="lang-shell">D:/worksp/yiibai.com/gradle-3.1/study/script&gt; gradle -q hello
+Hello from the HelloPlugin
+</code></pre> 
+ <h2 id="h2-u4ECEu6784u5EFAu83B7u53D6u8F93u5165"><a name="从构建获取输入" class="reference-link"></a><span class="header-link octicon octicon-link"></span>从构建获取输入</h2>
+ <p>大多数插件需要从构建脚本中的配置获得支持。 <code>Gradle</code>项目有一个关联“<code>ExtensionContainer</code>”对象，它有助于跟踪传递给插件的所有设置和属性。</p> 
+ <p>让我们在项目中添加一个简单的扩展对象。在这里，我们向项目中添加一个问候语扩展对象，它允许我们配置问候语。在<code>build.gradle</code>文件中使用此代码如下所示。</p> 
+ <pre><code class="lang-shell">apply plugin: HelloPlugin
+
+greeting.message = 'Hi,this from configure Gradle message.'
+
+class HelloPlugin implements Plugin&lt;Project&gt; {
+   void apply(Project project) {
+      // Add the 'greeting' extension object
+      project.extensions.create("greeting", HelloPluginExtension)
+
+      // Add a task that uses the configuration
+      project.task('hello') &lt;&lt; {
+         println project.greeting.message
+      }
+   }
+}
+
+class HelloPluginExtension {
+   def String message = 'Hello,this from HelloPluginExtension message.'
+}
+</code></pre> 
+ <p>使用以下代码执行上述脚本，得到结果如下 - </p>   
+ <pre><code class="lang-shell">D:/worksp/yiibai.com/gradle-3.1/study/script&gt;gradle -q hello
+Hi,this from configure Gradle message.
+</code></pre> 
+ <p>Gradle为每个扩展对象添加了一个配置闭包，因此可以将分组设置在一起。 看看下面的代码。 在<code>build.gradle</code>文件中使用此代码。</p> 
+ <pre><code class="lang-sql">apply plugin: GreetingPlugin
+
+greeting {
+   message = 'Hi'
+   greeter = 'Gradle'
+}
+
+class GreetingPlugin implements Plugin&lt;Project&gt; {
+   void apply(Project project) {
+      project.extensions.create("greeting", GreetingPluginExtension)
+
+      project.task('hello') &lt;&lt; {
+         println "${project.greeting.message} from ${project.greeting.greeter}"
+      }
+   }
+}
+
+class GreetingPluginExtension {
+   String message
+   String greeter
+}
+</code></pre> 
+ <p>使用以下代码执行上述脚本，得到结果如下 - </p> 
+ <pre><code class="lang-shell">D:/worksp/yiibai.com/gradle-3.1/study/script&gt;gradle -q hello
+Hi from Gradle
+</code></pre> 
+ <h2 id="h2--gradle-"><a name="标准Gradle插件" class="reference-link"></a><span class="header-link octicon octicon-link"></span>标准Gradle插件</h2>
+ <p>在<code>Gradle</code>分布中包含不同的插件。</p> 
+ <h3 id="h3-u8BEDu8A00u63D2u4EF6"><a name="语言插件" class="reference-link"></a><span class="header-link octicon octicon-link"></span>语言插件</h3>
+ <p>这些插件的添加，让JVM在编译和执行时对各种语言支持。</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>插件Id</th> 
+    <th>自动应用</th> 
+    <th>描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>java</td> 
+    <td>java-base</td> 
+    <td>向项目添加Java编译，测试和绑定的功能。它作为许多其他Gradle插件的基础。</td> 
+   </tr> 
+   <tr> 
+    <td>groovy</td> 
+    <td>java,groovy-base</td> 
+    <td>添加对构建Groovy项目的支持。</td> 
+   </tr> 
+   <tr> 
+    <td>scala</td> 
+    <td>java,scala-base</td> 
+    <td>添加对构建Scala项目的支持。</td> 
+   </tr> 
+   <tr> 
+    <td>antlr</td> 
+    <td>Java</td> 
+    <td>添加了使用Antlr生成解析器的支持。</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h3 id="h3-u5B75u5316u8BEDu8A00u63D2u4EF6"><a name="孵化语言插件" class="reference-link"></a><span class="header-link octicon octicon-link"></span>孵化语言插件</h3>
+ <p>这些插件添加对各种语言的支持。</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>插件Id</th> 
+    <th>自动应用</th> 
+    <th>描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>汇编</td> 
+    <td>—</td> 
+    <td>向项目添加本地汇编语言功能。</td> 
+   </tr> 
+   <tr> 
+    <td>c</td> 
+    <td>—</td> 
+    <td>向项目添加C语言的源代码编译功能。</td> 
+   </tr> 
+   <tr> 
+    <td>cpp</td> 
+    <td>—</td> 
+    <td>向项目添加C++语言的源代码编译功能。</td> 
+   </tr> 
+   <tr> 
+    <td>objective-c</td> 
+    <td>—</td> 
+    <td>向项目添加objective-c语言的源代码编译功能。</td> 
+   </tr> 
+   <tr> 
+    <td>objective-cpp</td> 
+    <td>—</td> 
+    <td>向项目添加Objective-C++语言的源代码编译功能。</td> 
+   </tr> 
+   <tr> 
+    <td>windows-resources</td> 
+    <td>—</td> 
+    <td>添加本机二进制文件包括Windows资源的支持。</td> 
+   </tr> 
+  </tbody> 
+ </table>
+ <br>      
+</div></body></html>

@@ -1,0 +1,359 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Spring Security入门程序注释示例</h1><div style="width:100%;float:left;" class="article-content">   
+ <div>
+   在上一篇文章中，我们使用XML文件来配置&nbsp;Spring&nbsp;Security&nbsp;在Spring&nbsp;MVC中的环境。在本教程中，我们将来学习如何将基于XML的Spring&nbsp;Security项目转换成纯&nbsp;Spring&nbsp;注解项目。 
+ </div> 
+ <div> 
+  <div>
+    注意：由于在这一系列教程中使用的是Maven来创建工程，如果不了解 Mave 如何使用的，可以参考：
+   <a target="_blank" href="http://www.yiibai.com/maven/create-a-maven-web-project-with-eclipse.html">http://www.yiibai.com/maven/create-a-maven-web-project-with-eclipse.html</a> 
+  </div> 
+  <p> 一些要用到的技术： </p> 
+  <blockquote> 
+   <ol> 
+    <li> Spring 3.2.8.RELEASE </li> 
+    <li> Spring Security 3.2.3.RELEASE </li> 
+    <li> Eclipse 4.2 </li> 
+    <li> JDK 1.6 </li> 
+    <li> Maven 3 </li> 
+    <li> Tomcat 7 (Servlet 3.x) </li> 
+   </ol> 
+  </blockquote> 
+  <p> 一些需要注意的事项： </p> 
+  <ol> 
+   <li> 
+    <div>
+      本教程使用&nbsp;WebApplicationInitializer&nbsp;来自动加载&nbsp;Spring&nbsp;上下文加载器，这些仅在&nbsp;Servlet&nbsp;3.X&nbsp;容器中支持，例如：Tomcat7和&nbsp;Jetty8。 
+    </div> </li> 
+   <li> 
+    <div>
+      由于我们使用了WebApplicationInitializer，所以不需要web.xml配置文件。 
+    </div> </li> 
+   <li> 
+    <div>
+      Spring&nbsp;Security注释在旧版本的Servlet容器2.x中支持，例如：Tomcat6.&nbsp;如果您使用经典的XML文件来加载Spring上下文，本教程仍然能够部署在Servlet容器2.X&nbsp;中，例如，Tomcat6。 
+    </div> </li> 
+  </ol> 
+  <div> 
+   <h2> 2. 目录结构 </h2> 
+   <div>
+     下面我们来看看本教程最终的目录结构，如下图中所示：
+    <br> 
+    <img src="/uploads/tutorial/20160817/160qh20029_1_p4.png" alt="">
+    <br> 
+   </div> 
+   <h2> 3. Spring Security依懒 </h2> 
+   <p> 要使用Spring security, 我们需要&nbsp;spring-security-web&nbsp;和&nbsp;spring-security-config. </p> 
+   <div> 
+    <em><strong>pom.xml</strong></em> 
+   </div> 
+   <pre>&lt;properties&gt;
+		&lt;jdk.version&gt;1.6&lt;/jdk.version&gt;
+		&lt;spring.version&gt;3.2.8.RELEASE&lt;/spring.version&gt;
+		&lt;spring.security.version&gt;3.2.3.RELEASE&lt;/spring.security.version&gt;
+		&lt;jstl.version&gt;1.2&lt;/jstl.version&gt;
+	&lt;/properties&gt;
+
+	&lt;dependencies&gt;
+
+		&lt;!-- Spring 3 dependencies --&gt;
+		&lt;dependency&gt;
+			&lt;groupId&gt;org.springframework&lt;/groupId&gt;
+			&lt;artifactId&gt;spring-core&lt;/artifactId&gt;
+			&lt;version&gt;${spring.version}&lt;/version&gt;
+		&lt;/dependency&gt;
+
+		&lt;dependency&gt;
+			&lt;groupId&gt;org.springframework&lt;/groupId&gt;
+			&lt;artifactId&gt;spring-web&lt;/artifactId&gt;
+			&lt;version&gt;${spring.version}&lt;/version&gt;
+		&lt;/dependency&gt;
+
+		&lt;dependency&gt;
+			&lt;groupId&gt;org.springframework&lt;/groupId&gt;
+			&lt;artifactId&gt;spring-webmvc&lt;/artifactId&gt;
+			&lt;version&gt;${spring.version}&lt;/version&gt;
+		&lt;/dependency&gt;
+
+		&lt;!-- Spring Security --&gt;
+		&lt;dependency&gt;
+			&lt;groupId&gt;org.springframework.security&lt;/groupId&gt;
+			&lt;artifactId&gt;spring-security-web&lt;/artifactId&gt;
+			&lt;version&gt;${spring.security.version}&lt;/version&gt;
+		&lt;/dependency&gt;
+
+		&lt;dependency&gt;
+			&lt;groupId&gt;org.springframework.security&lt;/groupId&gt;
+			&lt;artifactId&gt;spring-security-config&lt;/artifactId&gt;
+			&lt;version&gt;${spring.security.version}&lt;/version&gt;
+		&lt;/dependency&gt;
+
+		&lt;!-- jstl for jsp page --&gt;
+		&lt;dependency&gt;
+			&lt;groupId&gt;jstl&lt;/groupId&gt;
+			&lt;artifactId&gt;jstl&lt;/artifactId&gt;
+			&lt;version&gt;${jstl.version}&lt;/version&gt;
+		&lt;/dependency&gt;
+
+	&lt;/dependencies&gt;</pre> 
+   <h2> 4. Spring MVC Web应用程序 </h2> 
+   <p> 一些简单的控制器，如下所示： </p> 
+   <ol> 
+    <li> 如果 URL =&nbsp;/welcome&nbsp;或&nbsp;/&nbsp;, 返回 hello 页面； </li> 
+    <li> 如果 URL =&nbsp;/admin&nbsp;,&nbsp;返回&nbsp;admin&nbsp;页面； </li> 
+    <li> 如果&nbsp;&nbsp;URL =&nbsp;/dba&nbsp;, 返回admin&nbsp;页面； </li> 
+   </ol> 
+   <p> 接下来，我们将保证&nbsp;/admin&nbsp;和&nbsp;/dba&nbsp;URLs. </p> 
+   <div>
+     HelloController.java 
+   </div> 
+   <pre>package com.yiibai.web.controller;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
+
+@Controller
+public class HelloController {
+
+	@RequestMapping(value = { "/", "/welcome**" }, method = RequestMethod.GET)
+	public ModelAndView welcomePage() {
+
+		ModelAndView model = new ModelAndView();
+		model.addObject("title", "Spring Security Hello World");
+		model.addObject("message", "This is welcome page!");
+		model.setViewName("hello");
+		return model;
+
+	}
+
+	@RequestMapping(value = "/admin**", method = RequestMethod.GET)
+	public ModelAndView adminPage() {
+
+		ModelAndView model = new ModelAndView();
+		model.addObject("title", "Spring Security Hello World");
+		model.addObject("message", "This is protected page - Admin Page!");
+		model.setViewName("admin");
+
+		return model;
+
+	}
+
+	@RequestMapping(value = "/dba**", method = RequestMethod.GET)
+	public ModelAndView dbaPage() {
+
+		ModelAndView model = new ModelAndView();
+		model.addObject("title", "Spring Security Hello World");
+		model.addObject("message", "This is protected page - Database Page!");
+		model.setViewName("admin");
+
+		return model;
+
+	}
+
+}</pre> 
+   <p> 两个 JSP 页面如下所示： </p> 
+   <div> 
+    <strong><em>hello.jsp</em></strong> 
+   </div> 
+   <pre>&lt;%@page session="false"%&gt;
+&lt;html&gt;
+&lt;body&gt;
+	&lt;h1&gt;Title : ${title}&lt;/h1&gt;	
+	&lt;h1&gt;Message : ${message}&lt;/h1&gt;	
+&lt;/body&gt;
+&lt;/html&gt;</pre> 
+   <div> 
+    <em><strong>admin.jsp</strong></em> 
+   </div> 
+   <pre>&lt;%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%&gt;
+&lt;%@page session="true"%&gt;
+&lt;html&gt;
+&lt;body&gt;
+	&lt;h1&gt;Title : ${title}&lt;/h1&gt;
+	&lt;h1&gt;Message : ${message}&lt;/h1&gt;
+
+	&lt;c:if test="${pageContext.request.userPrincipal.name != null}"&gt;
+		&lt;h2&gt;Welcome : ${pageContext.request.userPrincipal.name} 
+                 | &lt;a href="&lt;c:url value="/logout" /&gt;" &gt; Logout&lt;/a&gt;&lt;/h2&gt;  
+	&lt;/c:if&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre> 
+   <h2> 5. Spring Security配置 </h2> 
+   <p> 5.1创建 Spring&nbsp;Security 配置文件，并&nbsp;@EnableWebSecurity&nbsp;注解，如下代码所示： </p> 
+   <div>
+     SecurityConfig.java 
+   </div> 
+   <pre>package com.yiibai.config;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+
+@Configuration
+@EnableWebSecurity
+public class SecurityConfig extends WebSecurityConfigurerAdapter {
+
+	@Autowired
+	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+	  auth.inMemoryAuthentication().withUser("yiibai").password("123456").roles("USER");
+	  auth.inMemoryAuthentication().withUser("admin").password("123456").roles("ADMIN");
+	  auth.inMemoryAuthentication().withUser("dba").password("123456").roles("DBA");
+	}
+
+	@Override
+	protected void configure(HttpSecurity http) throws Exception {
+
+	  http.authorizeRequests()
+		.antMatchers("/admin/**").access("hasRole('ROLE_ADMIN')")
+		.antMatchers("/dba/**").access("hasRole('ROLE_ADMIN') or hasRole('ROLE_DBA')")
+		.and().formLogin();
+		
+	}
+}</pre> 
+   <p> 这等同于以下 Spring Security xml 文件： </p> 
+   <pre>&lt;http auto-config="true"&gt;
+		&lt;intercept-url pattern="/admin**" access="ROLE_ADMIN" /&gt;
+		&lt;intercept-url pattern="/dba**" access="ROLE_ADMIN,ROLE_DBA" /&gt;
+	&lt;/http&gt;
+
+	&lt;authentication-manager&gt;
+	  &lt;authentication-provider&gt;
+	    &lt;user-service&gt;
+		&lt;user name="yiibai" password="123456" authorities="ROLE_USER" /&gt;
+		&lt;user name="admin" password="123456" authorities="ROLE_ADMIN" /&gt;
+		&lt;user name="dba" password="123456" authorities="ROLE_DBA" /&gt;
+	    &lt;/user-service&gt;
+	  &lt;/authentication-provider&gt;
+	&lt;/authentication-manager&gt;</pre> 
+   <p> 5.2&nbsp;创建一个扩展&nbsp;AbstractSecurityWebApplicationInitializer 的一个类, 它将会自动地加载&nbsp;springSecurityFilterChain&nbsp;。 </p> 
+   <div>
+     SpringSecurityInitializer.java 
+   </div>   
+   <pre>package com.yiibai.config.core;
+
+import org.springframework.security.web.context.AbstractSecurityWebApplicationInitializer;
+
+public class SpringSecurityInitializer extends AbstractSecurityWebApplicationInitializer {
+   //do nothing
+}</pre> 
+   <p> 这等同于以下 Spring Security 中的&nbsp;web.xml&nbsp;文件，如下： </p> 
+   <pre>&lt;filter&gt;
+		&lt;filter-name&gt;springSecurityFilterChain&lt;/filter-name&gt;
+		&lt;filter-class&gt;org.springframework.web.filter.DelegatingFilterProxy
+                &lt;/filter-class&gt;
+	&lt;/filter&gt;
+
+	&lt;filter-mapping&gt;
+		&lt;filter-name&gt;springSecurityFilterChain&lt;/filter-name&gt;
+		&lt;url-pattern&gt;/*&lt;/url-pattern&gt;
+	&lt;/filter-mapping&gt;</pre> 
+   <h2> 6. Spring MVC配置 </h2> 
+   <p> 6.1&nbsp;这是一个配置类,&nbsp;定义视图技术和导入上述&nbsp;SecurityConfig.java. </p> 
+   <div>
+     AppConfig.java 
+   </div> 
+   <pre>package com.yiibai.config;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.view.InternalResourceViewResolver;
+import org.springframework.web.servlet.view.JstlView;
+
+@EnableWebMvc
+@Configuration
+@ComponentScan({ "com.yiibai.web.*" })
+@Import({ SecurityConfig.class })
+public class AppConfig {
+
+	@Bean
+	public InternalResourceViewResolver viewResolver() {
+		InternalResourceViewResolver viewResolver 
+                          = new InternalResourceViewResolver();
+		viewResolver.setViewClass(JstlView.class);
+		viewResolver.setPrefix("/WEB-INF/pages/");
+		viewResolver.setSuffix(".jsp");
+		return viewResolver;
+	}
+	
+}</pre> 
+   <p> 这将等同于以下 Spring XML文件： </p> 
+   <pre>&lt;context:component-scan base-package="com.yiibai.web.*" /&gt;
+
+	&lt;bean
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver"&gt;
+		&lt;property name="prefix"&gt;
+			&lt;value&gt;/WEB-INF/pages/&lt;/value&gt;
+		&lt;/property&gt;
+		&lt;property name="suffix"&gt;
+			&lt;value&gt;.jsp&lt;/value&gt;
+		&lt;/property&gt;
+	&lt;/bean&gt;</pre> 
+   <p> 6.2&nbsp;创建一个&nbsp;Initializer&nbsp;类来加载所有的一切，如下代码： </p> 
+   <div>
+     SpringMvcInitializer.java 
+   </div> 
+   <pre>package com.yiibai.config.core;
+
+import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
+import com.yiibai.config.AppConfig;
+
+public class SpringMvcInitializer 
+       extends AbstractAnnotationConfigDispatcherServletInitializer {
+
+	@Override
+	protected Class&lt;?&gt;[] getRootConfigClasses() {
+		return new Class[] { AppConfig.class };
+	}
+
+	@Override
+	protected Class&lt;?&gt;[] getServletConfigClasses() {
+		return null;
+	}
+
+	@Override
+	protected String[] getServletMappings() {
+		return new String[] { "/" };
+	}
+	
+}</pre> 
+   <p> 到这里，实例介绍完成了，您可以参考本实例并自己亲自动实践一下体验。 </p> 
+   <div>
+     注意事项：
+    <br> 
+    <div>
+      在Servlet&nbsp;3.X容器环境+&nbsp;Spring容器中将会自动检测并加载初始化类。 
+    </div> 
+   </div> 
+   <h2> 7. 示例 </h2> 
+   <p> 7.1. 打开进入欢迎页面 – http://localhost:8080/spsecurity-helloworld-annotation/welcome 如下图所示 -&nbsp;<br> <img src="/uploads/tutorial/20160817/160qh20129_1_2a.png" alt=""> </p> 
+   <p> 7.2&nbsp;尝试访问&nbsp;http://localhost:8080/spsecurity-helloworld-annotation/admin&nbsp;页面，Spring&nbsp;Security将截取请求并重定向到&nbsp;/login，并显示一个默认的登录表单。<br> <img src="/uploads/tutorial/20160817/160qh20155_1_3h.png" alt=""> </p> 
+   <p> 7.3.&nbsp;如果用户名和密码不正确，将提示(显示)错误信息，并且Spring将重定向到网址：http://localhost:8080/spsecurity-helloworld-annotation/login?error.<br> <img src="/uploads/tutorial/20160817/160qh20212_1_i7.png" alt=""> </p> 
+   <p> 7.4.&nbsp;如果用户名和密码是正确的，Spring将请求重定向到原来请求的URL并显示该网页。<br> <img src="/uploads/tutorial/20160817/160qh20229_1_b6.png" alt=""> </p> 
+   <p> 7.5.对于未经授权的用户，Spring会显示403拒绝访问页面。例如，用户名&nbsp;“yiibai”&nbsp;或&nbsp;“dba”&nbsp;尝试访问&nbsp;/admin&nbsp;这个网址。可以看到一个禁止访问的提示 -&nbsp; </p> 
+   <h2> 下载源代码 </h2> 
+   <div>
+     下载本实例的源代码 –&nbsp;
+    <a target="_blank" href="http://share.weiyun.com/876e9040edcfb41c331ccf958422bace">spsecurity-helloworld-annotation.zip</a>&nbsp;(12 KB) 
+   </div> 
+   <h2> 参考 </h2> 
+   <ol> 
+    <li> <a target="_blank" href="http://projects.spring.io/spring-security/">Spring Security</a> </li> 
+    <li> <a target="_blank" href="http://spring.io/blog/2013/07/03/spring-security-java-config-preview-web-security/">Spring Security Java Config Preview: Web Security</a> </li> 
+    <li> <a target="_blank" href="http://docs.spring.io/spring-security/site/docs/3.2.x/guides/hellomvc.html">Hello Spring MVC Security Java Config</a> </li> 
+    <li> <a target="_blank" href="http://en.wikipedia.org/wiki/Java_Servlet">Wikipedia : Java Servlet</a> </li> 
+    <li> <a target="_blank" href="http://en.wikipedia.org/wiki/Apache_Tomcat">Wikipedia : Apache Tomcat</a> </li> 
+    <li> <a target="_blank" href="http://www.yiibai.com/spring-security/spring-security-hello-world-example.html">Spring Security Hello World XML实例</a> </li> 
+   </ol> 
+  </div> 
+ </div> 
+ <div> 
+ </div>
+ <br>      
+</div></body></html>

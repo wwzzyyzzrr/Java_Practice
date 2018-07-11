@@ -1,0 +1,289 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Pandas描述性统计</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>有很多方法用来集体计算<code>DataFrame</code>的描述性统计信息和其他相关操作。 其中大多数是<code>sum()</code>，<code>mean()</code>等聚合函数，但其中一些，如<code>sumsum()</code>，产生一个相同大小的对象。 一般来说，这些方法采用轴参数，就像<code>ndarray.{sum，std，...}</code>，但轴可以通过名称或整数来指定：</p> 
+ <ul> 
+  <li><em>数据帧(DataFrame)</em> - “index”(axis=0，默认)，columns(axis=1)</li>
+ </ul> 
+ <p>下面创建一个数据帧(DataFrame)，并使用此对象进行演示本章中所有操作。</p> 
+ <p><strong>示例</strong></p> 
+ <pre><code class="lang-python">import pandas as pd
+import numpy as np
+
+#Create a Dictionary of series
+d = {'Name':pd.Series(['Tom','James','Ricky','Vin','Steve','Minsu','Jack',
+   'Lee','David','Gasper','Betina','Andres']),
+   'Age':pd.Series([25,26,25,23,30,29,23,34,40,30,51,46]),
+   'Rating':pd.Series([4.23,3.24,3.98,2.56,3.20,4.6,3.8,3.78,2.98,4.80,4.10,3.65])}
+
+#Create a DataFrame
+df = pd.DataFrame(d)
+print df
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 - </p> 
+ <pre><code class="lang-shell">    Age  Name   Rating
+0   25   Tom     4.23
+1   26   James   3.24
+2   25   Ricky   3.98
+3   23   Vin     2.56
+4   30   Steve   3.20
+5   29   Minsu   4.60
+6   23   Jack    3.80
+7   34   Lee     3.78
+8   40   David   2.98
+9   30   Gasper  4.80
+10  51   Betina  4.10
+11  46   Andres  3.65
+</code></pre> 
+ <p><strong>sum()方法</strong></p> 
+ <p>返回所请求轴的值的总和。 默认情况下，轴为索引(<code>axis=0</code>)。</p> 
+ <pre><code class="lang-python">import pandas as pd
+import numpy as np
+
+#Create a Dictionary of series
+d = {'Name':pd.Series(['Tom','James','Ricky','Vin','Steve','Minsu','Jack',
+   'Lee','David','Gasper','Betina','Andres']),
+   'Age':pd.Series([25,26,25,23,30,29,23,34,40,30,51,46]),
+   'Rating':pd.Series([4.23,3.24,3.98,2.56,3.20,4.6,3.8,3.78,2.98,4.80,4.10,3.65])}
+
+#Create a DataFrame
+df = pd.DataFrame(d)
+print df.sum()
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 - </p> 
+ <pre><code class="lang-shell">Age                                                    382
+Name     TomJamesRickyVinSteveMinsuJackLeeDavidGasperBe...
+Rating                                               44.92
+dtype: object
+</code></pre> 
+ <p>每个单独的列单独添加(附加字符串)。</p> 
+ <p><strong>axis=1示例</strong></p> 
+ <p>此语法将给出如下所示的输出，参考以下示例代码 - </p> 
+ <pre><code class="lang-python">import pandas as pd
+import numpy as np
+
+#Create a Dictionary of series
+d = {'Name':pd.Series(['Tom','James','Ricky','Vin','Steve','Minsu','Jack',
+   'Lee','David','Gasper','Betina','Andres']),
+   'Age':pd.Series([25,26,25,23,30,29,23,34,40,30,51,46]),
+   'Rating':pd.Series([4.23,3.24,3.98,2.56,3.20,4.6,3.8,3.78,2.98,4.80,4.10,3.65])}
+
+#Create a DataFrame
+df = pd.DataFrame(d)
+print df.sum(1)
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 - </p> 
+ <pre><code class="lang-shell">0    29.23
+1    29.24
+2    28.98
+3    25.56
+4    33.20
+5    33.60
+6    26.80
+7    37.78
+8    42.98
+9    34.80
+10   55.10
+11   49.65
+dtype: float64
+</code></pre> 
+ <p><strong>mean()示例</strong><br>返回平均值，参考以下示例代码 - </p> 
+ <pre><code class="lang-python">import pandas as pd
+import numpy as np
+
+#Create a Dictionary of series
+d = {'Name':pd.Series(['Tom','James','Ricky','Vin','Steve','Minsu','Jack',
+   'Lee','David','Gasper','Betina','Andres']),
+   'Age':pd.Series([25,26,25,23,30,29,23,34,40,30,51,46]),
+   'Rating':pd.Series([4.23,3.24,3.98,2.56,3.20,4.6,3.8,3.78,2.98,4.80,4.10,3.65])}
+
+#Create a DataFrame
+df = pd.DataFrame(d)
+print df.mean()
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 - </p> 
+ <pre><code class="lang-shell">Age       31.833333
+Rating     3.743333
+dtype: float64
+</code></pre> 
+ <p><strong>std()示例</strong></p> 
+ <p>返回数字列的Bressel标准偏差。</p> 
+ <pre><code class="lang-python">import pandas as pd
+import numpy as np
+
+#Create a Dictionary of series
+d = {'Name':pd.Series(['Tom','James','Ricky','Vin','Steve','Minsu','Jack',
+   'Lee','David','Gasper','Betina','Andres']),
+   'Age':pd.Series([25,26,25,23,30,29,23,34,40,30,51,46]),
+   'Rating':pd.Series([4.23,3.24,3.98,2.56,3.20,4.6,3.8,3.78,2.98,4.80,4.10,3.65])}
+
+#Create a DataFrame
+df = pd.DataFrame(d)
+print df.std()
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 - </p> 
+ <pre><code class="lang-shell">Age       9.232682
+Rating    0.661628
+dtype: float64
+</code></pre> 
+ <h2 id="h2-u51FDu6570u548Cu8BF4u660E"><a name="函数和说明" class="reference-link"></a><span class="header-link octicon octicon-link"></span>函数和说明</h2>
+ <p>下面来了解Python Pandas中描述性统计信息的函数，下表列出了重要函数 -</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>编号</th> 
+    <th>函数</th> 
+    <th>描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>1</td> 
+    <td><code>count()</code></td> 
+    <td>非空观测数量</td> 
+   </tr> 
+   <tr> 
+    <td>2</td> 
+    <td><code>sum()</code></td> 
+    <td>所有值之和</td> 
+   </tr> 
+   <tr> 
+    <td>3</td> 
+    <td><code>mean()</code></td> 
+    <td>所有值的平均值</td> 
+   </tr> 
+   <tr> 
+    <td>4</td> 
+    <td><code>median()</code></td> 
+    <td>所有值的中位数</td> 
+   </tr> 
+   <tr> 
+    <td>5</td> 
+    <td><code>mode()</code></td> 
+    <td>值的模值</td> 
+   </tr> 
+   <tr> 
+    <td>6</td> 
+    <td><code>std()</code></td> 
+    <td>值的标准偏差</td> 
+   </tr> 
+   <tr> 
+    <td>7</td> 
+    <td><code>min()</code></td> 
+    <td>所有值中的最小值</td> 
+   </tr> 
+   <tr> 
+    <td>8</td> 
+    <td><code>max()</code></td> 
+    <td>所有值中的最大值</td> 
+   </tr> 
+   <tr> 
+    <td>9</td> 
+    <td><code>abs()</code></td> 
+    <td>绝对值</td> 
+   </tr> 
+   <tr> 
+    <td>10</td> 
+    <td><code>prod()</code></td> 
+    <td>数组元素的乘积</td> 
+   </tr> 
+   <tr> 
+    <td>11</td> 
+    <td><code>cumsum()</code></td> 
+    <td>累计总和</td> 
+   </tr> 
+   <tr> 
+    <td>12</td> 
+    <td><code>cumprod()</code></td> 
+    <td>累计乘积</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <blockquote> 
+  <p>注 - 由于DataFrame是异构数据结构。通用操作不适用于所有函数。</p> 
+ </blockquote> 
+ <ul> 
+  <li>类似于：<code>sum()</code>，<code>cumsum()</code>函数能与数字和字符(或)字符串数据元素一起工作，不会产生任何错误。字符聚合从来都比较少被使用，虽然这些函数不会引发任何异常。</li>
+  <li>由于这样的操作无法执行，因此，当DataFrame包含字符或字符串数据时，像<code>abs()</code>，<code>cumprod()</code>这样的函数会抛出异常。</li>
+ </ul> 
+ <h2 id="h2-u6C47u603Bu6570u636E"><a name="汇总数据" class="reference-link"></a><span class="header-link octicon octicon-link"></span>汇总数据</h2>
+ <p><code>describe()</code>函数是用来计算有关DataFrame列的统计信息的摘要。</p>   
+ <pre><code class="lang-python">import pandas as pd
+import numpy as np
+
+#Create a Dictionary of series
+d = {'Name':pd.Series(['Tom','James','Ricky','Vin','Steve','Minsu','Jack',
+   'Lee','David','Gasper','Betina','Andres']),
+   'Age':pd.Series([25,26,25,23,30,29,23,34,40,30,51,46]),
+   'Rating':pd.Series([4.23,3.24,3.98,2.56,3.20,4.6,3.8,3.78,2.98,4.80,4.10,3.65])}
+
+#Create a DataFrame
+df = pd.DataFrame(d)
+print df.describe()
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 - </p> 
+ <pre><code class="lang-shell">               Age         Rating
+count    12.000000      12.000000
+mean     31.833333       3.743333
+std       9.232682       0.661628
+min      23.000000       2.560000
+25%      25.000000       3.230000
+50%      29.500000       3.790000
+75%      35.500000       4.132500
+max      51.000000       4.800000
+</code></pre> 
+ <p>该函数给出了平均值，标准差和IQR值。 而且，函数排除字符列，并给出关于数字列的摘要。 <code>include</code>是用于传递关于什么列需要考虑用于总结的必要信息的参数。获取值列表; 默认情况下是”数字值”。</p> 
+ <ul> 
+  <li><code>object</code> - 汇总字符串列</li>
+  <li><code>number</code> - 汇总数字列</li>
+  <li><code>all</code> - 将所有列汇总在一起(不应将其作为列表值传递)</li>
+ </ul> 
+ <p>现在，在程序中使用以下语句并检查输出 -</p> 
+ <pre><code class="lang-python">import pandas as pd
+import numpy as np
+
+#Create a Dictionary of series
+d = {'Name':pd.Series(['Tom','James','Ricky','Vin','Steve','Minsu','Jack',
+   'Lee','David','Gasper','Betina','Andres']),
+   'Age':pd.Series([25,26,25,23,30,29,23,34,40,30,51,46]),
+   'Rating':pd.Series([4.23,3.24,3.98,2.56,3.20,4.6,3.8,3.78,2.98,4.80,4.10,3.65])}
+
+#Create a DataFrame
+df = pd.DataFrame(d)
+print df.describe(include=['object'])
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 - </p> 
+ <pre><code class="lang-shell">          Name
+count       12
+unique      12
+top      Ricky
+freq         1
+</code></pre> 
+ <p>现在，使用以下语句并查看输出 -</p> 
+ <pre><code class="lang-shell">import pandas as pd
+import numpy as np
+
+#Create a Dictionary of series
+d = {'Name':pd.Series(['Tom','James','Ricky','Vin','Steve','Minsu','Jack',
+   'Lee','David','Gasper','Betina','Andres']),
+   'Age':pd.Series([25,26,25,23,30,29,23,34,40,30,51,46]),
+   'Rating':pd.Series([4.23,3.24,3.98,2.56,3.20,4.6,3.8,3.78,2.98,4.80,4.10,3.65])}
+
+#Create a DataFrame
+df = pd.DataFrame(d)
+print df. describe(include='all')
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 - </p> 
+ <pre><code class="lang-shell">          Age          Name       Rating
+count   12.000000        12    12.000000
+unique        NaN        12          NaN
+top           NaN     Ricky          NaN
+freq          NaN         1          NaN
+mean    31.833333       NaN     3.743333
+std      9.232682       NaN     0.661628
+min     23.000000       NaN     2.560000
+25%     25.000000       NaN     3.230000
+50%     29.500000       NaN     3.790000
+75%     35.500000       NaN     4.132500
+max     51.000000       NaN     4.800000
+</code></pre>
+ <br>      
+</div></body></html>

@@ -1,0 +1,44 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Docker推送存储库</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>可以将Docker映像推送到全局存储库。它是由Docker正式提供的公共存储库。 它允许我们将docker映像放在服务器上。 当我们想从全局访问Docker映像时，这就很有用了。 按照以下步骤在Docker集线器上推送自定义映像。</p> 
+ <p><strong>1. 登录hub.docker.com</strong></p> 
+ <p>如果还未注册帐号，请打开浏览器并打开 - hub.docker.com 注册用户帐号，然后再继续下面的教程学习。打开 hub.docker.com 显示如下所示 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201706/1506/426150613_58895.png" alt=""></p> 
+ <p>需要登录您的Docker中心的帐户。如果还没有Docker中心的帐户，请先创建它。</p> 
+ <pre><code class="lang-shell">yiibai@ubuntu:~/docker/ubuntu-in-docker$ sudo docker login
+[sudo] password for yiibai:
+Login with your Docker ID to push and pull images from Docker Hub. If you don't have a Docker ID, head over to https://hub.docker.com to create one.
+Username: yiibai
+Password:
+Login Succeeded
+yiibai@ubuntu:~/docker/ubuntu-in-docker$
+</code></pre> 
+ <p>它会要求您输入用户名。 在此处输入用户名为(假设)：<code>yiibai</code>，然后按<em>Enter</em>键。</p> 
+ <p>提供输入用户名后，会要求输入密码。在这里输入您自己的帐户密码，它将显示登录状态为成功。</p> 
+ <p><strong>2. 标记Docker映像</strong></p> 
+ <p>登录后，需要标记要推送的Docker映像。 以下命令用于标记Docker映像。</p> 
+ <pre><code class="lang-shell">$ docker tag image-name username/image-name
+</code></pre> 
+ <ul> 
+  <li><em>username</em> - 是指定为<code>yiibai</code>，将用于登录：hub.docker.com 。</li>
+  <li><em>image-name</em> - 是系统上存在的Docker映像名称。</li>
+ </ul> 
+ <p>请参阅以下一个执行示例的结果 - </p> 
+ <p>在上面的命令中，已经标记了<code>docker image hello-world</code>。 现在，需要将其推送到存储库，看看下面的命令。</p> 
+ <p><strong>3. 推送Docker映像</strong></p> 
+ <p>以下命令用于将docker映像推送到docker中心资源库。</p>   
+ <pre><code class="lang-shell">$ docker push  username/image-name
+</code></pre> 
+ <p>请参阅上述命令语法，执行下面一个示例 - </p> 
+ <pre><code class="lang-shell">yiibai@ubuntu:~/docker$ sudo docker tag hello-world yiibai/hello-world
+yiibai@ubuntu:~/docker$ sudo docker push yiibai/hello-world
+The push refers to a repository [docker.io/yiibai/hello-world]
+98c944e98de8: Pushed
+latest: digest: sha256:2075ac87b043415d35bb6351b4a59df19b8ad154e578f7048335feeb02d0f759 size: 524
+yiibai@ubuntu:~/docker$
+</code></pre> 
+ <p>在上面的显示结果中，我们可以看到Docker映像<em>hello-world</em>已经被成功推送。</p> 
+ <p>现在，使用浏览器打开 <code>hub.docker.com</code> 并登录帐户，并查看信息中心。 它将有一个新的Docker映像命名为：<strong>yiibai/hello-world</strong></p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201706/1506/851150634_74310.png" alt=""></p> 
+ <p>看到截图中，它已经成功推送了一个新的Docker映像。 在顶部，第一个就是最新的映像。</p>
+ <br>      
+</div></body></html>

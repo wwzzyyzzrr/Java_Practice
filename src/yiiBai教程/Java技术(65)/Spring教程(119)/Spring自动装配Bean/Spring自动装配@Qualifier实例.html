@@ -1,0 +1,89 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Spring自动装配@Qualifier实例</h1><div style="width:100%;float:left;" class="article-content">   
+ <div> 
+  <div>
+    在Spring中，@Qualifier的意思是，Bean有资格自动装配上到一个字段。请参见以下情形： 
+  </div> 
+ </div> 
+ <div> 
+  <h2> 
+   <div>
+     自动装配示例 
+   </div> </h2> 
+  <div>
+    参见下面的例子，它会自动装配“person”&nbsp;bean 到 customer 的 person 属性。 
+  </div> 
+  <pre>package com.yiibai.common;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+
+public class Customer {
+
+	@Autowired
+	private Person person;
+	//...
+}</pre> 
+  <div style="background-color:inherit;">
+    但是，两个类似的&nbsp;bean&nbsp;“com.yiibai.common.Person”&nbsp;在&nbsp;bean&nbsp;配置文件中声明。Spring会知道哪个person&nbsp;bean应当自动装配？ 
+  </div> 
+  <pre>&lt;beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-2.5.xsd"&gt;
+
+&lt;bean 
+class ="org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor"/&gt;
+	
+	&lt;bean id="customer" class="com.yiibai.common.Customer" /&gt;
+		
+	&lt;bean id="personA" class="com.yiibai.common.Person" &gt;
+		&lt;property name="name" value="yiibaiA" /&gt;
+	&lt;/bean&gt;
+	
+	&lt;bean id="personB" class="com.yiibai.common.Person" &gt;
+		&lt;property name="name" value="yiibaiB" /&gt;
+	&lt;/bean&gt;
+
+&lt;/beans&gt;</pre> 
+  <div style="background-color:inherit;">
+    当你运行上面的例子，它产生以下异常： 
+  </div> 
+  <pre>Caused by: org.springframework.beans.factory.NoSuchBeanDefinitionException: 
+	No unique bean of type [com.yiibai.common.Person] is defined: 
+		expected single matching bean but found 2: [personA, personB]</pre> 
+  <h2 style="color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:24px;font-weight:500;"> @Qualifier示例 </h2> 
+  <div style="background-color:inherit;">
+    要解决上述问题，需要使用&nbsp;@Quanlifier&nbsp;告诉Spring哪些bean应当自动装配。 
+  </div>   
+  <pre>package com.yiibai.common;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+
+public class Customer {
+
+	@Autowired
+	@Qualifier("personA")
+	private Person person;
+	//...
+}</pre> 
+  <div style="background-color:inherit;">
+    在这种情况下，Bean&nbsp;“personA”&nbsp;会被自动装配。 
+  </div> 
+  <pre>	
+	
+   <div style="background-color:inherit;">
+    
+		Customer&nbsp;[person=Person&nbsp;[name=yiibaiA],&nbsp;type=1,&nbsp;action=buy]
+	
+   </div></pre> 
+  <div style="color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:16px;background-color:inherit;"> 
+   <br> 
+  </div> 
+  <div style="color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:16px;background-color:inherit;">
+    下载代码 &nbsp;–&nbsp;
+   <a target="_blank" href="http://pan.baidu.com/s/1bnMJH8r">http://pan.baidu.com/s/1bnMJH8r</a> 
+  </div> 
+ </div>
+ <br>      
+</div></body></html>

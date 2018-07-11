@@ -1,0 +1,161 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">VB.Net异常处理</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>程序执行期间出现异常是一个例外。例外情况是对程序运行时出现的异常情况的回应，例如尝试除以零。</p> 
+ <p>例外提供了一种将程序的一部分控制权移交给另一部分的方法。VB.Net异常处理基于四个关键字：<code>Try</code>，<code>Catch</code>，<code>Finally</code>和<code>Throw</code>。</p> 
+ <ul> 
+  <li><em>Try</em>：尝试块标识一个代码块，特定的例外将被激活。紧接着是一个或多个<code>Catch</code>块。</li>
+  <li><em>Catch</em>：程序在程序中需要处理问题的地方捕获异常。<code>Catch</code>关键字指示捕获异常。</li>
+  <li><em>Finally</em>: <code>Finally</code>块用于执行一组给定的语句，无论是抛出异常还是不抛出异常。例如，如果打开一个文件，无论是否引发异常，它都必须关闭。</li>
+  <li><em>Throw</em>：当出现问题时，程序抛出异常。这是使用<code>Throw</code>关键字完成的。</li>
+ </ul> 
+ <h2 id="h2-u8BEDu6CD5"><a name="语法" class="reference-link"></a><span class="header-link octicon octicon-link"></span>语法</h2>
+ <p>假设一个块会引发一个异常，在方法中使用<code>Try</code>和<code>Catch</code>关键字的组合来捕获一个异常。 <code>Try/Catch</code>块放置在可能产生异常的代码周围。<code>Try/Catch</code>块内的代码被称为受保护的代码，<code>Try/Catch</code>的语法如下所示：</p> 
+ <pre><code class="lang-vbnet">Try
+    [ tryStatements ]
+    [ Exit Try ]
+[ Catch [ exception [ As type ] ] [ When expression ]
+    [ catchStatements ]
+    [ Exit Try ] ]
+[ Catch ... ]
+[ Finally
+    [ finallyStatements ] ]
+End Try
+</code></pre> 
+ <p>可以列出多个<code>catch</code>语句以捕获不同类型的异常，以防<code>try</code>块在不同情况下引发多个异常。</p> 
+ <h2 id="h2--net-"><a name=".Net框架中的异常类" class="reference-link"></a><span class="header-link octicon octicon-link"></span>.Net框架中的异常类</h2>
+ <p>在.Net框架中，异常由类表示。<em>.Net Framework</em> 中的异常类主要是直接或间接从<code>System.Exception</code>类派生的。一些从<code>System.Exception</code>类派生的异常类是<code>System.ApplicationException</code>和<code>System.SystemException</code>类。</p> 
+ <p><code>System.ApplicationException</code>类支持应用程序生成的异常。所以程序员定义的异常应该来自这个类。</p> 
+ <p><code>System.SystemException</code>类是所有预定义的系统异常的基类。</p> 
+ <p>下表提供了一些从<code>System.SystemException</code>类派生的预定义的异常类：</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>编号</th> 
+    <th>异常类</th> 
+    <th>描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>1</td> 
+    <td><code>System.IO.IOException</code></td> 
+    <td>处理<code>I/O</code>错误</td> 
+   </tr> 
+   <tr> 
+    <td>2</td> 
+    <td><code>System.IndexOutOfRangeException</code></td> 
+    <td>处理方法引用数组索引超出范围时生成的错误。</td> 
+   </tr> 
+   <tr> 
+    <td>3</td> 
+    <td><code>System.ArrayTypeMismatchException</code></td> 
+    <td>处理类型与数组类型不匹配时产生的错误。</td> 
+   </tr> 
+   <tr> 
+    <td>4</td> 
+    <td><code>System.NullReferenceException</code></td> 
+    <td>处理解引用空对象时产生的错误。</td> 
+   </tr> 
+   <tr> 
+    <td>5</td> 
+    <td><code>System.DivideByZeroException</code></td> 
+    <td>处理将除数除以零产生的错误。</td> 
+   </tr> 
+   <tr> 
+    <td>6</td> 
+    <td><code>System.InvalidCastException</code></td> 
+    <td>处理类型转换过程中产生的错误。</td> 
+   </tr> 
+   <tr> 
+    <td>7</td> 
+    <td><code>System.OutOfMemoryException</code></td> 
+    <td>处理可用内存不足导致的错误。</td> 
+   </tr> 
+   <tr> 
+    <td>8</td> 
+    <td><code>System.StackOverflowException</code></td> 
+    <td>处理堆栈溢出产生的错误。</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h2 id="h2-u5904u7406u5F02u5E38"><a name="处理异常" class="reference-link"></a><span class="header-link octicon octicon-link"></span>处理异常</h2>
+ <p>VB.Net以<code>try</code>和<code>catch</code>块的形式为异常处理问题提供了一个结构化的解决方案。使用这些块将核心程序语句与错误处理语句分开。</p> 
+ <p>这些错误处理块是使用<code>Try</code>，<code>Catch</code>和<code>Finally</code>关键字实现的。以下是除零条件发生时抛出异常的一个例子：</p> 
+ <pre><code class="lang-vbnet">Module exceptionProg
+   Sub division(ByVal num1 As Integer, ByVal num2 As Integer)
+      Dim result As Integer
+      Try
+          result = num1 \ num2
+      Catch e As DivideByZeroException
+          Console.WriteLine("Exception caught: {0}", e)
+      Finally
+          Console.WriteLine("Result: {0}", result)
+      End Try
+   End Sub
+   Sub Main()
+      division(25, 0)
+      Console.ReadKey()
+  End Sub
+End Module
+</code></pre> 
+ <p>当上面的代码被编译并执行时，会产生以下结果：</p>   
+ <pre><code class="lang-shell">Exception caught: System.DivideByZeroException: Attempted to divide by zero. 
+at ...
+Result: 0
+</code></pre> 
+ <h2 id="h2-u521Bu5EFAu7528u6237u5B9Au4E49u7684u4F8Bu5916"><a name="创建用户定义的例外" class="reference-link"></a><span class="header-link octicon octicon-link"></span>创建用户定义的例外</h2>
+ <p>也可以定义你自己的例外。用户定义的异常类是从<code>ApplicationException</code>类派生的。以下示例演示了这一点：</p> 
+ <pre><code class="lang-vbnet">Module exceptionProg
+   Public Class TempIsZeroException : Inherits ApplicationException
+      Public Sub New(ByVal message As String)
+          MyBase.New(message)
+      End Sub
+   End Class
+   Public Class Temperature
+      Dim temperature As Integer = 0
+      Sub showTemp()
+          If (temperature = 0) Then
+              Throw (New TempIsZeroException("Zero Temperature found"))
+          Else
+              Console.WriteLine("Temperature: {0}", temperature)
+          End If
+      End Sub
+   End Class
+   Sub Main()
+      Dim temp As Temperature = New Temperature()
+      Try
+          temp.showTemp()
+      Catch e As TempIsZeroException
+          Console.WriteLine("TempIsZeroException: {0}", e.Message)
+      End Try
+      Console.ReadKey()
+   End Sub
+End Module
+</code></pre> 
+ <p>当上面的代码被编译并执行时，会产生以下结果：</p> 
+ <pre><code class="lang-shell">TempIsZeroException: Zero Temperature found
+</code></pre> 
+ <h2 id="h2-u629Bu51FAu5BF9u8C61"><a name="抛出对象" class="reference-link"></a><span class="header-link octicon octicon-link"></span>抛出对象</h2>
+ <p>如果它是从<code>System.Exception</code>类直接或间接派生的，则可以抛出一个对象。可以在<code>catch</code>块中使用<code>throw</code>语句来将当前对象引用为：</p> 
+ <pre><code class="lang-shell">Throw [ expression ]
+</code></pre> 
+ <p>以下程序演示了这一点：</p> 
+ <pre><code class="lang-vbnet">Module exceptionProg
+   Sub Main()
+      Try
+          Throw New ApplicationException("A custom exception _
+          is being thrown here...")
+      Catch e As Exception
+          Console.WriteLine(e.Message)
+      Finally
+          Console.WriteLine("Now inside the Finally Block")
+      End Try
+      Console.ReadKey()
+   End Sub
+End Module
+</code></pre> 
+ <p>当上面的代码被编译并执行时，会产生以下结果：</p> 
+ <pre><code class="lang-shell">A custom exception is being thrown here...
+Now inside the Finally Block
+</code></pre>
+ <br>      
+</div></body></html>

@@ -1,0 +1,143 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Node.js事件发射器</h1><div style="width:100%;float:left;" class="article-content">   
+ <p> 在Node很多对象发出事件，例如net.Server每个同级连接到它，一个fs.readStream发出打开文件事件时，每次都发出一个事件。&nbsp;它发出事件的所有对象都是events.EventEmitter的实例。</p> 
+ <h2> EventEmitter 类</h2> 
+ <p> 正如我们已经看到在上一节，EventEmitter类在于事件的模块。它是通过通俗易懂的语法如下：</p> 
+ <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+<span class="com" style="box-sizing: border-box; color: rgb(136, 0, 0);">// Import events module</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+</span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">var</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> events </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">=</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">require</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">'events'</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">);</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+</span><span class="com" style="box-sizing: border-box; color: rgb(136, 0, 0);">// Create an eventEmitter object</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+</span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">var</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> eventEmitter </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">=</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">new</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> events</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">EventEmitter</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">();</span></pre> 
+ <p> EventEmitter实例对任何错误，它会发出一个“error”事件。当新的侦听器被添加，“newListener'事件被触发，当一个侦听器被删除，'removeListener”事件被触发。</p> 
+ <p> EventEmitter提供多种性能如在发射。On属性用于绑定事件函数，发射用于触发一个事件。</p> 
+ <h2> 方法</h2> 
+ <table class="src" style="box-sizing: border-box; border-collapse: collapse; border-spacing: 0px;  border-color: rgb(214, 214, 214); width: 604px; vertical-align: top; margin-top: 8px; margin-bottom: 8px; color: rgb(49, 49, 49);  font-size: 14px; line-height: 22px; background-color: rgb(247, 247, 247);"> 
+  <tbody style="box-sizing: border-box;"> 
+   <tr style="box-sizing: border-box;"> 
+    <th style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px; background: rgb(238, 238, 238);"> S.N.</th> 
+    <th style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px; background: rgb(238, 238, 238);"> 方法 &amp; 描述</th> 
+   </tr> 
+   <tr style="box-sizing: border-box;"> 
+    <td style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px;"> 1</td> 
+    <td style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px;"> <b style="box-sizing: border-box;">addListener(event, listener)</b><br style="box-sizing: border-box;"> 添加一个监听器监听器数组指定事件的结束。没有进行检查，以查看是否侦听器已经添加。多次调用传递事件和监听器的相同组合，将导致在侦听器被添加多次。返回发射器，所以调用可以链接。</td> 
+   </tr> 
+   <tr style="box-sizing: border-box;"> 
+    <td style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px;"> 2</td> 
+    <td style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px;"> <b style="box-sizing: border-box;">on(event, listener)</b><br style="box-sizing: border-box;"> 添加一个监听器监听器数组在未尾指定事件. 没有进行检查，以查看是否侦听器已经添加。多次调用传递事件和监听器的相同组合，将导致在侦听器被添加多次。返回发射器，所以调用可以链接。</td> 
+   </tr> 
+   <tr style="box-sizing: border-box;"> 
+    <td style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px;"> 3</td> 
+    <td style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px;"> <b style="box-sizing: border-box;">once(event, listener)</b><br style="box-sizing: border-box;"> 增加一次监听事件。 监听器调用仅在下一次事件被触发，之后被删除。返回发射器，所以调用可以链接。</td> 
+   </tr> 
+   <tr style="box-sizing: border-box;"> 
+    <td style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px;"> 4</td> 
+    <td style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px;"> <b style="box-sizing: border-box;">removeListener(event, listener)</b><br style="box-sizing: border-box;"> 从侦听器数组指定事件删除监听器。注意：改变数组索引侦听器后面监听器数组中。removeListener将从监听数组中删除至多侦听器一个实例。如果任何一个监听器已经被多次添加到侦听数组指定事件，然后removeListener必须多次删除每个实例。返回发射器，所以调用可以链接。</td> 
+   </tr> 
+   <tr style="box-sizing: border-box;"> 
+    <td style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px;"> 5</td> 
+    <td style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px;"> <b style="box-sizing: border-box;">removeAllListeners([event])</b><br style="box-sizing: border-box;"> 删除所有监听器，或者那些指定的事件。这不是一个好主意，删除在其他地方添加代码，特别是当它在还没有创建（如套接字或文件流）发射器监听器。 返回发射器，所以调用可以链接。</td> 
+   </tr> 
+   <tr style="box-sizing: border-box;"> 
+    <td style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px;"> 6</td> 
+    <td style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px;"> <b style="box-sizing: border-box;">setMaxListeners(n)</b><br style="box-sizing: border-box;"> 默认情况下EventEmitters将打印一个警告，如果超过10个监听器添加特定事件。这是一个有用的默认这有助于发现内存泄漏。显然，并非所有的发射器应限制在10个，此功能允许增加。设置为零无限制。</td> 
+   </tr> 
+   <tr style="box-sizing: border-box;"> 
+    <td style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px;"> 7</td> 
+    <td style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px;"> <b style="box-sizing: border-box;">listeners(event)</b><br style="box-sizing: border-box;"> 返回监听器为指定事件的数组。</td> 
+   </tr> 
+   <tr style="box-sizing: border-box;"> 
+    <td style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px;"> 8</td> 
+    <td style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px;"> <b style="box-sizing: border-box;">emit(event, [arg1], [arg2], [...])</b><br style="box-sizing: border-box;"> 为了与提供的参数执行每一个监听器。如果事件有监听器返回true，否则为false。</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h2> 类方法</h2> 
+ <table class="src" style="box-sizing: border-box; border-collapse: collapse; border-spacing: 0px;  border-color: rgb(214, 214, 214); width: 604px; vertical-align: top; margin-top: 8px; margin-bottom: 8px; color: rgb(49, 49, 49);  font-size: 14px; line-height: 22px; background-color: rgb(247, 247, 247);"> 
+  <tbody style="box-sizing: border-box;"> 
+   <tr style="box-sizing: border-box;"> 
+    <th style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px; background: rgb(238, 238, 238);"> S.N.</th> 
+    <th style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px; background: rgb(238, 238, 238);"> 方法 &amp; 描述</th> 
+   </tr> 
+   <tr style="box-sizing: border-box;"> 
+    <td style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px;"> 1</td> 
+    <td style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px;"> <b style="box-sizing: border-box;">listenerCount(emitter, event)</b><br style="box-sizing: border-box;"> 返回对于一个给定的事件监听器的数量。</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h2> 事件</h2> 
+ <table class="src" style="box-sizing: border-box; border-collapse: collapse; border-spacing: 0px;  border-color: rgb(214, 214, 214); width: 604px; vertical-align: top; margin-top: 8px; margin-bottom: 8px; color: rgb(49, 49, 49);  font-size: 14px; line-height: 22px; background-color: rgb(247, 247, 247);"> 
+  <tbody style="box-sizing: border-box;"> 
+   <tr style="box-sizing: border-box;"> 
+    <th style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px; background: rgb(238, 238, 238);"> S.No.</th> 
+    <th style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px; background: rgb(238, 238, 238);"> 事件 &amp; 描述</th> 
+   </tr> 
+   <tr style="box-sizing: border-box;"> 
+    <td style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px;"> 1</td> 
+    <td style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px;"> <b style="box-sizing: border-box;">newListener</b><br style="box-sizing: border-box;"> 
+     <ul> 
+      <li> <p> event&nbsp;- 事件字符串名称</p> </li> 
+      <li> <p> listener&nbsp;- 函数的事件处理函数</p> </li> 
+     </ul> <p> 此事件发出的侦听器在任何时间添加。当该事件被触发，监听器可能还没有被添加到监听的数组，用于该事件。</p> </td> 
+   </tr> 
+   <tr style="box-sizing: border-box;"> 
+    <td style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px;"> 2</td> 
+    <td style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px;"> <b style="box-sizing: border-box;">removeListener</b><br style="box-sizing: border-box;"> 
+     <ul> 
+      <li> <p> event&nbsp;- 字符串事件名称</p> </li> 
+      <li> <p> listener&nbsp;- 函数的事件处理函数</p> </li> 
+     </ul> <p> 此事件发出任何时当要删除一个侦听器。当该事件被触发，监听器可能还没有被从监听的阵列删除，而用于在事件中删除。</p> </td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h2> 例子</h2> 
+ <p> 创建一个名为main.js，使用以下Node.js的代码js文件：</p> 
+ <pre class="prettyprint tryit prettyprinted" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); cursor: default; background-image: url(http://www.yiibai.com/nodejs/images/try-it.jpg) !important; background-attachment: initial !important; background-size: initial !important; background-origin: initial !important; background-clip: initial !important; background-position: 100% 0%; background-repeat: no-repeat !important;">
+<span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">var</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> events </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">=</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">require</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">'events'</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">);</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+</span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">var</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> eventEmitter </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">=</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">new</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> events</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">EventEmitter</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">();</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+
+</span><span class="com" style="box-sizing: border-box; color: rgb(136, 0, 0);">// listener #1</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+</span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">var</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> listner1 </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">=</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">function</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> listner1</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">()</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">{</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+   console</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">log</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">'listner1 executed.'</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">);</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">}</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+
+</span><span class="com" style="box-sizing: border-box; color: rgb(136, 0, 0);">// listener #2</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+</span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">var</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> listner2 </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">=</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">function</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> listner2</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">()</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">{</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+  console</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">log</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">'listner2 executed.'</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">);</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">}</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+
+</span><span class="com" style="box-sizing: border-box; color: rgb(136, 0, 0);">// Bind the connection event with the listner1 function</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+eventEmitter</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">addListener</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">'connection'</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">,</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> listner1</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">);</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+
+</span><span class="com" style="box-sizing: border-box; color: rgb(136, 0, 0);">// Bind the connection event with the listner2 function</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+eventEmitter</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">on</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">'connection'</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">,</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> listner2</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">);</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+
+</span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">var</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> eventListeners </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">=</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">require</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">'events'</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">).</span><span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">EventEmitter</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">listenerCount</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">eventEmitter</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">,</span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">'connection'</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">);</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+console</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">log</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">eventListeners </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">+</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">" Listner(s) listening to connection event"</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">);</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+
+</span><span class="com" style="box-sizing: border-box; color: rgb(136, 0, 0);">// Fire the connection event </span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+eventEmitter</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">emit</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">'connection'</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">);</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+
+</span><span class="com" style="box-sizing: border-box; color: rgb(136, 0, 0);">// Remove the binding of listner1 function</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+eventEmitter</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">removeListener</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">'connection'</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">,</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> listner1</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">);</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+console</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">log</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"Listner1 will not listen now."</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">);</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+
+</span><span class="com" style="box-sizing: border-box; color: rgb(136, 0, 0);">// Fire the connection event </span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+eventEmitter</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">emit</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">'connection'</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">);</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+
+eventListeners </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">=</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">require</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">'events'</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">).</span><span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">EventEmitter</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">listenerCount</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">eventEmitter</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">,</span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">'connection'</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">);</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+console</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">log</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">eventListeners </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">+</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">" Listner(s) listening to connection event"</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">);</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+
+console</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">log</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"Program Ended."</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">);</span></pre> 
+ <p> 现在运行main.js看到的结果：</p>   
+ <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+<span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">$ node main</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">js</span></pre> 
+ <p> 验证输出</p> 
+ <pre class="result notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace;  border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+2 Listner(s) listening to connection event
+listner1 executed.
+listner2 executed.
+Listner1 will not listen now.
+listner2 executed.
+1 Listner(s) listening to connection event
+Program Ended.</pre> 
+ <br>      
+</div></body></html>

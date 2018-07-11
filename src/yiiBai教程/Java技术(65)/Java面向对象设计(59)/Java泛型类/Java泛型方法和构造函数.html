@@ -1,0 +1,131 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Java泛型方法和构造函数</h1><div style="width:100%;float:left;" class="article-content">   
+ <h2 id="h2-u6CDBu578Bu65B9u6CD5"><a name="泛型方法" class="reference-link"></a><span class="header-link octicon octicon-link"></span>泛型方法</h2>
+ <p>可以在方法声明中定义类型参数，它们在方法的返回类型之前的尖括号中指定。包含泛型方法声明的类型不必是通用类型。可以在非静态方法声明中使用为泛型类型指定的类型参数。</p> 
+ <h2 id="h2-u793Au4F8B"><a name="示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例</h2>
+ <p>以下代码显示如何为方法<code>m1()</code>定义新的类型参数<code>V</code>。新类型参数<code>V</code>强制将方法<code>m1()</code>的第一个和第二个参数必须为相同类型。</p> 
+ <p>第三个参数必须与类型<code>T</code>相同，这是类实例化的类型。</p> 
+ <pre><code class="lang-java">class MyBag&lt;T&gt; {
+  private T ref;
+
+  public MyBag(T ref) {
+    this.ref = ref;
+  }
+
+  public T get() {
+    return ref;
+  }
+
+  public void set(T a) {
+    this.ref = a;
+  }
+}
+class Test&lt;T&gt;  {
+  public &lt;V&gt;  void  m1(MyBag&lt;V&gt;  a, MyBag&lt;V&gt;  b, T  c)  {
+
+  }
+}
+</code></pre> 
+ <h2 id="h2-u4F7Fu7528u901Au7528u65B9u6CD5"><a name="使用通用方法" class="reference-link"></a><span class="header-link octicon octicon-link"></span>使用通用方法</h2>
+ <p>要传递方法的形式类型参数的实际类型参数，必须在方法调用中的点和方法名之间的尖括号<code>&lt;&gt;</code>中指定它。</p> 
+ <pre><code class="lang-java">class MyBag&lt;T&gt; {
+  private T ref;
+
+  public MyBag(T ref) {
+    this.ref = ref;
+  }
+
+  public T get() {
+    return ref;
+  }
+
+  public void set(T a) {
+    this.ref = a;
+  }
+}
+class Test&lt;T&gt; {
+  public &lt;V&gt; void m1(MyBag&lt;V&gt; a, MyBag&lt;V&gt; b, T c) {
+  }
+}
+public class Main {
+
+  public static void main(String[] argv) {
+    Test&lt;String&gt; t = new Test&lt;String&gt;();
+    MyBag&lt;Integer&gt; iw1 = new MyBag&lt;Integer&gt;(new Integer(201));
+    MyBag&lt;Integer&gt; iw2 = new MyBag&lt;Integer&gt;(new Integer(202));
+
+    // Specify that Integer is the actual type for the type parameter for m1()
+    t.&lt;Integer&gt;m1(iw1, iw2, "hello");
+
+    t.m1(iw1, iw2, "hello");
+  }
+}
+</code></pre> 
+ <h2 id="h2--2"><a name="实例-2" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实例-2</h2>
+ <p>以下代码显示了如何声明通用静态方法。不能在静态方法中引用包含类的类型参数。<br>静态方法只能引用它自己声明的类型参数。以下静态通用类型定义了类型参数<code>T</code>，用于约束参数<code>source</code>和<code>dest</code>的类型。</p> 
+ <pre><code class="lang-java">class MyBag&lt;T&gt; {
+  private T ref;
+
+  public MyBag(T ref) {
+    this.ref = ref;
+  }
+
+  public T get() {
+    return ref;
+  }
+
+  public void set(T a) {
+    this.ref = a;
+  }
+}
+
+public class Main {
+  public static &lt;T&gt; void copy(MyBag&lt;T&gt; source, MyBag&lt;? super T&gt; dest) {
+    T value = source.get();
+    dest.set(value);
+  }
+
+  public static void main(String[] argv) {
+  }
+}
+</code></pre> 
+ <p>要为静态方法调用指定实际的类型参数，可以这样做：</p> 
+ <pre><code class="lang-java">Main.&lt;Integer&gt;copy(iw1, iw2);
+</code></pre> 
+ <h2 id="h2-u901Au7528u6784u9020u51FDu6570"><a name="通用构造函数" class="reference-link"></a><span class="header-link octicon octicon-link"></span>通用构造函数</h2>
+ <p>可以为构造函数定义类型参数。下面的代码定义了类<code>Test</code>的构造函数的类型参数<code>U</code>。它放置一个约束，构造函数的类型参数<code>U</code>必须是相同的，或者它的类类型参数<code>T</code>类型的子类型。</p>   
+ <pre><code class="lang-java">public class Test&lt;T&gt; {
+  public &lt;U extends T&gt; Test(U k) {
+  }
+}
+</code></pre> 
+ <p>要为构造函数指定实际的类型参数值，请在 <code>new</code> 运算符和构造函数名称之间的尖括号中指定它，如以下代码段所示：</p> 
+ <pre><code class="lang-java">class Test&lt;T&gt; {
+  public &lt;U extends T&gt; Test(U k) {
+  }
+}
+
+public class Main {
+  public static void main(String[] argv) {
+    // Specify the actual type parameter for the constructor as Double
+    Test&lt;Number&gt; t1 = new&lt;Double&gt; Test&lt;Number&gt;(new Double(1.9));
+
+    // Let the compiler figure out, Integer is
+    // the actual type parameter for the constructor
+    Test&lt;Number&gt; t2 = new Test&lt;Number&gt;(new Integer(1));
+
+  }
+}
+</code></pre> 
+ <h2 id="h2-u901Au7528u5BF9u8C61u5728u521Bu5EFAu4E2Du7684u7C7Bu578Bu63A8u65AD"><a name="通用对象在创建中的类型推断" class="reference-link"></a><span class="header-link octicon octicon-link"></span>通用对象在创建中的类型推断</h2>
+ <p>Java7在通用类型的对象创建表达式中增加了对类型推断的一些有限支持。<br>对于以下语句：</p> 
+ <pre><code class="lang-java">List&lt;String&gt; list = new ArrayList&lt;String&gt;();
+</code></pre> 
+ <p>在<code>Java7</code>中，可以在上面的语句中指定空尖括号，称为菱形操作符或简单的菱形<code>&lt;&gt;</code>作为<code>ArrayList</code>的类型参数。</p> 
+ <pre><code class="lang-java">List&lt;String&gt; list = new ArrayList&lt;&gt;();
+</code></pre> 
+ <p>如果不在对象创建表达式中为通用类型指定类型参数，那么类型是原始类型，编译器生成未检查的警告。<br>例如，以下语句将编译产生未选中的警告：</p> 
+ <pre><code class="lang-java">List&lt;String&gt; list = new ArrayList(); // Generates an  unchecked  warning
+</code></pre> 
+ <p>不能创建通用的异常类。 并且没有通用的匿名类。</p>
+ <br>      
+</div></body></html>

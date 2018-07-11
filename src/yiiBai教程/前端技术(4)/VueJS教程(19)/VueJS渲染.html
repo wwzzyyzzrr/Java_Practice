@@ -1,0 +1,235 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">VueJS渲染</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>在本章中，我们将学习有条件的渲染和列表渲染。在条件渲染中，我们将讨论如何使用<code>if</code>，<code>if-else</code>，<code>if-else-if</code>，<code>show</code>等。在列表渲染中，我们将讨论如何使用<code>for</code>循环。</p> 
+ <h2 id="h2-u6709u6761u4EF6u7684u6E32u67D3"><a name="有条件的渲染" class="reference-link"></a><span class="header-link octicon octicon-link"></span>有条件的渲染</h2>
+ <p>下面先来看看一个例子来解释有条件渲染的细节。 使用有条件渲染时，只在满足条件时进行输出，并且在<code>if</code>，<code>else</code>，<code>if-else-if</code>，<code>show</code>等的帮助下完成条件检查。</p> 
+ <h4 id="h4-1-v-if"><a name="1. v-if" class="reference-link"></a><span class="header-link octicon octicon-link"></span>1. v-if</h4>
+ <p>创建一个文件：<em>rendering-v-if.html</em> - </p> 
+ <pre><code class="lang-html">&lt;html&gt;
+   &lt;head&gt;
+      &lt;meta charset="UTF-8"&gt;
+      &lt;title&gt;VueJs条件渲染示例&lt;/title&gt;
+      &lt;script type = "text/javascript" src = "js/vue.js"&gt;&lt;/script&gt;
+   &lt;/head&gt;
+   &lt;body&gt;
+      &lt;div id = "databinding"&gt;
+         &lt;button v-on:click = "showdata" v-bind:style = "styleobj"&gt;点击我&lt;/button&gt;
+         &lt;span style = "font-size:25px;"&gt;&lt;b&gt;{{show}}&lt;/b&gt;&lt;/span&gt;
+         &lt;h1 v-if = "show"&gt;This is h1 tag&lt;/h1&gt;
+         &lt;h2&gt;This is h2 tag&lt;/h2&gt;
+      &lt;/div&gt;
+      &lt;script type = "text/javascript"&gt;
+         var vm = new Vue({
+            el: '#databinding',
+            data: {
+               show: true,
+               styleobj: {
+                  backgroundColor: '#2196F3!important',
+                  cursor: 'pointer',
+                  padding: '8px 16px',
+                  verticalAlign: 'middle',
+               }
+            },
+            methods : {
+               showdata : function() {
+                  this.show = !this.show;
+               }
+            },
+         });
+      &lt;/script&gt;
+   &lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>在上面的例子中，我们创建了一个按钮和两个带有消息的<code>h1</code>标签。</p> 
+ <p><code>show</code>变量被声明并初始化为值<code>true</code>，它靠近按钮显示。点击按钮时调用方法：<code>showdata</code>，它切换变量<code>show</code>的值。这意味着点击按钮时，变量<code>show</code>的值将从<code>true</code>变为<code>false</code>，也可以由<code>false</code>变为<code>true</code>。</p> 
+ <p>如下面的代码片段所示，已经分配给了h1标签。</p> 
+ <pre><code class="lang-html">&lt;button v-on:click = "showdata" v-bind:style = "styleobj"&gt;Click Me&lt;/button&gt;
+&lt;h1 v-if = "show"&gt;This is h1 tag&lt;/h1&gt;
+</code></pre> 
+ <p>VueJS将检查变量<code>show</code>的值，如果为<code>true</code>值时将显示<code>h1</code>标签。单击该按钮并在浏览器中查看，因为<code>show</code>变量的值更改为<code>false</code>，则<code>h1</code>标记不会显示在浏览器中。只有在<code>show</code>变量为<code>true</code>时才显示。<br>如下在浏览器中的显示效果 -<br><img src="http://www.yiibai.com/uploads/images/201712/2112/605101241_48057.gif" alt=""></p> 
+ <h4 id="h4-2-v-else"><a name="2.  v-else" class="reference-link"></a><span class="header-link octicon octicon-link"></span>2. v-else</h4>
+ <p>在下面的例子中，我们添加了<code>v-else</code>条件到第二个<code>h1</code>标签。创建一个文件：<em>rendering-v-else.html</em> - </p> 
+ <pre><code class="lang-html">&lt;html&gt;
+   &lt;head&gt;
+      &lt;meta charset="UTF-8"&gt;
+      &lt;title&gt;VueJs条件渲染示例&lt;/title&gt;
+      &lt;script type = "text/javascript" src = "js/vue.js"&gt;&lt;/script&gt;
+   &lt;/head&gt;
+   &lt;body&gt;
+      &lt;div id = "databinding"&gt;
+         &lt;button v-on:click = "showdata" v-bind:style = "styleobj"&gt;点击我&lt;/button&gt;
+         &lt;span style = "font-size:25px;"&gt;&lt;b&gt;{{show}}&lt;/b&gt;&lt;/span&gt;
+         &lt;h1 v-if = "show"&gt;This is h1 tag&lt;/h1&gt;
+         &lt;h2 v-else&gt;This is h2 tag&lt;/h2&gt;
+      &lt;/div&gt;
+      &lt;script type = "text/javascript"&gt;
+         var vm = new Vue({
+            el: '#databinding',
+            data: {
+               show: true,
+               styleobj: {
+                  backgroundColor: '#2196F3!important',
+                  cursor: 'pointer',
+                  padding: '8px 16px',
+                  verticalAlign: 'middle',
+               }
+            },
+            methods : {
+               showdata : function() {
+                  this.show = !this.show;
+               }
+            },
+         });
+      &lt;/script&gt;
+   &lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>下面的代码片段添加<code>v-else</code>条件指令 -</p> 
+ <pre><code class="lang-html">&lt;h1 v-if = "show"&gt;This is h1 tag&lt;/h1&gt;
+&lt;h2 v-else&gt;This is h2 tag&lt;/h2&gt;
+</code></pre> 
+ <p>现在，如果<code>show</code>为<code>true</code>，则显示<code>"This is h1 tag"</code>，如果<code>show</code>为<code>false</code>，则显示为<code>"This is h2 tag"</code>，下面是将在浏览器中看到的效果 -<br><img src="http://www.yiibai.com/uploads/images/201712/2112/812101255_81008.gif" alt=""></p> 
+ <h4 id="h4-3-v-show"><a name="3. v-show" class="reference-link"></a><span class="header-link octicon octicon-link"></span>3. v-show</h4>
+ <p><code>v-show</code>的行为与<code>v-if</code>相同。 它还根据分配给它的条件显示和隐藏元素。 <code>v-if</code>与<code>v-show</code>之间的区别在于，如果条件为<code>false</code>，则<code>v-if</code>从HTML中删除HTML元素，如果条件为<code>true</code>，则将其添加回去。 而<code>v-show</code>隐藏元素，如果条件为<code>false</code>，则应用<code>display:none</code>。如果条件是<code>true</code>则它显示元素回来。 因此，元素总是存在于dom中。</p> 
+ <p>创建一个文件：<em>rendering-v-show.html</em> - </p> 
+ <pre><code class="lang-html">&lt;html&gt;
+   &lt;head&gt;
+      &lt;meta charset="UTF-8"&gt;
+      &lt;title&gt;VueJs条件渲染示例&lt;/title&gt;
+      &lt;script type = "text/javascript" src = "js/vue.js"&gt;&lt;/script&gt;
+   &lt;/head&gt;
+   &lt;body&gt;
+      &lt;div id = "databinding"&gt;
+         &lt;button v-on:click = "showdata" v-bind:style = "styleobj"&gt;点击我&lt;/button&gt;
+         &lt;span style = "font-size:25px;"&gt;&lt;b&gt;{{show}}&lt;/b&gt;&lt;/span&gt;
+         &lt;h1 v-if = "show"&gt;This is h1 tag&lt;/h1&gt;
+         &lt;h2 v-else&gt;This is h2 tag&lt;/h2&gt;
+         &lt;div v-show = "show"&gt;
+            &lt;b&gt;V-Show:&lt;/b&gt;
+            &lt;img src = "images/mydog.jpg" width = "100" height = "100" /&gt;
+         &lt;/div&gt;
+      &lt;/div&gt;
+      &lt;script type = "text/javascript"&gt;
+         var vm = new Vue({
+            el: '#databinding',
+            data: {
+               show: true,
+               styleobj: {
+                  backgroundColor: '#2196F3!important',
+                  cursor: 'pointer',
+                  padding: '8px 16px',
+                  verticalAlign: 'middle',
+               }
+            },
+            methods : {
+               showdata : function() {
+                  this.show = !this.show;
+               }
+            },
+         });
+      &lt;/script&gt;
+   &lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>使用下面的代码片段将<code>v-show</code>分配给HTML元素。</p>   
+ <pre><code class="lang-html">&lt;div v-show = "show"&gt;&lt;b&gt;V-Show:&lt;/b&gt;&lt;img src = "images/mydog.jpg" width = "100" height = "100" /&gt;&lt;/div&gt;
+</code></pre> 
+ <p>已经使用了相同的<code>show</code>变量，并基于值<code>true/false</code>，图像显示在浏览器中如下所示 -<br><img src="http://www.yiibai.com/uploads/images/201712/2112/375111252_71607.gif" alt=""></p> 
+ <h2 id="h2-u5217u8868u6E32u67D3"><a name="列表渲染" class="reference-link"></a><span class="header-link octicon octicon-link"></span>列表渲染</h2>
+ <h4 id="h4-1-em-v-for-em-"><a name="1. <em>v-for</em>" class="reference-link"></a><span class="header-link octicon octicon-link"></span>1. <em>v-for</em></h4>
+ <p>现在讨论如何使用<code>v-for</code>指令进行列表渲染。创建一个文件：<em>rendering-v-for.html</em> -</p> 
+ <pre><code class="lang-html">&lt;html&gt;
+   &lt;head&gt;
+      &lt;meta charset="UTF-8"&gt;
+      &lt;title&gt;VueJs渲染示例&lt;/title&gt;
+      &lt;script type = "text/javascript" src = "js/vue.js"&gt;&lt;/script&gt;
+   &lt;/head&gt;
+   &lt;body&gt;
+      &lt;body&gt;
+      &lt;div id = "databinding"&gt;
+         &lt;input type = "text" v-on:keyup.enter = "showinputvalue"
+            v-bind:style = "styleobj" placeholder = "输入水果名称，并回车..."/&gt;&lt;br/&gt;
+         &lt;b v-if = "items.length&gt;0"&gt;显示水果列表如下：&lt;/b&gt;
+         &lt;ul&gt;
+            &lt;li v-for = "a in items"&gt;{{a}}&lt;/li&gt;
+         &lt;/ul&gt;
+      &lt;/div&gt;
+      &lt;script type = "text/javascript"&gt;
+         var vm = new Vue({
+            el: '#databinding',
+            data: {
+               items:[],
+               styleobj: {
+                  width: "40%",
+                  padding: "12px 20px",
+                  margin: "8px 0",
+                  boxSizing: "border-box"
+               }
+            },
+            methods : {
+               showinputvalue : function(event) {
+                  this.items.push(event.target.value);
+               }
+            },
+         });
+      &lt;/script&gt;
+   &lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p><code>items</code>变量被声明为一个数组。 在方法中，有一个名为<code>showinputvalue</code>的方法，它被分配到输入框的名字上。在该方法中，使用下面的一段代码将在文本框内输入的水果添加到数组中。</p> 
+ <pre><code class="lang-html">showinputvalue : function(event) {
+   this.items.push(event.target.value);
+}
+</code></pre> 
+ <p>使用<code>v-for</code>来显示输入的水果，如下面的一段代码。<code>v-for</code>用于遍历数组中存在的值。</p> 
+ <pre><code class="lang-html">&lt;ul&gt;
+   &lt;li v-for = "a in items"&gt;{{a}}&lt;/li&gt;
+&lt;/ul&gt;
+</code></pre> 
+ <p>要使用<code>for</code>循环遍历数组，则要使用指令：<code>v-for = "a in items"</code>，其中<code>a</code>保存数组中的值并显示，直到完成所有项目。<br>以下是浏览器中的输出效果 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201712/2112/476121207_69213.gif" alt=""></p> 
+ <p>如果想要显示数组的索引，则使用下面的代码完成。</p> 
+ <pre><code class="lang-html">&lt;html&gt;
+   &lt;head&gt;
+      &lt;meta charset="UTF-8"&gt;
+      &lt;title&gt;VueJs渲染示例&lt;/title&gt;
+      &lt;script type = "text/javascript" src = "js/vue.js"&gt;&lt;/script&gt;
+   &lt;/head&gt;
+   &lt;body&gt;
+      &lt;body&gt;
+      &lt;div id = "databinding"&gt;
+         &lt;input type = "text" v-on:keyup.enter = "showinputvalue"
+            v-bind:style = "styleobj" placeholder = "输入水果名称，并回车..."/&gt;&lt;br/&gt;
+         &lt;b v-if = "items.length&gt;0"&gt;显示水果列表如下：&lt;/b&gt;
+         &lt;ul&gt;
+            &lt;li v-for = "(a, index) in items"&gt;{{index}}--{{a}}&lt;/li&gt;
+         &lt;/ul&gt;
+      &lt;/div&gt;
+      &lt;script type = "text/javascript"&gt;
+         var vm = new Vue({
+            el: '#databinding',
+            data: {
+               items:[],
+               styleobj: {
+                  width: "40%",
+                  padding: "12px 20px",
+                  margin: "8px 0",
+                  boxSizing: "border-box"
+               }
+            },
+            methods : {
+               showinputvalue : function(event) {
+                  this.items.push(event.target.value);
+               }
+            },
+         });
+      &lt;/script&gt;
+   &lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>为了显示索引，在括号中增加了一个变量，如下面的一段代码所示。</p> 
+ <pre><code class="lang-html">&lt;li v-for = "(a, index) in items"&gt;{{index}}--{{a}}&lt;/li&gt;
+</code></pre> 
+ <p>以下是浏览器中的输出效果 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201712/2112/624121210_32659.png" alt=""></p>
+ <br>      
+</div></body></html>

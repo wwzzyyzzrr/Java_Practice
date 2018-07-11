@@ -1,0 +1,138 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">ReactJS动画</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>在本章中，我们将学习React如何使用动画元素。</p> 
+ <h2 id="h2--1-react-css-"><a name="第1步 - 安装React CSS转换组" class="reference-link"></a><span class="header-link octicon octicon-link"></span>第1步 - 安装React CSS转换组</h2>
+ <p>这是React插件，用于创建基本的CSS转换和动画。从命令提示符窗口中安装它 -</p> 
+ <pre><code class="lang-shell">F:\worksp\reactjs\reactApp&gt; npm install react-addons-css-transition-group
+</code></pre> 
+ <h2 id="h2--2-css-"><a name="第2步 - 添加一个CSS文件" class="reference-link"></a><span class="header-link octicon octicon-link"></span>第2步 - 添加一个CSS文件</h2>
+ <p>在项目根目录里面创建一个新的文件夹：<code>css</code>，并在文件夹中创建一个文件：<em>style.css</em> 。 为了能够在应用程序中使用它，需要将它添加到<code>index.html</code>中的<code>head</code>元素中。如下文件(<em>index.html</em>)代码所示 - </p> 
+ <pre><code class="lang-html">&lt;!DOCTYPE html&gt;
+&lt;html lang = "en"&gt;
+
+   &lt;head&gt;
+      &lt;meta charset = "UTF-8"&gt;
+      &lt;title&gt;React动画示例&lt;/title&gt;
+      &lt;link rel = "stylesheet" type = "text/css" href = "css/style.css"&gt;
+   &lt;/head&gt;
+
+   &lt;body&gt;
+      &lt;div id = "app"&gt;&lt;/div&gt;
+      &lt;script type = "text/javascript" src = "index.js"&gt;&lt;/script&gt;
+   &lt;/body&gt;
+
+&lt;/html&gt;
+</code></pre> 
+ <h2 id="h2--3-"><a name="第3步 - 出现动画" class="reference-link"></a><span class="header-link octicon octicon-link"></span>第3步 - 出现动画</h2>
+ <p>创建一个基本的React组件。 <code>ReactCSSTransitionGroup</code>元素将被用作想要动画的组件的包装。它将使用<code>transitionAppear</code>和<code>transitionAppearTimeout</code>，而<code>transitionEnter</code>和<code>transitionLeave</code>是<code>false</code>。</p> 
+ <p>文件：<em>App.jsx</em> - </p> 
+ <pre><code class="lang-js">import React from 'react';
+var ReactCSSTransitionGroup = require('react-addons-css-transition-group');
+
+class App extends React.Component {
+   render() {
+      return (
+         &lt;div&gt;
+            &lt;ReactCSSTransitionGroup transitionName = "example"
+               transitionAppear = {true} transitionAppearTimeout = {500}
+               transitionEnter = {false} transitionLeave = {false}&gt;
+               &lt;h1&gt;My Element...&lt;/h1&gt;
+            &lt;/ReactCSSTransitionGroup&gt;
+         &lt;/div&gt;      
+      );
+   }
+}
+export default App;
+</code></pre> 
+ <p>文件：<em>main.js</em> - </p> 
+ <pre><code class="lang-js">import React from 'react'
+import ReactDOM from 'react-dom';
+import App from './App.jsx';
+
+ReactDOM.render(&lt;App /&gt;, document.getElementById('app'));
+</code></pre> 
+ <p>CSS动画非常简单。文件：<em>css/style.css</em> - </p> 
+ <pre><code class="lang-js">.example-appear {
+   opacity: 0.01;
+}
+.example-appear.example-appear-active {
+   opacity: 1;
+   transition: opacity 500ms ease-in;
+}
+</code></pre> 
+ <p>当启动应用程序，元素将淡入。<br><img src="http://www.yiibai.com/uploads/images/201801/0301/655100122_14069.png" alt=""></p> 
+ <h2 id="h2--4-"><a name="第4步 - 输入和离开动画" class="reference-link"></a><span class="header-link octicon octicon-link"></span>第4步 - 输入和离开动画</h2>
+ <p>当想要添加或删除列表中的元素时，可以使用输入和离开动画。</p> 
+ <p>文件：<em>App.jsx</em> - </p> 
+ <pre><code class="lang-js">import React from 'react';
+var ReactCSSTransitionGroup = require('react-addons-css-transition-group');
+
+class App extends React.Component {
+   constructor(props) {
+      super(props);
+
+      this.state = {
+         items: ['Item 1...', 'Item 2...', 'Item 3...', 'Item 4...']
+      }
+      this.handleAdd = this.handleAdd.bind(this);
+   };
+   handleAdd() {
+      var newItems = this.state.items.concat([prompt('Create New Item')]);
+      this.setState({items: newItems});
+   }
+   handleRemove(i) {
+      var newItems = this.state.items.slice();
+      newItems.splice(i, 1);
+      this.setState({items: newItems});
+   }
+   render() {
+      var items = this.state.items.map(function(item, i) {
+         return (
+            &lt;div key = {item} onClick = {this.handleRemove.bind(this, i)}&gt;
+               {item}
+            &lt;/div&gt;
+         );
+      }.bind(this));
+
+      return (
+         &lt;div&gt;      
+            &lt;button onClick = {this.handleAdd}&gt;Add Item&lt;/button&gt;
+
+            &lt;ReactCSSTransitionGroup transitionName = "example" 
+               transitionEnterTimeout = {500} transitionLeaveTimeout = {500}&gt;
+               {items}
+            &lt;/ReactCSSTransitionGroup&gt;
+         &lt;/div&gt;
+      );
+   }
+}
+export default App;
+</code></pre> 
+ <p>文件：<em>main.js</em> - </p>   
+ <pre><code class="lang-js">import React from 'react'
+import ReactDOM from 'react-dom';
+import App from './App.jsx';
+
+ReactDOM.render(&lt;App /&gt;, document.getElementById('app'));
+</code></pre> 
+ <p>文件：<em>css/style.css</em> - </p> 
+ <pre><code class="lang-js">.example-enter {
+   opacity: 0.01;
+}
+.example-enter.example-enter-active {
+   opacity: 1;
+   transition: opacity 500ms ease-in;
+}
+.example-leave {
+   opacity: 1;
+}
+.example-leave.example-leave-active {
+   opacity: 0.01;
+   transition: opacity 500ms ease-in;
+}
+</code></pre> 
+ <p>当启动应用程序，然后点击添加项目按钮，会出现提示。<br><img src="http://www.yiibai.com/uploads/images/201801/0301/499100140_77651.png" alt=""></p> 
+ <p>当点击<code>"Add Item..."</code>并输入名称，然后按<strong>确定</strong>，新的元素将淡入。<br><img src="http://www.yiibai.com/uploads/images/201801/0301/346100147_93735.png" alt=""></p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201801/0301/509100149_87161.png" alt=""></p> 
+ <p>现在可以通过点击删除一些项目(例如：<em>Item 3 …</em> )。 该项目将从列表中淡出。<br><img src="http://www.yiibai.com/uploads/images/201801/0301/778100150_68548.png" alt=""></p>
+ <br>      
+</div></body></html>

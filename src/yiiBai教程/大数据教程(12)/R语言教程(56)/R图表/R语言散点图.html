@@ -1,0 +1,86 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">R语言散点图</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>散点图显示了在笛卡尔平面绘制的多个点。每个点代表两个变量的值。在水平轴上选择一个变量，在垂直轴中选择另一个变量。</p> 
+ <p>简单散点图使用<code>plot()</code>函数来创建。</p> 
+ <h2 id="h2-u8BEDu6CD5"><a name="语法" class="reference-link"></a><span class="header-link octicon octicon-link"></span>语法</h2>
+ <p>在R中创建散点图的基本语法是 -</p> 
+ <pre><code class="lang-r">plot(x, y, main, xlab, ylab, xlim, ylim, axes)
+</code></pre> 
+ <p>以下是使用的参数的描述 - </p> 
+ <ul> 
+  <li><em>x</em> - 是数据集，其值是水平坐标。</li>
+  <li><em>y</em> - 是数据集，其值是垂直坐标。</li>
+  <li><em>main</em> - 是图表的标题。</li>
+  <li><em>xlab</em> - 是水平轴(<code>y</code>轴)上的标签。</li>
+  <li><em>ylab</em> - 是垂直轴(<code>y</code>轴)上的标签。</li>
+  <li><em>xlim</em> - 是用于绘制的<code>x</code>的值的极限。</li>
+  <li><em>ylim</em> - 是用于绘制的<code>y</code>值的极限。</li>
+  <li><em>axes</em> - 指示是否应在绘图上绘制两个轴。</li>
+ </ul> 
+ <h2 id="h2-u793Au4F8B"><a name="示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例</h2>
+ <p>我们使用R环境中可用的数据集<em>“mtcars”</em>来创建基本散点图，下面使用<code>mtcars</code>数据集中的<code>“wt”</code>和<code>“mpg”</code>列。参考以下代码实现 - </p> 
+ <pre><code class="lang-r">input &lt;- mtcars[,c('wt','mpg')]
+print(head(input))
+</code></pre> 
+ <p>当我们执行上述代码时，会产生以下结果 -</p> 
+ <pre><code class="lang-r">                    wt      mpg
+Mazda RX4           2.620   21.0
+Mazda RX4 Wag       2.875   21.0
+Datsun 710          2.320   22.8
+Hornet 4 Drive      3.215   21.4
+Hornet Sportabout   3.440   18.7
+Valiant             3.460   18.1
+</code></pre> 
+ <h2 id="h2-u521Bu5EFAu6563u70B9u56FE"><a name="创建散点图" class="reference-link"></a><span class="header-link octicon octicon-link"></span>创建散点图</h2>
+ <p>以下脚本将为<code>wt(weight)</code>和<code>mpg(英里/加仑)</code>之间的关系创建一个散点图。</p> 
+ <pre><code class="lang-r">setwd("F:/worksp/R")
+# Get the input values.
+input &lt;- mtcars[,c('wt','mpg')]
+
+# Give the chart file a name.
+png(file = "scatterplot.png")
+
+# Plot the chart for cars with weight between 2.5 to 5 and mileage between 15 and 30.
+plot(x = input$wt,y = input$mpg,
+   xlab = "重量",
+   ylab = "里程",
+   xlim = c(2.5,5),
+   ylim = c(15,30),         
+   main = "重量 VS 里程"
+)
+
+# Save the file.
+dev.off()
+</code></pre> 
+ <p>当我们执行上述代码时，会产生以下结果 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201708/2408/839100852_79629.png" alt=""></p> 
+ <h2 id="h2-u6563u70B9u56FEu77E9u9635"><a name="散点图矩阵" class="reference-link"></a><span class="header-link octicon octicon-link"></span>散点图矩阵</h2>
+ <p>当我们有两个以上的变量，并且想要找到一个变量与其余变量之间的相关性时，我们使用散点图矩阵。可通过使用<code>pairs()</code>函数来创建散点图的矩阵。</p> 
+ <p><strong>语法</strong></p> 
+ <p>在R中创建散点图矩阵的基本语法是 -</p>   
+ <pre><code class="lang-r">pairs(formula, data)
+</code></pre> 
+ <p>以下是使用的参数的描述 -</p> 
+ <ul> 
+  <li><em>formula</em> - 表示成对使用的一系列变量。</li>
+  <li><em>data</em> - 表示将从中采集变量的数据集。</li>
+ </ul> 
+ <h2 id="h2-u4F8Bu5B50"><a name="例子" class="reference-link"></a><span class="header-link octicon octicon-link"></span>例子</h2>
+ <p>每个变量与每个剩余变量配对。下面为每对绘制散点图。</p> 
+ <pre><code class="lang-r">setwd("F:/worksp/R")
+# Give the chart file a name.
+png(file = "scatterplot_matrices.png")
+
+# Plot the matrices between 4 variables giving 12 plots.
+
+# One variable with 3 others and total 4 variables.
+
+pairs(~wt+mpg+disp+cyl,data = mtcars,
+   main = "散点图矩阵")
+
+# Save the file.
+dev.off()
+</code></pre> 
+ <p>当我们执行上述代码时，会产生以下结果 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201708/2408/448100853_65404.png" alt=""></p>
+ <br>      
+</div></body></html>

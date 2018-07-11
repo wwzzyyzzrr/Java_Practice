@@ -1,0 +1,117 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Yii特设动态验证</h1><div style="width:100%;float:left;" class="article-content">   
+ <div> 
+  <div>
+    有时不需要绑定验证值到任何模型。您可以使用&nbsp;yii\base\DynamicModel&nbsp;类，它支持动态定义attributes&nbsp;和&nbsp;rules。 
+  </div> 
+ </div> 
+ <div> 
+  <div>
+    第1步&nbsp;-&nbsp;将&nbsp;actionAdHocValidation&nbsp;方法添加到 SiteController ，如下所示： 
+  </div> 
+  <pre>public function actionAdHocValidation() {
+   $model = DynamicModel::validateData([
+      'username' =&gt; 'hippo',
+      'email' =&gt; 'yiibai.com@gmail.com'
+   ], [
+      [['username', 'email'], 'string', 'max' =&gt; 12],
+      ['email', 'email'],
+   ]);
+	
+   if ($model-&gt;hasErrors()) {
+      var_dump($model-&gt;errors);
+   } else {
+      echo "success";
+   }
+}</pre> 
+  <div>
+    在上面的代码中，我们定义一个&nbsp;username&nbsp;和&nbsp;email&nbsp;属性的“动态”模式并对其进行验证。 
+  </div> 
+  <div>
+    上面的代码还需要在开始位置加入一行：use&nbsp;yii\base\DynamicModel ; 
+  </div> 
+  <p style="text-align:justify;"> 第2步&nbsp;-在Web浏览器的地址栏中输入URL：<a target="_blank" href="http://localhost:8080/index.php?r=site/ad-hoc-validation">http://localhost:8080/index.php?r=site/ad-hoc-validation</a>&nbsp;，这时会看到一个错误信息，因为电子邮件(email)有超过 12 个字符。<br> <img src="/uploads/tutorial/20160531/1-1605310H14K05.png" alt="Yii特设动态验证" title="Yii特设动态验证"> </p> 
+  <h2> 
+   <div>
+     自定义验证器 
+   </div> </h2> 
+  <div>
+    有两种类型的自定义验证器&nbsp;- 
+  </div> 
+  <ul> 
+   <li> 
+    <div>
+      内联验证器 
+    </div> </li> 
+   <li> 
+    <div>
+      独立验证器 
+    </div> </li> 
+  </ul> 
+  <p style="text-align:justify;"> 内联验证器通过模型法或匿名函数定义。如果属性无法验证，应该调用yii\base\Model::addError()&nbsp;方法来保存错误消息。 </p> 
+  <div>
+    下面的例子&nbsp;RegistrationForm&nbsp;验证了&nbsp;city&nbsp;属性，所以它只能接受两个值&nbsp;-&nbsp;Haikou&nbsp;和&nbsp;Guangzhou。 
+  </div> 
+  <pre>&lt;?php
+   namespace app\models;
+   use Yii;
+   use yii\base\Model;
+   class RegistrationForm extends Model {
+      public $username;
+      public $password;
+      public $email;
+      public $country;
+      public $city;
+      public $phone;
+      public function rules() {
+         return [
+            ['city', 'validateCity']
+         ];
+      }
+      public function validateCity($attribute, $params) {
+         if (!in_array($this-&gt;$attribute, ['Haikou', 'Guangzhou'])) {
+            $this-&gt;addError($attribute, 'The city must be either "London" or "Paris".');
+         }
+      }
+   }
+?&gt;&nbsp;</pre> 
+  <p style="text-align:justify;"> 一个独立的验证器一般是扩展&nbsp;yii\validators\Validator&nbsp;类。要实现验证逻辑，应该重写&nbsp;yii\validators\Validator::validateAttribute()&nbsp;方法。 </p> 
+  <div>
+    为了实现验证逻辑，就应该重写yii\validators\Validator::validateAttribute()&nbsp;方法。 
+  </div>   
+  <pre>&lt;?php
+   namespace app\components;
+   use yii\validators\Validator;
+   class CityValidator extends Validator {
+      public function validateAttribute($model, $attribute) {
+         if (!in_array($model-&gt;$attribute, ['Paris', 'London'])) {
+            $this-&gt;addError($model, $attribute, 'The city must be either "Haikou"
+               or "Guangzhou".');
+         }
+      }
+   }
+?&gt;</pre> 
+  <div>
+    第2步&nbsp;-&nbsp;然后，修改&nbsp;RegistrationForm&nbsp;以如下这种方式。 
+  </div> 
+  <pre>&lt;?php
+   namespace app\models;
+   use app\components\CityValidator;
+   use Yii;
+   use yii\base\Model;
+   class RegistrationForm extends Model {
+      public $username;
+      public $password;
+      public $email;
+      public $country;
+      public $city;
+      public $phone;
+      public function rules() {
+         return [
+            ['city', CityValidator::className()]
+         ];
+      }
+   }
+?&gt;</pre> 
+ </div>
+ <br>      
+</div></body></html>

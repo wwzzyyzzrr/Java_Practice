@@ -1,0 +1,156 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">人工智能数据准备</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>在上一节中，我们已经学习了监督和无监督机器学习算法。 这些算法需要格式化数据才能开始训练过程。在这一节中，我们以某种方式准备或格式化数据，以便将其作为ML算法的输入提供。</p> 
+ <p>本章重点介绍机器学习算法的数据准备。</p> 
+ <h2 id="h2-u9884u5904u7406u6570u636E"><a name="预处理数据" class="reference-link"></a><span class="header-link octicon octicon-link"></span>预处理数据</h2>
+ <p>在我们的日常生活中，需要处理大量数据，但这些数据是原始数据。 为了提供数据作为机器学习算法的输入，需要将其转换为有意义的数据。 这就是数据预处理进入图像的地方。 换言之，可以说在将数据提供给机器学习算法之前，我们需要对数据进行预处理。</p> 
+ <p><strong>数据预处理步骤</strong></p> 
+ <p>按照以下步骤在Python中预处理数据 - </p> 
+ <p><strong>第1步 </strong> - 导入有用的软件包 - 如果使用Python，那么这将成为将数据转换为特定格式(即预处理)的第一步。如下代码 -</p> 
+ <pre><code class="lang-python">import numpy as np
+sklearn import preprocessing
+</code></pre> 
+ <p>这里使用了以下两个软件包 -</p> 
+ <ul> 
+  <li><strong>NumPy</strong> - 基本上NumPy是一种通用的数组处理软件包，设计用于高效处理任意记录的大型多维数组而不牺牲小型多维数组的速度。</li>
+  <li><strong>sklearn.preprocessing</strong> - 此包提供了许多常用的实用函数和变换器类，用于将原始特征向量更改为更适合机器学习算法的表示形式。</li>
+ </ul> 
+ <p><strong>第2步</strong> - 定义样本数据 - 导入包后，需要定义一些样本数据，以便可以对这些数据应用预处理技术。现在将定义以下样本数据 -</p> 
+ <pre><code class="lang-python">input_data = np.array([2.1, -1.9, 5.5],
+                      [-1.5, 2.4, 3.5],
+                      [0.5, -7.9, 5.6],
+                      [5.9, 2.3, -5.8]])
+</code></pre> 
+ <p><strong>第3步 </strong> - 应用预处理技术 - 在这一步中，我们需要应用预处理技术。</p> 
+ <p>以下部分描述数据预处理技术。</p> 
+ <h2 id="h2-u6570u636Eu9884u5904u7406u6280u672F"><a name="数据预处理技术" class="reference-link"></a><span class="header-link octicon octicon-link"></span>数据预处理技术</h2>
+ <p>下面介绍数据预处理技术 - </p> 
+ <p><strong>二值化</strong></p> 
+ <p>这是当需要将数值转换为布尔值时使用的预处理技术。我们可以用一种内置的方法来二值化输入数据，比如说用<code>0.5</code>作为阈值，方法如下 -</p> 
+ <pre><code class="lang-python">data_binarized = preprocessing.Binarizer(threshold = 0.5).transform(input_data)
+print("\nBinarized data:\n", data_binarized)
+</code></pre> 
+ <p>现在，运行上面的代码后，将得到以下输出，所有高于<code>0.5</code>(阈值)的值将被转换为<code>1</code>，并且所有低于<code>0.5</code>的值将被转换为<code>0</code>。</p> 
+ <p><strong>二值化数据</strong></p> 
+ <pre><code class="lang-python">[[ 1. 0. 1.]
+[ 0. 1. 1.]
+[ 0. 0. 1.]
+[ 1. 1. 0.]]
+</code></pre> 
+ <p><strong>平均去除</strong></p> 
+ <p>这是机器学习中使用的另一种非常常见的预处理技术。 基本上它用于消除特征向量的均值，以便每个特征都以零为中心。 还可以消除特征向量中的特征偏差。 为了对样本数据应用平均去除预处理技术，可以编写如下Python代码。 代码将显示输入数据的平均值和标准偏差 -</p> 
+ <pre><code class="lang-python">print("Mean = ", input_data.mean(axis = 0))
+print("Std deviation = ", input_data.std(axis = 0))
+</code></pre> 
+ <p>运行上述代码行后，将得到以下输出 -</p> 
+ <pre><code class="lang-python">Mean = [ 1.75       -1.275       2.2]
+Std deviation = [ 2.71431391  4.20022321  4.69414529]
+</code></pre> 
+ <p>现在，下面的代码将删除输入数据的平均值和标准偏差 -</p> 
+ <pre><code class="lang-python">data_scaled = preprocessing.scale(input_data)
+print("Mean =", data_scaled.mean(axis=0))
+print("Std deviation =", data_scaled.std(axis = 0))
+</code></pre> 
+ <p>运行上述代码行后，将得到以下输出 -</p> 
+ <pre><code class="lang-python">Mean = [ 1.11022302e-16 0.00000000e+00 0.00000000e+00]
+Std deviation = [ 1.             1.             1.]
+</code></pre> 
+ <p><strong>缩放</strong></p> 
+ <p>这是另一种数据预处理技术，用于缩放特征向量。 特征向量的缩放是需要的，因为每个特征的值可以在许多随机值之间变化。 换句话说，我们可以说缩放非常重要，因为我们不希望任何特征合成为大或小。 借助以下Python代码，我们可以对输入数据进行缩放，即特征矢量 -</p> 
+ <p><strong>最小最大缩放</strong></p> 
+ <pre><code class="lang-python">data_scaler_minmax = preprocessing.MinMaxScaler(feature_range=(0,1))
+data_scaled_minmax = data_scaler_minmax.fit_transform(input_data)
+print ("\nMin max scaled data:\n", data_scaled_minmax)
+</code></pre> 
+ <p>运行上述代码行后，将得到以下输出 - </p> 
+ <pre><code class="lang-python">[ [ 0.48648649  0.58252427   0.99122807]
+[   0.          1.           0.81578947]
+[   0.27027027  0.           1.        ]
+[   1.          0. 99029126  0.        ]]
+</code></pre> 
+ <h3 id="h3-u6B63u5E38u5316"><a name="正常化" class="reference-link"></a><span class="header-link octicon octicon-link"></span>正常化</h3>
+ <p>这是另一种数据预处理技术，用于修改特征向量。 这种修改对于在一个普通的尺度上测量特征向量是必要的。 以下是可用于机器学习的两种标准化 -</p> 
+ <p><strong>L1标准化</strong></p> 
+ <p>它也被称为最小绝对偏差。 这种标准化会修改这些值，以便绝对值的总和在每行中总是最多为<code>1</code>。 它可以在以下Python代码，使用上面的输入数据来实现 -</p> 
+ <pre><code class="lang-python"># Normalize data
+data_normalized_l1 = preprocessing.normalize(input_data, norm = 'l1')
+print("\nL1 normalized data:\n", data_normalized_l1)
+</code></pre> 
+ <p>上面的代码行生成以下输出:</p> 
+ <pre><code class="lang-python">L1 normalized data:
+[[ 0.22105263  -0.2          0.57894737]
+[ -0.2027027    0.32432432   0.47297297]
+[  0.03571429  -0.56428571   0.4       ]
+[  0.42142857   0.16428571  -0.41428571]]
+</code></pre> 
+ <p><strong>L2标准化</strong></p> 
+ <p>它也被称为最小二乘。这种归正常化修改了这些值，以便每一行中的平方和总是最多为<code>1</code>。它可以在以下Python代码，使用上面的输入数据来实现 -</p> 
+ <pre><code class="lang-python"># Normalize data
+data_normalized_l2 = preprocessing.normalize(input_data, norm = 'l2')
+print("\nL2 normalized data:\n", data_normalized_l2)
+</code></pre> 
+ <p>执行以上代码行将生成以下输出 -</p>   
+ <pre><code class="lang-python">L2 normalized data:
+[[ 0.33946114  -0.30713151   0.88906489]
+[ -0.33325106   0.53320169   0.7775858 ]
+[  0.05156558  -0.81473612   0.57753446]
+[  0.68706914   0.26784051  -0.6754239 ]]
+</code></pre> 
+ <h2 id="h2-u6807u8BB0u6570u636E"><a name="标记数据" class="reference-link"></a><span class="header-link octicon octicon-link"></span>标记数据</h2>
+ <p>我们已经知道，某种格式的数据对于机器学习算法是必需的。 另一个重要的要求是，在将数据作为机器学习算法的输入发送之前，必须正确标记数据。 例如，如果所说的分类，那么数据上会有很多标记。 这些标记以文字，数字等形式存在。与sklearn中的机器学习相关的功能期望数据必须具有数字标记。 因此，如果数据是其他形式，那么它必须转换为数字。 这个将单词标签转换为数字形式的过程称为标记编码。</p> 
+ <p><strong>标记编码步骤</strong></p> 
+ <p>按照以下步骤在Python中对数据标记进行编码 - </p> 
+ <p><strong>第1步</strong> - 导入有用的软件包</p> 
+ <p>如果使用Python，那么这将是将数据转换为特定格式(即预处理)的第一步。 它可以做到如下 -</p> 
+ <pre><code class="lang-python">import numpy as np
+from sklearn import preprocessing
+</code></pre> 
+ <p><strong>第2步</strong> - 定义样本标签</p> 
+ <p>导入包后，我们需要定义一些样本标签，以便可以创建和训练标签编码器。 现在将定义以下样本标签 -</p> 
+ <pre><code class="lang-python"># Sample input labels
+input_labels = ['red','black','red','green','black','yellow','white']
+</code></pre> 
+ <p><strong>第3步</strong> - 创建和训练标签编码器对象</p> 
+ <p>在这一步中，我们需要创建标签编码器并对其进行训练。 以下是Python代码的实现 -</p> 
+ <pre><code class="lang-python"># Creating the label encoder
+encoder = preprocessing.LabelEncoder()
+encoder.fit(input_labels)
+</code></pre> 
+ <p>以下是运行上面的Python代码后的输出 -</p> 
+ <pre><code class="lang-python">LabelEncoder()
+</code></pre> 
+ <p><strong>第4步</strong> - 通过编码随机排序列表来检查性能</p> 
+ <p>此步骤可用于通过编码随机排序列表来检查性能。 下面的Python代码可以做同样的事情 -</p> 
+ <pre><code class="lang-python"># encoding a set of labels
+test_labels = ['green','red','black']
+encoded_values = encoder.transform(test_labels)
+print("\nLabels =", test_labels)
+</code></pre> 
+ <p>标签将如下打印 -</p> 
+ <pre><code class="lang-python">Labels = ['green', 'red', 'black']
+</code></pre> 
+ <p>现在，可以得到编码值列表，即将文字标签转换为数字，如下所示 -</p> 
+ <pre><code class="lang-python">print("Encoded values =", list(encoded_values))
+</code></pre> 
+ <p>输出结果打印如下 -</p> 
+ <pre><code class="lang-shell">Encoded values = [1, 2, 0]
+</code></pre> 
+ <p><strong>第5步</strong> - 通过解码一组随机数来检查性能 - </p> 
+ <p>通过对随机数字集进行解码，可以使用此步骤来检查性能。 下面的Python代码也可以做同样的事情 -</p> 
+ <pre><code class="lang-python"># decoding a set of values
+encoded_values = [3,0,4,1]
+decoded_list = encoder.inverse_transform(encoded_values)
+print("\nEncoded values =", encoded_values)
+</code></pre> 
+ <p>现在，将被打印如下 -</p> 
+ <pre><code class="lang-python">Encoded values = [3, 0, 4, 1]
+print("\nDecoded labels =", list(decoded_list))
+</code></pre> 
+ <p>现在，解码值将被打印如下 -</p> 
+ <pre><code class="lang-python">Decoded labels = ['white', 'black', 'yellow', 'green']
+</code></pre> 
+ <p><strong>标记与未标记数据</strong></p> 
+ <p>未标记的数据主要由自然或人造物体的样本组成，这些样本可以很容易从现实世界中获得。 它们包括音频，视频，照片，新闻文章等。</p> 
+ <p>另一方面，带标签的数据采用一组未标记的数据，并用一些有意义的标签或标签或类来扩充每片未标记的数据。 例如，如果有照片，那么标签可以基于照片的内容放置，即它是男孩或女孩或动物或其他任何照片。 标记数据需要人类专业知识或判断一个给定的未标记数据。</p> 
+ <p>有很多情况下，无标签数据丰富且容易获得，但标注数据通常需要人工/专家进行注释。 半监督学习尝试将标记数据和未标记数据组合起来，以建立更好的模型。</p>
+ <br>      
+</div></body></html>

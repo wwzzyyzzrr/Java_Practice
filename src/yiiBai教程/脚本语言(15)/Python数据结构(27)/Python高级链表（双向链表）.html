@@ -1,0 +1,170 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Python高级链表（双向链表）</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>在前面的章节中已经看到并学习了链表，但在前面只是进行介绍和入门。 在本章中，我们看到另一种链接列表，可以向前和向后移动遍历。 这种链表称为双向链表。 以下是双向链表的特点。</p> 
+ <ul> 
+  <li>双向链表包含第一个和最后一个的链接元素。</li>
+  <li>每个链接都有一个数据字段和两个称为<code>next</code>和<code>prev</code>的链接字段。</li>
+  <li>每个链接都使用其下一个链接与其下一个链接链接。</li>
+  <li>每个链接都使用其上一个链接与之前的链接链接。</li>
+  <li>最后一个链接将链接作为空来标记列表的结尾。</li>
+ </ul> 
+ <p><strong>创建双向链表</strong></p> 
+ <p>我们使用<code>Node</code>类创建一个双链表。 使用与单链表中相同的方法，但是除了存在于节点中的数据之外，头指针和下一个指针将用于正确分配以在每个节点中创建两个链接。</p> 
+ <p>参考以下代码的实现 - </p> 
+ <pre><code class="lang-python">class Node:
+    def __init__(self, data):
+        self.data = data
+        self.next = None
+        self.prev = None
+
+class doubly_linked_list:
+
+    def __init__(self):
+        self.head = None
+
+# Adding data elements        
+    def push(self, NewVal):
+        NewNode = Node(NewVal)
+        NewNode.next = self.head
+        if self.head is not None:
+            self.head.prev = NewNode
+        self.head = NewNode
+
+# Print the Doubly Linked list        
+    def listprint(self, node):
+        while (node is not None):
+            print(node.data),
+            last = node
+            node = node.next
+
+dllist = doubly_linked_list()
+dllist.push(12)
+dllist.push(8)
+dllist.push(62)
+dllist.listprint(dllist.head)
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 - </p> 
+ <pre><code class="lang-shell">62
+8
+12
+</code></pre> 
+ <p><strong>插入双链表中</strong></p> 
+ <p>在这里将演示如何使用以下程序将节点插入到双向链接列表中。 该程序使用一个名为<code>insert()</code>的方法，它将新节点插入到双向链表头部的第三个位置。</p> 
+ <p>参考以下代码的实现 - </p> 
+ <pre><code class="lang-python"># Create the Node class
+class Node:
+    def __init__(self, data):
+        self.data = data
+        self.next = None
+        self.prev = None
+
+# Create the doubly linked list
+class doubly_linked_list:
+
+    def __init__(self):
+        self.head = None
+
+# Define the push method to add elements        
+    def push(self, NewVal):
+
+        NewNode = Node(NewVal)
+        NewNode.next = self.head
+        if self.head is not None:
+            self.head.prev = NewNode
+        self.head = NewNode
+
+# Define the insert method to insert the element        
+    def insert(self, prev_node, NewVal):
+        if prev_node is None:
+            return
+        NewNode = Node(NewVal)
+        NewNode.next = prev_node.next
+        prev_node.next = NewNode
+        NewNode.prev = prev_node
+        if NewNode.next is not None:
+            NewNode.next.prev = NewNode
+
+# Define the method to print the linked list 
+    def listprint(self, node):
+        while (node is not None):
+            print(node.data),
+            last = node
+            node = node.next
+
+dllist = doubly_linked_list()
+dllist.push(12)
+dllist.push(8)
+dllist.push(62)
+dllist.insert(dllist.head.next, 13)
+dllist.listprint(dllist.head)
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 - </p>   
+ <pre><code class="lang-shell">62
+8
+13
+12
+</code></pre> 
+ <p><strong>附加到双向链表</strong></p> 
+ <p>追加节点(元素)到双向链表的最后位置。参考以下代码的实现 - </p> 
+ <pre><code class="lang-python"># Create the node class
+class Node:
+    def __init__(self, data):
+        self.data = data
+        self.next = None
+        self.prev = None
+# Create the doubly linked list class
+class doubly_linked_list:
+
+    def __init__(self):
+        self.head = None
+
+# Define the push method to add elements at the begining
+    def push(self, NewVal):
+        NewNode = Node(NewVal)
+        NewNode.next = self.head
+        if self.head is not None:
+            self.head.prev = NewNode
+        self.head = NewNode
+
+# Define the append method to add elements at the end
+    def append(self, NewVal):
+
+        NewNode = Node(NewVal)
+        NewNode.next = None
+        if self.head is None:
+            NewNode.prev = None
+            self.head = NewNode
+            return
+        last = self.head
+        while (last.next is not None):
+            last = last.next
+        last.next = NewNode
+        NewNode.prev = last
+        return
+
+# Define the method to print
+    def listprint(self, node):
+        while (node is not None):
+            print(node.data),
+            last = node
+            node = node.next
+
+dllist = doubly_linked_list()
+dllist.push(12)
+dllist.append(9)
+dllist.push(8)
+dllist.push(62)
+dllist.append(45)
+dllist.listprint(dllist.head)
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 - </p> 
+ <pre><code class="lang-shell">62
+8
+12
+9
+45
+</code></pre> 
+ <blockquote> 
+  <p>注意:元素<code>9</code>和<code>45</code>在追加操作中的位置。</p> 
+ </blockquote>
+ <br>      
+</div></body></html>

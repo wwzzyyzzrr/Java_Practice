@@ -1,0 +1,47 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Apache通用集合MapIterator接口</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>JDK Map接口很难作为迭代在<code>EntrySet</code>或<code>KeySet</code>对象上迭代。 <code>MapIterator</code>提供了对<code>Map</code>的简单迭代。下面的例子说明了这一点。</p> 
+ <p><strong>MapIterator接口示例</strong></p> 
+ <pre><code class="lang-java">import org.apache.commons.collections4.IterableMap;
+import org.apache.commons.collections4.MapIterator;
+import org.apache.commons.collections4.map.HashedMap;
+
+public class MapIteratorTester {
+   public static void main(String[] args) {
+      IterableMap&lt;String, String&gt; map = new HashedMap&lt;&gt;();
+
+      map.put("1", "One");
+      map.put("2", "Two");
+      map.put("3", "Three");
+      map.put("4", "Four");
+      map.put("5", "Five");
+
+      MapIterator&lt;String, String&gt; iterator = map.mapIterator();
+      while (iterator.hasNext()) {
+         Object key = iterator.next();
+         Object value = iterator.getValue();
+
+         System.out.println("key: " + key);
+         System.out.println("Value: " + value);
+
+         iterator.setValue(value + "_");
+      }
+
+      System.out.println(map);
+   }
+}
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 - </p>   
+ <pre><code class="lang-shell">key: 3
+Value: Three
+key: 5
+Value: Five
+key: 2
+Value: Two
+key: 4
+Value: Four
+key: 1
+Value: One
+{3=Three_, 5=Five_, 2=Two_, 4=Four_, 1=One_}
+</code></pre>
+ <br>      
+</div></body></html>

@@ -1,0 +1,230 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Elasticsearch测试</h1><div style="width:100%;float:left;" class="article-content">   
+ <p><strong>Elasticsearch</strong>提供了一个jar文件，可以将其添加到任何Java IDE，并可用于测试与Elasticsearch相关的代码。 可以使用<strong>Elasticsearch</strong>提供的框架执行一系列测试 -</p> 
+ <ul> 
+  <li>单元测试</li>
+  <li>集成测试</li>
+  <li>随机测试</li>
+ </ul> 
+ <p>要开始测试，需要向程序添加<strong>Elasticsearch</strong>测试依赖关系。您可以使用<a target="_blank" href="http://www.yiibai.com/maven/" title="maven">maven</a>来实现此目的，并且可在<code>pom.xml</code>中添加以下内容。</p> 
+ <pre><code class="lang-xml">&lt;dependency&gt;
+   &lt;groupId&gt;org.elasticsearch&lt;/groupId&gt;
+   &lt;artifactId&gt;elasticsearch&lt;/artifactId&gt;
+   &lt;version&gt;2.1.0&lt;/version&gt;
+&lt;/dependency&gt;
+</code></pre> 
+ <p><strong>EsSetup</strong>初始化用来启动和停止Elasticsearch节点，并创建索引。</p> 
+ <pre><code class="lang-java">EsSetup esSetup = new EsSetup();
+</code></pre> 
+ <p><code>esSetup.execute()</code>函数与<code>createIndex</code>用于创建索引，需要指定设置，类型和数据。</p> 
+ <h2 id="h2-u5355u5143u6D4Bu8BD5"><a name="单元测试" class="reference-link"></a><span class="header-link octicon octicon-link"></span>单元测试</h2>
+ <p>单元测试是通过使用JUnit和Elasticsearch测试框架来进行的。可以使用Elasticsearch类创建节点和索引，并且在测试方法中可以用来执行测试。<code>ESTestCase</code>和<code>ESTokenStreamTestCase</code>类用于此测试。</p> 
+ <h2 id="h2-u96C6u6210u6D4Bu8BD5"><a name="集成测试" class="reference-link"></a><span class="header-link octicon octicon-link"></span>集成测试</h2>
+ <p>集成测试在集群中使用多个节点。 <code>ESIntegTestCase</code>类用于这种类型的测试。 有多种方法使得准备测试用例的工作更容易。</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>编号</th> 
+    <th>方法</th> 
+    <th>描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>1</td> 
+    <td>refresh()</td> 
+    <td>刷新群集中的所有索引</td> 
+   </tr> 
+   <tr> 
+    <td>2</td> 
+    <td>ensureGreen()</td> 
+    <td>确保绿色健康集群状态</td> 
+   </tr> 
+   <tr> 
+    <td>3</td> 
+    <td>ensureYellow()</td> 
+    <td>确保黄色的健康群集状态</td> 
+   </tr> 
+   <tr> 
+    <td>4</td> 
+    <td>createIndex(name)</td> 
+    <td>使用传递给此方法的名称创建索引</td> 
+   </tr> 
+   <tr> 
+    <td>5</td> 
+    <td>flush()</td> 
+    <td>刷新群集中的所有索引</td> 
+   </tr> 
+   <tr> 
+    <td>6</td> 
+    <td>flushAndRefresh()</td> 
+    <td>执行 flush() 和 refresh()</td> 
+   </tr> 
+   <tr> 
+    <td>7</td> 
+    <td>indexExists(name)</td> 
+    <td>验证指定索引是否存在</td> 
+   </tr> 
+   <tr> 
+    <td>8</td> 
+    <td>clusterService()</td> 
+    <td>返回集群服务java类</td> 
+   </tr> 
+   <tr> 
+    <td>9</td> 
+    <td>cluster()</td> 
+    <td>返回测试集群类</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h3 id="h3-u6D4Bu8BD5u96C6u7FA4u65B9u6CD5"><a name="测试集群方法" class="reference-link"></a><span class="header-link octicon octicon-link"></span>测试集群方法</h3>
+ <table> 
+  <thead> 
+   <tr> 
+    <th>编号</th> 
+    <th>方法</th> 
+    <th>描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>1</td> 
+    <td>ensureAtLeastNumNodes(n)</td> 
+    <td>确保群集中最小节点数量大于或等于指定数量。</td> 
+   </tr> 
+   <tr> 
+    <td>2</td> 
+    <td>ensureAtMostNumNodes(n)</td> 
+    <td>确保群集中最大节点数小于或等于指定数。</td> 
+   </tr> 
+   <tr> 
+    <td>3</td> 
+    <td>stopRandomNode()</td> 
+    <td>停止集群中的随机节点</td> 
+   </tr> 
+   <tr> 
+    <td>4</td> 
+    <td>stopCurrentMasterNode()</td> 
+    <td>停止主节点</td> 
+   </tr> 
+   <tr> 
+    <td>5</td> 
+    <td>stopRandomNonMaster()</td> 
+    <td>停止集群中的随机节点(不是主节点)</td> 
+   </tr> 
+   <tr> 
+    <td>6</td> 
+    <td>buildNode()</td> 
+    <td>创建一个新节点</td> 
+   </tr> 
+   <tr> 
+    <td>7</td> 
+    <td>startNode(settings)</td> 
+    <td>启动一个新节点</td> 
+   </tr> 
+   <tr> 
+    <td>8</td> 
+    <td>nodeSettings()</td> 
+    <td>覆盖此方法以更改(更新)节点设置</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h3 id="h3-u8BBFu95EEu5BA2u6237u7AEF"><a name="访问客户端" class="reference-link"></a><span class="header-link octicon octicon-link"></span>访问客户端</h3>
+ <p>客户端用于访问集群中的不同节点并执行某些操作。<code>ESIntegTestCase.client()</code>方法用于获取随机客户端。Elasticsearch还提供了其他方法来访问客户端，这些方法可以使用<code>ESIntegTestCase.internalCluster()</code>方法访问。</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>编号</th> 
+    <th>方法</th> 
+    <th>描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>1</td> 
+    <td>iterator()</td> 
+    <td>这用于访问所有可用的客户端。</td> 
+   </tr> 
+   <tr> 
+    <td>2</td> 
+    <td>masterClient()</td> 
+    <td>返回一个正在与主节点通信的客户端。</td> 
+   </tr> 
+   <tr> 
+    <td>3</td> 
+    <td>nonMasterClient()</td> 
+    <td>返回一个不与主节点通信的客户端。</td> 
+   </tr> 
+   <tr> 
+    <td>4</td> 
+    <td>clientNodeClient()</td> 
+    <td>将返回当前在客户端节点上的客户端。</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h2 id="h2-u968Fu673Au6D4Bu8BD5"><a name="随机测试" class="reference-link"></a><span class="header-link octicon octicon-link"></span>随机测试</h2>
+ <p>随机测试是用于使用所有可能的数据测试用户的代码，以便将来不会出现任何类型的数据失败。 随机数据是进行此测试的最佳选择。</p> 
+ <h3 id="h3-u751Fu6210u968Fu673Au6570u636E"><a name="生成随机数据" class="reference-link"></a><span class="header-link octicon octicon-link"></span>生成随机数据</h3>
+ <p>在这个测试中，<code>Random</code>类由<code>RandomizedTest</code>提供的实例实例化，并提供了许多方法来获取不同类型的数据。</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>方法</th> 
+    <th>返回值</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>getRandom()</td> 
+    <td>随机类的实例</td> 
+   </tr> 
+   <tr> 
+    <td>randomBoolean()</td> 
+    <td>随机布尔值</td> 
+   </tr> 
+   <tr> 
+    <td>randomByte()</td> 
+    <td>随机字节值</td> 
+   </tr> 
+   <tr> 
+    <td>randomShort()</td> 
+    <td>随机短整型值</td> 
+   </tr> 
+   <tr> 
+    <td>randomInt()</td> 
+    <td>随机整型值</td> 
+   </tr> 
+   <tr> 
+    <td>randomLong()</td> 
+    <td>随机长整型值</td> 
+   </tr> 
+   <tr> 
+    <td>randomFloat()</td> 
+    <td>随机浮点值</td> 
+   </tr> 
+   <tr> 
+    <td>randomDouble()</td> 
+    <td>随机双精度浮点值</td> 
+   </tr> 
+   <tr> 
+    <td>randomLocale()</td> 
+    <td>随机区域设置</td> 
+   </tr> 
+   <tr> 
+    <td>randomTimeZone()</td> 
+    <td>随机时区</td> 
+   </tr> 
+   <tr> 
+    <td>randomFrom()</td> 
+    <td>数组中的随机元素</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h2 id="h2-u65ADu8A00"><a name="断言" class="reference-link"></a><span class="header-link octicon octicon-link"></span>断言</h2>
+ <p><code>ElasticsearchAssertions</code>和<code>ElasticsearchGeoAssertions</code>类包含断言，用于在测试时执行一些常见检查。 例如，</p>   
+ <pre><code class="lang-java">SearchResponse seearchResponse = client().prepareSearch();
+assertHitCount(searchResponse, 6);
+assertFirstHit(searchResponse, hasId("6"));
+assertSearchHits(searchResponse, "1", "2", "3", "4",”5”,”6”);
+</code></pre>
+ <br>      
+</div></body></html>

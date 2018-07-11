@@ -1,0 +1,68 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">VBA消息框（MsgBox）</h1><div style="width:100%;float:left;" class="article-content">   
+ <p><code>MsgBox</code>函数显示一个消息框，并等待用户点击一个按钮，然后根据用户点击的按钮执行相关的操作。</p> 
+ <h4 id="h4-u8BEDu6CD5"><a name="语法" class="reference-link"></a><span class="header-link octicon octicon-link"></span>语法</h4>
+ <pre><code class="lang-vb">MsgBox(prompt[,buttons][,title][,helpfile,context])
+</code></pre> 
+ <p><strong>参数说明</strong></p> 
+ <ul> 
+  <li><em>prompt</em> - 必需的参数。在对话框中显示为消息的字符串。提示的最大长度大约为<code>1024</code>个字符。 如果消息扩展为多行，则可以使用每行之间的回车符(<code>Chr(13)</code>)或换行符(<code>Chr(10)</code>)来分隔行。</li>
+  <li><em>buttons</em> - 可选参数。一个数字表达式，指定要显示的按钮的类型，要使用的图标样式，默认按钮的标识以及消息框的形式。如果留空，则按钮的默认值为<code>0</code>。</li>
+  <li><em>title</em> - 可选参数。 显示在对话框的标题栏中的字符串表达式。 如果标题留空，应用程序名称将被放置在标题栏中。</li>
+  <li><em>helpfile</em> - 可选参数。一个字符串表达式，标识用于为对话框提供上下文相关帮助的帮助文件。</li>
+  <li><em>Context</em> - 可选参数。一个数字表达式，用于标识由帮助作者分配给相应帮助主题的帮助上下文编号。 如果提供上下文，则还必须提供<code>helpfile</code>。</li>
+ </ul> 
+ <p><em>Buttons</em> 参数可以使用以下任何值 -</p> 
+ <ul> 
+  <li><em>0 vbOKOnly</em> - 仅显示<em>“确定”</em> 按钮。</li>
+  <li><em>1 vbOKCancel</em> - 显示<em>“确定”</em> 和<em>“取消”</em> 按钮。</li>
+  <li><em>2 vbAbortRetryIgnore</em> - 显示<em>“中止”</em>，<em>“重试”</em>和<em>“忽略”</em> 按钮。</li>
+  <li><em>3 vbYesNoCancel</em> - 显示<em>“是”</em>，<em>“否”</em>和<em>“取消”</em> 按钮。</li>
+  <li><em>4 vbYesNo</em> - 显示<em>“是”</em>和<em>“否”</em>按钮。</li>
+  <li><em>5 vbRetryCancel</em> - 显示<em>“重试”</em>和<em>“取消”</em>按钮。</li>
+  <li><em>16 vbCritical</em> - 显示严重消息图标。</li>
+  <li><em>32 vbQuestion</em> - 显示警告查询图标。</li>
+  <li><em>48 vbExclamation</em> - 显示警告消息图标。</li>
+  <li><em>64 vbInformation</em> - 显示信息消息图标。</li>
+  <li><em>0 vbDefaultButton1</em> - 第一个按钮是默认的。</li>
+  <li><em>256 vbDefaultButton2</em> - 第二个按钮是默认的。</li>
+  <li><em>512 vbDefaultButton3</em> - 第三个按钮是默认的。</li>
+  <li><em>768 vbDefaultButton4</em> - 第四个按钮是默认的。</li>
+  <li><em>0 vbApplicationModal</em> 应用程序模式 - 当前的应用程序将不会工作，直到用户响应消息框。</li>
+  <li><em>4096 vbSystemModal</em> 系统模式 - 所有的应用程序将不会工作，直到用户响应消息框。</li>
+ </ul> 
+ <p>上述值在逻辑上分为四组：第一组(<code>0</code>至<code>5</code>)指示要在消息框中显示的按钮。第二组(<code>16</code>,<code>32</code>,<code>48</code>,<code>64</code>)描述要显示的图标的样式，第三组(<code>0</code>,<code>256</code>,<code>512</code>,<code>768</code>)指示哪个按钮必须是默认的，第四组(<code>0</code>,<code>4096</code> )确定消息框的形式。</p> 
+ <h4 id="h4-u8FD4u56DEu503C"><a name="返回值" class="reference-link"></a><span class="header-link octicon octicon-link"></span>返回值</h4>
+ <p><code>MsgBox</code>函数可以返回以下值之一，可用于标识用户在消息框中单击的按钮。</p> 
+ <ul> 
+  <li><em>vbOK</em> - <em>确定</em> 按钮被点击。</li>
+  <li><em>vbCancel</em> - <em>取消</em> 按钮被点击。</li>
+  <li><em>vbAbort</em> - <em>中止</em> 按钮被点击。</li>
+  <li><em>vbIgnore</em> - <em>忽略</em> 按钮被点击。</li>
+  <li><em>vbYes</em> - <em>是</em> 按钮被点击。</li>
+  <li><em>vbNo</em> - <em>否</em> 按钮被点击。</li>
+ </ul> 
+ <h4 id="h4-u793Au4F8B"><a name="示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例</h4>  
+ <pre><code class="lang-vb">Function MessageBoxDemo() 
+   'Message Box with just prompt message '
+   MsgBox("欢迎您~")     
+
+   'Message Box with title, yes no and cancel Butttons  '
+   result = MsgBox("你喜欢蓝色吗?", 3, "选择一个选项") 
+
+   ' Assume that you press No Button  '
+   MsgBox ("返回 result 的值是：" &amp;result) 
+End Function
+</code></pre> 
+ <p><strong>输出结果</strong></p> 
+ <p><strong>第1步</strong> - 上述功能函数可以通过单击VBA窗口上的“运行”按钮或通过从Excel工作表调用函数来执行，如以下屏幕截图所示 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201711/2111/764091128_65645.png" alt=""></p> 
+ <p>运行子程序 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201711/2111/371091131_41328.png" alt=""></p> 
+ <p><strong>第2步</strong> - 显示一个简单的消息框，并显示消息“欢迎”和“确定”按钮</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201711/2111/145091132_69468.png" alt=""></p> 
+ <p><strong>第3步</strong> - 点击<em>确定</em>后，另一个对话框会显示一个消息，同时显示<em>“是，否和取消”</em>按钮。</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201711/2111/943091133_10755.png" alt=""></p> 
+ <p><strong>第4步</strong> - 点击<em>“否”</em>按钮后，该按钮(<code>7</code>)的值将被存储为一个整数，并显示为一个消息框给用户，如以下屏幕截图所示。使用这个值，可以理解用户点击了哪个按钮。</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201711/2111/476091134_96541.png" alt=""></p>
+ <br>      
+</div></body></html>

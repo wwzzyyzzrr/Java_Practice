@@ -1,0 +1,137 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Matlab转换</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>MATLAB提供了处理转换的命令，如拉普拉斯和傅里叶变换。转换在科学和工程中被用作简化分析和从另一个角度看待数据的工具。</p> 
+ <p>例如，傅里叶(<em>Fourier</em>)转换允许我们将表示为时间的函数的信号转换为频率的函数。 拉普拉斯变换允许我们将微分方程转换为代数方程。</p> 
+ <p>MATLAB提供了<code>laplace</code>，<code>fourier</code>和<code>fft</code>命令来处理拉普拉斯，傅立叶和快速傅里叶转换。</p> 
+ <h2 id="h2-u62C9u666Eu62C9u65AFu53D8u6362"><a name="拉普拉斯变换" class="reference-link"></a><span class="header-link octicon octicon-link"></span>拉普拉斯变换</h2>
+ <p>时间<code>f(t)</code>函数的拉普拉斯转换由以下积分 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/0810/898091002_66052.jpg" alt=""></p> 
+ <p>拉普拉斯变换也表示为<code>f(t)</code>到<code>F(s)</code>的变换。 可以看到此变换或集成过程将<code>f(t)</code>，符号变量<code>t</code>的函数转换为另一个函数<code>F(s)</code>与另一个变量<code>s</code>。</p> 
+ <p>拉普拉斯变换将微分方程转换为代数方程。要计算函数<code>f(t)</code>的拉普拉斯变换，参考以下代码 - </p> 
+ <pre><code class="lang-matlab">laplace(f(t))
+</code></pre> 
+ <p><strong>示例</strong></p> 
+ <p>在这个例子中，我们将计算一些常用函数的拉普拉斯变换。</p> 
+ <p>创建脚本文件并键入以下代码 -</p> 
+ <pre><code class="lang-matlab">syms s t a b w
+laplace(a)
+laplace(t^2)
+laplace(t^9)
+laplace(exp(-b*t))
+laplace(sin(w*t))
+laplace(cos(w*t))
+</code></pre> 
+ <p>MATLAB运行文件代码时，得到以下结果 -</p> 
+ <pre><code class="lang-shell">Trial&gt;&gt; syms s t a b w
+laplace(a)
+laplace(t^2)
+laplace(t^9)
+laplace(exp(-b*t))
+laplace(sin(w*t))
+laplace(cos(w*t))
+
+ans =
+
+1/s^2
+
+
+ans =
+
+2/s^3
+
+
+ans =
+
+362880/s^10
+
+
+ans =
+
+1/(b + s)
+
+
+ans =
+
+w/(s^2 + w^2)
+
+
+ans =
+
+s/(s^2 + w^2)
+</code></pre> 
+ <h2 id="h2-u9006u62C9u666Eu62C9u65AFu53D8u6362"><a name="逆拉普拉斯变换" class="reference-link"></a><span class="header-link octicon octicon-link"></span>逆拉普拉斯变换</h2>
+ <p>MATLAB中可使用命令<code>ilaplace</code>来计算逆拉普拉斯变换。</p> 
+ <p>例如，</p> 
+ <pre><code class="lang-matlab">ilaplace(1/s^3)
+</code></pre> 
+ <p>MATLAB执行上述代码语句得到以下结果 -</p> 
+ <pre><code class="lang-shell">ans =
+ t^2/2
+</code></pre> 
+ <p><strong>示例</strong><br>创建脚本文件并键入以下代码 -</p> 
+ <pre><code class="lang-matlab">syms s t a b w
+ilaplace(1/s^7)
+ilaplace(2/(w+s))
+ilaplace(s/(s^2+4))
+ilaplace(exp(-b*t))
+ilaplace(w/(s^2 + w^2))
+ilaplace(s/(s^2 + w^2))
+</code></pre> 
+ <p>MATLAB执行上述代码语句得到以下结果 -</p> 
+ <pre><code class="lang-shell">ans =
+t^6/720
+
+ ans =
+ 2*exp(-t*w)
+
+ ans =
+ cos(2*t)
+
+ ans =
+ ilaplace(exp(-b*t), t, x)
+
+ ans =
+ sin(t*w)
+
+ ans =
+ cos(t*w)
+</code></pre> 
+ <h2 id="h2-u5085u91CCu53F6u53D8u6362"><a name="傅里叶变换" class="reference-link"></a><span class="header-link octicon octicon-link"></span>傅里叶变换</h2>
+ <p>傅里叶变换通常将时间<code>f(t)</code>的数学函数转换成有时由F表示的新函数，其参数是以周期/ s(赫兹)或每秒弧度为单位的频率。新功能被称为傅立叶变换和/或函数<code>f</code>的频谱。</p> 
+ <p><strong>示例</strong></p> 
+ <p>创建脚本文件并在其中键入以下代码 -</p>   
+ <pre><code class="lang-matlab">syms x 
+f = exp(-2*x^2);  %our function
+ezplot(f,[-2,2])  % plot of our function
+FT = fourier(f)    % Fourier transform
+</code></pre> 
+ <p>MATLAB执行上述代码语句得到以下结果 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/0810/995091031_51710.png" alt=""></p> 
+ <p>同时也会输出以下结果 - </p> 
+ <pre><code class="lang-shell">Trial&gt;&gt; syms x 
+f = exp(-2*x^2);  %our function
+ezplot(f,[-2,2])  % plot of our function
+FT = fourier(f)    % Fourier transform
+
+FT =
+
+(2^(1/2)*pi^(1/2)*exp(-w^2/8))/2
+</code></pre> 
+ <p>绘制傅里叶变换为 -</p> 
+ <pre><code class="lang-matlab">syms x 
+f = exp(-2*x^2);  %our function
+% ezplot(f,[-2,2])  % plot of our function
+FT = fourier(f)    % Fourier transform
+ezplot(FT)
+</code></pre> 
+ <p>MATLAB执行上述代码语句得到以下结果 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/0810/392091034_67965.png" alt=""></p> 
+ <h2 id="h2-u9006u5085u91CCu53F6u53D8u6362"><a name="逆傅里叶变换" class="reference-link"></a><span class="header-link octicon octicon-link"></span>逆傅里叶变换</h2>
+ <p>MATLAB提供了用于计算函数的逆傅里叶变换的<code>ifourier</code>命令。 例如，</p> 
+ <pre><code class="lang-matlab">f = ifourier(-2*exp(-abs(w)))
+</code></pre> 
+ <p>MATLAB将执行上述语句并显示结果 -</p> 
+ <pre><code class="lang-matlab">f =
+-2/(pi*(x^2 + 1))
+</code></pre>
+ <br>      
+</div></body></html>

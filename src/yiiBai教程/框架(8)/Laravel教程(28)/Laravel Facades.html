@@ -1,0 +1,369 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Laravel Facades</h1><div style="width:100%;float:left;" class="article-content">   
+ <div>
+   Facades提供了一个“静态”的接口到应用程序的服务容器中可用的类。&nbsp;Laravel&nbsp;的“facades”作为“静态代理”在服务容器底层类，提供了一个简洁，&nbsp;富有表现的语法，同时保持比传统的静态方法更有可测试性和灵活性。 
+ </div> 
+ <div> 
+  <h2> 
+   <div>
+     如何创建Facade 
+   </div> </h2> 
+  <div>
+    以下是在Laravel创建&nbsp;Facade&nbsp;的步骤： 
+  </div> 
+  <ul> 
+   <li> 
+    <div>
+      第1步&nbsp;-&nbsp;创建PHP类文件 
+    </div> </li> 
+   <li> 
+    <div>
+      第2步&nbsp;-&nbsp;绑定类到服务提供者 
+    </div> </li> 
+   <li> 
+    <div>
+      第3步-&nbsp;注册服务提供者到&nbsp;Config\app.php&nbsp;作为供应者 
+    </div> </li> 
+   <li> 
+    <div>
+      第4步-&nbsp;创建类，这个类是扩展lluminate\Support\Facades\Facade 
+    </div> </li> 
+   <li> 
+    <div>
+      第5步-&nbsp;注册第4点到&nbsp;Config\app.php&nbsp;作为别名 
+    </div> </li> 
+  </ul> 
+  <h2> 
+   <div>
+     Facade类参考 
+   </div> </h2> 
+  <div>
+    Laravel附带许多Facades。下面是内置的Facades类引用。 
+  </div> 
+  <table border="1" cellpadding="2" cellspacing="0" style="font-size:14px;color:#313131;font-family:Verdana, Geneva, Tahoma,  Helvetica, background-color:inherit;"> 
+   <tbody> 
+    <tr> 
+     <th style="border:1px solid #999999;background-color:#EEEEEE;text-align:center;"> Facade </th> 
+     <th style="border:1px solid #999999;background-color:#EEEEEE;text-align:center;"> 类 </th> 
+     <th style="border:1px solid #999999;background-color:#EEEEEE;"> 
+      <div style="background-color:inherit;">
+        服务容器绑定 
+      </div> </th> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> App </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> Illuminate\Foundation\Application </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> app </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> Artisan </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> Illuminate\Contracts\Console\Kernel </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> artisan </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> Auth </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> Illuminate\Auth\AuthManager </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> auth </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> Auth (Instance) </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> Illuminate\Auth\Guard </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 
+      <div style="background-color:inherit;"> 
+       <br> 
+      </div> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> Blade </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> Illuminate\View\Compilers\BladeCompiler </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> blade.compiler </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> Bus </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> Illuminate\Contracts\Bus\Dispatcher </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 
+      <div style="background-color:inherit;"> 
+       <br> 
+      </div> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> Cache </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> Illuminate\Cache\Repository </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> cache </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> Config </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> Illuminate\Config\Repository </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> config </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> Cookie </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> Illuminate\Cookie\CookieJar </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> cookie </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> Crypt </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> Illuminate\Encryption\Encrypter </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> encrypter </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> DB </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> Illuminate\Database\DatabaseManager </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> db </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> DB (Instance) </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> Illuminate\Database\Connection </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 
+      <div style="background-color:inherit;"> 
+       <br> 
+      </div> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> Event </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> Illuminate\Events\Dispatcher </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> events </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> File </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> Illuminate\Filesystem\Filesystem </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> files </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> Gate </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> Illuminate\Contracts\Auth\Access\Gate </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 
+      <div style="background-color:inherit;"> 
+       <br> 
+      </div> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> Hash </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> Illuminate\Contracts\Hashing\Hasher </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> hash </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> Input </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> Illuminate\Http\Request </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> request </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> Lang </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> Illuminate\Translation\Translator </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> translator </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> Log </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> Illuminate\Log\Writer </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> log </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> Mail </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> Illuminate\Mail\Mailer </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> mailer </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> Password </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> Illuminate\Auth\Passwords\PasswordBroker </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> auth.password </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> Queue </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> Illuminate\Queue\QueueManager </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> queue </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> Queue (Instance) </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> Illuminate\Queue\QueueInterface </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 
+      <div style="background-color:inherit;"> 
+       <br> 
+      </div> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> Queue (Base Class) </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> Illuminate\Queue\Queue </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 
+      <div style="background-color:inherit;"> 
+       <br> 
+      </div> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> Redirect </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> Illuminate\Routing\Redirector </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> redirect </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> Redis </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> Illuminate\Redis\Database </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> redis </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> Request </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> Illuminate\Http\Request </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> request </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> Response </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> Illuminate\Contracts\Routing\ResponseFactory </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 
+      <div style="background-color:inherit;"> 
+       <br> 
+      </div> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> Route </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> Illuminate\Routing\Router </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> router </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> Schema </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> Illuminate\Database\Schema\Blueprint </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 
+      <div style="background-color:inherit;"> 
+       <br> 
+      </div> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> Session </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> Illuminate\Session\SessionManager </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> session </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> Session (Instance) </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> Illuminate\Session\Store </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 
+      <div style="background-color:inherit;"> 
+       <br> 
+      </div> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> Storage </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> Illuminate\Contracts\Filesystem\Factory </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> filesystem </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> URL </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> Illuminate\Routing\UrlGenerator </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> url </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> Validator </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> Illuminate\Validation\Factory </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> validator </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> Validator (Instance) </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> Illuminate\Validation\Validator </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 
+      <div style="background-color:inherit;"> 
+       <br> 
+      </div> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> View </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> Illuminate\View\Factory </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> view </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> View (Instance) </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> Illuminate\View\View </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 
+      <div style="background-color:inherit;"> 
+       <br> 
+      </div> </td> 
+    </tr> 
+   </tbody> 
+  </table> 
+  <h3> 示例 </h3> 
+  <div>
+    第1步-&nbsp;执行以下命令创建一个叫作&nbsp;TestFacadesServiceProvider&nbsp;的服务提供者。 
+  </div>   
+  <pre>php artisan make:provider TestFacadesServiceProvider</pre> 
+  <div>
+    第2步&nbsp;-&nbsp;成功执行后，您会收到以下输出&nbsp;-
+   <br> 
+   <img src="/uploads/tutorial/20160516/1-160516220204U9.png" alt="">
+   <br> 
+  </div> 
+  <div>
+    第3步&nbsp;-&nbsp;在“App/Test”创建一个名为&nbsp;“TestFacades.php”的类 
+  </div> 
+  <p style="text-align:justify;"> App/Test/TestFacades.php </p> 
+  <pre>&lt;?php
+namespace App\Test;
+
+class TestFacades{
+   public function testingFacades(){
+      echo "Testing the Facades in Laravel.";
+   }
+}</pre> 
+  <div>
+    第4步&nbsp;-&nbsp;在“App/Test/Facades”创建一个名为“TestFacades.php”&nbsp;的一个Facade类。 
+  </div> 
+  <p style="text-align:justify;"> App/Test/Facades/TestFacades.php </p> 
+  <pre>&lt;?php
+namespace app\Test\Facades;
+use Illuminate\Support\Facades\Facade;
+
+class TestFacades extends Facade{
+   protected static function getFacadeAccessor() { return 'test'; }
+}</pre> 
+  <div>
+    第5步-&nbsp;在“App/Test/Facades”创建一个名为&nbsp;“TestFacadesServiceProviders.php”的一个Facade类。 
+  </div> 
+  <p style="text-align:justify;"> App/Providers/TestFacadesServiceProvider.php </p> 
+  <pre>&lt;?php
+namespace App\Providers;
+use App;
+use Illuminate\Support\ServiceProvider;
+
+class TestFacadesServiceProvider extends ServiceProvider {
+   public function boot() {
+      //
+   }
+   public function register() {
+      App::bind('test',function() {
+         return new \App\Test\TestFacades;
+      });
+   }
+}</pre> 
+  <div>
+    第6步&nbsp;-&nbsp;在文件&nbsp;config/app.php&nbsp;中添加一个服务提供者如图所示如下图。 
+  </div> 
+  <p style="text-align:justify;"> config/app.php </p> 
+  <div> 
+   <img src="/uploads/tutorial/20160516/1-16051622030BI.jpg" alt="">
+   <br> 第7步&nbsp;-&nbsp;在文件&nbsp;config/app.php&nbsp;中添加别名如图所示如下图。 
+  </div> 
+  <p style="text-align:justify;"> config/app.php </p> 
+  <div> 
+   <img src="/uploads/tutorial/20160516/1-16051622035H03.jpg" alt="">
+   <br> 
+  </div> 
+  <div>
+    'TestFacades' =&gt; App\Test\Facades\TestFacades::class,&nbsp; 
+  </div> 
+  <div> 
+   <br> 
+  </div> 
+  <div>
+    第8步&nbsp;-&nbsp;添加以下行到文件&nbsp;-&nbsp;app/Http/routes.php 
+  </div> 
+  <p style="text-align:justify;"> app/Http/routes.php </p> 
+  <pre>Route::get('/facadeex', function(){
+   return TestFacades::testingFacades();
+});</pre> 
+  <div>
+    第9步&nbsp;-&nbsp;访问以下网址测试&nbsp;Facade 
+  </div> 
+  <p style="text-align:justify;"> http://localhost:8000/facadeex </p> 
+  <div>
+    第10步&nbsp;-&nbsp;访问URL后，您会收到以下输出&nbsp;- 
+  </div> 
+ </div> 
+ <div style="font-family:微软雅黑;font-size:14px;background-color:#FFFFFF;"> 
+  <img src="/uploads/tutorial/20160516/1-160516220512520.png" alt="">
+  <br> 
+ </div>
+ <br>      
+</div></body></html>

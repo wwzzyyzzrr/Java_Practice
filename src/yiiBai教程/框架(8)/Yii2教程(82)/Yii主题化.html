@@ -1,0 +1,195 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Yii主题化</h1><div style="width:100%;float:left;" class="article-content">   
+ <div>
+   主题化可以帮助你更换一组视图，而不需要修改原来的视图文件。应该设置视图应用程序组件的&nbsp;theme&nbsp;属性来使用主题。 
+ </div> 
+ <div> 
+  <div>
+    也应该定义以下属性&nbsp;- 
+  </div> 
+  <ul> 
+   <li> <p style="text-align:justify;"> <em>yii\base\Theme::$basePath</em>&nbsp;−&nbsp;定义&nbsp;CSS,&nbsp;JS,&nbsp;images&nbsp;的基本目录等等 </p> </li> 
+   <li> <p style="text-align:justify;"> <em>yii\base\Theme::$baseUrl</em>&nbsp;−&nbsp;定义主题资源的基本URL </p> </li> 
+   <li> <p style="text-align:justify;"> <em>yii\base\Theme::$pathMap</em>&nbsp;−&nbsp;定义替换规则 </p> </li> 
+  </ul> 
+  <div>
+    例如，如果在&nbsp;UserController&nbsp;中调用 $this-&gt;render('create')&nbsp;，&nbsp;
+   <em>@app/views/user/create.php&nbsp;</em>视图文件将被渲染。 
+  </div> 
+  <div>
+    如果下面的应用配置主题化，视图文件&nbsp;
+   <em>@app/themes/basic/user/create.php</em>&nbsp;将渲染代替。 
+  </div> 
+  <div>
+    第1步&nbsp;-&nbsp;修改&nbsp;config/web.php&nbsp;文件使用以下代码。 
+  </div> 
+  <pre>&lt;?php
+   $params = require(__DIR__ . '/params.php');
+   $config = [
+      'id' =&gt; 'basic',
+      'basePath' =&gt; dirname(__DIR__),
+      'bootstrap' =&gt; ['log'],
+      'components' =&gt; [
+         'request' =&gt; [
+            // !!! insert a secret key in the following (if it is empty) - this
+               //is required by cookie validation
+            'cookieValidationKey' =&gt; 'sfdsajkljfkldsajkfldsa-yiibai.com-dsaf ',
+         ],
+         'cache' =&gt; [
+            'class' =&gt; 'yii\caching\FileCache',
+         ],
+         'user' =&gt; [
+            'identityClass' =&gt; 'app\models\User',
+            'enableAutoLogin' =&gt; true,
+         ],
+         'errorHandler' =&gt; [
+            'errorAction' =&gt; 'site/error',
+         ],
+         'mailer' =&gt; [
+            'class' =&gt; 'yii\swiftmailer\Mailer',
+            // send all mails to a file by default. You have to set
+            // 'useFileTransport' to false and configure a transport
+            // for the mailer to send real emails.
+            'useFileTransport' =&gt; true,
+         ],
+         'log' =&gt; [
+            'traceLevel' =&gt; YII_DEBUG ? 3 : 0,
+            'targets' =&gt; [
+               [
+                  'class' =&gt; 'yii\log\FileTarget',
+                  'levels' =&gt; ['error', 'warning'],
+               ],
+            ],
+         ],
+         'view' =&gt; [
+            'theme' =&gt; [
+               'basePath' =&gt; '@app/themes/basic',
+               'baseUrl' =&gt; '@web/themes/basic',
+               'pathMap' =&gt; [
+                  '@app/views' =&gt; '@app/themes/basic',
+               ],
+            ],
+         ],
+         'db' =&gt; require(__DIR__ . '/db.php'),
+      ],
+      'modules' =&gt; [
+         'admin' =&gt; [
+            'class' =&gt; 'app\modules\admin\Admin',
+         ],
+      ],
+      'params' =&gt; $params,
+   ];
+   if (YII_ENV_DEV) {
+      // configuration adjustments for 'dev' environment
+      $config['bootstrap'][] = 'debug';
+      $config['modules']['debug'] = [
+         'class' =&gt; 'yii\debug\Module',
+      ];
+      $config['bootstrap'][] = 'gii';
+      $config['modules']['gii'] = [
+         'class' =&gt; 'yii\gii\Module',
+      ];
+   }
+   return $config;
+?&gt;</pre> 
+  <div>
+    我们已经添加了视图应用程序组件。 
+  </div> 
+  <div>
+    第2步&nbsp;-&nbsp;现在创建了&nbsp;
+   <em>web/themes/basic</em>&nbsp;和&nbsp;
+   <em>themes/basic/site</em>&nbsp;目录结构。在&nbsp;
+   <em>themes/basic/site</em>&nbsp;文件夹里面创建一个&nbsp;about.php&nbsp;文件并使用下面的代码。 
+  </div> 
+  <pre>&lt;?php
+   /* @var $this yii\web\View */
+   use yii\helpers\Html;
+   $this-&gt;title = 'About';
+   $this-&gt;params['breadcrumbs'][] = $this-&gt;title;
+   $this-&gt;registerMetaTag(['name' =&gt; 'keywords', 'content' =&gt; 'yii, developing,
+      views, meta, tags']);
+   $this-&gt;registerMetaTag(['name' =&gt; 'description', 'content' =&gt; 'This is the
+      description of this page!'], 'description');
+?&gt;
+
+&lt;div class = "site-about"&gt;
+   &lt;h1&gt;&lt;?= Html::encode($this-&gt;title) ?&gt;&lt;/h1&gt;
+	
+   &lt;p style = "color: red;"&gt; <span style="font-family:Monaco, Consolas, Courier, &quot;line-height:1.5;">这是一个“关于页面”，现在正在使用的视图文件是：</span><span style="font-family:Monaco, Consolas, Courier, &quot;line-height:1.5;">&lt;pre&gt;&lt;?php&nbsp;echo&nbsp;__FILE__;?&gt;&lt;/pre&gt;</span> &lt;/p&gt; 
+&lt;/div&gt;</pre> 
+  <div>
+    第3步&nbsp;-&nbsp;现在，访问&nbsp;
+   <a target="_blank" href="http://localhost:8080/index.php?r=site/about">http://localhost:8080/index.php?r=site/about</a>&nbsp;，themes/basic/site/about.php&nbsp;文件将被渲染，而不是渲染&nbsp;views/site/about.php&nbsp;文件。
+   <br> 
+   <img src="/uploads/tutorial/20160604/1-160604210602B1.png" alt="">
+   <br> 
+  </div> 
+  <div> 
+   <div>
+     第4步&nbsp;-&nbsp;到&nbsp;主题模块，使用以下方式配置&nbsp;&nbsp;yii\base\Theme::$pathMap&nbsp;。 
+   </div> 
+  </div>   
+  <pre>'pathMap' =&gt; [
+   '@app/views' =&gt; '@app/themes/basic',
+   '@app/modules' =&gt; '@app/themes/basic/modules',
+],</pre> 
+  <div>
+    第5步&nbsp;-&nbsp;到&nbsp;widgets&nbsp;模块，使用以下方式配置&nbsp;&nbsp;yii\base\Theme::$pathMap&nbsp;。 
+  </div> 
+  <pre>'pathMap' =&gt; [
+   '@app/views' =&gt; '@app/themes/basic',
+   '@app/widgets' =&gt; '@app/themes/basic/widgets', // &lt;-- !!!--&gt;
+],</pre> 
+  <div>
+    有时需要指定一个基本主题，它包含应用程序的基本外观。为了实现这个目标，可以使用主题继承。 
+  </div> 
+  <div>
+    第6步&nbsp;-&nbsp;修改视图(view)应用程序组件，并使用以下代码。 
+  </div> 
+  <pre>'view' =&gt; [
+   'theme' =&gt; [
+      'basePath' =&gt; '@app/themes/basic',
+      'baseUrl' =&gt; '@web/themes/basic',
+      'pathMap' =&gt; [
+         '@app/views' =&gt; [
+            '@app/themes/newyear',
+            '@app/themes/basic',
+         ],
+      ]
+   ],
+],</pre> 
+  <div>
+    在上面的配置中，@app/views/site/index.php&nbsp;或&nbsp;@app/themes/newyear/site/index.php&nbsp;或&nbsp;&nbsp;@app/themes/basic/site/index.php&nbsp;视图文件将被作为主题，这取决于哪些文件存在。如果两个文件都存在，第一个将被使用。 
+  </div> 
+  <div>
+    第7步&nbsp;-&nbsp;创建&nbsp;
+   <em>themes/newyear/site</em>&nbsp;目录结构。 
+  </div> 
+  <div>
+    第8步&nbsp;-&nbsp;现在&nbsp;
+   <em>themes/newyear/site</em> 文件夹内，创建一个&nbsp;about.php&nbsp;文件并用下面的代码。 
+  </div> 
+  <pre>&lt;?php
+   /* @var $this yii\web\View */
+   use yii\helpers\Html;
+   $this-&gt;title = 'About';
+   $this-&gt;params['breadcrumbs'][] = $this-&gt;title;
+   $this-&gt;registerMetaTag(['name' =&gt; 'keywords', 'content' =&gt; 'yii, developing,
+      views, meta, tags']);
+   $this-&gt;registerMetaTag(['name' =&gt; 'description', 'content' =&gt; 'This is the
+      description of this page!'], 'description');
+?&gt;
+
+&lt;div class = "site-about"&gt;
+   &lt;h2&gt;New Year Theme&lt;/h2&gt;
+   &lt;img src = "<a target="_blank" href="http://www.mortimerarms.co.uk/wp-content/uploads/2016/01/new-year.jpg">http://www.mortimerarms.co.uk/wp-content/uploads/2016/01/new-year.jpg</a><span style="font-family:Monaco, Consolas, Courier, &quot;line-height:1.5;">" alt = "新年主题"/&gt;</span> &lt;p&gt; <span style="font-family:Monaco, Consolas, Courier, &quot;line-height:1.5;">这是一个“关于页面”，现在正在使用的视图文件是：&lt;br/&gt;</span><span style="font-family:Monaco, Consolas, Courier, &quot;line-height:1.5;">&lt;pre&gt;&lt;?php&nbsp;echo&nbsp;__FILE__;?&gt;&lt;/pre&gt;</span> &lt;/p&gt;
+&lt;/div&gt;</pre> 
+  <div>
+    第9步&nbsp;-&nbsp;打开URL=&gt;&nbsp;
+   <a target="_blank" href="http://localhost:8080/index.php?r=site/about">http://localhost:8080/index.php?r=site/about</a>&nbsp;，就会看到更新的有关使用新年的主题页面。
+   <br> 
+   <img src="/uploads/tutorial/20160604/1-160604210630E7.png" alt="Yii主题化">
+   <br> 
+  </div> 
+ </div>
+ <br>      
+</div></body></html>

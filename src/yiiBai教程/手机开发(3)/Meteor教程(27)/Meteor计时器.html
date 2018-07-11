@@ -1,0 +1,66 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Meteor计时器</h1><div style="width:100%;float:left;" class="article-content">   
+ <div> 
+  <div>
+    Meteor有提供它自己的setTimeout和setInterval方法。这些方法被用于确保所有全局变量都具有正确的值。它们就像普通 JavaScript 中的setTimeout 和 setInterval&nbsp;一样工作。 
+  </div> 
+ </div> 
+ <div> 
+  <h2> Timeout - 超时 </h2> 
+  <div>
+    Meteor.setTimeout 的例子。 
+  </div> 
+  <pre>Meteor.setTimeout(function(){
+   console.log("Timeout called after three seconds..."); }, 3000);</pre> 
+  <div>
+    当应用程序已经开始我们可以在超时函数调用(启动 3 秒后调用)，在控制台中看到下面的输出结果。
+   <br> 
+   <img src="/uploads/tutorial/20160425/1-160425215S14U.png" alt="">
+   <br> 
+  </div> 
+  <img src="file://E:/data/youdao/qq24B39E2329F08D9F4C3146A571A415EF/9eee429596af4e1cadbf34ee8c7b3789/clipboard.png">
+  <br> 
+  <h2> Interval </h2> 
+  <div>
+    接下来的例子显示如何设置和清除interval。 
+  </div> 
+  <p> meteorApp/client/app.html </p> 
+  <pre>&lt;head&gt;
+   &lt;title&gt;meteorApp&lt;/title&gt;
+&lt;/head&gt;
+ 
+&lt;body&gt;
+   &lt;div&gt;
+      {{&gt; myTemplate}}
+   &lt;/div&gt;
+&lt;/body&gt;
+ 
+&lt;template name = "myTemplate"&gt;
+   &lt;button&gt;CLEAR&lt;/button&gt;
+&lt;/template&gt;</pre> 
+  <div>
+    我们将设置将&nbsp;counter&nbsp;的初始变量在每次调用后更新。 
+  </div> 
+  <p> meteorApp/client/app.js </p>   
+  <pre>if (Meteor.isClient) {
+
+   var counter = 0;
+
+   var myInterval = Meteor.setInterval(function(){
+      counter ++
+      console.log("Interval called " + counter + " times...");
+   }, 3000);
+
+   Template.myTemplate.events({
+      'click button': function(){
+         Meteor.clearInterval(myInterval);
+         console.log('Interval cleared...')
+      }
+   });                                                    
+
+}&nbsp;</pre> 
+  <p> 控制台将每三秒钟记录更新计数器- counter 变量。我们可以通过点击 CLEAR 按钮清除。这将调用 clearInterval 方法。<br> <img src="/uploads/tutorial/20160425/1-160425215U2V0.png" alt=""> </p> 
+  <img src="file://E:/data/youdao/qq24B39E2329F08D9F4C3146A571A415EF/ed20bb2004af474386e72b0e8f8dd129/clipboard.png">
+  <br> 
+ </div>
+ <br>      
+</div></body></html>

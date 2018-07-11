@@ -1,0 +1,85 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">MariaDB创建表</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>在MariaDB中，<code>CREATE TABLE</code>语句用于在选定的数据库中创建表。使用<code>CREATE TABLE</code>语句创建一个具有给定名称(<code>tbl_name</code>)的表。 必须具有表或数据库的<code>CREATE</code>权限才能创建表。</p> 
+ <p>语法如下 - </p> 
+ <pre><code class="lang-sql">CREATE [OR REPLACE] [TEMPORARY] TABLE [IF NOT EXISTS] tbl_name
+    (create_definition,...) [table_options    ]... [partition_options]
+CREATE [OR REPLACE] [TEMPORARY] TABLE [IF NOT EXISTS] tbl_name
+    [(create_definition,...)] [table_options   ]... [partition_options]
+    select_statement
+CREATE [OR REPLACE] [TEMPORARY] TABLE [IF NOT EXISTS] tbl_name
+   { LIKE old_table_name | (LIKE old_table_name) }
+
+select_statement:
+    [IGNORE | REPLACE] [AS] SELECT ...   (Some legal select statement)
+</code></pre> 
+ <p>在最基本的形式中，<code>CREATE TABLE</code>语句提供了一个表名称，后跟一列，索引和约束。 默认情况下，该表是在默认数据库中创建的。 用<code>db_name.tbl_name</code>指定一个数据库。 如果引用表名称，则必须分别将数据库名称和表名引用为<code>db_name</code>.<code>tbl_name</code>。 这对于<code>CREATE TABLE ... SELECT</code>是特别有用的，因为它允许在包含来自其他数据库的数据的数据库中创建表。</p> 
+ <p>最基本的语法如下 - </p> 
+ <pre><code class="lang-sql">CREATE TABLE table_name (column_name column_type);
+</code></pre> 
+ <p>也可以指定一个<code>column_name</code>作为主键 - <code>primary_key</code>，它必须是一个<code>NOT NULL</code>值。</p> 
+ <h4 id="h4-u793Au4F8B"><a name="示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例</h4>
+ <p>在<code>"testdb"</code>数据库中创建一个<code>"students"</code>表。参考以下创建语句 - </p> 
+ <pre><code class="lang-sql">USE testdb;
+CREATE TABLE students(  
+    student_id INT NOT NULL AUTO_INCREMENT,  
+    student_name VARCHAR(100) NOT NULL,  
+    student_address VARCHAR(40) NOT NULL,  
+    admission_date DATE,  
+    PRIMARY KEY ( student_id )
+);
+</code></pre> 
+ <p>执行上面查询语句，结果如下 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201711/2711/204151132_67355.png" alt=""></p> 
+ <p><strong>查询数据库中的表</strong></p> 
+ <p>您可以使用<code>SHOW TABLES</code>命令验证是否创建表成功了。</p> 
+ <pre><code class="lang-sql">MariaDB [testdb]&gt; show tables;
++------------------+
+| Tables_in_testdb |
++------------------+
+| students         |
++------------------+
+1 row in set (0.00 sec)
+
+MariaDB [testdb]&gt;
+</code></pre> 
+ <p>在上面结果中，可以看到有创建了<code>"students"</code>表。查看<code>"students"</code>表的结构：</p> 
+ <pre><code class="lang-sql">SHOW CREATE TABLE `testdb`.`students`;
+</code></pre> 
+ <p>执行上面查询语句，输出结果如下 - </p> 
+ <pre><code class="lang-sql">CREATE TABLE `students` (
+    `student_id` INT(11) NOT NULL AUTO_INCREMENT,
+    `student_name` VARCHAR(100) NOT NULL,
+    `student_address` VARCHAR(40) NOT NULL,
+    `admission_date` DATE NULL DEFAULT NULL,
+    PRIMARY KEY (`student_id`)
+)
+COLLATE='utf8_general_ci'
+ENGINE=InnoDB;
+</code></pre> 
+ <h4 id="h4--heidisql-"><a name="使用HeidiSQL创建表" class="reference-link"></a><span class="header-link octicon octicon-link"></span>使用HeidiSQL创建表</h4>
+ <p>首先启动 <em>HeidiSQL</em> 填入用户名，密码，服务器IP地址等，然后点击 <em>打开</em> 连接到MariaDB服务器，如下所示 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201711/2711/456151144_17828.png" alt=""></p> 
+ <p>在数据库列表中，选择<em>testdb</em>，点击右键在弹出的菜单项中选择：<em>创建新的</em> -&gt; <em>表</em> ，如下所示 - </p> 
+ <p>点击<em>表</em>选项后，得到以下的结果 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201711/2711/578151148_48816.png" alt=""></p> 
+ <p>在以上图形界面中创建一个表：<code>"students"</code>，并添加相关列和数据类型，如下所示 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201711/2711/823151158_64271.png" alt=""></p> 
+ <p>添加定义的所有列后，点击<em>保存</em> ，如下所示 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201711/2711/991161101_77019.png" alt=""></p> 
+ <p>这样，创建一个表就完成了。</p> 
+ <p>其它创建表常用的语句 - </p>   
+ <pre><code class="lang-sql">create table if not exists test (
+    a bigint auto_increment primary key,
+    name varchar(128) charset utf8,
+    key name (name(32))
+) engine=InnoDB default charset utf8;
+</code></pre> 
+ <p>以下语句仅适用于<em>MariaDB 10.2.1</em> 以上版本。</p> 
+ <pre><code class="lang-sql">CREATE TABLE t1(
+  a int DEFAULT (1+1),
+  b int DEFAULT (a+1),
+  expires DATETIME DEFAULT(NOW() + INTERVAL 1 YEAR)
+);
+</code></pre>
+ <br>      
+</div></body></html>

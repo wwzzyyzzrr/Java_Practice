@@ -1,0 +1,75 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">ASP.Net MVC控制器</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>控制器本质上是ASP.NET MVC应用程序的中心单元。 它是第一个请求接收者，与传入的HTTP请求进行交互。 因此，控制器决定选择哪个模型，然后从模型中获取数据，并将其传递给相应的视图，然后渲染视图。 实际上，控制器正在控制应用程序的整体流程，并输出正确的输出。</p> 
+ <p>控制器是继承自<code>System.Web.Mvc.Controller</code>的 C# 类，它是内置的控制器基类。 控制器中的每个公共方法都称为一个操作方法，这意味着您可以通过某个URL从Web调用它来执行操作。</p> 
+ <p>MVC约定是将控制器放置在<em>Visual Studio</em> 在项目设置时创建的文件夹(<em>Controllers</em>)中。</p> 
+ <p>我们来看一个简单的控制器例子，通过创建一个新的ASP.Net MVC项目。</p> 
+ <p><strong>第1步</strong> - 打开Visual Studio，然后单击菜单：<em>文件</em> -&gt; <em>新建</em> -&gt; <em>项目</em> 选项。一个新的项目对话框打开。<br><strong>第2步</strong> - 在左侧窗格中，选择模板：<em>Visual C# </em> -&gt; <em>Web</em> 。<br><strong>第3步</strong> - 在中间窗格中，选择<em>“ASP.NET Web应用程序”</em> 。如下图所示 -<br><img src="http://www.yiibai.com/uploads/images/201712/1412/502081256_21840.png" alt=""><br><strong>第4步</strong> - 在名称字段中输入项目名称：<em>MVCControllerDemo</em>，然后单击<em>确定</em> 继续。 您将看到以下对话框，要求为ASP.NET项目设置初始内容。</p> 
+ <p><strong>第5步</strong> - 为了简单起见，选择<em>空</em> 选项，并在<em>“为以下项添加文件夹和核心引用”</em>部分选中MVC复选框，然后单击【<em>确定</em>】。<br><img src="http://www.yiibai.com/uploads/images/201712/1412/201081258_61278.png" alt=""></p> 
+ <p>它将使用最少的预定义内容创建一个基本的MVC项目。</p> 
+ <p>当Visual Studio项目创建以后，在<em>“解决方案资源管理器”</em> 窗口中看到许多文件和文件夹。</p> 
+ <p>由于这里从一个空的项目模板中创建了ASP.Net MVC项目，因此目前应用程序不包含任何要运行的东西。</p> 
+ <p><strong>第6步</strong> - 通过在<em>解决方案资源管理器</em> 中右键单击 <code>Controllers</code> 文件夹来添加一个：<code>EmployeeController</code>。选择：<em>添加</em> -&gt; <em>控制器</em> 。如下所示 -<br><img src="http://www.yiibai.com/uploads/images/201712/1412/721091202_34203.png" alt=""></p> 
+ <p>它将显示<em>“添加基架”</em> 对话框。如下所示 -<br><img src="http://www.yiibai.com/uploads/images/201712/1412/151091202_94458.png" alt=""></p> 
+ <p><strong>第7步</strong> - 选择<em>MVC 5控制器 - 空</em> 选项，然后单击<em>“添加”</em> 按钮。添加控制器对话框将出现。<br><strong>第8步</strong> - 将名称设置为：<em>EmployeeController</em> ，然后单击<em>“添加”</em> 按钮。如下所示 -<br><img src="http://www.yiibai.com/uploads/images/201712/1412/761091204_15478.png" alt=""></p> 
+ <p>在<em>Controllers</em> 文件夹中看到一个新的 C# 文件 - <code>EmployeeController.cs</code>，在Visual Studio中打开并进行编辑。默认代码如下所示 -<br><img src="http://www.yiibai.com/uploads/images/201712/1412/672091208_97184.png" alt=""></p> 
+ <h2 id="h2-u81EAu5B9Au4E49u8DEFu7531u89C4u5219"><a name="自定义路由规则" class="reference-link"></a><span class="header-link octicon octicon-link"></span>自定义路由规则</h2>
+ <p>现在，在这个应用程序中，我们将使用默认路由为<code>EmployeeController</code>控制器，这需要添加一个自定义的路由。请参考以下步骤实现 - </p> 
+ <p><strong>第1步</strong> - 转到<em>“App_Start”</em>文件夹下的 <em>RouteConfig.cs</em> 文件，并添加以下路由。</p> 
+ <pre><code class="lang-csharp">routes.MapRoute(
+   "Employee", "Employee/{name}", new{
+      controller = "Employee", action = "Search", name =
+      UrlParameter.Optional });
+</code></pre> 
+ <p>以下是<em>RouteConfig.cs</em> 文件的完整实现。参考以下代码 - </p>   
+ <pre><code class="lang-csharp">using System;
+using System.Collections.Generic;
+using System.Linq;
+
+using System.Web;
+using System.Web.Mvc;
+using System.Web.Routing;
+
+namespace MVCControllerDemo {
+   public class RouteConfig {
+      public static void RegisterRoutes(RouteCollection routes){
+         routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
+         routes.MapRoute(
+            "Employee", "Employee/{name}", new{
+               controller = "Employee", action = "Search", name = UrlParameter.Optional });
+
+         routes.MapRoute(
+            name: "Default", url: "{controller}/{action}/{id}", defaults: new{
+               controller = "Home", action = "Index", id = UrlParameter.Optional });
+      }
+   }
+}
+</code></pre> 
+ <p>考虑一个场景，其中任何用户来到并搜索雇员，指定URL为<code>Employee/Maxsu</code>。 在这种情况下，<code>Maxsu</code>将被视为参数名称，而不是操作的方法。所以在这种情况下，默认路由将不会工作显示。</p> 
+ <p>当参数传递时，要从浏览器获取传入值，MVC框架提供了一个简单的方法来解决这个问题。它是通过使用操作方法内部的参数。</p> 
+ <p><strong>第2步</strong> - 使用以下代码更改<code>EmployeeController</code>类。参考以下代码 - </p> 
+ <pre><code class="lang-csharp">using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+
+namespace MVCControllerDemo.Controllers
+{
+    public class EmployeeController : Controller
+    {
+        // GET: Employee       
+        public ActionResult Search(string name)
+        {
+            var input = Server.HtmlEncode(name);
+            return Content(input);
+        }
+    }
+}
+</code></pre> 
+ <p>如果将一个参数添加到操作方法中，则MVC框架将查找与参数名称匹配的值。它将应用所有可能的组合来找出参数值。它将搜索路由数据，查询字符串等</p> 
+ <p>因此，如果请求：<code>/Employee/Maxsu</code>，那么MVC框架将决定需要一个带有<code>UserInput</code>的参数，然后<code>Maxsu</code>会从URL中挑选出来并自动传递。</p> 
+ <p><code>Server.HtmlEncode</code>将简单地转换任何形式的纯文本恶意脚本。当上面的代码被编译并执行并请求以下URL：<code>http://localhost:51066/Employee/Maxsu</code>时，将得到以下输出。参考下图所示 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201712/1412/363091212_79492.png" alt=""></p> 
+ <p>正如你在上面的屏幕截图中看到的，<code>Maxsu</code>是从URL中选取的。</p>
+ <br>      
+</div></body></html>

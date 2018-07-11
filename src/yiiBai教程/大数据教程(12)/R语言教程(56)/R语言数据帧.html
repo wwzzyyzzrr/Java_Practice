@@ -1,0 +1,211 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">R语言数据帧</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>数据帧是一个表或二维类似数组的结构，其中每列包含一个变量的值，每行包含来自每一列的一组值。</p> 
+ <p>以下是数据帧的特征 - </p> 
+ <ul> 
+  <li>列名称应该不为空。</li>
+  <li>行名称应该是唯一的。</li>
+  <li>存储在数据帧中的数据可以是数字，因子或字符类型。</li>
+  <li>每列应包含相同数量的数据项。</li>
+ </ul> 
+ <p><strong>创建数据帧</strong></p> 
+ <pre><code class="lang-r"># Create the data frame.
+emp.data &lt;- data.frame(
+   emp_id = c (1:5), 
+   emp_name = c("Rick","Dan","Michelle","Ryan","Gary"),
+   salary = c(623.3,515.2,611.0,729.0,843.25), 
+
+   start_date = as.Date(c("2017-01-01", "2017-09-23", "2017-11-15", "2017-05-11",
+      "2018-03-27")),
+   stringsAsFactors = FALSE
+)
+# Print the data frame.            
+print(emp.data)
+</code></pre> 
+ <p>当我们执行上述代码时，会产生以下结果 -</p> 
+ <pre><code class="lang-shell">  emp_id emp_name salary start_date
+1      1     Rick 623.30 2017-01-01
+2      2      Dan 515.20 2017-09-23
+3      3 Michelle 611.00 2017-11-15
+4      4     Ryan 729.00 2017-05-11
+5      5     Gary 843.25 2018-03-27
+</code></pre> 
+ <h2 id="h2-u83B7u53D6u6570u636Eu5E27u7684u7ED3u6784"><a name="获取数据帧的结构" class="reference-link"></a><span class="header-link octicon octicon-link"></span>获取数据帧的结构</h2>
+ <p>通过使用<code>str()</code>函数可以查看数据帧的结构，参考以下代码实现 - </p> 
+ <pre><code class="lang-r"># Create the data frame.
+emp.data &lt;- data.frame(
+   emp_id = c (1:5), 
+   emp_name = c("Rick","Dan","Michelle","Ryan","Gary"),
+   salary = c(623.3,515.2,611.0,729.0,843.25), 
+
+   start_date = as.Date(c("2017-01-01", "2017-09-23", "2017-11-15", "2017-05-11",
+      "2018-03-27")),
+   stringsAsFactors = FALSE
+)
+# Get the structure of the data frame.
+str(emp.data)
+</code></pre> 
+ <p>当我们执行上述代码时，会产生以下结果 -</p> 
+ <pre><code class="lang-shell">'data.frame':   5 obs. of  4 variables:
+ $ emp_id    : int  1 2 3 4 5
+ $ emp_name  : chr  "Rick" "Dan" "Michelle" "Ryan" ...
+ $ salary    : num  623 515 611 729 843
+ $ start_date: Date, format: "2017-01-01" "2017-09-23" ...
+</code></pre> 
+ <h2 id="h2-u6570u636Eu5E27u6570u636Eu6458u8981"><a name="数据帧数据摘要" class="reference-link"></a><span class="header-link octicon octicon-link"></span>数据帧数据摘要</h2>
+ <p>数据的统计摘要和性质可以通过应用<code>summary()</code>函数获得。</p> 
+ <pre><code class="lang-r"># Create the data frame.
+emp.data &lt;- data.frame(
+   emp_id = c (1:5), 
+   emp_name = c("Rick","Dan","Michelle","Ryan","Gary"),
+   salary = c(623.3,515.2,611.0,729.0,843.25), 
+
+   start_date = as.Date(c("2015-01-01", "2016-09-23", "2017-11-15", "2018-05-11",
+      "2018-03-27")),
+   stringsAsFactors = FALSE
+)
+# Print the summary.
+</code></pre> 
+ <p>当我们执行上述代码时，会产生以下结果 -</p> 
+ <pre><code class="lang-shell">     emp_id    emp_name             salary        start_date        
+ Min.   :1   Length:5           Min.   :515.2   Min.   :2015-01-01  
+ 1st Qu.:2   Class :character   1st Qu.:611.0   1st Qu.:2016-09-23  
+ Median :3   Mode  :character   Median :623.3   Median :2017-11-15  
+ Mean   :3                      Mean   :664.4   Mean   :2017-03-28  
+ 3rd Qu.:4                      3rd Qu.:729.0   3rd Qu.:2018-03-27  
+ Max.   :5                      Max.   :843.2   Max.   :2018-05-11
+</code></pre> 
+ <h2 id="h2-u4ECEu6570u636Eu5E27u63D0u53D6u6570u636E"><a name="从数据帧提取数据" class="reference-link"></a><span class="header-link octicon octicon-link"></span>从数据帧提取数据</h2>
+ <p>使用列名称从数据帧中提取特定列。</p> 
+ <pre><code class="lang-r"># Create the data frame.
+emp.data &lt;- data.frame(
+   emp_id = c (1:5),
+   emp_name = c("Rick","Dan","Michelle","Ryan","Gary"),
+   salary = c(623.3,515.2,611.0,729.0,843.25),
+
+   start_date = as.Date(c("2012-01-01","2013-09-23","2014-11-15","2014-05-11",
+      "2015-03-27")),
+   stringsAsFactors = FALSE
+)
+# Extract Specific columns.
+result &lt;- data.frame(emp.data$emp_name,emp.data$salary)
+print(result)
+</code></pre> 
+ <p>当我们执行上述代码时，会产生以下结果 -</p> 
+ <pre><code class="lang-shell">  emp.data.emp_name emp.data.salary
+1              Rick          623.30
+2               Dan          515.20
+3          Michelle          611.00
+4              Ryan          729.00
+5              Gary          843.25
+</code></pre> 
+ <p>提取前两行，然后提取所有列 - </p> 
+ <pre><code class="lang-r"># Create the data frame.
+emp.data &lt;- data.frame(
+   emp_id = c (1:5),
+   emp_name = c("Rick","Dan","Michelle","Ryan","Gary"),
+   salary = c(623.3,515.2,611.0,729.0,843.25),
+
+   start_date = as.Date(c("2012-01-01", "2013-09-23", "2014-11-15", "2014-05-11",
+      "2015-03-27")),
+   stringsAsFactors = FALSE
+)
+# Extract first two rows.
+result &lt;- emp.data[1:2,]
+print(result)
+</code></pre> 
+ <p>当我们执行上述代码时，会产生以下结果 -</p> 
+ <pre><code class="lang-shell">  emp_id    emp_name   salary    start_date
+1      1     Rick      623.3     2012-01-01
+2      2     Dan       515.2     2013-09-23
+</code></pre> 
+ <p>提取第2列和第4列和第3行和第5列 </p> 
+ <pre><code class="lang-r"># Create the data frame.
+emp.data &lt;- data.frame(
+   emp_id = c (1:5), 
+   emp_name = c("Rick","Dan","Michelle","Ryan","Gary"),
+   salary = c(623.3,515.2,611.0,729.0,843.25), 
+
+    start_date = as.Date(c("2012-01-01", "2013-09-23", "2014-11-15", "2014-05-11",
+      "2015-03-27")),
+   stringsAsFactors = FALSE
+)
+
+# Extract 3rd and 5th row with 2nd and 4th column.
+result &lt;- emp.data[c(3,5),c(2,4)]
+print(result)
+</code></pre> 
+ <p>当我们执行上述代码时，会产生以下结果 -</p>   
+ <pre><code class="lang-shell">  emp_name start_date
+3 Michelle 2014-11-15
+5     Gary 2015-03-27
+</code></pre> 
+ <h2 id="h2-u6269u5C55u6570u636Eu5E27"><a name="扩展数据帧" class="reference-link"></a><span class="header-link octicon octicon-link"></span>扩展数据帧</h2>
+ <p>可以通过添加列和行来扩展数据帧。</p> 
+ <p><strong>添加列</strong></p> 
+ <p>只需使用新的列名来添加列向量。参考以下示例代码 - </p> 
+ <pre><code class="lang-r"># Create the data frame.
+emp.data &lt;- data.frame(
+   emp_id = c (1:5), 
+   emp_name = c("Rick","Dan","Michelle","Ryan","Gary"),
+   salary = c(623.3,515.2,611.0,729.0,843.25), 
+
+   start_date = as.Date(c("2012-01-01", "2013-09-23", "2014-11-15", "2014-05-11",
+      "2015-03-27")),
+   stringsAsFactors = FALSE
+)
+
+# Add the "dept" coulmn.
+emp.data$dept &lt;- c("IT","Operations","IT","HR","Finance")
+v &lt;- emp.data
+print(v)
+</code></pre> 
+ <p>当我们执行上述代码时，会产生以下结果 -</p> 
+ <pre><code class="lang-shell">  emp_id   emp_name    salary    start_date       dept
+1     1    Rick        623.30    2012-01-01       IT
+2     2    Dan         515.20    2013-09-23       Operations
+3     3    Michelle    611.00    2014-11-15       IT
+4     4    Ryan        729.00    2014-05-11       HR
+5     5    Gary        843.25    2015-03-27       Finance
+</code></pre> 
+ <p><strong>添加行</strong></p> 
+ <p>要将更多行永久添加到现有数据帧，需要使用与现有数据帧相同结构的新行，并使用<code>rbind()</code>函数。</p> 
+ <p>在下面的示例中，我们使用新行创建一个数据帧，并将其与现有的数据帧进行合并，以创建最终的数据帧。</p> 
+ <pre><code class="lang-r"># Create the first data frame.
+emp.data &lt;- data.frame(
+   emp_id = c (1:5), 
+   emp_name = c("Rick","Dan","Michelle","Ryan","Gary"),
+   salary = c(623.3,515.2,611.0,729.0,843.25), 
+
+   start_date = as.Date(c("2012-01-01", "2013-09-23", "2014-11-15", "2014-05-11",
+      "2015-03-27")),
+   dept = c("IT","Operations","IT","HR","Finance"),
+   stringsAsFactors = FALSE
+)
+
+# Create the second data frame
+emp.newdata &lt;-     data.frame(
+   emp_id = c (6:8), 
+   emp_name = c("Rasmi","Pranab","Tusar"),
+   salary = c(578.0,722.5,632.8), 
+   start_date = as.Date(c("2013-05-21","2013-07-30","2014-06-17")),
+   dept = c("IT","Operations","Fianance"),
+   stringsAsFactors = FALSE
+)
+
+# Bind the two data frames.
+emp.finaldata &lt;- rbind(emp.data,emp.newdata)
+print(emp.finaldata)
+</code></pre> 
+ <p>当我们执行上述代码时，会产生以下结果 -</p> 
+ <pre><code class="lang-shell">  emp_id     emp_name    salary     start_date       dept
+1      1     Rick        623.30     2012-01-01       IT
+2      2     Dan         515.20     2013-09-23       Operations
+3      3     Michelle    611.00     2014-11-15       IT
+4      4     Ryan        729.00     2014-05-11       HR
+5      5     Gary        843.25     2015-03-27       Finance
+6      6     Rasmi       578.00     2013-05-21       IT
+7      7     Pranab      722.50     2013-07-30       Operations
+8      8     Tusar       632.80     2014-06-17       Fianance
+</code></pre>
+ <br>      
+</div></body></html>

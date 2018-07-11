@@ -1,0 +1,106 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Struts2 &lt;s:i18n&gt;标签示例</h1><div style="width:100%;float:left;" class="article-content">   
+ <div style="font-family:微软雅黑;font-size:14px;background-color:#FFFFFF;"> 
+  <div style="background-color:inherit;"> 
+   <span style="font-family:'Microsoft Yahei',  Helvetica, font-size:16px;line-height:1.5;">Struts2&nbsp;&lt;s:i18n&gt;标签是用来从声明的资源包获得消息，</span>
+   <span style="font-family:'Microsoft Yahei',  Helvetica, font-size:16px;line-height:1.5;">&nbsp;</span>
+   <span style="font-family:'Microsoft Yahei',  Helvetica, font-size:16px;line-height:1.5;">不只是使用当前操作相关联的资源包。看下面一个完整的&lt;s:i18n&gt;标签的例子：</span> 
+  </div> 
+ </div> 
+ <h2> 1. 动作 </h2> 
+ <div>
+   Action类转发请求。 
+ </div> 
+ <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:16px;"> <strong>I18nTagAction.java</strong> </p> 
+ <pre>package com.yiibai.common.action;
+
+import com.opensymphony.xwork2.ActionSupport;
+ 
+public class I18nTagAction extends ActionSupport{
+
+	public String execute() throws Exception {
+		
+		return SUCCESS;
+	}
+}</pre> 
+ <h2> 2. 属性文件 </h2> 
+ <div>
+   两个属性文件作为演示。 
+ </div> 
+ <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:16px;"> <strong>I18nTagAction.properties</strong> </p> 
+ <pre>i18n.msg = "This is a message from I18nTagAction.properties"</pre> 
+ <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:16px;"> <strong>Custom.properties</strong> </p> 
+ <pre>i18n.msg = "This is a message from Custom.properties"</pre> 
+ <h2> 3. &lt;s:i18n&gt;标签示例 </h2> 
+ <p> 下面显示&lt;s:i18n&gt;标签的使用。 </p> 
+ <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:16px;"> <strong>i18n.jsp</strong> </p> 
+ <pre>&lt;%@ taglib prefix="s" uri="/struts-tags" %&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;/head&gt;
+ 
+&lt;body&gt;
+&lt;h1&gt;Struts2 &lt;s:i18n&gt;标签示例 - www.yiibai.com&lt;/h1&gt;
+
+&lt;h2&gt;1.Get message from I18nTagAction.properties&lt;/h2&gt; 
+Output : 
+&lt;s:text name="i18n.msg" /&gt;
+
+&lt;h2&gt;2.Get message from Custom.properties&lt;/h2&gt; 
+Output : 
+&lt;s:i18n name="com/yiibai/common/action/Custom"&gt;
+	&lt;s:text name="i18n.msg" /&gt;
+&lt;/s:i18n&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;</pre> 
+ <p> 它是如何工作的? </p> 
+ <p> 1.在示例1中，它会得到来自资源包的消息(I18nTagAction.properties)这是关想当前的操作类&nbsp;(I18nTagAction.java) </p> 
+ <p> 2.在例2中，它会从“Custom.properties”属性的文件得到消息，这个文件放在&nbsp;com/yiibai/common/action/&nbsp;文件 </p> 
+ <div> 
+  <div>
+    不要放 .properties 后缀 
+  </div> 一个常见的错误，在国际化的标签，如果声明属性名为.properties后缀的文件，在Struts2将未能从声明的资源包获得消息。
+  <br> 错误的方式：
+  <br>   
+  <pre>&lt;s:i18n name="com/yiibai/common/action/Custom.properties"&gt;
+	&lt;s:text name="i18n.msg" /&gt;
+&lt;/s:i18n&gt;</pre> 
+  <p style="background-color:inherit;"> <strong>正确的方式</strong>&nbsp;: </p> 
+  <div>
+    声明的属性文件没有 .properties 后缀。 
+  </div> 
+  <pre>&lt;s:i18n name="com/yiibai/common/action/Custom"&gt;
+	&lt;s:text name="i18n.msg" /&gt;
+&lt;/s:i18n&gt;</pre> 
+ </div> 
+ <h2 style="color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:24px;font-weight:500;"> 4. struts.xml </h2> 
+ <pre>&lt;?xml version="1.0" encoding="UTF-8" ?&gt;
+&lt;!DOCTYPE struts PUBLIC
+"-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+"http://struts.apache.org/dtds/struts-2.0.dtd"&gt;
+ 
+&lt;struts&gt;
+ 	&lt;constant name="struts.devMode" value="true" /&gt;
+	&lt;package name="default" namespace="/" extends="struts-default"&gt;
+	
+		&lt;action name="i18nTagAction" 
+			class="com.yiibai.common.action.I18nTagAction" &gt;
+			&lt;result name="success"&gt;pages/i18n.jsp&lt;/result&gt;
+		&lt;/action&gt;
+		
+	&lt;/package&gt;
+&lt;/struts&gt;</pre> 
+ <h2> 5. 示例 </h2> 
+ <p> http://localhost:8080/struts2i18ntag/i18nTagAction.action </p> 
+ <p> 在浏览器中打开上面的URL，显示结果如下： </p> 
+ <p> <img src="/uploads/tutorial/20151120/1-1511201T210N1.png" alt=""> </p> 
+ <h2> 参考 </h2> 
+ <ol> 
+  <li> <a target="_blank" href="http://struts.apache.org/2.0.14/docs/i18n.html">Struts2 &lt;s:i18n&gt;标签文档</a> </li> 
+ </ol> 
+ <div style="background-color:inherit;"> 
+  <span style="background-color:inherit;"><span style="background-color:inherit;line-height:24px;">下载代码 -&nbsp;<a target="_blank" href="http://pan.baidu.com/s/1c0mHDlA">http://pan.baidu.com/s/1c0mHDlA</a> </span></span> 
+ </div> 
+ <p> <br> </p>
+ <br>      
+</div></body></html>

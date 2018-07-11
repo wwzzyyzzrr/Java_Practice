@@ -1,0 +1,129 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">ASP.Net MVC模型绑定</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>ASP.NET MVC模型绑定允许您将HTTP请求数据与模型进行映射。 这是使用HTTP请求中的浏览器发送的数据创建.NET对象的过程。对于ASP.Net MVC而言，ASP.NET Web Forms开发人员大多都感到困惑，因为视图的值在到达控制类的动作方法时会如何转换为Model类，这个转换由模型绑定器完成。</p> 
+ <p>模型绑定是HTTP请求和 C# 操作方法之间的良好设计桥梁。 它使开发人员可以方便地使用表单(视图)上的数据，因为<code>POST</code>和<code>GET</code>会自动传输到指定的数据模型中。 ASP.NET MVC使用默认的绑定器来完成这个场景。</p> 
+ <p>我们来看一个简单的例子，在上一章的项目中添加一个“创建视图”，我们将看到如何从视图中获取这些值传到<code>EmployeeController</code>动作方法。</p> 
+ <p>以下是<code>POST</code>的创建动作方法。</p> 
+ <pre><code class="lang-csharp">// POST: Employee/Create
+[HttpPost]
+public ActionResult Create(FormCollection collection){
+   try{
+      // TODO: Add insert logic here
+      return RedirectToAction("Index");
+   }catch{
+      return View();
+   }
+}
+</code></pre> 
+ <p>右键单击<code>Create</code>动作方法，然后选择<strong>添加视图…</strong>， 它将显示<strong>添加视图</strong>对话框。<br>如在上面的屏幕截图中看到的那样，默认的动作名字已经在输入框中了。现在从“模板”下拉列表中选择<code>“Create”</code>，从“模型”下拉列表中选择<code>“Employee”</code>。参考下图 -<br><img src="http://www.yiibai.com/uploads/images/201712/1612/196161222_53112.png" alt=""></p> 
+ <p>创建的<em>Create.cshtml</em> 视图中看到默认代码如下 - </p> 
+ <pre><code class="lang-html">@model MVCSimpleApp.Models.Employee
+
+@{
+    Layout = null;
+}
+
+&lt;!DOCTYPE html&gt;
+
+&lt;html&gt;
+&lt;head&gt;
+    &lt;meta name="viewport" content="width=device-width" /&gt;
+    &lt;title&gt;Create&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    @using (Html.BeginForm()) 
+    {
+        @Html.AntiForgeryToken()
+
+        &lt;div class="form-horizontal"&gt;
+            &lt;h4&gt;Employee&lt;/h4&gt;
+            &lt;hr /&gt;
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            &lt;div class="form-group"&gt;
+                @Html.LabelFor(model =&gt; model.Name, htmlAttributes: new { @class = "control-label col-md-2" })
+                &lt;div class="col-md-10"&gt;
+                    @Html.EditorFor(model =&gt; model.Name, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model =&gt; model.Name, "", new { @class = "text-danger" })
+                &lt;/div&gt;
+            &lt;/div&gt;
+
+            &lt;div class="form-group"&gt;
+                @Html.LabelFor(model =&gt; model.JoiningDate, htmlAttributes: new { @class = "control-label col-md-2" })
+                &lt;div class="col-md-10"&gt;
+                    @Html.EditorFor(model =&gt; model.JoiningDate, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model =&gt; model.JoiningDate, "", new { @class = "text-danger" })
+                &lt;/div&gt;
+            &lt;/div&gt;
+
+            &lt;div class="form-group"&gt;
+                @Html.LabelFor(model =&gt; model.Age, htmlAttributes: new { @class = "control-label col-md-2" })
+                &lt;div class="col-md-10"&gt;
+                    @Html.EditorFor(model =&gt; model.Age, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model =&gt; model.Age, "", new { @class = "text-danger" })
+                &lt;/div&gt;
+            &lt;/div&gt;
+
+            &lt;div class="form-group"&gt;
+                &lt;div class="col-md-offset-2 col-md-10"&gt;
+                    &lt;input type="submit" value="Create" class="btn btn-default" /&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+    }
+
+    &lt;div&gt;
+        @Html.ActionLink("Back to List", "Index")
+    &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>当用户在创建视图上输入值时，它在<code>FormCollection</code>和<code>Request.Form</code>中都可用。可以使用这些值中的任何一个来填充视图中的员工信息。</p> 
+ <p>使用下面的代码来(<code>FormCollection</code>)创建员工信息。参考以下代码 - </p>   
+ <pre><code class="lang-csharp">// POST: Employee/Create
+[HttpPost]
+public ActionResult Create(FormCollection collection){
+   try {
+      Employee emp = new Employee();
+      emp.Name = collection["Name"];
+      DateTime jDate;
+      DateTime.TryParse(collection["DOB"], out jDate);
+      emp.JoiningDate = jDate;
+      string age = collection["Age"];
+      emp.Age = Int32.Parse(age);
+      empList.Add(emp);
+      return RedirectToAction("Index");
+   }catch {
+      return View();
+   }
+}
+</code></pre> 
+ <p>运行这个应用程序并请问这个URL： <code>http：// localhost：63004 / Employee /</code>。将收到以下输出结果 -<br><img src="http://www.yiibai.com/uploads/images/201712/1612/176161234_18248.png" alt=""></p> 
+ <p>点击页面顶部的<em>“Create New”</em>链接，它将转到下面的视图。如下所示 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201712/1612/337161236_29220.png" alt=""></p> 
+ <p>输入想要添加的其他员工的数据。如下所示 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201712/1612/528161237_91939.png" alt=""></p> 
+ <p>点击创建按钮，会看到新员工被添加到列表中。如下图所示 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201712/1612/964161243_13827.png" alt=""></p> 
+ <p>在上面的示例中，从HTML视图中获取所有发布的值，然后将这些值映射到<code>Employee</code>属性并逐一分配它们。</p> 
+ <p>在这种情况下，我们也将在发布的值与<code>Model</code>属性的格式不相同的情况下进行类型转换。</p> 
+ <p>这也被称为手动绑定，这种类型的实现对于简单和小数据模型可能不是那么糟糕。 但是，如果对于具有大量的数据类型的模型，则需要大量的类型转换，那么可以利用ASP.NET MVC Model绑定的强大功能和易用性。</p> 
+ <p>下面来看看为模型绑定所做的另一个例子。</p> 
+ <p>我们需要改变Create方法的参数来接受<code>Employee</code>模型对象而不是<code>FormCollection</code>对象，如下面的代码所示。</p> 
+ <pre><code class="lang-csharp">// POST: Employee/Create
+[HttpPost]
+public ActionResult Create(Employee emp){
+   try{
+      empList.Add(emp);
+      return RedirectToAction("Index");
+   }catch{
+      return View();
+   }
+}
+</code></pre> 
+ <p>现在，模型绑定的魔力取决于提供值的HTML变量的<code>id</code>。</p> 
+ <p>对于<code>Employee</code>模型，HTML输入字段的<code>id</code>应该与<code>Employee</code>模型的属性名称相同，可以看到Visual Studio在创建视图时使用了相同的模型属性名称。如下代码 - </p> 
+ <pre><code class="lang-html">@Html.EditorFor(model =&gt; model.Name, new { htmlAttributes = new { @class = "form-control" } })
+</code></pre> 
+ <p>映射将基于默认的属性名称。在这里，您会发现HTML助手方法非常有用，因为这些助手方法将生成HTML，它将具有适当的名称以使模型绑定起作用。</p> 
+ <p>运行修改代码的应用程序，与上面的运行结果一样。</p>
+ <br>      
+</div></body></html>

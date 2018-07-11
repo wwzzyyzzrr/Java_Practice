@@ -1,0 +1,69 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Git执行变更操作</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>在本文章教程中，我们将演示如何添加文件到 Git 存储库，并对存储库中的文件作修改和提交。</p> 
+ <blockquote> 
+  <p>注意：在开始学习本教程之前，先克隆一个存储库，有关如何克隆存储库，请参考： <a target="_blank" href="http://www.yiibai.com/git/git_clone_operation.html">http://www.yiibai.com/git/git_clone_operation.html</a> </p> 
+ </blockquote> 
+ <p>现在，在克隆存储库之后，我们开始学习 Git 基本的文件修改和版本管理操作。假设要使用 <em>sample</em> 这个存储库来协同管理一个Python的项目。首先创建一个Python的代码文件： <em>main.py</em> ，编写了一些代码完成并保存文件后，<em>main.py</em> 现在的内容如下所示：</p> 
+ <pre><code class="lang-python">#!/usr/bin/python3
+#coding=utf-8
+
+print ("Life is short, you need Python !")
+</code></pre> 
+ <p>假设上面代码编译并通过了测试，一切正常。 现在，我们可以安全地将这些更改添加到存储库。</p> 
+ <p>查看当前工作区状态 - </p> 
+ <pre><code class="lang-shell">$ git status -s
+?? main.py
+</code></pre> 
+ <p>Git在文件名之前显示两个问号。因为到目前操作为止，这些文件还不是Git的一部分(Git还不能控制这些文件)，这就是Git不知道该怎么处理这些文件。 这就是为什么，Git在文件名之前显示问号。</p> 
+ <p>现在，Git添加操作(<code>git add</code>命令)将文件添加到暂存区域。</p> 
+ <pre><code class="lang-shell">$ git add main.py
+</code></pre> 
+ <p>在执行上命令后，已将文件添加到存储区域，<code>git status</code>命令将显示临时区域中存在的文件。</p> 
+ <pre><code class="lang-shell">$ git status -s
+A  main.py
+</code></pre> 
+ <p>上面文件中，看到文件名称前面多了一个大写字母：<code>A</code>，表示该文件已添加到 Git 临时区域中了。</p> 
+ <p>要提交更改，可使用了<code>git commit</code>命令，后跟<code>-m</code>选项。 如果忽略了<code>-m</code>选项。 Git将打开一个文本编辑器，我们可以在其中编写多行的提交备注消息。</p> 
+ <blockquote> 
+  <p>在执行 <code>git commit</code>命令之前，一定要先执行 <code>git add</code> 命令。</p> 
+ </blockquote> 
+ <pre><code class="lang-shell">$ git commit main.py
+</code></pre> 
+ <p>这里因为忽略了<code>-m</code>选项，所以会打开一个 vim 编辑器，可在引编辑器中写入提交说明备注信息，如下所示 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201707/0707/747060748_65670.png" alt=""></p> 
+ <p>如上图中，写了一条提交说明备注信息：“this is main.py file commit mark without use -m option”，退出 VIM 编辑器保存文件后， Git 会自动提交。当然，也可以直接使用以下命令一步完成。</p>   
+ <pre><code class="lang-shell">git commit main.py -m "this is main.py file commit mark use -m option"
+</code></pre> 
+ <p>执行上面代码，结果如下 - </p> 
+ <pre><code class="lang-shell">$ git commit main.py -m "this is main.py file commit mark use -m option"
+[master 5eccf92] this is main.py file commit mark use -m option
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+</code></pre> 
+ <p>在提交查看日志详细信息后，运行<code>git log</code>命令。它将使用提交ID，提交作者，提交日期和提交的<em>SHA-1</em>哈希显示所有提交的信息。</p> 
+ <pre><code class="lang-shell">$ git log
+</code></pre> 
+ <p>上述命令将产生以下结果：</p> 
+ <pre><code class="lang-shell">$ git log
+commit 5eccf92e28eae94ec5fce7c687f6f92bf32a6a8d
+Author: your_name &lt;your_email@mail.com&gt;
+Date:   Fri Jul 7 18:52:06 2017 +0800
+
+    this is main.py file commit mark use -m option
+
+commit 6e5f31067466795c522b01692871f202c26ff948
+Author: your_name &lt;your_email@mail.com&gt;
+Date:   Fri Jul 7 18:42:43 2017 +0800
+
+    this is main.py file commit mark without use "-m" option
+
+commit 290342c270bc90f861ccc3d83afa920169e3b07e
+Author: Maxsu &lt;769728683@qq.com&gt;
+Date:   Fri Jul 7 16:55:12 2017 +0800
+
+    Initial commit
+</code></pre> 
+ <p>前面我们说过，要提交修改过的文件，首先使用 <code>git add &lt;file&gt;</code> ，然后再执行 <code>git comit &lt;file&gt; -m "？？mark"</code>，但是这两步也可以一步完成，如下所示 - </p> 
+ <pre><code class="lang-shell">$ git commit -a -m "？？mark"
+</code></pre>
+ <br>      
+</div></body></html>

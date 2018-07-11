@@ -1,0 +1,37 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">PHP7过滤unserialize()</h1><div style="width:100%;float:left;" class="article-content">   
+ <p style="text-align:justify;"> PHP7引入了过滤&nbsp;unserialize()函数以在反序列化不受信任的数据对象时提供更好的安全性。它可以防止可能的代码注入，使开发人员能够使用序列化白名单类。 </p> 
+ <h2> 示例 </h2> 
+ <pre>&lt;?php
+class MyClass1 { 
+   public $obj1prop;   
+}
+class MyClass2 {
+   public $obj2prop;
+}
+
+
+$obj1 = new MyClass1();
+$obj1-&gt;obj1prop = 1;
+$obj2 = new MyClass2();
+$obj2-&gt;obj2prop = 2;
+
+$serializedObj1 = serialize($obj1);
+$serializedObj2 = serialize($obj2);
+
+// default behaviour that accepts all classes
+// second argument can be ommited.
+// if allowed_classes is passed as false, unserialize converts all objects into __PHP_Incomplete_Class object
+$data = unserialize($serializedObj1 , ["allowed_classes" =&gt; true]);
+
+// converts all objects into __PHP_Incomplete_Class object except those of MyClass1 and MyClass2
+$data2 = unserialize($serializedObj2 , ["allowed_classes" =&gt; ["MyClass1", "MyClass2"]]);
+
+print($data-&gt;obj1prop);
+print("&lt;br/&gt;");
+print($data2-&gt;obj2prop);
+?&gt;</pre> 
+ <p style="text-align:justify;"> 这将在浏览器产生以下输出&nbsp;- </p>   
+ <pre>1
+2</pre>
+ <br>      
+</div></body></html>

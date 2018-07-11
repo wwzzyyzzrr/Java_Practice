@@ -1,0 +1,41 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Docker Dockerfile</h1><div style="width:100%;float:left;" class="article-content">   
+ <p><em>Dockerfile</em>是一个包含用于组合映像的命令的文本文档。可以使用在命令行中调用任何命令。 Docker通过读取<code>Dockerfile</code>中的指令自动生成映像。</p> 
+ <p><code>docker build</code>命令用于从Dockerfile构建映像。可以在<code>docker build</code>命令中使用<code>-f</code>标志指向文件系统中任何位置的Dockerfile。</p> 
+ <pre><code class="lang-shell">$ docker build -f /path/to/a/Dockerfile
+</code></pre> 
+ <h2 id="h2-dockerfile-"><a name="Dockerfile文件说明" class="reference-link"></a><span class="header-link octicon octicon-link"></span>Dockerfile文件说明</h2>
+ <p>说明不区分大小写，但必须遵循建议使用大写字母的约定。</p> 
+ <p>Docker以从上到下的顺序运行Dockerfile的指令。为了指定基本映像，第一条指令必须是<em>FROM</em>。</p> 
+ <p>一个声明以<code>＃</code>字符开头则被视为注释。可以在Docker文件中使用<code>RUN</code>，<code>CMD</code>，<code>FROM</code>，<code>EXPOSE</code>，<code>ENV</code>等指令。</p> 
+ <p>在这里列出了一些常用的说明。</p> 
+ <p><strong>FROM</strong></p> 
+ <p>该指令用于设置后续指令的基本映像。有效的Dockerfile必须使用<code>FROM</code>作为其第一条指令。</p> 
+ <pre><code class="lang-shell">FROM ubuntu
+</code></pre> 
+ <p><strong>LABEL</strong></p> 
+ <p>可以为映像添加标签来组织项目的映像。需要使用<em>LABEL</em>指令设置映像的标签。</p> 
+ <pre><code class="lang-shell">LABEL vendorl = "YiiBai"
+</code></pre> 
+ <p><strong>RUN</strong></p> 
+ <p>该指令用于执行当前映像的任何命令。</p> 
+ <pre><code class="lang-shell">RUN /bin/bash -c 'source $HOME/.bashrc; echo $HOME'
+</code></pre> 
+ <p><strong>CMD</strong></p> 
+ <p>这用于执行映像的应用程序。应该以下列形式总是使用<em>CMD</em> - </p>   
+ <pre><code class="lang-shell">CMD ["executable", "param1", "param2"?]
+</code></pre> 
+ <p>这是使用<em>CMD</em>的首选方法。Dockerfile文件中只能有一个<em>CMD</em>。如果使用多个<em>CMD</em>，则只会执行最后一个<em>CMD</em>。</p> 
+ <p><strong>COPY</strong></p> 
+ <p>该指令用于将来自源的新文件或目录复制到目的地的容器的文件系统。</p> 
+ <pre><code class="lang-shell">COPY abc/ /xyz
+</code></pre> 
+ <p><strong>规则</strong></p> 
+ <ul> 
+  <li><p><code>source</code>路径必须在构建的上下文之内。无法使用<code>COPY ../something /something</code>，因为docker构建的第一步是将上下文目录(和子目录)发送到docker守护程序。</p> </li>
+  <li><p>如果<code>source</code>是目录，则会复制目录的全部内容，包括文件系统元数据。</p> </li>
+ </ul> 
+ <p><strong>WORKDIR</strong></p> 
+ <p><em>WORKDIR</em>用于为<em>Dockerfile</em>中的<code>RUN</code>，<code>CMD</code>和<code>COPY</code>指令设置工作目录。如果工作目录不存在，它默认将会创建。</p> 
+ <p>我们可以在<em>Dockerfile</em>文件中多次使用<code>WORKDIR</code>。</p>
+ <br>      
+</div></body></html>

@@ -1,0 +1,163 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">其他进程</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>到目前为止，我们已经讨论和学习了进程，创建，父进程和子进程等。但是没有讨论其他相关进程，如孤儿进程，僵尸进程和守护进程，在本节中，我们来看看这些进程。</p> 
+ <h2 id="h2-u5B64u513Fu8FDBu7A0B"><a name="孤儿进程" class="reference-link"></a><span class="header-link octicon octicon-link"></span>孤儿进程</h2>
+ <p>如名字所示，孤儿进程表示无父进程。 当我们运行程序或应用程序时，应用程序的父进程是shell。 当使用<code>fork()</code>创建一个进程时，新创建的进程是子进程，创建是父进程的子进程。 反过来，这个父进程就是<code>shell</code>。 当然，所有进程的父进程是初始(<code>init</code>)进程(进程ID等于1)。</p> 
+ <p>以上是一个常见的情况，但是，如果父进程在子进程之前退出，会发生什么情况。 结果是，子进程现在成为孤儿进程。 那么它的父进程呢，它的新父进程就是所有进程的父进程，这只不过是初始(<code>init</code>)进程(进程ID等于1)。</p> 
+ <p>让我们来看看下面的例子来理解孤儿进程的含义。</p> 
+ <p>文件:<em>orphan_process.c</em> - </p> 
+ <pre><code class="lang-cpp">#include&lt;stdio.h&gt;
+#include&lt;stdlib.h&gt;
+
+int main() {
+   int pid;
+   system("ps -f");
+   pid = fork();
+   if (pid == 0) {
+      printf("Child: pid is %d and ppid is %d\n",getpid(),getppid());
+      sleep(5);
+      printf("Child: pid is %d and ppid is %d\n",getpid(),getppid());
+      system("ps -f");
+   } else {
+      printf("Parent: pid is %d and ppid is %d\n",getpid(),getppid());
+      sleep(2);
+      exit(0);
+   }
+   return 0;
+}
+</code></pre> 
+ <p>编译和执行上面代码，得到以下结果 - </p> 
+ <pre><code class="lang-shell">UID         PID   PPID  C STIME TTY    TIME CMD
+4581875  180558      0  0 09:19  ?     00:00:00 sh -c cd /home/cg/root/4581875; 
+                                       timeout 10s main
+4581875  180564 180558  0 09:19  ?     00:00:00 timeout 10s main
+4581875  180565 180564  0 09:19  ?     00:00:00 main
+4581875  180566 180565  0 09:19  ?     00:00:00 ps -f
+Parent: pid is 180565 and ppid is 180564
+UID         PID   PPID  C STIME TTY    TIME CMD
+4581875  180567      0  0 09:19  ?     00:00:00 main
+4581875  180820 180567  0 09:19  ?     00:00:00 ps -f
+Child: pid is 180567 and ppid is 180565
+Child: pid is 180567 and ppid is 0
+</code></pre> 
+ <h2 id="h2-u50F5u5C38u8FDBu7A0B"><a name="僵尸进程" class="reference-link"></a><span class="header-link octicon octicon-link"></span>僵尸进程</h2>
+ <p>简而言之，假设有两个进程，即父进程和子进程。 父进程负责等待子进程，然后清理进程表中的子进程入口。 如果父进程没有准备好等待子进程，同时子进程就完成工作并退出呢？ 这种情况时，子进程将成为僵尸进程。 当然，在父进程准备好之后，僵尸进程就会被清除。</p> 
+ <p>让我们通过一个例子来理解这一点。</p> 
+ <p>文件:<em>zombie_process.c </em> - </p> 
+ <pre><code class="lang-cpp">#include&lt;stdio.h&gt;
+#include&lt;stdlib.h&gt;
+
+int main() {
+   int pid;
+   pid = fork();
+   if (pid == 0) {
+      system("ps -f");
+      printf("Child: pid is %d and ppid is %d\n",getpid(),getppid());
+      exit(0);
+   } else {
+      printf("Parent: pid is %d and ppid is %d\n",getpid(),getppid());
+      sleep(10);
+      system("ps aux|grep Z");
+   }
+   return 0;
+}
+</code></pre> 
+ <p>编译和执行上面代码，得到以下结果 - </p> 
+ <pre><code class="lang-shell">UID         PID   PPID  C STIME TTY    TIME CMD
+4581875  184946      0  0 09:20  ?     00:00:00 sh -c cd /home/cg/root/4581875; 
+                                       timeout 10s main
+4581875  184952 184946  0 09:20  ?     00:00:00 timeout 10s main
+4581875  184953 184952  0 09:20  ?     00:00:00 main
+4581875  184954 184953  0 09:20  ?     00:00:00 main
+4581875  184955 184954  0 09:20  ?     00:00:00 ps -f
+Child: pid is 184954 and ppid is 184953
+</code></pre> 
+ <h2 id="h2-u5B88u62A4u8FDBu7A0B"><a name="守护进程" class="reference-link"></a><span class="header-link octicon octicon-link"></span>守护进程</h2>
+ <p>没有任何关联的shell或终端的进程被称为守护进程。 为什么这是必要的？ 这些是在后台运行的进程，以预定的时间间隔执行操作，并响应某些事件。 守护进程不应该有任何用户交互，因为它作为后台进程运行。</p> 
+ <p>内核守护进程通常以内核守护进程(ksoftirqd，kblockd，kswapd等)，打印守护进程(cupsd，lpd等)，文件服务守护进程(smbd，nmbd等)的字母“d” ，电子邮件守护进程(sendmail，popd，smtpd等)，远程登录和命令执行守护进程(sshd，in.telnetd等)，引导和配置守护进程(dhcpd等)，管理数据库守护进程(ypbind，ypserv等) ，udevd等)，init进程(init)，cron守护进程，atd守护进程等。</p> 
+ <p>现在让我们看看如何创建一个守护进程。 以下是步骤 - </p> 
+ <p><strong>第1步</strong> - 创建一个子进程。 现在我们有两个进程 - 父进程和子进程。通常流程是:<em>SHELL</em> -&gt; 父进程 -&gt; 子进程</p> 
+ <p><strong>第2步</strong> - 通过退出终止父进程。 子进程现在成为孤儿进程，由初始(<code>init</code>)进程接管。<br>现在，这个流程层次是:初始(<code>init</code>)进程 -&gt; 子进程。</p> 
+ <p><strong>第3步</strong> - 如果调用进程不是进程组头，则调用<code>setsid()</code>系统调用会创建一个新的会话。 现在调用进程成为新会话的组头。 这个进程将是这个新的进程组和这个新的进程中唯一的进程。</p> 
+ <p><strong>第4步</strong> - 将进程组ID和会话ID设置为调用进程的PID。</p> 
+ <p><strong>第5步</strong> - 关闭终端和外壳现在与应用程序断开连接的过程的默认文件描述符(标准输入，标准输出和标准错误)。</p> 
+ <p>文件:<em>daemon_test.c</em> - </p>   
+ <pre><code class="lang-shell">#include&lt;stdio.h&gt;
+#include&lt;sys/types.h&gt;
+#include&lt;sys/stat.h&gt;
+#include&lt;unistd.h&gt;
+#include&lt;fcntl.h&gt;
+#include&lt;stdlib.h&gt;
+#include&lt;string.h&gt;
+
+int main(int argc, char *argv[]) {
+   pid_t pid;
+   int counter;
+   int fd;
+   int max_iterations;
+   char buffer[100];
+   if (argc &lt; 2)
+   max_iterations = 5;
+   else {
+      max_iterations = atoi(argv[1]);
+      if ( (max_iterations &lt;= 0) || (max_iterations &gt; 20) )
+      max_iterations = 10;
+   }
+   pid = fork();
+
+   // Unable to create child process
+   if (pid &lt; 0) {
+      perror("fork error\n");
+      exit(1);
+   }
+
+   // Child process
+   if (pid == 0) {
+      fd = open("/tmp/DAEMON.txt", O_WRONLY|O_CREAT|O_TRUNC, 0644);
+      if (fd == -1) {
+         perror("daemon txt file open error\n");
+         return 1;
+      }
+      printf("Child: pid is %d and ppid is %d\n", getpid(), getppid());
+      printf("\nChild process before becoming session leader\n");
+      sprintf(buffer, "ps -ef|grep %s", argv[0]);
+      system(buffer);
+      setsid();
+      printf("\nChild process after becoming session leader\n");
+      sprintf(buffer, "ps -ef|grep %s", argv[0]);
+      system(buffer);
+      close(STDIN_FILENO);
+      close(STDOUT_FILENO);
+      close(STDERR_FILENO);
+   } else {
+      printf("Parent: pid is %d and ppid is %d\n", getpid(), getppid());
+      printf("Parent: Exiting\n");
+      exit(0);
+   }
+
+   // Executing max_iteration times
+   for (counter = 0; counter &lt; max_iterations; counter++) {
+      sprintf(buffer, "Daemon process: pid is %d and ppid is %d\n", getpid(), getppid());
+      write(fd, buffer, strlen(buffer));
+      sleep(2);
+   }
+   strcpy(buffer, "Done\n");
+   write(fd, buffer, strlen(buffer));
+
+   // Can't print this as file descriptors are already closed
+   printf("DoneDone\n");
+   close(fd);
+   return 0;
+}
+</code></pre> 
+ <p>编译和执行上面示例代码，得到以下结果 - </p> 
+ <pre><code class="lang-shell">Parent: pid is 193524 and ppid is 193523
+Parent: Exiting
+4581875  193525      0  0 09:23  ?      00:00:00 main
+4581875  193526 193525  0 09:23  ?      00:00:00 sh -c ps -ef|grep main
+4581875  193528 193526  0 09:23  ?      00:00:00 grep main
+4581875  193525      0  0 09:23  ?      00:00:00 main
+4581875  193529 193525  0 09:23  ?      00:00:00 sh -c ps -ef|grep main
+4581875  193531 193529  0 09:23  ?      00:00:00 grep main
+</code></pre>
+ <br>      
+</div></body></html>

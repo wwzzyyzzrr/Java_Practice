@@ -1,0 +1,80 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">getpriority()函数 Unix/Linux</h1><div style="width:100%;float:left;" class="article-content">   
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">getpriority, setpriority -&nbsp;</span>获取/设置程序的调度优先级 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> 内容简介</h1> 
+ <b style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">#include &lt;sys/time.h&gt;</b>
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">&nbsp;</span>
+ <br style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;"> 
+ <b style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">#include &lt;sys/resource.h&gt;</b> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> <b>int getpriority(int&nbsp;</b><i>which</i><b>, int&nbsp;</b><i>who</i><b>);</b>&nbsp;<br> <b>int setpriority(int&nbsp;</b><i>which</i><b>, int&nbsp;</b><i>who</i><b>, int&nbsp;</b><i>prio</i><b>);</b></p> 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> 描述</h1> 
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">The scheduling priority of the process, process group, or user, as indicated by&nbsp;</span>
+ <i style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">which</i>
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">&nbsp;and</span>
+ <i style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">who</i>
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">&nbsp;is obtained with the&nbsp;</span>
+ <b style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">getpriority</b>
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">() call and set with the&nbsp;</span>
+ <b style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">setpriority</b>
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">() call.</span> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> The value&nbsp;<i>which</i>&nbsp;is one of&nbsp;<b>PRIO_PROCESS</b>,&nbsp;<b>PRIO_PGRP</b>, or&nbsp;<b>PRIO_USER</b>, and&nbsp;<i>who</i>&nbsp;is interpreted relative to&nbsp;<i>which</i>&nbsp;(a process identifier for&nbsp;<b>PRIO_PROCESS</b>, process group identifier for&nbsp;<b>PRIO_PGRP</b>, and a user ID for&nbsp;<b>PRIO_USER</b>). A zero value for&nbsp;<i>who</i>&nbsp;denotes (respectively) the calling process, the process group of the calling process, or the real user ID of the calling process.&nbsp;<i>Prio</i>&nbsp;is a value in the range -20 to 19 (but see the Notes below). The default priority is 0; lower priorities cause more favorable scheduling.</p> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> The&nbsp;<b>getpriority</b>() call returns the highest priority (lowest numerical value) enjoyed by any of the specified processes. The&nbsp;<b>setpriority</b>() call sets the priorities of all of the specified processes to the specified value. Only the superuser may lower priorities.</p> 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> 返回值</h1> 
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">Since&nbsp;</span>
+ <b style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">getpriority</b>
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">() can legitimately return the value -1, it is necessary to clear the external variable&nbsp;</span>
+ <i style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">errno</i>
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">&nbsp;prior to the call, then check it afterwards to determine if a -1 is an error or a legitimate value. The&nbsp;</span>
+ <b style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">setpriority</b>
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">() call returns 0 if there is no error, or -1 if there is.</span> 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> 错误</h1> 
+ <div style="float:left;margin-bottom: 10px;">  
+ </div>
+ <div style="float:left;margin-bottom: 10px;">  
+ </div>
+ <table border="1" cellpadding="5" cellspacing="0" class="src" style="font-family: verdana, helvetica, arial, sans-serif; border: 1px solid rgb(170, 170, 170); width: 552px; background-color: rgb(241, 241, 241); border-collapse: collapse; padding-left: 5px; vertical-align: top; color: rgb(0, 0, 0);"> 
+  <tbody> 
+   <tr> 
+    <th style="background-color: rgb(205, 205, 205); border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" width="25%"> 标签</th> 
+    <th style="background-color: rgb(205, 205, 205); border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> 描述</th> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>EINVAL</b></td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" valign="bottom"> <i>which</i>&nbsp;was not one of&nbsp;<b>PRIO_PROCESS</b>,&nbsp;<b>PRIO_PGRP</b>, or<b>PRIO_USER</b>.</td> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>ESRCH</b></td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" valign="bottom"> No process was located using the&nbsp;<i>which</i>&nbsp;and&nbsp;<i>who</i>&nbsp;values specified.</td> 
+   </tr> 
+   <tr> 
+    <td colspan="2" style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> In addition to the errors indicated above,&nbsp;<b>setpriority</b>() may fail if:</td> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>EPERM</b></td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" valign="bottom"> A process was located, but its effective user ID did not match either the effective or the real user ID of the caller, and was not privileged (on Linux: did not have the&nbsp;<b>CAP_SYS_NICE</b>capability). But see NOTES below.</td> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>EACCES</b></td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" valign="bottom"> The caller attempted to lower a process priority, but did not have the required privilege (on Linux: did not have the<b>CAP_SYS_NICE</b>&nbsp;capability). Since Linux 2.6.12, this error only occurs if the caller attempts to set a process priority outside the range of the&nbsp;<b>RLIMIT_NICE</b>&nbsp;soft resource limit of the target process; see&nbsp;<b>getrlimit</b>(2) for details.</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> 注意</h1> 
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">A child created by&nbsp;</span>
+ <b style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">fork</b>
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">(2) inherits its parent’s nice value. The nice value is preserved across&nbsp;</span>
+ <b style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">execve</b>
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">(2).</span> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> The details on the condition for EPERM depend on the system. The above description is what POSIX.1-2001 says, and seems to be followed on all System V-like systems. Linux kernels before 2.6.12 required the real or effective user ID of the caller to match the real user of the process&nbsp;<i>who</i>&nbsp;(instead of its effective user ID). Linux 2.6.12 and later require the effective user ID of the caller to match the real or effective user ID of the process&nbsp;<i>who</i>. All BSD-like systems (SunOS 4.1.3, Ultrix 4.2, 4.3BSD, FreeBSD 4.3, OpenBSD-2.5, ...) behave in the same manner as Linux &gt;= 2.6.12.</p> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> The actual priority range varies between kernel versions. Linux before 1.3.36 had -infinity..15. Since kernel 1.3.43 Linux has the range -20..19. Within the kernel, nice values are actually represented using the corresponding range 40..1 (since negative numbers are error codes) and these are the values employed by the&nbsp;<b>setpriority</b>() and<b>getpriority</b>() system calls. The glibc wrapper functions for these system calls handle the translations between the user-land and kernel representations of the nice value according to the formula&nbsp;<i>unice = 20 - knice</i>.</p> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> On some systems, the range of nice values is -20..20.</p> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> Including&nbsp;<i>&lt;sys/time.h&gt;</i>&nbsp;is not required these days, but increases portability. (Indeed,<i>&lt;sys/resource.h&gt;</i>&nbsp;defines the&nbsp;<i>rusage</i>&nbsp;structure with fields of type&nbsp;<i>struct timeval</i>&nbsp;defined in&nbsp;<i>&lt;sys/time.h&gt;</i>.)</p> 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> 遵循于</h1> 
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">SVr4, 4.4BSD (these function calls first appeared in 4.2BSD), POSIX.1-2001.</span> 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> 另请参阅</h1> 
+ <ul style="font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> 
+  <li> <p style="text-align: justify;"> <a target="_blank" href="http://www.yiibai.com/unix_commands/nice.html" style="color: rgb(144, 11, 9); background-color: transparent;">nice (1)</a></p> </li> 
+  <li> <p style="text-align: justify;"> <a target="_blank" href="http://www.yiibai.com/unix_system_calls/fork.html" style="color: rgb(144, 11, 9); background-color: transparent;">fork (2)</a></p> </li> 
+  <li> <p style="text-align: justify;"> <a target="_blank" href="http://www.yiibai.com/unix_commands/renice.html" style="color: rgb(144, 11, 9); background-color: transparent;">renice (8)</a></p> </li> 
+ </ul> 
+ <br>      
+</div></body></html>

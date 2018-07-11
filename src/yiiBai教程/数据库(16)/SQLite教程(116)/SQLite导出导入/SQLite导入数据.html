@@ -1,0 +1,36 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">SQLite导入数据</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>可以使用sqlite3工具和<code>.import</code>命令将CSV文件导入SQLite表。此命令接受文件名和表名。</p> 
+ <p>这里，文件名是用于指定从哪里获取数据，表名是要导入数据的表。在没有指定表名的情况下，它将根据CSV文件中的数据自动创建表。</p> 
+ <h2 id="h2--csv-sqlite-"><a name="从CSV文件导入到SQLite表" class="reference-link"></a><span class="header-link octicon octicon-link"></span>从CSV文件导入到SQLite表</h2>
+ <p>看下面一个例子，将一个CSV文件：<code>data.csv</code>的内容导入到不存在的表中，在导入时指定新表名称为“<code>employee</code>”。 它将根据CSV文件的数据创建一个表。</p> 
+ <p>文件：<code>data.csv</code>的内容如下 -</p> 
+ <pre><code class="lang-shell">ID,NAME,AGE,ADDRESS,FEES
+1,Maxsu,26,Haikou,36000
+2,Minwang,25,Guangzhou,29900
+</code></pre> 
+ <p>执行以下导入命令 - </p> 
+ <pre><code class="lang-shell">.mode csv  
+.import D:/software/sqlite/data.csv employee
+</code></pre> 
+ <blockquote> 
+  <p><strong>注意：</strong> <code>.mode csv</code>在<code>.import</code>语句之前使用，以防止命令行实用程序尝试将输入文件文本解释为其他格式。</p> 
+ </blockquote> 
+ <p>现在检查表是否创建：</p> 
+ <p>可以看到创建了<code>employee</code>表，现在查看<code>employee</code>表中的数据：</p>   
+ <pre><code class="lang-sql">.mode column  
+SELECT * FROM EMPLOYEE;
+</code></pre> 
+ <p>完整执行结果如下 - </p> 
+ <pre><code class="lang-shell">sqlite&gt; .mode csv
+sqlite&gt; .import D:/software/sqlite/data.csv employee
+sqlite&gt;
+sqlite&gt; .tables
+audit       company     department  employee    student
+sqlite&gt;
+sqlite&gt; select * from employee;
+1,Maxsu,26,Haikou,36000
+2,Minwang,25,Guangzhou,29900
+sqlite&gt;
+</code></pre>
+ <br>      
+</div></body></html>

@@ -1,0 +1,72 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Spring Bean引用例子</h1><div style="width:100%;float:left;" class="article-content">   
+ <div> 
+  <div>
+    在Spring，bean可以“访问”对方通过bean配置文件指定相同或不同的引用。 
+  </div> 
+ </div> 
+ <div> 
+  <h2> 1.&nbsp;Bean在不同的XML文件 </h2> 
+  <div>
+    如果是在不同XML文件中的bean，可以用一个“ref”标签，“bean”属性引用它。 
+  </div> 
+  <pre>&lt;ref bean="someBean"/&gt;</pre> 
+  <div>
+    “CsvOutputGenerator”或“JsonOutputGenerator”通过属性标签使用'ref'属性，&nbsp;-&nbsp;在这个例子中，Bean&nbsp;“OutputHelper”&nbsp;在&nbsp;'Spring-Common.xml'&nbsp;声明可以访问其他 Bean在'Spring-Output.xml'。 
+  </div> 
+  <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:16px;"> <em>File : Spring-Common.xml</em> </p> 
+  <pre>&lt;beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-2.5.xsd"&gt;
+
+	&lt;bean id="OutputHelper" class="com.yiibai.output.OutputHelper"&gt;
+		&lt;property name="outputGenerator" &gt;
+			&lt;ref bean="CsvOutputGenerator"/&gt;
+		&lt;/property&gt;
+	&lt;/bean&gt;
+
+&lt;/beans&gt;</pre> 
+  <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:16px;"> <em>File : Spring-Output.xml</em> </p> 
+  <pre>&lt;beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-2.5.xsd"&gt;
+
+	&lt;bean id="CsvOutputGenerator" class="com.yiibai.output.impl.CsvOutputGenerator" /&gt;
+	&lt;bean id="JsonOutputGenerator" class="com.yiibai.output.impl.JsonOutputGenerator" /&gt;
+		
+&lt;/beans&gt;</pre> 
+  <h2> 2. 在同一个XML文件中的Bean </h2> 
+  <div>
+    如果引用在同一个XML文件中的bean，你可以用&nbsp;'ref'&nbsp;标签，“local”属性引用它。 
+  </div>   
+  <pre>&lt;ref local="someBean"/&gt;</pre> 
+  <div>
+    在这个例子中，Bean&nbsp;“OutputHelper”&nbsp;在&nbsp;'Spring-Common.xml'&nbsp;声明可以相互访问“CsvOutputGenerator”或“JsonOutputGenerator”。 
+  </div> 
+  <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:16px;"> <em>File : Spring-Common.xml</em> </p> 
+  <pre>&lt;beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-2.5.xsd"&gt;
+
+	&lt;bean id="OutputHelper" class="com.yiibai.output.OutputHelper"&gt;
+		&lt;property name="outputGenerator" &gt;
+			&lt;ref local="CsvOutputGenerator"/&gt;
+		&lt;/property&gt;
+	&lt;/bean&gt;
+	
+	&lt;bean id="CsvOutputGenerator" class="com.yiibai.output.impl.CsvOutputGenerator" /&gt;
+	&lt;bean id="JsonOutputGenerator" class="com.yiibai.output.impl.JsonOutputGenerator" /&gt;
+		
+&lt;/beans&gt;</pre> 
+  <h2> 
+   <div>
+     总结 
+   </div> </h2> 
+  <div>
+    其实，无论是在相同或不同的XML文件，“ref”&nbsp;标签可以访问一个bean，但是，对于该项目的可读性，如果引用了相同的&nbsp;XML文件中声明&nbsp;bean，您应该使用“local”属性。 
+  </div> 
+ </div>
+ <br>      
+</div></body></html>

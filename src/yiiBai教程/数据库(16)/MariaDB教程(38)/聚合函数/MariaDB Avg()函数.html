@@ -1,0 +1,127 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">MariaDB Avg()函数</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>MariaDB <code>Avg()</code>函数用于检索表达式的平均值。</p> 
+ <p><strong>语法：</strong></p> 
+ <pre><code class="lang-sql">SELECT AVG(aggregate_expression)  
+FROM tables  
+[WHERE conditions];
+</code></pre> 
+ <p>或者 - </p> 
+ <pre><code class="lang-sql">SELECT expression1, expression2, ... expression_n,  
+AVG(aggregate_expression)  
+FROM tables  
+[WHERE conditions]  
+GROUP BY expression1, expression2, ... expression_n;
+</code></pre> 
+ <p><em>数据准备</em></p> 
+ <p>在<code>"testdb"</code>数据库中创建一个<code>"students"</code>表，并插入一些数据。参考以下创建语句 -</p> 
+ <pre><code class="lang-sql">USE testdb;
+DROP TABLE students;
+-- 创建新表
+CREATE TABLE students(  
+    student_id INT NOT NULL AUTO_INCREMENT,  
+    student_name VARCHAR(100) NOT NULL,  
+    student_address VARCHAR(40) default NULL, 
+    admission_date DATE,
+    score float(4, 1) default NULL, 
+    PRIMARY KEY ( student_id )
+);
+-- 插入数据
+INSERT INTO students  
+(student_id, student_name, student_address,score, admission_date)  
+VALUES(1,'Maxsu','Haikou', 99.5,'2017-01-07 00:00:00');
+
+INSERT INTO students  
+(student_id, student_name, student_address, score, admission_date)  
+VALUES  
+(2,'Crurry','Beijing',86,'2016-05-07 00:00:00'),
+(3,'JMaster','Beijing',91,'2016-05-07 00:00:00'),  
+(4,'Mahesh','Guangzhou',78,'2016-06-07 00:00:00'),  
+(5,'Kobe','Shanghai',89,'2016-02-07 00:00:00'),  
+(6,'Blaba','Shengzhen',100,'2016-08-07 00:00:00');
+</code></pre> 
+ <h4 id="h4-1-avg-"><a name="1. AVG()函数与单表达式" class="reference-link"></a><span class="header-link octicon octicon-link"></span>1. AVG()函数与单表达式</h4>
+ <p><strong>示例：</strong></p> 
+ <p>查询<code>Student</code>表的平均分数。参考以下查询语句 - </p> 
+ <pre><code class="lang-sql">SELECT AVG(Score) AS "Average  Score" FROM students;
+</code></pre> 
+ <p>执行上面查询语句，得到以下结果 - </p> 
+ <pre><code class="lang-shell">MariaDB [testdb]&gt; SELECT AVG(Score) AS "Average  Score" FROM students;
++----------------+
+| Average  Score |
++----------------+
+|       90.58333 |
++----------------+
+1 row in set (0.04 sec)
+</code></pre> 
+ <h4 id="h4-2-avg-"><a name="2. AVG()函数与公式" class="reference-link"></a><span class="header-link octicon octicon-link"></span>2. AVG()函数与公式</h4>
+ <p>也可以在<code>AVG()</code>函数使用数学公式。 例如，如果要将学生的平均成绩提高50％，则可以使用以下公式来计算：</p> 
+ <p>当前数据库中的记录如下 - </p> 
+ <pre><code class="lang-sql">MariaDB [testdb]&gt; select * from students;
++------------+--------------+-----------------+----------------+-------+
+| student_id | student_name | student_address | admission_date | score |
++------------+--------------+-----------------+----------------+-------+
+|          1 | Maxsu        | Haikou          | 2017-01-07     |  99.5 |
+|          2 | Crurry       | Beijing         | 2016-05-07     |  86.0 |
+|          3 | JMaster      | Beijing         | 2016-05-07     |  91.0 |
+|          4 | Mahesh       | Guangzhou       | 2016-06-07     |  78.0 |
+|          5 | Kobe         | Shanghai        | 2016-02-07     |  89.0 |
+|          6 | Blaba        | Shengzhen       | 2016-08-07     | 100.0 |
++------------+--------------+-----------------+----------------+-------+
+6 rows in set (0.07 sec)
+</code></pre> 
+ <p><strong>示例：</strong></p> 
+ <pre><code class="lang-sql">SELECT AVG(score * 1.5) AS "New Score"  FROM students;
+</code></pre> 
+ <p>执行上面查询语句，得到以下结果 - </p>   
+ <pre><code class="lang-shell">MariaDB [testdb]&gt; SELECT AVG(score * 1.5) AS "New Score"  FROM students;
++-----------+
+| New Score |
++-----------+
+| 135.87500 |
++-----------+
+1 row in set (0.01 sec)
+</code></pre> 
+ <h4 id="h4-2-avg-order-by-"><a name="2. AVG()函数与Order By子句" class="reference-link"></a><span class="header-link octicon octicon-link"></span>2. AVG()函数与Order By子句</h4>
+ <p>为了更容易说明问题，这里再插入一条记录 - </p> 
+ <pre><code class="lang-sql">INSERT INTO students  
+(student_name, student_address,score, admission_date)  
+VALUES('Maxsu','Haikou', 90,'2017-11-17 00:00:00');
+</code></pre> 
+ <p>当前<code>students</code>表中，有以下数据 - </p> 
+ <pre><code class="lang-sql">MariaDB [testdb]&gt; select * from students;
++------------+--------------+-----------------+----------------+-------+
+| student_id | student_name | student_address | admission_date | score |
++------------+--------------+-----------------+----------------+-------+
+|          1 | Maxsu        | Haikou          | 2017-01-07     |  99.5 |
+|          2 | Crurry       | Beijing         | 2016-05-07     |  86.0 |
+|          3 | JMaster      | Beijing         | 2016-05-07     |  91.0 |
+|          4 | Mahesh       | Guangzhou       | 2016-06-07     |  78.0 |
+|          5 | Kobe         | Shanghai        | 2016-02-07     |  89.0 |
+|          6 | Blaba        | Shengzhen       | 2016-08-07     | 100.0 |
+|          7 | Maxsu        | Haikou          | 2017-11-17     |  90.0 |
++------------+--------------+-----------------+----------------+-------+
+7 rows in set (0.00 sec)
+</code></pre> 
+ <p>参考下查询语句 - </p> 
+ <pre><code class="lang-sql">SELECT student_name, AVG(score) AS "Average Salary"  
+FROM students  
+GROUP BY student_name;
+</code></pre> 
+ <p>执行上面查询语句，得到以下结果 -</p> 
+ <pre><code class="lang-shell">MariaDB [testdb]&gt; SELECT student_name, AVG(score) AS "Average Salary"
+    -&gt; FROM students
+    -&gt; GROUP BY student_name;
++--------------+----------------+
+| student_name | Average Salary |
++--------------+----------------+
+| Blaba        |      100.00000 |
+| Crurry       |       86.00000 |
+| JMaster      |       91.00000 |
+| Kobe         |       89.00000 |
+| Mahesh       |       78.00000 |
+| Maxsu        |       94.75000 |
++--------------+----------------+
+6 rows in set (0.02 sec)
+</code></pre>
+ <br>      
+</div></body></html>

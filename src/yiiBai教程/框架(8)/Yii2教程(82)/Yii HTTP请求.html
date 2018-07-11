@@ -1,0 +1,148 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Yii HTTP请求</h1><div style="width:100%;float:left;" class="article-content">   
+ <div> 
+  <div>
+    Requests是&nbsp;yii\web\Request&nbsp;对象的表示，它提供了HTTP头，请求参数，Cookies等信息。 
+  </div> 
+ </div> 
+ <div> 
+  <div>
+    get()&nbsp;和&nbsp;post()方法返回请求组件的请求参数。 
+  </div> 
+  <p style="text-align:justify;"> 示例&nbsp;− </p> 
+  <pre>$req = Yii::$app-&gt;request;
+   /*
+   * $get = $_GET;
+   */
+   $get = $req-&gt;get();
+
+   /*
+   * if(isset($_GET['id'])) {
+   *     $id = $_GET['id'];
+   * } else {
+   *     $id = null;
+   * }
+   */
+   $id = $req-&gt;get('id');
+	
+   /*
+   * if(isset($_GET['id'])) {
+   *     $id = $_GET['id'];
+   * } else {
+   *     $id = 1;
+   * }
+   */
+   $id = $req-&gt;get('id', 1);
+	
+   /*
+   * $post = $_POST;
+	*/
+   $post = $req-&gt;post();
+
+   /*
+   * if(isset($_POST['name'])) {       
+   *     $name = $_POST['name'];          
+   * } else {
+   *     $name = null;
+   * }
+   */
+   $name = $req-&gt;post('name');
+		  
+   /*
+   * if(isset($_POST['name'])) {
+   *     $name = $_POST['name'];
+   * } else {
+   *     $name = '';
+   * }
+   */
+   $name = $req-&gt;post('name', '');</pre> 
+  <div>
+    第1步&nbsp;-&nbsp;添加一个&nbsp;actionTestGet&nbsp;函数到基本应用程序模板的控制器&nbsp;SiteController&nbsp;中。 
+  </div> 
+  <pre>public function actionTestGet() {
+   var_dump(Yii::$app-&gt;request-&gt;get());
+}&nbsp;</pre> 
+  <p style="text-align:justify;"> 第2步&nbsp;-&nbsp;现在打开URL=&gt;&nbsp;<a target="_blank" href="http://localhost:8080/index.php?r=site/test-get&amp;id=1&amp;name=yiibai&amp;message=welcome">http://localhost:8080/index.php?r=site/test-get&amp;id=1&amp;name=yiibai&amp;message=welcome</a>&nbsp;,&nbsp;<br> 你会看到以下内容。 </p> 
+  <p style="text-align:justify;"> <img src="/uploads/tutorial/20160526/1-160526222915136.png" alt=""><br> 要检索的另一个请求方法的参数&nbsp;(PATCH, DELETE, etc.), 使用&nbsp;yii\web\Request::getBodyParam()&nbsp;方法。 </p> 
+  <p style="text-align:justify;"> 要获得当前请求的HTTP方法，使用Yii::$app→request→method&nbsp;属性. </p> 
+  <div>
+    第3步&nbsp;-&nbsp;修改&nbsp;actionTestGet&nbsp;函数，如下面的代码。 
+  </div> 
+  <pre>public function actionTestGet() {
+   $req = Yii::$app-&gt;request;
+   if ($req-&gt;isAjax) {
+      echo "the request is AJAX";
+   }
+   if ($req-&gt;isGet) {
+      echo "the request is GET";
+   }
+   if ($req-&gt;isPost) {
+      echo "the request is POST";
+   }
+   if ($req-&gt;isPut) {
+      echo "the request is PUT";
+   }
+}&nbsp;</pre> 
+  <p style="text-align:justify;"> 第4步&nbsp;-&nbsp;转到&nbsp;http://localhost:8080/index.php?r=site/test-get . <br> 你会看到结果如下所示： </p> 
+  <div> 
+   <img src="/uploads/tutorial/20160526/1-160526222940104.png" alt="">
+   <br> 所请求的组件提供了很多属性来检查请求的URL。 
+  </div> 
+  <div>
+    第5步&nbsp;-&nbsp;修改&nbsp;actionTestGet&nbsp;函数如下。 
+  </div> 
+  <pre>public function actionTestGet() {
+   //the URL without the host
+   var_dump(Yii::$app-&gt;request-&gt;url);
+   
+   //the whole URL including the host path
+   var_dump(Yii::$app-&gt;request-&gt;absoluteUrl);
+   
+   //the host of the URL
+   var_dump(Yii::$app-&gt;request-&gt;hostInfo);
+   
+   //the part after the entry script and before the question mark
+   var_dump(Yii::$app-&gt;request-&gt;pathInfo);
+   
+   //the part after the question mark
+   var_dump(Yii::$app-&gt;request-&gt;queryString);
+   
+   //the part after the host and before the entry script
+   var_dump(Yii::$app-&gt;request-&gt;baseUrl);
+   
+   //the URL without path info and query string
+   var_dump(Yii::$app-&gt;request-&gt;scriptUrl);
+   
+   //the host name in the URL
+   var_dump(Yii::$app-&gt;request-&gt;serverName);
+   
+   //the port used by the web server
+   var_dump(Yii::$app-&gt;request-&gt;serverPort);
+}&nbsp;</pre> 
+  <p style="text-align:justify;"> 第6步-在Web浏览器地址栏中输入URL=&gt;<strong>http://localhost:8080/index.php?r=site/testget&amp;id=1&amp;name=yiibai&amp;message=welcome</strong>,&nbsp;<br> 你会看到以下内容。 </p> 
+  <p style="text-align:justify;"> <img src="/uploads/tutorial/20160526/1-16052622300GP.png" alt="Yii HTTP请求"><br> 第7步&nbsp;-&nbsp;要获得HTTP头信息，&nbsp;需要使用&nbsp;yii\web\Request::$headers&nbsp;属性.&nbsp;修改&nbsp;actionTestGet&nbsp;这样的动作。 </p>   
+  <pre>public function actionTestGet() { 
+   var_dump(Yii::$app-&gt;request-&gt;headers); 
+}&nbsp;</pre> 
+  <p style="text-align:justify;"> 第8步-如果你打开网址URL=&gt;http://localhost:8080/index.php?r=site/testget&amp;id=1&amp;name=yiibai&amp;message=welcome,&nbsp;<br> 你会看到如图所示的代码输出。 </p> 
+  <div>
+    要获得主机名和客户机的IP地址，使用&nbsp;userHost&nbsp;和userIP&nbsp;属性。 
+  </div> 
+  <div> 
+   <img src="/uploads/tutorial/20160526/1-160526223033P7.png" alt="">
+   <br> 第9步&nbsp;-&nbsp;需要像这样修改&nbsp;actionTestGet&nbsp;函数。 
+  </div> 
+  <pre>public function actionTestGet() {
+   var_dump(Yii::$app-&gt;request-&gt;userHost);
+   var_dump(Yii::$app-&gt;request-&gt;userIP);
+}</pre> 
+  <div>
+    第10步-&nbsp;转到地址URL=&gt;&nbsp;
+   <a target="_blank" href="http://localhost:8080/index.php?r=site/test-get">http://localhost:8080/index.php?r=site/test-get</a>&nbsp;，
+   <br> 会看到下面的输出结果：
+   <br> 
+   <img src="/uploads/tutorial/20160526/1-160526223053Z9.png" alt="">
+   <br> 
+  </div> 
+ </div>
+ <br>      
+</div></body></html>

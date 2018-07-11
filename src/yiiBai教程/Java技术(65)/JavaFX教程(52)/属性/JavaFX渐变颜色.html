@@ -1,0 +1,291 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">JavaFX渐变颜色</h1><div style="width:100%;float:left;" class="article-content">   
+ <h2 id="h2-javafx-"><a name="JavaFX渐变颜色" class="reference-link"></a><span class="header-link octicon octicon-link"></span>JavaFX渐变颜色</h2>
+ <p>可以使用径向渐变使形状看起来三维(立体)。</p> 
+ <p>梯度绘制可以在两种或更多种颜色之间内插，这给出形状的深度。<strong>JavaFX</strong>提供两种类型的渐变：径向渐变(<code>RadialGradient</code>)和线性渐变(<code>LinearGradient</code>)。</p> 
+ <p>要在JavaFX中创建渐变颜色，需要设置五个属性值。如下 -</p> 
+ <ul> 
+  <li>设置开始起点的第一个停止颜色。</li>
+  <li>将终点设置为终止停止颜色。</li>
+  <li>设置<code>proportional</code>属性以指定是使用标准屏幕坐标还是单位平方坐标。</li>
+  <li>将循环方法设置为使用三个枚举：<code>NO_CYCLE</code>，<code>REFLECT</code>或<code>REPEAT</code>。</li>
+  <li>设置停止颜色数组。</li>
+ </ul> 
+ <p>通过将<code>proportional</code>属性设置为<code>false</code>，可以基于标准屏幕(<code>x</code>，<code>y</code>)坐标将渐变轴设置为起点和终点。</p> 
+ <p>通过将<code>proportional</code>属性设置为<code>true</code>，梯度轴线开始点和结束点将被表示为单位平方坐标。 开始点和结束点的<code>x</code>，<code>y</code>坐标必须在<code>0.0</code>和<code>1.0</code>之间(<code>double</code>)。</p> 
+ <h2 id="h2--lineargradient-"><a name="线性梯度(LinearGradient)" class="reference-link"></a><span class="header-link octicon octicon-link"></span>线性梯度(LinearGradient)</h2>
+ <p>要创建线性渐变涂料，为开始点和结束点指定<code>startX</code>，<code>startY</code>，<code>endX</code>和<code>endY</code>。起点和终点坐标指定渐变模式开始和停止的位置。</p> 
+ <p>下表列出了<code>LinearGradient</code>属性值 - </p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>属性</th> 
+    <th>数据类型及描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>startX</td> 
+    <td><code>Double</code> - 设置梯度轴起点的<code>X</code>坐标。</td> 
+   </tr> 
+   <tr> 
+    <td>startY</td> 
+    <td><code>Double</code> - 设置梯度轴起点的<code>Y</code>坐标。</td> 
+   </tr> 
+   <tr> 
+    <td>endX</td> 
+    <td><code>Double</code> - 设置梯度轴终点的<code>X</code>坐标。</td> 
+   </tr> 
+   <tr> 
+    <td>endY</td> 
+    <td><code>Double</code> - 设置梯度轴终点的<code>Y</code>坐标</td> 
+   </tr> 
+   <tr> 
+    <td>proportional</td> 
+    <td><code>Boolean</code> - 设置坐标是否与形状成比例。设置为<code>true</code>时则使用单位正方形坐标，否则使用屏幕坐标系。</td> 
+   </tr> 
+   <tr> 
+    <td>cycleMethod</td> 
+    <td><code>CycleMethod</code> - 设置应用于渐变的循环方法。</td> 
+   </tr> 
+   <tr> 
+    <td>stops</td> 
+    <td><code>List&lt;Stop&gt;</code> - 设置渐变颜色指定的停止列表。</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p>以下代码显示了如何使用线性渐变来绘制矩形。</p> 
+ <pre><code class="lang-java">import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.CycleMethod;
+import javafx.scene.paint.LinearGradient;
+import javafx.scene.paint.Stop;
+import javafx.scene.shape.Rectangle;
+import javafx.stage.Stage;
+
+
+public class Main extends Application {
+
+    @Override
+    public void start(Stage stage) {
+        VBox box = new VBox();
+        final Scene scene = new Scene(box, 300, 250);
+        scene.setFill(null);
+        Stop[] stops = new Stop[] { new Stop(0, Color.BLACK), new Stop(1, Color.RED) };
+        LinearGradient lg1 = new LinearGradient(0, 0, 1, 0, true, CycleMethod.NO_CYCLE, stops);
+
+        Rectangle r1 = new Rectangle(0, 0, 100, 100);
+        r1.setFill(lg1);
+
+        box.getChildren().add(r1);
+
+        stage.setScene(scene);
+        stage.show();
+    }
+
+    public static void main(String[] args) {
+        launch(args);
+    }
+}
+</code></pre> 
+ <p>上面的代码生成以下结果。</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201701/11/671170124_33451.png" alt=""></p> 
+ <h2 id="h2-u5F84u5411u6E10u53D8"><a name="径向渐变" class="reference-link"></a><span class="header-link octicon octicon-link"></span>径向渐变</h2>
+ <p>下表列出了<code>RadialGradient</code>属性。</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>属性</th> 
+    <th>数据类型及描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>focusAngle</td> 
+    <td><code>Double</code> - 设置从渐变中心到映射第一种颜色的焦点的角度(以度为单位)。</td> 
+   </tr> 
+   <tr> 
+    <td>focusDistance</td> 
+    <td><code>Double</code> - 设置从渐变中心到映射第一种颜色的焦点的距离。</td> 
+   </tr> 
+   <tr> 
+    <td>centerX</td> 
+    <td><code>Double</code> - 设置渐变圆的中心点的<code>X</code>坐标。</td> 
+   </tr> 
+   <tr> 
+    <td>centerY</td> 
+    <td><code>Double</code> - 设置渐变圆的中心点的<code>Y</code>坐标。</td> 
+   </tr> 
+   <tr> 
+    <td>radius</td> 
+    <td><code>Double</code> - 设置颜色渐变的圆的半径。</td> 
+   </tr> 
+   <tr> 
+    <td>proportional</td> 
+    <td><code>boolean</code> - 设置坐标和大小与形状成比例。</td> 
+   </tr> 
+   <tr> 
+    <td>cycleMethod</td> 
+    <td><code>CycleMethod</code> - 设置应用于渐变的Cycle方法。</td> 
+   </tr> 
+   <tr> 
+    <td>Stops</td> 
+    <td><code>List&lt;Stop&gt;</code> - 设置渐变颜色的停止列表</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p>现在来看看下面的示例代码 -</p> 
+ <pre><code class="lang-java">import javafx.application.Application;
+import javafx.scene.Group;
+import javafx.scene.Scene;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.CycleMethod;
+import javafx.scene.paint.RadialGradient;
+import javafx.scene.paint.Stop;
+import javafx.scene.shape.Circle;
+import javafx.stage.Stage;
+// =&gt; w W  w .y i IB  A I .C O   M
+public class Main extends Application {
+    static int dx = 1;
+    static int dy = 1;
+
+    public static void main(String[] args) {
+        Application.launch(args);
+    }
+
+    @Override
+    public void start(final Stage primaryStage) {
+        primaryStage.setTitle("Animation");
+        Group root = new Group();
+        Scene scene = new Scene(root, 400, 300, Color.WHITE);
+
+        primaryStage.setScene(scene);
+        addBouncyBall(scene); 
+        primaryStage.show();
+    }
+    private void addBouncyBall(final Scene scene) {
+        final Circle ball = new Circle(100, 100, 20);
+
+        RadialGradient gradient1 = new RadialGradient(0,
+            .1,
+            100,
+            100,
+            20,
+            false,
+            CycleMethod.NO_CYCLE,
+            new Stop(0, Color.RED),
+            new Stop(1, Color.BLACK));
+
+        ball.setFill(gradient1);
+
+        final Group root = (Group) scene.getRoot();
+        root.getChildren().add(ball);
+
+    }
+}
+</code></pre> 
+ <p>上面的代码生成以下结果。</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201701/12/350080147_48446.png" alt=""></p> 
+ <h2 id="h2-u534Au900Fu660Eu6E10u53D8"><a name="半透明渐变" class="reference-link"></a><span class="header-link octicon octicon-link"></span>半透明渐变</h2>  
+ <pre><code class="lang-java">import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.CycleMethod;
+import javafx.scene.paint.LinearGradient;
+import javafx.scene.paint.Stop;
+import javafx.scene.shape.Rectangle;
+import javafx.stage.Stage;
+
+public class Main extends Application {
+// from W w w . y i I b a I. C o M
+    @Override
+    public void start(Stage stage) {
+        VBox box = new VBox();
+        final Scene scene = new Scene(box,300, 250);
+        scene.setFill(null);
+        // A rectangle filled with a linear gradient with a translucent color.
+        Rectangle rectangle = new Rectangle();
+        rectangle.setX(50);
+        rectangle.setY(50);
+        rectangle.setWidth(100);
+        rectangle.setHeight(70);
+
+        LinearGradient linearGrad = new LinearGradient(
+                0,   // start X 
+                0,   // start Y
+                0,   // end X
+                1, // end Y
+                true, // proportional
+                CycleMethod.NO_CYCLE, // cycle colors
+                // stops
+                new Stop(0.1f, Color.rgb(25, 200, 0, .4)),
+                new Stop(1.0f, Color.rgb(0, 0, 0, .1)));
+        rectangle.setFill(linearGrad);
+
+        box.getChildren().add(rectangle);
+
+        stage.setScene(scene);
+        stage.show();
+    }
+
+    public static void main(String[] args) {
+        launch(args);
+    }
+}
+</code></pre> 
+ <p>上面的代码生成以下结果。</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201701/12/412080151_79868.png" alt=""></p> 
+ <h2 id="h2-u53CDu5C04u5FAAu73AFu6E10u53D8"><a name="反射循环渐变" class="reference-link"></a><span class="header-link octicon octicon-link"></span>反射循环渐变</h2>
+ <p>以下代码使用在对角方向上的绿色和黑色创建具有渐变的重复图案的矩形。开始点(<code>X</code>，<code>Y</code>)和结束点(<code>X</code>，<code>Y</code>)值设置在对角线位置，循环方法设置为反射<code>CycleMethod.REFLECT</code>。</p> 
+ <p><code>CycleMethod.REFLECT</code>使梯度图案在停止颜色之间重复或循环。</p> 
+ <pre><code class="lang-java">import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.CycleMethod;
+import javafx.scene.paint.LinearGradient;
+import javafx.scene.paint.Stop;
+import javafx.scene.shape.Rectangle;
+import javafx.stage.Stage;
+
+public class Main extends Application {
+
+  @Override
+  public void start(Stage stage) {
+    VBox box = new VBox();
+    final Scene scene = new Scene(box, 300, 250);
+    scene.setFill(null);
+    // A rectangle filled with a linear gradient with a translucent color.
+    Rectangle rectangle = new Rectangle();
+    rectangle.setX(50);
+    rectangle.setY(50);
+    rectangle.setWidth(100);
+    rectangle.setHeight(70);
+
+    LinearGradient cycleGrad = new LinearGradient(50, // start X
+        50, // start Y
+        70, // end X
+        70, // end Y
+        false, // proportional
+        CycleMethod.REFLECT, // cycleMethod
+        new Stop(0f, Color.rgb(21, 25, 0, .784)), new Stop(1.0f, Color.rgb(0,
+            210, 0, .784)));
+    rectangle.setFill(cycleGrad);
+
+    box.getChildren().add(rectangle);
+
+    stage.setScene(scene);
+    stage.show();
+  }
+
+  public static void main(String[] args) {
+    launch(args);
+  }
+}
+</code></pre> 
+ <p>上面的代码生成以下结果。</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201701/12/414080155_96076.png" alt=""></p>
+ <br>      
+</div></body></html>

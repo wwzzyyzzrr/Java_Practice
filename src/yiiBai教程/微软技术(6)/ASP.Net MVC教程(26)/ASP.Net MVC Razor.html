@@ -1,0 +1,132 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">ASP.Net MVC Razor</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>在本章中，我们来看看ASP.NET MVC应用程序中的Razor视图引擎以及为什么使用Razor的一些原因。 Razor是一种标记语法，可以让您使用 C# 和VB.Net将基于服务器的代码嵌入到网页中。 这不是一种编程语言。 这是一个服务器端标记语言。</p> 
+ <p>Razor与ASP.NET MVC没有任何关系，因为Razor是一个通用的模板引擎。 您可以在任何地方使用它来生成像HTML一样的输出。 只是ASP.NET MVC实现了一个视图引擎，它允许在MVC应用程序内部使用Razor来生成HTML。<br><img src="http://www.yiibai.com/uploads/images/201712/1812/277081244_11405.jpg" alt=""></p> 
+ <p>假设有一个模板文件，它是一些文字和一些代码块的混合体。可以将该模板与一些数据或模板指定数据应该出现的位置的特定模型相结合，然后执行模板以生成输出。</p> 
+ <h2 id="h2-razor-vs-aspx"><a name="Razor Vs ASPX" class="reference-link"></a><span class="header-link octicon octicon-link"></span>Razor Vs ASPX</h2>
+ <ul> 
+  <li>Razor与ASPX文件的工作方式非常相似。ASPX文件是模板，其中包含文本文本和一些 C# 代码，指定数据应该出现的位置。执行这些来为应用程序生成HTML。</li>
+  <li>ASPX文件依赖ASP.NET运行时来解析和执行这些ASPX文件。Razor没有这样的依赖关系。</li>
+  <li>与ASPX文件不同，Razor有一些不同的设计目标。</li>
+ </ul> 
+ <h2 id="h2-u76EEu6807"><a name="目标" class="reference-link"></a><span class="header-link octicon octicon-link"></span>目标</h2>
+ <p>微软希望Razor易于使用，易于学习，并且可以在Visual Studio等工具中使用，因此<em>IntelliSense</em> 和调试器可用，但他们希望Razor与特定技术(如ASP.NET或 ASP.NET MVC)绑定关联。</p> 
+ <p>如果熟悉ASPX文件的生命周期，那么可能会意识到，ASP.NET运行时可以解析和执行这些ASPX文件。 微软希望Razor聪明，让开发人员的工作更轻松。</p> 
+ <p>下面来看一个ASPX文件中的示例代码，它包含一些文本文本。这是HTML标记，包含一点 C# 代码。</p> 
+ <pre><code class="lang-csharp">&lt;% foreach (var item in Model) { %&gt;
+   &lt;tr&gt;
+      &lt;td&gt;
+         &lt;%: Html.ActionLink("Edit", "Edit", new { id = item.ID })%&gt; |
+         &lt;%: Html.ActionLink("Details", "Details", new { id = item.ID }) %&gt;|
+         &lt;%: Html.ActionLink("Delete", "Delete", new { id = item.ID })%&gt;
+      &lt;/td&gt;
+
+      &lt;td&gt;
+         &lt;%: item.Name %&gt;
+      &lt;/td&gt;
+
+      &lt;td&gt;
+         &lt;%: String.Format("{0,g}", item.JoiningDate) %&gt;
+      &lt;/td&gt;
+
+   &lt;/tr&gt;
+&lt;%}%&gt;
+</code></pre> 
+ <p>但是这些Web表单基本上是由微软重新使用的，与MVC的早期版本一起工作，这意味着ASPX文件从来不是MVC的完美搭配。</p> 
+ <p>当您需要从 C# 代码转换回HTML代码，或者从HTML代码转换回 C# 代码时，语法有点笨拙。 <em>IntelliSense</em>也会提示您执行一些在MVC项目中没有意义的事情，例如将输出缓存和用户控件的指令添加到ASPX视图中。</p> 
+ <p>现在看看这个产生相同输出的代码，不同之处在于它使用的是Razor语法。</p> 
+ <pre><code class="lang-html">@foreach (var item in Model) {
+   &lt;tr&gt;
+      &lt;td&gt;
+         @Html.ActionLink("Edit", "Edit", new { id = item.ID }) |
+         @Html.ActionLink("Details", "Details", new { id = item.ID }) |
+         @Html.ActionLink("Delete", "Delete", new { id = item.ID })
+      &lt;/td&gt;
+
+      &lt;td&gt;
+         @item.Name
+      &lt;/td&gt;
+
+      &lt;td&gt;
+         @String.Format("{0,g}", item.JoiningDate)
+      &lt;/td&gt;
+   &lt;/tr&gt;
+}
+</code></pre> 
+ <p>使用Razor语法，可以使用<code>'@'</code>符号开始编写 C# 代码，Razor解析会自动切换到解析这个语句，这个<code>foreach</code>语句，解析作为 C# 代码。</p> 
+ <p>但是，当我们完成了<code>foreach</code>语句，并且使用大括号的时候，可以从 C# 代码转换成HTML，而不用在里面放置一个明确的标记，就像尖括号中的百分比。</p> 
+ <p>Razor解析器足够聪明，可以在 C# 代码和HTML之间进行切换，而当将大括号放在这里时，再次从HTML切换回 C# 代码。如果比较这两个代码块，您会发现Razor版本更易于阅读和编写。</p> 
+ <h2 id="h2--razor-"><a name="使用Razor创建视图" class="reference-link"></a><span class="header-link octicon octicon-link"></span>使用Razor创建视图</h2>
+ <p>下面我们来创建一个新的ASP.Net MVC项目。</p> 
+ <p>在名称字段中输入项目的名称：<em>MVCRazor</em>，然后单击<em>确定</em>。如下图所示 -<br><img src="http://www.yiibai.com/uploads/images/201712/1812/355091206_13467.png" alt=""></p> 
+ <p>为了简单起见，选择 <em>空</em> 选项并在<em>为以下项添加文件夹和核心引用</em> 部分选中MVC复选框，然后单击<em>确定</em>。 它将使用最少的预定义内容创建一个基本的MVC项目。</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201712/1812/205091208_28500.png" alt=""></p> 
+ <p>项目创建后，将在“解决方案资源管理器”窗口中看到许多文件和文件夹。 因为我们已经从一个空的项目模板创建了ASP.Net MVC项目，所以目前应用程序不包含任何要运行的东西。 由于从一个空应用程序开始，甚至没有一个控制器，所以需要手动添加一个控制器：<em>HomeController</em> 。</p> 
+ <p>要添加控制器，请右键单击<em>解决方案资源管理器</em> 中的<em>Controllers</em> 文件夹，然后选择:<em>添加</em> -&gt; <em>控制器</em> ，它将显示<em>“添加基架”</em> 对话框。<br><img src="http://www.yiibai.com/uploads/images/201712/1812/134091211_85283.png" alt=""></p> 
+ <p>选择<em>MVC 5控制器 - 空</em> 选项，然后单击<em>添加</em> 按钮，然后添加控制器对话框将出现。<br><img src="http://www.yiibai.com/uploads/images/201712/1812/346091212_22063.png" alt=""></p> 
+ <p>将名称设置为：<em>HomeController</em>，然后单击“添加”按钮。在<em>Controllers</em> 文件夹中看到一个新的 C# 文件：<em>HomeController.cs</em>，在Visual Studio中打开并进行编辑。代码如下所示 - </p>   
+ <pre><code class="lang-csharp">using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+
+namespace MVCRazor.Controllers
+{
+    public class HomeController : Controller
+    {
+        // GET: Home
+        public ActionResult Index()
+        {
+            return View();
+        }
+    }
+}
+</code></pre> 
+ <p>右键单击<em>Index</em>操作方法，然后选择<em>添加视图…</em> ，如下所示 -<br><img src="http://www.yiibai.com/uploads/images/201712/1812/997091216_80734.png" alt=""></p> 
+ <p>从模板下拉列表中选择<em>Empty</em>，然后点击<em>添加</em> 按钮。 Visual Studio将在<code>View/Home</code>文件夹中创建一个<code>Index.cshtml</code>文件。内容如下所示 - </p> 
+ <pre><code class="lang-html">@{
+    Layout = null;
+}
+
+&lt;!DOCTYPE html&gt;
+
+&lt;html&gt;
+&lt;head&gt;
+    &lt;meta name="viewport" content="width=device-width" /&gt;
+    &lt;title&gt;Index&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div&gt; 
+    &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>请注意，Razor视图有一个<code>cshtml</code>扩展名。 如果使用Visual Basic构建MVC应用程序，它将是一个<code>VBHTML</code>扩展。在这个文件的顶部是一个代码块，它将这个<code>Layout</code>属性显式地设置为<code>null</code>。</p> 
+ <p>当运行这个应用程序，会看到空白的网页，因为我们已经创建了一个空模板的视图。</p> 
+ <p>下面添加一些 C# 代码。要在Razor视图中编写一些 C# 代码，要做的第一件事就是输入<code>"@"</code>符号，告诉解析器它将在代码中执行某些操作。</p> 
+ <p>创建一个<code>FOR</code>循环，在大括号内指定<code><a target="_blank" href="https://github.com/index" title="@index" class="at-link">@index</a></code>，这实质上是告诉 Razor 存储变量<code>index</code>的值。</p> 
+ <pre><code class="lang-html">@{
+    Layout = null;
+}
+
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;meta name="viewport" content="width = device-width" /&gt;
+    &lt;title&gt;第一个Razor示例&lt;/title&gt;
+&lt;/head&gt;
+
+&lt;body&gt;
+    &lt;div&gt;
+        @for (int index = 0; index &lt; 12; index++)
+        {
+            &lt;div&gt;@index &lt;/div&gt;
+        }
+    &lt;/div&gt;
+&lt;/body&gt;
+
+&lt;/html&gt;
+</code></pre> 
+ <p>运行这个应用程序，会看到下面的输出。<br><img src="http://www.yiibai.com/uploads/images/201712/1812/117091223_93762.png" alt=""></p>
+ <br>      
+</div></body></html>

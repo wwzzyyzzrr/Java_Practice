@@ -1,0 +1,58 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Java泛型下限通配符</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>问号(<code>?</code>)表示通配符，代表未知类型的泛型。 有时候您可能希望限制允许传递给类型参数的类型。 例如，对数字进行操作的方法可能只需要接受<code>Integer</code>或其超类的实例，例如<code>Number</code>类的实例。</p> 
+ <p>要声明一个下限通配符参数，在问号<code>?</code>后跟<code>super</code>关键字，最后跟其下界。</p> 
+ <h2 id="h2-u793Au4F8B"><a name="示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例</h2>
+ <p>以下示例说明了如何使用<code>super</code>来指定下限通配符。</p> 
+ <p>使用您喜欢的编辑器创建以下java程序，并保存到文件：<em>LowerBoundedWildcards.java</em> 中，代码如下所示 -</p> 
+ <pre><code class="lang-java">package com.yiibai;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class LowerBoundedWildcards {
+
+    public static void addCat(List&lt;? super Cat&gt; catList) {
+        catList.add(new RedCat());
+        System.out.println("Cat Added");
+    }
+
+    public static void main(String[] args) {
+        List&lt;Animal&gt; animalList = new ArrayList&lt;Animal&gt;();
+        List&lt;Cat&gt; catList = new ArrayList&lt;Cat&gt;();
+        List&lt;RedCat&gt; redCatList = new ArrayList&lt;RedCat&gt;();
+        List&lt;Dog&gt; dogList = new ArrayList&lt;Dog&gt;();
+
+        // add list of super class Animal of Cat class
+        addCat(animalList);
+
+        // add list of Cat class
+        addCat(catList);
+
+        // compile time error
+        // can not add list of subclass RedCat of Cat class
+        // addCat(redCatList);
+
+        // compile time error
+        // can not add list of subclass Dog of Superclass Animal of Cat class
+        // addCat.addMethod(dogList);
+    }
+}
+
+class Animal {
+}
+
+class Cat extends Animal {
+}
+
+class RedCat extends Cat {
+}
+
+class Dog extends Animal {
+}
+</code></pre> 
+ <p>执行上面代码，得到以下结果 - </p>   
+ <pre><code class="lang-shell">Cat Added
+Cat Added
+</code></pre>
+ <br>      
+</div></body></html>

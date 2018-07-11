@@ -1,0 +1,132 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Spring客户端（单元测试）</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>在本章中，我们将学习如何对使用Spring WS的<a target="_blank" href="https://www.yiibai.com/springws/springws_write_client.html" title="Spring WS编写服务器">Spring WS编写服务器</a>章节中创建的Web应用程序服务器的<a target="_blank" href="https://www.yiibai.com/springws/springws_write_server.html" title="Spring WS编写客户器">Spring WS编写客户器</a>中创建的客户端进行单元测试。</p> 
+ <p>参考以下实现步骤:</p> 
+ <p><strong>第1步:</strong> 按照Spring WS编写服务器章节中的项目<em>countryService</em> 说明更新<code>com.yiibai</code>包。</p> 
+ <p><strong>第2步:</strong> 在文件夹<em>src/test/java</em> 下的<code>com.yiibai</code>包下创建一个文件:<em>CountryServiceClientTest.java</em> ，如以下步骤中所述。</p> 
+ <p>文件:<em>CountryServiceClientTest.java</em> 的内容如下 - </p> 
+ <pre><code class="lang-java">package com.yiibai;
+
+import static org.junit.Assert.*;
+
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import org.springframework.oxm.jaxb.Jaxb2Marshaller;
+
+import com.yiibai.client.CountryServiceClient;
+
+public class CountryServiceClientTest {
+   CountryServiceClient client;
+
+   @Before
+   public void setUp() throws Exception {
+      client = new CountryServiceClient();
+      Jaxb2Marshaller marshaller = new Jaxb2Marshaller();
+      marshaller.setContextPath("com.yiibai");
+      client.setMarshaller(marshaller);
+      client.setUnmarshaller(marshaller);
+   }
+   @Test
+   public void test() {
+      GetCountryResponse response = client.getCountryDetails("United States");
+      Country expectedCountry = new Country();
+      expectedCountry.setCapital("Washington");
+      Country actualCountry = response.getCountry();
+      Assert.assertEquals(expectedCountry.getCapital(), actualCountry.getCapital());
+   }
+}
+</code></pre> 
+ <p><strong>启动Web服务</strong></p> 
+ <p>启动Tomcat服务器，并确保能够使用标准浏览器从webapps文件夹访问其他网页。</p> 
+ <p><strong>单元测试Web服务客户端</strong></p> 
+ <p>打开命令控制台，进入到项目<code>countryService</code>目录，并执行以下<code>mvn</code>命令。</p> 
+ <pre><code class="lang-shell">C:\MVN\countryService&gt;mvn test
+</code></pre> 
+ <p>Maven将开始构建和测试项目，如果程序没有问题可以看到以下输出结果 - </p> 
+ <pre><code class="lang-shell">[INFO] Scanning for projects...
+[INFO]
+[INFO] ------------------------------------------------------------------------
+[INFO] Building countryService Spring-WS Application 1.0-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO]
+[INFO] --- maven-resources-plugin:2.6:resources (default-resources) @ countrySer
+vice ---
+[WARNING] Using platform encoding (Cp1252 actually) to copy filtered resources,
+i.e. build is platform dependent!
+[INFO] Copying 2 resources
+[INFO]
+[INFO] --- maven-compiler-plugin:3.1:compile (default-compile) @ countryService
+---
+[INFO] Changes detected - recompiling the module!
+[WARNING] File encoding has not been set, using platform encoding Cp1252, i.e. b
+uild is platform dependent!
+[INFO] Compiling 10 source files to C:\MVN\countryService\target\classes
+[INFO]
+[INFO] --- maven-resources-plugin:2.6:testResources (default-testResources) @ co
+untryService ---
+[WARNING] Using platform encoding (Cp1252 actually) to copy filtered resources,
+i.e. build is platform dependent!
+[INFO] skip non existing resourceDirectory C:\MVN\countryService\src\test\resour
+ces
+[INFO]
+[INFO] --- maven-compiler-plugin:3.1:testCompile (default-testCompile) @ country
+Service ---
+[INFO] Changes detected - recompiling the module!
+[WARNING] File encoding has not been set, using platform encoding Cp1252, i.e. b
+uild is platform dependent!
+[INFO] Compiling 2 source files to C:\MVN\countryService\target\test-classes
+[INFO]
+[INFO] --- maven-surefire-plugin:2.12.4:test (default-test) @ countryService ---
+
+[INFO] Surefire report directory: C:\MVN\countryService\target\surefire-reports
+
+-------------------------------------------------------
+ T E S T S
+-------------------------------------------------------
+Running com.yiibai.CountryServiceClientTest
+Feb 27, 2017 8:45:26 PM org.springframework.ws.soap.saaj.SaajSoapMessageFactory
+afterPropertiesSet
+INFO: Creating SAAJ 1.3 MessageFactory with SOAP 1.1 Protocol
+Feb 27, 2017 8:45:26 PM org.springframework.oxm.jaxb.Jaxb2Marshaller createJaxbC
+ontextFromContextPath
+INFO: Creating JAXBContext with context path [com.yiibai]
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.457 sec
+Running com.yiibai.ws.CustomerEndPointTest
+Feb 27, 2017 8:45:27 PM org.springframework.test.context.TestContextManager retr
+ieveTestExecutionListeners
+INFO: @TestExecutionListeners is not present for class [class com.yiibai
+.ws.CustomerEndPointTest]: using defaults.
+Feb 27, 2017 8:45:27 PM org.springframework.beans.factory.xml.XmlBeanDefinitionR
+eader loadBeanDefinitions
+INFO: Loading XML bean definitions from class path resource [spring-context.xml]
+
+Feb 27, 2017 8:45:27 PM org.springframework.context.support.GenericApplicationCo
+ntext prepareRefresh
+INFO: Refreshing org.springframework.context.support.GenericApplicationContext@5
+17c642: startup date [Mon Feb 27 20:45:27 IST 2017]; root of context hierarchy
+Feb 27, 2017 8:45:28 PM org.springframework.ws.soap.addressing.server.Annotation
+ActionEndpointMapping afterPropertiesSet
+INFO: Supporting [WS-Addressing August 2004, WS-Addressing 1.0]
+Feb 27, 2017 8:45:28 PM org.springframework.ws.soap.saaj.SaajSoapMessageFactory
+afterPropertiesSet
+INFO: Creating SAAJ 1.3 MessageFactory with SOAP 1.1 Protocol
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.243 sec
+Feb 27, 2017 8:45:28 PM org.springframework.context.support.GenericApplicationCo
+ntext doClose
+INFO: Closing org.springframework.context.support.GenericApplicationContext@517c
+642: startup date [Mon Feb 27 20:45:27 IST 2017]; root of context hierarchy
+
+Results :
+
+Tests run: 2, Failures: 0, Errors: 0, Skipped: 0
+
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 5.686 s
+[INFO] Finished at: 2017-02-27T20:45:28+05:30
+[INFO] Final Memory: 17M/173M
+[INFO] ------------------------------------------------------------------------
+</code></pre>
+ <br>      
+</div></body></html>

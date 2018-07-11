@@ -1,0 +1,73 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">ASP.Net MVC Web API</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>ASP.NET Web API是一个框架，可以轻松构建到达各种客户端(包括浏览器和移动设备)的HTTP服务。ASP.NET Web API是在.NET Framework上构建RESTful应用程序的理想平台。</p> 
+ <p>当要Web上构建API时，可以通过多种方式在Web上构建API。 这些包括<code>HTTP/RPC</code>，这意味着在远程过程调用中使用HTTP来通过Web调用诸如方法之类的东西。</p> 
+ <p>这些动词本身包含在API中，例如：获取客户，插入发票，删除客户，并且每个这些端点最终都是一个单独的URI。</p> 
+ <p>下面通过创建一个新的ASP.NET Web应用程序来看看如何构造一个简单的Web API示例。</p> 
+ <p><strong>第1步</strong> - 打开Visual Studio，然后单击：<em>文件</em> -&gt; <em>新建</em> -&gt; <em>项目</em> 菜单选项。<br>一个新的项目对话框打开。如下图所示 -<br><img src="http://www.yiibai.com/uploads/images/201712/1812/402111224_76201.png" alt=""></p> 
+ <p><strong>第2步</strong> - 在左侧窗格中，选择：<em>模板</em> -&gt; <em>Visual C# </em> -&gt; <em>Web</em> 。</p> 
+ <p><strong>第3步</strong> - 在中间窗格中，选择“ASP.NET Web应用程序”，在名称字段中输入项目名称：<em>WebAPIDemo</em> ，然后单击<em>确定</em> 以继续。将看到以下对话框，要求您为ASP.NET项目设置初始内容。如下图所示 -<br><img src="http://www.yiibai.com/uploads/images/201712/1812/724111232_48915.png" alt=""></p> 
+ <p><strong>第4步</strong> - 为了简单起见，请选择: <em>空</em> 选项，并在<em>“为以下项添加文件夹和核心引用”</em> 部分中选中<em>Web API</em> 复选框，然后单击 <em>确定</em> 。</p> 
+ <p><strong>第5步</strong> - 它将创建一个基本的MVC项目与最小的预定义的内容。</p> 
+ <p>项目由Visual Studio创建后，在<em>“解决方案资源管理器”</em>窗口中看到许多文件和文件夹。</p> 
+ <p><strong>第6步</strong> - 现在需要添加一个模型。右键单击<em>解决方案资源管理器</em> 中的<em>Models</em> 文件夹，然后选择：<em>添加</em> -&gt; <em>类</em>。将看到添加新项目对话框。<br><strong>第7步</strong> - 选择中间平台的类，并在名称字段中输入<code>Employee.cs</code>。<br><img src="http://www.yiibai.com/uploads/images/201712/1812/643111234_69402.png" alt=""><br><strong>第8步</strong> - 使用下面的代码将一些属性添加到<code>Employee</code>类。代码如下所示 -</p> 
+ <pre><code class="lang-csharp">using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+
+namespace WebAPIDemo.Models
+{
+    public class Employee
+    {
+        public int ID { get; set; }
+        public string Name { get; set; }
+        public DateTime JoiningDate { get; set; }
+        public int Age { get; set; }
+    }
+}
+</code></pre> 
+ <p><strong>第9步</strong> - 添加控制器。右键单击<em>解决方案资源管理器</em> 中的<em>Controllers</em> 文件夹，然后选择：<em>添加</em> -&gt; <em>控制器</em> 。它将显示“添加基架”对话框 -<br><img src="http://www.yiibai.com/uploads/images/201712/1812/982111237_78815.png" alt=""></p> 
+ <p><strong>第10步</strong> - 选择：<em>Web API 2控制器 - 空</em> 选项。该模板将为控制器创建一个具有默认操作的<code>Index</code>方法。</p> 
+ <p><strong>第11步</strong> - 点击“添加”按钮，添加控制器对话框将出现。<br><strong>第12步</strong> - 将名称设置为：<em>EmployeesController</em>，然后单击<em>“添加”</em> 按钮。<br><img src="http://www.yiibai.com/uploads/images/201712/1812/665111240_98618.png" alt=""><br>在<code>Controllers</code>文件夹中看到一个新的 C# 文件 - <code>EmployeeController.cs</code>，该文件夹在Visual Studio中打开，并进行一些默认操作。如下代码 - </p>   
+ <pre><code class="lang-csharp">using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Web.Http;
+using WebAPIDemo.Models;
+
+namespace WebAPIDemo.Controllers
+{
+    public class EmployeesController : ApiController
+    {
+        Employee[] employees = new Employee[]{
+         new Employee { ID = 1, Name = "Maxsu", JoiningDate =
+            DateTime.Parse(DateTime.Today.ToString()), Age = 30 },
+         new Employee { ID = 2, Name = "Allan", JoiningDate =
+            DateTime.Parse(DateTime.Today.ToString()), Age = 35 },
+         new Employee { ID = 3, Name = "AvgWong", JoiningDate =
+            DateTime.Parse(DateTime.Today.ToString()), Age = 21 }
+      };
+
+        public IEnumerable&lt;Employee&gt; GetAllEmployees()
+        {
+            return employees;
+        }
+
+        public IHttpActionResult GetEmployee(int id)
+        {
+            var employee = employees.FirstOrDefault((p) =&gt; p.ID == id);
+            if (employee == null)
+            {
+                return NotFound();
+            }
+            return Ok(employee);
+        }
+    }
+}
+</code></pre> 
+ <p><strong>第13步</strong> - 运行这个应用程序，并在浏览器中访问URL：<code>http://localhost:58150/api/employees/</code> ，然后按“Enter”。将看到以下输出 -<br><img src="http://www.yiibai.com/uploads/images/201712/1812/315111245_81344.png" alt=""></p> 
+ <p><strong>第14步</strong> - 再次访问URL：<code>http://localhost:58150/api/employees/1</code> ，将看到以下输出 -<br><img src="http://www.yiibai.com/uploads/images/201712/1812/448111246_67803.png" alt=""></p>
+ <br>      
+</div></body></html>

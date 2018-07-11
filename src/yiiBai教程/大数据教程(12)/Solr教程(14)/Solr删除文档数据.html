@@ -1,0 +1,108 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Solr删除文档数据</h1><div style="width:100%;float:left;" class="article-content">   
+ <h2 id="h2-u5220u9664u6587u6863"><a name="删除文档" class="reference-link"></a><span class="header-link octicon octicon-link"></span>删除文档</h2>
+ <p>要从<strong>Apache Solr</strong>的索引中删除文档，我们需要在<code>&lt;delete&gt; &lt;/ delete&gt;</code>标记之间指定要删除的文档的<code>ID</code>。</p> 
+ <pre><code class="lang-xml">&lt;delete&gt;   
+   &lt;id&gt;003&lt;/id&gt;   
+   &lt;id&gt;005&lt;/id&gt; 
+&lt;/delete&gt;
+</code></pre> 
+ <p>这里，此XML代码用于删除<code>ID</code>为<code>003</code>和<code>005</code>的文档。将此代码保存在名称为<code>delete.xml</code>的文件中。</p> 
+ <p>如果要从属于名称为<code>my_core</code>的核心的索引中删除文档，则可以使用<code>post</code>工具发布<code>delete.xml</code>文件，如下所示。</p> 
+ <pre><code class="lang-shell">[yiibai@ubuntu:/usr/local/solr-6.4.0/bin]$ ./post -c my_core delete.xml
+</code></pre> 
+ <p>执行上述命令后，将得到以下输出 - </p> 
+ <pre><code class="lang-xml">yiibai@ubuntu:/usr/local/solr-6.4.0/bin$ ./post -c my_core delete.xml
+/usr/local/jdk1.8.0_65/bin/java -classpath /usr/local/solr-6.4.0/dist/solr-core-6.4.0.jar -Dauto=yes -Dc=my_core -Ddata=files org.apache.solr.util.SimplePostTool delete.xml
+SimplePostTool version 5.0.0
+Posting files to [base] url http://localhost:8983/solr/my_core/update...
+Entering auto mode. File endings considered are xml,json,jsonl,csv,pdf,doc,docx,ppt,pptx,xls,xlsx,odt,odp,ods,ott,otp,ots,rtf,htm,html,txt,log
+POSTing file delete.xml (application/xml) to [base]
+1 files indexed.
+COMMITting Solr index changes to http://localhost:8983/solr/my_core/update...
+Time spent: 0:00:00.124
+</code></pre> 
+ <h2 id="h2-u9A8Cu8BC1u6267u884Cu7ED3u679C"><a name="验证执行结果" class="reference-link"></a><span class="header-link octicon octicon-link"></span>验证执行结果</h2>
+ <p>访问Apache Solr Web界面的主页，选择核心 - <strong>my_core</strong>。 尝试通过在文本区域<code>q</code>中传递查询“<code>：</code>”来检索所有文档，并执行查询。 执行时可以观察到指定的文档(<code>ID</code>为<code>003</code>和<code>005</code>)已删除。</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201702/0402/326110205_34801.png" alt=""></p> 
+ <h2 id="h2-u5220u9664u5B57u6BB5"><a name="删除字段" class="reference-link"></a><span class="header-link octicon octicon-link"></span>删除字段</h2>
+ <p>有时，需要基于除<code>ID</code>以外的字段来删除文档。例如，可能需要删除城市是<code>Chennai</code>的文档。</p> 
+ <p>在这种情况下，需要在<code>&lt;query&gt; &lt;/ query&gt;</code>标记对中指定字段的名称和值。</p> 
+ <pre><code class="lang-xml">&lt;delete&gt; 
+   &lt;query&gt;city:Chennai&lt;/query&gt; 
+&lt;/delete&gt;
+</code></pre> 
+ <p>将上面代码保存到<code>delete_field.xml</code>文件中，并使用Solr的<code>post</code>工具在核心<code>my_core</code>上执行删除操作。</p> 
+ <pre><code class="lang-shell">[yiibai@ubuntu:/usr/local/solr-6.4.0/bin]$ ./post -c my_core delete_field.xml
+</code></pre> 
+ <p>执行上述命令后，将产生以下输出。</p> 
+ <pre><code class="lang-shell">yiibai@ubuntu:/usr/local/solr-6.4.0/bin$ ./post -c my_core delete_field.xml
+/usr/local/jdk1.8.0_65/bin/java -classpath /usr/local/solr-6.4.0/dist/solr-core-6.4.0.jar -Dauto=yes -Dc=my_core -Ddata=files org.apache.solr.util.SimplePostTool delete_field.xml
+SimplePostTool version 5.0.0
+Posting files to [base] url http://localhost:8983/solr/my_core/update...
+Entering auto mode. File endings considered are xml,json,jsonl,csv,pdf,doc,docx,ppt,pptx,xls,xlsx,odt,odp,ods,ott,otp,ots,rtf,htm,html,txt,log
+POSTing file delete_field.xml (application/xml) to [base]
+1 files indexed.
+COMMITting Solr index changes to http://localhost:8983/solr/my_core/update...
+Time spent: 0:00:00.225
+</code></pre> 
+ <h3 id="h3-u9A8Cu8BC1u6267u884Cu7ED3u679C"><a name="验证执行结果" class="reference-link"></a><span class="header-link octicon octicon-link"></span>验证执行结果</h3>
+ <p>访问Apache Solr Web界面的主页，选择核心 - <strong>my_core</strong>。 尝试通过在文本区域<code>q</code>中传递查询“<code>：</code>”来检索所有文档，并执行查询。 执行时可以观察到包含指定字段值对的文档被删除。<br><img src="http://www.yiibai.com/uploads/images/201702/0402/446110212_88923.png" alt=""></p> 
+ <h2 id="h2-u5220u9664u6240u6709u6587u6863"><a name="删除所有文档" class="reference-link"></a><span class="header-link octicon octicon-link"></span>删除所有文档</h2>
+ <p>类似删除一个指定删除某个字段一样，如果想删除索引中的所有文档，只需要在标签<code>&lt;query&gt; &lt;/ query&gt;</code>之间传递符号“<code>：</code>”，如下所示。</p> 
+ <pre><code class="lang-xml">&lt;delete&gt; 
+   &lt;query&gt;*:*&lt;/query&gt; 
+&lt;/delete&gt;
+</code></pre> 
+ <p>将上面代码保存到<code>delete_all.xml</code>文件中，并使用Solr的<code>post</code>工具对核心<code>my_core</code>执行删除操作。</p>   
+ <pre><code class="lang-shell">[yiibai@ubuntu:/usr/local/solr-6.4.0/bin]$ ./post -c my_core delete_all.xml
+</code></pre> 
+ <p>执行上述命令后，将产生以下输出。</p> 
+ <pre><code class="lang-shell">yiibai@ubuntu:/usr/local/solr-6.4.0/bin$ ./post -c my_core delete_all.xml
+/usr/local/jdk1.8.0_65/bin/java -classpath /usr/local/solr-6.4.0/dist/solr-core-6.4.0.jar -Dauto=yes -Dc=my_core -Ddata=files org.apache.solr.util.SimplePostTool delete_all.xml
+SimplePostTool version 5.0.0
+Posting files to [base] url http://localhost:8983/solr/my_core/update...
+Entering auto mode. File endings considered are xml,json,jsonl,csv,pdf,doc,docx,ppt,pptx,xls,xlsx,odt,odp,ods,ott,otp,ots,rtf,htm,html,txt,log
+POSTing file delete_all.xml (application/xml) to [base]
+1 files indexed.
+COMMITting Solr index changes to http://localhost:8983/solr/my_core/update...
+Time spent: 0:00:00.114
+</code></pre> 
+ <h3 id="h3-u9A8Cu8BC1u6267u884Cu7ED3u679C"><a name="验证执行结果" class="reference-link"></a><span class="header-link octicon octicon-link"></span>验证执行结果</h3>
+ <p>访问Apache Solr Web界面的主页，选择核心 - <strong>my_core</strong>。 尝试通过在文本区域<code>q</code>中传递查询“<code>：</code>”来检索所有文档，并执行查询。执行时您可以观察到包含指定字段值对的文档全被删除了。</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201702/0402/714110217_92439.png" alt=""></p> 
+ <h2 id="h2--java-api-"><a name="使用Java(客户端API)删除所有文档" class="reference-link"></a><span class="header-link octicon octicon-link"></span>使用Java(客户端API)删除所有文档</h2>
+ <p>以下是使用Java程序向Apache Solr索引删除文档。将此代码保存在名称为<code>DeletingAllDocuments.java</code>的文件中。</p> 
+ <pre><code class="lang-java">import java.io.IOException;  
+
+import org.apache.Solr.client.Solrj.SolrClient; 
+import org.apache.Solr.client.Solrj.SolrServerException; 
+import org.apache.Solr.client.Solrj.impl.HttpSolrClient; 
+import org.apache.Solr.common.SolrInputDocument;  
+
+public class DeletingAllDocuments { 
+   public static void main(String args[]) throws SolrServerException, IOException {
+      //Preparing the Solr client 
+      String urlString = "http://localhost:8983/Solr/my_core"; 
+      SolrClient Solr = new HttpSolrClient.Builder(urlString).build();   
+
+      //Preparing the Solr document 
+      SolrInputDocument doc = new SolrInputDocument();   
+
+      //Deleting the documents from Solr 
+      Solr.deleteByQuery("*");        
+
+      //Saving the document 
+      Solr.commit(); 
+      System.out.println("Documents deleted"); 
+   } 
+}
+</code></pre> 
+ <p>通过在终端中执行以下命令编译上述代码 -</p> 
+ <pre><code class="lang-java">[yiibai@ubuntu:/usr/local/solr-6.4.0/bin]$ javac DeletingAllDocuments.java
+[yiibai@ubuntu:/usr/local/solr-6.4.0/bin]$ java DeletingAllDocuments
+</code></pre> 
+ <p>执行上述命令后，将得到以下输出。</p> 
+ <pre><code class="lang-shell">Documents deleted
+</code></pre>
+ <br>      
+</div></body></html>

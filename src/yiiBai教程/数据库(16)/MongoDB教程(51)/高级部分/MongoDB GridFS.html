@@ -1,0 +1,44 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">MongoDB GridFS</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>GridFS是用于存储和检索大型文件(如图像，音频文件，视频文件等)的MongoDB规范。它是一种用于存储文件的文件系统，但其数据存储在MongoDB集合中。 GridFS存储文件可超过文件大小限制为<code>16MB</code>的功能。</p> 
+ <p>GridFS将文件划分成块，并将每个数据块存储在单独的文档中，每个文件的最大大小为<code>255k</code>。</p> 
+ <p>默认情况下，GridFS使用两个集合<code>fs.files</code>和<code>fs.chunks</code>来存储文件的元数据和块。 每个块由其唯一的ObjectId字段<code>_id</code>标识。 <code>fs.files</code>作为父文档进行切换。 <code>fs.chunks</code>文档中的<code>files_id</code>字段将该块链接到其父块。</p> 
+ <p>以下是<code>fs.files</code>集合的示例文档 -</p> 
+ <pre><code class="lang-shell">{
+   "filename": "test.txt",
+   "chunkSize": NumberInt(261120),
+   "uploadDate": ISODate("2018-04-13T11:32:33.557Z"),
+   "md5": "7b762939321e146569b07f72c62cca4f",
+   "length": NumberInt(646)
+}
+</code></pre> 
+ <p>文档指定文件名，块大小，上传的日期和长度。</p> 
+ <p>以下是<code>fs.chunks</code>文档的示例文档 -</p> 
+ <pre><code class="lang-shell">{
+   "files_id": ObjectId("595b99d9f6a6243715b3c312"),
+   "n": NumberInt(0),
+   "data": "Mongo Binary Data"
+}
+</code></pre> 
+ <h2 id="h2--gridfs"><a name="将文件添加到GridFS" class="reference-link"></a><span class="header-link octicon octicon-link"></span>将文件添加到GridFS</h2>
+ <p>现在，使用<code>put</code>命令存储一个使用GridFS的mp3文件。 为此，我们将使用MongoDB安装文件夹的bin文件夹中出现的<code>mongofiles.exe</code>工具程序。</p> 
+ <p>打开命令提示符，导航到MongoDB安装文件夹的bin文件夹中的<code>mongofiles.exe</code>，然后键入以下代码 -</p>   
+ <pre><code class="lang-shell">D:\Program Files\MongoDB\Server\3.4\bin&gt; mongofiles.exe -d gridfs put song.mp3
+</code></pre> 
+ <p>这里，<code>gridfs</code>是要存储文件的数据库的名称。 如果数据库不存在，MongoDB将自动创建一个新的文档。 <code>song.mp3</code>是上传文件的名称。 要在数据库中查看文件的文档，可以使用查询查询 -</p> 
+ <pre><code class="lang-shell">&gt; db.fs.files.find()
+</code></pre> 
+ <p>上述命令返回以下文档 -</p> 
+ <pre><code class="lang-shell">{
+   _id: ObjectId('595b99d9f6a6243715b3c316'), 
+   filename: "song.mp3", 
+   chunkSize: 381120, 
+   uploadDate: new Date(1398391643474), md5: "e4f53379c909f7bed2e9d631e15c1c41",
+   length: 10401959 
+}
+</code></pre> 
+ <p>还可以使用以前查询中返回的文档ID，查看与存储文件相关的<code>fs.chunks</code>集合中存在的所有块，并使用以下代码：</p> 
+ <pre><code class="lang-shell">&gt;db.fs.chunks.find({files_id:ObjectId('595b99d9f6a6243715b3c316')})
+</code></pre> 
+ <p>在这个示例中，查询返回<code>50</code>多个文件，表示整个<code>mp3</code>文件被分成<code>50</code>个数据块。</p>
+ <br>      
+</div></body></html>

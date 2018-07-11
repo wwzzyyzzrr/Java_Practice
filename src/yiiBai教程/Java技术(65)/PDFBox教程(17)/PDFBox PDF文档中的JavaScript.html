@@ -1,0 +1,72 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">PDFBox PDF文档中的JavaScript</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>在前一章中，我们学习了如何将图像插入到PDF文档中。 在本章中，将学习如何将JavaScript添加到PDF文档。</p> 
+ <h2 id="h2--javascript-pdf-"><a name="将JavaScript添加到PDF文档" class="reference-link"></a><span class="header-link octicon octicon-link"></span>将JavaScript添加到PDF文档</h2>
+ <p>可以使用<code>PDActionJavaScript</code>类将JavaScript操作添加到PDF文档。 它代表了JavaScript操作。</p> 
+ <p>以下是将JavaScript操作添加到现有PDF文档的步骤。</p> 
+ <p><strong>第1步:加载现有的PDF文档</strong></p> 
+ <p>使用<code>PDDocument</code>类的<code>load()</code>静态方法加载现有的PDF文档。 此方法接受一个文件对象作为参数，因为这是一个静态方法，可以使用类名称调用它，如下所示。</p> 
+ <pre><code class="lang-java">File file = new File("path of the document")
+PDDocument document = PDDocument.load(file);
+</code></pre> 
+ <p><strong>第2步:创建PDActionJavaScript对象</strong></p> 
+ <p>实例化<code>PDActionJavaScript</code>对象，如下所示。 在这个类的构造函数中，以String的形式传递所需的JavaScript，如下所示。</p> 
+ <pre><code class="lang-java">String javaScript = "app.alert( {cMsg: 'this is an example', nIcon: 3,"
+   + " nType: 0,cTitle: 'PDFBox Javascript example' } );";       
+PDActionJavaScript PDAjavascript = new PDActionJavaScript(javaScript);
+</code></pre> 
+ <p><strong>第3步:在文档中嵌入Javascript</strong></p> 
+ <p>如下所示将必需的字符串嵌入到PDF文档中。</p> 
+ <pre><code class="lang-java">document.getDocumentCatalog().setOpenAction(PDAjavascript);
+</code></pre> 
+ <p><strong>第4步:保存文档</strong></p> 
+ <p>在添加所需内容后，使用<code>PDDocument</code>类的<code>save()</code>方法保存PDF文档，如以下代码块所示。</p> 
+ <pre><code class="lang-java">document.save("Path");
+</code></pre> 
+ <p><strong>第5步:关闭文档</strong></p> 
+ <p>最后，使用<code>PDDocument</code>类的<code>close()</code>方法关闭文档，如下所示。</p> 
+ <pre><code class="lang-java">document.close();
+</code></pre> 
+ <h2 id="h2-u793Au4F8B"><a name="示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例</h2>
+ <p>假设有一个名称为<code>sample.pdf</code>的PDF文档，存储在目录:<code>F:\worksp\pdfbox</code>，其空页如下所示。</p> 
+ <p>这个例子演示了如何在上面提到的PDF文档中嵌入JavaScript。 在这里，将加载<em>sample.pdf</em> PDF文档并在其中嵌入JavaScript。 将此代码保存在名称为<code>AddJavaScript.java</code>的文件中。</p>   
+ <pre><code class="lang-java">package com.yiibai;
+
+import java.io.File;
+
+import org.apache.pdfbox.pdmodel.PDDocument; 
+import org.apache.pdfbox.pdmodel.interactive.action.PDActionJavaScript;
+
+public class AddJavaScript {
+
+   public static void main(String args[]) throws Exception {
+
+      //Loading an existing file
+      File file = new File("F:/worksp/pdfbox/sample.pdf");
+      PDDocument document = PDDocument.load(file);
+
+      String javaScript = "app.alert( {cMsg: 'this is an example', nIcon: 3,"
+         + " nType: 0, cTitle: 'PDFBox Javascript example’} );";
+
+      //Creating PDActionJavaScript object 
+      PDActionJavaScript PDAjavascript = new PDActionJavaScript(javaScript);
+
+      //Embedding java script
+      document.getDocumentCatalog().setOpenAction(PDAjavascript);
+
+      //Saving the document
+      document.save( new File("F:/worksp/pdfbox/smaple-js.pdf") );
+      System.out.println("Data added to the given PDF"); 
+
+      //Closing the document
+      document.close();
+
+   }
+}
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 - </p> 
+ <pre><code class="lang-shell">Data added to the given PDF
+</code></pre> 
+ <p>打开生成的PDF文件:<em>smaple-js.pdf</em>，应该会看到有以下提示信息 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201803/1103/452090338_13080.png" alt=""></p>
+ <br>      
+</div></body></html>

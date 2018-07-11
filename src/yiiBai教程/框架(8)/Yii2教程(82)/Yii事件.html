@@ -1,0 +1,83 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Yii事件</h1><div style="width:100%;float:left;" class="article-content">   
+ <div> 
+  <div>
+    可以在特定执行点注入自定义代码使用事件。事件可自定义代码，当事件被触发时该代码被执行。例如，当一个新的用户在网站上注册，一个日志记录器(logger)对象可能会引发&nbsp;userRegistered&nbsp;事件。 
+  </div> 
+ </div> 
+ <div> 
+  <div>
+    如果一个类需要触发事件，则应该扩展&nbsp;yii\base\Component&nbsp;类。 
+  </div> 
+  <div>
+    事件处理程序是一个&nbsp;PHP&nbsp;回调。您可以使用下面的回调&nbsp;- 
+  </div> 
+  <ul> 
+   <li> 
+    <div>
+      指定为字符串的全局PHP函数 
+    </div> </li> 
+   <li> 
+    <div>
+      一个匿名函数 
+    </div> </li> 
+   <li> <p style="text-align:justify;"> 一个类名的数组和方法作为字符串，例如，&nbsp;['ClassName', 'methodName'] </p> </li> 
+   <li> <p style="text-align:justify;"> 一个对象的数组和一个方法作为字符串，例如&nbsp;[$obj, 'methodName'] </p> </li> 
+  </ul> 
+  <p style="text-align:justify;"> 第1步&nbsp;-&nbsp;要将处理程序绑定到一个事件，应该调用&nbsp;yii\base\Component::on()&nbsp;方法 </p> 
+  <pre>$obj = new Obj;
+// this handler is a global function
+$obj-&gt;on(Obj::EVENT_HELLO, 'function_name');
+// this handler is an object method
+$obj-&gt;on(Obj::EVENT_HELLO, [$object, 'methodName']);
+// this handler is a static class method
+$obj-&gt;on(Obj::EVENT_HELLO, ['app\components\MyComponent', 'methodName']);
+// this handler is an anonymous function
+
+$obj-&gt;on(Obj::EVENT_HELLO, function ($event) {
+   // event handling logic
+});</pre> 
+  <div>
+    可以将一个或多个处理程序到附加事件。附加处理程序将会按它们在附连到该事件的顺序来调用。 
+  </div> 
+  <div>
+    第2步&nbsp;-&nbsp;要停止在处理程序的调用，应该将&nbsp;yii\base\Event::$handled&nbsp;属性设置为&nbsp;true。 
+  </div> 
+  <pre>$obj-&gt;on(Obj::EVENT_HELLO, function ($event) {
+   $event-&gt;handled = true;
+});</pre> 
+  <div>
+    第3步&nbsp;-&nbsp;要插入处理程序到队列开始，可以调用&nbsp;yii\base\Component::on()&nbsp;，传递第四个参数的值为&nbsp;false&nbsp;。 
+  </div>   
+  <pre>$obj-&gt;on(Obj::EVENT_HELLO, function ($event) {
+   // ...
+}, $data, false);</pre> 
+  <div>
+    第4步&nbsp;-&nbsp;触发一个事件，调用&nbsp;yii\base\Component::trigger()&nbsp;方法。 
+  </div> 
+  <pre>namespace app\components;
+use yii\base\Component;
+use yii\base\Event;
+class Obj extends Component {
+   const EVENT_HELLO = 'hello';
+   public function triggerEvent() {
+      $this-&gt;trigger(self::EVENT_HELLO);
+   }
+}</pre> 
+  <div>
+    第5步&nbsp;-&nbsp;要将事件附加一个处理程序，应该调用&nbsp;yii\base\Component::off()&nbsp;方法。 
+  </div> 
+  <pre>$obj = new Obj;
+// this handler is a global function
+$obj-&gt;off(Obj::EVENT_HELLO, 'function_name');
+// this handler is an object method
+$obj-&gt;off(Obj::EVENT_HELLO, [$object, 'methodName']);
+// this handler is a static class method
+$obj-&gt;off(Obj::EVENT_HELLO, ['app\components\MyComponent', 'methodName']);
+// this handler is an anonymous function
+
+$obj-&gt;off(Obj::EVENT_HELLO, function ($event) {
+   // event handling logic
+});</pre> 
+ </div>
+ <br>      
+</div></body></html>

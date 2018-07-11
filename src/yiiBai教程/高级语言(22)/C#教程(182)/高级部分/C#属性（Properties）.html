@@ -1,0 +1,223 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">C#属性（Properties）</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>属性(Properties)被命名为类，结构和接口的成员。类或结构中的成员变量或方法称为字段。 属性是字段的扩展，并使用相同的语法访问。它们使用访问器，通过这些访问器可以读取，写入或操作私有字段的值。</p> 
+ <p>属性不指定存储位置。它们有读取，写入或计算其值的访问器。</p> 
+ <p>例如，假设有一个名称为<code>Student</code>的类，其中包含年龄(<code>age</code>)，名称(<code>name</code>)和代码(<code>code</code>)的私有字段。我们无法从类范围外直接访问这些字段，但是可以拥有访问这些私有字段的属性。</p> 
+ <h2 id="h2-u8BBFu95EEu5668"><a name="访问器" class="reference-link"></a><span class="header-link octicon octicon-link"></span>访问器</h2>
+ <p>属性的访问器包含有助于获取(读取或计算)或设置(写入)属性的可执行语句。访问器声明可以包含<code>get</code>访问器和<code>set</code>访问器。例如：</p> 
+ <pre><code class="lang-csharp">// Declare a Code property of type string:
+public string Code
+{
+   get
+   {
+      return code;
+   }
+   set
+   {
+      code = value;
+   }
+}
+
+// Declare a Name property of type string:
+public string Name
+{
+   get
+   {
+      return name;
+   }
+   set
+   {
+      name = value;
+   }
+}
+
+// Declare a Age property of type int:
+public int Age
+{ 
+   get
+   {
+      return age;
+   }
+   set
+   {
+      age = value;
+   }
+}
+</code></pre> 
+ <h2 id="h2-u4F8Bu5B50"><a name="例子" class="reference-link"></a><span class="header-link octicon octicon-link"></span>例子</h2>
+ <p>以下示例演示了如何使用属性：</p> 
+ <pre><code class="lang-csharp">using System;
+namespace yiibai
+{
+   class Student
+   {
+      private string code = "N.A";
+      private string name = "not known";
+      private int age = 0;
+
+      // Declare a Code property of type string:
+      public string Code
+      {
+         get
+         {
+            return code;
+         }
+         set
+         {
+            code = value;
+         }
+      }
+
+      // Declare a Name property of type string:
+      public string Name
+      {
+         get
+         {
+            return name;
+         }
+         set
+         {
+            name = value;
+         }
+      }
+
+      // Declare a Age property of type int:
+      public int Age
+      {
+         get
+         {
+            return age;
+         }
+         set
+         {
+            age = value;
+         }
+      }
+      public override string ToString()
+      {
+         return "Code = " + Code +", Name = " + Name + ", Age = " + Age;
+      }
+   }
+
+   class ExampleDemo
+   {
+      public static void Main()
+      {
+
+         // Create a new Student object:
+         Student s = new Student();
+
+         // Setting code, name and the age of the student
+         s.Code = "10010";
+         s.Name = "Maxsu";
+         s.Age = 24;
+         Console.WriteLine("Student Info: {0}", s);
+
+         //let us increase age
+         s.Age += 1;
+         Console.WriteLine("Student Info: {0}", s);
+         Console.ReadKey();
+      }
+   }
+}
+</code></pre> 
+ <p>当上述代码被编译并执行时，它产生以下结果：</p> 
+ <pre><code class="lang-shell">Student Info: Code = 10010, Name = Maxsu, Age = 24
+Student Info: Code = 10010, Name = Maxsu, Age = 25
+</code></pre> 
+ <h2 id="h2-u62BDu8C61u5C5Eu6027"><a name="抽象属性" class="reference-link"></a><span class="header-link octicon octicon-link"></span>抽象属性</h2>
+ <p>抽象类可能有一个抽象属性，它应该在派生类中实现。以下程序说明了这一点：</p>   
+ <pre><code class="lang-csharp">using System;
+namespace yiibai
+{
+    public abstract class Person
+    {
+        public abstract string Name
+        {
+            get;
+            set;
+        }
+        public abstract int Age
+        {
+            get;
+            set;
+        }
+    }
+
+    class Student : Person
+    {
+
+        private string code = "N.A";
+        private string name = "N.A";
+        private int age = 0;
+
+        // Declare a Code property of type string:
+        public string Code
+        {
+            get
+            {
+                return code;
+            }
+            set
+            {
+                code = value;
+            }
+        }
+
+        // Declare a Name property of type string:
+        public override string Name
+        {
+            get
+            {
+                return name;
+            }
+            set
+            {
+                name = value;
+            }
+        }
+
+        // Declare a Age property of type int:
+        public override int Age
+        {
+            get
+            {
+                return age;
+            }
+            set
+            {
+                age = value;
+            }
+        }
+        public override string ToString()
+        {
+            return "Code = " + Code + ", Name = " + Name + ", Age = " + Age;
+        }
+    }
+
+    class ExampleDemo
+    {
+        public static void Main()
+        {
+            // Create a new Student object:
+            Student s = new Student();
+
+            // Setting code, name and the age of the student
+            s.Code = "1011";
+            s.Name = "Maxsu";
+            s.Age = 21;
+            Console.WriteLine("Student Info:- {0}", s);
+
+            //let us increase age
+            s.Age += 1;
+            Console.WriteLine("Student Info:- {0}", s);
+            Console.ReadKey();
+        }
+    }
+}
+</code></pre> 
+ <p>当上述代码被编译并执行时，它产生以下结果：</p> 
+ <pre><code class="lang-shell">Student Info:- Code = 1011, Name = Maxsu, Age = 21
+Student Info:- Code = 1011, Name = Maxsu, Age = 22
+</code></pre>
+ <br>      
+</div></body></html>

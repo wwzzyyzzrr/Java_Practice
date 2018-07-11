@@ -1,0 +1,71 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">java.util.Properties.storeToXML(OutputStream osString comment,String encoding)方法实例</h1><div style="width:100%;float:left;" class="article-content">   
+ <p> <strong>java.util.Properties.storeToXML(OutputStream osString comment,String encoding)&nbsp;</strong>方法发出代表所有包含在此表中的属性的XML文档，使用指定的编码。</p> 
+ <h2> 声明</h2> 
+ <p> 以下是java.util.Properties.storeToXML()方法的声明</p> 
+ <pre class="prettyprint" style="border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; font-size: 12px; overflow: auto;">
+public void storeToXML(OutputStream os,String comment, String encoding)</pre> 
+ <h2> 参数</h2> 
+ <ul> 
+  <li> <p> out&nbsp;--&nbsp;根据其内容发出XML文档的输出流。</p> </li> 
+  <li> <p> comments&nbsp;-- 属性列表，或者为null的描述，如果没有所需的注释。</p> </li> 
+ </ul> 
+ <h2> 返回值</h2> 
+ <p> 这个方法没有任何返回值</p> 
+ <h2> 异常</h2> 
+ <ul> 
+  <li> <p> IOException&nbsp;--&nbsp;如果将此属性列表写入到指定的输出流抛出一个IOException异常。</p> </li> 
+  <li> <p> ClassCastException&nbsp;-- 如果此Properties对象包含不属于任何字符串键或值。</p> </li> 
+  <li> <p> NullPointerException&nbsp;-- 如果&nbsp;out 为 null.</p> </li> 
+ </ul> 
+ <h2> 例子</h2> 
+ <p> 下面的示例演示java.util.Properties.storeToXML()方法的用法。</p> 
+ <pre class="prettyprint" style="border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; font-size: 12px; overflow: auto;">
+package com.yiibai;
+
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.*;
+
+public class PropertiesDemo {
+
+   public static void main(String[] args) {
+      Properties prop = new Properties();
+
+      // add some properties
+      prop.put("Height", "200");
+      prop.put("Width", "15");
+
+      try {
+
+         // create a output and input as a xml file
+         FileOutputStream fos = new FileOutputStream("properties.xml");
+         FileInputStream fis = new FileInputStream("properties.xml");
+
+         // store the properties in the specific xml and a different encoding
+         prop.storeToXML(fos, "Properties Example","ISO 8859");
+
+         // print the xml. Notice that ISO 8859 isn't supported
+         while (fis.available() &gt; 0) {
+            System.out.print("" + (char) fis.read());
+         }
+
+      } catch (IOException ex) {
+         ex.printStackTrace();
+      }
+
+   }
+}</pre> 
+ <p> 让我们来编译和运行上面的程序，这将产生以下结果：</p>   
+ <pre class="prettyprint" style="border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; font-size: 12px; overflow: auto;">
+Warning:  The encoding 'ISO 8859' is not supported by the Java runtime.
+Warning: encoding "ISO 8859" not supported, using UTF-8
+&lt;?xml version="1.0" encoding="UTF-8" standalone="no"?&gt;
+&lt;!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd"&gt;
+&lt;properties&gt;
+&lt;comment&gt;Properties Example&lt;/comment&gt;
+&lt;entry key="Width"&gt;15&lt;/entry&gt;
+&lt;entry key="Height"&gt;200&lt;/entry&gt;
+&lt;/properties&gt;</pre> 
+ <br>      
+</div></body></html>

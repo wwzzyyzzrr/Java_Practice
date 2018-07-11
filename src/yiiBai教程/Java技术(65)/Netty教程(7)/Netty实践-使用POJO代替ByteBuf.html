@@ -1,0 +1,86 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Netty实践-使用POJO代替ByteBuf</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>到目前为止，我们上面几篇教程中的所有例子都使用ByteBuf作为协议消息的主要数据结构。 在本节中，我们将改进TIME协议的客户端和服务器示例，让它们使用POJO来代替原来的ByteBuf。</p> 
+ <p>在<code>ChannelHandler</code>中使用POJO的优点是显而易见的; 处理程序将从ByteBuf中提取信息的代码，将从处理程序中分离出来，变得更易维护和可重用。 在TIME客户端和服务器示例中，我们只读取一个32位整数，它不是直接使用ByteBuf来解码转换的。在实现真实世界协议时，这是必须要进行分离的。</p> 
+ <p>首先，我们定义一个名为 <code>UnixTime</code> 的新类型(一个简单的Java类)。</p> 
+ <pre><code class="lang-java">package com.yiibai.netty.timepojo;
+
+import java.util.Date;
+
+public class UnixTime {
+
+    private final long value;
+
+    public UnixTime() {
+        this(System.currentTimeMillis() / 1000L + 2208988800L);
+    }
+
+    public UnixTime(long value) {
+        this.value = value;
+    }
+
+    public long value() {
+        return value;
+    }
+
+    @Override
+    public String toString() {
+        Date date = new Date((value() - 2208988800L) * 1000L);
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String dateString = formatter.format(date);
+        return dateString;
+    }
+}
+</code></pre> 
+ <p>我们现在来修改时间解码器(<code>TimeDecoder</code>)来生成<code>UnixTime</code>，而不是<code>ByteBuf</code>。</p> 
+ <pre><code class="lang-java">@Override
+protected void decode(ChannelHandlerContext ctx, ByteBuf in, List&lt;Object&gt; out) {
+    if (in.readableBytes() &lt; 4) {
+        return;
+    }
+
+    out.add(new UnixTime(in.readUnsignedInt()));
+}
+</code></pre> 
+ <p>使用更新的解码器，<code>TimeClientHandler</code>不再使用ByteBuf：</p> 
+ <pre><code class="lang-java">@Override
+public void channelRead(ChannelHandlerContext ctx, Object msg) {
+    UnixTime m = (UnixTime) msg;
+    System.out.println(m);
+    ctx.close();
+}
+</code></pre> 
+ <p>怎么样？看起更简单和优雅，对吧？ 相同地也可以应用在服务器端。现在我们首先更新<code>TimeServerHandler</code>中的代码：</p> 
+ <pre><code class="lang-java">@Override
+public void channelActive(ChannelHandlerContext ctx) {
+    ChannelFuture f = ctx.writeAndFlush(new UnixTime());
+    f.addListener(ChannelFutureListener.CLOSE);
+}
+</code></pre> 
+ <p>现在，唯一缺少的是一个编码器，它是一个<code>ChannelOutboundHandler</code>的实现，是将<code>UnixTime</code>转换回<code>ByteBuf</code>。 它比编写解码器简单得多，因为在编码消息时不需要处理数据包分段和组合。</p>   
+ <pre><code class="lang-java">package com.yiibai.netty.timepojo;
+
+public class TimeEncoder extends ChannelOutboundHandlerAdapter {
+    @Override
+    public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) {
+        UnixTime m = (UnixTime) msg;
+        ByteBuf encoded = ctx.alloc().buffer(4);
+        encoded.writeInt((int)m.value());
+        ctx.write(encoded, promise); // (1)
+    }
+}
+</code></pre> 
+ <ol> 
+  <li>在这一行有很多重要的东西。<br><strong>首先</strong>，我们按原样传递原始的<code>ChannelPromise</code>，以便Netty将编码数据实际写入时将其标记为成功或失败。<br><strong>第二步</strong>，我们没有调用<code>ctx.flush()</code>。 有一个单独的处理程序方法<code>void flush(ChannelHandlerContext ctx)</code>，它用于覆盖<code>flush()</code>操作。</li>
+ </ol> 
+ <p>要进一步简化，可以使用<code>MessageToByteEncoder</code>：</p> 
+ <pre><code class="lang-java">public class TimeEncoder extends MessageToByteEncoder&lt;UnixTime&gt; {
+    @Override
+    protected void encode(ChannelHandlerContext ctx, UnixTime msg, ByteBuf out) {
+        out.writeInt((int)msg.value());
+    }
+}
+</code></pre> 
+ <p>剩下的最后一个任务是在<code>TimeServerHandler</code>之前将<code>TimeEncoder</code>插入到服务器端的<code>ChannelPipeline</code>中，这里将留作一个简单的练习吧。</p> 
+ <p>参考代码： <code>Netty-&gt;NettyTutorial-&gt;com.yiibai.netty.pojo</code>;</p>
+ <br>      
+</div></body></html>

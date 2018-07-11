@@ -1,0 +1,98 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Spring EL方法调用实例</h1><div style="width:100%;float:left;" class="article-content">   
+ <div> 
+  <div>
+    Spring表达式语言(使用SpEL)允许开发人员使用表达式来执行方法和将返回值以注入的方式到属性，或叫作“使用SpEL方法调用”。 
+  </div> 
+ </div> 
+ <div> 
+  <h2> Spring EL在注解的形式 </h2> 
+  <div>
+    了解如何实现Spring&nbsp;EL方法调用与@Value注释。 
+  </div> 
+  <pre>package com.yiibai.core;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+@Component("customerBean")
+public class Customer {
+
+	@Value("#{'yiibai'.toUpperCase()}")
+	private String name;
+
+	@Value("#{priceBean.getSpecialPrice()}")
+	private double amount;
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public double getAmount() {
+		return amount;
+	}
+
+	public void setAmount(double amount) {
+		this.amount = amount;
+	}
+
+	@Override
+	public String toString() {
+		return "Customer [name=" + name + ", amount=" + amount + "]";
+	}
+
+}</pre> 
+  <pre>package com.yiibai.core;
+
+import org.springframework.stereotype.Component;
+
+@Component("priceBean")
+public class Price {
+
+	public double getSpecialPrice() {
+		return new Double(199.09);
+	}
+
+}</pre> 
+  <p> 输出 </p> 
+  <pre><span style="line-height:1.5;background-color:inherit;">Customer&nbsp;[name=YIIBAI,&nbsp;amount=199.09]</span></pre> 
+  <h3> 一点解释 </h3> 
+  <div>
+    在字串文本上调用&nbsp;toUpperCase()方法。 
+  </div> 
+  <pre>@Value("#{'yiibai'.toUpperCase()}")
+private String name;</pre> 
+  <p> 在 ‘priceBean‘ Bean上调用getSpecialPrice()&nbsp;方法 </p>   
+  <pre>@Value("#{priceBean.getSpecialPrice()}")
+private double amount;</pre> 
+  <h2> Spring EL在XML的形式 </h2> 
+  <div> 
+   <div>
+     请参阅在XML文件定义bean的等效版本。 
+   </div> 
+  </div> 
+  <pre>&lt;beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd"&gt;
+ 
+	&lt;bean id="customerBean" class="com.yiibai.core.Customer"&gt;
+		&lt;property name="name" value="#{'yiibai'.toUpperCase()}" /&gt;
+		&lt;property name="amount" value="#{priceBean.getSpecialPrice()}" /&gt;
+	&lt;/bean&gt;
+ 
+	&lt;bean id="priceBean" class="com.yiibai.core.Price" /&gt;
+	
+&lt;/beans&gt;</pre> 
+  <p> 输出 </p> 
+  <pre><span style="line-height:1.5;background-color:inherit;">Customer&nbsp;[name=YIIBAI,&nbsp;amount=199.09]</span></pre> 
+  <div>
+    下载代码 –&nbsp;&nbsp;
+   <a target="_blank" href="http://pan.baidu.com/s/1mhdwodU">http://pan.baidu.com/s/1mhdwodU</a> 
+  </div> 
+ </div>
+ <br>      
+</div></body></html>

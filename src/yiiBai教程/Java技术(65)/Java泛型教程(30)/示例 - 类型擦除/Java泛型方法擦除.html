@@ -1,0 +1,83 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Java泛型方法擦除</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>如果使用无界类型参数，则Java编译器将使用<code>Object</code>替换通用类型中的类型参数，如果绑定参数用作方法参数，则使用参数的类型。</p> 
+ <h2 id="h2-u793Au4F8B"><a name="示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例</h2>
+ <p>创建一个名称为：<em>GenericMethodsErasure.java</em> 文件，并编写以下代码 - </p> 
+ <pre><code class="lang-java">package com.yiibai.demo3;
+
+public class GenericMethodsErasure {
+    public static void main(String[] args) {
+        Box&lt;Integer&gt; integerBox = new Box&lt;Integer&gt;();
+        Box&lt;String&gt; stringBox = new Box&lt;String&gt;();
+
+        integerBox.add(new Integer(1992));
+        stringBox.add(new String("Hello World"));
+
+        printBox(integerBox);
+        printBox1(stringBox);
+    }
+
+    private static &lt;T extends Box&gt; void printBox(T box) {
+        System.out.println("Value: " + box.get());
+    }
+
+    private static &lt;T&gt; void printBox1(T box) {
+        System.out.println("Value: " + ((Box) box).get());
+    }
+}
+
+class Box&lt;T&gt; {
+    private T t;
+
+    public void add(T t) {
+        this.t = t;
+    }
+
+    public T get() {
+        return t;
+    }
+}
+</code></pre> 
+ <p>在本示例中，java编译器将用<code>Object</code>类替换<code>T</code>类型，而在类型擦除之后，编译器会为以下代码生成字节码。</p> 
+ <pre><code class="lang-java">package com.yiibai.demo3;
+
+public class GenericMethodsErasure {
+    public static void main(String[] args) {
+        Box integerBox = new Box();
+        Box stringBox = new Box();
+
+        integerBox.add(new Integer(1992));
+        stringBox.add(new String("Hello World"));
+
+        printBox(integerBox);
+        printBox1(stringBox);
+    }
+
+    // Bounded Types Erasure
+    private static void printBox(Box box) {
+        System.out.println("Value: " + box.get());
+    }
+
+    // Unbounded Types Erasure
+    private static void printBox1(Object box) {
+        System.out.println("Value: " + ((Box) box).get());
+    }
+}
+
+class Box {
+    private Object t;
+
+    public void add(Object t) {
+        this.t = t;
+    }
+
+    public Object get() {
+        return t;
+    }
+}
+</code></pre> 
+ <p>在这两种情况下，执行输出结果是相同的 -</p>   
+ <pre><code class="lang-shell">Value: 1992
+Value: Hello World
+</code></pre>
+ <br>      
+</div></body></html>

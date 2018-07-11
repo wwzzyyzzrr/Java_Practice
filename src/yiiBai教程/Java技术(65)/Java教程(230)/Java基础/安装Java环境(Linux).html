@@ -1,0 +1,85 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">安装Java环境(Linux)</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>在开始设置使用 Java 之前，则需要从系统中删除 OpenJDK/JRE。</p> 
+ <p>请使用以下命令 :</p> 
+ <pre><code class="lang-shell">yiibai@ubuntu:~$ sudo apt-get purge openjdk-\*
+</code></pre> 
+ <p><img src="https://www.yiibai.com/uploads/allimg/201508/1-150R209241Y42.png" alt=""></p> 
+ <p>系统会要求确认。确认删除则输入:Y，等待一段时间后，卸载完成！</p> 
+ <p><strong>第2步:</strong> 查看 Ubuntu 操作系统的架构是32位还是64位。</p> 
+ <p>可以使用下面的命令:</p> 
+ <pre><code class="lang-shell">yiibai@ubuntu:~$ file /sbin/init
+</code></pre> 
+ <p><img src="https://www.yiibai.com/uploads/allimg/201508/1-150R2092451B9.png" alt=""></p> 
+ <p><strong>第3步:</strong> 从 Oracle 站点下载最新版本的 Java 安装包<br>这是一个 zip 文件，名称为:<code>jdk-8-linux-x64.tar.gz</code><br>下载链接如下: <a target="_blank" href="http://www.oracle.com/technetwork/java/javase/downloads/index.html">http://www.oracle.com/technetwork/java/javase/downloads/index.html</a> ，如下图所示:</p> 
+ <p><img src="https://www.yiibai.com/uploads/allimg/201508/1-150R209251JM.png" alt=""></p> 
+ <p>接受许可协议，然后选项对应版本下载 - </p> 
+ <ul> 
+  <li>对于32位系统选择86</li>
+  <li>对于64位系统，选择64</li>
+  <li>Ubuntu 选择 <code>tar.gz</code> (本教程中下载使用)</li>
+  <li>对于基于 Debian 系统选择 rpm</li>
+ </ul> 
+ <p><img src="https://www.yiibai.com/uploads/allimg/201508/1-150R2092552Y4.png" alt=""></p> 
+ <p>下载完成后，会看到如下图所示(以Firefox为例):</p> 
+ <p><img src="https://www.yiibai.com/uploads/allimg/201508/1-150R2092615530.png" alt=""></p> 
+ <p><strong>第4步:</strong> 在终端，打开下载的 Java zip 文件的目录位置</p> 
+ <pre><code class="lang-shell">yiibai@ubuntu:~$ cd /home/yiibai/Downloads
+yiibai@ubuntu:~/Downloads$
+</code></pre> 
+ <p>选择一个目录提取 java zip 文件的内容。</p> 
+ <p>在本教程中，我们将提取的下载文件到<code>/usr/local</code> 目录中 ，如下命令:</p> 
+ <p>使用如下命令 - </p> 
+ <pre><code class="lang-shell">yiibai@ubuntu:~$ sudo tar -xvf jdk-8u60-linux-64.tar.gz -C /usr/local
+</code></pre> 
+ <p><img src="https://www.yiibai.com/uploads/allimg/201508/1-150R2092Z3939.png" alt=""></p> 
+ <p>如果有要求输入密码，请输入密码。解压缩继续。完成后会看到下面的 <code>/usr/local/jdk1.8.0_60</code> 文件夹的内容:</p> 
+ <p><img src="https://www.yiibai.com/uploads/allimg/201508/1-150R209301J08.png" alt=""></p> 
+ <p><strong>第5步:</strong> 添加下面内空到系统变量，即打开 <code>/etc/profile</code> 文件，并在文件的结束位置添加以下内容:</p> 
+ <pre><code class="lang-shell">JAVA_HOME=/usr/local/jdk1.8.0_60
+PATH=$PATH:$HOME/bin:$JAVA_HOME/bin
+export JAVA_HOME
+export PATH
+</code></pre> 
+ <p>在使用 VI 打开 <code>/etc/profile</code> 文件，如下命令:</p> 
+ <pre><code class="lang-shell">yiibai@ubuntu:~$ vi /etc/profile
+</code></pre> 
+ <p>在文件的最后位置，写入 Java 的环境变量，如下图所示:</p> 
+ <p><img src="https://www.yiibai.com/uploads/allimg/201508/1-150R2093046140.png" alt=""></p> 
+ <p>返回 vi 的命令模式，输入 <code>:wq</code> 保存文件完成！</p> 
+ <p><strong>第6步:</strong> 现在让 Ubuntu 知道 JDK/JRE 的位置</p> 
+ <p>复制 - 粘贴以下行到命令提示符中执行 - </p> 
+ <pre><code class="lang-shell">yiibai@ubuntu:~$ sudo update-alternatives --install "/usr/bin/java" "java" "/usr/local/jdk1.8.0_60/bin/java" 1
+yiibai@ubuntu:~$ sudo update-alternatives --install "/usr/bin/javac" "javac" "/usr/local/jdk1.8.0_60/bin/javac" 1
+yiibai@ubuntu:~$ sudo update-alternatives --install "/usr/bin/javaws" "javaws" "/usr/local/jdk1.8.0_60/bin/javaws" 1
+</code></pre> 
+ <p>具体执行如下图所示:</p> 
+ <p><img src="https://www.yiibai.com/uploads/allimg/201508/1-150R2093113620.png" alt=""></p> 
+ <p><strong>第7步:</strong> 告诉 Ubuntu 我们安装的 <code>jdk1.8.0_60</code> 是默认的Java</p> 
+ <p>请使用以下命令来完成:</p>   
+ <pre><code class="lang-shell">yiibai@ubuntu:~$ sudo update-alternatives --set java /usr/local/jdk1.8.0_60/bin/java
+yiibai@ubuntu:~$ sudo update-alternatives --set javac /usr/local/jdk1.8.0_60/bin/javac
+yiibai@ubuntu:~$ sudo update-alternatives --set javaws /usr/local/jdk1.8.0_60/bin/javaws
+</code></pre> 
+ <p>执行结果如下:</p> 
+ <p><img src="https://www.yiibai.com/uploads/allimg/201508/1-150R2093133b6.png" alt=""></p> 
+ <p><strong>第8步:</strong> 使用下面的命令来测试安装 Java 的结果，</p> 
+ <pre><code class="lang-shell">yiibai@ubuntu:~$ java -version
+</code></pre> 
+ <p>执行结果如下所示 - </p> 
+ <p><img src="https://www.yiibai.com/uploads/allimg/201508/1-150R2093203317.png" alt=""></p> 
+ <p>到此，在Ubuntu上安装Java讲解完成。如果您觉得比较麻烦，可以使用以下在线编辑器，直接编写和运行Java程序。</p> 
+ <h2 id="h2-java-"><a name="Java在线编程工具" class="reference-link"></a><span class="header-link octicon octicon-link"></span>Java在线编程工具</h2>
+ <blockquote> 
+  <p>Java是一种跨平台的编程语言，想要让你的计算机能够运行Java程序那么就需要安装JRE，而想要开发Java程序，那么就需要安装JDK。这对新手来说可能有些复杂、安装配置的过程中可能会遇到一些问题。对于老手来说，有些时候可能会面临在一台陌生的(配置没有Java环境)计算机下临时开发、调试代码。因此，这里推荐基于腾讯云主机的在线云端开发工具<a target="_blank" href="https://studio.coding.net">CloudStudio</a>来快速开始你的Java项目。</p> 
+ </blockquote> 
+ <p><strong>CloudStudio</strong>为我们集成了Java + Maven环境，下面的步骤向你展示了如何通过<strong>CloudStudio</strong>提供的集成环境来进行Java项目的开发:</p> 
+ <ul> 
+  <li>step1:访问<a target="_blank" href="https://studio.coding.net">CloudStudio</a>，注册/登录账户。</li>
+  <li>step2:在右侧的运行环境菜单选择:<code>"Java"</code></li>
+  <li>step3: 在左侧代码目录中新建Java目录进行开发</li>
+  <li>step4:进入java目录，输入命令<code>mvn spring-boot:run</code> 启动服务(首次启动由于需要下载依赖包、可能需要一些时间)</li>
+  <li>step5:点击最右侧的【访问链接】选项卡，在访问链接面板中填写端口号为:8081，点击创建链接，即可点击生成的链接访问我们的Java项目</li>
+ </ul> 
+ <p><strong>Tips:</strong> 从终端中输入命令可以看出 <strong>CloudStudio</strong> 为我们集成了 <strong>Ubuntu16.04 + java1.8+Apache Maven3.3.9</strong> 的开发环境:<br><img src="http://qiniu-images.wythevan.com/18-5-16/98661811.jpg" alt=""><br><img src="http://qiniu-images.wythevan.com/18-5-16/67344372.jpg" alt=""></p>
+ <br>      
+</div></body></html>

@@ -1,0 +1,27 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Windows下安装Redis</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>Redis是一个开源的使用ANSI C语言编写、支持网络、可基于内存亦可持久化的日志型、Key-Value数据库，和Memcached类似，它支持存储的value类型相对更多，包括string(字符串)、list(链表)、set(集合)、zset(sorted set —有序集合)和hash(哈希类型)。在此基础上，redis支持各种不同方式的排序。与memcached一样，为了保证效率，数据都是缓存在内存中。区别的是redis会周期性的把更新的数据写入磁盘或者把修改操作写入追加的记录文件，并且在此基础上实现了master-slave(主从)同步。</p> 
+ <p>　　Redis支持主从同步。数据可以从主服务器向任意数量的从服务器上同步，从服务器可以是关联其他从服务器的主服务器。这使得Redis可执行单层树复制。存盘可以有意无意的对数据进行写操作。</p> 
+ <p><strong>Redis支持两种持久化方式：</strong></p> 
+ <ol> 
+  <li>snapshotting(快照)也是默认方式.(把数据做一个备份，将数据存储到文件)</li>
+  <li><p>Append-only file(缩写aof)的方式 </p> <p>快照是默认的持久化方式，这种方式是将内存中数据以快照的方式写到二进制文件中，默认的文件名称为dump.rdb.可以通过配置设置自动做快照持久化的方式。我们可以配置redis在n秒内如果超过m个key键修改就自动做快照.</p> <p>aof方式:由于快照方式是在一定间隔时间做一次的，所以如果redis意外down掉的话，就会丢失最后一次快照后的所有修改。aof比快照方式有更好的持久化性，是由于在使用aof时，redis会将每一个收到的写命令都通过write函数追加到文件中，当redis重启时会通过重新执行文件中保存的写命令来在内存中重建整个数据库的内容。 </p> </li>
+ </ol> 
+ <h2 id="h2-windows-redis-"><a name="Windows下Redis的安装" class="reference-link"></a><span class="header-link octicon octicon-link"></span>Windows下Redis的安装</h2>
+ <p>　　Redis官方下载(官方地址：<a target="_blank" href="http://redis.io/download)只能用于Linux环境下，所以要在Windows环境下安装Redis就不能从官方进行下载了。为了能够在Windows平台安装Redis，微软的Microsoft">http://redis.io/download)只能用于Linux环境下，所以要在Windows环境下安装Redis就不能从官方进行下载了。为了能够在Windows平台安装Redis，微软的Microsoft</a> Open Tech团队为我们开发了Windows版本下Redis。下载地址为：<a target="_blank" href="http://github.com/MSOpenTech/redis，但是Microsoft">http://github.com/MSOpenTech/redis，但是Microsoft</a> Open Tech团队开发的最新版本只能应用于64位操作系统，但是我使用的还是32位操作系统，那是不是我就不能安装Redis了呢？幸好微软之前开发的Redis之前版本还是支持32位系统的，所以我本机只能安装之前的版本了。这里我选择的是2.6版本，下载地址：<a target="_blank" href="http://github.com/MSOpenTech/redis/tree/2.6/bin/release。下载redisbin.zip文件之后直接解压到指定目录就完成了Redis的安装了，解压成功后，你将看到如下几个Dll">http://github.com/MSOpenTech/redis/tree/2.6/bin/release。下载redisbin.zip文件之后直接解压到指定目录就完成了Redis的安装了，解压成功后，你将看到如下几个Dll</a>:</p> 
+ <ul> 
+  <li>redis-server.exe：服务程序 </li>
+  <li>redis-check-dump.exe：本地数据库检查 </li>
+  <li>redis-check-aof.exe：更新日志检查 </li>
+  <li>redis-benchmark.exe：性能测试，用以模拟同时由N个客户端发送M个 SETs/GETs 查询</li>
+  <li>redis-cli.exe： 服务端开启后，我们的客户端就可以输入各种命令测试了 </li>
+ </ul> 
+ <p>接下来，只需要双击redis-server.exe程序就可以启动Redis服务，在2.6版本中可以不指定config路径，不像网上的Redis介绍文章都需要指定config文件，因为它们下载一般都是更早的版本，如2.4等版本。在2.6版本不需要特别指定config文件就可以启动成功，启动成功的界面如下图所示：</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201702/1002/977090246_28245.png" alt=""></p> 
+ <p> 服务启动成功后，我们就可以像MongoDB一样，开启redis-cli.exe客户端程序要操作Redis服务器，关于使用redis-cli.exe客户端命令的方式这里就不介绍了，更多可以参考官方文档，因为对我们来说，更常用的是使用C#、Java来操作Redis服务。在第四部分我将介绍使用C#来操作Redis。</p> 
+ <p> 一般服务我们都是用Windows Service来启动的，对于最新版本的Redis安装为Windows Service官方有详细的介绍，由于这里我不是用的最新版本，并且还是32位的，所以这里我安装Windows Service是通过sc(<a target="_blank" href="http://www.cnblogs.com/jankie/archive/2011/08/03/2126249.html)命令来安装的，具体的安装脚本如下所示：">http://www.cnblogs.com/jankie/archive/2011/08/03/2126249.html)命令来安装的，具体的安装脚本如下所示：</a></p> 
+ <pre><code class="lang-bash">sc create Redis start= auto DisplayName= Redis binpath= "F:\Study\No-Sql\Redis\redis-windows\RedisService.exe"
+</code></pre> 
+ <p> 其中RedisService是Redis注册Windows服务的启动程序，具体下载地址为：<a target="_blank" href="http://files.cnblogs.com/files/zhili/RedisService.zip">http://files.cnblogs.com/files/zhili/RedisService.zip</a></p> 
+ <p> 通过上面的脚本就可以成功安装Redis为Windows Service了，然后每次系统启动的时候，就会自动开启Redis服务，而不需要我们每次去手动运行redis-server.exe命令了。</p>
+ <br>      
+</div></body></html>

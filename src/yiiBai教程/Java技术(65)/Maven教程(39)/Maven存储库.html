@@ -1,0 +1,69 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Maven存储库</h1><div style="width:100%;float:left;" class="article-content">   
+ <h2> 什么是Maven资源库? </h2> 
+ <p> 在 Maven 术语里存储库是一个目录，即目录中<span>保存</span>所有项目的 jar 库，插件或任何其他项目特定文件，并可以容易由 Maven <span>使用</span>。 </p> 
+ <p> Maven库中有三种类型 </p> 
+ <ul> 
+  <li> <p> local - 本地库 </p> </li> 
+  <li> <p> central - 中央库 </p> </li> 
+  <li> <p> remote - 远程库 </p> </li> 
+ </ul> 
+ <h2> 本地库 </h2> 
+ <p> Maven 本地存储库是一个在本地计算机上的一个文件夹位置。当你第一次运行 maven 命令的时候<span>它就被创建了</span>。 </p> 
+ <p> Maven 的本地资源库让您的项目可依赖这些项目（插件库 jar 文件，jar文件等）。当运行 Maven 构建，那么 Maven 会自动下载<span>所有依赖的jar</span>到本地存储库中。它有助于避免依赖存储在远程机器上的项目建立参考。 </p> 
+ <p> Maven 本地存储库，默认情况下创建在 ％USER_HOME％ 目录。要覆盖默认位置，<span>可在 </span>Maven 的 settings.xml 文件中修改 ％M2_HOME％conf 目录指向另一个路径。 </p> 
+ <pre class="prettyprint lang-xml">&lt;settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 
+   http://maven.apache.org/xsd/settings-1.0.0.xsd"&gt;
+      &lt;localRepository&gt;C:/MyLocalRepository&lt;/localRepository&gt;
+&lt;/settings&gt;</pre> 
+ <p> 当运行 Maven 命令，Maven 会下载<span>依赖</span>到您的自定义路径。 </p> 
+ <h2> 中央储存库 </h2> 
+ <p> <span>Maven中央存储库是由Maven社区提供的资源库。它包含了大量的常用程序库。</span> </p> 
+ <p> 当Maven没有<span>在本地存储库</span>找到任何依赖，就会开始搜索在中央存储库，它会使用下列网址:&nbsp;<a target="_blank" href="http://repo1.maven.org/maven2/">http://repo1.maven.org/maven2/</a> </p> 
+ <p> 中央仓库的关键概念： </p> 
+ <ul> 
+  <li> <p> 此系统信息库由Maven社区管理 </p> </li> 
+  <li> <p> 它不要求配置 </p> </li> 
+  <li> <p> 搜索时<span>需要</span>互联网接入 </p> </li> 
+ </ul> 
+ <p> <span>要浏览</span>中央 Maven 仓库<span>的</span>内容，Maven 社区提供了一个网址：<a target="_blank" href="http://search.maven.org/#browse">http://search.maven.org/#browse</a>&nbsp;。使用这个库，开发人员可以在中央存储库中搜索所有可用的库。 </p> 
+ <h2> 远程仓库 </h2> 
+ <p> 有时，Maven不能从依赖中央存储库找到上述库，那么它停下构建过程并输出错误消息到控制台。为了防止这种情况，Maven提供远程仓库概念，这是开发商的自定义库包含所需的库文件或其他项目 jar 文件。 </p> 
+ <p> 例如，使用以下提到的 pom.xml，Maven 会<span>从远程仓库</span>下载依赖项（不在中央存储库中<span>提供</span>）。 </p> 
+ <pre class="prettyprint lang-xml">&lt;project xmlns="http://maven.apache.org/POM/4.0.0"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+   http://maven.apache.org/xsd/maven-4.0.0.xsd"&gt;
+   &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
+   &lt;groupId&gt;com.companyname.projectgroup&lt;/groupId&gt;
+   &lt;artifactId&gt;project&lt;/artifactId&gt;
+   &lt;version&gt;1.0&lt;/version&gt;
+   &lt;dependencies&gt;
+      &lt;dependency&gt;
+         &lt;groupId&gt;com.companyname.common-lib&lt;/groupId&gt;
+         &lt;artifactId&gt;common-lib&lt;/artifactId&gt;
+         &lt;version&gt;1.0.0&lt;/version&gt;
+      &lt;/dependency&gt;
+   &lt;dependencies&gt;
+   &lt;repositories&gt;
+      &lt;repository&gt;
+         &lt;id&gt;companyname.lib1&lt;/id&gt;
+         &lt;url&gt;http://download.companyname.org/maven2/lib1&lt;/url&gt;
+      &lt;/repository&gt;
+      &lt;repository&gt;
+         &lt;id&gt;companyname.lib2&lt;/id&gt;
+         &lt;url&gt;http://download.companyname.org/maven2/lib2&lt;/url&gt;
+      &lt;/repository&gt;
+   &lt;/repositories&gt;
+&lt;/project&gt;</pre> 
+ <h2> Maven 依赖搜索序列 </h2> 
+ <p> 当我们执行 Maven 构建命令，Maven 依赖库按以下顺序进行搜索： </p> 
+ <ul> 
+  <li> <p> 第1步 -&nbsp;搜索依赖本地资源库，如果没有找到，跳到第2步，否则，如果找到那么会做进一步处理。 </p> </li> 
+  <li> <p> <span>第2步</span> -&nbsp;搜索依赖中央存储库，如果没有找到，则从远程资源库/存储库中，然后移动到步骤4，否则如果找到，那么它下载到本地存储库中，以备将来参考使用。 </p> </li> 
+  <li> <p> <span>第3步</span> -&nbsp;如果没有提到远程仓库，Maven 则会停止处理并抛出错误（找不到依赖库）。 </p> </li> 
+  <li> <p> <span>第4步&nbsp;</span>-&nbsp;远程仓库或储存库中的搜索依赖，如果找到它会下载到本地资源库以供将来参考使用，否则 Maven 停止处理并抛出错误（找不到依赖库）。 </p> </li> 
+ </ul>
+ <br>      
+</div></body></html>

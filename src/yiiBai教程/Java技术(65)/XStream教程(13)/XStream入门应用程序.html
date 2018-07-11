@@ -1,0 +1,233 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">XStream入门应用程序</h1><div style="width:100%;float:left;" class="article-content">   
+ <p> 在进入XStream库的细节之前，让我们来看看应用程序操作。在这个例子中，我们创建Student和Address类。还将创建一个Student对象，然后将其序列化到一个XML字符串。然后反序列化的同一个XML字符串，以重新获得学生对象。</p> 
+ <p> 创建一个名为XStreamTester的Java类文件在&nbsp;C:\&gt;XStream_WORKSPACE.</p> 
+ <p style="box-sizing: border-box; color: rgb(0, 0, 0); line-height: 24px; margin: 0em 0.2em 1em; padding: 0px; text-align: justify;    font-size: 14px;"> <i style="box-sizing: border-box;">文件: XStreamTester.java</i></p> 
+ <pre class="prettyprint tryit" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 496.1875px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); cursor: default; background-image: url(http://www.yiibai.com/java8/images/try-it.jpg) !important; background-attachment: initial !important; background-size: initial !important; background-origin: initial !important; background-clip: initial !important; background-position: 100% 0%; background-repeat: no-repeat !important;">
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.sax.SAXSource;
+import javax.xml.transform.sax.SAXTransformerFactory;
+import javax.xml.transform.stream.StreamResult;
+
+import org.xml.sax.InputSource;
+
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.xml.StaxDriver;
+
+public class XStreamTester {
+   public static void main(String args[]){
+      XStreamTester tester = new XStreamTester();
+      XStream xstream = new XStream(new StaxDriver());
+
+      Student student = tester.getStudentDetails();
+      
+	  //Object to XML Conversion
+      String xml = xstream.toXML(student);
+      System.out.println(formatXml(xml));
+
+      //XML to Object Conversion		
+      Student student1 = (Student)xstream.fromXML(xml);
+      System.out.println(student1);
+   }	
+
+   private Student getStudentDetails(){
+      Student student = new Student();
+      student.setFirstName("Mahesh");
+      student.setLastName("Parashar");
+      student.setRollNo(1);
+      student.setClassName("1st");
+
+      Address address = new Address();
+      address.setArea("H.No. 16/3, Preet Vihar.");
+      address.setCity("Delhi");
+      address.setState("Delhi");
+      address.setCountry("India");
+      address.setPincode(110012);
+
+      student.setAddress(address);
+      return student;
+   }
+
+   public static String formatXml(String xml){
+      try{
+         Transformer serializer= SAXTransformerFactory.newInstance().newTransformer();
+         serializer.setOutputProperty(OutputKeys.INDENT, "yes");
+         serializer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+         Source xmlSource=new SAXSource(new InputSource(new ByteArrayInputStream(xml.getBytes())));
+         StreamResult res =  new StreamResult(new ByteArrayOutputStream());            
+         serializer.transform(xmlSource, res);
+         return new String(((ByteArrayOutputStream)res.getOutputStream()).toByteArray());
+      }catch(Exception e){         
+         return xml;
+      }
+   }
+}
+
+class Student {
+   private String firstName;
+   private String lastName;
+   private int rollNo;
+   private String className;
+   private Address address;
+
+   public String getFirstName() {
+      return firstName;
+   }
+   public void setFirstName(String firstName) {
+      this.firstName = firstName;
+   }
+   public String getLastName() {
+      return lastName;
+   }
+   public void setLastName(String lastName) {
+      this.lastName = lastName;
+   }
+   public int getRollNo() {
+      return rollNo;
+   }
+   public void setRollNo(int rollNo) {
+      this.rollNo = rollNo;
+   }
+   public String getClassName() {
+      return className;
+   }
+   public void setClassName(String className) {
+      this.className = className;
+   }
+   public Address getAddress() {
+      return address;
+   }
+   public void setAddress(Address address) {
+      this.address = address;
+   }
+
+   public String toString(){
+      StringBuilder stringBuilder = new StringBuilder();
+      stringBuilder.append("Student [ ");
+      stringBuilder.append("\nfirstName: ");
+      stringBuilder.append(firstName);
+      stringBuilder.append("\nlastName: ");
+      stringBuilder.append(lastName);
+      stringBuilder.append("\nrollNo: ");
+      stringBuilder.append(rollNo);
+      stringBuilder.append("\nclassName: ");
+      stringBuilder.append(className);
+      stringBuilder.append("\naddress: ");
+      stringBuilder.append(address);
+      stringBuilder.append(" ]");
+      return stringBuilder.toString();
+   }
+}
+
+class Address {
+   private String area;
+   private String city;
+   private String state;
+   private String country;
+   private int pincode;
+
+   public String getArea() {
+      return area;
+   }
+   public void setArea(String area) {
+      this.area = area;
+   }
+   public String getCity() {
+      return city;
+   }
+   public void setCity(String city) {
+      this.city = city;
+   }
+   public String getState() {
+      return state;
+   }
+   public void setState(String state) {
+      this.state = state;
+   }
+   public String getCountry() {
+      return country;
+   }
+   public void setCountry(String country) {
+      this.country = country;
+   }
+   public int getPincode() {
+      return pincode;
+   }
+   public void setPincode(int pincode) {
+      this.pincode = pincode;
+   }
+   public String toString(){
+      StringBuilder stringBuilder = new StringBuilder();
+      stringBuilder.append("\nAddress [ ");
+      stringBuilder.append("\narea: ");
+      stringBuilder.append(area);
+      stringBuilder.append("\ncity: ");
+      stringBuilder.append(city);
+      stringBuilder.append("\nstate: ");
+      stringBuilder.append(state);
+      stringBuilder.append("\ncountry: ");
+      stringBuilder.append(country);
+      stringBuilder.append("\npincode: ");	
+      stringBuilder.append(pincode);
+      stringBuilder.append(" ]");
+      return stringBuilder.toString();
+   }
+}</pre> 
+ <p> <strong>验证结果</strong></p> 
+ <p> 使用javac编译器编译如下类：</p>   
+ <pre class="prettyprint notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 496.1875px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+C:\XStream_WORKSPACE&gt;javac XStreamTester.java</pre> 
+ <p> 现在运行XStreamTester看到结果：</p> 
+ <pre class="prettyprint notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 496.1875px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+C:\XStream_WORKSPACE&gt;java XStreamTester</pre> 
+ <p> 验证输出</p> 
+ <pre class="result notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 496.1875px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;Student&gt;
+  &lt;firstName&gt;Mahesh&lt;/firstName&gt;
+  &lt;lastName&gt;Parashar&lt;/lastName&gt;
+  &lt;rollNo&gt;1&lt;/rollNo&gt;
+  &lt;className&gt;1st&lt;/className&gt;
+  &lt;address&gt;
+    &lt;area&gt;H.No. 16/3, Preet Vihar.&lt;/area&gt;
+    &lt;city&gt;Delhi&lt;/city&gt;
+    &lt;state&gt;Delhi&lt;/state&gt;
+    &lt;country&gt;India&lt;/country&gt;
+    &lt;pincode&gt;110012&lt;/pincode&gt;
+  &lt;/address&gt;
+&lt;/Student&gt;
+
+Student [ 
+firstName: Mahesh
+lastName: Parashar
+rollNo: 1
+className: 1st
+address: 
+Address [ 
+area: H.No. 16/3, Preet Vihar.
+city: Delhi
+state: Delhi
+country: India
+pincode: 110012 ] ]</pre> 
+ <h2> 记住以下步骤</h2> 
+ <p> 以下是这里要考虑的重要步骤。</p> 
+ <h3> 第1步：创建XStream对象。</h3> 
+ <p> 通过它传递一个StaxDriver创建XStream对象。StaxDriver使用SAX解析器(可从Java6)，一个快速的XML解析器。</p> 
+ <pre class="prettyprint notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 496.1875px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+XStream xstream = new XStream(new StaxDriver());</pre> 
+ <h3> 第2步：序列化对象到XML。</h3> 
+ <p> 使用toXML() 方法来获取对象的XML字符串表示。</p> 
+ <pre class="prettyprint notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 496.1875px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+//Object to XML Conversion
+String xml = xstream.toXML(student);</pre> 
+ <h3> 第3步：反序列化XML获得对象。</h3> 
+ <p> 使用 fromXML()方法来从XML对象。</p> 
+ <pre class="prettyprint notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 496.1875px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+//XML to Object Conversion		
+Student student1 = (Student)xstream.fromXML(xml);</pre> 
+ <br>      
+</div></body></html>

@@ -1,0 +1,163 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Spring注入日期到bean属性-CustomDateEditor</h1><div style="width:100%;float:left;" class="article-content">   
+ <div> 
+  <div>
+    这一个Spring例子向您展示如何为bean属性注入一个“日期”。 
+  </div> 
+ </div> 
+ <div> 
+  <pre>package com.yiibai.common;
+
+import java.util.Date;
+
+public class Customer {
+
+	Date date;
+
+	public Date getDate() {
+		return date;
+	}
+
+	public void setDate(Date date) {
+		this.date = date;
+	}
+
+	@Override
+	public String toString() {
+		return "Customer [date=" + date + "]";
+	}
+
+}</pre> 
+  <div>
+    bean配置文件 
+  </div> 
+  <pre>&lt;beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-2.5.xsd"&gt;
+
+	&lt;bean id="customer" class="com.yiibai.common.Customer"&gt;
+		&lt;property name="date" value="2015-12-31" /&gt;
+	&lt;/bean&gt;
+
+&lt;/beans&gt;</pre> 
+  <p> 执行-运行程序输出 </p> 
+  <pre>package com.yiibai.common;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+public class App {
+	public static void main(String[] args) {
+		ApplicationContext context = new ClassPathXmlApplicationContext(
+				"SpringBeans.xml");
+
+		Customer cust = (Customer) context.getBean("customer");
+		System.out.println(cust);
+		
+	}
+}</pre> 
+  <div>
+    可能会遇到如下错误信息： 
+  </div> 
+  <pre>Caused by: org.springframework.beans.TypeMismatchException: 
+	Failed to convert property value of type [java.lang.String] to 
+	required type [java.util.Date] for property 'date'; 
+
+nested exception is java.lang.IllegalArgumentException: 
+	Cannot convert value of type [java.lang.String] to
+	required type [java.util.Date] for property 'date': 
+	no matching editors or conversion strategy found</pre> 
+  <h2> 解决办法 </h2> 
+  <div>
+    在Spring中，可以通过两种方式注入日期： 
+  </div> 
+  <h2> 1. Factory bean </h2> 
+  <div>
+    声明一个dateFormat&nbsp;bean，在“customer”&nbsp;Bean，引用 “dateFormat”&nbsp;bean作为一个工厂bean。该工厂方法将调用SimpleDateFormat.parse()自动转换成字符串Date对象。 
+  </div> 
+  <pre>&lt;beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-2.5.xsd"&gt;
+
+	&lt;bean id="dateFormat" class="java.text.SimpleDateFormat"&gt;
+		&lt;constructor-arg value="yyyy-MM-dd" /&gt;
+	&lt;/bean&gt;
+
+	&lt;bean id="customer" class="com.yiibai.common.Customer"&gt;
+		&lt;property name="date"&gt;
+			&lt;bean factory-bean="dateFormat" factory-method="parse"&gt;
+				&lt;constructor-arg value="2015-12-31" /&gt;
+			&lt;/bean&gt;
+		&lt;/property&gt;
+	&lt;/bean&gt;
+
+&lt;/beans&gt;</pre> 
+  <h2> 2. CustomDateEditor </h2> 
+  <div>
+    声明一个 CustomDateEditor 类将字符串转换成 java.util.Date。 
+  </div> 
+  <pre>&lt;bean id="dateEditor"
+	   class="org.springframework.beans.propertyeditors.CustomDateEditor"&gt;
+	
+		&lt;constructor-arg&gt;
+			&lt;bean class="java.text.SimpleDateFormat"&gt;
+				&lt;constructor-arg value="yyyy-MM-dd" /&gt;
+			&lt;/bean&gt;
+		&lt;/constructor-arg&gt;
+		&lt;constructor-arg value="true" /&gt;
+	&lt;/bean&gt;</pre> 
+  <div>
+    并声明另一个“CustomEditorConfigurer”，使 Spring转换&nbsp;bean&nbsp;属性，其类型为java.util.Date。 
+  </div>   
+  <pre>&lt;bean class="org.springframework.beans.factory.config.CustomEditorConfigurer"&gt;
+		&lt;property name="customEditors"&gt;
+			&lt;map&gt;
+				&lt;entry key="java.util.Date"&gt;
+					&lt;ref local="dateEditor" /&gt;
+				&lt;/entry&gt;
+			&lt;/map&gt;
+		&lt;/property&gt;
+	&lt;/bean&gt;</pre> 
+  <div>
+    bean配置文件的完整例子(applicationContext.xml)。 
+  </div> 
+  <pre>&lt;beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-2.5.xsd"&gt;
+
+	&lt;bean id="dateEditor"
+		class="org.springframework.beans.propertyeditors.CustomDateEditor"&gt;
+
+		&lt;constructor-arg&gt;
+			&lt;bean class="java.text.SimpleDateFormat"&gt;
+				&lt;constructor-arg value="yyyy-MM-dd" /&gt;
+			&lt;/bean&gt;
+		&lt;/constructor-arg&gt;
+		&lt;constructor-arg value="true" /&gt;
+
+	&lt;/bean&gt;
+
+	&lt;bean class="org.springframework.beans.factory.config.CustomEditorConfigurer"&gt;
+		&lt;property name="customEditors"&gt;
+			&lt;map&gt;
+				&lt;entry key="java.util.Date"&gt;
+					&lt;ref local="dateEditor" /&gt;
+				&lt;/entry&gt;
+			&lt;/map&gt;
+		&lt;/property&gt;
+	&lt;/bean&gt;
+
+	&lt;bean id="customer" class="com.yiibai.common.Customer"&gt;
+		&lt;property name="date" value="2015-12-31" /&gt;
+	&lt;/bean&gt;
+
+&lt;/beans&gt;</pre> 
+  <div>
+    下载代码 – 
+   <a target="_blank" href="http://pan.baidu.com/s/1bxZyfO">http://pan.baidu.com/s/1bxZyfO</a> 
+  </div> 
+ </div>
+ <br>      
+</div></body></html>

@@ -1,0 +1,82 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Cordova网络信息</h1><div style="width:100%;float:left;" class="article-content">   
+ <div> 
+  <div>
+    这个插件提供了有关设备的网络信息。 
+  </div> 
+ </div> 
+ <div> 
+  <h2> 
+   <div>
+     第1步&nbsp;-&nbsp;安装网络信息插件 
+   </div> </h2> 
+  <p style="text-align:justify;"> 要安装这个插件，我们将打开命令提示符，然后运行下面的代码&nbsp;− </p> 
+  <pre>C:\Users\username\Desktop\CordovaProject&gt;cordova plugin add cordova-plugin-network-information</pre> 
+  <h2> 
+   <div>
+     第2步&nbsp;-&nbsp;添加按钮 
+   </div> </h2> 
+  <div>
+    让我们在 index.html 中创建一个按钮将用于获取有关网络的信息。 
+  </div> 
+  <pre>&lt;button id = "networkInfo"&gt;INFO&lt;/button&gt;</pre> 
+  <h2> 
+   <div>
+     第3步&nbsp;-&nbsp;添加事件监听器 
+   </div> </h2> 
+  <p style="text-align:justify;"> 我们将在index.js 的 onDeviceReady函数内部添加三个事件侦听器。一个用于监听我们之前创建的按钮点击，另外两个将监听连接状态的变化。 </p> 
+  <pre>document.getElementById("networkInfo").addEventListener("click", networkInfo);
+document.addEventListener("offline", onOffline, false);
+document.addEventListener("online", onOnline, false);</pre> 
+  <h2> 
+   <div>
+     第4步&nbsp;-&nbsp;创建函数 
+   </div> </h2> 
+  <p style="text-align:justify;"> 当按钮被点击&nbsp;networkInfo&nbsp;函数将返回有关当前网络连接的信息。我们调用&nbsp;type&nbsp;方法。其他函数是&nbsp;onOffline&nbsp;和&nbsp;onOnline。这些函数正在侦听连接变化，任何变化都会触发相应提示消息。 </p> 
+  <pre>function networkInfo() {
+   var networkState = navigator.connection.type;
+   var states = {};
+	
+   states[Connection.UNKNOWN]  = 'Unknown connection';
+   states[Connection.ETHERNET] = 'Ethernet connection';
+   states[Connection.WIFI]     = 'WiFi connection';
+   states[Connection.CELL_2G]  = 'Cell 2G connection';
+   states[Connection.CELL_3G]  = 'Cell 3G connection';
+   states[Connection.CELL_4G]  = 'Cell 4G connection';
+   states[Connection.CELL]     = 'Cell generic connection';
+   states[Connection.NONE]     = 'No network connection';
+
+   alert('Connection type: ' + states[networkState]);
+}
+
+function onOffline() {
+   alert('You are now offline!');
+}
+
+function onOnline() {
+   alert('You are now online!');
+}</pre> 
+  <div>
+    当我们开始连接到网络的应用程序，onOnline函数将触发信息提示。
+   <br> 
+   <img src="/uploads/tutorial/20160220/1-160220120402615.jpg" alt="">
+   <br> 
+  </div> 
+  <img src="file://E:/data/youdao/qq24B39E2329F08D9F4C3146A571A415EF/09171e53a87541e880eac8178f119b2c/work-online.jpeg" alt="Cordova Network Online"> 
+  <div>
+    如果我们按 INFO 按钮，弹出信息将显示我们的网络状态。
+   <br> 
+   <img src="/uploads/tutorial/20160220/1-160220120423616.jpg" alt="">
+   <br> 
+  </div> 
+  <img src="file://E:/data/youdao/qq24B39E2329F08D9F4C3146A571A415EF/b386d1c9734540b9a516b421d026542f/etwork-info.jpeg" alt="Cordova Network Info"> 
+  <div>
+    如果从网络上断开，onOffline函数将被调用。
+   <br> 
+   <img src="/uploads/tutorial/20160220/1-16022012044Y59.jpg" alt="">
+   <br> 
+  </div> 
+  <img src="file://E:/data/youdao/qq24B39E2329F08D9F4C3146A571A415EF/0888aa475e484c41bc7e9b60ce6c959c/ork-offline.jpeg" alt="Cordova Network Offline">
+  <br> 
+ </div>
+ <br>      
+</div></body></html>

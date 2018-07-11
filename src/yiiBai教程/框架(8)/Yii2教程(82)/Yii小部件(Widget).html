@@ -1,0 +1,131 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Yii小部件(Widget)</h1><div style="width:100%;float:left;" class="article-content">   
+ <div>
+   widget是可重复使用的客户端代码，它包含HTML，CSS 和 JS。此代码包含最少逻辑并被包装在一个&nbsp;yii\base\Widget 对象。我们可以很容易地此对象插入到在任意视图中应用。 
+ </div> 
+ <div> 
+  <div> 
+   <strong>第1步</strong>-&nbsp;要在动作中查看小部件，我们在&nbsp;SiteController&nbsp;创建&nbsp;actionTestWidget&nbsp;函数并用下面的代码。 
+  </div> 
+  <pre>public function actionTestWidget() { 
+   return $this-&gt;render('testwidget'); 
+}</pre> 
+  <div>
+    在上面的例子中，我们只是返回了一个名为&nbsp;“testwidget”&nbsp;的视图。 
+  </div> 
+  <div>
+    第2步&nbsp;-&nbsp;现在，在&nbsp;views/site&nbsp;文件夹中，创建一个名为&nbsp;testwidget.php&nbsp;的视图文件。 
+  </div> 
+  <pre>&lt;?php 
+   use yii\bootstrap\Progress; 
+?&gt; 
+&lt;?= Progress::widget(['percent' =&gt; 60, 'label' =&gt; 'Progress 60%']) ?&gt;</pre> 
+  <div>
+    第3步&nbsp;-&nbsp;如果在浏览器中打开URL=&gt;&nbsp;
+   <a target="_blank" href="http://localhost:8080/index.php?r=site/test-widget">http://localhost:8080/index.php?r=site/test-widget</a>&nbsp;，就会看到进度条部件如下所示。
+   <br> 
+   <img src="/uploads/tutorial/20160519/1-160519204951200.png" alt="">
+   <br> 
+  </div> 
+  <h2> 使用Widgets </h2> 
+  <p style="text-align:justify;"> 要在视图中使用一个小部件，您应该调用&nbsp;yii\base\Widget::widget()&nbsp;函数。&nbsp;这个函数使用的配置数组来初始化窗口小部件。在前面的例子中，我们用插入百分比进度条和配置对象标记参数。 </p> 
+  <p style="text-align:justify;"> 一些小部件需要内容块，应该封闭在yii\base\Widget::begin()&nbsp;和&nbsp;yii\base\Widget::end()函数之间。&nbsp;例如，下面的 widget&nbsp;显示一个联系的表单&nbsp;- </p> 
+  <pre>&lt;?php $form = ActiveForm::begin(['id' =&gt; 'contact-form']); ?&gt; 
+   &lt;?= $form-&gt;field($model, 'name') ?&gt; 
+   &lt;?= $form-&gt;field($model, 'email') ?&gt; 
+   &lt;?= $form-&gt;field($model, 'subject') ?&gt; 
+   &lt;?= $form-&gt;field($model, 'body')-&gt;textArea(['rows' =&gt; 6]) ?&gt; 
+   &lt;?= $form-&gt;field($model, 'verifyCode')-&gt;widget(Captcha::className(), [ 
+      'template' =&gt;
+         '&lt;div class="row"&gt;
+            &lt;div class = "col-lg-3"&gt;{image}&lt;/div&gt;
+            &lt;div class = "col-lg-6"&gt;{input}&lt;/div&gt;
+         &lt;/div&gt;', 
+   ]) ?&gt; 
+   &lt;div class = "form-group"&gt; 
+      &lt;?= Html::submitButton('Submit', ['class' =&gt; 'btn btn-primary',
+         'name' =&gt; 'contact-button']) ?&gt; 
+   &lt;/div&gt; 
+&lt;?php ActiveForm::end(); ?&gt; </pre> 
+  <h2> 创建Widgets </h2> 
+  <p style="text-align:justify;"> 要创建一个窗口小部件，应该扩展类&nbsp;yii\base\Widget。那么需要重写&nbsp;yii\base\Widget::init()&nbsp;和&nbsp;yii\base\Widget::run()&nbsp;函数。run()函数将返回渲染的结果。&nbsp;init()函数将标准化小部件的属性。 </p> 
+  <p style="text-align:justify;"> init()函数将标准化小部件的属性。&nbsp;在 components&nbsp;文件夹内，创建一个名为 FirstWidget.php 文件，并使用下面的代码。 </p> 
+  <pre>&lt;?php 
+   namespace app\components; 
+   use yii\base\Widget; 
+   class FirstWidget extends Widget { 
+      public $mes; 
+      public function init() { 
+         parent::init(); 
+         if ($this-&gt;mes === null) { 
+            $this-&gt;mes = '第一个Widget'; 
+         } 
+      }  
+      public function run() { 
+         return "&lt;h1&gt;$this-&gt;mes&lt;/h1&gt;"; 
+      } 
+   } 
+?&gt;</pre> 
+  <div>
+    步骤2-&nbsp;按以下列方式修改 views/site/testwidget.php 视图。 
+  </div>   
+  <pre>&lt;?php 
+   use app\components\FirstWidget; 
+?&gt; 
+&lt;?= FirstWidget∷widget() ?&gt;</pre> 
+  <div>
+    第3步&nbsp;-&nbsp;访问URL=&gt;&nbsp;
+   <a target="_blank" href="http://localhost:8080/index.php?r=site/test-widget">http://localhost:8080/index.php?r=site/test-widget</a>&nbsp;，将会看到以下内容输出。
+   <br> 
+   <img src="/uploads/tutorial/20160519/1-1605192050221Q.png" alt="">
+   <br> 
+  </div> 
+  <div>
+    第4步-&nbsp;要在 begin()&nbsp;和&nbsp;end()&nbsp;函数之间调用显示内容，您应该修改&nbsp;FirstWidget&nbsp;文件。 
+  </div> 
+  <pre>&lt;?php
+   namespace app\components;
+   use yii\base\Widget;
+   class FirstWidget extends Widget {
+      public function init() {
+         parent::init();
+         ob_start();
+      }
+      public function run() {
+         $content = ob_get_clean();
+         return "&lt;h1&gt;$content&lt;/h1&gt;";
+      }
+   }
+?&gt; &nbsp;</pre> 
+  <p style="text-align:justify;"> 第5步&nbsp;-&nbsp;现在H1标签将环绕的所有内容。请注意，我们使用 ob_start()函数来缓冲输出。修改&nbsp;&nbsp;views/site/testwidget.php 视图使用如下面给出的代码。 </p> 
+  <pre>&lt;?php
+   use app\components\FirstWidget;
+?&gt;
+&lt;?php FirstWidget::begin(); ?&gt;
+   第一个Widget在H1标签中
+&lt;?php FirstWidget::end(); ?&gt;</pre> 
+  <div>
+    将会看到下面的输出&nbsp;-
+   <br> 
+   <img src="/uploads/tutorial/20160519/1-16051920510I28.png" alt="">
+   <br> 
+  </div> 
+  <h2> 
+   <div>
+     要点 
+   </div> </h2> 
+  <div>
+    窗口小部件应该&nbsp;- 
+  </div> 
+  <ul> 
+   <li> 
+    <div>
+      要在MVC模式下创建。应该保持表现层在视图，逻辑在窗口小部件(widget)类。 
+    </div> </li> 
+   <li> 
+    <div>
+      设计成自包含的。最终开发人员应该能够将它设计到一个视图。 
+    </div> </li> 
+  </ul> 
+ </div>
+ <br>      
+</div></body></html>

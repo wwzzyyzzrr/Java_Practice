@@ -1,0 +1,52 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">MongoDB更新文档</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>MongoDB的<code>update()</code>和<code>save()</code>方法用于将集合中的文档更新。<code>update()</code>方法更新现有文档中的值，而<code>save()</code>方法使用<code>save()</code>方法中传递的文档数据替换现有文档。</p> 
+ <h2 id="h2-mongodb-update-"><a name="MongoDB Update()方法" class="reference-link"></a><span class="header-link octicon octicon-link"></span>MongoDB Update()方法</h2>
+ <p><code>update()</code>方法更新现有文档中的值。</p> 
+ <p><strong>语法</strong></p> 
+ <p><code>update()</code>方法的基本语法如下 -</p> 
+ <pre><code class="lang-shell">&gt; db.COLLECTION_NAME.update(SELECTION_CRITERIA, UPDATED_DATA)
+</code></pre> 
+ <p><strong>示例</strong></p> 
+ <p>考虑<code>mycol</code>集合具有以下数据 - </p> 
+ <pre><code class="lang-shell">&gt; db.mycol.find({}, {'_id':1, 'title':1})
+{ "_id" : 100, "title" : "MongoDB Overview" }
+{ "_id" : 101, "title" : "MongoDB Guide" }
+{ "_id" : 102, "title" : "NoSQL Database" }
+{ "_id" : 104, "title" : "Python Quick Guide" }
+&gt;
+</code></pre> 
+ <p>以下示例将为标题为“<code>MongoDB Overview</code>”的文档设置为“<code>New Update MongoDB Overview</code>”。</p> 
+ <pre><code class="lang-shell">&gt; db.mycol.find({'title':'MongoDB Overview'},{'_id':1, 'title':1})
+{ "_id" : 100, "title" : "MongoDB Overview" }
+&gt; # 更新操作
+&gt; db.mycol.update({'title':'MongoDB Overview'},{$set:{'title':'New Update MongoDB Overview'}})
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+&gt; # 查询更新后的结果 -
+&gt; db.mycol.find({'_id':100},{'_id':1, 'title':1})
+{ "_id" : 100, "title" : "New Update MongoDB Overview" }
+&gt;
+</code></pre> 
+ <p>默认情况下，MongoDB只会更新一个文档。要更新多个文档，需要将参数’<code>multi</code>‘设置为<code>true</code>。</p>   
+ <pre><code class="lang-shell">&gt;db.mycol.update({'title':'MongoDB Overview'},
+   {$set:{'title':'New Update MongoDB Overview'}},{multi:true})
+</code></pre> 
+ <h2 id="h2-mongodb-save-"><a name="MongoDB Save()方法" class="reference-link"></a><span class="header-link octicon octicon-link"></span>MongoDB Save()方法</h2>
+ <p><code>save()</code>方法使用<code>save()</code>方法中传递的文档数据替换现有文档。</p> 
+ <p><strong>语法</strong></p> 
+ <p>MongoDB <code>save()</code>方法的基本语法如下所示：</p> 
+ <pre><code class="lang-shell">&gt;db.COLLECTION_NAME.save({_id:ObjectId(),NEW_DATA})
+</code></pre> 
+ <p>以下示例将<code>_id</code>为 <code>100</code> 的文档使用新的文档替换。</p> 
+ <pre><code class="lang-shell">db.mycol.save(
+   {
+      "_id" : 100, "title":"Update By Save()Method.", "by":"yiibai.com"
+   }
+)
+
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+
+db.mycol.find({'_id':100}, {'_id':1, 'title':1})
+{ "_id" : 100, "title" : "Update By Save()Method." }
+</code></pre>
+ <br>      
+</div></body></html>

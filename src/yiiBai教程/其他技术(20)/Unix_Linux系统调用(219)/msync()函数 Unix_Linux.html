@@ -1,0 +1,63 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">msync()函数 Unix/Linux</h1><div style="width:100%;float:left;" class="article-content">   
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">msync -&nbsp;</span>同步用的存储器映射的文件 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> 内容简介</h1> 
+ <b style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">#include &lt;sys/mman.h&gt;</b> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> <b>int msync(void *</b><i>start</i><b>, size_t&nbsp;</b><i>length</i><b>, int&nbsp;</b><i>flags</i><b>);</b></p> 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> 描述</h1> 
+ <b style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">msync</b>
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">() flushes changes made to the in-core copy of a file that was mapped into memory using&nbsp;</span>
+ <b style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">mmap</b>
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">(2) back to disk. Without use of this call there is no guarantee that changes are written back before&nbsp;</span>
+ <b style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">munmap</b>
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">(2) is called. To be more precise, the part of the file that corresponds to the memory area starting at&nbsp;</span>
+ <i style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">start</i>
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">&nbsp;and having length&nbsp;</span>
+ <i style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">length</i>
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">is updated. The&nbsp;</span>
+ <i style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">flags</i>
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">&nbsp;argument may have the bits MS_ASYNC, MS_SYNC and MS_INVALIDATE set, but not both MS_ASYNC and MS_SYNC. MS_ASYNC specifies that an update be scheduled, but the call returns immediately. MS_SYNC asks for an update and waits for it to complete. MS_INVALIDATE asks to invalidate other mappings of the same file (so that they can be updated with the fresh values just written).</span> 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> 返回值</h1> 
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">On success, zero is returned. On error, -1 is returned, and&nbsp;</span>
+ <i style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">errno</i>
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">&nbsp;is set appropriately.</span> 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> 错误</h1> 
+ <div style="float:left;margin-bottom: 10px;">  
+ </div>
+ <div style="float:left;margin-bottom: 10px;">  
+ </div>
+ <table border="1" cellpadding="5" cellspacing="0" class="src" style="font-family: verdana, helvetica, arial, sans-serif; border: 1px solid rgb(170, 170, 170); width: 552px; background-color: rgb(241, 241, 241); border-collapse: collapse; padding-left: 5px; vertical-align: top; color: rgb(0, 0, 0);"> 
+  <tbody> 
+   <tr> 
+    <th style="background-color: rgb(205, 205, 205); border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" width="25%"> 标签</th> 
+    <th style="background-color: rgb(205, 205, 205); border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> 描述</th> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>EINVAL</b></td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" valign="bottom"> <i>start</i>&nbsp;is not a multiple of PAGESIZE; or any bit other than MS_ASYNC | MS_INVALIDATE | MS_SYNC is set in&nbsp;<i>flags</i>; or both MS_SYNC and MS_ASYNC are set in&nbsp;<i>flags</i>.</td> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>ENOMEM</b></td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" valign="bottom"> The indicated memory (or part of it) was not mapped.</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> 可用性</h1> 
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">On POSIX systems on which&nbsp;</span>
+ <b style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">msync</b>
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">() is available, both&nbsp;</span>
+ <b style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">_POSIX_MAPPED_FILES</b>
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">&nbsp;and</span>
+ <b style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">_POSIX_SYNCHRONIZED_IO</b>
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">&nbsp;are defined in &lt;unistd.h&gt; to a value greater than 0. (See also&nbsp;</span>
+ <b style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">sysconf</b>
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">(3).)</span> 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> 遵循于</h1> 
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">POSIX.1-2001.</span> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> This call was introduced in Linux 1.3.21, and then used EFAULT instead of ENOMEM. In Linux 2.4.19 this was changed to the POSIX value ENOMEM.</p> 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> 另请参阅</h1> 
+ <ul style="font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> 
+  <li> <p style="text-align: justify;"> <a target="_blank" href="http://www.yiibai.com/unix_system_calls/mmap.html" style="color: rgb(144, 11, 9); background-color: transparent;">mmap (2)</a></p> </li> 
+ </ul> 
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">B.O. Gallmeister, POSIX.4, O’Reilly, pp. 128-129 and 389-391.</span>
+ <br>      
+</div></body></html>

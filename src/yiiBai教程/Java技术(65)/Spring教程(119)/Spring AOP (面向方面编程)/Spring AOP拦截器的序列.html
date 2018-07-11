@@ -1,0 +1,53 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Spring AOP拦截器的序列</h1><div style="width:100%;float:left;" class="article-content">   
+ <div class="__kindeditor_paste__"> 
+  <div>
+    Spring&nbsp;AOP 事务不是工作在以下拦截器？ 
+  </div> 
+  <div> 
+   <pre>&lt;bean id="testAutoProxyCreator"
+    class="org.springframework.aop.framework.autoproxy.BeanNameAutoProxyCreator"&gt;
+	&lt;property name="interceptorNames"&gt;
+		&lt;list&gt;
+			&lt;idref bean="urlInterceptorInsert" /&gt;
+			&lt;idref bean="urlInterceptorCommit" /&gt;
+			&lt;idref bean="urlInterceptorRelease" /&gt;
+			&lt;idref bean="matchGenericTxInterceptor" /&gt;
+		&lt;/list&gt;
+	&lt;/property&gt;
+	&lt;property name="beanNames"&gt;
+		&lt;list&gt;
+			&lt;idref local="urlBo" /&gt;
+		&lt;/list&gt;
+	&lt;/property&gt;
+&lt;/bean&gt;</pre> 
+   <p> matchGenericTxInterceptor”事务拦截器，假设来拦截器&nbsp;urlInterceptorInsert,urlInterceptorCommit,urlInterceptorRelease,&nbsp;但不能如预期一样工作？ </p> 
+   <h2> 解决 </h2> 
+   <div>
+     3个拦截器在事务管理器拦截器(matchGenericTxInterceptor)之前执行。 
+   </div> 
+   <div>
+     为了解决这个问题，必须改变拦截器 XML文件的顺序，如下面的(把 matchGenericTxInterceptor 放在顶部)。 
+   </div>   
+   <pre>&lt;bean id="testAutoProxyCreator"
+        class="org.springframework.aop.framework.autoproxy.BeanNameAutoProxyCreator"&gt;
+	&lt;property name="interceptorNames"&gt;
+		&lt;list&gt;
+            &lt;idref bean="matchGenericTxInterceptor" /&gt;
+			&lt;idref bean="urlInterceptorInsert" /&gt;
+			&lt;idref bean="urlInterceptorCommit" /&gt;
+			&lt;idref bean="urlInterceptorRelease" /&gt;
+		&lt;/list&gt;
+	&lt;/property&gt;
+	&lt;property name="beanNames"&gt;
+		&lt;list&gt;
+			&lt;idref local="urlBo" /&gt;
+		&lt;/list&gt;
+	&lt;/property&gt;
+&lt;/bean&gt;</pre> 
+   <div> 
+    <h3> 注&nbsp;<span style="font-size:16px;font-weight:normal;line-height:1.5;">Spring&nbsp;AOP的拦截器的顺序对功能有影响。</span> </h3> 
+   </div> 
+  </div> 
+ </div>
+ <br>      
+</div></body></html>

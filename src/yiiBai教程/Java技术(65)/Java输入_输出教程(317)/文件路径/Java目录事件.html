@@ -1,0 +1,103 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Java目录事件</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>当文件系统中的对象被修改时，我们可以监听<code>watch</code>服务以获取警报。<code>java.nio.file</code>包中的以下类和接口提供<code>watch</code>服务。</p> 
+ <ul> 
+  <li>Watchable接口</li>
+  <li>WatchService接口</li>
+  <li>WatchKey接口</li>
+  <li>WatchEvent接口</li>
+  <li>WatchEvent.Kind接口</li>
+  <li>StandardWatchEventKinds类</li>
+ </ul> 
+ <p><code>Watchable</code>对象表示可以被监视的文件系统对象。<code>Watchable</code>对象可以向<code>watch</code>服务注册。<br><code>Path</code>对象是一个<code>Watchable</code>对象。</p> 
+ <p><code>WatchService</code>表示观察服务。当一个对象使用<code>WatchService</code>注册时，<code>WatchService</code>返回一个<code>WatchKey</code>作为注册的令牌。<code>WatchEvent</code>表示注册到监视服务的对象上的事件。 它的<code>kind()</code>方法返回发生的事件的类型。<br>它的<code>context()</code>方法返回一个<code>Path</code>对象，它表示事件发生的条目。<code>count()</code>方法返回特定通知的事件发生次数。 如果它返回的值大于<code>1</code>，那么它是一个重复的事件。</p> 
+ <p><code>WatchEvent.Kind &lt;T&gt;</code>表示发生的事件的类型。<code>StandardWatchEventKinds</code>类定义了用于表示事件种类的常量，如下所示。</p> 
+ <ul> 
+  <li>ENTRY_CREATE</li>
+  <li>ENTRY_DELETE</li>
+  <li>ENTRY_MODIFY</li>
+  <li>OVERFLOW</li>
+ </ul> 
+ <p><code>OVERFLOW</code>表示丢失或丢弃的事件。创建观察服务用来观察目录，以进行进一步更改。</p> 
+ <pre><code class="lang-java">WatchService ws = FileSystems.getDefault().newWatchService();
+</code></pre> 
+ <p>要使用<code>Watch</code>服务注册目录，请使用<code>register()</code>方法，该方法将返回一个<code>WatchKey</code>对象作为注册令牌。</p> 
+ <pre><code class="lang-java">// Get  a  Path  object for C:\myName  directory  to watch
+Path  dirToWatch  = Paths.get("C:\\myName");
+WatchKey token   = dirToWatch.register(ws, ENTRY_CREATE,  ENTRY_MODIFY,  ENTRY_DELETE);
+</code></pre> 
+ <p>要取消注册，请使用<code>WatchKey</code>的<code>cancel()</code>方法。当注册目录时，其<code>WatchKey</code>处于就绪状态。可以通过手表服务注册多个目录。</p> 
+ <p>要从监视服务队列中检索<code>WatchKey</code>，请使用<code>WatchService</code>对象的<code>take()</code>或<code>poll()</code>方法检索并删除发出信号并排队的<code>WatchKey</code>。<br><code>take()</code>方法等待，直到<code>WatchKey</code>可用。<code>poll()</code>方法可用于为等待指定超时时间值。</p> 
+ <p>以下代码使用无限循环来检索发出信号的<code>WatchKey</code>。</p> 
+ <pre><code class="lang-java">while(true)  {
+    WatchKey key  = ws.take();
+}
+</code></pre> 
+ <h2 id="h2-u5904u7406u4E8Bu4EF6"><a name="处理事件" class="reference-link"></a><span class="header-link octicon octicon-link"></span>处理事件</h2>
+ <p><code>WatchKey</code>的<code>pollEvents()</code>方法检索并删除其所有挂起的事件。它返回一个<code>WatchEvent</code>的列表-<code>List</code>。<code>List</code>的每个元素代表<code>WatchKey</code>上的一个事件。</p> 
+ <p>以下代码显示了处理事件的典型逻辑：</p> 
+ <pre><code class="lang-java">while(true)  {
+    WatchKey key  = ws.take();
+    // Process all  events of  the   WatchKey 
+    for(WatchEvent&lt;?&gt; event  : key.pollEvents())  {
+       // Process each  event here
+    }
+}
+</code></pre> 
+ <h2 id="h2--watchkey"><a name="处理事件后重置WatchKey" class="reference-link"></a><span class="header-link octicon octicon-link"></span>处理事件后重置WatchKey</h2>
+ <p>如果要重置<code>WatchKey</code>对象，通过调用它的<code>reset()</code>方法来再次接收事件通知。</p> 
+ <p><code>reset()</code>方法将<code>WatchKey</code>置于就绪状态。如果<code>WatchKey</code>仍然有效，<code>reset()</code>方法返回<code>true</code>,否则它返回<code>false</code>。</p> 
+ <p>如果<code>WatchKey</code>被取消或其监视服务关闭，它可能会失效。</p>   
+ <pre><code class="lang-java">// Reset   the   WatchKey
+boolean isKeyValid = key.reset();
+if (!isKeyValid)  {
+    System.out.println("No  longer  watching "  + dirToWatch);
+}
+</code></pre> 
+ <p><code>WatchService</code>是可自动关闭的。可以在<code>try-with-resources</code>块中创建一个<code>WatchService</code>对象，当程序退出块时，它会自动关闭。</p> 
+ <h2 id="h2-u793Au4F8B"><a name="示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例</h2>
+ <p>以下代码显示了如何实现监视服务以监视目录中的更改。</p> 
+ <pre><code class="lang-java">import static java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
+import static java.nio.file.StandardWatchEventKinds.ENTRY_DELETE;
+import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
+import static java.nio.file.StandardWatchEventKinds.OVERFLOW;
+
+import java.io.IOException;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.WatchEvent;
+import java.nio.file.WatchEvent.Kind;
+import java.nio.file.WatchKey;
+import java.nio.file.WatchService;
+
+public class Main {
+  public static void main(String[] args) {
+    try (WatchService ws = FileSystems.getDefault().newWatchService()) {
+      Path dirToWatch = Paths.get("C:\\myName");
+      dirToWatch.register(ws, ENTRY_CREATE, ENTRY_MODIFY, ENTRY_DELETE);
+      while (true) {
+        WatchKey key = ws.take();
+        for (WatchEvent&lt;?&gt; event : key.pollEvents()) {
+          Kind&lt;?&gt; eventKind = event.kind();
+          if (eventKind == OVERFLOW) {
+            System.out.println("Event  overflow occurred");
+            continue;
+          }
+          WatchEvent&lt;Path&gt; currEvent = (WatchEvent&lt;Path&gt;) event;
+          Path dirEntry = currEvent.context();
+          System.out.println(eventKind + "  occurred on  " + dirEntry);
+        }
+        boolean isKeyValid = key.reset();
+        if (!isKeyValid) {
+          System.out.println("No  longer  watching " + dirToWatch);
+          break;
+        }
+      }
+    } catch (IOException | InterruptedException e) {
+      e.printStackTrace();
+    }
+  }
+}
+</code></pre>
+ <br>      
+</div></body></html>

@@ -1,0 +1,93 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Firebase过滤数据</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>Firebase提供了多种方式来过滤数据。</p> 
+ <h2 id="h2-u9650u5236u7B2Cu4E00u4E2Au548Cu6700u540Eu4E00u4E2A"><a name="限制第一个和最后一个" class="reference-link"></a><span class="header-link octicon octicon-link"></span>限制第一个和最后一个</h2>
+ <p>下面我们来了解第一个和最后一个数据限制是什么。</p> 
+ <ul> 
+  <li><code>limitToFirst</code>方法返回从第一个开始向前的指定数量的项目。</li>
+  <li><code>limitToLast</code>方法返回从最后一个开始向前的指定数量的项目。</li>
+ </ul> 
+ <p>下面这个例子是展示如何工作的。 由于在数据库中只有三个运动员数据，这里将限制查询返回一个运动员数据。</p> 
+ <p><strong>示例</strong></p> 
+ <p>现在，参考下面的例子 -</p> 
+ <pre><code class="lang-html">&lt;!DOCTYPE html&gt;
+&lt;html lang="zh"&gt;
+    &lt;head&gt;
+        &lt;meta charset="utf-8" /&gt;
+        &lt;title&gt;FireBase Example&lt;/title&gt;
+        &lt;script src="https://www.gstatic.com/firebasejs/4.9.1/firebase.js"&gt;&lt;/script&gt;
+        &lt;script&gt;
+          // Initialize Firebase
+          var config = {
+            apiKey: "AIzaSyAOSPYpgn7T_bKa6VbCaSeQlsw-3p3zqDs",
+            authDomain: "yiibai-firebase.firebaseapp.com",
+            databaseURL: "https://yiibai-firebase.firebaseio.com/",
+            projectId: "yiibai-firebase",
+            storageBucket: "yiibai-firebase.appspot.com",
+            messagingSenderId: "334522625008"
+          };
+          firebase.initializeApp(config);
+         var firstPlayerRef = firebase.database().ref("players/").limitToFirst(2);
+          var lastPlayerRef = firebase.database().ref('players/').limitToLast(2);
+            //console.log("====== limitToFirst(2) ========");
+            firstPlayerRef.on("value", function(data) {
+               console.log(data.val());
+            }, function (error) {
+               console.log("Error: " + error.code);
+            });
+            console.log("====== limitToLast(2) ========");
+            lastPlayerRef.on("value", function(data) {
+               console.log(data.val());
+            }, function (error) {
+               console.log("Error: " + error.code);
+            });
+        &lt;/script&gt;
+    &lt;/head&gt;
+&lt;body&gt;
+</code></pre> 
+ <p>控制台会记录第一个查询得到前两个运动员数据，第二个查询得到最后两个运动员数据。结果如下所示 -<br><img src="http://www.yiibai.com/uploads/images/201802/0402/577100255_43127.png" alt=""></p> 
+ <h2 id="h2-u5176u4ED6u8FC7u6EE4u5668"><a name="其他过滤器" class="reference-link"></a><span class="header-link octicon octicon-link"></span>其他过滤器</h2>
+ <p>我们也可以使用其他Firebase过滤方法。 例如:<code>startAt()</code>，<code>endAt()</code>和<code>equalTo()</code>可以与排序方法结合使用。在下面的例子中，我们将把它和<code>orderByChild()</code>方法结合起来。</p> 
+ <p><strong>示例</strong></p> 
+ <p>让我们来看看下面的例子。参考以下代码 - </p>   
+ <pre><code class="lang-html">&lt;!DOCTYPE html&gt;
+&lt;html lang="zh"&gt;
+    &lt;head&gt;
+        &lt;meta charset="utf-8" /&gt;
+        &lt;title&gt;FireBase Example&lt;/title&gt;
+        &lt;script src="https://www.gstatic.com/firebasejs/4.9.1/firebase.js"&gt;&lt;/script&gt;
+        &lt;script&gt;
+          // Initialize Firebase
+          var config = {
+            apiKey: "AIzaSyAOSPYpgn7T_bKa6VbCaSeQlsw-3p3zqDs",
+            authDomain: "yiibai-firebase.firebaseapp.com",
+            databaseURL: "https://yiibai-firebase.firebaseio.com/",
+            projectId: "yiibai-firebase",
+            storageBucket: "yiibai-firebase.appspot.com",
+            messagingSenderId: "334522625008"
+          };
+          firebase.initializeApp(config);
+         var firstPlayerRef = firebase.database().ref("players/").limitToFirst(2);
+            var playersRef = firebase.database().ref("players/");
+
+            playersRef.orderByChild("name").startAt("Kobe").on("child_added", function(data) {
+               console.log("Start at filter: " + data.val().name);
+            });
+
+            playersRef.orderByChild("name").endAt("Maxsu").on("child_added", function(data) {
+               console.log("End at filter: " + data.val().name);
+            });
+
+            playersRef.orderByChild("name").equalTo("Kobe").on("child_added", function(data) {
+               console.log("Equal to filter: " + data.val().name);
+            });
+
+            playersRef.orderByChild("age").startAt(20).on("child_added", function(data) {
+               console.log("Age filter: " + data.val().name);
+            });
+        &lt;/script&gt;
+    &lt;/head&gt;
+&lt;body&gt;
+</code></pre> 
+ <p>结果如下所示 -<br><img src="http://www.yiibai.com/uploads/images/201802/0402/276100258_27061.png" alt=""></p>
+ <br>      
+</div></body></html>

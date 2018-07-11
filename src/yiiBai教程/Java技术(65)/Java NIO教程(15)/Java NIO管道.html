@@ -1,0 +1,76 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Java NIO管道</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>Java NIO管道用于在两个线程之间建立单向数据连接。它有一个槽通道和源通道。数据正在写入槽通道，然后可以从源通道读取该数据。</p> 
+ <p>在Java NIO中，包<code>java.nio.channel.pipe</code>用于按顺序读取和写入数据。管道用于确保数据必须以写入管道的相同顺序读取。</p> 
+ <p>下面来看看管道工作原理的示意图说明：</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201709/2909/143140912_10919.png" alt=""></p> 
+ <p><strong>创建管道</strong></p> 
+ <p>要创建一个管道，可通过调用<code>Pipe.open()</code>方法打开管道。</p> 
+ <p>打开或创建管道的语法是：</p> 
+ <pre><code class="lang-java">Pipe pp = Pipe.open();
+</code></pre> 
+ <p><strong>从管道读取数据</strong></p> 
+ <p>要从管道读取数据，需要先访问源通道。 因此，用于访问源通道的语法是：</p> 
+ <pre><code class="lang-java">Pipe.SourceChannel sc= pipe.source();
+</code></pre> 
+ <p>要从<code>SourceChannel</code>读取数据，可调用<code>read()</code>方法，如下所示：</p> 
+ <pre><code class="lang-java">ByteBuffer bb= ByteBuffer.allocate(512);  
+int bytesRead = inChannel.read(bb);
+</code></pre> 
+ <p><code>read()</code>方法返回的整数值用于确定读入缓冲区的字节数。</p> 
+ <p><strong>写入管道</strong></p> 
+ <p>要将数据写入管道，需要访问接收器通道。访问宿通道的语法是：</p> 
+ <pre><code class="lang-java">Pipe.SinkChannel sc= pipe.sink();
+</code></pre> 
+ <p>要将数据写入<code>SinkChannel</code>，可调用<code>write()</code>方法，如下所示：</p> 
+ <pre><code class="lang-java">String newData = "The new String is writing in a Pipe..." + System.currentTimeMillis();  
+ByteBuffer bb= ByteBuffer.allocate(512);  
+bb.clear();  
+bb.put(newData.getBytes());  
+bb.flip();  
+while(bb.hasRemaining()) {  
+    SinkChannel.write(bb);  
+}
+</code></pre> 
+ <p><strong>基本管道示例：</strong></p> 
+ <pre><code class="lang-java">package com.yiibai;
+
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.channels.Pipe;
+
+public class PipeExample {
+    public static void main(String[] args) throws IOException {
+        // The Pipe is created
+        Pipe pipe = Pipe.open();
+        // For accessing the pipe sink channel
+        Pipe.SinkChannel skChannel = pipe.sink();
+        String td = "Data is successfully sent for checking the java NIO Channel Pipe.";
+        ByteBuffer bb = ByteBuffer.allocate(512);
+        bb.clear();
+        bb.put(td.getBytes());
+        bb.flip();
+        // write the data into a sink channel.
+        while (bb.hasRemaining()) {
+            skChannel.write(bb);
+        }
+        // For accessing the pipe source channel
+        Pipe.SourceChannel sourceChannel = pipe.source();
+        bb = ByteBuffer.allocate(512);
+        // The data is write to the console
+        while (sourceChannel.read(bb) &gt; 0) {
+            bb.flip();
+
+            while (bb.hasRemaining()) {
+                char TestData = (char) bb.get();
+                System.out.print(TestData);
+            }
+            bb.clear();
+        }
+    }
+}
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 - </p>   
+ <pre><code class="lang-shell">Data is successfully sent for checking the java NIO Channel Pipe.
+</code></pre>
+ <br>      
+</div></body></html>

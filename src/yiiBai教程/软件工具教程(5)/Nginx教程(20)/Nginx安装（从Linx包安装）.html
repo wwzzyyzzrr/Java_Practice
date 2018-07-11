@@ -1,0 +1,272 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Nginx安装（从Linx包安装）</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>目前，nginx软件包可用于以下发行版和版本：</p> 
+ <p><strong>RHEL/CentOS：</strong></p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>版本</th> 
+    <th>支持的平台</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>5.x</td> 
+    <td>x86_64, i386</td> 
+   </tr> 
+   <tr> 
+    <td>6.x</td> 
+    <td>x86_64, i386</td> 
+   </tr> 
+   <tr> 
+    <td>7.x</td> 
+    <td>x86_64, ppc64le</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p><strong>Debian：</strong></p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>版本</th> 
+    <th>代码名称(<code>codename</code>)</th> 
+    <th>支持的平台</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>7.x</td> 
+    <td>wheezy</td> 
+    <td>x86_64, i386</td> 
+   </tr> 
+   <tr> 
+    <td>8.x</td> 
+    <td>jessie</td> 
+    <td>x86_64, i386</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p><strong>Ubuntu:</strong></p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>版本</th> 
+    <th>代码名称(<code>codename</code>)</th> 
+    <th>支持的平台</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>12.04</td> 
+    <td>precise</td> 
+    <td>x86_64, i386</td> 
+   </tr> 
+   <tr> 
+    <td>14.04</td> 
+    <td>trusty</td> 
+    <td>x86_64, i386, aarch64/arm64</td> 
+   </tr> 
+   <tr> 
+    <td>16.04</td> 
+    <td>xenial</td> 
+    <td>x86_64, i386, ppc64el</td> 
+   </tr> 
+   <tr> 
+    <td>16.10</td> 
+    <td>yakkety</td> 
+    <td>x86_64, i386</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p><strong>SLES:</strong></p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>版本</th> 
+    <th>支持的平台</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>12</td> 
+    <td>x86_64</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p>要实现Linux软件包的自动更新，可以为RHEL/CentOS发行版设置<code>yum</code>存储库，<code>Debian/Ubuntu</code>发行版的<code>apt</code>存储库，以及SLES的<code>zypper</code>存储库。</p> 
+ <p>在本文中，我们重点以<code>Debian/Ubuntu</code>发行版的<code>apt</code>存储库作为一个演示，并在<code>Ubuntu</code>系统上安装Nginx。</p> 
+ <h2 id="h2-1-"><a name="1. 用于稳定版本的预构建软件包" class="reference-link"></a><span class="header-link octicon octicon-link"></span>1. 用于稳定版本的预构建软件包</h2>
+ <h3 id="h3-rhel-centos-"><a name="RHEL/CentOS系统平台" class="reference-link"></a><span class="header-link octicon octicon-link"></span>RHEL/CentOS系统平台</h3>
+ <p>要设置<code>RHEL/CentOS</code>的yum存储库，需要创建一个名称为<code>/etc/yum.repos.d/nginx.repo</code>的文件，其中包含以下内容：</p> 
+ <pre><code class="lang-shell">[nginx]
+name=nginx repo
+baseurl=http://nginx.org/packages/OS/OSRELEASE/$basearch/
+gpgcheck=0
+enabled=1
+</code></pre> 
+ <p>根据所使用的分配，将“<code>OS</code>”替换为“<code>rhel</code>”或“<code>centos</code>”，对于<code>5.x</code>，<code>6.x</code>或<code>7.x</code>，请将“<code>OSRELEASE</code>”替换为“<code>5</code>”，“<code>6</code>”或“<code>7</code>” 版本。<br>有关于如何查看系统版本 - </p> 
+ <pre><code>[root@localhost nginx-1.10.3]# lsb_release -a
+bash:lsb_release: command not found
+[root@localhost nginx-1.10.3]# yum install lsb –y
+[root@localhost nginx-1.10.3]# lsb_release -a
+LSB Version:    :core-4.1-amd64:core-4.1-noarch:cxx-4.1-amd64:cxx-4.1-noarch:desktop-4.1-amd64:desktop-4.1-noarch:languages-4.1-amd64:languages-4.1-noarch:printing-4.1-amd64:printing-4.1-noarch
+Distributor ID: CentOS
+Description:    CentOS Linux release 7.3.1611 (Core)
+Release:        7.3.1611
+Codename:       Core
+[root@localhost nginx-1.10.3]#
+</code></pre>
+ <p>第二种方法:</p> 
+ <pre><code>[root@localhost ~]# cat /etc/redhat-release
+CentOS Linux release 7.3.1611 (Core)
+[root@localhost ~]#
+</code></pre>
+ <h3 id="h3-debian-ubuntu-"><a name="Debian/Ubuntu系统平台" class="reference-link"></a><span class="header-link octicon octicon-link"></span>Debian/Ubuntu系统平台</h3>
+ <p>对于Debian/Ubuntu，为了验证nginx存储库签名，并且在安装nginx软件包时消除关于缺少PGP密钥的警告，必须将用于将nginx软件包和存储库签署的密钥添加到<code>apt</code>程序密钥环中。 请从Nginx官方网站下载密钥：<a target="_blank" href="http://nginx.org/keys/nginx_signing.key">http://nginx.org/keys/nginx_signing.key</a> ， 并使用以下命令将其添加到<code>apt</code>程序密钥环：</p> 
+ <pre><code>sudo apt-key add nginx_signing.key
+</code></pre>
+ <p>Debian系统则将Debian代码替换为Debian发行版代码(<code>codename</code>)，并将以下内容附加到<code>/etc/apt/sources.list</code>文件的末尾：</p> 
+ <pre><code>deb http://nginx.org/packages/debian/ codename nginx
+deb-src http://nginx.org/packages/debian/ codename nginx
+</code></pre>
+ <p>对于Ubuntu将Ubuntu发行版代号替换<code>codename</code>，并将以下内容附加到<code>/etc/apt/sources.list</code>文件的末尾：</p> 
+ <pre><code>deb http://nginx.org/packages/ubuntu/ codename nginx
+deb-src http://nginx.org/packages/ubuntu/ codename nginx
+</code></pre>
+ <p>对于Debian / Ubuntu，请运行以下命令：</p> 
+ <pre><code>apt-get update
+apt-get install nginx
+</code></pre>
+ <h3 id="h3-sles-"><a name="SLES系统平台" class="reference-link"></a><span class="header-link octicon octicon-link"></span>SLES系统平台</h3>
+ <p>对于SLES，运行以下命令：</p> 
+ <pre><code class="lang-shell">zypper addrepo -G -t yum -c 'http://nginx.org/packages/sles/12' nginx
+</code></pre> 
+ <h2 id="h2-2-"><a name="2. 源码包" class="reference-link"></a><span class="header-link octicon octicon-link"></span>2. 源码包</h2>
+ <p>包源码包可以在包源码源码库中找到: <a target="_blank" href="http://hg.nginx.org/pkg-oss?_ga=1.85593177.1509956953.1490042234">http://hg.nginx.org/pkg-oss?_ga=1.85593177.1509956953.1490042234</a> 。</p> 
+ <p>默认分支保存当前主线版本的包源码，而<code>stable-*</code>分支则用于稳定版本的最新的源码包。 要构建二进制包，可在<code>Debian/Ubuntu</code>上的<code>debian/</code>目录中或在<code>RHEL/CentOS/SLES</code>上的<code>rpm/SPECS/</code>中运行<code>make</code>命令。</p> 
+ <p>包源码分布在与nginx相同的<code>2</code>条<a target="_blank" href="http://nginx.org/LICENSE" title="BSD类许可证">BSD类许可证</a>下。</p> 
+ <h2 id="h2-3-ubuntu-server-nginx-"><a name="3. Ubuntu Server安装Nginx实例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>3. Ubuntu Server安装Nginx实例</h2>
+ <p>对于Debian/Ubuntu，为了验证nginx存储库签名，并且在安装nginx软件包时消除关于缺少PGP密钥的警告，必须将用于将nginx软件包和存储库签署的密钥添加到<code>apt</code>程序密钥环中。 请从Nginx官方网站下载密钥：<a target="_blank" href="http://nginx.org/keys/nginx_signing.key">http://nginx.org/keys/nginx_signing.key</a> ， 并使用以下命令将其添加到<code>apt</code>程序密钥环：</p> 
+ <pre><code>yiibai@ubuntu:~$ wget -c http://nginx.org/keys/nginx_signing.key
+--2017-03-31 20:13:06--  http://nginx.org/keys/nginx_signing.key
+Resolving nginx.org (nginx.org)... 95.211.80.227, 206.251.255.63, 2001:1af8:4060:a004:21::e3, ...
+Connecting to nginx.org (nginx.org)|95.211.80.227|:80... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 1561 (1.5K) [application/octet-stream]
+Saving to: ‘nginx_signing.key’
+
+nginx_signing.key   100%[===================&gt;]   1.52K  --.-KB/s    in 0s
+
+2017-03-31 20:13:06 (105 MB/s) - ‘nginx_signing.key’ saved [1561/1561]
+
+yiibai@ubuntu:~$ ls
+nginx_signing.key
+yiibai@ubuntu:~$
+yiibai@ubuntu:~$ sudo apt-key add nginx_signing.key
+</code></pre>
+ <p>查看 Ubuntu发行版代号，使用以下命令 -</p> 
+ <pre><code class="lang-shell">yiibai@ubuntu:~$ sudo lsb_release -a
+No LSB modules are available.
+Distributor ID: Ubuntu
+Description:    Ubuntu 16.04.1 LTS
+Release:        16.04
+Codename:       xenial
+yiibai@ubuntu:~$
+</code></pre> 
+ <p>Ubuntu将Ubuntu发行版代号替换<code>codename</code>，并将以下两行内容附加到<code>/etc/apt/sources.list</code>文件的末尾：</p>   
+ <pre><code>deb http://nginx.org/packages/ubuntu/ xenial nginx
+deb-src http://nginx.org/packages/ubuntu/ xenial nginx
+</code></pre>
+ <p>如下所示 -<br><img src="http://www.yiibai.com/uploads/images/201703/3103/885110425_57913.png" alt=""></p> 
+ <p>现在，可以运行下面命令来安装nginx了：</p> 
+ <pre><code>yiibai@ubuntu:~$ sudo apt-get update
+Get:1 http://nginx.org/packages/ubuntu xenial InRelease [3,589 B]
+Hit:2 http://us.archive.ubuntu.com/ubuntu xenial InRelease
+Get:3 http://nginx.org/packages/ubuntu xenial/nginx Sources [4,139 B]
+Get:4 http://us.archive.ubuntu.com/ubuntu xenial-updates InRelease [102 kB]
+Get:5 http://nginx.org/packages/ubuntu xenial/nginx amd64 Packages [7,012 B]
+Get:6 http://nginx.org/packages/ubuntu xenial/nginx i386 Packages [6,999 B]
+Get:7 http://us.archive.ubuntu.com/ubuntu xenial-backports InRelease [102 kB]
+Get:8 http://security.ubuntu.com/ubuntu xenial-security InRelease [102 kB]
+Fetched 328 kB in 5s (61.3 kB/s)
+Reading package lists... Done
+yiibai@ubuntu:~$
+yiibai@ubuntu:~$ sudo apt-get install nginx
+... ...
+... ...
+Selecting previously unselected package nginx.
+(Reading database ... 54601 files and directories currently installed.)
+Preparing to unpack .../nginx_1.10.3-1~xenial_amd64.deb ...
+----------------------------------------------------------------------
+
+Thanks for using nginx!
+
+Please find the official documentation for nginx here:
+* http://nginx.org/en/docs/
+
+Commercial subscriptions for nginx are available on:
+* http://nginx.com/products/
+
+----------------------------------------------------------------------
+Unpacking nginx (1.10.3-1~xenial) ...
+Processing triggers for man-db (2.7.5-1) ...
+Processing triggers for systemd (229-4ubuntu7) ...
+Processing triggers for ureadahead (0.100.0-19) ...
+Setting up nginx (1.10.3-1~xenial) ...
+Processing triggers for systemd (229-4ubuntu7) ...
+Processing triggers for ureadahead (0.100.0-19) ...
+</code></pre>
+ <p>配置文件默认会被安装到： <code>/etc/nginx</code> 目录下 -<br><img src="http://www.yiibai.com/uploads/images/201703/3103/764110439_46091.png" alt=""></p> 
+ <p><strong>1. 启动 Nginx 测试 - </strong></p> 
+ <pre><code class="lang-shell">yiibai@ubuntu:~$ sudo /etc/init.d/nginx
+Usage: /etc/init.d/nginx {start|stop|status|restart|reload|force-reload|upgrade|configtest|check-reload}
+yiibai@ubuntu:~$ sudo /etc/init.d/nginx start
+[ ok ] Starting nginx (via systemctl): nginx.service.
+yiibai@ubuntu:~$
+</code></pre> 
+ <p><strong>2. 查询nginx进程</strong></p> 
+ <pre><code class="lang-shell">yiibai@ubuntu:~$ ps -ef | grep nginx
+root       9933      1  0 20:36 ?        00:00:00 nginx: master process /usr/sbi                        n/nginx -c /etc/nginx/nginx.conf
+nginx      9938   9933  0 20:36 ?        00:00:00 nginx: worker process
+yiibai     9978   8461  0 20:40 pts/0    00:00:00 grep --color=auto nginx
+yiibai@ubuntu:~$
+</code></pre> 
+ <p>上面输出结果中，<code>master</code>就代表该进程是nginx的主进程，它的进程ID是：<code>9933</code>。</p> 
+ <p><strong>3. 停止nginx</strong></p> 
+ <p>要停止Nginx，可以使用以下命令 -</p> 
+ <pre><code>kill -QUIT 主进程号
+</code></pre>
+ <p>本例中就是 ： <code>kill -QUIT 9933</code><br>当然还有通用的停止进程的命令，那就是暴力停止了。<br><code>kill -9 进程号</code><br>kill一个进程，在查询一下进程是否还存在，一个个的kill，全部kill完就可以了。</p> 
+ <p><strong>4. 测试nginx服务</strong></p> 
+ <p>打开浏览器或或在终端上使用 <code>curl localhost</code>访问目标服务器，如下 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201703/3103/540110453_62685.png" alt=""></p> 
+ <p>或在终端上使用：<code>curl localhost</code> -</p> 
+ <pre><code class="lang-shell">yiibai@ubuntu:~$ curl localhost
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;Welcome to nginx!&lt;/title&gt;
+&lt;style&gt;
+    body {
+        width: 35em;
+        margin: 0 auto;
+        font-family: Tahoma, Verdana, Arial, sans-serif;
+    }
+&lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;h1&gt;Welcome to nginx!&lt;/h1&gt;
+&lt;p&gt;If you see this page, the nginx web server is successfully installed and
+working. Further configuration is required.&lt;/p&gt;
+
+&lt;p&gt;For online documentation and support please refer to
+&lt;a href="http://nginx.org/"&gt;nginx.org&lt;/a&gt;.&lt;br/&gt;
+Commercial support is available at
+&lt;a href="http://nginx.com/"&gt;nginx.com&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;Thank you for using nginx.&lt;/em&gt;&lt;/p&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+yiibai@ubuntu:~$
+</code></pre>
+ <br>      
+</div></body></html>

@@ -1,0 +1,35 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">kexec_load()函数 Unix/Linux</h1><div style="width:100%;float:left;" class="article-content">   
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">kexec_load -</span>加载新的内核映像到内存 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> 内容简介</h1> 
+ <table cellpadding="5" cellspacing="5" class="src" style="font-family: verdana, helvetica, arial, sans-serif;  border-color: rgb(170, 170, 170); width: 552px; background-color: rgb(241, 241, 241); border-collapse: collapse; padding-left: 5px; vertical-align: top; color: rgb(0, 0, 0);"> 
+  <tbody> 
+   <tr> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse;  border-color: rgb(170, 170, 170);"> <pre style="font-family: 'Courier New', monospace; font-size: 12px; margin-bottom: 0px;">
+<b>#include &lt;syscall.h&gt;</b> 
+<b>#include &lt;kexec.h&gt;</b> 
+</pre> <p style="text-align: justify;"> <b>long kexec_load(unsigned long </b><i>entry</i><b>, unsigned long </b><i>nr_segments</i><b>,</b> <b>&nbsp;&nbsp;<br> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; struct kexec_segment *</b><i>flags</i><b>);</b></p> </td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> 描述</h1> 
+ <b style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">kexec_load</b>
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">&nbsp;</span>加载从当前地址空间中的新内核。这个系统调用只能用于由root。 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> 条目是一个指向新加载的可执行映像的入口点。这是内核将跳转到并开始执行新加载的图像的指令的存储器位置。</p> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> <i>nr_segments</i>&nbsp;denotes the number of segments which will be passed to&nbsp;<b>kexec_load</b>. The value must not be greater than&nbsp;<i>KEXEC_SEGMENT_MAX</i>.</p> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> <i>segments</i>&nbsp;denotes a pointer to the first element of an array of&nbsp;<b>kexec_segment</b>elements. A&nbsp;<b>kexec_segment</b>&nbsp;element contains the details of a segment to be loaded in memory.</p> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> <i>flags</i>&nbsp;Sixteen most significant bits of the flag are used to communicate the architecture information (<b>KEXEC_ARCH_</b><i>*</i>). The values for various architectures are same as defined by ELF specifications.&nbsp; Lower sixteen bits have been reserved for miscellaneous information. Currently only one bit is being used and rest fifteen have been reserved for future use.&nbsp; The least significant bit (<b>KEXEC_ON_CRASH</b>) can be set to inform the kernel that the memory memory image being loaded is to be executed upon a system crash and not regular boot. For regular boot, this bit is cleared.</p> 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> 返回值</h1> 
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">On success, zero is returned. On error, nonzero value is returned, and&nbsp;</span>
+ <i style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">errno</i>
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">&nbsp;is set appropriately.&nbsp;</span> 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> 错误</h1> 
+ <b style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">EPERM</b>
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">&nbsp;the calling process has not sufficient permissions (is not root).</span> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> <b>EINVAL</b>&nbsp;the&nbsp;<i>flags</i>&nbsp;argument contains an invalid combination of flags, or&nbsp;<i>nr_segments</i>&nbsp;is greater than&nbsp;<b>KEXEC_SEGMENT_MAX</b>.</p> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> <b>ENOMEM</b>&nbsp;there is not enough memory to store the kernel image.</p> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> <b>EBUSY</b>&nbsp;the memory location which should be written to is not available now.</p> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> &nbsp;</p> 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> 可用性</h1> 
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">This syscall is implemented only since kernel 2.6.1&nbsp;</span>
+ <br>      
+</div></body></html>

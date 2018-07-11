@@ -1,0 +1,207 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">UNIX 文件权限/访问模式</h1><div style="width:100%;float:left;" class="article-content">   
+ <p> 文件所有权是UNIX的一个重要组成部分，提供了一个安全的方法，用于存储文件。 UNIX中的每个文件具有以下属性：</p> 
+ <ul> 
+  <li> <p> 所有者权限:&nbsp;所有者的权限，确定所采取的操作文件的拥有者可以执行文件。</p> </li> 
+  <li> <p> 组权限:&nbsp;该组的权限确定哪些操作用户，谁是一个文件所属的组的成员，可以执行该文件。</p> </li> 
+  <li> <p> 其它权限:&nbsp;别人的权限表明什么样的操作，所有其他用户可以执行该文件。</p> </li> 
+ </ul> 
+ <h2> 权限指示：</h2> 
+ <p> 当用ls-l命令显示各种信息相关的文件权限如下：</p> 
+ <pre class="prettyprint prettyprinted" style="font-size: 12px;">
+<span class="pln" style="margin: 0px; padding: 0px;">$ls </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">-</span><span class="pln" style="margin: 0px; padding: 0px;">l </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">/</span><span class="pln" style="margin: 0px; padding: 0px;">home</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">/</span><span class="pln" style="margin: 0px; padding: 0px;">amrood
+</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">-</span><span class="pln" style="margin: 0px; padding: 0px;">rwxr</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">-</span><span class="pln" style="margin: 0px; padding: 0px;">xr</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">--</span><span class="pln" style="margin: 0px; padding: 0px;">  </span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">1</span><span class="pln" style="margin: 0px; padding: 0px;"> amrood   users </span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">1024</span><span class="pln" style="margin: 0px; padding: 0px;">  </span><span class="typ" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">Nov</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">2</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">00</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">:</span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">10</span><span class="pln" style="margin: 0px; padding: 0px;">  myfile
+drwxr</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">-</span><span class="pln" style="margin: 0px; padding: 0px;">xr</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">---</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">1</span><span class="pln" style="margin: 0px; padding: 0px;"> amrood   users </span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">1024</span><span class="pln" style="margin: 0px; padding: 0px;">  </span><span class="typ" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">Nov</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">2</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">00</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">:</span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">10</span><span class="pln" style="margin: 0px; padding: 0px;">  mydir</span></pre> 
+ <p> 这里第一列代表不同的访问模式，即关联的权限的文件或目录。</p> 
+ <p> 权限被分成三组，每个组中的位置表示一个特定的权限，这个顺序：读（r），写（w），执行（x）：</p> 
+ <ul> 
+  <li> <p> 前三个字符（2-4）表示文件所有者的权限。例如&nbsp;-rwxr-xr--&nbsp;&nbsp;代表读（r），写（w）和执行（x）许可。</p> </li> 
+  <li> <p> 第二组的三个字符（5-7）由文件所属组的权限。例如-rwxr-xr--代表该组读（r）和执行（x）权限，但没有写权限。&nbsp;</p> </li> 
+  <li> <p> 最后一组的三个字符（8-10）表示其他的权限。例如rwxr-XR - 代表其他只允许读（r）</p> </li> 
+ </ul> 
+ <h2> 文件访问模式：</h2> 
+ <p> 一个文件的权限是一个Unix系统安全防御的第一线。 Unix权限的基本构建块的读，写和执行权限，​​说明如下：</p> 
+ <h2> 1. Read:</h2> 
+ <p> 即阅读，查看该文件的内容。</p> 
+ <h2> 2. Write:</h2> 
+ <p> 修改或删除的文件的内容。</p> 
+ <h2> 3. Execute:</h2> 
+ <p> 作为一个程序执行权限的用户可以运行一个文件。</p> 
+ <h2> 目录访问方式：</h2> 
+ <p> 目录访问方式列出，像其他文件中相同的方式组织。有一些差异，需要提及：</p> 
+ <h2> 1. Read:</h2> 
+ <p> 到一个目录中的访问意味着用户可以读取内容。用户可以看看目录里面的文件名。</p> 
+ <h2> 2. Write:</h2> 
+ <p> 访问装置，用户可以添加或删除的文件的目录的内容。</p> 
+ <h2> 3. Execute:</h2> 
+ <p> 执行目录并没有真正有很大的意义，认为这是一个遍历权限。</p> 
+ <p> 用户必须拥有的bin目录的执行权限，以执行ls或cd命令。</p> 
+ <h2> 更改权限：</h2> 
+ <p> 要改变文件或目录的权限，使用chmod（其他模式）命令。有两种方法使用chmod：符号模式和绝对模式。</p> 
+ <h2> 使用chmod符号模式：</h2> 
+ <p> 对于一个初学者，修改文件或目录的权限最简单的方法是使用符号模式。具有象征性的权限，可以添加，删除，或使用下表中的操作符，想要指定的权限集。</p> 
+ <table class="src" style="margin: 8px 0px; padding: 0px;  border-color: rgb(214, 214, 214); width: 560px; border-collapse: collapse; vertical-align: top; background-color: rgb(247, 247, 247); color: rgb(0, 0, 0); font-family: Helvetica, Arial, sans-serif;"> 
+  <tbody style="margin: 0px; padding: 0px;"> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <th style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214); background-color: rgb(238, 238, 238); width: 189px;"> Chmod 操作符</th> 
+    <th style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214); background-color: rgb(238, 238, 238); width: 349px;"> 描述</th> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> <b style="margin: 0px; padding: 0px;">+</b></td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> Adds the designated permission(s) to a file or directory.</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> <b style="margin: 0px; padding: 0px;">-</b></td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> Removes the designated permission(s) from a file or directory.</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> <b style="margin: 0px; padding: 0px;">=</b></td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> Sets the designated permission(s).</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p> 下面是一个例子，使用testfile的。运行ls -1 在&nbsp;testfile将显示文件的权限如下：</p> 
+ <pre class="prettyprint prettyprinted" style="font-size: 12px;">
+<span class="pln" style="margin: 0px; padding: 0px;">$ls </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">-</span><span class="pln" style="margin: 0px; padding: 0px;">l testfile
+</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">-</span><span class="pln" style="margin: 0px; padding: 0px;">rwxrwxr</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">--</span><span class="pln" style="margin: 0px; padding: 0px;">  </span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">1</span><span class="pln" style="margin: 0px; padding: 0px;"> amrood   users </span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">1024</span><span class="pln" style="margin: 0px; padding: 0px;">  </span><span class="typ" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">Nov</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">2</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">00</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">:</span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">10</span><span class="pln" style="margin: 0px; padding: 0px;">  testfile</span></pre> 
+ <p style="margin: 0.8em 0px 1em; padding: 0px; text-align: justify; color: rgb(0, 0, 0); font-family: Helvetica, Arial, sans-serif;"> 然后每个例子chmod命令从前面的表上运行，其次testfile将ls-l，可以看到权限更改：</p> 
+ <pre class="prettyprint prettyprinted" style="font-size: 12px;">
+<span class="pln" style="margin: 0px; padding: 0px;">$chmod o</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">+</span><span class="pln" style="margin: 0px; padding: 0px;">wx testfile
+$ls </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">-</span><span class="pln" style="margin: 0px; padding: 0px;">l testfile
+</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">-</span><span class="pln" style="margin: 0px; padding: 0px;">rwxrwxrwx  </span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">1</span><span class="pln" style="margin: 0px; padding: 0px;"> amrood   users </span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">1024</span><span class="pln" style="margin: 0px; padding: 0px;">  </span><span class="typ" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">Nov</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">2</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">00</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">:</span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">10</span><span class="pln" style="margin: 0px; padding: 0px;">  testfile
+$chmod u</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">-</span><span class="pln" style="margin: 0px; padding: 0px;">x testfile
+$ls </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">-</span><span class="pln" style="margin: 0px; padding: 0px;">l testfile
+</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">-</span><span class="pln" style="margin: 0px; padding: 0px;">rw</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">-</span><span class="pln" style="margin: 0px; padding: 0px;">rwxrwx  </span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">1</span><span class="pln" style="margin: 0px; padding: 0px;"> amrood   users </span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">1024</span><span class="pln" style="margin: 0px; padding: 0px;">  </span><span class="typ" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">Nov</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">2</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">00</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">:</span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">10</span><span class="pln" style="margin: 0px; padding: 0px;">  testfile
+$chmod g</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">=</span><span class="pln" style="margin: 0px; padding: 0px;">r</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">-</span><span class="pln" style="margin: 0px; padding: 0px;">x testfile
+$ls </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">-</span><span class="pln" style="margin: 0px; padding: 0px;">l testfile
+</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">-</span><span class="pln" style="margin: 0px; padding: 0px;">rw</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">-</span><span class="pln" style="margin: 0px; padding: 0px;">r</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">-</span><span class="pln" style="margin: 0px; padding: 0px;">xrwx  </span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">1</span><span class="pln" style="margin: 0px; padding: 0px;"> amrood   users </span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">1024</span><span class="pln" style="margin: 0px; padding: 0px;">  </span><span class="typ" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">Nov</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">2</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">00</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">:</span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">10</span><span class="pln" style="margin: 0px; padding: 0px;">  testfile</span></pre> 
+ <p style="margin: 0.8em 0px 1em; padding: 0px; text-align: justify; color: rgb(0, 0, 0); font-family: Helvetica, Arial, sans-serif;"> 这里是如何将这些命令放在一行：</p> 
+ <pre class="prettyprint prettyprinted" style="font-size: 12px;">
+<span class="pln" style="margin: 0px; padding: 0px;">$chmod o</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">+</span><span class="pln" style="margin: 0px; padding: 0px;">wx</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">,</span><span class="pln" style="margin: 0px; padding: 0px;">u</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">-</span><span class="pln" style="margin: 0px; padding: 0px;">x</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">,</span><span class="pln" style="margin: 0px; padding: 0px;">g</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">=</span><span class="pln" style="margin: 0px; padding: 0px;">r</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">-</span><span class="pln" style="margin: 0px; padding: 0px;">x testfile
+$ls </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">-</span><span class="pln" style="margin: 0px; padding: 0px;">l testfile
+</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">-</span><span class="pln" style="margin: 0px; padding: 0px;">rw</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">-</span><span class="pln" style="margin: 0px; padding: 0px;">r</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">-</span><span class="pln" style="margin: 0px; padding: 0px;">xrwx  </span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">1</span><span class="pln" style="margin: 0px; padding: 0px;"> amrood   users </span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">1024</span><span class="pln" style="margin: 0px; padding: 0px;">  </span><span class="typ" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">Nov</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">2</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">00</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">:</span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">10</span><span class="pln" style="margin: 0px; padding: 0px;">  testfile</span></pre> 
+ <h2 style="margin: 0.2em 0.2em 0.2em 0px; padding: 0px; font-size: 1.6em; line-height: 1.5em; font-weight: normal; text-shadow: rgb(204, 204, 204) 1px 1px 2px; color: rgb(0, 0, 0); font-family: Helvetica, Arial, sans-serif;"> 使用chmod绝对权限：</h2> 
+ <p style="margin: 0.8em 0px 1em; padding: 0px; text-align: justify; color: rgb(0, 0, 0); font-family: Helvetica, Arial, sans-serif;"> 使用chmod命令修改权限的第二种方法是使用一些指定每个组的文件的权限。</p> 
+ <p style="margin: 0.8em 0px 1em; padding: 0px; text-align: justify; color: rgb(0, 0, 0); font-family: Helvetica, Arial, sans-serif;"> 每个权限分配一个值，按照下表中所示，每一组的总的权限提供了许多用于该集合。</p> 
+ <table class="src" style="margin: 8px 0px; padding: 0px;  border-color: rgb(214, 214, 214); width: 560px; border-collapse: collapse; vertical-align: top; background-color: rgb(247, 247, 247); color: rgb(0, 0, 0); font-family: Helvetica, Arial, sans-serif;"> 
+  <tbody style="margin: 0px; padding: 0px;"> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <th style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214); background-color: rgb(238, 238, 238);"> Number</th> 
+    <th style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214); background-color: rgb(238, 238, 238); width: 409px;"> 八进制权限表示</th> 
+    <th style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214); background-color: rgb(238, 238, 238);"> Ref</th> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> <b style="margin: 0px; padding: 0px;">0</b></td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> No permission</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> ---</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> <b style="margin: 0px; padding: 0px;">1</b></td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> Execute permission</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> --x</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> <b style="margin: 0px; padding: 0px;">2</b></td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> Write permission</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> -w-</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> <b style="margin: 0px; padding: 0px;">3</b></td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> Execute and write permission: 1 (execute) + 2 (write) = 3</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> -wx</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> <b style="margin: 0px; padding: 0px;">4</b></td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> Read permission</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> r--</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> <b style="margin: 0px; padding: 0px;">5</b></td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> Read and execute permission: 4 (read) + 1 (execute) = 5</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> r-x</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> <b style="margin: 0px; padding: 0px;">6</b></td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> Read and write permission: 4 (read) + 2 (write) = 6</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> rw-</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> <b style="margin: 0px; padding: 0px;">7</b></td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> All permissions: 4 (read) + 2 (write) + 1 (execute) = 7</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> rwx</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p style="margin: 0.8em 0px 1em; padding: 0px; text-align: justify; color: rgb(0, 0, 0); font-family: Helvetica, Arial, sans-serif;"> 下面是一个例子，使用testfile。运行ls -1 在&nbsp;testfile 将显示文件的权限如下：</p> 
+ <pre class="prettyprint prettyprinted" style="font-size: 12px;">
+<span class="pln" style="margin: 0px; padding: 0px;">$ls </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">-</span><span class="pln" style="margin: 0px; padding: 0px;">l testfile
+</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">-</span><span class="pln" style="margin: 0px; padding: 0px;">rwxrwxr</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">--</span><span class="pln" style="margin: 0px; padding: 0px;">  </span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">1</span><span class="pln" style="margin: 0px; padding: 0px;"> amrood   users </span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">1024</span><span class="pln" style="margin: 0px; padding: 0px;">  </span><span class="typ" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">Nov</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">2</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">00</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">:</span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">10</span><span class="pln" style="margin: 0px; padding: 0px;">  testfile</span></pre> 
+ <p style="margin: 0.8em 0px 1em; padding: 0px; text-align: justify; color: rgb(0, 0, 0); font-family: Helvetica, Arial, sans-serif;"> 然后每个例子chmod命令从前面的表上运行，其次testfile将ls-l ，所以 可以看到权限更改：</p>   
+ <pre class="prettyprint prettyprinted" style="font-size: 12px;">
+<span class="pln" style="margin: 0px; padding: 0px;">$ chmod </span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">755</span><span class="pln" style="margin: 0px; padding: 0px;"> testfile
+$ls </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">-</span><span class="pln" style="margin: 0px; padding: 0px;">l testfile
+</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">-</span><span class="pln" style="margin: 0px; padding: 0px;">rwxr</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">-</span><span class="pln" style="margin: 0px; padding: 0px;">xr</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">-</span><span class="pln" style="margin: 0px; padding: 0px;">x  </span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">1</span><span class="pln" style="margin: 0px; padding: 0px;"> amrood   users </span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">1024</span><span class="pln" style="margin: 0px; padding: 0px;">  </span><span class="typ" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">Nov</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">2</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">00</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">:</span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">10</span><span class="pln" style="margin: 0px; padding: 0px;">  testfile
+$chmod </span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">743</span><span class="pln" style="margin: 0px; padding: 0px;"> testfile
+$ls </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">-</span><span class="pln" style="margin: 0px; padding: 0px;">l testfile
+</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">-</span><span class="pln" style="margin: 0px; padding: 0px;">rwxr</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">---</span><span class="pln" style="margin: 0px; padding: 0px;">wx  </span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">1</span><span class="pln" style="margin: 0px; padding: 0px;"> amrood   users </span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">1024</span><span class="pln" style="margin: 0px; padding: 0px;">  </span><span class="typ" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">Nov</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">2</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">00</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">:</span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">10</span><span class="pln" style="margin: 0px; padding: 0px;">  testfile
+$chmod </span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">043</span><span class="pln" style="margin: 0px; padding: 0px;"> testfile
+$ls </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">-</span><span class="pln" style="margin: 0px; padding: 0px;">l testfile
+</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">----</span><span class="pln" style="margin: 0px; padding: 0px;">r</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">---</span><span class="pln" style="margin: 0px; padding: 0px;">wx  </span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">1</span><span class="pln" style="margin: 0px; padding: 0px;"> amrood   users </span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">1024</span><span class="pln" style="margin: 0px; padding: 0px;">  </span><span class="typ" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">Nov</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">2</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">00</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">:</span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">10</span><span class="pln" style="margin: 0px; padding: 0px;">  testfile</span></pre> 
+ <h2> 更改所有者和组：</h2> 
+ <p> 在Unix上创建一个帐户，一个所有者分配给每个用户的ID和组ID。上面提到的所有的权限也被分配基础上的所有者和组。</p> 
+ <p> 两个命令都可以改变文件的所有者和组：</p> 
+ <ol> 
+  <li> <p> chown:&nbsp;chown命令代表“更改所有者”，是用来改变文件所有者。</p> </li> 
+  <li> <p> chgrp:&nbsp;chgrp命令代表“更改组”，是用来改变文件的组。</p> </li> 
+ </ol> 
+ <h2> 所有权变更：</h2> 
+ <p> chown命令更改文件的所有权。基本语法如下：</p> 
+ <pre class="prettyprint prettyprinted" style="font-size: 12px;">
+<span class="pln" style="margin: 0px; padding: 0px;">$ chown user filelist</span></pre> 
+ <p> 用户的值可以是一个用户在系统上的一个用户在系统上的用户ID（UID）的名称。</p> 
+ <p> 下面的例子：</p> 
+ <pre class="prettyprint prettyprinted" style="font-size: 12px;">
+<span class="pln" style="margin: 0px; padding: 0px;">$ chown amrood testfile
+$</span></pre> 
+ <p> 更改给定的文件的所有者用户amrood。</p> 
+ <p> 注意：超级用户root拥有不受限制的能力改变任何文件的所有权，但普通用户只能改变他们所拥有的文件的所有者。</p> 
+ <h2> 更改组所有权：</h2> 
+ <p> chrgp命令组文件的所有权更改。基本语法如下：</p> 
+ <pre class="prettyprint prettyprinted" style="font-size: 12px;">
+<span class="pln" style="margin: 0px; padding: 0px;">$ chgrp </span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">group</span><span class="pln" style="margin: 0px; padding: 0px;"> filelist</span></pre> 
+ <p> 组的值可以是系统或组ID（GID）系统上的一组一组的名称。</p> 
+ <p> 下面的例子：</p> 
+ <pre class="prettyprint prettyprinted" style="font-size: 12px;">
+<span class="pln" style="margin: 0px; padding: 0px;">$ chgrp special testfile
+$</span></pre> 
+ <p> 组给定的文件更改特殊组。</p> 
+ <h2> SUID和SGID文件权限：</h2> 
+ <p> 通常，当执行一个命令，它会以完成其任务，必须具有特殊权限的执行。</p> 
+ <p> 作为一个例子，当用passwd命令更改您的密码，新密码存储在文件&nbsp;/etc/shadow文件。</p> 
+ <p> 作为一个普通用户，没有读或写访问此文件出于安全原因，但是当改变你的密码，需要写这个文件的​​权限。这意味着passwd程序给额外的权限，这样就可以写入文件/ etc / shadow中。</p> 
+ <p> 其他权限的程序通过设置用户ID（SUID）和设置组ID（SGID）位被称为一种机制。</p> 
+ <p> 当执行一个程序，启用了SUID位，继承该程序的所有者的权限。启动程序的用户的权限运行程序没有设置SUID位。</p> 
+ <p> 这才是真正为SGID。通常情况下，节目组权限执行，而是您的组将被改变只是对这一计划的程序的组所有者。</p> 
+ <p> 如果权限SUID和SGID位会出现字母“s”。位于所有者的权限位执行权限通常会位于SUID位将被“S”。例如，命令</p> 
+ <div style="float:left;margin-bottom: 10px;">  
+ </div>
+ <div style="float:left;margin-bottom: 10px;">  
+ </div>
+ <pre class="prettyprint prettyprinted" style="font-size: 12px;">
+<span class="pln" style="margin: 0px; padding: 0px;">$ ls </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">-</span><span class="pln" style="margin: 0px; padding: 0px;">l </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">/</span><span class="pln" style="margin: 0px; padding: 0px;">usr</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">/</span><span class="pln" style="margin: 0px; padding: 0px;">bin</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">/</span><span class="pln" style="margin: 0px; padding: 0px;">passwd
+</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">-</span><span class="pln" style="margin: 0px; padding: 0px;">r</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">-</span><span class="pln" style="margin: 0px; padding: 0px;">sr</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">-</span><span class="pln" style="margin: 0px; padding: 0px;">xr</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">-</span><span class="pln" style="margin: 0px; padding: 0px;">x  </span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">1</span><span class="pln" style="margin: 0px; padding: 0px;">   root   bin  </span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">19031</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="typ" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">Feb</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">7</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">13</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">:</span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">47</span><span class="pln" style="margin: 0px; padding: 0px;">  </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">/</span><span class="pln" style="margin: 0px; padding: 0px;">usr</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">/</span><span class="pln" style="margin: 0px; padding: 0px;">bin</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">/</span><span class="pln" style="margin: 0px; padding: 0px;">passwd</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">*</span><span class="pln" style="margin: 0px; padding: 0px;">
+$</span></pre> 
+ <p> 这表明了SUID位设置该命令是由root。大写字母S在执行位置，而不是一个小写字母s表示，没有设置执行位。</p> 
+ <p> 如果粘位上启用的目录，文件只能被删除，如果是以下用户：</p> 
+ <ul> 
+  <li> <p> 所有者粘性目录</p> </li> 
+  <li> <p> 所有者被删除的文件</p> </li> 
+  <li> <p> 超级用户root</p> </li> 
+ </ul> 
+ <p> 要设置SUID和SGID位上的任何目录尝试以下操作：</p> 
+ <pre class="prettyprint prettyprinted" style="font-size: 12px;">
+<span class="pln" style="margin: 0px; padding: 0px;">$ chmod ug</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">+</span><span class="pln" style="margin: 0px; padding: 0px;">s dirname
+$ ls </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">-</span><span class="pln" style="margin: 0px; padding: 0px;">l
+drwsr</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">-</span><span class="pln" style="margin: 0px; padding: 0px;">sr</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">-</span><span class="pln" style="margin: 0px; padding: 0px;">x </span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">2</span><span class="pln" style="margin: 0px; padding: 0px;"> root root  </span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">4096</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="typ" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">Jun</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">19</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">06</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">:</span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">45</span><span class="pln" style="margin: 0px; padding: 0px;"> dirname
+$</span></pre> 
+ <br>      
+</div></body></html>

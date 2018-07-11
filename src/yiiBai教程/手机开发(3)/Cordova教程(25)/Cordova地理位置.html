@@ -1,0 +1,95 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Cordova地理位置</h1><div style="width:100%;float:left;" class="article-content">   
+ <div> 
+  <div>
+    地理位置是用于获取有关设备的经纬度信息。 
+  </div> 
+ </div> 
+ <div> 
+  <h2> 
+   <div>
+     第1步&nbsp;-&nbsp;安装插件 
+   </div> </h2> 
+  <div>
+    我们可以通过输入以下代码，命令提示符窗口安装这个插件。 
+  </div> 
+  <pre>C:\Users\username\Desktop\CordovaProject&gt;cordova plugin add cordova-plugin-geolocation</pre> 
+  <h2> 
+   <div>
+     第2步&nbsp;-&nbsp;添加按钮 
+   </div> </h2> 
+  <p style="text-align:justify;"> 在本教程中，我们将学习如何获得当前位置以及如何监视位置改变。我们首先需要创建调用这些功能的按钮。 </p> 
+  <pre>&lt;button id = "getPosition"&gt;CURRENT POSITION&lt;/button&gt;
+&lt;button id = "watchPosition"&gt;WATCH POSITION&lt;/button&gt;</pre> 
+  <h2> 
+   <div>
+     第3步&nbsp;-&nbsp;添加事件监听器 
+   </div> </h2> 
+  <p style="text-align:justify;"> 现在，我们要添加事件侦听器在设备已准备就绪时。我们将在index.js添加代码示例下面代码到 onDeviceReady 函数。 </p> 
+  <pre>document.getElementById("getPosition").addEventListener("click", getPosition);
+document.getElementById("watchPosition").addEventListener("click", watchPosition);	</pre> 
+  <h2> 
+   <div>
+     第3步&nbsp;-&nbsp;创建函数 
+   </div> </h2> 
+  <p style="text-align:justify;"> 两个函数需要创建用于两个事件侦听器。一个将被用于获取当前位置，另一个用于监视位置。 </p> 
+  <pre>function getPosition() {
+
+   var options = {
+      enableHighAccuracy: true,
+      maximumAge: 3600000
+   }
+	
+   var watchID = navigator.geolocation.getCurrentPosition(onSuccess, onError, options);
+
+   function onSuccess(position) {
+
+      alert('Latitude: '          + position.coords.latitude          + '\n' +
+         'Longitude: '         + position.coords.longitude         + '\n' +
+         'Altitude: '          + position.coords.altitude          + '\n' +
+         'Accuracy: '          + position.coords.accuracy          + '\n' +
+         'Altitude Accuracy: ' + position.coords.altitudeAccuracy  + '\n' +
+         'Heading: '           + position.coords.heading           + '\n' +
+         'Speed: '             + position.coords.speed             + '\n' +
+         'Timestamp: '         + position.timestamp                + '\n');
+   };
+
+   function onError(error) {
+      alert('code: '    + error.code    + '\n' + 'message: ' + error.message + '\n');
+   }
+}
+
+function watchPosition() {
+
+   var options = {
+      maximumAge: 3600000,
+      timeout: 3000,
+      enableHighAccuracy: true,
+   }
+
+   var watchID = navigator.geolocation.watchPosition(onSuccess, onError, options);
+
+   function onSuccess(position) {
+
+      alert('Latitude: '          + position.coords.latitude          + '\n' +
+         'Longitude: '         + position.coords.longitude         + '\n' +
+         'Altitude: '          + position.coords.altitude          + '\n' +
+         'Accuracy: '          + position.coords.accuracy          + '\n' +
+         'Altitude Accuracy: ' + position.coords.altitudeAccuracy  + '\n' +
+         'Heading: '           + position.coords.heading           + '\n' +
+         'Speed: '             + position.coords.speed             + '\n' +
+         'Timestamp: '         + position.timestamp                + '\n');
+   };
+
+   function onError(error) {
+      alert('code: '    + error.code    + '\n' +'message: ' + error.message + '\n');
+   }
+
+}&nbsp;</pre> 
+  <p style="text-align:justify;"> 在上面的例子，我们使用两种方法&nbsp;−&nbsp;getCurrentPosition&nbsp;和&nbsp;watchPosition。这两个函数使用三个参数。当我们点击CURRENT&nbsp;POSITION按钮，弹出显示地理位置值。<br> <img src="/uploads/tutorial/20160220/1-16022011105Uc.jpg" alt=""> </p> 
+  <p style="text-align:justify;"> 如果我们点击&nbsp;WATCH&nbsp;POSITION按钮，相同的弹出提示将每三秒钟触发一次。这样我们就可以跟踪用户的设备的运动的变化。 </p> 
+  <h2> 注 </h2> 
+  <p style="text-align:justify;"> 这个插件是使用GPS。有时不能按时返回值，并请求将返回超时错误。这就是为什么我们指定enableHighAccuracy:true和maximumAge: 3600000.&nbsp;这意味着，如果请求不按时完成后，我们将使用最后已知值来代替。在我们的例子中，最大值设置为3600000毫秒。 </p> 
+  <br> 
+ </div>
+ <br>      
+</div></body></html>

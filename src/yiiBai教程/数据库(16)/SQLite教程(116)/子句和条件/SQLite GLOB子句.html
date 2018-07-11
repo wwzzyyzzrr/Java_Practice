@@ -1,0 +1,94 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">SQLite GLOB子句</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>SQLite <code>GLOB</code>操作符通过使用通配符将模式表达式与文本值匹配， 当搜索表达式与模式表达式匹配时，<code>GLOB</code>运算符将返回真，该值为：<code>1</code>。</p> 
+ <p><code>GLOB</code>运算符遵循UNIX的语法，使用指定以下通配符。</p> 
+ <ul> 
+  <li>星号(<code>*</code>)： 符号表示零个或多个数字或字符。</li>
+  <li>问号(<code>?</code>)： 符号表示单个数字或字符。</li>
+ </ul> 
+ <p><strong>语法：</strong></p> 
+ <p>星号(<code>*</code>)符号的语法：</p> 
+ <pre><code class="lang-sql">SELECT FROM table_name  
+WHERE column GLOB 'XXXX*'  
+-- 或者
+SELECT FROM table_name  
+WHERE column GLOB '*XXXX*'
+</code></pre> 
+ <ul> 
+  <li>问号(<code>?</code>)符号的语法：</li>
+ </ul> 
+ <pre><code class="lang-sql">SELECT FROM table_name  
+WHERE column GLOB 'XXXX?'  
+-- 或者
+SELECT FROM table_name  
+WHERE column GLOB '?XXXX'  
+-- 或者
+SELECT FROM table_name  
+WHERE column GLOB '?XXXX?'  
+-- 或者
+SELECT FROM table_name  
+WHERE column GLOB '????'
+</code></pre> 
+ <h2 id="h2--"><a name="示例：" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例：</h2>
+ <p>假设有一个名为“<code>STUDENT</code>”的表，并具有以下数据：</p> 
+ <pre><code class="lang-sql">sqlite&gt; SELECT * FROM STUDENT;
+1|Maxsu|27|Shengzheng|20000.0
+2|Minsu|25|Beijing|15000.0
+3|Avgsu|23|Shanghai|2000.0
+4|Linsu|25|Guangzhou|65000.0
+5|Sqlsu|26|Hainan|25000.0
+6|Javasu|21|Shengzheng|18000.0
+sqlite&gt;
+</code></pre> 
+ <p>在下面这些示例中，WHERE语句具有不同的BLOB子句，带有’<code>*</code>‘和’<code>?</code>‘运算符：</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>语句</th> 
+    <th>描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td><code>WHERE FEES GLOB '200*'</code></td> 
+    <td>查找以<code>200</code>开头的任何值</td> 
+   </tr> 
+   <tr> 
+    <td><code>WHERE FEES GLOB '*200*'</code></td> 
+    <td>查找包含<code>200</code>的任何值</td> 
+   </tr> 
+   <tr> 
+    <td><code>WHERE FEES GLOB '?00*'</code></td> 
+    <td>查找在第二和第三个位置是<code>00</code>的任何值</td> 
+   </tr> 
+   <tr> 
+    <td><code>WHERE FEES GLOB '2??'</code></td> 
+    <td>查找以<code>2</code>开头并且长度至少为<code>3</code>个字符的值</td> 
+   </tr> 
+   <tr> 
+    <td><code>WHERE FEES GLOB'*2'</code></td> 
+    <td>查找以2结尾的任何值</td> 
+   </tr> 
+   <tr> 
+    <td><code>WHERE FEES GLOB '?2*3'</code></td> 
+    <td>查找具有第二个位置是<code>2</code>并以<code>3</code>结尾的任何值</td> 
+   </tr> 
+   <tr> 
+    <td><code>WHERE FEES GLOB '2???3'</code></td> 
+    <td>查找以<code>2</code>开头并以<code>3</code>结尾的五位数字的任何值</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p><strong>例1：</strong></p> 
+ <p>从<code>student</code>表中选择<code>fees</code>以<code>2</code>开头所有记录：</p>   
+ <pre><code class="lang-sql">SELECT * FROM student WHERE fees  GLOB '2*';
+</code></pre> 
+ <p>执行上面代码，输出结果如下 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201705/2305/119080556_38272.png" alt=""></p> 
+ <p><strong>例2：</strong></p> 
+ <p>从<code>student</code>表中选择<code>address</code>包含<code>an</code>字符所有记录：</p> 
+ <pre><code class="lang-sql">SELECT * FROM student WHERE address  GLOB '*an*';
+</code></pre> 
+ <p>执行上面代码，输出结果如下 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201705/2305/637080558_49424.png" alt=""></p>
+ <br>      
+</div></body></html>

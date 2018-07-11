@@ -1,0 +1,102 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">wxPython FlexiGridSizer布局</h1><div style="width:100%;float:left;" class="article-content">   
+ <div> 
+  <div>
+    这种大小测定器也有一个二维网格。然而，它提供多一点灵活性布局控件在单元中。&nbsp;尽管同一行中的所有控件具有相同的高度，并且在同一列中的所有控件具有相同的宽度，但每个小区的大小是不均匀的，如在GridSizer。 
+  </div> 
+ </div> 
+ <div> 
+  <div>
+    宽度和/或单元格在单个列中的高度/行可以通过AddGrowableRow()和AddGrowableCol()方法来扩展。 
+  </div> 
+  <div>
+    wx.FlexiGridSizer类的构造函数采用四个参数&nbsp;- 
+  </div> 
+  <pre>Wx.FlexiGridSizer(rows, cols, vgap, hgap)</pre> 
+  <div>
+    wx.FlexiGridSizer的主要方法的简短描述如下&nbsp;- 
+  </div> 
+  <table border="1" cellpadding="2" cellspacing="0" style="font-size:14px;color:#313131;font-family:Verdana, Geneva, Tahoma,  Helvetica, background-color:inherit;"> 
+   <tbody> 
+    <tr> 
+     <th style="border:1px solid #999999;background-color:#EEEEEE;"> S.N. </th> 
+     <th style="border:1px solid #999999;background-color:#EEEEEE;text-align:center;"> 
+      <div style="background-color:inherit;">
+        方法和说明 
+      </div> </th> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 1 </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>AddGrowableCol()</b> </p> 
+      <div style="background-color:inherit;">
+        指定定索引的列增长，如果额外的高度可用。 
+      </div> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 2 </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>AddGrowRow()</b> </p> 
+      <div style="background-color:inherit;">
+        指定的行定索引的增长，如果额外的宽度是可用的。 
+      </div> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 3 </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>SetFlexibleDirection()</b> </p> 
+      <div style="background-color:inherit;">
+        指定大小测定器的灵活性是否影响的行，列或两者。 
+      </div> </td> 
+    </tr> 
+   </tbody> 
+  </table> 
+  <h2> 实例 </h2> 
+  <p style="text-align:justify;"> 用下面的代码设计两列表单。&nbsp;第一列包含标签和第二个包含文本框。第二列被设定为可增长。类似地，第三行被设定为可增长。(请注意，行索引和列索引从0开始)。在AddGrowableCol()和AddGrowableRow()函数的第二个参数是proportion增长。 </p>   
+  <pre>fgs.AddGrowableRow(2, 1) 
+fgs.AddGrowableCol(1, 1)</pre> 
+  <div>
+    FlexiGrid.py&nbsp;整个代码如下&nbsp;- 
+  </div> 
+  <pre>import wx
+  
+class Example(wx.Frame): 
+   
+   def __init__(self, parent, title): 
+      super(Example, self).__init__(parent, title = title, size = (300, 250)) 
+             
+      self.InitUI()
+      self.Centre() 
+      self.Show()      
+         
+   def InitUI(self): 
+      panel = wx.Panel(self)
+		
+      hbox = wx.BoxSizer(wx.HORIZONTAL)
+		
+      fgs = wx.FlexGridSizer(3, 2, 10,10)
+		
+      title = wx.StaticText(panel, label = "Title") 
+      author = wx.StaticText(panel, label = "Name of the Author") 
+      review = wx.StaticText(panel, label = "Review")
+		
+      tc1 = wx.TextCtrl(panel) 
+      tc2 = wx.TextCtrl(panel) 
+      tc3 = wx.TextCtrl(panel, style = wx.TE_MULTILINE)
+		
+      fgs.AddMany([(title), (tc1, 1, wx.EXPAND), (author),  
+         (tc2, 1, wx.EXPAND), (review, 1, wx.EXPAND), (tc3, 1, wx.EXPAND)])  
+      fgs.AddGrowableRow(2, 1) 
+      fgs.AddGrowableCol(1, 1)  
+      hbox.Add(fgs, proportion = 2, flag = wx.ALL|wx.EXPAND, border = 15) 
+      panel.SetSizer(hbox) 
+		
+app = wx.App() 
+Example(None, title = 'FlexiGrid Demo - www.yiibai.com') 
+app.MainLoop()</pre> 
+  <div style="background-color:inherit;">
+    上面的代码产生下面的输出&nbsp;-
+   <br> 
+   <img src="/uploads/tutorial/20151208/1-15120Q95313J5.png" alt="">
+   <br> 
+  </div> 
+  <img src="file://E:/data/youdao/qq24B39E2329F08D9F4C3146A571A415EF/7440e3b39f714a909180b721827f7b4b/clipboard.png"> 
+ </div>
+ <br>      
+</div></body></html>

@@ -1,0 +1,228 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">ASP.NET错误管理</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>ASP.NET中的错误处理有三个方面：</p> 
+ <ul> 
+  <li><em>跟踪</em> - 在页面级别或应用程序级别跟踪程序执行。</li>
+  <li><em>错误处理</em> - 处理页面级别或应用程序级别的标准错误或自定义错误。</li>
+  <li><em>调试</em> - 逐步完成程序，设置断点来分析代码。</li>
+ </ul> 
+ <p>在本章中，我们将讨论跟踪，错误处理以及调试。</p> 
+ <p>要理解这些概念，创建一个ASP.Net空网站项目：<em>ErrorHandling</em> 。 它有一个标签控件，一个下拉列表和一个链接。 下拉列表加载名人名言的数组列表，所选引用显示在下面的标签中。它也有超链接，但是指向一个不存在的链接(仅作为示例演示)。参考以下代码(<em>Default.aspx</em>) - </p> 
+ <pre><code class="lang-aspnet">&lt;%@ Page Language="C#" AutoEventWireup="true" CodeFile="Default.aspx.cs" Inherits="_Default" %&gt;
+
+&lt;!DOCTYPE html&gt;
+
+&lt;html xmlns="http://www.w3.org/1999/xhtml"&gt;
+&lt;head runat="server"&gt;
+&lt;meta http-equiv="Content-Type" content="text/html; charset=utf-8"/&gt;
+    &lt;title&gt;ASP.Net错误处理示例&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;form id="form1" runat="server"&gt;
+        &lt;div&gt;
+            &lt;asp:Label ID="lblheading" runat="server" Text="跟踪，调试和错误处理"&gt;
+            &lt;/asp:Label&gt;
+
+            &lt;br /&gt; &lt;br /&gt;
+
+            &lt;asp:DropDownList ID="ddlquotes" runat="server" AutoPostBack="True"  onselectedindexchanged="ddlquotes_SelectedIndexChanged"&gt;
+            &lt;/asp:DropDownList&gt;
+
+            &lt;br /&gt; &lt;br /&gt;
+
+            &lt;asp:Label ID="lblquotes" runat="server"&gt;
+            &lt;/asp:Label&gt;
+
+            &lt;br /&gt; &lt;br /&gt;
+
+            &lt;asp:HyperLink ID="HyperLink1" runat="server" NavigateUrl="mylink.html"&gt;链接到:&lt;/asp:HyperLink&gt;
+         &lt;/div&gt;
+    &lt;/form&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>以下是<em>Default.aspx.cs</em> 的代码 - </p> 
+ <pre><code class="lang-csharp">using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+
+public partial class _Default : System.Web.UI.Page
+{
+    protected void Page_Load(object sender, EventArgs e)
+    {
+        if (!IsPostBack)
+        {
+            string[,] quotes =
+            {
+            {"Imagination is more important than Knowledge.", "Albert Einsten"},
+            {"Assume a virtue, if you have it not","Shakespeare"},
+            {"A man cannot be comfortable without his own approval", "Mark Twain"},
+            {"Beware the young doctor and the old barber", "Benjamin Franklin"},
+            {"Whatever begun in anger ends in shame", "Benjamin Franklin"}
+         };
+
+            for (int i = 0; i &lt; quotes.GetLength(0); i++)
+                ddlquotes.Items.Add(new ListItem(quotes[i, 0], quotes[i, 1]));
+        }
+    }
+
+    protected void ddlquotes_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        if (ddlquotes.SelectedIndex != -1)
+        {
+            lblquotes.Text = String.Format("{1}, 名言: {0}", ddlquotes.SelectedItem.Text, ddlquotes.SelectedValue);
+        }
+    }
+}
+</code></pre> 
+ <p>运行上面示例代码，得到以下结果 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201712/0712/521111246_87827.png" alt=""></p> 
+ <h2 id="h2-u8DDFu8E2A"><a name="跟踪" class="reference-link"></a><span class="header-link octicon octicon-link"></span>跟踪</h2>
+ <p>要启用页面级别跟踪，需要修改<code>Page</code>指令并添加<code>Trace</code>属性，如下所示：</p> 
+ <pre><code class="lang-aspnet">&lt;%@ Page Language="C#" AutoEventWireup="true" CodeFile="Default.aspx.cs" Inherits="_Default" Trace ="true"%&gt;
+</code></pre> 
+ <p>现在当执行这个文件时，就会得到以下跟踪信息：</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201712/0712/539111247_10218.png" alt=""></p> 
+ <p>它在顶部提供以下信息：</p> 
+ <ul> 
+  <li>会话ID</li>
+  <li>状态码</li>
+  <li>请求时间</li>
+  <li>请求类型</li>
+  <li>请求和响应编码</li>
+ </ul> 
+ <p>每次请求页面时，服务器发送的状态码显示错误的名称和时间(如果有的话)。 下表显示了常见的HTTP状态代码：</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>状态码</th> 
+    <th>描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>100</td> 
+    <td>继续</td> 
+   </tr> 
+   <tr> 
+    <td>101</td> 
+    <td>切换协议</td> 
+   </tr> 
+   <tr> 
+    <td>200</td> 
+    <td>完成</td> 
+   </tr> 
+   <tr> 
+    <td>204</td> 
+    <td>无内容</td> 
+   </tr> 
+   <tr> 
+    <td>301</td> 
+    <td>永久转移</td> 
+   </tr> 
+   <tr> 
+    <td>305</td> 
+    <td>使用代理</td> 
+   </tr> 
+   <tr> 
+    <td>307</td> 
+    <td>临时重定向</td> 
+   </tr> 
+   <tr> 
+    <td>400</td> 
+    <td>错误的请求</td> 
+   </tr> 
+   <tr> 
+    <td>402</td> 
+    <td>需要抵消</td> 
+   </tr> 
+   <tr> 
+    <td>404</td> 
+    <td>未找到</td> 
+   </tr> 
+   <tr> 
+    <td>408</td> 
+    <td>请求超时</td> 
+   </tr> 
+   <tr> 
+    <td>417</td> 
+    <td>未实现预期</td> 
+   </tr> 
+   <tr> 
+    <td>500</td> 
+    <td>内部服务器错误</td> 
+   </tr> 
+   <tr> 
+    <td>503</td> 
+    <td>服务不可用</td> 
+   </tr> 
+   <tr> 
+    <td>505</td> 
+    <td>HTTP版本不受支持</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p>在顶级信息下面有<code>Trace</code>日志，提供页面生命周期的细节。它提供自页面初始化以来经过的时间(秒)。如下图所示 -<br><img src="http://www.yiibai.com/uploads/images/201712/0712/323111248_27139.png" alt=""></p> 
+ <p>下一个信息块是控制树，它以分层的方式列出页面上的所有控件：</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201712/0712/292111249_88518.png" alt=""></p> 
+ <p>最后在会话和应用程序状态摘要，Cookie和标题集合之后列出所有服务器变量。</p> 
+ <p>跟踪对象允许将自定义信息添加到跟踪输出。 它有两个方法来完成这个操作：<code>Write</code>方法和<code>Warn</code>方法。</p> 
+ <p>更改<code>Page_Load</code>事件处理程序以使用<code>Write</code>方法记录程序执行过程：</p>   
+ <pre><code class="lang-csharp">Trace.Write("页面已经开始加载...");
+        if (!IsPostBack)
+        {
+            Trace.Write("Not Post Back, Page Load");
+            ......
+</code></pre> 
+ <p>运行观察效果：</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201712/0712/631111252_56985.png" alt=""></p> 
+ <p>要使用<code>Warn</code>方法，可在选择的索引更改的事件处理程序中强制输入一些错误的代码：</p> 
+ <pre><code class="lang-csharp">        // 强制抛出错误
+        try
+        {
+            int a = 0;
+            int b = 9 / a;
+        }catch (DivideByZeroException e1)
+        {
+            Trace.Warn("UserAction", "processing 9/a", e1);
+        }
+</code></pre> 
+ <p><code>Try-Catch</code>是一个<em>C#</em> 编程结构。 <code>try</code>块保存任何可能产生错误或者不产生错误的代码，<code>catch</code>块捕获错误。 程序运行时，会在跟踪日志中发送警告。</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201712/0812/461141213_32482.png" alt=""></p> 
+ <p>应用程序级别跟踪适用于网站中的所有页面。 它通过在<code>web.config</code>文件中放入以下代码行来实现：</p> 
+ <pre><code class="lang-xml">&lt;system.web&gt;
+   &lt;trace enabled="true" /&gt;
+&lt;/system.web&gt;
+</code></pre> 
+ <h2 id="h2-u9519u8BEFu5904u7406"><a name="错误处理" class="reference-link"></a><span class="header-link octicon octicon-link"></span>错误处理</h2>
+ <p>虽然ASP.NET可以检测到所有的运行时错误，但仍然有一些细微的错误。 通过跟踪观察错误是为了方便开发人员发现程序问题，而不是为了用户。<br>因此，为了截获这种情况，可以在应用程序的<code>web.config</code>文件中添加错误处理设置。 这是应用程序范围的错误处理。 例如，可以在<code>web.config</code>文件中添加以下行：</p> 
+ <pre><code class="lang-xml">&lt;configuration&gt;
+   &lt;system.web&gt;
+
+      &lt;customErrors mode="RemoteOnly" defaultRedirect="GenericErrorPage.html"&gt;
+         &lt;error statusCode="403" redirect="NoAccess.html"    /&gt;
+         &lt;error statusCode="404" redirect="FileNotFound.html" /&gt;
+      &lt;/customErrors&gt;
+
+   &lt;/system.web&gt;
+&lt;configuration&gt;
+</code></pre> 
+ <p><code>&lt;customErrors&gt;</code>部分可能有的属性：</p> 
+ <ul> 
+  <li><em>Mode</em> - 它启用或禁用自定义错误页面。它有三个可能的值：
+   <ul> 
+    <li><em>On</em> - 显示自定义页面。</li>
+    <li><em>Off</em> - 显示ASP.NET错误页面</li>
+    <li><em>remoteOnly</em> - 它向客户端显示自定义错误，在本地显示ASP.NET错误。</li>
+   </ul> </li>
+  <li><em>defaultRedirect </em> - 它包含在未处理的错误情况下显示的页面的URL。</li>
+ </ul> 
+ <p>为了针对不同类型的错误放置不同的自定义错误页面，根据错误的状态代码使用<code>&lt;error&gt;</code>子标记，其中指定了不同的错误页面。<br>要实现页面级错误处理，可以修改<code>Page</code>指令：</p> 
+ <pre><code class="lang-aspnet">&lt;%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Default.aspx.cs"
+   Inherits="errorhandling._Default" Trace ="true" ErrorPage="PageError.html" %&gt;
+</code></pre> 
+ <p>由于ASP.NET调试本身是一个重要的主题，因此在接下来的教程中，将在单独一篇文章讨论它。</p>
+ <br>      
+</div></body></html>

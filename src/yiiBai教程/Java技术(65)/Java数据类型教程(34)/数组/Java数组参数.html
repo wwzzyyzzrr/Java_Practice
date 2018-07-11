@@ -1,0 +1,160 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Java数组参数</h1><div style="width:100%;float:left;" class="article-content">   
+ <h2 id="h2-u6570u7EC4u53C2u6570"><a name="数组参数" class="reference-link"></a><span class="header-link octicon octicon-link"></span>数组参数</h2>
+ <p>可以将数组作为参数传递给方法或构造函数。传递给该方法的数组的类型必须是与形式参数类型兼容的赋值(即，形参和实参的数组类型要一样。</p> 
+ <p>以下代码显示了如何将数组作为方法参数传递 - </p> 
+ <pre><code class="lang-java">public class Main {
+  public static void main(String[] args) {
+    int[] num = { 1, 2 };
+
+    System.out.println("Before  swap");
+    System.out.println("#1: " + num[0]);
+    System.out.println("#2: " + num[1]);
+
+    swap(num);
+
+    System.out.println("After  swap");
+    System.out.println("#1: " + num[0]);
+    System.out.println("#2: " + num[1]);
+  }
+  public static void swap(int[] source) {
+    if (source != null &amp;&amp; source.length == 2) {
+      // Swap the first and the second elements
+      int temp = source[0];
+      source[0] = source[1];
+      source[1] = temp;
+    }
+  }
+}
+</code></pre> 
+ <p>上面的代码生成以下结果。</p> 
+ <pre><code class="lang-java">Before  swap
+#1: 1
+#2: 2
+After  swap
+#1: 2
+#2: 1
+</code></pre> 
+ <h2 id="h2-u6570u7EC4u53C2u6570u5F15u7528"><a name="数组参数引用" class="reference-link"></a><span class="header-link octicon octicon-link"></span>数组参数引用</h2>
+ <p>因为数组是一个对象，所以它的引用副本可传递给一个方法。如果方法更改数组参数，实际参数不受影响。</p> 
+ <pre><code class="lang-java">import java.util.Arrays;
+
+public class Main {
+  public static void main(String[] args) {
+    int[] origNum = { 1, 2, 3 };
+    System.out.println("Before method  call:" + Arrays.toString(origNum));
+
+    // Pass the array to the method
+    tryArrayChange(origNum);
+
+    System.out.println("After method  call:" + Arrays.toString(origNum));
+  }
+
+  public static void tryArrayChange(int[] num) {
+    System.out.println("Inside method-1:" + Arrays.toString(num));
+    // Create and store a new int array in num
+    num = new int[] { 10, 20 };
+
+    System.out.println("Inside method?2:" + Arrays.toString(num));
+  }
+}
+</code></pre> 
+ <p>上面的代码生成以下结果。</p> 
+ <pre><code class="lang-java">Before method  call:[1, 2, 3]
+Inside method-1:[1, 2, 3]
+Inside method?2:[10, 20]
+After method  call:[1, 2, 3]
+</code></pre> 
+ <h2 id="h2-u6570u7EC4u7684u5143u7D20u53C2u6570"><a name="数组的元素参数" class="reference-link"></a><span class="header-link octicon octicon-link"></span>数组的元素参数</h2>
+ <p>存储在数组参数中的元素的值在方法中可始终更改。以下代码显示了如何在方法中更改数组参数的元素值。</p> 
+ <pre><code class="lang-java">import java.util.Arrays;
+
+public class Main {
+  public static void main(String[] args) {
+    int[] origNum = { 1, 2, 3 };
+    String[] origNames = { "Java", "SQL" };
+    System.out.println("Before method  call, origNum:"
+        + Arrays.toString(origNum));
+    System.out.println("Before method  call, origNames:"
+        + Arrays.toString(origNames));
+
+    // Call methods passing the arrays 
+    tryElementChange(origNum);
+    tryElementChange(origNames);
+
+    System.out.println("After method  call, origNum:"
+        + Arrays.toString(origNum));
+    System.out.println("After method  call, origNames:"
+        + Arrays.toString(origNames));
+  }
+
+  public static void tryElementChange(int[] num) {
+    if (num != null &amp;&amp; num.length &gt; 0) {
+      num[0] = -1;
+    }
+  }
+
+  public static void tryElementChange(String[] names) {
+    if (names != null &amp;&amp; names.length &gt; 0) {
+      names[0] = "T";
+    }
+  }
+}
+</code></pre> 
+ <p>上面的代码生成以下结果。</p>   
+ <pre><code class="lang-java">Before method  call, origNum:[1, 2, 3]
+Before method  call, origNames:[Java, SQL]
+After method  call, origNum:[-1, 2, 3]
+After method  call, origNames:[T, SQL]
+</code></pre> 
+ <h2 id="h2-u793Au4F8B"><a name="示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例</h2>
+ <p>以下代码显示如何更改对象数组元素。</p> 
+ <pre><code class="lang-java">class Item {
+    private double price;
+    private String name;
+
+    public Item(String name, double initialPrice) {
+        this.name = name;
+        this.price = initialPrice;
+    }
+
+    public double getPrice() {
+        return this.price;
+    }
+
+    public void setPrice(double newPrice) {
+        this.price = newPrice;
+    }
+
+    public String toString() {
+        return "[" + this.name + ", " + this.price + "]";
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Item[] myItems = { new Item("Pen", 2.11), new Item("Pencil", 0.10) };
+        System.out.println("Before method  call  #1:" + myItems[0]);
+        System.out.println("Before method  call  #2:" + myItems[1]);
+
+        // Call the method passing the array of Item
+        tryStateChange(myItems);
+
+        System.out.println("After method  call  #1:" + myItems[0]);
+        System.out.println("After method  call  #2:" + myItems[1]);
+    }
+
+    public static void tryStateChange(Item[] allItems) {
+        if (allItems != null &amp;&amp; allItems.length &gt; 0) {
+            allItems[0].setPrice(0.38);
+        }
+    }
+}
+</code></pre> 
+ <p>上面的代码生成以下结果。</p> 
+ <pre><code class="lang-java">Before method  call  #1:[Pen, 2.11]
+Before method  call  #2:[Pencil, 0.1]
+After method  call  #1:[Pen, 0.38]
+After method  call  #2:[Pencil, 0.1]
+</code></pre>
+ <br>      
+</div></body></html>

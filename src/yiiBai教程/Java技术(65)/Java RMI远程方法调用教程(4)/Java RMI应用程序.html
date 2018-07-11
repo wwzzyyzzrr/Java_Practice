@@ -1,0 +1,152 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Java RMI应用程序</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>要编写Java的RMI应用程序，必须遵循以下步骤：</p> 
+ <ul> 
+  <li>定义远程接口</li>
+  <li>开发实现类(远程对象)</li>
+  <li>开发服务器程序</li>
+  <li>开发客户端程序</li>
+  <li>编译应用程序</li>
+  <li>执行应用程序</li>
+ </ul> 
+ <h2 id="h2-u5B9Au4E49u8FDCu7A0Bu63A5u53E3"><a name="定义远程接口" class="reference-link"></a><span class="header-link octicon octicon-link"></span>定义远程接口</h2>
+ <p>远程接口提供特定远程对象的所有方法的描述。客户端可与此远程接口进行通信。</p> 
+ <p>创建远程接口 -</p> 
+ <ul> 
+  <li>创建一个扩展预定义接口的接口，该接口属于该包。</li>
+  <li>声明客户端在此界面中可以调用的所有业务方法。</li>
+  <li>由于在远程调用期间存在网络问题，因此可能会抛出一个名称为<code>RemoteException</code>的异常。 </li>
+ </ul> 
+ <p>以下是远程接口的示例。首先定义一个名为<code>Hello</code>的接口，此接口有一个名为<code>printMsg()</code>的方法。</p> 
+ <pre><code class="lang-java">import java.rmi.Remote; 
+import java.rmi.RemoteException;  
+
+// Creating Remote interface for our application 
+public interface Hello extends Remote {  
+   void printMsg() throws RemoteException;  
+}
+</code></pre> 
+ <h2 id="h2--remote-object-"><a name="开发实现类(Remote Object)" class="reference-link"></a><span class="header-link octicon octicon-link"></span>开发实现类(Remote Object)</h2>
+ <p>我们需要实现在前面的步骤中创建的远程接口。可以单独写一个实现类，也可以直接使服务器程序实现这个接口。</p> 
+ <p>开发一个实现类 -</p> 
+ <ul> 
+  <li>实现上一步创建的接口。</li>
+  <li>提供远程接口的所有抽象方法的实现。</li>
+ </ul> 
+ <p>以下是一个实现类。 在这里，我们创建了一个名为<code>ImplExample</code>的类，并实现了在上一步中创建的接口<code>Hello</code>，并提供了打印消息 - <code>printMsg()</code>方法的具体实现。</p> 
+ <pre><code class="lang-java">// Implementing the remote interface 
+public class ImplExample implements Hello {  
+
+   // Implementing the interface method 
+   public void printMsg() {  
+      System.out.println("This is an example RMI program");  
+   }  
+}
+</code></pre> 
+ <h2 id="h2-u5F00u53D1u670Du52A1u5668u7A0Bu5E8F"><a name="开发服务器程序" class="reference-link"></a><span class="header-link octicon octicon-link"></span>开发服务器程序</h2>
+ <p>RMI服务器程序应实现远程接口或扩展实现类。在这里，我们应该创建一个远程对象并将其绑定到<code>RMIregistry</code>。</p> 
+ <p>开发服务器程序 -</p> 
+ <ul> 
+  <li>从要调用远程对象的位置创建一个客户端类。</li>
+  <li>通过实例化实现类创建一个远程对象，如下所示。</li>
+  <li>使用属于包<code>java.rmi.server</code>中的<code>UnicastRemoteObject</code>类的<code>exportObject()</code>方法导出远程对象。</li>
+  <li>使用属于<code>java.rmi.registry</code>包中的<code>LocateRegistry</code>类的<code>getRegistry()</code>方法获取RMI注册表。</li>
+  <li>使用<code>Registry</code>类的bind()方法将创建的远程对象绑定到注册表。对于此方法，传递表示绑定名称和导出的对象的字符串作为参数。对于此方法，需要传递一个表示绑定名称的字符串值作为参数。这将返回远程对象。</li>
+ </ul> 
+ <p>以下是RMI服务器程序的示例，创建一名为：<em>Server.java</em>的文件保存以下代码 - </p> 
+ <pre><code class="lang-java">import java.rmi.registry.Registry; 
+import java.rmi.registry.LocateRegistry; 
+import java.rmi.RemoteException; 
+import java.rmi.server.UnicastRemoteObject; 
+
+public class Server extends ImplExample { 
+   public Server() {} 
+   public static void main(String args[]) { 
+      try { 
+         // Instantiating the implementation class 
+         ImplExample obj = new ImplExample(); 
+
+         // Exporting the object of implementation class  
+         // (here we are exporting the remote object to the stub) 
+         Hello stub = (Hello) UnicastRemoteObject.exportObject(obj, 0);  
+
+         // Binding the remote object (stub) in the registry 
+         Registry registry = LocateRegistry.getRegistry(); 
+
+         registry.bind("Hello", stub);  
+         System.err.println("Server ready"); 
+      } catch (Exception e) { 
+         System.err.println("Server exception: " + e.toString()); 
+         e.printStackTrace(); 
+      } 
+   } 
+}
+</code></pre> 
+ <h2 id="h2-u5F00u53D1u5BA2u6237u7AEFu7A0Bu5E8F"><a name="开发客户端程序" class="reference-link"></a><span class="header-link octicon octicon-link"></span>开发客户端程序</h2>
+ <p>在这里我们编写一个客户端程序，获取远程对象并使用此对象调用所需的方法。</p> 
+ <p>要开发客户端程序，请参考以下步骤 -</p> 
+ <ul> 
+  <li>从想要调用远程对象的地方创建一个客户端类。</li>
+  <li>使用属于<code>java.rmi.registry</code>包中的<code>LocateRegistry</code>类的<code>getRegistry()</code>方法获取RMI注册表。</li>
+  <li>使用属于<code>java.rmi.registry</code>包中的<code>Registry</code>类的<code>lookup()</code>方法从注册表获取对象。</li>
+  <li><code>lookup()</code>返回一个类型为<code>remote</code>的对象，将其转换为<code>Hello</code>类型。</li>
+  <li>最后使用获取的远程对象调用所需的方法。</li>
+ </ul> 
+ <p>以下是RMI客户端程序的示例，创建一个名称为：<em>Client.java</em> 的文件 - </p>   
+ <pre><code class="lang-java">import java.rmi.registry.LocateRegistry; 
+import java.rmi.registry.Registry;  
+
+public class Client {  
+   private Client() {}  
+   public static void main(String[] args) {  
+      try {  
+         // Getting the registry 
+         Registry registry = LocateRegistry.getRegistry(null); 
+
+         // Looking up the registry for the remote object 
+         Hello stub = (Hello) registry.lookup("Hello"); 
+
+         // Calling the remote method using the obtained object 
+         stub.printMsg(); 
+
+         // System.out.println("Remote method invoked"); 
+      } catch (Exception e) {
+         System.err.println("Client exception: " + e.toString()); 
+         e.printStackTrace(); 
+      } 
+   } 
+}
+</code></pre> 
+ <h2 id="h2-u7F16u8BD1u5E94u7528u7A0Bu5E8F"><a name="编译应用程序" class="reference-link"></a><span class="header-link octicon octicon-link"></span>编译应用程序</h2>
+ <p>编译应用程序 - </p> 
+ <ul> 
+  <li>编译远程接口。</li>
+  <li>编译实现类。</li>
+  <li>编译服务器程序。</li>
+  <li>编译客户端程序。</li>
+ </ul> 
+ <p>或者 - </p> 
+ <p>打开存储所有程序的文件夹，使用以下命令编译所有Java文件，如下所示 - </p> 
+ <pre><code class="lang-shell">javac *.java
+</code></pre> 
+ <p>执行结果如下 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201707/1607/728080747_92222.png" alt=""></p> 
+ <h2 id="h2-u6267u884Cu5E94u7528u7A0Bu5E8F"><a name="执行应用程序" class="reference-link"></a><span class="header-link octicon octicon-link"></span>执行应用程序</h2>
+ <p><strong>第一步</strong> - 使用以下命令启动rmi注册表。</p> 
+ <pre><code class="lang-shell">start rmiregistry
+</code></pre> 
+ <p>这将在单独的窗口中启动一个rmi注册表，如下所示。</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201707/1607/758080749_82419.png" alt=""></p> 
+ <p><strong>第二步</strong> - 运行服务器类文件，如下所示。</p> 
+ <pre><code class="lang-shell">java Server
+</code></pre> 
+ <p>打开另一个命令行提示符，执行上面命令，如下所示 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201707/1607/235080751_25097.png" alt=""></p> 
+ <p><strong>第三步</strong> - 运行客户端类文件，如下所示。</p> 
+ <pre><code class="lang-shell">java Client
+</code></pre> 
+ <p>打开另一个命令行提示符，执行上面命令，如下所示 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201707/1607/721080753_69252.png" alt=""></p> 
+ <p><strong>验证远程调用结果</strong> - 当启动客户端后，将在服务器中看到以下输出。</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201707/1607/862080753_21044.png" alt=""></p>
+ <br>      
+</div></body></html>

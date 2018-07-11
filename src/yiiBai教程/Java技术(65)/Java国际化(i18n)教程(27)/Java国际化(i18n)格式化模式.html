@@ -1,0 +1,109 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Java国际化(i18n)格式化模式</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>以下是在格式化模式中使用字符。</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>编号</th> 
+    <th>类</th> 
+    <th>描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>1</td> 
+    <td><code>0</code></td> 
+    <td>如果数字较小，则显示0。</td> 
+   </tr> 
+   <tr> 
+    <td>2</td> 
+    <td><code>#</code></td> 
+    <td>显示忽略前导零的数字。</td> 
+   </tr> 
+   <tr> 
+    <td>3</td> 
+    <td><code>.</code></td> 
+    <td>小数分隔符。</td> 
+   </tr> 
+   <tr> 
+    <td>4</td> 
+    <td><code>,</code></td> 
+    <td>分组分隔符。</td> 
+   </tr> 
+   <tr> 
+    <td>5</td> 
+    <td><code>E</code></td> 
+    <td>指数格式的尾数和指数分隔符。</td> 
+   </tr> 
+   <tr> 
+    <td>6</td> 
+    <td><code>;</code></td> 
+    <td>格式分隔符。</td> 
+   </tr> 
+   <tr> 
+    <td>7</td> 
+    <td><code>-</code></td> 
+    <td>负数字前缀。</td> 
+   </tr> 
+   <tr> 
+    <td>8</td> 
+    <td><code>%</code></td> 
+    <td>将乘以100后的数字显示为百分比。</td> 
+   </tr> 
+   <tr> 
+    <td>9</td> 
+    <td><code>?</code></td> 
+    <td>与1000相乘后显示数字为千位。</td> 
+   </tr> 
+   <tr> 
+    <td>10</td> 
+    <td><code>X</code></td> 
+    <td>将字符标记为数字前缀/后缀。</td> 
+   </tr> 
+   <tr> 
+    <td>11</td> 
+    <td><code>'</code></td> 
+    <td>标记特殊字符的引号。</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p>在这个例子中，我们根据不同的模式来格式化数字。</p> 
+ <p>文件:<em>IOTester.java</em> - </p> 
+ <pre><code class="lang-java">import java.text.DecimalFormat;
+
+public class I18NTester {
+   public static void main(String[] args) {
+      String pattern = "###.###";
+      double number = 123456789.123;
+
+      DecimalFormat numberFormat = new DecimalFormat(pattern);
+
+      System.out.println(number);
+
+      //pattern ###.###
+      System.out.println(numberFormat.format(number));
+
+      //pattern ###.#
+      numberFormat.applyPattern("###.#");
+      System.out.println(numberFormat.format(number));
+
+      //pattern ###,###.##
+      numberFormat.applyPattern("###,###.##");
+      System.out.println(numberFormat.format(number));
+
+      number = 9.34;
+
+      //pattern 000.###
+      numberFormat.applyPattern("000.##");
+      System.out.println(numberFormat.format(number));           
+   }
+}
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 - </p>   
+ <pre><code class="lang-shell">1.23456789123E8
+123456789.123
+123456789.1
+123,456,789.12
+009.34
+</code></pre>
+ <br>      
+</div></body></html>

@@ -1,0 +1,25 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">批处理输入输出</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>有三个键盘输入的通用“文件”，在屏幕上打印文本和在屏幕上打印错误。 标准输入文件(stdin)包含程序/脚本的输入。 标准输出(Standard Out)文件(stdout)被用来写输出以显示在屏幕上。 最后一种叫作<code>stderr</code>的“标准错误”文件包含用于显示在屏幕上的任何错误消息。</p> 
+ <p>这三个标准文件中的每一个(也称为标准流)分别使用数字<code>0</code>,<code>1</code>和<code>2</code>进行引用。Stdin是文件<code>0</code>，stdout是文件<code>1</code>，stderr是文件<code>2</code>。</p> 
+ <h2 id="h2--stdout-stderr-"><a name="重定向输出(Stdout和Stderr)" class="reference-link"></a><span class="header-link octicon octicon-link"></span>重定向输出(Stdout和Stderr)</h2>
+ <p>批处理文件中的一种常见做法是将程序的输出发送到日志文件。 <code>&gt;</code>运算符将stdout或stderr发送或重定向到另一个文件。 以下示例显示了如何完成此操作。</p> 
+ <pre><code class="lang-bat">dir C:\  &gt; list.txt
+</code></pre> 
+ <p>在上面的例子中，命令<code>dir C:\</code> 的stdout被重定向到文件<code>list.txt</code>。</p> 
+ <p>如果将数字<code>2</code>附加到重定向过滤器，则会将stderr重定向到文件<code>lists.txt</code>。例如 -</p> 
+ <pre><code class="lang-bat">Dir C:\ 2 &gt; list.txt
+</code></pre> 
+ <p>甚至可以使用文件编号和<code>"&amp;"</code>前缀来组合stdout和stderr流。 以下是一个例子。</p> 
+ <pre><code class="lang-bat">DIR C:\ &gt; lists.txt 2&gt; &amp;1
+</code></pre> 
+ <h2 id="h2-u6291u5236u7A0Bu5E8Fu8F93u51FA"><a name="抑制程序输出" class="reference-link"></a><span class="header-link octicon octicon-link"></span>抑制程序输出</h2>
+ <p>伪文件<code>NUL</code>用于丢弃程序的任何输出。 以下示例显示通过将输出发送到<code>NUL</code>来丢弃命令<code>DIR</code>的输出。</p>   
+ <pre><code class="lang-bat">Dir C:\ &gt; NUL
+</code></pre> 
+ <p><strong>STDIN</strong></p> 
+ <p>要使用Stdin，必须使用解决方法来实现此目的。这可以通过重定向命令提示符自己的标准输入(称为<code>CON</code>)来完成。</p> 
+ <p>以下示例显示了如何将输出重定向到名为<code>lists.txt</code>的文件。 在执行下面的命令后，命令提示符会将用户输入的所有输入都保存到一个<code>EOF</code>字符中。 稍后，它将所有输入发送到文件<code>lists.txt</code>。</p> 
+ <pre><code class="lang-bat">TYPE CON &gt; lists.txt
+</code></pre>
+ <br>      
+</div></body></html>

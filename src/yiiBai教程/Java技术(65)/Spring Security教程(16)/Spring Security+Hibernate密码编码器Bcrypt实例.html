@@ -1,0 +1,1665 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Spring Security+Hibernate密码编码器Bcrypt实例</h1><div style="width:100%;float:left;" class="article-content">   
+ <div> 
+  <div>
+    本教程介绍了在&nbsp;Spring&nbsp;Security&nbsp;使用&nbsp;BCryptPasswordEncoder&nbsp;来作密码编码。我们将使用&nbsp;Spring&nbsp;MVC&nbsp;4，Hibernate&nbsp;4&nbsp;&amp;&nbsp;Spring&nbsp;Security&nbsp;4&nbsp;的一个实例来说明一个真实世界的设置涉及登录认证和用户创建。 
+  </div> 
+ </div> 
+ <div> 
+  <div>
+    基于注解&nbsp;+&nbsp;XML这两个项目的代码，可这篇文章的结尾下载。 
+  </div> 
+  <h4> 
+   <div>
+     密码编码的字符 
+   </div> </h4> 
+  <p> 任何应用程序，这需要认真对待安全问题，千万不要以纯文本格式来存储密码。密码应始终使用安全散列算法进行编码。有许多标准算法如：SHA或MD5，这其中要一个适当的&nbsp;SALT&nbsp;字符串相结合，可为密码编码提供一个不错的选择。Spring&nbsp;Security提供BCryptPasswordEncoder，并实现了&nbsp;Spring&nbsp;的&nbsp;PasswordEncoder&nbsp;接口，从而使用&nbsp;BCrypt&nbsp;强散列函数对密码进行加密编码。 </p> 
+  <h4> 
+   <div>
+     需要在应用程序中的什么地方进行密码编码？ 
+   </div> </h4> 
+  <p> 1.&nbsp;在密码比较过程中。输入密码经过编辑加密与存储在数据库中密码(它是经过编码的)进行比较； </p> 
+  <p> 2.&nbsp;在新用户创建或现有用户密码需要更新。在保存或更新数据库之前将输入新密码进行加密编码；&nbsp; </p> 
+  <h4> 
+   <div>
+     与之前的文章有哪些是变化的？ 
+   </div> </h4> 
+  <p> 1.&nbsp;创建和注入 PasswordEncoder 到&nbsp;AuthenticationProvider并设置作为身份验证提供者在&nbsp;AuthenticationManagerBuilder&nbsp; </p> 
+  <pre>package com.yiibai.springsecurity.configuration;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
+@Configuration
+@EnableWebSecurity
+public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
+
+	@Autowired
+	@Qualifier("customUserDetailsService")
+	UserDetailsService userDetailsService;
+	
+	
+	@Autowired
+	public void configureGlobalSecurity(AuthenticationManagerBuilder auth) throws Exception {
+		auth.userDetailsService(userDetailsService);
+		auth.authenticationProvider(authenticationProvider());
+	}
+	
+	
+	@Bean
+	public PasswordEncoder passwordEncoder() {
+	    return new BCryptPasswordEncoder();
+	}
+	
+	
+	@Bean
+	public DaoAuthenticationProvider authenticationProvider() {
+	    DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
+	    authenticationProvider.setUserDetailsService(userDetailsService);
+	    authenticationProvider.setPasswordEncoder(passwordEncoder());
+	    return authenticationProvider;
+	}
+	
+	@Override
+	protected void configure(HttpSecurity http) throws Exception {
+	  http.authorizeRequests()
+	  	.antMatchers("/", "/home").permitAll()
+	  	.antMatchers("/admin/**","/newuser").access("hasRole('ADMIN')")
+	  	.antMatchers("/db/**").access("hasRole('ADMIN') and hasRole('DBA')")
+	  	.and().formLogin().loginPage("/login")
+	  	.usernameParameter("ssoId").passwordParameter("password")
+	  	.and().csrf()
+	  	.and().exceptionHandling().accessDeniedPage("/Access_Denied");
+	}
+}</pre> 
+  <div>
+    上面的设置可在应用程序的任何地方来处理密码比较认证过程。 
+  </div> 
+  <div>
+    以上安全配置以XML配置格式表示如下： 
+  </div> 
+  <pre>&lt;beans:beans xmlns="http://www.springframework.org/schema/security"
+    xmlns:beans="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
+    http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-4.0.xsd"&gt;
+     
+    &lt;http auto-config="true" &gt;
+        &lt;intercept-url pattern="/" access="permitAll" /&gt;
+        &lt;intercept-url pattern="/home" access="permitAll" /&gt;
+        &lt;intercept-url pattern="/admin**" access="hasRole('ADMIN')" /&gt;
+        &lt;intercept-url pattern="/dba**" access="hasRole('ADMIN') and hasRole('DBA')" /&gt;
+        &lt;form-login  login-page="/login" 
+                     username-parameter="ssoId" 
+                     password-parameter="password" 
+                     authentication-failure-url="/Access_Denied" /&gt;
+        &lt;csrf/&gt;
+    &lt;/http&gt;
+ 
+    &lt;authentication-manager &gt;
+        &lt;authentication-provider user-service-ref="customUserDetailsService"&gt;
+            &lt;password-encoder ref="bcryptEncoder"/&gt;
+        &lt;/authentication-provider&gt;
+    &lt;/authentication-manager&gt;
+     
+    &lt;beans:bean id="bcryptEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder" /&gt;
+
+    &lt;beans:bean id="customUserDetailsService" class="com.yiibai.springsecurity.service.CustomUserDetailsService" /&gt;
+    
+&lt;/beans:beans&gt;</pre> 
+  <p> 2.&nbsp;更新 UserService 让它实现在保存新的口令到数据库中之前进行密码编码加密。 </p> 
+  <pre>@Service("userService")
+@Transactional
+public class UserServiceImpl implements UserService{
+
+	@Autowired
+	private UserDao dao;
+	
+	@Autowired
+	private PasswordEncoder passwordEncoder;
+
+	
+	public void save(User user){
+		user.setPassword(passwordEncoder.encode(user.getPassword()));
+		dao.save(user);
+	}
+	
+	public User findById(int id) {
+		return dao.findById(id);
+	}
+
+	public User findBySso(String sso) {
+		return dao.findBySSO(sso);
+	}
+	
+}</pre> 
+  <div>
+    需要做的是在应用程序中使用&nbsp;Spring&nbsp;Security&nbsp;BCrypt&nbsp;来实现您的密码编码。 
+  </div> 
+  <hr> 
+  <h4> 完整的实例 </h4> 
+  <div>
+    使用以下技术： 
+  </div> 
+  <div>
+    [blockquote] 
+  </div> 
+  <ul> 
+   <li> Spring 4.1.6.RELEASE </li> 
+   <li> Spring Security 4.0.1.RELEASE </li> 
+   <li> Hibernate 4.3.6.Final </li> 
+   <li> MySQL Server 5.6 </li> 
+   <li> Maven 3 </li> 
+   <li> JDK 1.8 </li> 
+   <li> Tomcat 8.0.21 </li> 
+   <li> Eclipse JUNO Service Release 2 </li> 
+  </ul> 
+  <p> [/blockquote] </p> 
+  <h4> 第1步: 工程目录结构 </h4> 
+  <div>
+    以下将是项目最终的结构： 
+  </div> 
+  <h4> 
+   <div>
+     第2步：更新pom.xml，包括所需的依懒 
+   </div> </h4> 
+  <pre>&lt;project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"&gt;
+	&lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
+
+	&lt;groupId&gt;com.yiibai.springsecurity&lt;/groupId&gt;
+	&lt;artifactId&gt;SpringSecurityPasswordEncodingWithBcryptExample&lt;/artifactId&gt;
+	&lt;version&gt;1.0.0&lt;/version&gt;
+	&lt;packaging&gt;war&lt;/packaging&gt;
+
+	&lt;name&gt;SpringSecurityPasswordEncodingWithBcryptExample&lt;/name&gt;
+
+	&lt;properties&gt;
+		&lt;springframework.version&gt;4.1.6.RELEASE&lt;/springframework.version&gt;
+		&lt;springsecurity.version&gt;4.0.1.RELEASE&lt;/springsecurity.version&gt;
+		&lt;hibernate.version&gt;4.3.6.Final&lt;/hibernate.version&gt;
+		&lt;mysql.connector.version&gt;5.1.31&lt;/mysql.connector.version&gt;
+	&lt;/properties&gt;
+
+	&lt;dependencies&gt;
+
+		&lt;!-- Spring --&gt;
+		&lt;dependency&gt;
+			&lt;groupId&gt;org.springframework&lt;/groupId&gt;
+			&lt;artifactId&gt;spring-core&lt;/artifactId&gt;
+			&lt;version&gt;${springframework.version}&lt;/version&gt;
+		&lt;/dependency&gt;
+		&lt;dependency&gt;
+			&lt;groupId&gt;org.springframework&lt;/groupId&gt;
+			&lt;artifactId&gt;spring-web&lt;/artifactId&gt;
+			&lt;version&gt;${springframework.version}&lt;/version&gt;
+		&lt;/dependency&gt;
+		&lt;dependency&gt;
+			&lt;groupId&gt;org.springframework&lt;/groupId&gt;
+			&lt;artifactId&gt;spring-webmvc&lt;/artifactId&gt;
+			&lt;version&gt;${springframework.version}&lt;/version&gt;
+		&lt;/dependency&gt;
+		&lt;dependency&gt;
+			&lt;groupId&gt;org.springframework&lt;/groupId&gt;
+			&lt;artifactId&gt;spring-tx&lt;/artifactId&gt;
+			&lt;version&gt;${springframework.version}&lt;/version&gt;
+		&lt;/dependency&gt;
+		&lt;dependency&gt;
+			&lt;groupId&gt;org.springframework&lt;/groupId&gt;
+			&lt;artifactId&gt;spring-orm&lt;/artifactId&gt;
+			&lt;version&gt;${springframework.version}&lt;/version&gt;
+		&lt;/dependency&gt;
+
+
+		&lt;!-- Spring Security --&gt;
+		&lt;dependency&gt;
+			&lt;groupId&gt;org.springframework.security&lt;/groupId&gt;
+			&lt;artifactId&gt;spring-security-web&lt;/artifactId&gt;
+			&lt;version&gt;${springsecurity.version}&lt;/version&gt;
+		&lt;/dependency&gt;
+		&lt;dependency&gt;
+			&lt;groupId&gt;org.springframework.security&lt;/groupId&gt;
+			&lt;artifactId&gt;spring-security-config&lt;/artifactId&gt;
+			&lt;version&gt;${springsecurity.version}&lt;/version&gt;
+		&lt;/dependency&gt;
+
+		&lt;!-- Hibernate --&gt;
+		&lt;dependency&gt;
+			&lt;groupId&gt;org.hibernate&lt;/groupId&gt;
+			&lt;artifactId&gt;hibernate-core&lt;/artifactId&gt;
+			&lt;version&gt;${hibernate.version}&lt;/version&gt;
+		&lt;/dependency&gt;
+		
+		&lt;!-- jsr303 validation --&gt;
+		&lt;dependency&gt;
+			&lt;groupId&gt;javax.validation&lt;/groupId&gt;
+			&lt;artifactId&gt;validation-api&lt;/artifactId&gt;
+			&lt;version&gt;1.1.0.Final&lt;/version&gt;
+		&lt;/dependency&gt;
+		&lt;!-- Hibernate validators --&gt;
+		&lt;dependency&gt;
+            &lt;groupId&gt;org.hibernate&lt;/groupId&gt;
+            &lt;artifactId&gt;hibernate-validator&lt;/artifactId&gt;
+            &lt;version&gt;5.1.3.Final&lt;/version&gt;
+        &lt;/dependency&gt;		
+
+		&lt;!-- MySQL --&gt;
+		&lt;dependency&gt;
+			&lt;groupId&gt;mysql&lt;/groupId&gt;
+			&lt;artifactId&gt;mysql-connector-java&lt;/artifactId&gt;
+			&lt;version&gt;${mysql.connector.version}&lt;/version&gt;
+		&lt;/dependency&gt;
+
+		&lt;dependency&gt;
+			&lt;groupId&gt;javax.servlet&lt;/groupId&gt;
+			&lt;artifactId&gt;javax.servlet-api&lt;/artifactId&gt;
+			&lt;version&gt;3.1.0&lt;/version&gt;
+		&lt;/dependency&gt;
+		&lt;dependency&gt;
+			&lt;groupId&gt;javax.servlet.jsp&lt;/groupId&gt;
+			&lt;artifactId&gt;javax.servlet.jsp-api&lt;/artifactId&gt;
+			&lt;version&gt;2.3.1&lt;/version&gt;
+		&lt;/dependency&gt;
+		&lt;dependency&gt;
+			&lt;groupId&gt;javax.servlet&lt;/groupId&gt;
+			&lt;artifactId&gt;jstl&lt;/artifactId&gt;
+			&lt;version&gt;1.2&lt;/version&gt;
+		&lt;/dependency&gt;
+	&lt;/dependencies&gt;
+
+	&lt;build&gt;
+		&lt;pluginManagement&gt;
+			&lt;plugins&gt;
+				&lt;plugin&gt;
+					&lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+					&lt;artifactId&gt;maven-compiler-plugin&lt;/artifactId&gt;
+					&lt;version&gt;3.2&lt;/version&gt;
+					&lt;configuration&gt;
+						&lt;source&gt;1.7&lt;/source&gt;
+						&lt;target&gt;1.7&lt;/target&gt;
+					&lt;/configuration&gt;
+				&lt;/plugin&gt;
+				&lt;plugin&gt;
+					&lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+					&lt;artifactId&gt;maven-war-plugin&lt;/artifactId&gt;
+					&lt;version&gt;2.4&lt;/version&gt;
+					&lt;configuration&gt;
+						&lt;warSourceDirectory&gt;src/main/webapp&lt;/warSourceDirectory&gt;
+						&lt;warName&gt;SpringSecurityPasswordEncodingWithBcryptExample&lt;/warName&gt;
+						&lt;failOnMissingWebXml&gt;false&lt;/failOnMissingWebXml&gt;
+					&lt;/configuration&gt;
+				&lt;/plugin&gt;
+			&lt;/plugins&gt;
+		&lt;/pluginManagement&gt;
+		&lt;finalName&gt;SpringSecurityPasswordEncodingWithBcryptExample&lt;/finalName&gt;
+	&lt;/build&gt;
+&lt;/project&gt;</pre> 
+  <h2> 数据库表部分 </h2> 
+  <h4> 
+   <div>
+     第3步：创建数据库模式并填充数据 
+   </div> </h4> 
+  <pre>/*All User's gets stored in APP_USER table*/
+create table APP_USER (
+   id BIGINT NOT NULL AUTO_INCREMENT,
+   sso_id VARCHAR(30) NOT NULL,
+   password VARCHAR(100) NOT NULL,
+   first_name VARCHAR(30) NOT NULL,
+   last_name  VARCHAR(30) NOT NULL,
+   email VARCHAR(30) NOT NULL,
+   state VARCHAR(30) NOT NULL, 	
+   PRIMARY KEY (id),
+   UNIQUE (sso_id)
+);
+ 
+/* USER_PROFILE table contains all possible roles */ 
+create table USER_PROFILE(
+   id BIGINT NOT NULL AUTO_INCREMENT,
+   type VARCHAR(30) NOT NULL,
+   PRIMARY KEY (id),
+   UNIQUE (type)
+);
+ 
+/* JOIN TABLE for MANY-TO-MANY relationship*/  
+CREATE TABLE APP_USER_USER_PROFILE (
+    user_id BIGINT NOT NULL,
+    user_profile_id BIGINT NOT NULL,
+    PRIMARY KEY (user_id, user_profile_id),
+    CONSTRAINT FK_APP_USER FOREIGN KEY (user_id) REFERENCES APP_USER (id),
+    CONSTRAINT FK_USER_PROFILE FOREIGN KEY (user_profile_id) REFERENCES USER_PROFILE (id)
+);
+
+/* Populate USER_PROFILE Table */
+INSERT INTO USER_PROFILE(type)
+VALUES ('USER');
+
+INSERT INTO USER_PROFILE(type)
+VALUES ('ADMIN');
+
+INSERT INTO USER_PROFILE(type)
+VALUES ('DBA');
+
+
+/* Populate one Admin User which will further create other users for the application using GUI */
+INSERT INTO APP_USER(sso_id, password, first_name, last_name, email, state)
+VALUES ('sam','$2a$10$6e2mmsbKPVMRv1zCUTxcS.k2wPxqaXc6.wseLpYBB8qzfIMmKimBK', 'Sam','Smith','samy@yiibai.com', 'Active'); /* Populate JOIN Table */
+INSERT INTO APP_USER_USER_PROFILE (user_id, user_profile_id)
+  SELECT user.id, profile.id FROM app_user user, user_profile profile
+  where user.sso_id='sam' and profile.type='ADMIN';
+&nbsp;</pre> 
+  <p> 请注意，这里我们已经手动插入一个用户(我们还得需要一个管理员用户并登录以及使用应用程序来创建更多的用户)。这是一个真实的应用场景。需要注意一下密码。它用下述工具类[它甚至可以是一个脚本]，仅仅用来生成一个管理员用户的初始密码生成。 </p> 
+  <div>
+    它完全可以从应用程序中删除。 
+  </div> 
+  <pre>package com.yiibai.springsecurity.util;
+
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
+public class QuickPasswordEncodingGenerator {
+
+	/**
+	 * @param args
+	 */
+	public static void main(String[] args) {
+			String password = "abc125";
+			BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+			System.out.println(passwordEncoder.encode(password));
+	}
+
+}</pre> 
+  <div>
+    上面的程序将使用上述模式产生编码加密密码。请注意&nbsp;BCrypt散列算法生成的每个密码编码是一个长度为&nbsp;60&nbsp;的哈希值，同样的密码可能会得到不同的值。 
+  </div> 
+  <h2> Security(安全)部分 </h2> 
+  <h4> 第4步: 添加Spring Security配置类 </h4> 
+  <pre>package com.yiibai.springsecurity.configuration;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
+@Configuration
+@EnableWebSecurity
+public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
+
+	@Autowired
+	@Qualifier("customUserDetailsService")
+	UserDetailsService userDetailsService;
+	
+	
+	@Autowired
+	public void configureGlobalSecurity(AuthenticationManagerBuilder auth) throws Exception {
+		auth.userDetailsService(userDetailsService);
+		auth.authenticationProvider(authenticationProvider());
+	}
+	
+	
+	@Bean
+	public PasswordEncoder passwordEncoder() {
+	    return new BCryptPasswordEncoder();
+	}
+	
+	
+	@Bean
+	public DaoAuthenticationProvider authenticationProvider() {
+	    DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
+	    authenticationProvider.setUserDetailsService(userDetailsService);
+	    authenticationProvider.setPasswordEncoder(passwordEncoder());
+	    return authenticationProvider;
+	}
+	
+	@Override
+	protected void configure(HttpSecurity http) throws Exception {
+	  http.authorizeRequests()
+	  	.antMatchers("/", "/home").permitAll()
+	  	.antMatchers("/admin/**","/newuser").access("hasRole('ADMIN')")
+	  	.antMatchers("/db/**").access("hasRole('ADMIN') and hasRole('DBA')")
+	  	.and().formLogin().loginPage("/login")
+	  	.usernameParameter("ssoId").passwordParameter("password")
+	  	.and().csrf()
+	  	.and().exceptionHandling().accessDeniedPage("/Access_Denied");
+	}
+}</pre> 
+  <h4> 第5步: 使用 war 注册 springSecurityFilter </h4> 
+  <div>
+    下面指定的初始化类应用程序的&nbsp;war&nbsp;注册&nbsp;springSecurityFilter&nbsp;[第 3 步中创建的]。 
+  </div> 
+  <pre>package com.yiibai.springsecurity.configuration;
+
+import org.springframework.security.web.context.AbstractSecurityWebApplicationInitializer;
+
+public class SecurityWebApplicationInitializer extends AbstractSecurityWebApplicationInitializer {
+
+}</pre> 
+  <p> 以上对应的XML配置格式的配置是： </p> 
+  <pre>&lt;filter&gt;
+    &lt;filter-name&gt;springSecurityFilterChain&lt;/filter-name&gt;
+    &lt;filter-class&gt;org.springframework.web.filter.DelegatingFilterProxy&lt;/filter-class&gt;
+&lt;/filter&gt;
+
+&lt;filter-mapping&gt;
+    &lt;filter-name&gt;springSecurityFilterChain&lt;/filter-name&gt;
+    &lt;url-pattern&gt;/*&lt;/url-pattern&gt;
+&lt;/filter-mapping&gt;</pre> 
+  <h4> 第6步: 定义UserDetailsService实现 </h4> 
+  <div>
+    这个服务是负责提供身份验证细节到验证管理。 
+  </div> 
+  <pre>package com.yiibai.springsecurity.service;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.yiibai.springsecurity.model.User;
+import com.yiibai.springsecurity.model.UserProfile;
+
+@Service("customUserDetailsService")
+public class CustomUserDetailsService implements UserDetailsService{
+
+	@Autowired
+	private UserService userService;
+	
+	@Transactional(readOnly=true)
+	public UserDetails loadUserByUsername(String ssoId)
+			throws UsernameNotFoundException {
+		User user = userService.findBySso(ssoId);
+		System.out.println("User : "+user);
+		if(user==null){
+			System.out.println("User not found");
+			throw new UsernameNotFoundException("Username not found"); 
+		}
+			return new org.springframework.security.core.userdetails.User(user.getSsoId(), user.getPassword(), 
+				 user.getState().equals("Active"), true, true, true, getGrantedAuthorities(user));
+	}
+
+	
+	private List&lt;GrantedAuthority&gt; getGrantedAuthorities(User user){
+		List&lt;GrantedAuthority&gt; authorities = new ArrayList&lt;GrantedAuthority&gt;();
+		
+		for(UserProfile userProfile : user.getUserProfiles()){
+			System.out.println("UserProfile : "+userProfile);
+			authorities.add(new SimpleGrantedAuthority("ROLE_"+userProfile.getType()));
+		}
+		System.out.print("authorities :"+authorities);
+		return authorities;
+	}
+	
+}</pre> 
+  <h2> SpringMVC部分 </h2> 
+  <h4> 第7步: 添加控制器 </h4> 
+  <pre>package com.yiibai.springsecurity.controller;
+
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+
+import com.yiibai.springsecurity.model.User;
+import com.yiibai.springsecurity.model.UserProfile;
+import com.yiibai.springsecurity.service.UserProfileService;
+import com.yiibai.springsecurity.service.UserService;
+
+@Controller
+public class HelloWorldController {
+
+	@Autowired
+	UserProfileService userProfileService;
+	
+	@Autowired
+	UserService userService;
+	
+	@RequestMapping(value = { "/", "/home" }, method = RequestMethod.GET)
+	public String homePage(ModelMap model) {
+		model.addAttribute("greeting", "Hi, Welcome to mysite");
+		return "welcome";
+	}
+
+	@RequestMapping(value = "/admin", method = RequestMethod.GET)
+	public String adminPage(ModelMap model) {
+		model.addAttribute("user", getPrincipal());
+		return "admin";
+	}
+
+	@RequestMapping(value = "/db", method = RequestMethod.GET)
+	public String dbaPage(ModelMap model) {
+		model.addAttribute("user", getPrincipal());
+		return "dba";
+	}
+
+	@RequestMapping(value = "/Access_Denied", method = RequestMethod.GET)
+	public String accessDeniedPage(ModelMap model) {
+		model.addAttribute("user", getPrincipal());
+		return "accessDenied";
+	}
+
+	@RequestMapping(value = "/login", method = RequestMethod.GET)
+	public String loginPage() {
+		return "login";
+	}
+
+	@RequestMapping(value="/logout", method = RequestMethod.GET)
+	public String logoutPage (HttpServletRequest request, HttpServletResponse response) {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		if (auth != null){    
+			new SecurityContextLogoutHandler().logout(request, response, auth);
+		}
+		return "redirect:/login?logout";
+	}
+
+	
+	@RequestMapping(value = "/newUser", method = RequestMethod.GET)
+	public String newRegistration(ModelMap model) {
+		User user = new User();
+		model.addAttribute("user", user);
+		return "newuser";
+	}
+
+	/*
+	 * This method will be called on form submission, handling POST request It
+	 * also validates the user input
+	 */
+	@RequestMapping(value = "/newUser", method = RequestMethod.POST)
+	public String saveRegistration(@Valid User user,
+			BindingResult result, ModelMap model) {
+
+		if (result.hasErrors()) {
+			System.out.println("There are errors");
+			return "newuser";
+		}
+		userService.save(user);
+		
+		System.out.println("First Name : "+user.getFirstName());
+		System.out.println("Last Name : "+user.getLastName());
+		System.out.println("SSO ID : "+user.getSsoId());
+		System.out.println("Password : "+user.getPassword());
+		System.out.println("Email : "+user.getEmail());
+		System.out.println("Checking UsrProfiles....");
+		if(user.getUserProfiles()!=null){
+			for(UserProfile profile : user.getUserProfiles()){
+				System.out.println("Profile : "+ profile.getType());
+			}
+		}
+		
+		model.addAttribute("success", "User " + user.getFirstName() + " has been registered successfully");
+		return "registrationsuccess";
+	}
+
+	
+	
+	
+	private String getPrincipal(){
+		String userName = null;
+		Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+		if (principal instanceof UserDetails) {
+			userName = ((UserDetails)principal).getUsername();
+		} else {
+			userName = principal.toString();
+		}
+		return userName;
+	}
+	
+	
+	
+	@ModelAttribute("roles")
+	public List&lt;UserProfile&gt; initializeProfiles() {
+		return userProfileService.findAll();
+	}
+
+}</pre> 
+  <h4> 第8步: 添加SpringMVC配置类 </h4> 
+  <pre>package com.yiibai.springsecurity.configuration;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.format.FormatterRegistry;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.ViewResolverRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.view.InternalResourceViewResolver;
+import org.springframework.web.servlet.view.JstlView;
+
+@Configuration
+@EnableWebMvc
+@ComponentScan(basePackages = "com.yiibai.springsecurity")
+public class HelloWorldConfiguration extends WebMvcConfigurerAdapter {
+	
+	@Autowired
+	RoleToUserProfileConverter roleToUserProfileConverter;
+	
+	
+	@Override
+	public void configureViewResolvers(ViewResolverRegistry registry) {
+		InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
+		viewResolver.setViewClass(JstlView.class);
+		viewResolver.setPrefix("/WEB-INF/views/");
+		viewResolver.setSuffix(".jsp");
+		registry.viewResolver(viewResolver);
+	}
+	
+	/*
+     * Configure ResourceHandlers to serve static resources like CSS/ Javascript etc...
+     *
+     */
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/static/**").addResourceLocations("/static/");
+    }
+    
+    /*
+     * Configure Converter to be used.
+     * In our example, we need a converter to convert string values[Roles] to UserProfiles in newUser.jsp
+     */
+    @Override
+    public void addFormatters(FormatterRegistry registry) {
+        registry.addConverter(roleToUserProfileConverter);
+    }
+    
+    
+}</pre> 
+  <div>
+    这个类负责注册转换器并将ID转换成一个对象。这是必需的，以处理JSP中的一对多的关系。在用户创造过程中，用户可以分配多个角色/UserProfiles，所以我们需要一个转换到一个特定的角色/UserProfiles映射到基于配置文件ID的用户。转换器类如下所示。 
+  </div> 
+  <p> 上面的设置转换为XML配置如下图中所示 -&nbsp; </p> 
+  <pre>	&lt;mvc:annotation-driven conversion-service="conversionService"/&gt;
+
+	&lt;bean id="conversionService" class="org.springframework.format.support.FormattingConversionServiceFactoryBean"&gt;
+	
+		&lt;property name="converters"&gt;
+			&lt;list&gt;
+				&lt;bean id="roleToUserProfile" class="com.yiibai.springsecurity.configuration.RoleToUserProfileConverter" /&gt;
+			&lt;/list&gt;
+		&lt;/property&gt;
+	&lt;/bean&gt;</pre> 
+  <h4> 第9步: 添加SpringMVC转换器类 </h4> 
+  <pre>package com.yiibai.springsecurity.configuration;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.convert.converter.Converter;
+import org.springframework.stereotype.Component;
+
+import com.yiibai.springsecurity.model.UserProfile;
+import com.yiibai.springsecurity.service.UserProfileService;
+
+@Component
+public class RoleToUserProfileConverter implements Converter&lt;Object, UserProfile&gt;{
+
+	@Autowired
+	UserProfileService userProfileService;
+
+	/*
+	 * Gets UserProfile by Id
+	 * @see org.springframework.core.convert.converter.Converter#convert(java.lang.Object)
+	 */
+	public UserProfile convert(Object element) {
+		Integer id = Integer.parseInt((String)element);
+		UserProfile profile= userProfileService.findById(id);
+		System.out.println("Profile : "+profile);
+		return profile;
+	}
+	
+	/*
+	 * Gets UserProfile by type
+	 * @see org.springframework.core.convert.converter.Converter#convert(java.lang.Object)
+	 */
+	/*
+	public UserProfile convert(Object element) {
+		String type = (String)element;
+		UserProfile profile= userProfileService.findByType(type);
+		System.out.println("Profile ... : "+profile);
+		return profile;
+	}
+	*/
+
+}</pre> 
+  <h4> 第10步: 添加初始化类 </h4> 
+  <pre>package com.yiibai.springsecurity.configuration;
+
+import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
+
+public class SpringMvcInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
+
+	@Override
+	protected Class&lt;?&gt;[] getRootConfigClasses() {
+		return new Class[] { HelloWorldConfiguration.class };
+	}
+ 
+	@Override
+	protected Class&lt;?&gt;[] getServletConfigClasses() {
+		return null;
+	}
+ 
+	@Override
+	protected String[] getServletMappings() {
+		return new String[] { "/" };
+	}
+
+}</pre> 
+  <h2> Hibernate配置部分 </h2> 
+  <h4> 第11步: 创建Hibernate配置 </h4> 
+  <div>
+    Hibernate的配置类包含数据源层，SessionFactory和事务管理的&nbsp;@Bean&nbsp;方法。数据源属性是取自&nbsp;application.properties&nbsp;文件，包含MySQL数据库连接详细信息。 
+  </div> 
+  <pre>package com.yiibai.springsecurity.configuration;
+
+import java.util.Properties;
+
+import javax.sql.DataSource;
+
+import org.hibernate.SessionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.orm.hibernate4.HibernateTransactionManager;
+import org.springframework.orm.hibernate4.LocalSessionFactoryBean;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
+
+@Configuration
+@EnableTransactionManagement
+@ComponentScan({ "com.yiibai.springsecurity.configuration" })
+@PropertySource(value = { "classpath:application.properties" })
+public class HibernateConfiguration {
+
+    @Autowired
+    private Environment environment;
+
+    @Bean
+    public LocalSessionFactoryBean sessionFactory() {
+        LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
+        sessionFactory.setDataSource(dataSource());
+        sessionFactory.setPackagesToScan(new String[] { "com.yiibai.springsecurity.model" });
+        sessionFactory.setHibernateProperties(hibernateProperties());
+        return sessionFactory;
+     }
+	
+    @Bean
+    public DataSource dataSource() {
+        DriverManagerDataSource dataSource = new DriverManagerDataSource();
+        dataSource.setDriverClassName(environment.getRequiredProperty("jdbc.driverClassName"));
+        dataSource.setUrl(environment.getRequiredProperty("jdbc.url"));
+        dataSource.setUsername(environment.getRequiredProperty("jdbc.username"));
+        dataSource.setPassword(environment.getRequiredProperty("jdbc.password"));
+        return dataSource;
+    }
+    
+    private Properties hibernateProperties() {
+        Properties properties = new Properties();
+        properties.put("hibernate.dialect", environment.getRequiredProperty("hibernate.dialect"));
+        properties.put("hibernate.show_sql", environment.getRequiredProperty("hibernate.show_sql"));
+        properties.put("hibernate.format_sql", environment.getRequiredProperty("hibernate.format_sql"));
+        return properties;        
+    }
+    
+    @Bean
+    @Autowired
+    public HibernateTransactionManager transactionManager(SessionFactory s) {
+       HibernateTransactionManager txManager = new HibernateTransactionManager();
+       txManager.setSessionFactory(s);
+       return txManager;
+    }
+}</pre> 
+  <p> application.properties </p> 
+  <pre>jdbc.driverClassName = com.mysql.jdbc.Driver
+jdbc.url = jdbc:mysql://localhost:3306/yiibai
+jdbc.username = root
+jdbc.password = 
+hibernate.dialect = org.hibernate.dialect.MySQLDialect
+hibernate.show_sql = true
+hibernate.format_sql = true</pre> 
+  <h2> DAO, Model &amp; Service部分 </h2> 
+  <h4> 第12步: 创建模型类 </h4> 
+  <div>
+    用户可以有多个角色[DBA，ADMIN，USER]。而角色可以被分配给一个以上的用户。因此，一个用户和用户配置[角色]之间存在多对多的关系。我们保持这种关系单向[User&nbsp;到&nbsp;UserProfile]，因为我们只是在寻找指定用户的角色(而不反之亦然)。我们将使用连接(Join)表来实现多对多关联。 
+  </div> 
+  <pre>package com.yiibai.springsecurity.model;
+
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.Table;
+
+import org.hibernate.validator.constraints.NotEmpty;
+
+@Entity
+@Table(name="APP_USER")
+public class User {
+
+	@Id @GeneratedValue(strategy=GenerationType.IDENTITY)
+	private int id;
+
+	@NotEmpty
+	@Column(name="SSO_ID", unique=true, nullable=false)
+	private String ssoId;
+	
+	@NotEmpty
+	@Column(name="PASSWORD", nullable=false)
+	private String password;
+		
+	@NotEmpty
+	@Column(name="FIRST_NAME", nullable=false)
+	private String firstName;
+
+	@NotEmpty
+	@Column(name="LAST_NAME", nullable=false)
+	private String lastName;
+
+	@NotEmpty
+	@Column(name="EMAIL", nullable=false)
+	private String email;
+
+	@NotEmpty
+	@Column(name="STATE", nullable=false)
+	private String state=State.ACTIVE.getState();
+
+	@ManyToMany(fetch = FetchType.EAGER)
+	@JoinTable(name = "APP_USER_USER_PROFILE", 
+             joinColumns = { @JoinColumn(name = "USER_ID") }, 
+             inverseJoinColumns = { @JoinColumn(name = "USER_PROFILE_ID") })
+	private Set&lt;UserProfile&gt; userProfiles = new HashSet&lt;UserProfile&gt;();
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public String getSsoId() {
+		return ssoId;
+	}
+
+	public void setSsoId(String ssoId) {
+		this.ssoId = ssoId;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public String getFirstName() {
+		return firstName;
+	}
+
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+
+	public String getLastName() {
+		return lastName;
+	}
+
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public String getState() {
+		return state;
+	}
+
+	public void setState(String state) {
+		this.state = state;
+	}
+
+	public Set&lt;UserProfile&gt; getUserProfiles() {
+		return userProfiles;
+	}
+
+	public void setUserProfiles(Set&lt;UserProfile&gt; userProfiles) {
+		this.userProfiles = userProfiles;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + id;
+		result = prime * result + ((ssoId == null) ? 0 : ssoId.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (!(obj instanceof User))
+			return false;
+		User other = (User) obj;
+		if (id != other.id)
+			return false;
+		if (ssoId == null) {
+			if (other.ssoId != null)
+				return false;
+		} else if (!ssoId.equals(other.ssoId))
+			return false;
+		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "User [id=" + id + ", ssoId=" + ssoId + ", password=" + password
+				+ ", firstName=" + firstName + ", lastName=" + lastName
+				+ ", email=" + email + ", state=" + state + ", userProfiles=" + userProfiles +"]";
+	}
+
+	
+}</pre>   
+  <pre>package com.yiibai.springsecurity.model;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+@Entity
+@Table(name="USER_PROFILE")
+public class UserProfile {
+
+	@Id @GeneratedValue(strategy=GenerationType.IDENTITY)
+	private int id;	
+
+	@Column(name="TYPE", length=15, unique=true, nullable=false)
+	private String type = UserProfileType.USER.getUserProfileType();
+	
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + id;
+		result = prime * result + ((type == null) ? 0 : type.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (!(obj instanceof UserProfile))
+			return false;
+		UserProfile other = (UserProfile) obj;
+		if (id != other.id)
+			return false;
+		if (type == null) {
+			if (other.type != null)
+				return false;
+		} else if (!type.equals(other.type))
+			return false;
+		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "UserProfile [id=" + id + ",  type=" + type	+ "]";
+	}
+	
+
+}</pre> 
+  <pre>package com.yiibai.springsecurity.model;
+
+public enum UserProfileType {
+	USER("USER"),
+	DBA("DBA"),
+	ADMIN("ADMIN");
+	
+	String userProfileType;
+	
+	private UserProfileType(String userProfileType){
+		this.userProfileType = userProfileType;
+	}
+	
+	public String getUserProfileType(){
+		return userProfileType;
+	}
+	
+}</pre> 
+  <pre>package com.yiibai.springsecurity.model;
+
+public enum State {
+
+	ACTIVE("Active"),
+	INACTIVE("Inactive"),
+	DELETED("Deleted"),
+	LOCKED("Locked");
+	
+	private String state;
+	
+	private State(final String state){
+		this.state = state;
+	}
+	
+	public String getState(){
+		return this.state;
+	}
+
+	@Override
+	public String toString(){
+		return this.state;
+	}
+
+
+	public String getName(){
+		return this.name();
+	}
+
+
+}</pre> 
+  <h4> 第13步: 创建Dao层 </h4> 
+  <pre>package com.yiibai.springsecurity.dao;
+
+import java.io.Serializable;
+
+import java.lang.reflect.ParameterizedType;
+
+import org.hibernate.Criteria;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+
+public abstract class AbstractDao&lt;PK extends Serializable, T&gt; {
+	
+	private final Class&lt;T&gt; persistentClass;
+	
+	@SuppressWarnings("unchecked")
+	public AbstractDao(){
+		this.persistentClass =(Class&lt;T&gt;) ((ParameterizedType) this.getClass().getGenericSuperclass()).getActualTypeArguments()[1];
+	}
+	
+	@Autowired
+	private SessionFactory sessionFactory;
+
+	protected Session getSession(){
+		return sessionFactory.getCurrentSession();
+	}
+
+	@SuppressWarnings("unchecked")
+	public T getByKey(PK key) {
+		return (T) getSession().get(persistentClass, key);
+	}
+
+	public void persist(T entity) {
+		getSession().persist(entity);
+	}
+
+	public void delete(T entity) {
+		getSession().delete(entity);
+	}
+	
+	protected Criteria createEntityCriteria(){
+		return getSession().createCriteria(persistentClass);
+	}
+
+	
+}</pre> 
+  <pre>package com.yiibai.springsecurity.dao;
+
+import com.yiibai.springsecurity.model.User;
+
+public interface UserDao {
+
+	void save(User user);
+	
+	User findById(int id);
+	
+	User findBySSO(String sso);
+	
+}</pre> 
+  <pre>package com.yiibai.springsecurity.dao;
+
+import org.hibernate.Criteria;
+import org.hibernate.criterion.Restrictions;
+import org.springframework.stereotype.Repository;
+
+import com.yiibai.springsecurity.model.User;
+
+@Repository("userDao")
+public class UserDaoImpl extends AbstractDao&lt;Integer, User&gt; implements UserDao {
+
+	public void save(User user) {
+		persist(user);
+	}
+	
+	public User findById(int id) {
+		return getByKey(id);
+	}
+
+	public User findBySSO(String sso) {
+		Criteria crit = createEntityCriteria();
+		crit.add(Restrictions.eq("ssoId", sso));
+		return (User) crit.uniqueResult();
+	}
+
+}</pre> 
+  <pre>package com.yiibai.springsecurity.dao;
+
+import java.util.List;
+
+import com.yiibai.springsecurity.model.UserProfile;
+
+public interface UserProfileDao {
+
+	List&lt;UserProfile&gt; findAll();
+	
+	UserProfile findByType(String type);
+	
+	UserProfile findById(int id);
+}</pre> 
+  <pre>package com.yiibai.springsecurity.dao;
+
+import java.util.List;
+
+import org.hibernate.Criteria;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
+import org.springframework.stereotype.Repository;
+
+import com.yiibai.springsecurity.model.UserProfile;
+
+@Repository("userProfileDao")
+public class UserProfileDaoImpl extends AbstractDao&lt;Integer, UserProfile&gt;implements UserProfileDao{
+
+	@SuppressWarnings("unchecked")
+	public List&lt;UserProfile&gt; findAll(){
+		Criteria crit = createEntityCriteria();
+		crit.addOrder(Order.asc("type"));
+		return (List&lt;UserProfile&gt;)crit.list();
+	}
+	
+	public UserProfile findById(int id) {
+		return getByKey(id);
+	}
+	
+	public UserProfile findByType(String type) {
+		Criteria crit = createEntityCriteria();
+		crit.add(Restrictions.eq("type", type));
+		return (UserProfile) crit.uniqueResult();
+	}
+}</pre> 
+  <h4> 第14步: 创建Service层 </h4> 
+  <pre>package com.yiibai.springsecurity.service;
+
+import java.util.List;
+
+import com.yiibai.springsecurity.model.UserProfile;
+
+public interface UserProfileService {
+
+	List&lt;UserProfile&gt; findAll();
+	
+	UserProfile findByType(String type);
+	
+	UserProfile findById(int id);
+}</pre> 
+  <pre>package com.yiibai.springsecurity.service;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.yiibai.springsecurity.dao.UserProfileDao;
+import com.yiibai.springsecurity.model.UserProfile;
+
+@Service("userProfileService")
+@Transactional
+public class UserProfileServiceImpl implements UserProfileService{
+	
+	@Autowired
+	UserProfileDao dao;
+	
+	public List&lt;UserProfile&gt; findAll() {
+		return dao.findAll();
+	}
+
+	public UserProfile findByType(String type){
+		return dao.findByType(type);
+	}
+
+	public UserProfile findById(int id) {
+		return dao.findById(id);
+	}
+}</pre> 
+  <pre>package com.yiibai.springsecurity.service;
+
+import com.yiibai.springsecurity.model.User;
+
+public interface UserService {
+
+	void save(User user);
+	
+	User findById(int id);
+	
+	User findBySso(String sso);
+	
+}</pre> 
+  <pre>package com.yiibai.springsecurity.service;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.yiibai.springsecurity.dao.UserDao;
+import com.yiibai.springsecurity.model.User;
+
+@Service("userService")
+@Transactional
+public class UserServiceImpl implements UserService{
+
+	@Autowired
+	private UserDao dao;
+	
+	@Autowired
+	private PasswordEncoder passwordEncoder;
+
+	
+	public void save(User user){
+		user.setPassword(passwordEncoder.encode(user.getPassword()));
+		dao.save(user);
+	}
+	
+	public User findById(int id) {
+		return dao.findById(id);
+	}
+
+	public User findBySso(String sso) {
+		return dao.findBySSO(sso);
+	}
+	
+}</pre> 
+  <h2> 视图部分 </h2> 
+  <h4> 第15步: 添加视图 </h4> 
+  <p> login.jsp </p> 
+  <pre>&lt;%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%&gt;
+&lt;%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%&gt;
+&lt;html&gt;
+	&lt;head&gt;
+		&lt;meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"&gt;
+		&lt;title&gt;HelloWorld Login page&lt;/title&gt;
+		&lt;link href="&lt;c:url value='/static/css/bootstrap.css' /&gt;"  rel="stylesheet"&gt;&lt;/link&gt;
+		&lt;link href="&lt;c:url value='/static/css/app.css' /&gt;" rel="stylesheet"&gt;&lt;/link&gt;
+		&lt;link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.2.0/css/font-awesome.css" /&gt;
+	&lt;/head&gt;
+
+	&lt;body&gt;
+		&lt;div id="mainWrapper"&gt;
+			&lt;div class="login-container"&gt;
+				&lt;div class="login-card"&gt;
+					&lt;div class="login-form"&gt;
+						&lt;c:url var="loginUrl" value="/login" /&gt;
+						&lt;form action="${loginUrl}" method="post" class="form-horizontal"&gt;
+							&lt;c:if test="${param.error != null}"&gt;
+								&lt;div class="alert alert-danger"&gt;
+									&lt;p&gt;Invalid username and password.&lt;/p&gt;
+								&lt;/div&gt;
+							&lt;/c:if&gt;
+							&lt;c:if test="${param.logout != null}"&gt;
+								&lt;div class="alert alert-success"&gt;
+									&lt;p&gt;You have been logged out successfully.&lt;/p&gt;
+								&lt;/div&gt;
+							&lt;/c:if&gt;
+							&lt;div class="input-group input-sm"&gt;
+								&lt;label class="input-group-addon" for="username"&gt;&lt;i class="fa fa-user"&gt;&lt;/i&gt;&lt;/label&gt;
+								&lt;input type="text" class="form-control" id="username" name="ssoId" placeholder="Enter Username" required&gt;
+							&lt;/div&gt;
+							&lt;div class="input-group input-sm"&gt;
+								&lt;label class="input-group-addon" for="password"&gt;&lt;i class="fa fa-lock"&gt;&lt;/i&gt;&lt;/label&gt; 
+								&lt;input type="password" class="form-control" id="password" name="password" placeholder="Enter Password" required&gt;
+							&lt;/div&gt;
+							&lt;input type="hidden" name="${_csrf.parameterName}"
+								value="${_csrf.token}" /&gt;
+								
+							&lt;div class="form-actions"&gt;
+								&lt;input type="submit"
+									class="btn btn-block btn-primary btn-default" value="Log in"&gt;
+							&lt;/div&gt;
+						&lt;/form&gt;
+					&lt;/div&gt;
+				&lt;/div&gt;
+			&lt;/div&gt;
+		&lt;/div&gt;
+
+	&lt;/body&gt;
+&lt;/html&gt;</pre> 
+  <div>
+    正如你所看到的，CSRF参数需要在JSP中的EL表达式访问，所以还需要通过添将以下的代码添加JSP的顶部来强行执行EL表达式解析编译： 
+  </div> 
+  <pre>&lt;%@ page isELIgnored="false"%&gt;</pre> 
+  <p> welcome.jsp </p> 
+  <pre>&lt;%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%&gt;
+&lt;%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%&gt;
+&lt;html&gt;
+&lt;head&gt;
+	&lt;meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"&gt;
+	&lt;title&gt;Welcome page&lt;/title&gt;
+	&lt;link href="&lt;c:url value='/static/css/bootstrap.css' /&gt;" rel="stylesheet"&gt;&lt;/link&gt;
+	&lt;link href="&lt;c:url value='/static/css/app.css' /&gt;" rel="stylesheet"&gt;&lt;/link&gt;
+&lt;/head&gt;
+&lt;body&gt;
+	&lt;div class="success"&gt;
+		Greeting : ${greeting}
+		This is a welcome page.
+	&lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre> 
+  <p> admin.jsp </p> 
+  <pre>&lt;%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%&gt;
+&lt;%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%&gt;
+&lt;html&gt;
+&lt;head&gt;
+	&lt;meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"&gt;
+	&lt;title&gt;Admin page&lt;/title&gt;
+	&lt;link href="&lt;c:url value='/static/css/bootstrap.css' /&gt;" rel="stylesheet"&gt;&lt;/link&gt;
+	&lt;link href="&lt;c:url value='/static/css/app.css' /&gt;" rel="stylesheet"&gt;&lt;/link&gt;
+&lt;/head&gt;
+&lt;body&gt;
+	&lt;div class="success"&gt;
+		Dear &lt;strong&gt;${user}&lt;/strong&gt;, Welcome to Admin Page.
+		&lt;br/&gt;
+		Would you like to &lt;a href="&lt;c:url value='/newUser' /&gt;"&gt;Add Some Users&lt;/a&gt; to keep yourself busy?
+		&lt;br/&gt;
+		&lt;a href="&lt;c:url value="/logout" /&gt;"&gt;Logout&lt;/a&gt;
+	&lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre> 
+  <p> dba.jsp </p> 
+  <pre>&lt;%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%&gt;
+&lt;%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%&gt;
+&lt;html&gt;
+&lt;head&gt;
+	&lt;meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"&gt;
+	&lt;title&gt;DBA page&lt;/title&gt;
+	&lt;link href="&lt;c:url value='/static/css/bootstrap.css' /&gt;" rel="stylesheet"&gt;&lt;/link&gt;
+	&lt;link href="&lt;c:url value='/static/css/app.css' /&gt;" rel="stylesheet"&gt;&lt;/link&gt;
+&lt;/head&gt;
+&lt;body&gt;
+	&lt;div class="success"&gt;
+		Dear &lt;strong&gt;${user}&lt;/strong&gt;, Welcome to DBA Page.
+		&lt;br/&gt;
+		&lt;a href="&lt;c:url value="/logout" /&gt;"&gt;Logout&lt;/a&gt;
+	&lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre> 
+  <p> newuser.jsp </p> 
+  <pre>&lt;%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%&gt;
+&lt;%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%&gt;
+&lt;%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %&gt;
+
+&lt;html&gt;
+
+&lt;head&gt;
+	&lt;meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"&gt;
+	&lt;title&gt;User Registration Form&lt;/title&gt;
+	&lt;link href="&lt;c:url value='/static/css/bootstrap.css' /&gt;" rel="stylesheet"&gt;&lt;/link&gt;
+	&lt;link href="&lt;c:url value='/static/css/app.css' /&gt;" rel="stylesheet"&gt;&lt;/link&gt;
+&lt;/head&gt;
+
+&lt;body&gt;
+
+ 	&lt;div class="form-container"&gt;
+ 	
+ 	&lt;h1&gt;New User Registration Form&lt;/h1&gt;
+ 	
+	&lt;form:form method="POST" modelAttribute="user" class="form-horizontal"&gt;
+
+		&lt;div class="row"&gt;
+			&lt;div class="form-group col-md-12"&gt;
+				&lt;label class="col-md-3 control-lable" for="firstName"&gt;First Name&lt;/label&gt;
+				&lt;div class="col-md-7"&gt;
+					&lt;form:input type="text" path="firstName" id="firstName" class="form-control input-sm"/&gt;
+					&lt;div class="has-error"&gt;
+						&lt;form:errors path="firstName" class="help-inline"/&gt;
+					&lt;/div&gt;
+				&lt;/div&gt;
+			&lt;/div&gt;
+		&lt;/div&gt;
+
+		&lt;div class="row"&gt;
+			&lt;div class="form-group col-md-12"&gt;
+				&lt;label class="col-md-3 control-lable" for="lastName"&gt;Last Name&lt;/label&gt;
+				&lt;div class="col-md-7"&gt;
+					&lt;form:input type="text" path="lastName" id="lastName" class="form-control input-sm"/&gt;
+					&lt;div class="has-error"&gt;
+						&lt;form:errors path="lastName" class="help-inline"/&gt;
+					&lt;/div&gt;
+				&lt;/div&gt;
+			&lt;/div&gt;
+		&lt;/div&gt;
+
+		&lt;div class="row"&gt;
+			&lt;div class="form-group col-md-12"&gt;
+				&lt;label class="col-md-3 control-lable" for="ssoId"&gt;SSO ID&lt;/label&gt;
+				&lt;div class="col-md-7"&gt;
+					&lt;form:input type="text" path="ssoId" id="ssoId" class="form-control input-sm"/&gt;
+					&lt;div class="has-error"&gt;
+						&lt;form:errors path="ssoId" class="help-inline"/&gt;
+					&lt;/div&gt;
+				&lt;/div&gt;
+			&lt;/div&gt;
+		&lt;/div&gt;
+
+		&lt;div class="row"&gt;
+			&lt;div class="form-group col-md-12"&gt;
+				&lt;label class="col-md-3 control-lable" for="password"&gt;Password&lt;/label&gt;
+				&lt;div class="col-md-7"&gt;
+					&lt;form:input type="password" path="password" id="password" class="form-control input-sm"/&gt;
+					&lt;div class="has-error"&gt;
+						&lt;form:errors path="password" class="help-inline"/&gt;
+					&lt;/div&gt;
+				&lt;/div&gt;
+			&lt;/div&gt;
+		&lt;/div&gt;
+
+		&lt;div class="row"&gt;
+			&lt;div class="form-group col-md-12"&gt;
+				&lt;label class="col-md-3 control-lable" for="email"&gt;Email&lt;/label&gt;
+				&lt;div class="col-md-7"&gt;
+					&lt;form:input type="text" path="email" id="email" class="form-control input-sm"/&gt;
+					&lt;div class="has-error"&gt;
+						&lt;form:errors path="email" class="help-inline"/&gt;
+					&lt;/div&gt;
+				&lt;/div&gt;
+			&lt;/div&gt;
+		&lt;/div&gt;
+
+
+		&lt;div class="row"&gt;
+			&lt;div class="form-group col-md-12"&gt;
+				&lt;label class="col-md-3 control-lable" for="userProfiles"&gt;Roles&lt;/label&gt;
+				&lt;div class="col-md-7"&gt;
+					&lt;form:select path="userProfiles" items="${roles}" multiple="true" itemValue="id" itemLabel="type" class="form-control input-sm"/&gt;
+					&lt;div class="has-error"&gt;
+						&lt;form:errors path="userProfiles" class="help-inline"/&gt;
+					&lt;/div&gt;
+				&lt;/div&gt;
+			&lt;/div&gt;
+		&lt;/div&gt;
+
+		&lt;div class="row"&gt;
+			&lt;div class="form-actions floatRight"&gt;
+				&lt;input type="submit" value="Register" class="btn btn-primary btn-sm"&gt; or &lt;a href="&lt;c:url value='/admin' /&gt;"&gt;Cancel&lt;/a&gt;
+			&lt;/div&gt;
+		&lt;/div&gt;
+	&lt;/form:form&gt;
+	&lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre> 
+  <p> registrationsuccess.jsp </p> 
+  <pre>&lt;%@ page language="java" contentType="text/html; charset=ISO-8859-1"  pageEncoding="ISO-8859-1"%&gt;
+&lt;%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %&gt;
+&lt;html&gt;
+&lt;head&gt;
+	&lt;meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"&gt;
+	&lt;title&gt;User Registration Form&lt;/title&gt;
+	&lt;link href="&lt;c:url value='/static/css/bootstrap.css' /&gt;" rel="stylesheet"&gt;&lt;/link&gt;
+	&lt;link href="&lt;c:url value='/static/css/app.css' /&gt;" rel="stylesheet"&gt;&lt;/link&gt;
+&lt;/head&gt;
+&lt;body&gt;
+	&lt;div class="success"&gt;
+		Confirmation message : ${success}
+		&lt;br&gt;
+		Would you like to &lt;a href="&lt;c:url value='/newUser' /&gt;"&gt;Add More Users&lt;/a&gt;?
+		&lt;br/&gt;
+		Go to &lt;a href="&lt;c:url value='/admin' /&gt;"&gt;Admin Page&lt;/a&gt; OR &lt;a href="&lt;c:url value="/logout" /&gt;"&gt;Logout&lt;/a&gt;	
+	&lt;/div&gt;
+	
+&lt;/body&gt;
+&lt;/html&gt;</pre> 
+  <p> accessDenied.jsp </p> 
+  <pre>&lt;%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%&gt;
+&lt;%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%&gt;
+&lt;html&gt;
+&lt;head&gt;
+	&lt;meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"&gt;
+	&lt;title&gt;AccessDenied page&lt;/title&gt;
+	&lt;link href="&lt;c:url value='/static/css/bootstrap.css' /&gt;" rel="stylesheet"&gt;&lt;/link&gt;
+	&lt;link href="&lt;c:url value='/static/css/app.css' /&gt;" rel="stylesheet"&gt;&lt;/link&gt;
+&lt;/head&gt;
+&lt;body&gt;
+	Dear &lt;strong&gt;${user}&lt;/strong&gt;, You are not authorized to access this page.
+	&lt;br/&gt;
+	&lt;a href="&lt;c:url value="/home" /&gt;"&gt;Go to home&lt;/a&gt; OR &lt;a href="&lt;c:url value="/logout" /&gt;"&gt;Logout&lt;/a&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre> 
+  <h4> </h4> 
+  <h4> 
+   <div>
+     第16步 - 构建和部署应用程序 
+   </div> </h4> 
+  <p> 现在构造&nbsp;war(通过&nbsp;eclipse/m2eclipse)或通过Maven的命令行(mvn&nbsp;clean&nbsp;install)。部署WAR文件到Servlet3.0容器。由于这里我使用的是在&nbsp;eclipse&nbsp;中配置&nbsp;Tomcat，可以直接发布到&nbsp;Tomcat&nbsp;服务容器中。如果不知道怎么使用，可以参考：<a target="_blank" href="http://www.yiibai.com/maven/create-a-maven-web-project-with-eclipse.html">http://www.yiibai.com/maven/create-a-maven-web-project-with-eclipse.html</a> </p> 
+  <div>
+    运行应用程序 
+  </div> 
+  <p> 仅供参考，我们将使用在上一节中的所定义的数据库表结构及数据记录。点击查看<a target="_blank" href="http://yiibai.com/spring-security/spring-security-4-hibernate-annotation-example/">数据库表和记录</a>&nbsp;。 </p> 
+  <p> 打开浏览器并访问 -&nbsp;http://localhost:8080/SpringSecurityPasswordEncodingWithBcrypt/ </p> 
+  <p> <img src="/uploads/tutorial/20160822/160r2214126_1_245.png" alt=""> </p> 
+  <p> 现在尝试访问本地主机：&nbsp;http://localhost:8080/SpringSecurityPasswordEncodingWithBcrypt/admin，系统将提示您进行登录，提供管理员角色凭据(sam，abc123)(在这一刻仅有的系统用户)。 </p> 
+  <p> <img src="/uploads/tutorial/20160822/160r2214159_1_3i.png" alt=""> </p> 
+  <p> 提交后，如下所示 -&nbsp; </p> 
+  <p> <img src="/uploads/tutorial/20160822/160r2214217_1_l4.png" alt=""> </p> 
+  <p> 点击 "Add Some Users"&nbsp;链接，如下所示 -&nbsp; </p> 
+  <p> <img src="/uploads/tutorial/20160822/160r2214233_1_913.png" alt=""> </p> 
+  <p> 添加一个名为：Bill 的用户[密码：abc123]，选择&nbsp;USER&nbsp; 作为用户角色，如下图所示 -&nbsp; </p> 
+  <p> <img src="/uploads/tutorial/20160822/160r2214250_1_i4.png" alt=""> </p> 
+  <p> 提交后，如下所示 -&nbsp;<br> <img src="/uploads/tutorial/20160822/160r2214313_1_121.png" alt=""> </p> 
+  <p> 我们再次点击 "Add Some Users"&nbsp;链接, &nbsp;填写一个用户：kenny [密码 : abc125] , 选择 ADMIN,DBA 作为此用户的角色，如下图中所示 -&nbsp;<br> <img src="/uploads/tutorial/20160822/160r2214332_1_o4.png" alt=""> </p> 
+  <p> 提交后，如下图中所示 -&nbsp;<br> <img src="/uploads/tutorial/20160822/160r2214349_1_s4.png" alt=""> </p> 
+  <div>
+    点击注销。添加&nbsp;DBA&nbsp;用户信息(kenny，abc123)并提交，如在上一步中创建的一样，现在使用 kenny 用户名来登录系统 -&nbsp;
+   <br> 
+   <img src="/uploads/tutorial/20160822/160r2214408_1_n1.png" alt="">
+   <br> 
+  </div> 
+  <p> 提交后，现在访问 -&nbsp;http://localhost:8080/SpringSecurityPasswordEncodingWithBcrypt/db<br> <img src="/uploads/tutorial/20160822/160r2214425_1_931.png" alt=""> </p> 
+  <p> 最后，我们注销登录，如下图所示 -&nbsp;<br> <img src="/uploads/tutorial/20160822/160r2214441_1_513.png" alt=""> </p> 
+  <p> 查看数据库表的记录信息，如下图所示 -&nbsp; </p> 
+  <p> <img src="/uploads/tutorial/20160822/160r2214513_1_s4.png" alt=""><br> <img src="/uploads/tutorial/20160822/160r2214534_1_p7.png" alt=""><br> <img src="/uploads/tutorial/20160822/160r2214549_1_g4.png" alt=""> </p> 
+  <div>
+    到这里整个教程学习完成，在
+   <a target="_blank" href="http://yiibai.com/spring-security/spring-security-4-remember-me-example-with-hibernate.html">下一篇文章</a>中我们将学习如何使用 Spring&nbsp;Security&nbsp;以及&nbsp;Hibernate&nbsp;来实现&nbsp;"记住我"&nbsp;的认证。 
+  </div> 
+  <h4> 下载源代码 </h4> 
+  <p> 基于注释实例 -&nbsp;<a target="_blank" href="http://share.weiyun.com/873f3d6d95a16cf894fd9bcd2ee4e8e3">10.1-SpringSecurityPasswordEncodingWithBcrypt.zip</a> </p> 
+  <p> 基于XML实例 -&nbsp;<a target="_blank" href="http://share.weiyun.com/702f5be6266cbb6c361ef3ce2dcab8ad">10.2-SpringSecurityPasswordEncodingWithBcryptXML.zip</a> </p> 
+  <h4> 参考 </h4> 
+  <ul> 
+   <li> <a target="_blank" href="http://projects.spring.io/spring-security/">Spring Security工程</a> </li> 
+   <li> <a target="_blank" href="http://docs.spring.io/spring-security/site/docs/4.0.1.RELEASE/reference/htmlsingle/">Spring Security参考手册</a> </li> 
+  </ul> 
+  <br> 
+ </div> 
+ <div> 
+  <br> 
+ </div>
+ <br>      
+</div></body></html>

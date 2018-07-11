@@ -1,0 +1,44 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Java NIO编码和解码</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>使用Java NIO API编码和解码操作可以从一个字符串执行到另一个字符集。两个类：<code>CharsetEncoder</code>和<code>CharsetDecoder</code>在<code>ByteBuffer</code>和<code>CharBuffer</code>之间的编码和解码中起着重要的作用。</p> 
+ <p>只有当处理程序可用时，反应堆(<code>Reactor</code>)保持到达事件的跟踪和调度。我们来看看反应堆中执行的编码和解码操作的架构：</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201709/2909/374140945_23300.png" alt=""></p> 
+ <p><strong>Java NIO中的CharsetEncoder</strong></p> 
+ <p><code>CharsetEncoder</code>用于将<code>Unicode</code>字符编码为字节序列。它还返回一个提供任何错误信息的<code>CoderResult</code>对象。</p> 
+ <p><strong>Java NIO中的CharsetDecoder</strong> </p> 
+ <p><code>CharsetDecoder</code>用于将数组或字节序列解码为<code>Unicode</code>字符。在从<code>ByteBuffer</code>到<code>CharBuffer</code>的解码过程中，获得<code>CoderResult</code>对象。</p> 
+ <p><strong>Java NIO中的Charset.newEncoder()</strong></p> 
+ <p>在<code>CharsetEncoder</code>中，<code>Charset.newEncoder()</code>用于创建<code>Charset</code>对象，然后通过<code>newEncoder()</code>方法，可以获取<code>CharsetEncoder</code>对象。</p> 
+ <p><strong>Java NIO Charset.newDecoder()</strong></p> 
+ <p>在<code>CharsetDecoder</code>中，<code>Charset.newDecoder()</code>用于创建<code>Charset</code>对象，然后通过<code>newDecoder()</code>方法，可以获取一个<code>CharsetDecoder</code>对象。</p> 
+ <p><strong>基本编码和解码示例</strong></p>   
+ <pre><code class="lang-java">package com.yiibai;
+
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
+import java.nio.charset.Charset;
+import java.nio.charset.CharacterCodingException;
+import java.nio.charset.CharsetDecoder;
+import java.nio.charset.CharsetEncoder;
+
+public class CharsetExam {
+    public static void main(String[] args) throws CharacterCodingException {
+        Charset cs = Charset.forName("UTF-8");
+        CharsetDecoder csdecoder = cs.newDecoder();
+        CharsetEncoder csencoder = cs.newEncoder();
+        String st = "Example of Encode and Decode in Java NIO.";
+        ByteBuffer bb = ByteBuffer.wrap(st.getBytes());
+        CharBuffer cb = csdecoder.decode(bb);
+        ByteBuffer newbb = csencoder.encode(cb);
+        while (newbb.hasRemaining()) {
+            char ca = (char) newbb.get();
+            System.out.print(ca);
+        }
+        newbb.clear();
+    }
+}
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 - </p> 
+ <pre><code class="lang-shell">Example of Encode and Decode in Java NIO.
+</code></pre>
+ <br>      
+</div></body></html>

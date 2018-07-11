@@ -1,0 +1,43 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">JSP页面重定向</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>在本章中，我们将讨论使用JSP的页面重定向。 通常在文档移动到新位置时使用页面重定向，我们需要将客户端发送到此新位置。这可能是因为负载平衡，或者是简单的随机化。</p> 
+ <p>将请求重定向到另一个页面的最简单的方法是使用响应对象的<code>sendRedirect()</code>方法。 以下是这种方法的签名 -</p> 
+ <pre><code class="lang-java">public void response.sendRedirect(String location)
+throws IOException
+</code></pre> 
+ <p>该方法将响应与状态代码和新页面位置一起发送回浏览器。也可以一起使用<code>setStatus()</code>和<code>setHeader()</code>方法来实现相同的重定向示例 -</p> 
+ <pre><code class="lang-shell">....
+String site = "http://www.yiibai.com" ;
+response.setStatus(response.SC_MOVED_TEMPORARILY);
+response.setHeader("Location", site); 
+....
+</code></pre> 
+ <h2 id="h2-u91CDu5B9Au5411u793Au4F8B"><a name="重定向示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>重定向示例</h2>
+ <p>打开Eclipse，创建一个动态Web工程：<em>Redirect</em>，并在这个项目中创建示例JSP文件。</p> 
+ <p>此示例显示JSP如何执行页面重定向到另一个位置( <a target="_blank" href="http://www.yiibai.com">http://www.yiibai.com</a> )。</p> 
+ <p>文件：<em>PageRedirect.jsp</em> - </p> 
+ <pre><code class="lang-html">&lt;%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%&gt;
+&lt;%@ page import="java.io.*,java.util.*"%&gt;
+
+&lt;!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;meta http-equiv="Content-Type" content="text/html; charset=UTF-8"&gt;
+&lt;title&gt;页面重定向示例&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;center&gt;
+        &lt;h1&gt;页面重定向示例&lt;/h1&gt;
+    &lt;/center&gt;
+    &lt;%
+        // New location to be redirected
+        String site = new String("http://www.yiibai.com");
+        response.setStatus(response.SC_MOVED_TEMPORARILY);
+        response.setHeader("Location", site);
+    %&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>编写完成上面代码，部署项目。然后打开浏览器访问URL： <code>http://localhost:8080/Redirect/PageRedirect.jsp</code> 调用此JSP。这将自动定向到到给定的URL： <a target="_blank" href="http://www.yiibai.com">http://www.yiibai.com</a> 。</p>
+ <br>      
+</div></body></html>

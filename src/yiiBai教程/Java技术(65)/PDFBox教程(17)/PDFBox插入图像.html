@@ -1,0 +1,91 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">PDFBox插入图像</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>在前一章中，我们已经学习如何从现有的PDF文档中提取文本。 在本章中，将讨论如何将图像插入PDF文档。</p> 
+ <h2 id="h2--pdf-"><a name="将图像插入PDF文档" class="reference-link"></a><span class="header-link octicon octicon-link"></span>将图像插入PDF文档</h2>
+ <p>分别使用<code>PDImageXObject</code>类的<code>createFromFile()</code>以及<code>PDPageContentStream</code>类的<code>drawImage()</code>方法将图像插入到PDF文档中。</p> 
+ <p>以下是从现有PDF文档中提取文本的步骤。</p> 
+ <p><strong>第1步:加载现有的PDF文档</strong></p> 
+ <p>使用<code>PDDocument</code>类的静态方法<code>load()</code>加载现有的PDF文档。 此方法接受一个文件对象作为参数，因为这是一个静态方法，可以使用类名称调用它，如下所示。</p> 
+ <pre><code class="lang-java">File file = new File("path of the document")
+PDDocument doc = PDDocument.load(file);
+</code></pre> 
+ <p><strong>第2步:检索页面</strong></p> 
+ <p>在PDF文档中选择一个页面，并使用<code>getPage()</code>方法检索其<code>PDPage</code>对象，如下所示。</p> 
+ <pre><code class="lang-java">PDPage page = doc.getPage(0);
+</code></pre> 
+ <p><strong>第3步:创建PDImageXObject对象</strong></p> 
+ <p>PDFBox库中的类<code>PDImageXObject</code>表示图像。 它提供了执行与图像相关的操作所需的所有方法，例如插入图像，设置图像高度，设置图像宽度等。</p> 
+ <p>可以使用<code>createFromFile()</code>方法创建这个类的一个对象。 对于这种方法，需要传递想要以字符串形式添加的图像路径以及需要添加图像的文档对象。</p> 
+ <pre><code class="lang-java">PDImageXObject pdImage = PDImageXObject.createFromFile("C:/logo.png", doc);
+</code></pre> 
+ <p><strong>第4步:准备内容流</strong></p> 
+ <p>可以使用名称为<code>PDPageContentStream</code>的类的对象来插入各种数据元素。 因此，需要将文档对象和页面对象传递给此类的构造函数，通过传递在前面的步骤中创建的这两个对象来实例化此类，如下所示。</p> 
+ <pre><code class="lang-java">PDPageContentStream contentStream = new PDPageContentStream(doc, page);
+</code></pre> 
+ <p><strong>第5步:在PDF文档中绘制图像</strong></p> 
+ <p>使用<code>drawImage()</code>方法在PDF文档中插入图像。 对于这种方法，需要添加上述步骤中创建的图像对象和图像所需的尺寸(宽度和高度)，如下所示。</p> 
+ <pre><code class="lang-java">contentstream.drawImage(pdImage, 70, 250);
+</code></pre> 
+ <p><strong>第6步:关闭PDPageContentStream</strong></p> 
+ <p>使用<code>close()</code>方法关闭<code>PDPageContentStream</code>对象，如下所示。</p> 
+ <pre><code class="lang-java">contentstream.close();
+</code></pre> 
+ <p><strong>第7步:保存文档</strong></p> 
+ <p>添加所需内容后，使用<code>PDDocument</code>类的<code>save()</code>方法保存PDF文档，如以下代码块中所示。</p> 
+ <pre><code class="lang-java">doc.save("Path");
+</code></pre> 
+ <p><strong>第8步:关闭文件</strong></p> 
+ <p>最后，使用<code>PDDocument</code>类的<code>close()</code>方法关闭文档，如下所示。</p>   
+ <pre><code class="lang-java">doc.close();
+</code></pre> 
+ <p><strong>示例</strong></p> 
+ <p>假设有一个名称为<code>sample.pdf</code>的PDF文档，存放的目录是:<em>F:\worksp\pdfbox</em> ，其空页如下所示。<br><img src="http://www.yiibai.com/uploads/images/201803/1103/908090304_93335.png" alt=""></p> 
+ <p>本示例演示如何将图像添加到上述PDF文档的空白页面。 在这里，将加载PDF文档 - <em>sample.pdf</em>， 并添加图像。 将此代码保存在名称为<code>InsertingImage.java</code>的文件中。</p> 
+ <pre><code class="lang-java">package com.yiibai;
+
+import java.io.File;
+
+import org.apache.pdfbox.pdmodel.PDDocument; 
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
+
+public class InsertingImage {
+
+   public static void main(String args[]) throws Exception {
+      //Loading an existing document
+      File file = new File("F:/worksp/pdfbox/sample.pdf");
+      PDDocument doc = PDDocument.load(file);
+
+      //Retrieving the page
+      PDPage page = doc.getPage(0);
+
+      //Creating PDImageXObject object
+      PDImageXObject pdImage = PDImageXObject.createFromFile("F:/worksp/pdfbox/logo.png",doc);
+
+      //creating the PDPageContentStream object
+      PDPageContentStream contents = new PDPageContentStream(doc, page);
+
+      //Drawing the image in the PDF document
+      contents.drawImage(pdImage, 70, 250);
+
+      System.out.println("Image inserted");
+
+      //Closing the PDPageContentStream object
+      contents.close();        
+
+      //Saving the document
+      doc.save("F:/worksp/pdfbox/sample-image.pdf");
+
+      //Closing the document
+      doc.close();
+
+   }
+}
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 - </p> 
+ <pre><code class="lang-shell">Image inserted
+</code></pre> 
+ <p>如果打开文档:<em>sample-image.pdf</em>，可以观察到插入了一张图像，如下所示。</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201803/1103/550090305_74432.png" alt=""></p>
+ <br>      
+</div></body></html>

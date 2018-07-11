@@ -1,0 +1,101 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">C++多态</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>术语“多态”(<code>Polymorphism</code>)是”<code>poly</code>“ + “<code>morphs</code>“的组合，其意味着多种形式。 这是一个希腊词。 在面向对象编程中，我们使用<code>3</code>个主要概念：继承，封装和多态。</p> 
+ <p>C++中有两种类型的多态：</p> 
+ <ul> 
+  <li><strong>编译时多态性</strong>：通过函数重载和操作符重载来实现，这也称为静态绑定或早期绑定。</li>
+  <li><strong>运行时多态性</strong>：它通过方法覆盖来实现，也称为动态绑定或后期绑定。</li>
+ </ul> 
+ <h2 id="h2-c-"><a name="C++运行时多态性示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>C++运行时多态性示例</h2>
+ <p>下面来看看一个简单的C++运行时多态的例子。</p> 
+ <pre><code class="lang-cpp">#include &lt;iostream&gt;  
+using namespace std;  
+class Animal {  
+    public:  
+void eat(){    
+cout&lt;&lt;"Eating...";    
+    }      
+};   
+class Dog: public Animal    
+{    
+ public:  
+ void eat()    
+    {    
+       cout&lt;&lt;"Eating bread...";    
+    }    
+};  
+int main(void) {  
+   Dog d = Dog();    
+   d.eat();  
+   return 0;  
+}
+</code></pre> 
+ <p>运行上面代码，得到以下结果 -</p> 
+ <pre><code class="lang-cpp">Eating bread...
+</code></pre> 
+ <h2 id="h2-c-"><a name="C++运行时多态性示例：通过使用两个派生类" class="reference-link"></a><span class="header-link octicon octicon-link"></span>C++运行时多态性示例：通过使用两个派生类</h2>
+ <p>下面来看看看C++中的运行时多态性的另一个例子，下面有两个派生类。</p> 
+ <pre><code class="lang-cpp">#include &lt;iostream&gt;  
+using namespace std;  
+class Shape {  
+    public:  
+virtual void draw(){    
+cout&lt;&lt;"drawing..."&lt;&lt;endl;    
+    }      
+};   
+class Rectangle: public Shape    
+{    
+ public:  
+ void draw()    
+    {    
+       cout&lt;&lt;"drawing rectangle..."&lt;&lt;endl;    
+    }    
+};  
+class Circle: public Shape    
+{    
+ public:  
+ void draw()    
+    {    
+       cout&lt;&lt;"drawing circle..."&lt;&lt;endl;    
+    }    
+};  
+int main(void) {  
+    Shape *s;  
+    Shape sh;  
+        Rectangle rec;  
+        Circle cir;  
+        s=&amp;sh;  
+     s-&gt;draw();   
+        s=&amp;rec;  
+     s-&gt;draw();    
+    s=○  
+     s-&gt;draw();   
+}
+</code></pre> 
+ <p>运行上面代码，得到以下结果 -</p>   
+ <pre><code class="lang-cpp">drawing...
+drawing rectangle...
+drawing circle...
+</code></pre> 
+ <h2 id="h2-u8FD0u884Cu65F6u591Au6001u6027u4E0Eu6570u636Eu6210u5458"><a name="运行时多态性与数据成员" class="reference-link"></a><span class="header-link octicon octicon-link"></span>运行时多态性与数据成员</h2>
+ <p>运行时多态性可以通过C++中的数据成员来实现。 下面来看看一个例子，通过引用变量访问字段，引用变量引用派生类的实例。</p> 
+ <pre><code class="lang-cpp">#include &lt;iostream&gt;  
+using namespace std;  
+class Animal {  
+    public:  
+    string color = "Black";    
+};   
+class Dog: public Animal   
+{    
+ public:  
+    string color = "Grey";    
+};  
+int main(void) {  
+     Animal d= Dog();    
+    cout&lt;&lt;d.color;   
+}
+</code></pre> 
+ <p>运行上面代码，得到以下结果 -</p> 
+ <pre><code class="lang-cpp">Black
+</code></pre>
+ <br>      
+</div></body></html>

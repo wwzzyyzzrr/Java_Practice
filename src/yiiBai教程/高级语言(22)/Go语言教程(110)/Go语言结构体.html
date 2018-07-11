@@ -1,0 +1,188 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Go语言结构体</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>Go数组允许定义一种可以保存多个相同类型的数据项的变量类型，但结构体是Go编程中可用的另一个用户定义的数据类型，它允许组合不同类型的数据项。</p> 
+ <p>结构体用于表示记录，假设想在图书馆中跟踪图书。可能希望跟踪每本图书的以下属性：</p> 
+ <ul> 
+  <li>标题(Title)</li>
+  <li>作者(Author)</li>
+  <li>科目(Subject)</li>
+  <li>图书编号(Book ID)</li>
+ </ul> 
+ <h3 id="h3-u5B9Au4E49u7ED3u6784u4F53"><a name="定义结构体" class="reference-link"></a><span class="header-link octicon octicon-link"></span>定义结构体</h3>
+ <p>要定义结构，必须使用<code>type</code>和<code>struct</code>语句。<code>struct</code>语句定义了一个新的数据类型，在程序中有多个成员。<code>type</code>语句在例子中绑定一个类型为<code>struct</code>的名字。 <code>struct</code>语句的格式如下：</p> 
+ <pre><code class="lang-go">type struct_variable_type struct {
+   member definition;
+   member definition;
+   ...
+   member definition;
+}
+</code></pre> 
+ <p>当定义了结构体类型，它可以用于使用以下语法声明该类型的变量。</p> 
+ <pre><code class="lang-go">variable_name := structure_variable_type {value1, value2...valuen}
+</code></pre> 
+ <h3 id="h3-u8BBFu95EEu7ED3u6784u4F53u6210u5458"><a name="访问结构体成员" class="reference-link"></a><span class="header-link octicon octicon-link"></span>访问结构体成员</h3>
+ <p>要访问结构的任何成员，可使用成员访问运算符(<code>.</code>)。成员访问运算符被编码为结构变量名称和希望访问的结构成员的名称。使用<code>struct</code>关键字定义结构类型的变量。以下是解释结构用法的示例：</p> 
+ <pre><code class="lang-go">package main
+
+import "fmt"
+
+type Books struct {
+   title string
+   author string
+   subject string
+   book_id int
+}
+
+func main() {
+   var Book1 Books        /* Declare Book1 of type Book */
+   var Book2 Books        /* Declare Book2 of type Book */
+
+   /* book 1 specification */
+   Book1.title = "Go Programming"
+   Book1.author = "Mahesh Kumar"
+   Book1.subject = "Go Programming Tutorial"
+   Book1.book_id = 6495407
+
+   /* book 2 specification */
+   Book2.title = "Telecom Billing"
+   Book2.author = "Zara Ali"
+   Book2.subject = "Telecom Billing Tutorial"
+   Book2.book_id = 6495700
+
+   /* print Book1 info */
+   fmt.Printf( "Book 1 title : %s\n", Book1.title)
+   fmt.Printf( "Book 1 author : %s\n", Book1.author)
+   fmt.Printf( "Book 1 subject : %s\n", Book1.subject)
+   fmt.Printf( "Book 1 book_id : %d\n", Book1.book_id)
+
+   /* print Book2 info */
+   fmt.Printf( "Book 2 title : %s\n", Book2.title)
+   fmt.Printf( "Book 2 author : %s\n", Book2.author)
+   fmt.Printf( "Book 2 subject : %s\n", Book2.subject)
+   fmt.Printf( "Book 2 book_id : %d\n", Book2.book_id)
+}
+</code></pre> 
+ <p>当上述代码编译和执行时，它产生以下结果：</p> 
+ <pre><code class="lang-go">Book 1 title : Go Programming
+Book 1 author : Mahesh Kumar
+Book 1 subject : Go Programming Tutorial
+Book 1 book_id : 6495407
+Book 2 title : Telecom Billing
+Book 2 author : Zara Ali
+Book 2 subject : Telecom Billing Tutorial
+Book 2 book_id : 6495700
+</code></pre> 
+ <h3 id="h3-u7ED3u6784u4F53u4F5Cu4E3Au51FDu6570u53C2u6570"><a name="结构体作为函数参数" class="reference-link"></a><span class="header-link octicon octicon-link"></span>结构体作为函数参数</h3>
+ <p>可以传递一个结构体作为一个函数参数，与传递其他变量或指针的方式非常相似。可以使用类似于上面示例中访问的方式来访问结构变量：</p> 
+ <pre><code class="lang-go">package main
+
+import "fmt"
+
+type Books struct {
+   title string
+   author string
+   subject string
+   book_id int
+}
+
+func main() {
+   var Book1 Books        /* Declare Book1 of type Book */
+   var Book2 Books        /* Declare Book2 of type Book */
+
+   /* book 1 specification */
+   Book1.title = "Go Programming"
+   Book1.author = "Mahesh Kumar"
+   Book1.subject = "Go Programming Tutorial"
+   Book1.book_id = 6495407
+
+   /* book 2 specification */
+   Book2.title = "Telecom Billing"
+   Book2.author = "Zara Ali"
+   Book2.subject = "Telecom Billing Tutorial"
+   Book2.book_id = 6495700
+
+   /* print Book1 info */
+   printBook(Book1)
+
+   /* print Book2 info */
+   printBook(Book2)
+}
+func printBook( book Books ) {
+   fmt.Printf( "Book title : %s\n", book.title);
+   fmt.Printf( "Book author : %s\n", book.author);
+   fmt.Printf( "Book subject : %s\n", book.subject);
+   fmt.Printf( "Book book_id : %d\n", book.book_id);
+}
+</code></pre> 
+ <p>当上述代码编译和执行时，它产生以下结果：</p>   
+ <pre><code class="lang-go">Book title : Go Programming
+Book author : Mahesh Kumar
+Book subject : Go Programming Tutorial
+Book book_id : 6495407
+Book title : Telecom Billing
+Book author : Zara Ali
+Book subject : Telecom Billing Tutorial
+Book book_id : 6495700
+</code></pre> 
+ <h3 id="h3-u6307u9488u6307u5411u7ED3u6784"><a name="指针指向结构" class="reference-link"></a><span class="header-link octicon octicon-link"></span>指针指向结构</h3>
+ <p>可以以非常类似于定义指向其他变量的指针的方式来定义结构的指针，如下所示：</p> 
+ <pre><code class="lang-go">var struct_pointer *Books
+</code></pre> 
+ <p>现在，可以在上面定义的指针变量中存储结构体变量的地址。要查找结构体变量的地址，将<code>&amp;</code>操作符放在结构体名称之前，如下：</p> 
+ <pre><code class="lang-go">struct_pointer = &amp;Book1;
+</code></pre> 
+ <p>要使用指向该结构体的指针来访问结构的成员，必须使用“<code>.</code>”。 运算符如下：</p> 
+ <pre><code class="lang-go">struct_pointer.title;
+</code></pre> 
+ <p>现在，重写上面的例子使用结构指针，希望这能让您更容易地理解这个概念，代码如下：</p> 
+ <pre><code class="lang-go">package main
+
+import "fmt"
+
+type Books struct {
+   title string
+   author string
+   subject string
+   book_id int
+}
+
+func main() {
+   var Book1 Books        /* Declare Book1 of type Book */
+   var Book2 Books        /* Declare Book2 of type Book */
+
+   /* book 1 specification */
+   Book1.title = "Go Programming"
+   Book1.author = "Mahesh Kumar"
+   Book1.subject = "Go Programming Tutorial"
+   Book1.book_id = 6495407
+
+   /* book 2 specification */
+   Book2.title = "Telecom Billing"
+   Book2.author = "Zara Ali"
+   Book2.subject = "Telecom Billing Tutorial"
+   Book2.book_id = 6495700
+
+   /* print Book1 info */
+   printBook(&amp;Book1)
+
+   /* print Book2 info */
+   printBook(&amp;Book2)
+}
+func printBook( book *Books ) {
+   fmt.Printf( "Book title : %s\n", book.title);
+   fmt.Printf( "Book author : %s\n", book.author);
+   fmt.Printf( "Book subject : %s\n", book.subject);
+   fmt.Printf( "Book book_id : %d\n", book.book_id);
+}
+</code></pre> 
+ <p>当上述代码编译和执行时，它产生以下结果：</p> 
+ <pre><code class="lang-go">Book title : Go Programming
+Book author : Mahesh Kumar
+Book subject : Go Programming Tutorial
+Book book_id : 6495407
+Book title : Telecom Billing
+Book author : Zara Ali
+Book subject : Telecom Billing Tutorial
+Book book_id : 6495700
+</code></pre>
+ <br>      
+</div></body></html>

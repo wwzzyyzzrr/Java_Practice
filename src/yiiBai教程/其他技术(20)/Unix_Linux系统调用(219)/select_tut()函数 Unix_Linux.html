@@ -1,0 +1,600 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">select_tut()函数 Unix/Linux</h1><div style="width:100%;float:left;" class="article-content">   
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">select, pselect, FD_CLR, FD_ISSET, FD_SET, FD_ZERO -&nbsp;</span>同步I / O复用 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> 内容简介</h1> 
+ <b style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">#include &lt;sys/time.h&gt;</b>
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">&nbsp;</span>
+ <br style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;"> 
+ <b style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">#include &lt;sys/types.h&gt;</b>
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">&nbsp;</span>
+ <br style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;"> 
+ <b style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">#include &lt;unistd.h&gt;</b> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> <b>int select(int&nbsp;</b><i>nfds</i><b>, fd_set *</b><i>readfds</i><b>,</b>&nbsp;<b>fd_set *</b><i>writefds</i><b>, fd_set *</b><i>exceptfds</i><b>,</b>&nbsp;<b>struct timeval *</b><i>utimeout</i><b>);</b></p> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> <b>int pselect(int&nbsp;</b><i>nfds</i><b>, fd_set *</b><i>readfds</i><b>,</b>&nbsp;<b>fd_set *</b><i>writefds</i><b>, fd_set *</b><i>exceptfds</i><b>,</b>&nbsp;<b>const struct timespec *</b><i>ntimeout</i><b>, sigset_t *</b><i>sigmask</i><b>);</b></p> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> <b>FD_CLR(int&nbsp;</b><i>fd</i><b>, fd_set *</b><i>set</i><b>);</b>&nbsp;<br> <b>FD_ISSET(int&nbsp;</b><i>fd</i><b>, fd_set *</b><i>set</i><b>);</b>&nbsp;<br> <b>FD_SET(int&nbsp;</b><i>fd</i><b>, fd_set *</b><i>set</i><b>);</b>&nbsp;<br> <b>FD_ZERO(fd_set *</b><i>set</i><b>);</b></p> 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> 描述</h1> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> <b>select</b>() (or&nbsp;<b>pselect</b>()) is the pivot function of most C programs that handle more than one simultaneous file descriptor (or socket handle) in an efficient manner. Its principal arguments are three arrays of file descriptors:&nbsp;<i>readfds</i>,&nbsp;<i>writefds</i>, and&nbsp;<i>exceptfds</i>. The way that&nbsp;<b>select</b>() is usually used is to block while waiting for a "change of status" on one or more of the file descriptors. A "change of status" is when more characters become available from the file descriptor,&nbsp;<i>or</i>&nbsp;when space becomes available within the kernel’s internal buffers for more to be written to the file descriptor,&nbsp;<i>or</i>&nbsp;when a file descriptor goes into error (in the case of a socket or pipe this is when the other end of the connection is closed).</p> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> In summary,&nbsp;<b>select</b>() just watches multiple file descriptors, and is the standard Unix call to do so.</p> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> The arrays of file descriptors are called&nbsp;<i>file descriptor sets</i>. Each set is declared as type<b>fd_set</b>, and its contents can be altered with the macros&nbsp;<b>FD_CLR</b>(),&nbsp;<b>FD_ISSET</b>(),<b>FD_SET</b>(), and&nbsp;<b>FD_ZERO</b>().&nbsp;<b>FD_ZERO</b>() is usually the first function to be used on a newly declared set. Thereafter, the individual file descriptors that you are interested in can be added one by one with&nbsp;<b>FD_SET</b>().&nbsp;<b>select</b>() modifies the contents of the sets according to the rules described below; after calling&nbsp;<b>select</b>() you can test if your file descriptor is still present in the set with the&nbsp;<b>FD_ISSET</b>() macro.&nbsp;<b>FD_ISSET</b>() returns non-zero if the descriptor is present and zero if it is not.&nbsp;<b>FD_CLR</b>() removes a file descriptor from the set.</p> 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> ARGUMENTS</h1> 
+ <table border="1" cellpadding="5" cellspacing="0" class="src" style="font-family: verdana, helvetica, arial, sans-serif; border: 1px solid rgb(170, 170, 170); width: 552px; background-color: rgb(241, 241, 241); border-collapse: collapse; padding-left: 5px; vertical-align: top; color: rgb(0, 0, 0);"> 
+  <tbody> 
+   <tr> 
+    <th style="background-color: rgb(205, 205, 205); border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" width="25%"> 标签</th> 
+    <th style="background-color: rgb(205, 205, 205); border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> 描述</th> 
+   </tr> 
+   <tr valign="top"> 
+    <td colspan="2" style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <i>readfds</i></td> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" width="6%"> &nbsp;</td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> This set is watched to see if data is available for reading from any of its file descriptors. After&nbsp;<b>select</b>() has returned,&nbsp;<i>readfds</i>&nbsp;will be cleared of all file descriptors except for those file descriptors that are immediately available for reading with a&nbsp;<b>recv</b>() (for sockets) or&nbsp;<b>read</b>() (for pipes, files, and sockets) call.</td> 
+   </tr> 
+   <tr valign="top"> 
+    <td colspan="2" style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <i>writefds</i></td> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" width="6%"> &nbsp;</td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> This set is watched to see if there is space to write data to any of its file descriptors. After&nbsp;<b>select</b>() has returned,&nbsp;<i>writefds</i>&nbsp;will be cleared of all file descriptors except for those file descriptors that are immediately available for writing with a&nbsp;<b>send</b>() (for sockets) or&nbsp;<b>write</b>() (for pipes, files, and sockets) call.</td> 
+   </tr> 
+   <tr valign="top"> 
+    <td colspan="2" style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <i>exceptfds</i></td> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" width="6%"> &nbsp;</td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> This set is watched for exceptions or errors on any of the file descriptors. However, that is actually just a rumor. How you use<i>exceptfds</i>&nbsp;is to watch for&nbsp;<i>out-of-band</i>&nbsp;(OOB) data. OOB data is data sent on a socket using the&nbsp;<b>MSG_OOB</b>&nbsp;flag, and hence<i>exceptfds</i>&nbsp;only really applies to sockets. See&nbsp;<b>recv</b>(2) and&nbsp;<b>send</b>(2) about this. After&nbsp;<b>select</b>() has returned,&nbsp;<i>exceptfds</i>&nbsp;will be cleared of all file descriptors except for those descriptors that are available for reading OOB data. You can only ever read one byte of OOB data though (which is done with&nbsp;<b>recv</b>()), and writing OOB data (done with&nbsp;<b>send</b>()) can be done at any time and will not block. Hence there is no need for a fourth set to check if a socket is available for writing OOB data.</td> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <i>nfds</i></td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" valign="bottom"> This is an integer one more than the maximum of any file descriptor in any of the sets. In other words, while you are busy adding file descriptors to your sets, you must calculate the maximum integer value of all of them, then increment this value by one, and then pass this as&nbsp;<i>nfds</i>&nbsp;to&nbsp;<b>select</b>().</td> 
+   </tr> 
+   <tr valign="top"> 
+    <td colspan="2" style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <i>utimeout</i></td> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" width="6%"> &nbsp;</td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> This is the longest time&nbsp;<b>select</b>() must wait before returning, even if nothing interesting happened. If this value is passed as NULL, then&nbsp;<b>select</b>() blocks indefinitely waiting for an event.<i>utimeout</i>&nbsp;can be set to zero seconds, which causes&nbsp;<b>select</b>() to return immediately. The structure&nbsp;<b>struct timeval</b>&nbsp;is defined as, <p style="text-align: justify;"> &nbsp;</p> 
+     <table cellpadding="5" cellspacing="5" class="src" style=" border-color: rgb(170, 170, 170); width: 401px; border-collapse: collapse; padding-left: 5px; vertical-align: top;"> 
+      <tbody> 
+       <tr> 
+        <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse;  border-color: rgb(170, 170, 170);"> <pre style="font-family: 'Courier New', monospace; font-size: 12px; margin-bottom: 0px;">
+struct timeval {
+    time_t tv_sec;    /* seconds */
+    long tv_usec;     /* microseconds */
+};
+</pre> </td> 
+       </tr> 
+      </tbody> 
+     </table> </td> 
+   </tr> 
+   <tr valign="top"> 
+    <td colspan="2" style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <i>ntimeout</i></td> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" width="6%"> &nbsp;</td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> This argument has the same meaning as&nbsp;<i>utimeout</i>&nbsp;but&nbsp;<i>struct timespec</i>&nbsp;has nanosecond precision as follows, 
+     <table cellpadding="5" cellspacing="5" class="src" style=" border-color: rgb(170, 170, 170); width: 401px; border-collapse: collapse; padding-left: 5px; vertical-align: top;"> 
+      <tbody> 
+       <tr> 
+        <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse;  border-color: rgb(170, 170, 170);"> <pre style="font-family: 'Courier New', monospace; font-size: 12px; margin-bottom: 0px;">
+struct timespec {
+    long tv_sec;    /* seconds */
+    long tv_nsec;   /* nanoseconds */
+};
+</pre> </td> 
+       </tr> 
+      </tbody> 
+     </table> </td> 
+   </tr> 
+   <tr valign="top"> 
+    <td colspan="2" style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <i>sigmask</i></td> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" width="6%"> &nbsp;</td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> This argument holds a set of signals to allow while performing a<b>pselect</b>() call (see&nbsp;<b>sigaddset</b>(3) and&nbsp;<b>sigprocmask</b>(2)). It can be passed as NULL, in which case it does not modify the set of allowed signals on entry and exit to the function. It will then behave just like&nbsp;<b>select</b>().</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> COMBINING SIGNAL AND DATA EVENTS</h1> 
+ <b style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">pselect</b>
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">() must be used if you are waiting for a signal as well as data from a file descriptor. Programs that receive signals as events normally use the signal handler only to raise a global flag. The global flag will indicate that the event must be processed in the main loop of the program. A signal will cause the&nbsp;</span>
+ <b style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">select</b>
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">() (or&nbsp;</span>
+ <b style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">pselect</b>
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">()) call to return with&nbsp;</span>
+ <i style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">errno</i>
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">&nbsp;set to&nbsp;</span>
+ <b style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">EINTR</b>
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">. This behavior is essential so that signals can be processed in the main loop of the program, otherwise&nbsp;</span>
+ <b style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">select</b>
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">() would block indefinitely. Now, somewhere in the main loop will be a conditional to check the global flag. So we must ask: what if a signal arrives after the conditional, but before the&nbsp;</span>
+ <b style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">select</b>
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">() call? The answer is that&nbsp;</span>
+ <b style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">select</b>
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">() would block indefinitely, even though an event is actually pending. This race condition is solved by the&nbsp;</span>
+ <b style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">pselect</b>
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">() call. This call can be used to mask out signals that are not to be received except within the&nbsp;</span>
+ <b style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">pselect</b>
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">() call. For instance, let us say that the event in question was the exit of a child process. Before the start of the main loop, we would block&nbsp;</span>
+ <b style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">SIGCHLD</b>
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">&nbsp;using&nbsp;</span>
+ <b style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">sigprocmask</b>
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">(). Our&nbsp;</span>
+ <b style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">pselect</b>
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">() call would enable&nbsp;</span>
+ <b style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">SIGCHLD</b>
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">&nbsp;by using the virgin signal mask. Our program would look like:</span> 
+ <table cellpadding="5" cellspacing="5" class="src" style="font-family: verdana, helvetica, arial, sans-serif;  border-color: rgb(170, 170, 170); width: 552px; background-color: rgb(241, 241, 241); border-collapse: collapse; padding-left: 5px; vertical-align: top; color: rgb(0, 0, 0);"> 
+  <tbody> 
+   <tr> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse;  border-color: rgb(170, 170, 170);"> <pre style="font-family: 'Courier New', monospace; font-size: 12px; margin-bottom: 0px;">
+int child_events = 0;
+
+void child_sig_handler (int x) {
+    child_events++;
+    signal (SIGCHLD, child_sig_handler);
+}
+
+
+int main (int argc, char **argv) {
+    sigset_t sigmask, orig_sigmask;
+
+
+    sigemptyset (&amp;sigmask);
+    sigaddset (&amp;sigmask, SIGCHLD);
+    sigprocmask (SIG_BLOCK, &amp;sigmask,
+                                &amp;orig_sigmask);
+
+
+    signal (SIGCHLD, child_sig_handler);
+
+
+    for (;;) { /* main loop */
+        for (; child_events &gt; 0; child_events--) {
+            /* do event work here */
+        }
+        r = pselect (nfds, &amp;rd, &amp;wr, &amp;er, 0, &amp;orig_sigmask);
+
+
+        /* main body of program */
+    }
+}
+</pre> </td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> 实用</h1> 
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">So what is the point of&nbsp;</span>
+ <b style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">select</b>
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">()? Can’t I just read and write to my descriptors whenever I want? The point of&nbsp;</span>
+ <b style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">select</b>
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">() is that it watches multiple descriptors at the same time and properly puts the process to sleep if there is no activity. It does this while enabling you to handle multiple simultaneous pipes and sockets. Unix programmers often find themselves in a position where they have to handle I/O from more than one file descriptor where the data flow may be intermittent. If you were to merely create a sequence of&nbsp;</span>
+ <b style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">read</b>
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">() and&nbsp;</span>
+ <b style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">write</b>
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">() calls, you would find that one of your calls may block waiting for data from/to a file descriptor, while another file descriptor is unused though available for data.&nbsp;</span>
+ <b style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">select</b>
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">() efficiently copes with this situation.</span> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> A simple example of the use of&nbsp;<b>select</b>() can be found in the&nbsp;<b>select</b>(2) manual page.</p> 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> PORT FORWARDING EXAMPLE</h1> 
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">Here is an example that better demonstrates the true utility of&nbsp;</span>
+ <b style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">select</b>
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">(). The listing below is a TCP forwarding program that forwards from one TCP port to another.</span> 
+ <pre style="font-family: 'Courier New', monospace; font-size: 12px; margin-bottom: 0px;">
+#include &lt;stdlib.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;sys/time.h&gt;
+#include &lt;sys/types.h&gt;
+#include &lt;string.h&gt;
+#include &lt;signal.h&gt;
+#include &lt;sys/socket.h&gt;
+#include &lt;netinet/in.h&gt;
+#include &lt;arpa/inet.h&gt;
+#include &lt;errno.h&gt;
+static int forward_port;
+
+
+#undef max
+#define max(x,y) ((x) &gt; (y) ? (x) : (y))
+
+
+static int listen_socket (int listen_port) {
+    struct sockaddr_in a;
+    int s;
+    int yes;
+    if ((s = socket (AF_INET, SOCK_STREAM, 0)) &lt; 0) {
+        perror ("socket");
+        return -1;
+    }
+    yes = 1;
+    if (setsockopt
+        (s, SOL_SOCKET, SO_REUSEADDR,
+         (char *) &amp;yes, sizeof (yes)) &lt; 0) {
+        perror ("setsockopt");
+        close (s);
+        return -1;
+    }
+    memset (&amp;a, 0, sizeof (a));
+    a.sin_port = htons (listen_port);
+    a.sin_family = AF_INET;
+    if (bind
+        (s, (struct sockaddr *) &amp;a, sizeof (a)) &lt; 0) {
+        perror ("bind");
+        close (s);
+        return -1;
+    }
+    printf ("accepting connections on port %d\n",
+            (int) listen_port);
+    listen (s, 10);
+    return s;
+}
+
+
+static int connect_socket (int connect_port,
+                           char *address) {
+    struct sockaddr_in a;
+    int s;
+    if ((s = socket (AF_INET, SOCK_STREAM, 0)) &lt; 0) {
+        perror ("socket");
+        close (s);
+        return -1;
+    }
+
+
+    memset (&amp;a, 0, sizeof (a));
+    a.sin_port = htons (connect_port);
+    a.sin_family = AF_INET;
+
+
+    if (!inet_aton
+        (address,
+         (struct in_addr *) &amp;a.sin_addr.s_addr)) {
+        perror ("bad IP address format");
+        close (s);
+        return -1;
+    }
+
+
+    if (connect
+        (s, (struct sockaddr *) &amp;a,
+         sizeof (a)) &lt; 0) {
+        perror ("connect()");
+        shutdown (s, SHUT_RDWR);
+        close (s);
+        return -1;
+    }
+    return s;
+}
+
+
+#define SHUT_FD1 {                      \
+        if (fd1 &gt;= 0) {                 \
+            shutdown (fd1, SHUT_RDWR);  \
+            close (fd1);                \
+            fd1 = -1;                   \
+        }                               \
+    }
+
+
+#define SHUT_FD2 {                      \
+        if (fd2 &gt;= 0) {                 \
+            shutdown (fd2, SHUT_RDWR);  \
+            close (fd2);                \
+            fd2 = -1;                   \
+        }                               \
+    }
+
+
+#define BUF_SIZE 1024
+
+
+int main (int argc, char **argv) {
+    int h;
+    int fd1 = -1, fd2 = -1;
+    char buf1[BUF_SIZE], buf2[BUF_SIZE];
+    int buf1_avail, buf1_written;
+    int buf2_avail, buf2_written;
+
+
+    if (argc != 4) {
+        fprintf (stderr,
+                 "Usage\n\tfwd 
+  <listen-port>
+    \
+
+   <forward-to-port> 
+    <forward-to-ip-address>
+     \n");
+        exit (1);
+    }
+
+
+    signal (SIGPIPE, SIG_IGN);
+
+
+    forward_port = atoi (argv[2]);
+
+
+    h = listen_socket (atoi (argv[1]));
+    if (h &lt; 0)
+        exit (1);
+
+
+    for (;;) {
+        int r, nfds = 0;
+        fd_set rd, wr, er;
+        FD_ZERO (&amp;rd);
+        FD_ZERO (&amp;wr);
+        FD_ZERO (&amp;er);
+        FD_SET (h, &amp;rd);
+        nfds = max (nfds, h);
+        if (fd1 &gt; 0 &amp;&amp; buf1_avail &lt; BUF_SIZE) {
+            FD_SET (fd1, &amp;rd);
+            nfds = max (nfds, fd1);
+        }
+        if (fd2 &gt; 0 &amp;&amp; buf2_avail &lt; BUF_SIZE) {
+            FD_SET (fd2, &amp;rd);
+            nfds = max (nfds, fd2);
+        }
+        if (fd1 &gt; 0
+            &amp;&amp; buf2_avail - buf2_written &gt; 0) {
+            FD_SET (fd1, &amp;wr);
+            nfds = max (nfds, fd1);
+        }
+        if (fd2 &gt; 0
+            &amp;&amp; buf1_avail - buf1_written &gt; 0) {
+            FD_SET (fd2, &amp;wr);
+            nfds = max (nfds, fd2);
+        }
+        if (fd1 &gt; 0) {
+            FD_SET (fd1, &amp;er);
+            nfds = max (nfds, fd1);
+        }
+        if (fd2 &gt; 0) {
+            FD_SET (fd2, &amp;er);
+            nfds = max (nfds, fd2);
+        }
+
+
+        r = select (nfds + 1, &amp;rd, &amp;wr, &amp;er, NULL);
+
+
+        if (r == -1 &amp;&amp; errno == EINTR)
+            continue;
+        if (r &lt; 0) {
+            perror ("select()");
+            exit (1);
+        }
+        if (FD_ISSET (h, &amp;rd)) {
+            unsigned int l;
+            struct sockaddr_in client_address;
+            memset (&amp;client_address, 0, l =
+                    sizeof (client_address));
+            r = accept (h, (struct sockaddr *)
+                        &amp;client_address, &amp;l);
+            if (r &lt; 0) {
+                perror ("accept()");
+            } else {
+                SHUT_FD1;
+                SHUT_FD2;
+                buf1_avail = buf1_written = 0;
+                buf2_avail = buf2_written = 0;
+                fd1 = r;
+                fd2 =
+                    connect_socket (forward_port,
+                                    argv[3]);
+                if (fd2 &lt; 0) {
+                    SHUT_FD1;
+                } else
+                    printf ("connect from %s\n",
+                            inet_ntoa
+                            (client_address.sin_addr));
+            }
+        }
+/* NB: read oob data before normal reads */
+        if (fd1 &gt; 0)
+            if (FD_ISSET (fd1, &amp;er)) {
+                char c;
+                errno = 0;
+                r = recv (fd1, &amp;c, 1, MSG_OOB);
+                if (r &lt; 1) {
+                    SHUT_FD1;
+                } else
+                    send (fd2, &amp;c, 1, MSG_OOB);
+            }
+        if (fd2 &gt; 0)
+            if (FD_ISSET (fd2, &amp;er)) {
+                char c;
+                errno = 0;
+                r = recv (fd2, &amp;c, 1, MSG_OOB);
+                if (r &lt; 1) {
+                    SHUT_FD1;
+                } else
+                    send (fd1, &amp;c, 1, MSG_OOB);
+            }
+        if (fd1 &gt; 0)
+            if (FD_ISSET (fd1, &amp;rd)) {
+                r =
+                    read (fd1, buf1 + buf1_avail,
+                          BUF_SIZE - buf1_avail);
+                if (r &lt; 1) {
+                    SHUT_FD1;
+                } else
+                    buf1_avail += r;
+            }
+        if (fd2 &gt; 0)
+            if (FD_ISSET (fd2, &amp;rd)) {
+                r =
+                    read (fd2, buf2 + buf2_avail,
+                          BUF_SIZE - buf2_avail);
+                if (r &lt; 1) {
+                    SHUT_FD2;
+                } else
+                    buf2_avail += r;
+            }
+        if (fd1 &gt; 0)
+            if (FD_ISSET (fd1, &amp;wr)) {
+                r =
+                    write (fd1,
+                           buf2 + buf2_written,
+                           buf2_avail -
+                           buf2_written);
+                if (r &lt; 1) {
+                    SHUT_FD1;
+                } else
+                    buf2_written += r;
+            }
+        if (fd2 &gt; 0)
+            if (FD_ISSET (fd2, &amp;wr)) {
+                r =
+                    write (fd2,
+                           buf1 + buf1_written,
+                           buf1_avail -
+                           buf1_written);
+                if (r &lt; 1) {
+                    SHUT_FD2;
+                } else
+                    buf1_written += r;
+            }
+/* check if write data has caught read data */
+        if (buf1_written == buf1_avail)
+            buf1_written = buf1_avail = 0;
+        if (buf2_written == buf2_avail)
+            buf2_written = buf2_avail = 0;
+/* one side has closed the connection, keep
+   writing to the other side until empty */
+        if (fd1 &lt; 0
+            &amp;&amp; buf1_avail - buf1_written == 0) {
+            SHUT_FD2;
+        }
+        if (fd2 &lt; 0
+            &amp;&amp; buf2_avail - buf2_written == 0) {
+            SHUT_FD1;
+        }
+    }
+    return 0;
+}
+
+    </forward-to-ip-address>
+   </forward-to-port>
+  </listen-port></pre> vetica, arial, sans-serif; color: rgb(0, 0, 0);"&gt; The above program properly forwards most kinds of TCP connections including OOB signal data transmitted by&nbsp;
+ <b>telnet</b>&nbsp;servers. It handles the tricky problem of having data flow in both directions simultaneously. You might think it more efficient to use a&nbsp;
+ <b>fork</b>() call and devote a thread to each stream. This becomes more tricky than you might suspect. Another idea is to set non-blocking I/O using an&nbsp;
+ <b>ioctl</b>() call. This also has its problems because you end up having to have inefficient timeouts. 
+ <p> &nbsp;</p> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> The program does not handle more than one simultaneous connection at a time, although it could easily be extended to do this with a linked list of buffers — one for each connection. At the moment, new connections cause the current connection to be dropped.</p> 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> SELECT LAW</h1> 
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">Many people who try to use&nbsp;</span>
+ <b style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">select</b>
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">() come across behavior that is difficult to understand and produces non-portable or borderline results. For instance, the above program is carefully written not to block at any point, even though it does not set its file descriptors to non-blocking mode at all (see&nbsp;</span>
+ <b style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">ioctl</b>
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">(2)). It is easy to introduce subtle errors that will remove the advantage of using&nbsp;</span>
+ <b style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">select</b>
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">(), hence I will present a list of essentials to watch for when using the&nbsp;</span>
+ <b style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">select</b>
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">() call.</span> 
+ <table border="1" cellpadding="5" cellspacing="0" class="src" style="font-family: verdana, helvetica, arial, sans-serif; border: 1px solid rgb(170, 170, 170); width: 552px; background-color: rgb(241, 241, 241); border-collapse: collapse; padding-left: 5px; vertical-align: top; color: rgb(0, 0, 0);"> 
+  <tbody> 
+   <tr> 
+    <th style="background-color: rgb(205, 205, 205); border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" width="25%"> 标签</th> 
+    <th style="background-color: rgb(205, 205, 205); border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> 描述</th> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>1.</b></td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" valign="bottom"> You should always try to use&nbsp;<b>select</b>() without a timeout. Your program should have nothing to do if there is no data available. Code that depends on timeouts is not usually portable and is difficult to debug.</td> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>2.</b></td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" valign="bottom"> The value&nbsp;<i>nfds</i>&nbsp;must be properly calculated for efficiency as explained above.</td> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>3.</b></td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" valign="bottom"> No file descriptor must be added to any set if you do not intend to check its result after the&nbsp;<b>select</b>() call, and respond appropriately. See next rule.</td> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>4.</b></td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" valign="bottom"> After&nbsp;<b>select</b>() returns, all file descriptors in all sets should be checked to see if they are ready.</td> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>5.</b></td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" valign="bottom"> The functions&nbsp;<b>read</b>(),&nbsp;<b>recv</b>(),&nbsp;<b>write</b>(), and&nbsp;<b>send</b>() do&nbsp;<i>not</i>necessarily read/write the full amount of data that you have requested. If they do read/write the full amount, its because you have a low traffic load and a fast stream. This is not always going to be the case. You should cope with the case of your functions only managing to send or receive a single byte.</td> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>6.</b></td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" valign="bottom"> Never read/write only in single bytes at a time unless your are really sure that you have a small amount of data to process. It is extremely inefficient not to read/write as much data as you can buffer each time. The buffers in the example above are 1024 bytes although they could easily be made larger.</td> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>7.</b></td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" valign="bottom"> The functions&nbsp;<b>read</b>(),&nbsp;<b>recv</b>(),&nbsp;<b>write</b>(), and&nbsp;<b>send</b>() as well as the<b>select</b>() call can return -1 with&nbsp;<i>errno</i>&nbsp;set to&nbsp;<b>EINTR</b>, or with&nbsp;<i>errno</i>set to&nbsp;<b>EAGAIN</b>&nbsp;(<b>EWOULDBLOCK</b>). These results must be properly managed (not done properly above). If your program is not going to receive any signals then it is unlikely you will get<b>EINTR</b>. If your program does not set non-blocking I/O, you will not get&nbsp;<b>EAGAIN</b>. Nonetheless you should still cope with these errors for completeness.</td> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>8.</b></td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" valign="bottom"> Never call&nbsp;<b>read</b>(),&nbsp;<b>recv</b>(),&nbsp;<b>write</b>(), or&nbsp;<b>send</b>() with a buffer length of zero.</td> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>9.</b></td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" valign="bottom"> If the functions&nbsp;<b>read</b>(),&nbsp;<b>recv</b>(),&nbsp;<b>write</b>(), and&nbsp;<b>send</b>() fail with errors other than those listed in&nbsp;<b>7.</b>, or one of the input functions returns 0, indicating end of file, then you should&nbsp;<i>not</i>&nbsp;pass that descriptor to&nbsp;<b>select</b>() again. In the above example, I close the descriptor immediately, and then set it to -1 to prevent it being included in a set.</td> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>10.</b></td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" valign="bottom"> The timeout value must be initialized with each new call to<b>select</b>(), since some operating systems modify the structure.<b>pselect</b>() however does not modify its timeout structure.</td> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>11.</b></td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" valign="bottom"> I have heard that the Windows socket layer does not cope with OOB data properly. It also does not cope with&nbsp;<b>select</b>() calls when no file descriptors are set at all. Having no file descriptors set is a useful way to sleep the process with sub-second precision by using the timeout. (See further on.)</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> USLEEP EMULATION</h1> 
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">On systems that do not have a&nbsp;</span>
+ <b style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">usleep</b>
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">() function, you can call&nbsp;</span>
+ <b style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">select</b>
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">() with a finite timeout and no file descriptors as follows:</span> 
+ <table cellpadding="5" cellspacing="5" class="src" style="font-family: verdana, helvetica, arial, sans-serif;  border-color: rgb(170, 170, 170); width: 552px; background-color: rgb(241, 241, 241); border-collapse: collapse; padding-left: 5px; vertical-align: top; color: rgb(0, 0, 0);"> 
+  <tbody> 
+   <tr> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse;  border-color: rgb(170, 170, 170);">   <pre style="font-family: 'Courier New', monospace; font-size: 12px; margin-bottom: 0px;">
+    struct timeval tv;
+    tv.tv_sec = 0;
+    tv.tv_usec = 200000;  /* 0.2 seconds */
+    select (0, NULL, NULL, NULL, &amp;tv);
+</pre> </td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> This is only guaranteed to work on Unix systems, however.</p> 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> 返回值</h1> 
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">On success,&nbsp;</span>
+ <b style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">select</b>
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">() returns the total number of file descriptors still present in the file descriptor sets.</span> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> If&nbsp;<b>select</b>() timed out, then the return value will be zero. The file descriptors set should be all empty (but may not be on some systems).</p> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> A return value of -1 indicates an error, with&nbsp;<i>errno</i>&nbsp;being set appropriately. In the case of an error, the returned sets and the timeout struct contents are undefined and should not be used.&nbsp;<b>pselect</b>() however never modifies&nbsp;<i>ntimeout</i>.</p> 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> 注意</h1> 
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">Generally speaking, all operating systems that support sockets, also support&nbsp;</span>
+ <b style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">select</b>
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">(). Many types of programs become extremely complicated without the use of&nbsp;</span>
+ <b style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">select</b>
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">().</span>
+ <b style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">select</b>
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">() can be used to solve many problems in a portable and efficient way that naive programmers try to solve in a more complicated manner using threads, forking, IPCs, signals, memory sharing, and so on.</span> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> The&nbsp;<b>poll</b>(2) system call has the same functionality as&nbsp;<b>select</b>(), and is somewhat more efficient when monitoring sparse file descriptor sets. It is nowadays widely available, but historically was less portable than&nbsp;<b>select</b>().</p> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> The Linux-specific&nbsp;<b>epoll</b>(7) API provides an interface that that is more efficient than<b>select</b>(2) and&nbsp;<b>poll</b>(2) when monitoring large numbers of file descriptors.</p> 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> 另请参阅</h1> 
+ <ul style="font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> 
+  <li> <p style="text-align: justify;"> <a target="_blank" href="http://www.yiibai.com/unix_system_calls/accept.html" style="color: rgb(144, 11, 9); background-color: transparent;">accept (2)</a></p> </li> 
+  <li> <p style="text-align: justify;"> <a target="_blank" href="http://www.yiibai.com/unix_system_calls/connect.html" style="color: rgb(144, 11, 9); background-color: transparent;">connect (2)</a></p> </li> 
+  <li> <p style="text-align: justify;"> <a target="_blank" href="http://www.yiibai.com/unix_system_calls/ioctl.html" style="color: rgb(144, 11, 9); background-color: transparent;">ioctl (2)</a></p> </li> 
+  <li> <p style="text-align: justify;"> <a target="_blank" href="http://www.yiibai.com/unix_system_calls/poll.html" style="color: rgb(144, 11, 9); background-color: transparent;">poll (2)</a></p> </li> 
+  <li> <p style="text-align: justify;"> <a target="_blank" href="http://www.yiibai.com/unix_system_calls/read.html" style="color: rgb(144, 11, 9); background-color: transparent;">read (2)</a></p> </li> 
+  <li> <p style="text-align: justify;"> <a target="_blank" href="http://www.yiibai.com/unix_system_calls/recv.html" style="color: rgb(144, 11, 9); background-color: transparent;">recv (2)</a></p> </li> 
+  <li> <p style="text-align: justify;"> <a target="_blank" href="http://www.yiibai.com/unix_system_calls/select.html" style="color: rgb(144, 11, 9); background-color: transparent;">select (2)</a></p> </li> 
+  <li> <p style="text-align: justify;"> <a target="_blank" href="http://www.yiibai.com/unix_system_calls/send.html" style="color: rgb(144, 11, 9); background-color: transparent;">send (2)</a></p> </li> 
+  <li> <p style="text-align: justify;"> <a target="_blank" href="http://www.yiibai.com/unix_system_calls/sigprocmask.html" style="color: rgb(144, 11, 9); background-color: transparent;">sigprocmask (2)</a></p> </li> 
+  <li> <p style="text-align: justify;"> <a target="_blank" href="http://www.yiibai.com/unix_system_calls/write.html" style="color: rgb(144, 11, 9); background-color: transparent;">write (2)</a></p> 
+   <div>
+     &nbsp;
+   </div> </li> 
+ </ul> 
+ <br>      
+</div></body></html>

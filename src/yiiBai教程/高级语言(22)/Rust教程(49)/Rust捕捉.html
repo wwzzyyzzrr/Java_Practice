@@ -1,0 +1,66 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Rust捕捉</h1><div style="width:100%;float:left;" class="article-content">   
+ <h3 id="821-capturing" style="box-sizing: border-box; -webkit-tap-highlight-color: transparent; -webkit-font-smoothing: antialiased; margin-bottom: 16px; line-height: 1.43; font-size: 1.5em; position: relative; color: rgb(51, 51, 51);  'Clear Sans', 'Helvetica Neue', Helvetica,   margin-top: 0px !important;"> 捕捉</h3> 
+ <p style="box-sizing: border-box; -webkit-tap-highlight-color: transparent; -webkit-font-smoothing: antialiased; margin-top: 0px; margin-bottom: 16px; color: rgb(51, 51, 51);  'Clear Sans', 'Helvetica Neue', Helvetica,   font-size: 16px; line-height: 25.6000003814697px;"> 闭包是内在的灵活性，并会做哪些需要的功能，使撤销工作无需注释。这允许捕捉灵活适应使用的情况，有时会移动，有时借用。闭包可以捕捉变量：</p> 
+ <ul style="box-sizing: border-box; -webkit-tap-highlight-color: transparent; -webkit-font-smoothing: antialiased; padding-right: 0px; padding-left: 2em; margin-top: 0px; margin-bottom: 16px; color: rgb(51, 51, 51);  'Clear Sans', 'Helvetica Neue', Helvetica,   font-size: 16px; line-height: 25.6000003814697px;"> 
+  <li style="box-sizing: border-box; -webkit-tap-highlight-color: transparent; -webkit-font-smoothing: antialiased;"> 通过参考:&nbsp;<code style="box-sizing: border-box; -webkit-tap-highlight-color: transparent; -webkit-font-smoothing: antialiased; Consolas, 'Liberation Mono', Menlo, Courier, monospace; font-size: 13.6000003814697px; padding: 0.2em 0px; margin: 0px; border-radius: 3px; background-color: rgb(247, 247, 247);">&amp;T</code></li> 
+  <li style="box-sizing: border-box; -webkit-tap-highlight-color: transparent; -webkit-font-smoothing: antialiased;"> 通过可变引用:&nbsp;<code style="box-sizing: border-box; -webkit-tap-highlight-color: transparent; -webkit-font-smoothing: antialiased; Consolas, 'Liberation Mono', Menlo, Courier, monospace; font-size: 13.6000003814697px; padding: 0.2em 0px; margin: 0px; border-radius: 3px; background-color: rgb(247, 247, 247);">&amp;mut T</code></li> 
+  <li style="box-sizing: border-box; -webkit-tap-highlight-color: transparent; -webkit-font-smoothing: antialiased;"> 通过传值:&nbsp;<code style="box-sizing: border-box; -webkit-tap-highlight-color: transparent; -webkit-font-smoothing: antialiased; Consolas, 'Liberation Mono', Menlo, Courier, monospace; font-size: 13.6000003814697px; padding: 0.2em 0px; margin: 0px; border-radius: 3px; background-color: rgb(247, 247, 247);">T</code></li> 
+ </ul> 
+ <p style="box-sizing: border-box; -webkit-tap-highlight-color: transparent; -webkit-font-smoothing: antialiased; margin-top: 0px; margin-bottom: 16px; color: rgb(51, 51, 51);  'Clear Sans', 'Helvetica Neue', Helvetica,   font-size: 16px; line-height: 25.6000003814697px;"> 它们优先通过引用捕获变量并仅在需要时使用。</p> 
+ <pre>
+fn main() {
+    let color = "green";
+
+    // A closure to print `color` which immediately borrows (`&amp;`)
+    // `color` and stores the borrow and closure in the `print`
+    // variable. It will remain borrowed until `print` goes out of
+    // scope. `println!` only requires `by reference` so it doesn't
+    // impose anything more restrictive.
+    let print = || println!("`color`: {}", color);
+
+    // Call the closure using the borrow.
+    print();
+    print();
+
+    let mut count = 0;
+
+    // A closure to increment `count` could take either `&amp;mut count`
+    // or `count` but `&amp;mut count` is less restrictive so it takes
+    // that. Immediately borrows `count`.
+    //
+    // A `mut` is required on `inc` because a `&amp;mut` is stored inside.
+    // Thus, calling the closure mutates the closure which requires
+    // a `mut`.
+    let mut inc = || {
+        count += 1;
+        println!("`count`: {}", count);
+    };
+
+    // Call the closure.
+    inc();
+    inc();
+
+    //let reborrow = &amp;mut count;
+    // ^ TODO: try uncommenting this line.
+
+    // A non-copy type.
+    let movable = Box::new(3);
+
+    // `drop` requires `T` so this must take by value. A copy type
+    // would copy into the closure leaving the original untouched.
+    // A non-copy must move and so `movable` immediately moves into
+    // the closure.
+    let consume = || {
+        println!("`movable`: {:?}", movable);
+        drop(movable);
+    };
+
+    // `consume` consumes the variable so this can only be called once.
+    consume();
+    //consume();
+    // ^ TODO: Try uncommenting this line.
+}</pre> 
+ <h3 id="see-also"> 也可以参考:</h3> 
+ <p> <a target="_blank" href="http://www.yiibai.com/rust/std_box.html">Box</a>&nbsp;和&nbsp;<a target="_blank" href="http://doc.rust-lang.org/std/mem/fn.drop.html">std::mem::drop</a></p> 
+ <br>      
+</div></body></html>

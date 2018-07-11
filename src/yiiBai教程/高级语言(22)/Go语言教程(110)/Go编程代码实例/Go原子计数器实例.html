@@ -1,0 +1,61 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Go原子计数器实例</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>Go语言中管理状态的主要机制是通过通道进行通信。在过去的文章中我们已经看到了这一点，例如工人池。 还有一些其他选项用于管理状态。 这里我们将使用<code>sync/atomic</code>包来实现由多个<code>goroutine</code>访问的原子计数器。</p> 
+ <p>使用一个无符号整数表示计数器(正数)。</p> 
+ <p>为了模拟并发更新，将启动<code>50</code>个<code>goroutine</code>，每个增量计数器大约是<code>1</code>毫秒。</p> 
+ <p>为了原子地递增计数器，这里使用<code>AddUint64()</code>函数，在<code>ops</code>计数器的内存地址上使用<code>＆</code>语法。</p> 
+ <p>在增量之间等待一秒，允许一些操作累积。</p> 
+ <p>为了安全地使用计数器，同时它仍然被其他<code>goroutine</code>更新，通过<code>LoadUint64</code>提取一个当前值的副本到<code>opsFinal</code>。 如上所述，需要将获取值的内存地址<code>&amp;ops</code>给这个函数。</p> 
+ <p>运行程序显示执行了大约<code>40,000</code>次操作。</p> 
+ <blockquote> 
+  <p>所有的示例代码，都放在 <code>F:\worksp\golang</code> 目录下。安装Go编程环境请参考：<a target="_blank" href="http://www.yiibai.com/go/go_environment.html">http://www.yiibai.com/go/go_environment.html</a> </p> 
+ </blockquote> 
+ <p><code>atomic-counters.go</code>的完整代码如下所示 -</p> 
+ <pre><code class="lang-go">package main
+
+import "fmt"
+import "time"
+import "sync/atomic"
+
+func main() {
+
+    // We'll use an unsigned integer to represent our
+    // (always-positive) counter.
+    var ops uint64 = 0
+
+    // To simulate concurrent updates, we'll start 50
+    // goroutines that each increment the counter about
+    // once a millisecond.
+    for i := 0; i &lt; 50; i++ {
+        go func() {
+            for {
+                // To atomically increment the counter we
+                // use `AddUint64`, giving it the memory
+                // address of our `ops` counter with the
+                // `&amp;` syntax.
+                atomic.AddUint64(&amp;ops, 1)
+
+                // Wait a bit between increments.
+                time.Sleep(time.Millisecond)
+            }
+        }()
+    }
+
+    // Wait a second to allow some ops to accumulate.
+    time.Sleep(time.Second)
+
+    // In order to safely use the counter while it's still
+    // being updated by other goroutines, we extract a
+    // copy of the current value into `opsFinal` via
+    // `LoadUint64`. As above we need to give this
+    // function the memory address `&amp;ops` from which to
+    // fetch the value.
+    opsFinal := atomic.LoadUint64(&amp;ops)
+    fmt.Println("ops:", opsFinal)
+}
+</code></pre> 
+ <p>执行上面代码，将得到以下输出结果 - </p>   
+ <pre><code class="lang-go">F:\worksp\golang&gt;go run atomic-counters.go
+ops: 41360
+</code></pre>
+ <br>      
+</div></body></html>

@@ -1,0 +1,137 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Yii RESTful API</h1><div style="width:100%;float:left;" class="article-content">   
+ <div> 
+  <div>
+    Yii提供实现了&nbsp;RESTful&nbsp;API&nbsp;以下有用的功能&nbsp;- 
+  </div> 
+ </div> 
+ <div> 
+  <ul> 
+   <li> 
+    <div>
+      快速原型 
+    </div> </li> 
+   <li> 
+    <div>
+      自定义对象序列化 
+    </div> </li> 
+   <li> 
+    <div>
+      响应格式(支持默认JSON和XML) 
+    </div> </li> 
+   <li> 
+    <div>
+      收集数据格式和验证错误 
+    </div> </li> 
+   <li> 
+    <div>
+      高效的路由 
+    </div> </li> 
+   <li> 
+    <div>
+      HATEOAS支持 
+    </div> </li> 
+   <li> 
+    <div>
+      内置支持&nbsp;OPTION&nbsp;和&nbsp;HEAD&nbsp;动词 
+    </div> </li> 
+   <li> 
+    <div>
+      数据缓存和HTTP缓存 
+    </div> </li> 
+   <li> 
+    <div>
+      认证和授权 
+    </div> </li> 
+   <li> 
+    <div>
+      速率限制 
+    </div> </li> 
+  </ul> 
+  <div>
+    在动作中显示如何使用&nbsp;RESTful&nbsp;API&nbsp;，我们需要准备一些数据。
+   <br> 
+   <h2> 
+    <div>
+      准备数据库 
+    </div> </h2> 
+   <div>
+     第1步&nbsp;-&nbsp;创建一个新的数据库。数据库可以通过以下两种方式进行。 
+   </div> 
+   <ul> 
+    <li> <p style="text-align:justify;"> 在终端运行&nbsp;mysql -u root –p </p> </li> 
+    <li> <p style="text-align:justify;"> 登录数据后，通过执行&nbsp;CREATE DATABASE mystudy CHARACTER SET utf8 COLLATE utf8_general_ci;&nbsp;创建一个新的数据库; </p> </li> 
+   </ul> 
+   <div>
+     第2步&nbsp;-&nbsp;在&nbsp;config/db.php&nbsp;文件中配置数据库连接。下面的配置可根据自己的实际情况配置。 
+   </div> 
+   <pre>&lt;?php
+   return [
+      'class' =&gt; 'yii\db\Connection',
+      'dsn' =&gt; 'mysql:host = localhost;dbname = mystudy',
+      'username' =&gt; 'root',
+      'password' =&gt; '',
+      'charset' =&gt; 'utf8',
+   ];
+?&gt;</pre> 
+   <p> 第3步&nbsp;-&nbsp;在项目根文件夹执行：yii migrate/create test_table 。此命令将用于创建管理数据库数据库迁移。&nbsp;migrations文件会出现在项目的根的&nbsp;migrations&nbsp;文件夹中。<br> <img src="http://www.yiibai.com/uploads/tutorial/20160602/1-160602230AQ34.png" width="658" height="233" title="Yii RESTful API" alt="Yii RESTful API"> </p> 
+   <div>
+     第4步&nbsp;-&nbsp;修改迁移文件(在本示例中生成的是：m160529_014611_test_table.php)，并使用以下这些代码。 
+   </div> 
+   <pre>&lt;?php
+   use yii\db\Schema;
+   use yii\db\Migration;
+   class m160529_014611_test_table extends Migration {
+      public function up() {
+         $this-&gt;createTable("user", [
+            "id" =&gt; Schema::TYPE_PK,
+            "name" =&gt; Schema::TYPE_STRING,
+            "email" =&gt; Schema::TYPE_STRING,
+         ]);
+         $this-&gt;batchInsert("user", ["name", "email"], [
+            ["User1", "user11@gmail.com"],
+            ["User2", "user22@gmail.com"],
+            ["User3", "user33@gmail.com"],
+            ["User4", "user44@gmail.com"],
+            ["User5", "user55@gmail.com"],
+            ["User6", "user66@gmail.com"],
+            ["User7", "user77@gmail.com"],
+            ["User8", "user88@gmail.com"],
+            ["User9", "user99@gmail.com"],
+            ["User10", "user1010@gmail.com"],
+            ["User11", "user1111@gmail.com"],
+         ]);
+      }
+      public function down() {
+         //$this-&gt;dropTable('user');
+      }
+   }
+?&gt;</pre> 
+   <div>
+     上述迁移创建用户表，它包含了以下这些字段：id,&nbsp;name,&nbsp;和&nbsp;email。它还增加了一些演示用户帐号。 
+   </div> 
+   <div>
+     第5步&nbsp;-&nbsp;在项目的根目录内运行：&nbsp;yii&nbsp;migrate&nbsp; 来迁移应用到数据库。执行结果如下图所示：
+    <br> 
+   </div> 
+   <img src="http://www.yiibai.com/uploads/tutorial/20160602/1-160602230J42A.png" alt="">
+   <br> 
+   <p> 第6步-现在，我们需要为user表创建模型。为了简便起见，我们将使用GII代码生成工具。在浏览器中打开&nbsp;url:&nbsp;<a target="_blank" href="http://localhost:8080/index.php?r=gii">http://localhost:8080/index.php?r=gii</a>&nbsp;。<br> 然后，点击&nbsp;“Model&nbsp;generator”&nbsp;下的&nbsp;“Start”按钮。&nbsp;填写表名(“user”)和模型类(“MyUser”)，单击“Preview”按钮，最后点击&nbsp;“Generate”&nbsp;按钮。 </p> 
+   <img src="http://www.yiibai.com/uploads/tutorial/20160602/1-160602230R6155.png" alt="">
+   <br> 
+   <div> 
+    <img src="http://www.yiibai.com/uploads/tutorial/20160602/1-160602230T3554.png" alt="">
+    <br> MyUser 文件忆经生成在&nbsp;models&nbsp;目录。 
+   </div> 
+  </div> 
+  <h2> 安装Postman </h2> 
+  <div>
+    Postman 是开发RESTful服务一个使用方便的工具。它提供了用于构建请求一个有用的接口。 
+  </div> 
+  <p style="text-align:justify;"> 可以在&nbsp;<a target="_blank" href="https://chrome.google.com/webstore/detail/postman/fhbjgbiflinjbdggehcddcbncdddomop?hl=en">https://chrome.google.com/webstore/detail/postman/fhbjgbiflinjbdggehcddcbncdddomop?hl=en</a>&nbsp;&nbsp;找到这个工具. </p> 
+  <div>
+    要安装它，点击“Add&nbsp;to&nbsp;Chrome”按钮。 
+  </div> 
+  <img src="/uploads/tutorial/20160604/1-16060421095I28.png" alt=""> 
+ </div>
+ <br>      
+</div></body></html>

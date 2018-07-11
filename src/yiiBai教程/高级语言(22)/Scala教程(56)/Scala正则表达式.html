@@ -1,0 +1,77 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Scala正则表达式</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>本章介绍了Scala如何通过在<code>scala.util.matching</code>包中提供的<code>Regex</code>类支持和实现正则表达式。</p> 
+ <p>尝试以下示例程序，将尝试从语句中查找单词：<code>Scala</code>。</p> 
+ <p><strong>示例</strong></p> 
+ <pre><code class="lang-scala">import scala.util.matching.Regex
+
+object Demo {
+   def main(args: Array[String]) {
+      val pattern = "Scala".r
+      val str = "Scala is Scalable and cool"
+
+      println(pattern findFirstIn str)
+   }
+}
+</code></pre> 
+ <p>将上述程序保存在源文件：<em>Demo.scala</em>中，使用以下命令编译和执行此程序。</p> 
+ <pre><code class="lang-shell">D:\&gt;scalac Demo.scala
+D:\&gt;scala Demo
+Some(Scala)
+</code></pre> 
+ <p>我们创建一个String并在其上调用<code>r()</code>方法。 Scala会将<code>String</code>转换为<code>RichString</code>，并调用该方法获取<code>Regex</code>实例。 要找到正则表达式的第一个匹配项，只需调用<code>findFirstIn()</code>方法即可。如果希望找到匹配词的所有出现，可以使用<code>findAllIn()</code>方法，如果目标字符串中有多个<code>Scala</code>字符，则将返回所有匹配的字符串的集合。</p> 
+ <p>可以使用<code>mkString()</code>方法来连接结果列表，可以使用管道(<code>|</code>)来搜索大小写的字符串：<code>Scala</code>，可以使用<code>Regex</code>构造函数或<code>r()</code>方法来创建模式。</p> 
+ <p>尝试以下示例程序 - </p> 
+ <pre><code class="lang-scala">import scala.util.matching.Regex
+
+object Demo {
+   def main(args: Array[String]) {
+      val pattern = new Regex("(S|s)cala")
+      val str = "Scala is scalable and cool"
+
+      println((pattern findAllIn str).mkString(","))
+   }
+}
+</code></pre> 
+ <p>将上述程序保存在源文件：<em>Demo.scala</em>中，使用以下命令编译和执行此程序。</p> 
+ <pre><code class="lang-shell">D:\&gt;scalac Demo.scala
+D:\&gt;scala Demo
+Scala,scala
+</code></pre> 
+ <p>如果要替换匹配的文本，可以使用<code>replaceFirstIn()</code>替换第一个匹配或<code>replaceAllIn()</code>来替换所有出现的值。</p> 
+ <p><strong>示例</strong></p> 
+ <pre><code class="lang-scala">object Demo {
+   def main(args: Array[String]) {
+      val pattern = "(S|s)cala".r
+      val str = "Scala is scalable and cool"
+
+      println(pattern replaceFirstIn(str, "Java"))
+   }
+}
+</code></pre> 
+ <p>将上述程序保存在源文件：<em>Demo.scala</em>中，使用以下命令编译和执行此程序。</p>   
+ <pre><code class="lang-shell">D:\&gt;scalac Demo.scala
+D:\&gt;scala Demo
+Java is scalable and cool
+</code></pre> 
+ <h2 id="h2-u5F62u6210u6B63u5219u8868u8FBEu5F0F"><a name="形成正则表达式" class="reference-link"></a><span class="header-link octicon octicon-link"></span>形成正则表达式</h2>
+ <p>Scala从Java继承其正则表达式语法，后者继承了Perl的大部分功能。可参考Java正则表达式： <a target="_blank" href="http://www.yiibai.com/java/java_regular_expressions.html">http://www.yiibai.com/java/java_regular_expressions.html</a> </p> 
+ <p><em>注意</em> - 每个反斜杠在上面的字符串中出现两次。 这是因为在Java和Scala中，单个反斜杠是字符串文字中的转义字符，而不是字符串中显示的常规字符。 所以，反斜杠不是<code>'\'</code>，需要写<code>'\\'</code>来获取字符串中的单个反斜杠。</p> 
+ <p>尝试以下示例程序 -</p> 
+ <pre><code class="lang-scala">import scala.util.matching.Regex
+
+object Demo {
+   def main(args: Array[String]) {
+      val pattern = new Regex("abl[ae]\\d+")
+      val str = "ablaw is able1 and cool"
+
+      println((pattern findAllIn str).mkString(","))
+   }
+}
+</code></pre> 
+ <p>将上述程序保存在源文件：<em>Demo.scala</em>中，使用以下命令编译和执行此程序。</p> 
+ <pre><code class="lang-shell">D:\&gt;scalac Demo.scala
+D:\&gt;scala Demo
+able1
+</code></pre>
+ <br>      
+</div></body></html>

@@ -1,0 +1,561 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Secure Spring REST API使用基本认证</h1><div style="width:100%;float:left;" class="article-content">   
+ <div> 
+  <div>
+    假设您想保护应用程序的REST&nbsp;API，要怎么做？&nbsp;有几种流行的方式做到这一点，从基本身份验证到一个完全成熟的OAuth2安全解决方案。&nbsp;本教程文章中将介绍使用基本安全身份验证，涉及两个独立的客户实例来测试REST&nbsp;API：【Postman和基于Spring&nbsp;RestTemplate的Java应用程序】，现在使用它们来试着访问REST&nbsp;API。我们将在接下来的文章展示&nbsp;OAuth2 用户相同的例子：
+   <a target="_blank" href="http://yiibai.com/spring-security/secure-spring-rest-api-using-oauth2.html">使用OAuth2 REST API&nbsp;</a> 
+  </div> 
+ </div> 
+ <div> 
+  <div>
+    与往常一样，完整的代码可以在本文的末尾下载。 
+  </div> 
+  <div>
+    如果您正在使用基本身份验证，可查看AngularJS应用基础：
+   <a target="_blank" href="http://yiibai.com/spring-security/angularjs-basic-authentication-using-spring-security.html">AngularJS使用Spring Securyt的基础认证</a>&nbsp;这篇文章中显示了如何使用AngularJS客户端。 
+  </div> 
+  <hr> 
+  <h3> 
+   <div>
+     什么是基本身份验证？ 
+   </div> </h3> 
+  <p> 如基于Web的客户端的登录页面或会话身份验证的传统方法与人类有良好的互动效果，但并不能完全适合很好地应用，[REST]客户端它不止只一个Web应用程序进行通信时。考虑它是一个完全不同于服务器上的其他API，它随时都会与服务器的API通信，无需任何人为干预。 </p> 
+  <p> 基本身份验证它提供了一个方法来解决这个问题，虽然不是很安全。基本身份验证，客户端的每个请求发送Base64编码凭据，使用HTTP[授权]头。这意味着每个请求独立于其他请求和服务器可能/不维护客户端，这对可扩展性是非常好的。 </p> 
+  <div>
+    在HTTPS个词：对于任何形式的安全实现，从基本身份验证到一个完全成熟的 OAuth2 实现，HTTPS都是具备的。如果没有HTTPS，不管你的实现是什么，安全性是容易受到损害。 
+  </div> 
+  <div>
+    下面示出的是准备标头的样本代码。 
+  </div> 
+  <pre>    	String plainClientCredentials="myusername:mypassword";
+    	String base64ClientCredentials = new String(Base64.encodeBase64(plainClientCredentials.getBytes()));
+
+    	HttpHeaders headers = getHeaders();
+    	headers.add("Authorization", "Basic " + base64ClientCredentials);</pre> 
+  <div>
+    因而可能会产生这样的结果： 
+  </div> 
+  <p> Authorization : Basic bXktdHJ1c3RlZC1jbGllbnQ6c2VjcmV0... </p> 
+  <div>
+    这个头将和每个请求一起发送。由于证书[Base&nbsp;64编码，甚至不加密]要和每个请求一起发送，这样安全就可能受到损害。为了防止这一点，使用的一种方式是在基本认证时也使用HTTPS。 
+  </div> 
+  <h3> 
+   <div>
+     基本身份验证和Spring&nbsp;Security 
+   </div> </h3> 
+  <div>
+    有两个步骤，就可以启用基本身份验证在Spring&nbsp;Security配置中。 
+  </div> 
+  <p> 1.&nbsp;配置httpBasic&nbsp;:&nbsp;配置HTTP基本身份验证。&nbsp;[基于HTTP的XML] </p> 
+  <p> 2.&nbsp;配置有BasicAuthenticationEntryYiibai认证入口点&nbsp;:&nbsp;如果验证失败[无效/缺少凭据]，这个切入点将被触发。&nbsp;这是非常重要的，因为我们不想重定向到身份验证失败的登录页面[Spring&nbsp;Security的默认行为] ，因为这里我们没有一个登录页面。 </p> 
+  <p> 下面显示的是基于HTTP和切入点建立完整的&nbsp;Spring Security&nbsp;&nbsp;配置。 </p> 
+  <pre>package com.yiibai.springmvc.security;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
+
+@Configuration
+@EnableWebSecurity
+public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
+
+	private static String REALM="MY_TEST_REALM";
+	
+	@Autowired
+	public void configureGlobalSecurity(AuthenticationManagerBuilder auth) throws Exception {
+		auth.inMemoryAuthentication().withUser("bill").password("abc123").roles("ADMIN");
+		auth.inMemoryAuthentication().withUser("tom").password("abc123").roles("USER");
+	}
+	
+	@Override
+	protected void configure(HttpSecurity http) throws Exception {
+ 
+	  http.csrf().disable()
+	  	.authorizeRequests()
+	  	.antMatchers("/user/**").hasRole("ADMIN")
+		.and().httpBasic().realmName(REALM).authenticationEntryYiibai(getBasicAuthEntryYiibai())
+		.and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);//We don't need sessions to be created.
+ 	}
+	
+	@Bean
+	public CustomBasicAuthenticationEntryYiibai getBasicAuthEntryYiibai(){
+		return new CustomBasicAuthenticationEntryYiibai();
+	}
+	
+	/* To allow Pre-flight [OPTIONS] request from browser */
+    @Override
+    public void configure(WebSecurity web) throws Exception {
+        web.ignoring().antMatchers(HttpMethod.OPTIONS, "/**");
+    }
+}</pre> 
+  <div>
+    而从实际的切入点，如果验证失败将触发程序处理。您可以自定义它来响应发送自定义的内容。 
+  </div> 
+  <pre>package com.yiibai.springmvc.security;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.web.authentication.www.BasicAuthenticationEntryYiibai;
+
+public class CustomBasicAuthenticationEntryYiibai extends BasicAuthenticationEntryYiibai {
+
+    @Override
+    public void commence(final HttpServletRequest request, 
+    		final HttpServletResponse response, 
+    		final AuthenticationException authException) throws IOException, ServletException {
+    	//Authentication failed, send error response.
+    	response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+    	response.addHeader("WWW-Authenticate", "Basic realm=" + getRealmName() + "");
+        
+        PrintWriter writer = response.getWriter();
+        writer.println("HTTP Status 401 : " + authException.getMessage());
+    }
+    
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        setRealmName("MY_TEST_REALM");
+        super.afterPropertiesSet();
+    }
+}&nbsp;</pre> 
+  <p> 这就是需要配置基本安全。现在，让我们来看看动作中的一切，这里用之前老的REST&nbsp;API： </p> 
+  <h3> REST API </h3> 
+  <div>
+    简单的Spring&nbsp;REST&nbsp;API，它的服务器用户(客户可以使用标准的HTML动词，符合REST风格来执行CRUD操作。 
+  </div> 
+  <pre>package com.yiibai.springmvc.controller;
+ 
+import java.util.List;
+ 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.util.UriComponentsBuilder;
+ 
+import com.yiibai.springmvc.model.User;
+import com.yiibai.springmvc.service.UserService;
+ 
+@RestController
+public class HelloWorldRestController {
+ 
+    @Autowired
+    UserService userService;  //Service which will do all data retrieval/manipulation work
+ 
+     
+    //-------------------Retrieve All Users--------------------------------------------------------
+     
+    @RequestMapping(value = "/user/", method = RequestMethod.GET)
+    public ResponseEntity&lt;List&lt;User&gt;&gt; listAllUsers() {
+        List&lt;User&gt; users = userService.findAllUsers();
+        if(users.isEmpty()){
+            return new ResponseEntity&lt;List&lt;User&gt;&gt;(HttpStatus.NO_CONTENT);//You many decide to return HttpStatus.NOT_FOUND
+        }
+        return new ResponseEntity&lt;List&lt;User&gt;&gt;(users, HttpStatus.OK);
+    }
+ 
+ 
+    //-------------------Retrieve Single User--------------------------------------------------------
+     
+    @RequestMapping(value = "/user/{id}", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_VALUE,MediaType.APPLICATION_XML_VALUE})
+    public ResponseEntity&lt;User&gt; getUser(@PathVariable("id") long id) {
+        System.out.println("Fetching User with id " + id);
+        User user = userService.findById(id);
+        if (user == null) {
+            System.out.println("User with id " + id + " not found");
+            return new ResponseEntity&lt;User&gt;(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity&lt;User&gt;(user, HttpStatus.OK);
+    }
+ 
+     
+     
+    //-------------------Create a User--------------------------------------------------------
+     
+    @RequestMapping(value = "/user/", method = RequestMethod.POST)
+    public ResponseEntity&lt;Void&gt; createUser(@RequestBody User user, UriComponentsBuilder ucBuilder) {
+        System.out.println("Creating User " + user.getName());
+ 
+        if (userService.isUserExist(user)) {
+            System.out.println("A User with name " + user.getName() + " already exist");
+            return new ResponseEntity&lt;Void&gt;(HttpStatus.CONFLICT);
+        }
+ 
+        userService.saveUser(user);
+ 
+        HttpHeaders headers = new HttpHeaders();
+        headers.setLocation(ucBuilder.path("/user/{id}").buildAndExpand(user.getId()).toUri());
+        return new ResponseEntity&lt;Void&gt;(headers, HttpStatus.CREATED);
+    }
+ 
+     
+    //------------------- Update a User --------------------------------------------------------
+     
+    @RequestMapping(value = "/user/{id}", method = RequestMethod.PUT)
+    public ResponseEntity&lt;User&gt; updateUser(@PathVariable("id") long id, @RequestBody User user) {
+        System.out.println("Updating User " + id);
+         
+        User currentUser = userService.findById(id);
+         
+        if (currentUser==null) {
+            System.out.println("User with id " + id + " not found");
+            return new ResponseEntity&lt;User&gt;(HttpStatus.NOT_FOUND);
+        }
+ 
+        currentUser.setName(user.getName());
+        currentUser.setAge(user.getAge());
+        currentUser.setSalary(user.getSalary());
+         
+        userService.updateUser(currentUser);
+        return new ResponseEntity&lt;User&gt;(currentUser, HttpStatus.OK);
+    }
+ 
+    //------------------- Delete a User --------------------------------------------------------
+     
+    @RequestMapping(value = "/user/{id}", method = RequestMethod.DELETE)
+    public ResponseEntity&lt;User&gt; deleteUser(@PathVariable("id") long id) {
+        System.out.println("Fetching &amp; Deleting User with id " + id);
+ 
+        User user = userService.findById(id);
+        if (user == null) {
+            System.out.println("Unable to delete. User with id " + id + " not found");
+            return new ResponseEntity&lt;User&gt;(HttpStatus.NOT_FOUND);
+        }
+ 
+        userService.deleteUserById(id);
+        return new ResponseEntity&lt;User&gt;(HttpStatus.NO_CONTENT);
+    }
+ 
+     
+    //------------------- Delete All Users --------------------------------------------------------
+     
+    @RequestMapping(value = "/user/", method = RequestMethod.DELETE)
+    public ResponseEntity&lt;User&gt; deleteAllUsers() {
+        System.out.println("Deleting All Users");
+ 
+        userService.deleteAllUsers();
+        return new ResponseEntity&lt;User&gt;(HttpStatus.NO_CONTENT);
+    }
+ 
+}</pre> 
+  <h3> 运行应用程序 </h3> 
+  <div>
+    构建和部署应用程序到Web容器[例如Tomcat]。运行它，并使用两种不同的客户端进行测试。 
+  </div> 
+  <h4> 使用客户1: Postman </h4> 
+  <div>
+    发送一个请求来获取用户列表。请求URL：
+   <a target="_blank" href="http://localhost:8080/SecureRESTApiWithBasicAuthentication/user/r">http://localhost:8080/SecureRESTApiWithBasicAuthentication/user/</a>，将会得到一个401。 
+  </div> 
+  <p> <img src="/uploads/tutorial/20160829/160r9212416_1_446.png" alt=""> </p> 
+  <p> 现在，从下拉列表中选择类型(Type)为&nbsp;‘Basic Auth’，填写用户名/密码[bill/abc123],，点击&nbsp;‘update request’。如下图中所示 -&nbsp;<br> <img src="/uploads/tutorial/20160829/160r9212436_1_9c.png" alt=""> </p> 
+  <p> 点击头(Headers&nbsp;)标签。您应该看到新的头。让我们添加“Accept”头以及执行JSON响应。如下图中所示 -&nbsp; </p> 
+  <p> <img src="/uploads/tutorial/20160829/160r9212503_1_251.png" alt=""> </p> 
+  <div>
+    现在发送请求。这个时候您应该看到响应的用户列表了。 
+  </div> 
+  <p> <img src="/uploads/tutorial/20160829/160r9212520_1_919.png" alt=""> </p> 
+  <h4> 
+   <div>
+     使用客户端2：基于RestTemplate&nbsp;Java应用程序 
+   </div> </h4> 
+  <div>
+    让我们用一个完全成熟的Java客户端来访问REST&nbsp;API。我们将使用Spring&nbsp;RestTemplate&nbsp;发送请求。以了解我们如何为每个请求设置请求头，发送请求之前要特别注意。 
+  </div>   
+  <pre>package com.yiibai.springmvc;
+ 
+import java.net.URI;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.List;
+
+import org.apache.commons.codec.binary.Base64;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestTemplate;
+
+import com.yiibai.springmvc.model.User;
+ 
+public class SpringRestClient {
+ 
+    public static final String REST_SERVICE_URI = "http://localhost:8080/SecureRESTApiWithBasicAuthentication";
+ 
+    /*
+     * Add HTTP Authorization header, using Basic-Authentication to send user-credentials.
+     */
+    private static HttpHeaders getHeaders(){
+    	String plainCredentials="bill:abc123";
+    	String base64Credentials = new String(Base64.encodeBase64(plainCredentials.getBytes()));
+    	
+    	HttpHeaders headers = new HttpHeaders();
+    	headers.add("Authorization", "Basic " + base64Credentials);
+    	headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+    	return headers;
+    }
+    
+    /*
+     * Send a GET request to get list of all users.
+     */
+    @SuppressWarnings("unchecked")
+    private static void listAllUsers(){
+        System.out.println("\nTesting listAllUsers API-----------");
+        RestTemplate restTemplate = new RestTemplate(); 
+        
+        HttpEntity&lt;String&gt; request = new HttpEntity&lt;String&gt;(getHeaders());
+        ResponseEntity&lt;List&gt; response = restTemplate.exchange(REST_SERVICE_URI+"/user/", HttpMethod.GET, request, List.class);
+        List&lt;LinkedHashMap&lt;String, Object&gt;&gt; usersMap = (List&lt;LinkedHashMap&lt;String, Object&gt;&gt;)response.getBody();
+        
+        if(usersMap!=null){
+            for(LinkedHashMap&lt;String, Object&gt; map : usersMap){
+                System.out.println("User : id="+map.get("id")+", Name="+map.get("name")+", Age="+map.get("age")+", Salary="+map.get("salary"));;
+            }
+        }else{
+            System.out.println("No user exist----------");
+        }
+    }
+     
+    /*
+     * Send a GET request to get a specific user.
+     */
+    private static void getUser(){
+        System.out.println("\nTesting getUser API----------");
+        RestTemplate restTemplate = new RestTemplate();
+        HttpEntity&lt;String&gt; request = new HttpEntity&lt;String&gt;(getHeaders());
+        ResponseEntity&lt;User&gt; response = restTemplate.exchange(REST_SERVICE_URI+"/user/1", HttpMethod.GET, request, User.class);
+        User user = response.getBody();
+        System.out.println(user);
+    }
+     
+    /*
+     * Send a POST request to create a new user.
+     */
+    private static void createUser() {
+        System.out.println("\nTesting create User API----------");
+        RestTemplate restTemplate = new RestTemplate();
+        User user = new User(0,"Sarah",51,134);
+        HttpEntity&lt;Object&gt; request = new HttpEntity&lt;Object&gt;(user, getHeaders());
+        URI uri = restTemplate.postForLocation(REST_SERVICE_URI+"/user/", request, User.class);
+        System.out.println("Location : "+uri.toASCIIString());
+    }
+ 
+    /*
+     * Send a PUT request to update an existing user.
+     */
+    private static void updateUser() {
+        System.out.println("\nTesting update User API----------");
+        RestTemplate restTemplate = new RestTemplate();
+        User user  = new User(1,"Tomy",33, 70000);
+        HttpEntity&lt;Object&gt; request = new HttpEntity&lt;Object&gt;(user, getHeaders());
+        ResponseEntity&lt;User&gt; response = restTemplate.exchange(REST_SERVICE_URI+"/user/1", HttpMethod.PUT, request, User.class);
+        System.out.println(response.getBody());
+    }
+ 
+    /*
+     * Send a DELETE request to delete a specific user.
+     */
+    private static void deleteUser() {
+        System.out.println("\nTesting delete User API----------");
+        RestTemplate restTemplate = new RestTemplate();
+        HttpEntity&lt;String&gt; request = new HttpEntity&lt;String&gt;(getHeaders());
+        restTemplate.exchange(REST_SERVICE_URI+"/user/3", HttpMethod.DELETE, request, User.class);
+    }
+ 
+ 
+    /*
+     * Send a DELETE request to delete all users.
+     */
+    private static void deleteAllUsers() {
+        System.out.println("\nTesting all delete Users API----------");
+        RestTemplate restTemplate = new RestTemplate();
+        HttpEntity&lt;String&gt; request = new HttpEntity&lt;String&gt;(getHeaders());
+        restTemplate.exchange(REST_SERVICE_URI+"/user/", HttpMethod.DELETE, request, User.class);
+    }
+ 
+
+    public static void main(String args[]){
+        
+    	listAllUsers();
+
+        getUser();
+
+        createUser();
+        listAllUsers();
+
+        updateUser();
+        listAllUsers();
+
+        deleteUser();
+        listAllUsers();
+
+        deleteAllUsers();
+        listAllUsers();
+    }
+}</pre> 
+  <p> 看到上面程序的输出是： </p> 
+  <pre>Testing listAllUsers API-----------
+User : id=1, Name=Sam, Age=30, Salary=70000.0
+User : id=2, Name=Tom, Age=40, Salary=50000.0
+User : id=3, Name=Jerome, Age=45, Salary=30000.0
+User : id=4, Name=Silvia, Age=50, Salary=40000.0
+
+Testing getUser API----------
+User [id=1, name=Sam, age=30, salary=70000.0]
+
+Testing create User API----------
+Location : http://localhost:8080/SecureRESTApiWithBasicAuthentication/user/5
+
+Testing listAllUsers API-----------
+User : id=1, Name=Sam, Age=30, Salary=70000.0
+User : id=2, Name=Tom, Age=40, Salary=50000.0
+User : id=3, Name=Jerome, Age=45, Salary=30000.0
+User : id=4, Name=Silvia, Age=50, Salary=40000.0
+User : id=5, Name=Sarah, Age=51, Salary=134.0
+
+Testing update User API----------
+User [id=1, name=Tomy, age=33, salary=70000.0]
+
+Testing listAllUsers API-----------
+User : id=1, Name=Tomy, Age=33, Salary=70000.0
+User : id=2, Name=Tom, Age=40, Salary=50000.0
+User : id=3, Name=Jerome, Age=45, Salary=30000.0
+User : id=4, Name=Silvia, Age=50, Salary=40000.0
+User : id=5, Name=Sarah, Age=51, Salary=134.0
+
+Testing delete User API----------
+
+Testing listAllUsers API-----------
+User : id=1, Name=Tomy, Age=33, Salary=70000.0
+User : id=2, Name=Tom, Age=40, Salary=50000.0
+User : id=4, Name=Silvia, Age=50, Salary=40000.0
+User : id=5, Name=Sarah, Age=51, Salary=134.0
+
+Testing all delete Users API----------
+
+Testing listAllUsers API-----------
+No user exist----------</pre> 
+  <div>
+    在本实例中所使用的服务如下。完整的代码可以在本文章的结尾部分下载。 
+  </div> 
+  <pre>package com.yiibai.springmvc.service;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
+
+import org.springframework.stereotype.Service;
+
+import com.yiibai.springmvc.model.User;
+
+@Service("userService")
+public class UserServiceImpl implements UserService{
+	
+	private static final AtomicLong counter = new AtomicLong();
+	
+	private static List&lt;User&gt; users;
+	
+	static{
+		users= populateDummyUsers();
+	}
+
+	public List&lt;User&gt; findAllUsers() {
+		return users;
+	}
+	
+	public User findById(long id) {
+		for(User user : users){
+			if(user.getId() == id){
+				return user;
+			}
+		}
+		return null;
+	}
+	
+	public User findByName(String name) {
+		for(User user : users){
+			if(user.getName().equalsIgnoreCase(name)){
+				return user;
+			}
+		}
+		return null;
+	}
+	
+	public void saveUser(User user) {
+		user.setId(counter.incrementAndGet());
+		users.add(user);
+	}
+
+	public void updateUser(User user) {
+		int index = users.indexOf(user);
+		users.set(index, user);
+	}
+
+	public void deleteUserById(long id) {
+		
+		for (Iterator&lt;User&gt; iterator = users.iterator(); iterator.hasNext(); ) {
+		    User user = iterator.next();
+		    if (user.getId() == id) {
+		        iterator.remove();
+		    }
+		}
+	}
+
+	public boolean isUserExist(User user) {
+		return findByName(user.getName())!=null;
+	}
+	
+	public void deleteAllUsers(){
+		users.clear();
+	}
+
+	private static List&lt;User&gt; populateDummyUsers(){
+		List&lt;User&gt; users = new ArrayList&lt;User&gt;();
+		users.add(new User(counter.incrementAndGet(),"Sam",30, 70000));
+		users.add(new User(counter.incrementAndGet(),"Tom",40, 50000));
+		users.add(new User(counter.incrementAndGet(),"Jerome",45, 30000));
+		users.add(new User(counter.incrementAndGet(),"Silvia",50, 40000));
+		return users;
+	}
+
+}</pre> 
+  <h3> 工程目录结构 </h3> 
+  <div>
+    最后，下面示出的是本例项目的结构。
+   <br> 
+   <img src="/uploads/tutorial/20160829/160r9212550_1_349.png" alt="">
+   <br> 
+   <img src="/uploads/tutorial/20160829/160r9212607_1_n8.png" alt="">
+   <br> 
+  </div> 
+  <h4> 下载源代码 </h4> 
+  <div> 
+   <a target="_blank" href="http://pan.baidu.com/s/1pKMbHCv">SecureRESTApiWithBasicAuthentication.zip</a> 
+  </div> 
+  <h4> 参考 </h4> 
+  <ul> 
+   <li> <a target="_blank" href="http://projects.spring.io/spring-security/">Spring Security 4 工程页面</a> </li> 
+   <li> <a target="_blank" href="http://docs.spring.io/spring-security/site/docs/4.0.1.RELEASE/reference/htmlsingle/">Spring Security 4 参考手册</a> </li> 
+  </ul> 
+ </div>
+ <br>      
+</div></body></html>

@@ -1,0 +1,41 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Django创建视图</h1><div style="width:100%;float:left;" class="article-content">   
+ <div> 
+  <div>
+    视图功能，或简称"view"，是一个简单的Python函数，它接受一个Web请求，并返回一个Web响应。此响应可以是 Web页的HTML内容，或重定向，或404错误，或XML文档，或图像/片等。例如：使用视图创建页面，请注意需要将一个视图关联到一个URL，并把它看作一个网页。 
+  </div> 
+ </div> 
+ <div> 
+  <div>
+    在Django中，视图必须在应用程序的&nbsp;views.py&nbsp;文件中创建。 
+  </div> 
+  <h2> 简单的视图 </h2> 
+  <p style="text-align:justify;"> 我们将在 myapp&nbsp;创建一个简单的视图显示：&nbsp;"welcome to yiibai !" </p> 
+  <p style="text-align:justify;"> 查看如下的视图 − </p> 
+  <pre>from django.http import HttpResponse
+
+def hello(request):
+   text = """&lt;h1&gt;welcome to yiibai !&lt;/h1&gt;"""
+   return HttpResponse(text)&nbsp;</pre> 
+  <p> 在这个视图中，我们使用 HttpResponse 呈现 HTML(你可能已经注意到了，我们将HTML硬编码在视图中)。&nbsp;在这个视图我们只是需要把它映射到一个URL(这将在即将到来的章节中讨论)的页面。 </p> 
+  <p> 我们使用 HttpResponse 在渲染视图 HTML 之前。&nbsp;这不是渲染网页的最佳方式。Django支持MVT模式，从而先渲染视图，Django&nbsp;-&nbsp;MVT这是我们需要的− </p> 
+  <p> 一个模板文件: myapp/templates/hello.html </p> 
+  <p> 现在，我们的视图内容如下&nbsp;− </p>   
+  <pre>from django.shortcuts import render
+
+def hello(request):
+   return render(request, "myapp/template/hello.html", {})</pre> 
+  <div>
+    视图还可以接受的参数&nbsp;- 
+  </div> 
+  <pre>from django.http import HttpResponse
+
+def hello(request, number):
+   text = "&lt;h1&gt;welcome to my app number %s!&lt;/h1&gt;"% number
+   return HttpResponse(text)&nbsp;</pre> 
+  <p> 当链接到一个网址，页面会显示作为参数传递的数值。&nbsp;注意，参数将通过URL(在下一章节中讨论)传递。 </p> 
+  <div> 
+   <span style="background-color:inherit;font-family:微软雅黑;font-size:14px;line-height:1.5;"><br> </span> 
+  </div> 
+ </div>
+ <br>      
+</div></body></html>

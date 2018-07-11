@@ -1,0 +1,71 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Java注解</h1><div style="width:100%;float:left;" class="article-content">   
+ <h2 id="h2-java-"> <a name="Java注解是什么？"></a><span class="header-link octicon octicon-link"></span>Java注解是什么？ </h2> 
+ <p> 在Java中的注解允许将元数据与程序元素相关联。<br> 程序元素可以是包，类，接口，类的字段，局部变量，方法，方法的参数，枚举，注解，通用类型/方法声明中的类型参数等等。 </p> 
+ <p> 可以在Java程序中注解任何声明或类型。注解在任何其他修饰符(public，private，final，static等)的程序元素的声明中用作修饰符。与修饰符不同，注解不会修改程序元素的含义。它是程序元素的注解。 </p> 
+ <h2 id="h2-u58F0u660Eu6CE8u89E3u7C7Bu578B"> <a name="声明注解类型"></a><span class="header-link octicon octicon-link"></span>声明注解类型 </h2> 
+ <p> 声明注解类型类似于声明接口类型。注解类型是一种特殊类型的接口类型。使用前面带有@符号的interface关键字来声明注解类型(注意与声明接口的区别)。<br> 以下是声明注解类型的一般语法： </p> 
+ <pre>&lt;modifiers&gt; @interface &lt;annotation-type-name&gt;  {
+    // Annotation type body
+}</pre> 
+ <p> 注解声明的&lt;modifiers&gt;修辞符与接口声明的相同。可以将注解类型声明为public或package级别。@符号与interface关键字之间可以用空格分隔，也可以连接在一起。按照惯例，它们一般是连接放在一起，如：<a target="_blank" href="https://github.com/interface" class="at-link">@interface</a>。interface关键字后面是注解类型名称。 它应该是有效的Java标识符。 </p> 
+ <p> 注解类型正文放在大括号中。以下代码创建注解以使用版本信息注解程序元素。 </p> 
+ <pre>public  @interface  Version {
+    int  major();
+    int  minor();
+}</pre> 
+ <p> 在上面代码中的Version注解类型中声明了两个抽象方法：major()和minor()。注解类型中的抽象方法称为元素。注解可以声明零个或多个元素，它们被声明为抽象方法。抽象方法名称是注解类型的元素的名称。<br> 在上面的代码中，Version注解类型声明了两个元素：major和minor。 两个元素的数据类型都是int。 </p> 
+ <p> 如果要导入一个注解类型，那么它应该就像导入任何其他类型一样。 </p> 
+ <h2 id="h2-u6CE8u89E3u5B9Eu4F8B"> <a name="注解实例"></a><span class="header-link octicon octicon-link"></span>注解实例 </h2> 
+ <p> 要创建注解类型的实例并使用它来注解程序元素，使用以下语法： </p>   
+ <pre>@annotationType(name1=value1,  name2=value2, names3=values3...)</pre> 
+ <p> 注解类型前面带有一个@符号，后面是用括号括起来的逗号分隔的name = value对列表。name = value对中的名称是在注解类型中声明的元素的名称和值，它由用户提供。name = value对不必按照在注释类型中声明的顺序出现。<br> 以下代码使用Version类型的注解，主要元素值设置为1(major=1)，次要元素值设置为0(minor=0)。 </p> 
+ <pre>@Version(major=1, minor=0)</pre> 
+ <p> 也可以使用注释类型的完全限定名，如下代码 - </p> 
+ <pre>@com.java2s.annotation.Version(major=0,  minor=1)</pre> 
+ <p> 可以将类声明注释为 - </p> 
+ <pre>@Version(major=1, minor=0)
+public  class  VersionTest {
+
+}</pre> 
+ <p> 可以将程序元素的注释与其他修饰符混合使用。 </p> 
+ <pre>@Version(major=1, minor=0)  public  class  VersionTest {
+}
+
+public  @Version(major=1, minor=0)  class  VersionTest {
+}</pre> 
+ <p> 完整的源代码 </p> 
+ <pre>@interface Version {
+  int major();
+
+  int minor();
+}
+
+@Version(major = 1, minor = 0)
+public class Main {
+  @Version(major = 1, minor = 1)
+  private int xyz = 110;
+
+  @Version(major = 1, minor = 0)
+  public Main() {
+  }
+
+  @Version(major = 1, minor = 1)
+  public Main(int xyz) {
+    this.xyz = xyz;
+  }
+
+  @Version(major = 1, minor = 0)
+  public void printData() {
+  }
+
+  @Version(major = 1, minor = 1)
+  public void setXyz(int xyz) {
+
+    @Version(major = 1, minor = 2)
+    int newValue = xyz;
+
+    this.xyz = xyz;
+  }
+}</pre>
+ <br>      
+</div></body></html>

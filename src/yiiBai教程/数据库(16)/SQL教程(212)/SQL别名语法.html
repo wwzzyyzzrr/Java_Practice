@@ -1,0 +1,78 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">SQL别名语法</h1><div style="width:100%;float:left;" class="article-content">   
+ <p> 可以通过给定另一名称被叫作别名临时重命名表或列。</p> 
+ <p> 使用表别名指在一个特定的SQL语句重命名表。 重命名是一个临时的变化，实际的表名称并不更改数据库中。</p> 
+ <p> 列别名用来命名表中的列的特定SQL查询的目的。</p> 
+ <h2> 语法</h2> 
+ <p> 表别名的基本语法如下：</p> 
+ <pre class="prettyprint" style="border-radius: 0px; font-size: 12px; overflow: auto;">
+SELECT column1, column2....
+FROM table_name AS alias_name
+WHERE [condition];</pre> 
+ <p> 列别名的基本语法如下：</p> 
+ <pre class="prettyprint" style="border-radius: 0px; font-size: 12px; overflow: auto;">
+SELECT column_name AS alias_name
+FROM table_name
+WHERE [condition];</pre> 
+ <h2> 例子：</h2> 
+ <p> 考虑下面的两个表中，(a)CUSTOMERS表如下：</p> 
+ <pre class="prettyprint" style="border-radius: 0px; font-size: 12px; overflow: auto;">
++----+----------+-----+-----------+----------+
+| ID | NAME     | AGE | ADDRESS   | SALARY   |
++----+----------+-----+-----------+----------+
+|  1 | Ramesh   |  32 | Ahmedabad |  2000.00 |
+|  2 | Khilan   |  25 | Delhi     |  1500.00 |
+|  3 | kaushik  |  23 | Kota      |  2000.00 |
+|  4 | Chaitali |  25 | Mumbai    |  6500.00 |
+|  5 | Hardik   |  27 | Bhopal    |  8500.00 |
+|  6 | Komal    |  22 | MP        |  4500.00 |
+|  7 | Muffy    |  24 | Indore    | 10000.00 |
++----+----------+-----+-----------+----------+</pre> 
+ <p> (b)另一个ORDERS表如下：</p> 
+ <pre class="prettyprint" style="border-radius: 0px; font-size: 12px; overflow: auto;">
++-----+---------------------+-------------+--------+
+|OID  | DATE                | CUSTOMER_ID | AMOUNT |
++-----+---------------------+-------------+--------+
+| 102 | 2009-10-08 00:00:00 |           3 |   3000 |
+| 100 | 2009-10-08 00:00:00 |           3 |   1500 |
+| 101 | 2009-11-20 00:00:00 |           2 |   1560 |
+| 103 | 2008-05-20 00:00:00 |           4 |   2060 |
++-----+---------------------+-------------+--------+</pre> 
+ <p> 现在，下面是表的别名的用法：</p> 
+ <pre class="prettyprint" style="border-radius: 0px; font-size: 12px; overflow: auto;">
+SQL&gt; SELECT C.ID, C.NAME, C.AGE, O.AMOUNT 
+        FROM CUSTOMERS AS C, ORDERS AS O
+        WHERE  C.ID = O.CUSTOMER_ID;</pre> 
+ <p> 这将产生以下结果：</p> 
+ <pre class="prettyprint" style="border-radius: 0px; font-size: 12px; overflow: auto;">
++----+----------+-----+--------+
+| ID | NAME     | AGE | AMOUNT |
++----+----------+-----+--------+
+|  3 | kaushik  |  23 |   3000 |
+|  3 | kaushik  |  23 |   1500 |
+|  2 | Khilan   |  25 |   1560 |
+|  4 | Chaitali |  25 |   2060 |
++----+----------+-----+--------+</pre> 
+ <p> 以下是列别名的用法：</p> 
+ <div style="float:left;margin-bottom: 10px;">  
+ </div>
+ <div style="float:left;margin-bottom: 10px;">  
+ </div>  
+ <pre class="prettyprint" style="border-radius: 0px; font-size: 12px; overflow: auto;">
+SQL&gt; SELECT  ID AS CUSTOMER_ID, NAME AS CUSTOMER_NAME
+     FROM CUSTOMERS
+     WHERE SALARY IS NOT NULL;</pre> 
+ <p> 这将产生以下结果：</p> 
+ <pre class="prettyprint" style="border-radius: 0px; font-size: 12px; overflow: auto;">
++-------------+---------------+
+| CUSTOMER_ID | CUSTOMER_NAME |
++-------------+---------------+
+|           1 | Ramesh        |
+|           2 | Khilan        |
+|           3 | kaushik       |
+|           4 | Chaitali      |
+|           5 | Hardik        |
+|           6 | Komal         |
+|           7 | Muffy         |
++-------------+---------------+</pre> 
+ <br>      
+</div></body></html>

@@ -1,0 +1,111 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Java字符串比较</h1><div style="width:100%;float:left;" class="article-content">   
+ <p><code>String</code>类覆盖了<code>Object</code>类的<code>equals()</code>方法，并提供了自己的实现，<code>equals()</code>方法是根据它们的内容比较两个字符串的相等性。</p> 
+ <h2 id="h2--"><a name="等于(相等)" class="reference-link"></a><span class="header-link octicon octicon-link"></span>等于(相等)</h2>
+ <p>例如，可以比较两个字符串的相等性，如下所示：</p> 
+ <pre><code class="lang-java">String str1 = new String("Hello"); 
+String str2 = new String("Hi"); 
+String str3 = new String("Hello");
+
+boolean b1,   b2;
+
+b1  = str1.equals(str2); // false will be  assigned to b1 
+b2  = str1.equals(str3); // true will be  assigned to b2
+</code></pre> 
+ <p>还可以将字符串字面量与字符串字面量，或字符串对象进行比较，如下所示：</p> 
+ <pre><code class="lang-java">b1  = str1.equals("Hello");   // true will be  assigned to b1 
+b2  = "Hello".equals(str1);   // true will be  assigned to b2 
+b1  = "Hello".equals("Hi");   // false will be  assigned to b1
+</code></pre> 
+ <p><code>==</code>操作符总是比较内存中两个对象的引用。<code>str1 == str2</code>和<code>str1 == str3</code>将返回<code>false</code>，因为<code>str1</code>，<code>str2</code>和<code>str3</code>是内存中三个不同<code>String</code>对象的引用。</p> 
+ <h2 id="h2-u6BD4u8F83"><a name="比较" class="reference-link"></a><span class="header-link octicon octicon-link"></span>比较</h2>
+ <p>要根据字符的<code>Unicode</code>值比较两个字符串，请使用<code>compareTo()</code>方法。 它的签名是 - </p> 
+ <pre><code class="lang-java">public int compareTo(String anotherString)
+</code></pre> 
+ <p>它返回一个整数，它可以是<code>0</code>(零)，正整数或负整数。此方法返回这两个字符的<code>Unicode</code>值之间的差值。</p> 
+ <p>例如，<code>"a".compareTo("b")</code>将返回<code>-1</code>。 <code>a</code>的Unicode值为<code>97</code>，<code>b</code>为<code>98</code>。它返回差值<code>97 - 98</code>，所以它返回的差值是：<code>-1</code>。<br>以下是字符串比较的示例：</p> 
+ <pre><code class="lang-java">"abc".compareTo("abc") will  return  0
+"abc".compareTo("xyz") will  return  -23  (value of  'a' -  'x') 
+"xyz".compareTo("abc") will  return  23  (value of  'x' -  'a')
+</code></pre> 
+ <p>以下代码显示如何进行字符串比较。</p> 
+ <pre><code class="lang-java">public class Main {
+  public static void main(String[] args) {
+    String apple = new String("Apple");
+    String orange = new String("Orange");
+    System.out.println(apple.equals(orange));
+    System.out.println(apple.equals(apple));
+    System.out.println(apple == apple);
+    System.out.println(apple == orange);
+    System.out.println(apple.compareTo(apple));
+    System.out.println(apple.compareTo(orange));
+  }
+}
+</code></pre> 
+ <p>上面的代码生成以下结果。</p> 
+ <pre><code class="lang-java">false
+true
+true
+false
+0
+-14
+</code></pre> 
+ <h2 id="h2-u5B57u7B26u4E32u6C60"><a name="字符串池" class="reference-link"></a><span class="header-link octicon octicon-link"></span>字符串池</h2>
+ <p>Java维护一个所有字符串文字的池。它在字符串池中为每个字符串文字创建一个<code>String</code>对象。当遇到字符串字面量时，它在字符串池中查找具有相同内容的字符串对象。 如果在字符串池中找不到匹配项，它将创建一个新的<code>String</code>对象并将其添加到字符串池中。</p> 
+ <p>如果它在字符串池中找到匹配项，它将使用池中找到的<code>String</code>对象的引用替换字符串字面值。<br>可以使用<code>intern()</code>方法向字符串池添加一个<code>String</code>对象。<br>如果找到匹配，<code>intern()</code>方法从字符串池返回对象的引用。 否则，它将一个新的<code>String</code>对象添加到字符串池，并返回新对象的引用。</p> 
+ <h2 id="h2-u5B57u7B26u4E32u5927u5C0Fu5199u6BD4u8F83"><a name="字符串大小写比较" class="reference-link"></a><span class="header-link octicon octicon-link"></span>字符串大小写比较</h2>
+ <p>要比较两个字符串是否相等并忽略它们的大小，请使用<code>equalsIgnoreCase()</code>方法。要对两个字符串执行区分大小写的比较，请使用<code>equals()</code>方法。</p>   
+ <pre><code class="lang-java">public class Main {
+  public static void main(String[] args) {
+    String str1 = "Hello";
+    String str2 = "HELLO";
+
+    if (str1.equalsIgnoreCase(str2)) {
+      System.out.println("Ignoring case str1 and str2 are equal");
+    } else {
+      System.out.println("Ignoring case str1 and str2 are not equal");
+
+    }
+    if (str1.equals(str2)) {
+      System.out.println("str1 and str2 are equal");
+    } else {
+      System.out.println("str1 and str2 are not equal");
+    }
+  }
+}
+</code></pre> 
+ <p>上面的代码生成以下结果。</p> 
+ <pre><code class="lang-java">Ignoring case str1 and str2 are equal
+str1 and str2 are not equal
+</code></pre> 
+ <h2 id="h2-u8BEDu8A00u654Fu611Fu5B57u7B26u4E32u6BD4u8F83"><a name="语言敏感字符串比较" class="reference-link"></a><span class="header-link octicon octicon-link"></span>语言敏感字符串比较</h2>
+ <p><code>String</code>类根据字符的<code>Unicode</code>值比较字符串。要根据字典顺序比较字符串，请使用<code>java.text.Collator</code>类的<code>compare()</code>方法执行语言敏感(字典顺序)字符串比较。</p> 
+ <p>该方法需要两个字符串作为参数进行比较。 如果两个字符串相同，返回<code>0</code>，如果第一个字符串在第二个字符串之后返回<code>1</code>，如果第一个字符串在第二个字符串之前，返回<code>-1</code>。</p> 
+ <p>以下代码说明了<code>Collator</code>类的使用。</p> 
+ <pre><code class="lang-java">import java.text.Collator;
+import java.util.Locale;
+
+public class Main {
+  public static void main(String[] args) {
+    Locale USLocale = new Locale("en", "US");
+
+    Collator c = Collator.getInstance(USLocale);
+    String str1 = "Java";
+    String str2 = "HTML";
+    int diff = c.compare(str1, str2);
+    System.out.print("Comparing using Collator  class: ");
+
+    if (diff &gt; 0) {
+      System.out.println(str1 + "  comes after " + str2);
+    } else if (diff &lt; 0) {
+      System.out.println(str1 + "  comes before " + str2);
+    } else {
+      System.out.println(str1 + "  and  " + str2 + "  are   the   same.");
+    }
+  }
+}
+</code></pre> 
+ <p>上面的代码生成以下结果。</p> 
+ <pre><code class="lang-java">Comparing using Collator  class: Java  comes after HTML
+</code></pre>
+ <br>      
+</div></body></html>

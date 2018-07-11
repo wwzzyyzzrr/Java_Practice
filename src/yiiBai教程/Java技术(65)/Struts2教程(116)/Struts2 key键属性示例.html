@@ -1,0 +1,60 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Struts2 key键属性示例</h1><div style="width:100%;float:left;" class="article-content">   
+ <div> 
+  <div>
+    在Struts2，在UI组件的“key”属性来处理本地化的常用方法，也是编码UI标签的一个非常有效的方式。见下面两种情况： 
+  </div> 
+ </div> 
+ <div> 
+  <h2> 1. Properties属性文件 </h2> 
+  <div>
+    属性文件包含一条消息。 
+  </div> 
+  <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:16px;"> <strong>global.properties</strong> </p> 
+  <pre>global.username = Username</pre> 
+  <h2> 2. 示例1 </h2> 
+  <p> 如果分配一个“key”属性到一个文本框。键(key)属性会从资源包中获取信息，并使其在默认XHTML&nbsp;text.tfl模板基础上渲染。 </p> 
+  <pre>&lt;s:form action="validateUser"&gt;
+	&lt;s:textfield key="global.username" /&gt;
+&lt;/s:form&gt;</pre> 
+  <div>
+    现在它将会使用“global.username&nbsp;{left-side}”和&nbsp;“Username&nbsp;{right-side}”，并匹配相应的XHTML&nbsp;text.tfl模板。 
+  </div> 
+  <pre>&lt;td class="tdLabel"&gt;
+   &lt;label for="validateUser_{left-side}" class="label"&gt;{right-side}:&lt;/label&gt;
+&lt;/td&gt;
+&lt;td&gt;
+   &lt;input type="text" name="{left-side}" value="" id="validateUser_{left-side}"/&gt;
+&lt;/td&gt;</pre> 
+  <p> 最后的 HTML </p> 
+  <pre>&lt;td class="tdLabel"&gt;
+   &lt;label for="validateUser_global_username" class="label"&gt;Username:&lt;/label&gt;
+&lt;/td&gt;
+&lt;td&gt;
+   &lt;input type="text" name="global.username" value="" id="validateUser_global_username"/&gt;
+&lt;/td&gt;</pre> 
+  <div>
+    键属性将使用&nbsp;{left-side}作为文本框名称和ID;&nbsp;{right-side}&nbsp;作为标签值。 
+  </div> 
+  <h2> 3. 示例2 </h2> 
+  <div>
+    在某些情况下，可能需要显式声明的一个不同的名称的文本框。 
+  </div>   
+  <pre>&lt;s:form action="validateUser"&gt;
+	&lt;s:textfield key="global.username" name="username"/&gt;
+&lt;/s:form&gt;&nbsp;</pre> 
+  <p> 现在key属性将使用“Username&nbsp;{right-side}”来只匹配的标签值，&nbsp;文本框的名称和ID将明确覆盖。 </p> 
+  <p> 最后的 HTML </p> 
+  <pre>&lt;td class="tdLabel"&gt;
+   &lt;label for="validateUser_username" class="label"&gt;Username:&lt;/label&gt;
+&lt;/td&gt;
+&lt;td&gt;
+   &lt;input type="text" name="username" value="" id="validateUser_username"/&gt;
+&lt;/td&gt;</pre> 
+  <div> 
+   <div>
+     key属性可以提高你的开发速度，使代码更有效，这是值得学习的。 
+   </div> 
+  </div> 
+ </div>
+ <br>      
+</div></body></html>

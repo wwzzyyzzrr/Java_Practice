@@ -1,0 +1,172 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">JDBC流ASCII和二进制数据</h1><div style="width:100%;float:left;" class="article-content">   
+ <p><code>PreparedStatement</code>对象可以使用输入和输出流来提供参数数据。能够将整个文件放入可以容纳大值的数据库列，例如<code>CLOB</code>和<code>BLOB</code>数据类型。</p> 
+ <p>有以下方法可用于流式传输数据 -</p> 
+ <ul> 
+  <li><code>setAsciiStream()</code>：此方法用于提供大的ASCII值。</li>
+  <li><code>setCharacterStream()</code>：此方法用于提供较大的UNICODE值。</li>
+  <li><code>setBinaryStream()</code>：此方法用于提供较大的二进制值。</li>
+ </ul> 
+ <p><code>setXXXStream()</code>方法除了参数占位符之外还需要额外的参数和文件大小。此参数通知驱动程序使用流向数据库发送多少数据。</p> 
+ <h2 id="h2-u5B9Eu4F8B"><a name="实例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实例</h2>
+ <p>考虑要将XML文件<code>xml_data.xml</code>上传到数据库表中。下面是XML文件的内容 -</p> 
+ <pre><code class="lang-xml">&lt;?xml version="1.0"?&gt;
+&lt;Employee&gt;
+    &lt;id&gt;125&lt;/id&gt;
+    &lt;first&gt;Max&lt;/first&gt;
+    &lt;last&gt;Su&lt;/last&gt;
+    &lt;Salary&gt;18000&lt;/Salary&gt;
+    &lt;Dob&gt;18-08-1978&lt;/Dob&gt;
+&lt;Employee&gt;
+</code></pre> 
+ <p>将此XML文件保存在要运行此示例的同一目录中。</p> 
+ <p>此示例将在数据库创建一个表：<em>xml_data</em>，然后将文件<code>xml_data.xml</code>上传到此表中。</p> 
+ <p>复制以下示例代码，并保存在文件：<em>StreamingData.java</em> 中，编译并运行如下 -</p> 
+ <pre><code class="lang-java">// Import required packages
+import java.sql.*;
+import java.io.*;
+import java.util.*;
+
+public class StreamingData {
+   // JDBC driver name and database URL
+   static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";  
+   static final String DB_URL = "jdbc:mysql://localhost/EMP";
+
+   //  Database credentials
+   static final String USER = "root";
+   static final String PASS = "123456";
+
+   public static void main(String[] args) {
+   Connection conn = null;
+   PreparedStatement pstmt = null;
+   Statement stmt = null;
+   ResultSet rs = null;
+   try{
+      // Register JDBC driver
+      Class.forName("com.mysql.jdbc.Driver");
+
+      // Open a connection
+      System.out.println("Connecting to database...");
+      conn = DriverManager.getConnection(DB_URL,USER,PASS);
+
+      //Create a Statement object and build table
+      stmt = conn.createStatement();
+      createXMLTable(stmt);
+
+      //Open a FileInputStream
+      File f = new File("xml_data.xml");
+      long fileLength = f.length();
+      FileInputStream fis = new FileInputStream(f);
+
+      //Create PreparedStatement and stream data
+      String SQL = "INSERT INTO XML_Data VALUES (?,?)";
+      pstmt = conn.prepareStatement(SQL);
+      pstmt.setInt(1,125);
+      pstmt.setAsciiStream(2,fis,(int)fileLength);
+      pstmt.execute();
+
+      //Close input stream
+      fis.close();
+
+      // Do a query to get the row
+      SQL = "SELECT Data FROM XML_Data WHERE id=125";
+      rs = stmt.executeQuery (SQL);
+      // Get the first row
+      if (rs.next ()){
+         //Retrieve data from input stream
+         InputStream xmlInputStream = rs.getAsciiStream (1);
+         int c;
+         ByteArrayOutputStream bos = new ByteArrayOutputStream();
+         while (( c = xmlInputStream.read ()) != -1)
+            bos.write(c);
+         //Print results
+         System.out.println(bos.toString());
+      }
+      // Clean-up environment
+      rs.close();
+      stmt.close();
+      pstmt.close();
+      conn.close();
+   }catch(SQLException se){
+      //Handle errors for JDBC
+      se.printStackTrace();
+   }catch(Exception e){
+      //Handle errors for Class.forName
+      e.printStackTrace();
+   }finally{
+      //finally block used to close resources
+      try{
+         if(stmt!=null)
+            stmt.close();
+      }catch(SQLException se2){
+      }// nothing we can do
+      try{
+         if(pstmt!=null)
+            pstmt.close();
+      }catch(SQLException se2){
+      }// nothing we can do
+      try{
+         if(conn!=null)
+            conn.close();
+      }catch(SQLException se){
+         se.printStackTrace();
+      }//end finally try
+   }//end try
+   System.out.println("Goodbye!");
+}//end main
+
+public static void createXMLTable(Statement stmt) 
+   throws SQLException{
+   System.out.println("Creating XML_Data table..." );
+   //Create SQL Statement
+   String streamingDataSql = "CREATE TABLE XML_Data " +
+                             "(id INTEGER, Data LONG)";
+   //Drop table first if it exists.
+   try{
+      stmt.executeUpdate("DROP TABLE XML_Data");
+   }catch(SQLException se){
+   }// do nothing
+   //Build table.
+   stmt.executeUpdate(streamingDataSql);
+}//end createXMLTable
+}//end JDBCExample
+</code></pre> 
+ <p>编译上面代码，如下 - </p>   
+ <pre><code class="lang-shell">F:\worksp\jdbc&gt;javac -Djava.ext.dirs=F:\worksp\jdbc\libs StreamingData.java
+</code></pre> 
+ <p>执行上面编译后的代码，得到以下结果 - </p> 
+ <pre><code class="lang-shell">F:\worksp\jdbc&gt;java -Djava.ext.dirs=F:\worksp\jdbc\libs StreamingData
+Connecting to database...
+Thu Jun 01 21:42:00 CST 2017 WARN: Establishing SSL connection without server's identity verification is not recommended. According to MySQL 5.5.45+, 5.6.26+ and 5.7.6+ requirements SSL connection must be established by default if explicit option isn't set. For compliance with existing applications not using SSL the verifyServerCertificate property is set to 'false'. You need either to explicitly disable SSL by setting useSSL=false, or set useSSL=true and provide truststore for server certificate verification.
+Creating XML_Data table...
+&lt;?xml version="1.0"?&gt;
+&lt;Employee&gt;
+        &lt;id&gt;125&lt;/id&gt;
+        &lt;first&gt;Max&lt;/first&gt;
+        &lt;last&gt;Su&lt;/last&gt;
+        &lt;Salary&gt;18000&lt;/Salary&gt;
+        &lt;Dob&gt;18-08-1978&lt;/Dob&gt;
+&lt;Employee&gt;
+Goodbye!
+
+F:\worksp\jdbc&gt;
+</code></pre> 
+ <p>在执行上面语句后，将在数据库：<code>emp</code>下创建一个名称为：<code>xml_data</code>的表，现在查询<code>xml_data</code>表中的数据，如下所示 - </p> 
+ <pre><code class="lang-shell">mysql&gt; select * from xml_data;
++-----+-----------------------------------------------------------------------------------------------------------------------------------+
+| id  | Data                                                                                                                              |
++-----+-----------------------------------------------------------------------------------------------------------------------------------+
+| 125 | &lt;?xml version="1.0"?&gt;
+&lt;Employee&gt;
+    &lt;id&gt;125&lt;/id&gt;
+    &lt;first&gt;Max&lt;/first&gt;
+    &lt;last&gt;Su&lt;/last&gt;
+    &lt;Salary&gt;18000&lt;/Salary&gt;
+    &lt;Dob&gt;18-08-1978&lt;/Dob&gt;
+&lt;Employee&gt; |
++-----+-----------------------------------------------------------------------------------------------------------------------------------+
+1 row in set
+
+mysql&gt;
+</code></pre>
+ <br>      
+</div></body></html>

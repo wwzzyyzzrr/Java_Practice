@@ -1,0 +1,386 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Python3文件操作</h1><div style="width:100%;float:left;" class="article-content">   
+ <div> 
+  <div>
+    本章涵盖了 Python3&nbsp;所有提供的基本I/&nbsp;O功能。对于更多的功能，请参考标准Python文档。 
+  </div> 
+ </div> 
+ <div> 
+  <h2> 
+   <div>
+     打印到屏幕 
+   </div> </h2> 
+  <p style="text-align:justify;"> 产生输出的最简单方法是使用print语句，可以通过用逗号分隔零个或多个表达式。这个函数传递表达式转换为一个字符串，如下结果写到标准输出&nbsp;- </p> 
+  <pre>#!/usr/bin/python3
+
+print ("Python is really a great language,", "isn't it?")</pre> 
+  <div>
+    这将产生以下结果标准屏幕上&nbsp;- 
+  </div> 
+  <pre>Python is really a great language, isn't it?</pre> 
+  <h2> 
+   <div>
+     读取键盘输入 
+   </div> </h2> 
+  <p style="font-family:Verdana, Geneva, Tahoma,  Helvetica, text-align:justify;font-size:15px !important;background-color:inherit;"> <span style="background-color:inherit;font-family:微软雅黑;font-size:14px;line-height:1.5;">Python2中有两个内置的函数可从标准输入读取数据，</span><span style="background-color:inherit;font-family:微软雅黑;font-size:14px;line-height:1.5;">它默认来自键盘。这些函数分别是：input()&nbsp;和&nbsp;raw_input()。</span> </p> 
+  <p style="font-family:Verdana, Geneva, Tahoma,  Helvetica, text-align:justify;font-size:15px !important;background-color:inherit;"> <span style="background-color:inherit;font-family:微软雅黑;font-size:14px;line-height:1.5;">但在Python3中，raw_input()函数已被弃用。</span><span style="background-color:inherit;font-family:微软雅黑;font-size:14px;line-height:1.5;">此外，&nbsp;input()&nbsp;函数是从键盘作为字符串读取数据，不论是否使用引号(''或“”)与否。</span> </p> 
+  <h2> input&nbsp;函数 </h2> 
+  <p style="font-family:Verdana, Geneva, Tahoma,  Helvetica, text-align:justify;font-size:15px !important;background-color:inherit;"> <span style="background-color:inherit;font-family:微软雅黑;font-size:14px;line-height:1.5;">input([prompt])&nbsp;函数等同&nbsp;raw_input，</span><span style="background-color:inherit;font-family:微软雅黑;font-size:14px;line-height:1.5;">不同之处在于它假定输入是一个有效的Python表达式并计算结果返回给你。</span> </p> 
+  <pre>#!/usr/bin/python3
+
+&gt;&gt;&gt; x=input("something:")
+something:10
+&gt;&gt;&gt; x
+'10'
+&gt;&gt;&gt; x=input("something:")
+something:'10' #entered data treated as string with or without ''
+&gt;&gt;&gt; x
+"'10'"</pre> 
+  <h2> 
+   <div>
+     打开和关闭文件 
+   </div> </h2> 
+  <p style="font-family:Verdana, Geneva, Tahoma,  Helvetica, text-align:justify;font-size:15px !important;background-color:inherit;"> <span style="background-color:inherit;font-family:微软雅黑;font-size:14px;line-height:1.5;">到现在为止，已经学习了读取和写入标准输入和输出。</span><span style="background-color:inherit;font-family:微软雅黑;font-size:14px;line-height:1.5;">现在，我们学习如何使用文件实际数据。</span> </p> 
+  <p style="font-family:Verdana, Geneva, Tahoma,  Helvetica, text-align:justify;font-size:15px !important;background-color:inherit;"> <span style="background-color:inherit;font-family:微软雅黑;font-size:14px;line-height:1.5;">Python提供了基本的功能和必要的默认操作文件的方法。</span><span style="background-color:inherit;font-family:微软雅黑;font-size:14px;line-height:1.5;">您可以使用一个 file 对象来做大部分的文件操作。</span> </p> 
+  <h2> open&nbsp;函数 </h2> 
+  <p style="font-family:Verdana, Geneva, Tahoma,  Helvetica, text-align:justify;font-size:15px !important;background-color:inherit;"> <span style="background-color:inherit;font-family:微软雅黑;font-size:14px;line-height:1.5;">在读取或写入一个文件之前，你必须使用 Python 内置open()函数来打开它。</span>&nbsp;<span style="background-color:inherit;font-family:微软雅黑;font-size:14px;line-height:1.5;">该函数创建一个文件对象，这将被用来调用与它相关的其他支持方式。</span> </p> 
+  <h3 style="background-color:inherit;font-family:Verdana, Geneva, Tahoma,  Helvetica, font-size:1.3em;font-weight:normal;"> 语法 </h3> 
+  <pre>file object = open(file_name [, access_mode][, buffering])</pre> 
+  <div style="background-color:inherit;">
+    下面是参数的详细信息： 
+  </div> 
+  <ul style="background-color:inherit;color:#313131;font-family:Verdana, Geneva, Tahoma,  Helvetica,;"> 
+   <li style="background-color:inherit;color:#000000;"> <p style="text-align:justify;font-size:15px !important;background-color:inherit;"> <b>file_name:</b>&nbsp;<span style="background-color:inherit;font-size:14px;line-height:1.5;">文件名(file_name&nbsp;)参数是包含您要访问的文件名的字符串值。</span> </p> </li> 
+   <li style="background-color:inherit;color:#000000;"> <p style="text-align:justify;font-size:15px !important;background-color:inherit;"> <b>access_mode:</b>&nbsp;<span style="background-color:inherit;font-size:14px;line-height:1.5;">access_mode指定该文件已被打开，即读，写，追加等方式。</span><span style="background-color:inherit;line-height:1.5;"></span><span style="background-color:inherit;font-size:14px;line-height:1.5;">可能值的完整列表，在表中如下。</span> </p> 
+    <div style="background-color:inherit;">
+      这是可选的参数，默认文件访问模式是读(r)。 
+    </div> </li> 
+   <li style="background-color:inherit;color:#000000;"> <p style="text-align:justify;font-size:15px !important;background-color:inherit;"> <b>buffering:</b>&nbsp;<span style="background-color:inherit;font-size:14px;line-height:1.5;">如果该缓冲值被设置为0，则表示不使用缓冲。</span><span style="background-color:inherit;line-height:1.5;"></span><span style="background-color:inherit;font-size:14px;line-height:1.5;">如果该缓冲值是1，则在访问一个文件进行时行缓冲。</span> </p> <p style="text-align:justify;font-size:15px !important;background-color:inherit;"> <span style="background-color:inherit;line-height:1.5;"><span style="background-color:inherit;font-size:14px;line-height:1.5;">如果指定缓冲值大于1的整数，</span></span><span style="background-color:inherit;font-size:14px;line-height:1.5;">缓冲使用所指示的缓冲器大小进行。</span><span style="background-color:inherit;font-size:14px;line-height:1.5;">如果是负数，缓冲区大小是系统默认的(默认行为)。</span> </p> </li> 
+  </ul> 
+  <div style="background-color:inherit;">
+    这里是打开一个文件不同模式的列表&nbsp;- 
+  </div> 
+  <table border="1" cellpadding="2" cellspacing="0" style="font-size:14px;color:#313131;font-family:Verdana, Geneva, Tahoma,  Helvetica, background-color:inherit;"> 
+   <tbody> 
+    <tr> 
+     <th style="border:1px solid #999999;background-color:#EEEEEE;"> 模式 </th> 
+     <th style="border:1px solid #999999;background-color:#EEEEEE;"> 描述 </th> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> r </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <span style="background-color:inherit;font-size:inherit;line-height:1.5;">打开一个文件为只读。</span><span style="background-color:inherit;font-size:inherit;line-height:1.5;">文件指针被放置在文件的开头。这是默认模式。</span> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> rb </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <span style="background-color:inherit;font-size:inherit;line-height:1.5;">打开一个文件只能以二进制格式读取。</span><span style="background-color:inherit;font-size:inherit;line-height:1.5;">文件指针被放置在文件的开头。这是默认模式。</span> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> r+ </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <span style="background-color:inherit;font-size:inherit;line-height:1.5;">打开用于读和写文件。</span><span style="background-color:inherit;font-size:inherit;line-height:1.5;">文件指针置于该文件的开头。</span> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> rb+ </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <span style="background-color:inherit;font-size:inherit;line-height:1.5;">打开用于读取和写入二进制格式的文件。</span><span style="background-color:inherit;font-size:inherit;line-height:1.5;">文件指针置于该文件的开头。</span> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> w </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <span style="background-color:inherit;font-size:inherit;line-height:1.5;">打开一个文件只写。</span><span style="background-color:inherit;font-size:inherit;line-height:1.5;">如果文件存在覆盖该文件。</span><span style="background-color:inherit;font-size:inherit;line-height:1.5;">如果该文件不存在，则创建写入新文件。</span> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> wb </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <span style="background-color:inherit;font-size:inherit;line-height:1.5;">打开一个文件只能以二进制格式写入。</span><span style="background-color:inherit;font-size:inherit;line-height:1.5;">如果文件存在覆盖该文件。</span><span style="background-color:inherit;font-size:inherit;line-height:1.5;">如果该文件不存在，则创建写入新文件。</span> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> w+ </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <span style="background-color:inherit;font-size:inherit;line-height:1.5;">打开<span style="font-family:Verdana, Geneva, Tahoma,  Helvetica, font-size:14px;">文件</span>为写入和读取模式。</span><span style="background-color:inherit;font-size:inherit;line-height:1.5;">如果文件存在覆盖现有文件。</span><span style="background-color:inherit;font-size:inherit;line-height:1.5;">如果该文件不存在，创建用于读写操作的新文件。</span> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> wb+ </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <span style="background-color:inherit;font-size:inherit;line-height:1.5;">打开用于以二进制格式写入和读出文件。</span><span style="background-color:inherit;font-size:inherit;line-height:1.5;">如果文件存在覆盖现有文件。</span><span style="background-color:inherit;font-size:inherit;line-height:1.5;">如果该文件不存在，创建用于读写操作的新文件。</span> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> a </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <span style="background-color:inherit;font-size:inherit;line-height:1.5;">打开用于追加的文件。</span><span style="background-color:inherit;font-size:inherit;line-height:1.5;">文件指针是在文件是否存在该文件的末尾。</span><span style="background-color:inherit;font-size:inherit;line-height:1.5;">也就是说，该文件是在追加模式。</span><span style="background-color:inherit;font-size:inherit;line-height:1.5;">如果该文件不存在，它会创建一个用于写入的新文件。</span> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> ab </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <span style="background-color:inherit;font-size:inherit;line-height:1.5;">打开文件<span style="font-family:Verdana, Geneva, Tahoma,  Helvetica, font-size:14px;">用于二进制格式追加</span>。</span><span style="background-color:inherit;font-size:inherit;line-height:1.5;">文件指针是在文件是否存在该文件的末尾。</span><span style="background-color:inherit;font-size:inherit;line-height:1.5;">也就是说，文件是在追加模式。</span><span style="background-color:inherit;font-size:inherit;line-height:1.5;">&nbsp;</span><span style="background-color:inherit;font-size:inherit;line-height:1.5;">如果该文件不存在，它会创建一个用于写入的新文件。</span> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> a+ </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <span style="background-color:inherit;font-size:inherit;line-height:1.5;">打开<span style="font-family:Verdana, Geneva, Tahoma,  Helvetica, font-size:14px;">文件</span>为追加和读取方式。</span><span style="background-color:inherit;font-size:inherit;line-height:1.5;">文件指针是在文件是否存在该文件的末尾。</span><span style="background-color:inherit;font-size:inherit;line-height:1.5;">该文件以追加模式打开。</span><span style="background-color:inherit;font-size:inherit;line-height:1.5;">如果该文件不存在，它将创建用于读写操作的新文件。</span> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> ab+ </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <span style="background-color:inherit;font-size:inherit;line-height:1.5;">打开一个文件以附加和二进制格式读取模式。</span><span style="background-color:inherit;font-size:inherit;line-height:1.5;">如果该文件存在文件指针在该文件的末尾。</span><span style="background-color:inherit;font-size:inherit;line-height:1.5;">该文件以追加模式打开。</span><span style="background-color:inherit;font-size:inherit;line-height:1.5;">如果该文件不存在，它将创建读写操作的新文件。</span> </td> 
+    </tr> 
+   </tbody> 
+  </table> 
+  <h2> file&nbsp;对象属性 </h2> 
+  <p style="font-family:Verdana, Geneva, Tahoma,  Helvetica, text-align:justify;font-size:15px !important;background-color:inherit;"> <span style="background-color:inherit;font-family:微软雅黑;font-size:14px;line-height:1.5;">一旦文件被打开，则就会有一个文件对象，你</span>就<span style="background-color:inherit;font-family:微软雅黑;font-size:14px;line-height:1.5;">可以得到有关该文件的各种信息。</span> </p> 
+  <div style="background-color:inherit;">
+    这里是一个文件对象相关的所有属性的列表： 
+  </div> 
+  <table border="1" cellpadding="2" cellspacing="0" style="font-size:14px;color:#313131;font-family:Verdana, Geneva, Tahoma,  Helvetica, background-color:inherit;"> 
+   <tbody> 
+    <tr> 
+     <th style="border:1px solid #999999;background-color:#EEEEEE;"> 属性 </th> 
+     <th style="border:1px solid #999999;background-color:#EEEEEE;"> 描述 </th> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> file.closed </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 
+      <div style="background-color:inherit;">
+        如果文件被关闭
+       <span style="font-family:Verdana, Geneva, Tahoma,  Helvetica, font-size:14px;">返回true</span>，否则为false 
+      </div> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> file.mode </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 
+      <div style="background-color:inherit;">
+        返回文件打开访问模式 
+      </div> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> file.name </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 
+      <div style="background-color:inherit;">
+        返回文件名 
+      </div> </td> 
+    </tr> 
+   </tbody> 
+  </table> 
+  <div style="background-color:inherit;">
+    注：软空间属性未在Python3.x中支持 
+  </div> 
+  <h3> 示例 </h3> 
+  <pre>#!/usr/bin/python3
+
+# Open a file
+fo = open("foo.txt", "wb")
+print ("Name of the file: ", fo.name)
+print ("Closed or not : ", fo.closed)
+print ("Opening mode : ", fo.mode)
+fo.close()</pre> 
+  <div style="background-color:inherit;">
+    这将产生以下结果&nbsp;- 
+  </div> 
+  <pre>Name of the file:  foo.txt
+Closed or not :  False
+Opening mode :  wb</pre> 
+  <h2 style="background-color:inherit;color:#121214;font-family:Verdana, Geneva, Tahoma,  Helvetica, font-size:1.7em;font-weight:normal;"> <i>close()</i>方法 </h2> 
+  <p style="font-family:Verdana, Geneva, Tahoma,  Helvetica, text-align:justify;font-size:15px !important;background-color:inherit;"> <span style="background-color:inherit;font-family:微软雅黑;font-size:14px;line-height:1.5;">文件对象的close()方法用于刷新任何未写入的信息，并关闭文件对象，</span>&nbsp;<span style="background-color:inherit;font-family:微软雅黑;font-size:14px;line-height:1.5;">之后就没有更多的写入东西了。</span> </p> 
+  <p style="font-family:Verdana, Geneva, Tahoma,  Helvetica, text-align:justify;font-size:15px !important;background-color:inherit;"> <span style="background-color:inherit;font-family:微软雅黑;font-size:14px;line-height:1.5;">Python自动关闭文件当参考文件对象分配给另一个文件。</span><span style="background-color:inherit;font-family:微软雅黑;font-size:14px;line-height:1.5;">使用 close()方法关闭文件一个很好的做法。</span> </p> 
+  <h3> 语法 </h3> 
+  <pre>fileObject.close();</pre> 
+  <h3> 示例 </h3> 
+  <pre>#!/usr/bin/python3
+
+# Open a file
+fo = open("foo.txt", "wb")
+print ("Name of the file: ", fo.name)
+
+# Close opened file
+fo.close()</pre> 
+  <div style="background-color:inherit;">
+    这将产生以下结果&nbsp;- 
+  </div> 
+  <pre>Name of the file:  foo.txt</pre> 
+  <h2> 
+   <div>
+     读写文件 
+   </div> </h2> 
+  <p style="font-family:Verdana, Geneva, Tahoma,  Helvetica, text-align:justify;font-size:15px !important;background-color:inherit;"> <span style="background-color:inherit;font-family:微软雅黑;font-size:14px;line-height:1.5;">文件对象提供了一组访问方法。</span>&nbsp;<span style="background-color:inherit;font-family:微软雅黑;font-size:14px;line-height:1.5;">我们将看到如何使用 read()和write()方法来读取和写入文件。</span> </p> 
+  <h2> write()&nbsp;方法 </h2> 
+  <p style="font-family:Verdana, Geneva, Tahoma,  Helvetica, text-align:justify;font-size:15px !important;background-color:inherit;"> <span style="background-color:inherit;font-family:微软雅黑;font-size:14px;line-height:1.5;">write()方法将字符串写入一个打开的文件。</span><span style="background-color:inherit;font-family:微软雅黑;font-size:14px;line-height:1.5;">要注意，Python的字符串可以是二进制数据，而不仅仅只是文字。</span> </p> 
+  <div style="background-color:inherit;">
+    write()方法不添加换行符('\n')到字符串的结尾- 
+  </div> 
+  <h3 style="background-color:inherit;font-family:Verdana, Geneva, Tahoma,  Helvetica, font-size:1.3em;font-weight:normal;"> 语法 </h3> 
+  <pre>fileObject.write(string);</pre> 
+  <div style="background-color:inherit;">
+    这里，传递的参数是要写入到打开的文件的内容。 
+  </div> 
+  <h3 style="background-color:inherit;font-family:Verdana, Geneva, Tahoma,  Helvetica, font-size:1.3em;font-weight:normal;"> 示例 </h3> 
+  <pre>#!/usr/bin/python3
+
+# Open a file
+fo = open("foo.txt", "w")
+fo.write( "Python is a great language.\nYeah its great!!\n")
+
+# Close opend file
+fo.close()&nbsp;</pre> 
+  <p style="font-family:Verdana, Geneva, Tahoma,  Helvetica, text-align:justify;font-size:15px !important;background-color:inherit;"> <span style="background-color:inherit;font-family:微软雅黑;font-size:14px;line-height:1.5;">上面的方法将创建 foo.txt 文件，并给出的内容写入文件，最后将关闭该文件</span>。<span style="background-color:inherit;font-family:微软雅黑;font-size:14px;line-height:1.5;">如果打开这个文件，会看到它有以下内容。</span> </p>   
+  <pre>Python is a great language.
+Yeah its great!!</pre> 
+  <h2> read()&nbsp;方法 </h2> 
+  <p style="font-family:Verdana, Geneva, Tahoma,  Helvetica, text-align:justify;font-size:15px !important;background-color:inherit;"> <span style="background-color:inherit;font-family:微软雅黑;font-size:14px;line-height:1.5;">read()方法从一个打开的文件读取字符串。</span><span style="background-color:inherit;font-family:微软雅黑;font-size:14px;line-height:1.5;">要注意，Python字符串可以是二进制数据。而并非只是文本数据。</span> </p> 
+  <h3 style="background-color:inherit;font-family:Verdana, Geneva, Tahoma,  Helvetica, font-size:1.3em;font-weight:normal;"> 语法 </h3> 
+  <pre>fileObject.read([count]);&nbsp;</pre> 
+  <p style="font-family:Verdana, Geneva, Tahoma,  Helvetica, text-align:justify;font-size:15px !important;background-color:inherit;"> <span style="background-color:inherit;font-family:微软雅黑;font-size:14px;line-height:1.5;">这里，传递的参数是从打开的文件读取的字节数。</span><span style="background-color:inherit;font-family:微软雅黑;font-size:14px;line-height:1.5;">该方法开始从文件的开始读取，并且如果&nbsp;<i>count</i><span style="font-family:Verdana, Geneva, Tahoma,  Helvetica, font-size:15px;">&nbsp;</span>丢失，那么它会尝试尽可能读，也许直到文件的末尾。</span> </p> 
+  <h3 style="background-color:inherit;font-family:Verdana, Geneva, Tahoma,  Helvetica, font-size:1.3em;font-weight:normal;"> 示例 </h3> 
+  <div style="background-color:inherit;">
+    让我们使用一个文件 foo.txt，这是我们在上面所创建的。 
+  </div> 
+  <pre>#!/usr/bin/python3
+
+# Open a file
+fo = open("foo.txt", "r+")
+str = fo.read(10)
+print ("Read String is : ", str)
+# Close opened file
+fo.close()</pre> 
+  <div style="background-color:inherit;">
+    这将产生以下结果&nbsp;- 
+  </div> 
+  <pre>Read String is :  Python is</pre> 
+  <h2> 
+   <div>
+     文件位置 
+   </div> </h2> 
+  <p style="font-family:Verdana, Geneva, Tahoma,  Helvetica, text-align:justify;font-size:15px !important;background-color:inherit;"> <span style="background-color:inherit;font-family:微软雅黑;font-size:14px;line-height:1.5;">tell()&nbsp;方法告诉你该文件中的当前位置；</span><span style="background-color:inherit;font-family:微软雅黑;font-size:14px;line-height:1.5;">换句话说，下一个读或写将发生在从该文件的开头之后多个字节。</span> </p> 
+  <p style="font-family:Verdana, Geneva, Tahoma,  Helvetica, text-align:justify;font-size:15px !important;background-color:inherit;"> <i>seek(offset[, from])</i>&nbsp;<span style="background-color:inherit;font-family:微软雅黑;font-size:14px;line-height:1.5;">方法改变当前文件的位置。</span><span style="background-color:inherit;line-height:1.5;">&nbsp;</span><span style="background-color:inherit;font-family:微软雅黑;font-size:14px;line-height:1.5;">offset&nbsp;参数指示要移动字节数。</span><span style="background-color:inherit;font-family:微软雅黑;font-size:14px;line-height:1.5;">from&nbsp;参数指定字节从哪移动的参考位置。</span> </p> 
+  <p style="font-family:Verdana, Geneva, Tahoma,  Helvetica, text-align:justify;font-size:15px !important;background-color:inherit;"> <span style="background-color:inherit;font-family:微软雅黑;font-size:14px;line-height:1.5;">如果&nbsp;from&nbsp;被设置为0，这意味着使用该文件的开头作为基准位置，以及如果设置为</span><span style="background-color:inherit;font-family:微软雅黑;font-size:14px;line-height:1.5;">1，则使用当前位置作为基准位置，如果它被设置为2，则该文件的结束将被作为基准位置。</span> </p> 
+  <h3 style="background-color:inherit;font-family:Verdana, Geneva, Tahoma,  Helvetica, font-size:1.3em;font-weight:normal;"> 示例 </h3> 
+  <div style="background-color:inherit;">
+    让我们使用一个文件foo.txt，这是我们在上面创建的。 
+  </div> 
+  <pre>#!/usr/bin/python3
+
+# Open a file
+fo = open("foo.txt", "r+")
+str = fo.read(10)
+print ("Read String is : ", str)
+
+# Check current position
+position = fo.tell()
+print ("Current file position : ", position)
+
+# Reposition pointer at the beginning once again
+position = fo.seek(0, 0)
+str = fo.read(10)
+print ("Again read String is : ", str)
+# Close opened file
+fo.close()</pre> 
+  <div style="background-color:inherit;">
+    这将产生以下结果&nbsp;- 
+  </div> 
+  <pre>Read String is :  Python is
+Current file position :  10
+Again read String is :  Python is</pre> 
+  <h2> 
+   <div>
+     重命名和删除文件 
+   </div> </h2> 
+  <div style="background-color:inherit;">
+    Python的os模块提供了执行文件处理操作，如重命名和删除文件的方法。 
+  </div> 
+  <div style="background-color:inherit;">
+    要使用这个模块，需要先导入它，然后就可以调用任何相关的功能了。 
+  </div> 
+  <h2> rename() 方法 </h2> 
+  <div style="background-color:inherit;">
+    rename()方法有两个参数，当前文件名和新的文件名。 
+  </div> 
+  <h3 style="background-color:inherit;font-family:Verdana, Geneva, Tahoma,  Helvetica, font-size:1.3em;font-weight:normal;"> 语法 </h3> 
+  <pre>os.rename(current_file_name, new_file_name)</pre> 
+  <h3 style="background-color:inherit;font-family:Verdana, Geneva, Tahoma,  Helvetica, font-size:1.3em;font-weight:normal;"> 示例 </h3> 
+  <div style="background-color:inherit;">
+    以下为例子用来重命名现有文件 test1.txt 为&nbsp;test2.txt： 
+  </div> 
+  <pre>#!/usr/bin/python3
+import os
+
+# Rename a file from test1.txt to test2.txt
+os.rename( "test1.txt", "test2.txt" )</pre> 
+  <h2> remove()&nbsp;方法 </h2> 
+  <div style="background-color:inherit;">
+    可以使用 remove()方法通过提供参数文件名称(file_name)来删除文件。 
+  </div> 
+  <h3 style="background-color:inherit;font-family:Verdana, Geneva, Tahoma,  Helvetica, font-size:1.3em;font-weight:normal;"> 语法 </h3> 
+  <pre>os.remove(file_name)</pre> 
+  <h3 style="background-color:inherit;font-family:Verdana, Geneva, Tahoma,  Helvetica, font-size:1.3em;font-weight:normal;"> 示例 </h3> 
+  <div style="background-color:inherit;">
+    下面是删除现有文件 test2.txt 的例子&nbsp;- 
+  </div> 
+  <pre>#!/usr/bin/python3
+import os
+
+# Delete file test2.txt
+os.remove("text2.txt")</pre> 
+  <h2> 
+   <div>
+     Python目录 
+   </div> </h2> 
+  <p style="font-family:Verdana, Geneva, Tahoma,  Helvetica, text-align:justify;font-size:15px !important;background-color:inherit;"> <span style="background-color:inherit;font-family:微软雅黑;font-size:14px;line-height:1.5;">所有的文件都包含不同的目录中，Python处理这些目录操作也没有什么问题。</span><span style="background-color:inherit;font-family:微软雅黑;font-size:14px;line-height:1.5;">os模块中有用于创建，删除和更改目录的几种方法。</span> </p> 
+  <h2> mkdir()&nbsp;方法 </h2> 
+  <p style="font-family:Verdana, Geneva, Tahoma,  Helvetica, text-align:justify;font-size:15px !important;background-color:inherit;"> <span style="background-color:inherit;font-family:微软雅黑;font-size:14px;line-height:1.5;">可以使用os模块中的 mkdir()方法在当前目录下创建目录。</span><span style="background-color:inherit;font-family:微软雅黑;font-size:14px;line-height:1.5;">需要提供一个参数到这个方法指定要创建的目录名。</span> </p> 
+  <h3 style="background-color:inherit;font-family:Verdana, Geneva, Tahoma,  Helvetica, font-size:1.3em;font-weight:normal;"> 语法 </h3> 
+  <pre>os.mkdir("newdir")</pre> 
+  <h3 style="background-color:inherit;font-family:Verdana, Geneva, Tahoma,  Helvetica, font-size:1.3em;font-weight:normal;"> 示例 </h3> 
+  <div style="background-color:inherit;">
+    下面是在当前目录创建&nbsp;
+   <span style="background-color:inherit;line-height:1.5;">test&nbsp;目录</span>
+   <span style="background-color:inherit;line-height:1.5;">的例子&nbsp;-</span> 
+  </div> 
+  <pre>#!/usr/bin/python3
+import os
+
+# Create a directory "test"
+os.mkdir("test")</pre> 
+  <h2> chdir()&nbsp;方法 </h2> 
+  <p style="font-family:Verdana, Geneva, Tahoma,  Helvetica, text-align:justify;font-size:15px !important;background-color:inherit;"> <span style="background-color:inherit;font-family:微软雅黑;font-size:14px;line-height:1.5;">可以使用&nbsp;chdir()&nbsp;方法来改变当前目录。</span><span style="background-color:inherit;font-family:微软雅黑;font-size:14px;line-height:1.5;">chdir()&nbsp;方法接受一个参数，就是你想在当前目录创建的目录的目录名称。</span> </p> 
+  <h3 style="background-color:inherit;font-family:Verdana, Geneva, Tahoma,  Helvetica, font-size:1.3em;font-weight:normal;"> 语法 </h3> 
+  <pre>os.chdir("newdir")</pre> 
+  <h3 style="background-color:inherit;font-family:Verdana, Geneva, Tahoma,  Helvetica, font-size:1.3em;font-weight:normal;"> 示例 </h3> 
+  <div style="background-color:inherit;">
+    以下是进入&nbsp;"/home/newdir"&nbsp;目录的例子- 
+  </div> 
+  <pre>#!/usr/bin/python3
+import os
+
+# Changing a directory to "/home/newdir"
+os.chdir("/home/newdir")</pre> 
+  <h2> getcwd()方法 </h2> 
+  <div style="background-color:inherit;">
+    getcwd()方法显示当前的工作目录。 
+  </div> 
+  <h3 style="background-color:inherit;font-family:Verdana, Geneva, Tahoma,  Helvetica, font-size:1.3em;font-weight:normal;"> 语法 </h3> 
+  <pre>os.getcwd()</pre> 
+  <h3 style="background-color:inherit;font-family:Verdana, Geneva, Tahoma,  Helvetica, font-size:1.3em;font-weight:normal;"> 示例 </h3> 
+  <div style="background-color:inherit;">
+    以下是获得当前目录的例子&nbsp;- 
+  </div> 
+  <pre>#!/usr/bin/python3
+import os
+
+# This would give location of the current directory
+os.getcwd()</pre> 
+  <h2> rmdir()&nbsp;方法 </h2> 
+  <div style="background-color:inherit;">
+    rmdir()方法删除目录，这是作为方法的参数传递。 
+  </div> 
+  <div style="background-color:inherit;">
+    删除目录前，它的所有内容应该先删除。 
+  </div> 
+  <h3 style="background-color:inherit;font-family:Verdana, Geneva, Tahoma,  Helvetica, font-size:1.3em;font-weight:normal;"> 方法: </h3> 
+  <pre>os.rmdir('dirname')</pre> 
+  <h3 style="background-color:inherit;font-family:Verdana, Geneva, Tahoma,  Helvetica, font-size:1.3em;font-weight:normal;"> 示例 </h3> 
+  <p style="font-family:Verdana, Geneva, Tahoma,  Helvetica, text-align:justify;font-size:15px !important;background-color:inherit;"> <span style="background-color:inherit;font-family:微软雅黑;font-size:14px;line-height:1.5;">以下是删除&nbsp;"/tmp/test"&nbsp;目录的例子。</span><span style="background-color:inherit;font-family:微软雅黑;font-size:14px;line-height:1.5;">它需要给定目录的完全合格的名称，否则会从当前目录搜索目录。</span> </p> 
+  <pre>#!/usr/bin/python3
+import os
+
+# This would  remove "/tmp/test"  directory.
+os.rmdir( "/tmp/test"  )</pre> 
+  <h2> 
+   <div>
+     相关文件和目录的方法 
+   </div> </h2> 
+  <p style="font-family:Verdana, Geneva, Tahoma,  Helvetica, text-align:justify;font-size:15px !important;background-color:inherit;"> <span style="background-color:inherit;font-family:微软雅黑;font-size:14px;line-height:1.5;">有三个重要来源，它提供了多种实用的方法来处理&nbsp;</span><span style="background-color:inherit;font-family:微软雅黑;font-size:14px;line-height:1.5;">和操作在Windows和Unix操作系统的文件和目录。</span><span style="background-color:inherit;font-family:微软雅黑;font-size:14px;line-height:1.5;">它们如下&nbsp;-</span> </p> 
+  <ul style="background-color:inherit;color:#313131;font-family:Verdana, Geneva, Tahoma,  Helvetica,;"> 
+   <li style="background-color:inherit;color:#000000;"> <p style="text-align:justify;font-size:15px !important;background-color:inherit;"> <a target="_blank" href="http://www.yiibai.com/python3/file_methods.html">文件对象方法</a>:&nbsp;<span style="background-color:inherit;font-size:14px;line-height:1.5;">文件对象提供的功能来操作文件。</span> </p> </li> 
+   <li style="background-color:inherit;color:#000000;"> <p style="text-align:justify;font-size:15px !important;background-color:inherit;"> <a target="_blank" href="http://www.yiibai.com/python3/os_file_methods.html">OS对象方法</a>:&nbsp;<span style="background-color:inherit;font-size:14px;line-height:1.5;">提供的方法来处理的文件以及目录。</span> </p> </li> 
+  </ul> 
+ </div>
+ <br>      
+</div></body></html>

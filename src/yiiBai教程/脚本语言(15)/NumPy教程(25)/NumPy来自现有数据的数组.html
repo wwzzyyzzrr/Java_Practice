@@ -1,0 +1,167 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">NumPy来自现有数据的数组</h1><div style="width:100%;float:left;" class="article-content">   
+ <h1 id="h1-numpy-"><a name="NumPy - 来自现有数据的数组" class="reference-link"></a><span class="header-link octicon octicon-link"></span>NumPy - 来自现有数据的数组</h1>
+ <p>这一章中，我们会讨论如何从现有数据创建数组。</p> 
+ <h2 id="h2--code-numpy-asarray-code-"><a name="<code>numpy.asarray</code>" class="reference-link"></a><span class="header-link octicon octicon-link"></span><code>numpy.asarray</code></h2>
+ <p>此函数类似于<code>numpy.array</code>，除了它有较少的参数。 这个例程对于将 Python 序列转换为<code>ndarray</code>非常有用。</p> 
+ <pre><code>numpy.asarray(a, dtype = None, order = None)
+</code></pre>
+ <p>构造器接受下列参数：</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>序号</th> 
+    <th>参数及描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>1.</td> 
+    <td><code>a</code> 任意形式的输入参数，比如列表、列表的元组、元组、元组的元组、元组的列表</td> 
+   </tr> 
+   <tr> 
+    <td>2.</td> 
+    <td><code>dtype</code> 通常，输入数据的类型会应用到返回的<code>ndarray</code></td> 
+   </tr> 
+   <tr> 
+    <td>3.</td> 
+    <td><code>order</code> <code>'C'</code>为按行的 C 风格数组，<code>'F'</code>为按列的 Fortran 风格数组</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p>下面的例子展示了如何使用<code>asarray</code>函数：</p> 
+ <h3 id="h3--1"><a name="示例 1" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例 1</h3>
+ <pre><code># 将列表转换为 ndarray 
+import numpy as np 
+
+x =  [1,2,3] 
+a = np.asarray(x)  
+print a
+</code></pre>
+ <p>输出如下：</p> 
+ <pre><code>[1  2  3]
+</code></pre>
+ <h3 id="h3--2"><a name="示例 2" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例 2</h3>
+ <pre><code># 设置了 dtype  
+import numpy as np 
+
+x =  [1,2,3] 
+a = np.asarray(x, dtype =  float)  
+print a
+</code></pre>
+ <p>输出如下：</p> 
+ <pre><code>[ 1.  2.  3.]
+</code></pre>
+ <h3 id="h3--3"><a name="示例 3" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例 3</h3>
+ <pre><code># 来自元组的 ndarray  
+import numpy as np 
+
+x =  (1,2,3) 
+a = np.asarray(x)  
+print a
+</code></pre>
+ <p>输出如下：</p> 
+ <pre><code>[1  2  3]
+</code></pre>
+ <h3 id="h3--4"><a name="示例 4" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例 4</h3>
+ <pre><code># 来自元组列表的 ndarray
+import numpy as np 
+
+x =  [(1,2,3),(4,5)] 
+a = np.asarray(x)  
+print a
+</code></pre>
+ <p>输出如下：</p> 
+ <pre><code>[(1, 2, 3) (4, 5)]
+</code></pre>
+ <h2 id="h2--code-numpy-frombuffer-code-"><a name="<code>numpy.frombuffer</code>" class="reference-link"></a><span class="header-link octicon octicon-link"></span><code>numpy.frombuffer</code></h2>
+ <p>此函数将缓冲区解释为一维数组。 暴露缓冲区接口的任何对象都用作参数来返回<code>ndarray</code>。</p> 
+ <pre><code>numpy.frombuffer(buffer, dtype = float, count = -1, offset = 0)
+</code></pre>
+ <p>构造器接受下列参数：</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>序号</th> 
+    <th>参数及描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>1.</td> 
+    <td><code>buffer</code> 任何暴露缓冲区借口的对象</td> 
+   </tr> 
+   <tr> 
+    <td>2.</td> 
+    <td><code>dtype</code> 返回数组的数据类型，默认为<code>float</code></td> 
+   </tr> 
+   <tr> 
+    <td>3.</td> 
+    <td><code>count</code> 需要读取的数据数量，默认为<code>-1</code>，读取所有数据</td> 
+   </tr> 
+   <tr> 
+    <td>4.</td> 
+    <td><code>offset</code> 需要读取的起始位置，默认为<code>0</code></td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h3 id="h3-u793Au4F8B"><a name="示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例</h3>
+ <p>下面的例子展示了<code>frombuffer</code>函数的用法。</p>   
+ <pre><code>import numpy as np 
+s =  'Hello World' 
+a = np.frombuffer(s, dtype =  'S1')  
+print a
+</code></pre>
+ <p>输出如下：</p> 
+ <pre><code>['H'  'e'  'l'  'l'  'o'  ' '  'W'  'o'  'r'  'l'  'd']
+</code></pre>
+ <h2 id="h2--code-numpy-fromiter-code-"><a name="<code>numpy.fromiter</code>" class="reference-link"></a><span class="header-link octicon octicon-link"></span><code>numpy.fromiter</code></h2>
+ <p>此函数从任何可迭代对象构建一个<code>ndarray</code>对象，返回一个新的一维数组。</p> 
+ <pre><code>numpy.fromiter(iterable, dtype, count = -1)
+</code></pre>
+ <p>构造器接受下列参数：</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>序号</th> 
+    <th>参数及描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>1.</td> 
+    <td><code>iterable</code> 任何可迭代对象</td> 
+   </tr> 
+   <tr> 
+    <td>2.</td> 
+    <td><code>dtype</code> 返回数组的数据类型</td> 
+   </tr> 
+   <tr> 
+    <td>3.</td> 
+    <td><code>count</code> 需要读取的数据数量，默认为<code>-1</code>，读取所有数据</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p>以下示例展示了如何使用内置的<code>range()</code>函数返回列表对象。 此列表的迭代器用于形成<code>ndarray</code>对象。</p> 
+ <h3 id="h3--1"><a name="示例 1" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例 1</h3>
+ <pre><code># 使用 range 函数创建列表对象  
+import numpy as np 
+list = range(5)  
+print list
+</code></pre>
+ <p>输出如下：</p> 
+ <pre><code>[0,  1,  2,  3,  4]
+</code></pre>
+ <h3 id="h3--2"><a name="示例 2" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例 2</h3>
+ <pre><code># 从列表中获得迭代器  
+import numpy as np 
+list = range(5) 
+it = iter(list)  
+# 使用迭代器创建 ndarray 
+x = np.fromiter(it, dtype =  float)  
+print x
+</code></pre>
+ <p>输出如下：</p> 
+ <pre><code>[0.   1.   2.   3.   4.]
+</code></pre>
+ <br>      
+</div></body></html>

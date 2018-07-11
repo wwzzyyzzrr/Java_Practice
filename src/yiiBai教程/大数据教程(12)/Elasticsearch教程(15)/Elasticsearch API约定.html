@@ -1,0 +1,221 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Elasticsearch API约定</h1><div style="width:100%;float:left;" class="article-content">   
+ <p><strong>web</strong>中的应用编程接口(API)是一组函数调用或其他编程指令以访问该特定web应用中的软件组件。 例如，<strong>Facebook API</strong>帮助开发者通过从Facebook访问数据或其他功能来创建应用程序; 它可以是出生日期或状态更新。</p> 
+ <p><strong>Elasticsearch</strong>提供了一个REST API，通过HTTP通过JSON访问。 Elasticsearch使用以下约定 -</p> 
+ <h2 id="h2-u591Au7D22u5F15"><a name="多索引" class="reference-link"></a><span class="header-link octicon octicon-link"></span>多索引</h2>
+ <p>API中的大多数操作(主要是搜索和其他操作)用于一个或多个索引。 这有助于用户通过只执行一次查询来搜索多个位置或所有可用数据。 许多不同的符号用于在多个索引中执行操作。 我们将在本节讨论其中的一些。</p> 
+ <h3 id="h3-u9017u53F7u5206u9694u7B26u53F7"><a name="逗号分隔符号" class="reference-link"></a><span class="header-link octicon octicon-link"></span>逗号分隔符号</h3>
+ <pre><code>POST http://localhost:9200/index1,index2,index3/_search
+</code></pre>
+ <p><strong>请求正文</strong></p> 
+ <pre><code class="lang-json">{
+   "query":{
+      "query_string":{
+         "query":"any_string"
+      }
+   }
+}
+</code></pre> 
+ <p><strong>响应</strong></p> 
+ <p>来自<code>index1</code>，<code>index2</code>，<code>index3</code>的JSON对象，其中包含<code>any_string</code>。</p> 
+ <h3 id="h3--_all-"><a name="所有索引的_all关键字" class="reference-link"></a><span class="header-link octicon octicon-link"></span>所有索引的_all关键字</h3>
+ <pre><code>POST http://localhost:9200/_all/_search
+</code></pre>
+ <p><strong>请求正文</strong></p> 
+ <pre><code class="lang-json">{
+   "query":{
+      "query_string":{
+         "query":"any_string"
+      }
+   }
+}
+</code></pre> 
+ <h3 id="h3-u54CDu5E94"><a name="响应" class="reference-link"></a><span class="header-link octicon octicon-link"></span>响应</h3>
+ <p>来自所有索引的JSON对象，并且有<code>any_string</code>。</p> 
+ <h2 id="h2--"><a name="通配符(*，+， - )" class="reference-link"></a><span class="header-link octicon octicon-link"></span>通配符(*，+， - )</h2>
+ <pre><code>POST http://localhost:9200/school*/_search
+</code></pre>
+ <p><strong>请求正文</strong></p> 
+ <pre><code class="lang-json">{
+   "query":{
+      "query_string":{
+         "query":"CBSE"
+      }
+   }
+}
+</code></pre> 
+ <p><strong>响应</strong><br>来自所有索引的JSON对象，从<code>school</code> 开始，有CBSE。</p> 
+ <p>或者，也可以使用以下代码 -</p> 
+ <pre><code>POST http://localhost:9200/school*,-schools_gov /_search
+</code></pre>
+ <p><strong>请求正文</strong></p> 
+ <pre><code class="lang-json">{
+   "query":{
+      "query_string":{
+         "query":"CBSE"
+      }
+   }
+}
+</code></pre> 
+ <h3 id="h3-u54CDu5E94"><a name="响应" class="reference-link"></a><span class="header-link octicon octicon-link"></span>响应</h3>
+ <p>来自所有索引的JSON对象，它们以“<code>school</code>”开头，但不是<code>schools_gov</code>并且在其中有CBSE。<br>还有一些URL查询字符串参数 -</p> 
+ <ul> 
+  <li><code>ignore_unavailable</code> - 如果URL中存在的一个或多个索引不存在，则不会发生错误或操作不会停止。 例如，<code>schools</code> 索引存在，但<code>book_shops</code>不存在 -<pre><code>POST http://localhost:9200/school*,book_shops/_search
+</code></pre></li>
+ </ul> 
+ <p><strong>请求正文</strong></p> 
+ <pre><code class="lang-json">{
+   "query":{
+      "query_string":{
+         "query":"CBSE"
+      }
+   }
+}
+</code></pre> 
+ <p><strong>响应</strong></p> 
+ <pre><code class="lang-json">{
+   "error":{
+      "root_cause":[{
+         "type":"index_not_found_exception", "reason":"no such index",
+         "resource.type":"index_or_alias", "resource.id":"book_shops", 
+         "index":"book_shops"
+      }],
+
+      "type":"index_not_found_exception", "reason":"no such index",
+      "resource.type":"index_or_alias", "resource.id":"book_shops", 
+      "index":"book_shops"
+
+   },"status":404
+}
+</code></pre> 
+ <p>看看下面的代码 -</p> 
+ <pre><code>POST http://localhost:9200/school*,book_shops/_search?ignore_unavailable = true
+</code></pre>
+ <p><strong>请求正文</strong></p> 
+ <pre><code class="lang-json">{
+   "query":{
+      "query_string":{
+         "query":"CBSE"
+      }
+   }
+}
+</code></pre> 
+ <p><strong>响应(无错误)</strong><br>来自所有索引的JSON对象，从 <code>school</code> 开始，有<code>CBSE</code>。</p> 
+ <p><strong>allow_no_indices</strong></p> 
+ <p>如果带有通配符的网址没有索引，这个参数是<code>true</code>值时将防止错误。</p> 
+ <p>例如，不是以<code>schools_pri</code>开头的索引 -</p> 
+ <pre><code>POST
+http://localhost:9200/schools_pri*/_search?allow_no_indices = true
+</code></pre>
+ <p><strong>请求正文</strong></p> 
+ <pre><code class="lang-json">{
+   "query":{
+      "match_all":{}
+   }
+}
+</code></pre> 
+ <p><strong>响应(无错误)</strong></p> 
+ <pre><code class="lang-json">{
+   "took":1,"timed_out": false, "_shards":{"total":0, "successful":0, "failed":0}, 
+   "hits":{"total":0, "max_score":0.0, "hits":[]}
+}
+</code></pre> 
+ <p><strong>expand_wildcards</strong></p> 
+ <p>此参数确定通配符是否需要扩展为打开索引或闭合索引或两者。 此参数的值可以是打开和关闭或无和全部。</p> 
+ <p>例如，关闭索引<code>schools</code> -</p> 
+ <pre><code>POST http://localhost:9200/schools/_close
+</code></pre>
+ <p><strong>响应</strong></p> 
+ <pre><code class="lang-json">{"acknowledged":true}
+</code></pre> 
+ <p>看看下面的代码 -</p> 
+ <pre><code>POST http://localhost:9200/school*/_search?expand_wildcards = closed
+</code></pre>
+ <p><strong>请求正文</strong></p> 
+ <pre><code class="lang-json">{
+   "query":{
+      "match_all":{}
+   }
+}
+</code></pre> 
+ <p><strong>响应</strong></p> 
+ <pre><code class="lang-json">{
+   "error":{
+      "root_cause":[{
+         "type":"index_closed_exception", "reason":"closed", "index":"schools"
+      }],
+
+      "type":"index_closed_exception", "reason":"closed", "index":"schools"
+   }, "status":403
+}
+</code></pre> 
+ <h2 id="h2-u65E5u671Fu7D22u5F15u540Du79F0u4E2Du7684u6570u5B66u652Fu6301"><a name="日期索引名称中的数学支持" class="reference-link"></a><span class="header-link octicon octicon-link"></span>日期索引名称中的数学支持</h2>
+ <p><strong>Elasticsearch</strong>提供了根据日期和时间搜索索引的功能。我们需要以特定格式指定日期和时间。 例如，<code>accountdetail-2015.12.30</code>，索引将存储2015年12月30日的银行帐户详细信息。可以执行数学操作以获取特定日期或日期和时间范围的详细信息。</p> 
+ <p>日期数字索引名称的格式 -</p>   
+ <pre><code>&lt;static_name{date_math_expr{date_format|time_zone}}&gt;
+http://localhost:9200/&lt;accountdetail-{now-2d{YYYY.MM.dd|utc}}&gt;/_search
+</code></pre>
+ <p><code>static_name</code>是表达式的一部分，在每个日期数学索引(如帐户详细信息)中保持相同。 date_math_expr包含动态确定日期和时间的数学表达式，如<code>now-2d</code>。<code>date_format</code>包含日期在索引中写入的格式，如<code>YYYY.MM.dd</code>。 如果今天的日期是2015年12月30日，则<code>&lt;accountdetail- {now-2d {YYYY.MM.dd}}&gt;</code>将返回<code>accountdetail-2015.12.28</code>。</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>表达式</th> 
+    <th>解析为</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td><code>&lt;accountdetail-{now-d}&gt;</code></td> 
+    <td>accountdetail-2016.12.29</td> 
+   </tr> 
+   <tr> 
+    <td><code>&lt;accountdetail-{now-M}&gt;</code></td> 
+    <td>accountdetail-2015.11.30</td> 
+   </tr> 
+   <tr> 
+    <td><code>&lt;accountdetail-{now{YYYY.MM}}&gt;</code></td> 
+    <td>accountdetail-2015.12</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p>现在将看到<code>Elasticsearch</code>中可用于获取指定格式的响应的一些常见选项。</p> 
+ <h3 id="h3-u7F8Eu5316u7ED3u679C"><a name="美化结果" class="reference-link"></a><span class="header-link octicon octicon-link"></span>美化结果</h3>
+ <p>可以通过附加一个网址查询参数(即<code>pretty = true</code>)，获得格式正确的JSON对象的响应。</p> 
+ <pre><code>POST http://localhost:9200/schools/_search?pretty = true
+</code></pre>
+ <p><strong>请求正文</strong></p> 
+ <pre><code class="lang-json">{
+   "query":{
+      "match_all":{}
+   }
+}
+</code></pre> 
+ <p><strong>响应</strong></p> 
+ <pre><code class="lang-json">……………………..
+{
+   "_index" : "schools", "_type" : "school", "_id" : "1", "_score" : 1.0,
+   "_source":{
+      "name":"Central School", "description":"CBSE Affiliation", 
+      "street":"Nagan", "city":"paprola", "state":"HP", "zip":"176115",
+      "location": [31.8955385, 76.8380405], "fees":2000, 
+      "tags":["Senior Secondary", "beautiful campus"], "rating":"3.5"
+   }
+}    
+………………….
+</code></pre> 
+ <p><strong>人类可读输出</strong></p> 
+ <p>此选项可以将统计响应更改为人类可读的形式(如果<code>human = true</code>)或计算机可读形式(如果<code>human = false</code>)。 例如，如果<code>human = true</code>那么<code>distance_kilometer = 20KM</code>，如果<code>human = false</code>那么<code>distance_meter = 20000</code>，则是响应需要被另一个计算机程序使用。</p> 
+ <p><strong>响应过滤</strong><br>可以通过将其添加到<code>field_path</code>参数中来过滤对较少字段的响应。 例如，</p> 
+ <pre><code>POST http://localhost:9200/schools/_search?filter_path = hits.total
+</code></pre>
+ <p><strong>请求正文</strong></p> 
+ <pre><code class="lang-json">{
+   "query":{
+      "match_all":{}
+   }
+}
+</code></pre> 
+ <p><strong>响应</strong></p> 
+ <pre><code class="lang-json">{"hits":{"total":3}}
+</code></pre>
+ <br>      
+</div></body></html>

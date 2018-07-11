@@ -1,0 +1,75 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Memcached递增递减数据</h1><div style="width:100%;float:left;" class="article-content">   
+ <p> Memcached的incr 和 decr命令用于增加现有键的数值递减。如果键未找到或如果关键的不是数字，则返回NOT_FOUND。那么CLIENT_ERROR不能增加或返回递减非数值错误。</p> 
+ <h2> Incr</h2> 
+ <h3> 语法</h3> 
+ <p> memcached的incr命令的基本语法如下所示：</p> 
+ <pre class="prettyprint prettyprinted" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 603.767395019531px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+incr key increment_value</pre> 
+ <h3> 示例</h3> 
+ <pre class="prettyprint prettyprinted" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 603.767395019531px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+set visitors 0 900 2
+10
+STORED
+get visitors
+VALUE visitors 0 2
+10
+END
+incr visitors 5
+15
+get visitors
+VALUE visitors 0 2
+15
+END</pre> 
+ <p> 在上面的例子中，我们已经使用visitors为一个键，并设置10为初始值，之后为visitors增量5。</p> 
+ <h2> Decr</h2> 
+ <h3> 语法</h3> 
+ <p> memcached的decr命令的基本语法如下所示：</p> 
+ <pre class="prettyprint prettyprinted" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 603.767395019531px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+decr key decrement_value</pre> 
+ <h3> 示例</h3> 
+ <pre class="prettyprint prettyprinted" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 603.767395019531px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+set visitors 0 900 2
+10
+STORED
+get visitors
+VALUE visitors 0 2
+10
+END
+decr visitors 5
+5
+get visitors
+VALUE visitors 0 1
+5
+END</pre> 
+ <h2> 使用Java应用程序递增递减数据</h2> 
+ <p> 要在memcached服务器增加，减小数据，需要使用memcached的incr, decr方法。</p> 
+ <h3> 示例</h3> 
+ <pre class="prettyprint prettyprinted" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 603.767395019531px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+import net.spy.memcached.MemcachedClient;
+public class MemcachedJava {
+   public static void main(String[] args) {
+      //Connecting to Memcached server on localhost
+      MemcachedClient mcc = new MemcachedClient(new InetSocketAddress("127.0.0.1", 11211));
+      System.out.println("Connection to server sucessfully");
+      System.out.println("set status:"+mcc.set("count", 900, "5").isDone());
+      //Get value from cache
+      System.out.println("Get from Cache:"+mcc.get("count"));
+      // now increase the stored value
+      System.out.println("Increment value:"+mcc.incr("count", 2));
+      // now decrease the stored value
+      System.out.println("Decrement value:"+mcc.decr("count", 1));
+      // now get the final stored value
+      System.out.println("Get from Cache:"+mcc.get("count"));
+   }
+}</pre> 
+ <h3> 输出</h3> 
+ <p> 当上述程序编译和运行，它提供了以下的输出：</p>   
+ <pre class="result prettyprinted" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 603.767395019531px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+Connection to server successfully
+set status:true
+Get from Cache:5
+Increment value:7
+Decrement value:6
+Get from Cache:6</pre> 
+ <br>      
+</div></body></html>

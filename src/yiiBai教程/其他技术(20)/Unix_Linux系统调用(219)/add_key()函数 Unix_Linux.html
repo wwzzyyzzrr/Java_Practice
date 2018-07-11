@@ -1,0 +1,112 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">add_key()函数 Unix/Linux</h1><div style="width:100%;float:left;" class="article-content">   
+ <h1> 名称</h1> 
+ <p> add_key - 添加到内核的密钥管理机制一个键</p> 
+ <h1> 内容简介</h1> 
+ <table cellpadding="5" cellspacing="5" class="src" style="font-family: verdana, helvetica, arial, sans-serif;  border-color: rgb(170, 170, 170); width: 552px; background-color: rgb(241, 241, 241); border-collapse: collapse; padding-left: 5px; vertical-align: top; color: rgb(0, 0, 0);"> 
+  <tbody> 
+   <tr> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse;  border-color: rgb(170, 170, 170);"> <pre style="font-family: 'Courier New', monospace; font-size: 12px; margin-bottom: 0px;">
+</pre> <p style="text-align: justify;"> <b>#include &lt;keyutils.h&gt;</b> <b>key_serial_t add_key(const char *</b><i>type</i><b>, const char *</b><i>description</i><b>,</b> <b>const void *</b><i>payload</i><b>, size_t </b><i>plen</i><b>, key_serial_t </b><i>keyring</i><b>);</b></p> </td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h1> 描述</h1> 
+ <p> add_key()&nbsp;要求内核给定类型和描述来创建或更新一个键，它的有效载荷plen&nbsp;长度实例，将它安装到提名 keyringand，返回其序列号。</p> 
+ <p> 密钥类型可能会拒绝该数据，如果它是在错误的格式或以其他方式无效。</p> 
+ <p> 如果目标的钥匙圈已经包含匹配指定类型和描述，然后，如果密钥类型支持一个键，该键将被更新，而不是创建一个新的密钥，如果没有，将创建一个新的密钥，它将取代链接到现存的核心，从钥匙圈。</p> 
+ <p> 目的地钥匙圈序号可能是一个有效的钥匙圈，主调用写入权限，或者它可以是一个特殊的密钥环ID：</p> 
+ <table border="1" cellpadding="5" cellspacing="0" class="src" style="font-family: verdana, helvetica, arial, sans-serif; border: 1px solid rgb(170, 170, 170); width: 552px; background-color: rgb(241, 241, 241); border-collapse: collapse; padding-left: 5px; vertical-align: top; color: rgb(0, 0, 0);"> 
+  <tbody> 
+   <tr> 
+    <th style="background-color: rgb(205, 205, 205); border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" width="25%"> 标签</th> 
+    <th style="background-color: rgb(205, 205, 205); border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> 描述</th> 
+   </tr> 
+   <tr> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>KEY_SPEC_THREAD_KEYRING</b></td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> This specifies the caller’s thread-specific keyring.</td> 
+   </tr> 
+   <tr> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>KEY_SPEC_PROCESS_KEYRING</b></td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> This specifies the caller’s process-specific keyring.</td> 
+   </tr> 
+   <tr> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>KEY_SPEC_SESSION_KEYRING</b></td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> This specifies the caller’s session-specific keyring.</td> 
+   </tr> 
+   <tr> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>KEY_SPEC_USER_KEYRING</b></td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> This specifies the caller’s UID-specific keyring.</td> 
+   </tr> 
+   <tr> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>KEY_SPEC_USER_SESSION_KEYRING</b></td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> This specifies the caller’s UID-session keyring.</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h1> 密钥类型</h1> 
+ <p> 有很多可供选择的核心密钥管理代码的密钥类型，而这些可以被指定为这个函数：</p> 
+ <table border="1" cellpadding="5" cellspacing="0" class="src" style="font-family: verdana, helvetica, arial, sans-serif; border: 1px solid rgb(170, 170, 170); width: 552px; background-color: rgb(241, 241, 241); border-collapse: collapse; padding-left: 5px; vertical-align: top; color: rgb(0, 0, 0);"> 
+  <tbody> 
+   <tr> 
+    <th style="background-color: rgb(205, 205, 205); border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" width="25%"> 标签</th> 
+    <th style="background-color: rgb(205, 205, 205); border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> 描述</th> 
+   </tr> 
+   <tr> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>“user”</b></td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> Keys of the user-defined key type may contain a blob of arbitrary data, and the<i>description</i>&nbsp;may be any valid string, though it is preferred that the description be prefixed with a string representing the service to which the key is of interest and a colon (for instance “<b>afs:mykey</b>”). The&nbsp;<i>payload</i>&nbsp;may be empty or&nbsp;<b>NULL</b>&nbsp;for keys of this type.</td> 
+   </tr> 
+   <tr> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>“keyring”</b></td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> Keyrings are special key types that may contain links to sequences of other keys of any type. If this interface is used to create a keyring, then a&nbsp;<b>NULL</b>&nbsp;<i>payload</i>&nbsp;should be specified, and<i>plen</i>&nbsp;should be zero.</td> 
+   </tr> 
+  </tbody> 
+ </table>   
+ <h1> 返回值</h1> 
+ <p> 成功&nbsp;add_key()&nbsp;返回序列号密钥，它创建或更新。错误将返回值-1并且errno将被设置为一个适当的错误。</p> 
+ <h1> 错误</h1> 
+ <table border="1" cellpadding="5" cellspacing="0" class="src" style="font-family: verdana, helvetica, arial, sans-serif; border: 1px solid rgb(170, 170, 170); width: 552px; background-color: rgb(241, 241, 241); border-collapse: collapse; padding-left: 5px; vertical-align: top; color: rgb(0, 0, 0);"> 
+  <tbody> 
+   <tr> 
+    <th style="background-color: rgb(205, 205, 205); border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" width="25%"> 标签</th> 
+    <th style="background-color: rgb(205, 205, 205); border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> 描述</th> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>ENOKEY</b></td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" valign="bottom"> The keyring doesn’t exist.</td> 
+   </tr> 
+   <tr> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>EKEYEXPIRED</b></td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> The keyring has expired.</td> 
+   </tr> 
+   <tr> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>EKEYREVOKED</b></td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> The keyring has been revoked.</td> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>EINVAL</b></td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" valign="bottom"> The payload data was invalid.</td> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>ENOMEM</b></td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" valign="bottom"> Insufficient memory to create a key.</td> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>EDQUOT</b></td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" valign="bottom"> The key quota for this user would be exceeded by creating this key or linking it to the keyring.</td> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>EACCES</b></td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" valign="bottom"> The keyring wasn’t available for modification by the user.</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h1> 链接</h1> 
+ <p> 虽然这是一个Linux系统调用，它是在libc中不存在，但可以发现合适的 libkey 工具。链接时，lkey&nbsp;工具应指定给链接器。</p> 
+ <h1> 另请参阅</h1> 
+ <ul> 
+  <li> <p> <a target="_blank" href="http://www.yiibai.com/unix_commands/keyctl.html">keyctl (1)</a></p> </li> 
+  <li> <p> <a target="_blank" href="http://www.yiibai.com/unix_system_calls/keyctl.html">keyctl (2)</a></p> </li> 
+  <li> <p> <a target="_blank" href="http://www.yiibai.com/unix_system_calls/request_key.html">request_key (2)</a></p> </li> 
+ </ul> 
+ <br>      
+</div></body></html>

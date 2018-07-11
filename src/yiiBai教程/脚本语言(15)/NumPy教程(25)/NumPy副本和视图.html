@@ -1,0 +1,164 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">NumPy副本和视图</h1><div style="width:100%;float:left;" class="article-content">   
+ <h1 id="h1-numpy-"><a name="NumPy - 副本和视图" class="reference-link"></a><span class="header-link octicon octicon-link"></span>NumPy - 副本和视图</h1>
+ <p>在执行函数时，其中一些返回输入数组的副本，而另一些返回视图。 当内容物理存储在另一个位置时，称为<strong>副本</strong>。 另一方面，如果提供了相同内存内容的不同视图，我们将其称为<strong>视图</strong>。</p> 
+ <h2 id="h2-u65E0u590Du5236"><a name="无复制" class="reference-link"></a><span class="header-link octicon octicon-link"></span>无复制</h2>
+ <p>简单的赋值不会创建数组对象的副本。 相反，它使用原始数组的相同<code>id()</code>来访问它。 <code>id()</code>返回 Python 对象的通用标识符，类似于 C 中的指针。</p> 
+ <p>此外，一个数组的任何变化都反映在另一个数组上。 例如，一个数组的形状改变也会改变另一个数组的形状。</p> 
+ <h3 id="h3-u793Au4F8B"><a name="示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例</h3>
+ <pre><code class="lang-python">import numpy as np 
+a = np.arange(6)  
+print  '我们的数组是：'  
+print a 
+print  '调用 id() 函数：'  
+print id(a)  
+print  'a 赋值给 b：' 
+b = a 
+print b 
+print  'b 拥有相同 id()：'  
+print id(b)  
+print  '修改 b 的形状：' 
+b.shape =  3,2  
+print b 
+print  'a 的形状也修改了：'  
+print a
+</code></pre> 
+ <p>输出如下：</p> 
+ <pre><code class="lang-python">我们的数组是：
+[0 1 2 3 4 5]
+
+调用 id() 函数：
+139747815479536
+
+a 赋值给 b：
+[0 1 2 3 4 5]
+b 拥有相同 id()：
+139747815479536
+
+修改 b 的形状：
+[[0 1]
+ [2 3]
+ [4 5]]
+
+a 的形状也修改了：
+[[0 1]
+ [2 3]
+ [4 5]]
+</code></pre> 
+ <h2 id="h2-u89C6u56FEu6216u6D45u590Du5236"><a name="视图或浅复制" class="reference-link"></a><span class="header-link octicon octicon-link"></span>视图或浅复制</h2>
+ <p>NumPy 拥有<code>ndarray.view()</code>方法，它是一个新的数组对象，并可查看原始数组的相同数据。 与前一种情况不同，新数组的维数更改不会更改原始数据的维数。</p> 
+ <h3 id="h3-u793Au4F8B"><a name="示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例</h3>
+ <pre><code class="lang-python">import numpy as np 
+# 最开始 a 是个 3X2 的数组
+a = np.arange(6).reshape(3,2)  
+print  '数组 a：'  
+print a 
+print  '创建 a 的视图：' 
+b = a.view()  
+print b 
+print  '两个数组的 id() 不同：'  
+print  'a 的 id()：'  
+print id(a)  
+print  'b 的 id()：'  
+print id(b)  
+# 修改 b 的形状，并不会修改 a
+b.shape =  2,3  
+print  'b 的形状：'  
+print b 
+print  'a 的形状：'  
+print a
+</code></pre> 
+ <p>输出如下：</p> 
+ <pre><code class="lang-python">数组 a：
+[[0 1]
+ [2 3]
+ [4 5]]
+
+创建 a 的视图：
+[[0 1]
+ [2 3]
+ [4 5]]
+
+两个数组的 id() 不同：
+a 的 id()：
+140424307227264
+b 的 id()：
+140424151696288
+
+b 的形状：
+[[0 1 2]
+ [3 4 5]]
+
+a 的形状：
+[[0 1]
+ [2 3]
+ [4 5]]
+</code></pre> 
+ <p>数组的切片也会创建视图：</p> 
+ <h3 id="h3-u793Au4F8B"><a name="示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例</h3>  
+ <pre><code class="lang-python">import numpy as np 
+a = np.array([[10,10],  [2,3],  [4,5]])  
+print  '我们的数组：'  
+print a 
+print  '创建切片：' 
+s = a[:,  :2]  
+print s
+</code></pre> 
+ <p>输出如下：</p> 
+ <pre><code class="lang-python">我们的数组：
+[[10 10]
+ [ 2 3]
+ [ 4 5]]
+
+创建切片：
+[[10 10]
+ [ 2 3]
+ [ 4 5]]
+</code></pre> 
+ <h2 id="h2-u6DF1u590Du5236"><a name="深复制" class="reference-link"></a><span class="header-link octicon octicon-link"></span>深复制</h2>
+ <p><code>ndarray.copy()</code>函数创建一个深层副本。 它是数组及其数据的完整副本，不与原始数组共享。</p> 
+ <h3 id="h3-u793Au4F8B"><a name="示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例</h3>
+ <pre><code class="lang-python">import numpy as np 
+a = np.array([[10,10],  [2,3],  [4,5]])  
+print  '数组 a：'  
+print a 
+print  '创建 a 的深层副本：' 
+b = a.copy()  
+print  '数组 b：'  
+print b 
+# b 与 a 不共享任何内容  
+print  '我们能够写入 b 来写入 a 吗？'  
+print b is a 
+print  '修改 b 的内容：' 
+b[0,0]  =  100  
+print  '修改后的数组 b：'  
+print b 
+print  'a 保持不变：'  
+print a
+</code></pre> 
+ <p>输出如下：</p> 
+ <pre><code class="lang-python">数组 a：
+[[10 10]
+ [ 2 3]
+ [ 4 5]]
+
+创建 a 的深层副本：
+数组 b：
+[[10 10]
+ [ 2 3]
+ [ 4 5]]
+我们能够写入 b 来写入 a 吗？
+False
+
+修改 b 的内容：
+修改后的数组 b：
+[[100 10]
+ [ 2 3]
+ [ 4 5]]
+
+a 保持不变：
+[[10 10]
+ [ 2 3]
+ [ 4 5]]
+</code></pre>
+ <br>      
+</div></body></html>

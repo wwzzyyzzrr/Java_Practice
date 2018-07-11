@@ -1,0 +1,114 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Pandas可视化</h1><div style="width:100%;float:left;" class="article-content">   
+ <p><strong>基本绘图：绘图</strong></p> 
+ <p>Series和DataFrame上的这个功能只是使用<code>matplotlib</code>库的<code>plot()</code>方法的简单包装实现。参考以下示例代码 - </p> 
+ <pre><code class="lang-python">import pandas as pd
+import numpy as np
+
+df = pd.DataFrame(np.random.randn(10,4),index=pd.date_range('2018/12/18',
+   periods=10), columns=list('ABCD'))
+
+df.plot()
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201711/0511/385181122_97686.png" alt=""></p> 
+ <p>如果索引由日期组成，则调用<code>gct().autofmt_xdate()</code>来格式化<code>x</code>轴，如上图所示。</p> 
+ <p>我们可以使用<code>x</code>和<code>y</code>关键字绘制一列与另一列。</p> 
+ <p>绘图方法允许除默认线图之外的少数绘图样式。 这些方法可以作为<code>plot()</code>的<code>kind</code>关键字参数提供。这些包括 -</p> 
+ <ul> 
+  <li><code>bar</code>或<code>barh</code>为条形</li>
+  <li><code>hist</code>为直方图</li>
+  <li><code>boxplot</code>为盒型图</li>
+  <li><code>area</code>为“面积”</li>
+  <li><code>scatter</code>为散点图</li>
+ </ul> 
+ <h2 id="h2-u6761u5F62u56FE"><a name="条形图" class="reference-link"></a><span class="header-link octicon octicon-link"></span>条形图</h2>
+ <p>现在通过创建一个条形图来看看条形图是什么。条形图可以通过以下方式来创建 -</p> 
+ <pre><code class="lang-python">import pandas as pd
+import numpy as np
+
+df = pd.DataFrame(np.random.rand(10,4),columns=['a','b','c','d'])
+df.plot.bar()
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201711/0511/220181133_35165.png" alt=""></p> 
+ <p>要生成一个堆积条形图，通过指定：<em>pass stacked=True</em> -</p> 
+ <pre><code class="lang-python">import pandas as pd
+df = pd.DataFrame(np.random.rand(10,4),columns=['a','b','c','d'])
+df.plot.bar(stacked=True)
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201711/0511/726181135_51813.png" alt=""></p> 
+ <p>要获得水平条形图，使用<code>barh()</code>方法 -</p> 
+ <pre><code class="lang-python">import pandas as pd
+import numpy as np
+
+df = pd.DataFrame(np.random.rand(10,4),columns=['a','b','c','d'])
+
+df.plot.barh(stacked=True)
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201711/0511/596181136_49400.png" alt=""></p> 
+ <h2 id="h2-u76F4u65B9u56FE"><a name="直方图" class="reference-link"></a><span class="header-link octicon octicon-link"></span>直方图</h2>
+ <p>可以使用<code>plot.hist()</code>方法绘制直方图。我们可以指定<code>bins</code>的数量值。</p> 
+ <pre><code class="lang-python">import pandas as pd
+import numpy as np
+
+df = pd.DataFrame({'a':np.random.randn(1000)+1,'b':np.random.randn(1000),'c':
+np.random.randn(1000) - 1}, columns=['a', 'b', 'c'])
+
+df.plot.hist(bins=20)
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201711/0511/354181140_72017.png" alt=""></p> 
+ <p>要为每列绘制不同的直方图，请使用以下代码 -</p> 
+ <pre><code class="lang-python">import pandas as pd
+import numpy as np
+
+df=pd.DataFrame({'a':np.random.randn(1000)+1,'b':np.random.randn(1000),'c':
+np.random.randn(1000) - 1}, columns=['a', 'b', 'c'])
+
+df.hist(bins=20)
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201711/0511/532181142_60937.png" alt=""></p> 
+ <h2 id="h2-u7BB1u5F62u56FE"><a name="箱形图" class="reference-link"></a><span class="header-link octicon octicon-link"></span>箱形图</h2>
+ <p>Boxplot可以绘制调用<code>Series.box.plot()</code>和<code>DataFrame.box.plot()</code>或<code>DataFrame.boxplot()</code>来可视化每列中值的分布。</p> 
+ <p>例如，这里是一个箱形图，表示对<code>[0,1)</code>上的统一随机变量的<code>10</code>次观察的五次试验。</p>   
+ <pre><code class="lang-python">import pandas as pd
+import numpy as np
+df = pd.DataFrame(np.random.rand(10, 5), columns=['A', 'B', 'C', 'D', 'E'])
+df.plot.box()
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201711/0511/693191128_29628.png" alt=""></p> 
+ <h2 id="h2-u533Au57DFu5757u56FEu5F62"><a name="区域块图形" class="reference-link"></a><span class="header-link octicon octicon-link"></span>区域块图形</h2>
+ <p>可以使用<code>Series.plot.area()</code>或<code>DataFrame.plot.area()</code>方法创建区域图形。</p> 
+ <pre><code class="lang-python">import pandas as pd
+import numpy as np
+
+df = pd.DataFrame(np.random.rand(10, 4), columns=['a', 'b', 'c', 'd'])
+df.plot.area()
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201711/0511/936191130_18945.png" alt=""></p> 
+ <h2 id="h2-u6563u70B9u56FEu5F62"><a name="散点图形" class="reference-link"></a><span class="header-link octicon octicon-link"></span>散点图形</h2>
+ <p>可以使用<code>DataFrame.plot.scatter()</code>方法创建散点图。</p> 
+ <pre><code class="lang-python">import pandas as pd
+import numpy as np
+df = pd.DataFrame(np.random.rand(50, 4), columns=['a', 'b', 'c', 'd'])
+df.plot.scatter(x='a', y='b')
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201711/0511/605191131_96919.png" alt=""></p> 
+ <h2 id="h2-u997Cu72B6u56FE"><a name="饼状图" class="reference-link"></a><span class="header-link octicon octicon-link"></span>饼状图</h2>
+ <p>饼状图可以使用<code>DataFrame.plot.pie()</code>方法创建。</p> 
+ <pre><code class="lang-python">import pandas as pd
+import numpy as np
+
+df = pd.DataFrame(3 * np.random.rand(4), index=['a', 'b', 'c', 'd'], columns=['x'])
+df.plot.pie(subplots=True)
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201711/0511/571191132_24324.png" alt=""></p>
+ <br>      
+</div></body></html>

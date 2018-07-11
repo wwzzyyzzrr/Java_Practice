@@ -1,0 +1,59 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">MySQL创建与删除数据库</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>在本教程中，您将学习如何在MySQL中管理数据库。例如，学习如何创建新的数据库，删除现有数据库以及显示MySQL数据库服务器中的所有数据库。</p> 
+ <p>下面让我们演示如何在MySQL中创建一个新的数据库。</p> 
+ <h2 id="h2-u521Bu5EFAu6570u636Eu5E93"><a name="创建数据库" class="reference-link"></a><span class="header-link octicon octicon-link"></span>创建数据库</h2>
+ <p>在与数据进行任何其他操作之前，需要创建一个数据库。数据库是数据的容器。它可以用于存储联系人，供应商，客户或任何想存储的数据。 在MySQL中，数据库是用于存储和操作诸如表，数据库视图，触发器，存储过程等数据的对象的集合。</p> 
+ <p>要在MySQL中创建数据库，请使用<code>CREATE DATABASE</code>语句，如下：</p> 
+ <pre><code class="lang-sql">CREATE DATABASE [IF NOT EXISTS] database_name;
+</code></pre> 
+ <p>我们来更详细地看看<code>CREATE DATABASE</code>语句：</p> 
+ <ul> 
+  <li><code>CREATE DATABASE</code>语句的后面是要创建的数据库名称。建议数据库名称尽可能是有意义和具有一定的描述性。</li>
+  <li><code>IF NOT EXISTS</code>是语句的可选子句。 <code>IF NOT EXISTS</code>子句可防止创建数据库服务器中已存在的新数据库的错误。不能在MySQL数据库服务器中具有相同名称的数据库。</li>
+ </ul> 
+ <p>例如，要创建一个名称为<code>mytestdb</code>数据库，可以执行<code>CREATE DATABASE</code>语句后接数据库名称：<code>mytestdb</code>，如果当前MySQL服务器中没有数据库：<code>mytestdb</code>，则创建成功，如下所示：</p> 
+ <pre><code class="lang-sql">CREATE DATABASE IF NOT EXISTS mytestdb;
+</code></pre> 
+ <p>执行此语句后，MySQL返回一条消息，通知新数据库是否已成功创建。</p> 
+ <p><strong>显示数据库</strong></p> 
+ <p><code>SHOW DATABASES</code>语句显示MySQL数据库服务器中的所有数据库。您可以使用<code>SHOW DATABASES</code>语句来查看您要创建的数据库，或者在创建新数据库之前查看数据库服务器上的所有数据库，例如：</p> 
+ <pre><code class="lang-sql">+--------------------+
+| Database           |
++--------------------+
+| information_schema |
+| mysql              |
+| performance_schema |
+| testdb             |
+| yiibaidb           |
++--------------------+
+5 rows in set
+</code></pre> 
+ <p>在此MySQL数据库服务器中有<code>6</code>个数据库。 <code>information_schema</code>，<code>performance_schema</code>和<code>mysql</code>是我们安装MySQL时可用的默认数据库，而<code>yiibaidb</code>是创建的新数据库。</p> 
+ <p><strong>选择要使用的数据库</strong></p> 
+ <p>在使用指定数据库之前，必须通过使用<code>USE</code>语句告诉MySQL要使用哪个数据库。</p> 
+ <pre><code class="lang-sql">USE database_name;
+</code></pre> 
+ <p>您可以使用<code>USE</code>语句选择示例数据库(<code>yiibaidb</code>)，如下所示：</p>   
+ <pre><code class="lang-sql">USE yiibaidb;
+</code></pre> 
+ <p>从现在开始，所有操作(如查询数据，创建新表或调用存储过程)都将对当前数据库(即<code>yiibaidb</code>)产生影响。</p> 
+ <h2 id="h2-u5220u9664u6570u636Eu5E93"><a name="删除数据库" class="reference-link"></a><span class="header-link octicon octicon-link"></span>删除数据库</h2>
+ <p>删除数据库意味着数据库中的所有数据和关联对象将被永久删除，并且无法撤消。 因此，用额外的注意事项执行此查询是非常重要的。</p> 
+ <p>要删除数据库，请使用<code>DROP DATABASE</code>语句，如下所示：</p> 
+ <pre><code class="lang-sql">DROP DATABASE [IF EXISTS] database_name;
+</code></pre> 
+ <p>遵循<code>DROP DATABASE</code>是要删除的数据库名称。 与<code>CREATE DATABASE</code>语句类似，<code>IF EXISTS</code>是该语句的可选部分，以防止您删除数据库服务器中不存在的数据库。</p> 
+ <p>如果要使用<code>DROP DATABASE</code>语句练习，可以创建一个新数据库，然后将其删除。来看下面的查询：</p> 
+ <pre><code class="lang-sql">CREATE DATABASE IF NOT EXISTS tempdb;
+SHOW DATABASES;
+DROP DATABASE IF EXISTS tempdb;
+</code></pre> 
+ <p>三个语句的说明如下：</p> 
+ <ul> 
+  <li>首先，使用<code>CREATE DATABASE</code>语句创建了一个名为<code>tempdb</code>的数据库。</li>
+  <li>第二，使用<code>SHOW DATABASES</code>语句显示所有数据库。</li>
+  <li>第三，使用<code>DROP DATABASE</code>语句删除了名为<code>tempdb</code>的数据库。</li>
+ </ul> 
+ <p>在本教程中，您学习了各种语句来管理MySQL中的数据库，包括创建新数据库，删除现有数据库，选择要使用的数据库，以及在MySQL数据库服务器中显示所有数据库。</p>
+ <br>      
+</div></body></html>

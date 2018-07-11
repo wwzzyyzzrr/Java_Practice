@@ -1,0 +1,34 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Firebase写入事务数据</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>当需要从数据库中返回一些数据，然后使用它进行一些计算并将其存储回来时，则需要使用事务性数据。</p> 
+ <p>下面来看看运动员列表中的运动员。</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201802/0402/233090212_91604.png" alt=""></p> 
+ <p>我们要检索属性，添加年龄增加<code>1</code>岁并将其返还给Firebase。</p> 
+ <p><code>amandaRef</code>从集合中检索年龄，然后可以使用事务方法。 我们将获得当前的年龄，增加一年，并更新集合。</p> 
+ <pre><code class="lang-html">&lt;!DOCTYPE html&gt;
+&lt;html lang="zh"&gt;
+    &lt;head&gt;
+        &lt;meta charset="utf-8" /&gt;
+        &lt;title&gt;FireBase Example&lt;/title&gt;
+        &lt;script src="https://www.gstatic.com/firebasejs/4.9.1/firebase.js"&gt;&lt;/script&gt;
+        &lt;script&gt;
+          // Initialize Firebase
+          var config = {
+            apiKey: "AIzaSyAOSPYpgn7T_bKa6VbCaSeQlsw-3p3zqDs",
+            authDomain: "yiibai-firebase.firebaseapp.com",
+            databaseURL: "https://yiibai-firebase.firebaseio.com/",
+            projectId: "yiibai-firebase",
+            storageBucket: "yiibai-firebase.appspot.com",
+            messagingSenderId: "334522625008"
+          };
+          firebase.initializeApp(config);
+          var amandaAgeRef = firebase.database().ref().child('players').child('Amanda').child('age');
+          amandaAgeRef.transaction(function(currentAge) {
+               return currentAge + 1;
+            });
+        &lt;/script&gt;
+    &lt;/head&gt;
+&lt;body&gt;
+</code></pre> 
+ <p>如果运行这个代码，可以看到年龄值更新为<code>21</code>。如下图所示 -<br><img src="http://www.yiibai.com/uploads/images/201802/0402/783090219_96250.png" alt=""></p>
+ <br>      
+</div></body></html>

@@ -1,0 +1,184 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Quartz2第一个程序</h1><div style="width:100%;float:left;" class="article-content">   
+ <p> <a target="_blank" href="http://www.yiibai.com/quartz/" type="Quartz">Quartz</a>, 是一个企业级调度工作的框架，帮助Java应用程序到调度工作/任务在指定的日期和时间运行。</p> 
+ <p> 本教程教作为一个入门介绍如何开发使用调度工作（在写本教程时使用的最新Quartz 2.2.1 ）</p> 
+ <h4> 1. 下载Quartz</h4> 
+ <p> 可以从<a target="_blank" href="http://www.quartz-scheduler.org/">官方网站</a>或Maven中央存储库下载Quartz库文件；</p> 
+ <p style="margin: 0px 0px 20px; color: rgb(60, 60, 60); font-family: Arial, sans-serif; font-size: 14px; line-height: 21px;"> <em>File :&nbsp;</em><span style="color: rgb(34, 34, 34); font-family: Arial, Verdana, sans-serif; font-size: 14px;">quartz.properties</span></p> 
+ <div class="wp_syntax" style="color: rgb(60, 60, 60); font-family: Arial, sans-serif; font-size: 14px; line-height: 21px;"> 
+  <div class="code"> 
+   <pre class="xml" style="padding: 10px; font-size: 13px; color: rgb(51, 51, 51); border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 4px; border-bottom-left-radius: 4px; line-height: 1.5; border-color: rgb(209, 209, 232); margin-bottom: 20px; overflow-x: auto; background-color: rgb(247, 247, 249);">
+org.quartz.scheduler.instanceName = MyScheduler
+org.quartz.threadPool.threadCount = 3
+org.quartz.jobStore.class =org.quartz.simpl.RAMJobStore</pre> 
+  </div> 
+ </div> 
+ <h4> 2. Quartz 作业</h4> 
+ <p> Quartz作业定义要运行什么？</p> 
+ <p style="margin: 0px 0px 20px; color: rgb(60, 60, 60); font-family: Arial, sans-serif; font-size: 14px; line-height: 21px;"> <em>File : HelloJob</em></p> 
+ <div class="wp_syntax" style="color: rgb(60, 60, 60); font-family: Arial, sans-serif; font-size: 14px; line-height: 21px;"> 
+  <div class="code"> 
+   <pre class="java" style="padding: 10px; font-size: 13px; color: rgb(51, 51, 51); border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 4px; border-bottom-left-radius: 4px; line-height: 1.5; border-color: rgb(209, 209, 232); margin-bottom: 20px; overflow-x: auto; background-color: rgb(247, 247, 249);">
+<span style="color: rgb(0, 0, 0); font-weight: bold;">package</span> <span style="color: rgb(0, 102, 153);">com.yiibai.common</span><span style="color: rgb(51, 153, 51);">;</span>
+&nbsp;
+<span style="color: rgb(0, 0, 0); font-weight: bold;">import</span> <span style="color: rgb(0, 102, 153);">org.quartz.Job</span><span style="color: rgb(51, 153, 51);">;</span>
+<span style="color: rgb(0, 0, 0); font-weight: bold;">import</span> <span style="color: rgb(0, 102, 153);">org.quartz.JobExecutionContext</span><span style="color: rgb(51, 153, 51);">;</span>
+<span style="color: rgb(0, 0, 0); font-weight: bold;">import</span> <span style="color: rgb(0, 102, 153);">org.quartz.JobExecutionException</span><span style="color: rgb(51, 153, 51);">;</span>
+&nbsp;
+<span style="color: rgb(0, 0, 0); font-weight: bold;">public</span> <span style="color: rgb(0, 0, 0); font-weight: bold;">class</span> HelloJob <span style="color: rgb(0, 0, 0); font-weight: bold;">implements</span> Job
+<span style="color: rgb(0, 153, 0);">{</span>
+	<span style="color: rgb(0, 0, 0); font-weight: bold;">public</span> <span style="color: rgb(0, 0, 102); font-weight: bold;">void</span> execute<span style="color: rgb(0, 153, 0);">(</span>JobExecutionContext context<span style="color: rgb(0, 153, 0);">)</span>
+	<span style="color: rgb(0, 0, 0); font-weight: bold;">throws</span> JobExecutionException <span style="color: rgb(0, 153, 0);">{</span>
+&nbsp;
+		<span style="color: rgb(0, 51, 153);">System</span>.<span style="color: rgb(0, 102, 51);">out</span>.<span style="color: rgb(0, 102, 51);">println</span><span style="color: rgb(0, 153, 0);">(</span><span style="color: rgb(0, 0, 255);">"Hello Quartz!"</span><span style="color: rgb(0, 153, 0);">)</span><span style="color: rgb(51, 153, 51);">;</span>	
+&nbsp;
+	<span style="color: rgb(0, 153, 0);">}</span>
+<span style="color: rgb(0, 153, 0);">}</span></pre> 
+  </div> 
+ </div> 
+ <h4> 3. Quartz触发器</h4> 
+ <p> 定义Quartz触发器，当Quartz运行在上面的Quartz作业。</p> 
+ <p> 像老版本的Quartz，仍然有两种类型的触发器在Quartz2，但API有些变化：</p> 
+ <ul> 
+  <li> SimpleTrigger – 允许设置开始时间，结束时间，重复间隔。</li> 
+  <li> CronTrigger – 允许UNIX cron表达式来指定日期和时间来运行作业。</li> 
+ </ul> 
+ <p> SimpleTrigger – 每5秒运行。</p> 
+ <div class="wp_syntax" style="color: rgb(60, 60, 60); font-family: Arial, sans-serif; font-size: 14px; line-height: 21px;"> 
+  <div class="code"> 
+   <pre class="java" style="padding: 10px; font-size: 13px; color: rgb(51, 51, 51); border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 4px; border-bottom-left-radius: 4px; line-height: 1.5; border-color: rgb(209, 209, 232); margin-bottom: 20px; overflow-x: auto; background-color: rgb(247, 247, 249);">
+    Trigger trigger <span style="color: rgb(51, 153, 51);">=</span> TriggerBuilder
+	.<span style="color: rgb(0, 102, 51);">newTrigger</span><span style="color: rgb(0, 153, 0);">(</span><span style="color: rgb(0, 153, 0);">)</span>
+	.<span style="color: rgb(0, 102, 51);">withIdentity</span><span style="color: rgb(0, 153, 0);">(</span><span style="color: rgb(0, 0, 255);">"dummyTriggerName"</span>, <span style="color: rgb(0, 0, 255);">"group1"</span><span style="color: rgb(0, 153, 0);">)</span>
+	.<span style="color: rgb(0, 102, 51);">withSchedule</span><span style="color: rgb(0, 153, 0);">(</span>
+	    SimpleScheduleBuilder.<span style="color: rgb(0, 102, 51);">simpleSchedule</span><span style="color: rgb(0, 153, 0);">(</span><span style="color: rgb(0, 153, 0);">)</span>
+		.<span style="color: rgb(0, 102, 51);">withIntervalInSeconds</span><span style="color: rgb(0, 153, 0);">(</span><span style="color: rgb(204, 102, 204);">5</span><span style="color: rgb(0, 153, 0);">)</span>.<span style="color: rgb(0, 102, 51);">repeatForever</span><span style="color: rgb(0, 153, 0);">(</span><span style="color: rgb(0, 153, 0);">)</span><span style="color: rgb(0, 153, 0);">)</span>
+	.<span style="color: rgb(0, 102, 51);">build</span><span style="color: rgb(0, 153, 0);">(</span><span style="color: rgb(0, 153, 0);">)</span><span style="color: rgb(51, 153, 51);">;</span></pre> 
+  </div> 
+ </div> 
+ <p> CronTrigger – 每5秒运行。</p> 
+ <div class="wp_syntax" style="color: rgb(60, 60, 60); font-family: Arial, sans-serif; font-size: 14px; line-height: 21px;"> 
+  <div class="code"> 
+   <pre class="java" style="padding: 10px; font-size: 13px; color: rgb(51, 51, 51); border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 4px; border-bottom-left-radius: 4px; line-height: 1.5; border-color: rgb(209, 209, 232); margin-bottom: 20px; overflow-x: auto; background-color: rgb(247, 247, 249);">
+    Trigger trigger <span style="color: rgb(51, 153, 51);">=</span> TriggerBuilder
+	.<span style="color: rgb(0, 102, 51);">newTrigger</span><span style="color: rgb(0, 153, 0);">(</span><span style="color: rgb(0, 153, 0);">)</span>
+	.<span style="color: rgb(0, 102, 51);">withIdentity</span><span style="color: rgb(0, 153, 0);">(</span><span style="color: rgb(0, 0, 255);">"dummyTriggerName"</span>, <span style="color: rgb(0, 0, 255);">"group1"</span><span style="color: rgb(0, 153, 0);">)</span>
+	.<span style="color: rgb(0, 102, 51);">withSchedule</span><span style="color: rgb(0, 153, 0);">(</span>
+		CronScheduleBuilder.<span style="color: rgb(0, 102, 51);">cronSchedule</span><span style="color: rgb(0, 153, 0);">(</span><span style="color: rgb(0, 0, 255);">"0/5 * * * * ?"</span><span style="color: rgb(0, 153, 0);">)</span><span style="color: rgb(0, 153, 0);">)</span>
+	.<span style="color: rgb(0, 102, 51);">build</span><span style="color: rgb(0, 153, 0);">(</span><span style="color: rgb(0, 153, 0);">)</span><span style="color: rgb(51, 153, 51);">;</span></pre> 
+  </div> 
+ </div> 
+ <div class="note" style="border: 1px solid rgb(209, 209, 232); padding: 20px; margin: 20px 0px; border-top-left-radius: 4px; border-top-right-radius: 4px; border-bottom-right-radius: 4px; border-bottom-left-radius: 4px; color: rgb(60, 60, 60); font-family: Arial, sans-serif; font-size: 14px; line-height: 21px; background-color: rgb(230, 230, 252);"> 
+  <b>注意</b>
+  <br> 请阅读&nbsp;
+  <a target="_blank" href="http://quartz-scheduler.org/documentation/quartz-2.x/tutorials/" style="color: rgb(15, 59, 104);">官方文档</a>&nbsp;更多的Quartz2触发器的例子。
+ </div> 
+ <h4> 4. Scheduler</h4> 
+ <p> 调度类链接“工作”和“触发器”到一起，并执行它。</p> 
+ <div class="wp_syntax" style="color: rgb(60, 60, 60); font-family: Arial, sans-serif; font-size: 14px; line-height: 21px;"> 
+  <div class="code"> 
+   <pre class="java" style="padding: 10px; font-size: 13px; color: rgb(51, 51, 51); border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 4px; border-bottom-left-radius: 4px; line-height: 1.5; border-color: rgb(209, 209, 232); margin-bottom: 20px; overflow-x: auto; background-color: rgb(247, 247, 249);">
+    	Scheduler scheduler <span style="color: rgb(51, 153, 51);">=</span> <span style="color: rgb(0, 0, 0); font-weight: bold;">new</span> StdSchedulerFactory<span style="color: rgb(0, 153, 0);">(</span><span style="color: rgb(0, 153, 0);">)</span>.<span style="color: rgb(0, 102, 51);">getScheduler</span><span style="color: rgb(0, 153, 0);">(</span><span style="color: rgb(0, 153, 0);">)</span><span style="color: rgb(51, 153, 51);">;</span>
+    	scheduler.<span style="color: rgb(0, 102, 51);">start</span><span style="color: rgb(0, 153, 0);">(</span><span style="color: rgb(0, 153, 0);">)</span><span style="color: rgb(51, 153, 51);">;</span>
+    	scheduler.<span style="color: rgb(0, 102, 51);">scheduleJob</span><span style="color: rgb(0, 153, 0);">(</span>job, trigger<span style="color: rgb(0, 153, 0);">)</span><span style="color: rgb(51, 153, 51);">;</span></pre> 
+  </div> 
+ </div> 
+ <h4> 5. 完整的例子</h4> 
+ <p> Quartz2 两个&nbsp;SimpleTrigger 和 CronTrigger 完整的例子。</p> 
+ <p> SimpleTrigger的例子 - 每间隔5秒运行。</p> 
+ <div class="wp_syntax" style="color: rgb(60, 60, 60); font-family: Arial, sans-serif; font-size: 14px; line-height: 21px;"> 
+  <div class="code"> 
+   <pre class="java" style="padding: 10px; font-size: 13px; color: rgb(51, 51, 51); border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 4px; border-bottom-left-radius: 4px; line-height: 1.5; border-color: rgb(209, 209, 232); margin-bottom: 20px; overflow-x: auto; background-color: rgb(247, 247, 249);">
+<span style="color: rgb(0, 0, 0); font-weight: bold;">package</span> <span style="color: rgb(0, 102, 153);">com.yiibai.quartz</span><span style="color: rgb(51, 153, 51);">;</span>
+&nbsp;
+<span style="color: rgb(0, 0, 0); font-weight: bold;">import</span> <span style="color: rgb(0, 102, 153);">org.quartz.JobBuilder</span><span style="color: rgb(51, 153, 51);">;</span>
+<span style="color: rgb(0, 0, 0); font-weight: bold;">import</span> <span style="color: rgb(0, 102, 153);">org.quartz.JobDetail</span><span style="color: rgb(51, 153, 51);">;</span>
+<span style="color: rgb(0, 0, 0); font-weight: bold;">import</span> <span style="color: rgb(0, 102, 153);">org.quartz.Scheduler</span><span style="color: rgb(51, 153, 51);">;</span>
+<span style="color: rgb(0, 0, 0); font-weight: bold;">import</span> <span style="color: rgb(0, 102, 153);">org.quartz.SimpleScheduleBuilder</span><span style="color: rgb(51, 153, 51);">;</span>
+<span style="color: rgb(0, 0, 0); font-weight: bold;">import</span> <span style="color: rgb(0, 102, 153);">org.quartz.Trigger</span><span style="color: rgb(51, 153, 51);">;</span>
+<span style="color: rgb(0, 0, 0); font-weight: bold;">import</span> <span style="color: rgb(0, 102, 153);">org.quartz.TriggerBuilder</span><span style="color: rgb(51, 153, 51);">;</span>
+<span style="color: rgb(0, 0, 0); font-weight: bold;">import</span> <span style="color: rgb(0, 102, 153);">org.quartz.impl.StdSchedulerFactory</span><span style="color: rgb(51, 153, 51);">;</span>
+&nbsp;
+<span style="color: rgb(0, 0, 0); font-weight: bold;">public</span> <span style="color: rgb(0, 0, 0); font-weight: bold;">class</span> SimpleTriggerExample <span style="color: rgb(0, 153, 0);">{</span>
+	<span style="color: rgb(0, 0, 0); font-weight: bold;">public</span> <span style="color: rgb(0, 0, 0); font-weight: bold;">static</span> <span style="color: rgb(0, 0, 102); font-weight: bold;">void</span> main<span style="color: rgb(0, 153, 0);">(</span><span style="color: rgb(0, 51, 153);">String</span><span style="color: rgb(0, 153, 0);">[</span><span style="color: rgb(0, 153, 0);">]</span> args<span style="color: rgb(0, 153, 0);">)</span> <span style="color: rgb(0, 0, 0); font-weight: bold;">throws</span> <span style="color: rgb(0, 51, 153);">Exception</span> <span style="color: rgb(0, 153, 0);">{</span>
+&nbsp;
+		<span style="color: rgb(102, 102, 102); font-style: italic;">// Quartz 1.6.3</span>
+		<span style="color: rgb(102, 102, 102); font-style: italic;">// JobDetail job = new JobDetail();</span>
+		<span style="color: rgb(102, 102, 102); font-style: italic;">// job.setName("dummyJobName");</span>
+		<span style="color: rgb(102, 102, 102); font-style: italic;">// job.setJobClass(HelloJob.class);</span>
+&nbsp;
+		JobDetail job <span style="color: rgb(51, 153, 51);">=</span> JobBuilder.<span style="color: rgb(0, 102, 51);">newJob</span><span style="color: rgb(0, 153, 0);">(</span>HelloJob.<span style="color: rgb(0, 0, 0); font-weight: bold;">class</span><span style="color: rgb(0, 153, 0);">)</span>
+			.<span style="color: rgb(0, 102, 51);">withIdentity</span><span style="color: rgb(0, 153, 0);">(</span><span style="color: rgb(0, 0, 255);">"dummyJobName"</span>, <span style="color: rgb(0, 0, 255);">"group1"</span><span style="color: rgb(0, 153, 0);">)</span>.<span style="color: rgb(0, 102, 51);">build</span><span style="color: rgb(0, 153, 0);">(</span><span style="color: rgb(0, 153, 0);">)</span><span style="color: rgb(51, 153, 51);">;</span>
+&nbsp;
+                <span style="color: rgb(102, 102, 102); font-style: italic;">//Quartz 1.6.3</span>
+		<span style="color: rgb(102, 102, 102); font-style: italic;">// SimpleTrigger trigger = new SimpleTrigger();</span>
+		<span style="color: rgb(102, 102, 102); font-style: italic;">// trigger.setStartTime(new Date(System.currentTimeMillis() + 1000));</span>
+		<span style="color: rgb(102, 102, 102); font-style: italic;">// trigger.setRepeatCount(SimpleTrigger.REPEAT_INDEFINITELY);</span>
+		<span style="color: rgb(102, 102, 102); font-style: italic;">// trigger.setRepeatInterval(30000);</span>
+&nbsp;
+		<span style="color: rgb(102, 102, 102); font-style: italic;">// Trigger the job to run on the next round minute</span>
+		Trigger trigger <span style="color: rgb(51, 153, 51);">=</span> TriggerBuilder
+			.<span style="color: rgb(0, 102, 51);">newTrigger</span><span style="color: rgb(0, 153, 0);">(</span><span style="color: rgb(0, 153, 0);">)</span>
+			.<span style="color: rgb(0, 102, 51);">withIdentity</span><span style="color: rgb(0, 153, 0);">(</span><span style="color: rgb(0, 0, 255);">"dummyTriggerName"</span>, <span style="color: rgb(0, 0, 255);">"group1"</span><span style="color: rgb(0, 153, 0);">)</span>
+			.<span style="color: rgb(0, 102, 51);">withSchedule</span><span style="color: rgb(0, 153, 0);">(</span>
+				SimpleScheduleBuilder.<span style="color: rgb(0, 102, 51);">simpleSchedule</span><span style="color: rgb(0, 153, 0);">(</span><span style="color: rgb(0, 153, 0);">)</span>
+					.<span style="color: rgb(0, 102, 51);">withIntervalInSeconds</span><span style="color: rgb(0, 153, 0);">(</span><span style="color: rgb(204, 102, 204);">5</span><span style="color: rgb(0, 153, 0);">)</span>.<span style="color: rgb(0, 102, 51);">repeatForever</span><span style="color: rgb(0, 153, 0);">(</span><span style="color: rgb(0, 153, 0);">)</span><span style="color: rgb(0, 153, 0);">)</span>
+			.<span style="color: rgb(0, 102, 51);">build</span><span style="color: rgb(0, 153, 0);">(</span><span style="color: rgb(0, 153, 0);">)</span><span style="color: rgb(51, 153, 51);">;</span>
+&nbsp;
+		<span style="color: rgb(102, 102, 102); font-style: italic;">// schedule it</span>
+		Scheduler scheduler <span style="color: rgb(51, 153, 51);">=</span> <span style="color: rgb(0, 0, 0); font-weight: bold;">new</span> StdSchedulerFactory<span style="color: rgb(0, 153, 0);">(</span><span style="color: rgb(0, 153, 0);">)</span>.<span style="color: rgb(0, 102, 51);">getScheduler</span><span style="color: rgb(0, 153, 0);">(</span><span style="color: rgb(0, 153, 0);">)</span><span style="color: rgb(51, 153, 51);">;</span>
+		scheduler.<span style="color: rgb(0, 102, 51);">start</span><span style="color: rgb(0, 153, 0);">(</span><span style="color: rgb(0, 153, 0);">)</span><span style="color: rgb(51, 153, 51);">;</span>
+		scheduler.<span style="color: rgb(0, 102, 51);">scheduleJob</span><span style="color: rgb(0, 153, 0);">(</span>job, trigger<span style="color: rgb(0, 153, 0);">)</span><span style="color: rgb(51, 153, 51);">;</span>
+&nbsp;
+	<span style="color: rgb(0, 153, 0);">}</span>
+<span style="color: rgb(0, 153, 0);">}</span></pre> 
+  </div> 
+ </div> 
+ <p> CronTrigger例子 - 同样，在每5秒运行作业。</p> 
+ <div class="wp_syntax" style="color: rgb(60, 60, 60); font-family: Arial, sans-serif; font-size: 14px; line-height: 21px;"> 
+  <div class="code">   
+   <pre class="java" style="padding: 10px; font-size: 13px; color: rgb(51, 51, 51); border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 4px; border-bottom-left-radius: 4px; line-height: 1.5; border-color: rgb(209, 209, 232); margin-bottom: 20px; overflow-x: auto; background-color: rgb(247, 247, 249);">
+<span style="color: rgb(0, 0, 0); font-weight: bold;">package</span> <span style="color: rgb(0, 102, 153);">com.yiibai.quartz</span><span style="color: rgb(51, 153, 51);">;</span>
+&nbsp;
+<span style="color: rgb(0, 0, 0); font-weight: bold;">import</span> <span style="color: rgb(0, 102, 153);">org.quartz.CronScheduleBuilder</span><span style="color: rgb(51, 153, 51);">;</span>
+<span style="color: rgb(0, 0, 0); font-weight: bold;">import</span> <span style="color: rgb(0, 102, 153);">org.quartz.JobBuilder</span><span style="color: rgb(51, 153, 51);">;</span>
+<span style="color: rgb(0, 0, 0); font-weight: bold;">import</span> <span style="color: rgb(0, 102, 153);">org.quartz.JobDetail</span><span style="color: rgb(51, 153, 51);">;</span>
+<span style="color: rgb(0, 0, 0); font-weight: bold;">import</span> <span style="color: rgb(0, 102, 153);">org.quartz.Scheduler</span><span style="color: rgb(51, 153, 51);">;</span>
+<span style="color: rgb(0, 0, 0); font-weight: bold;">import</span> <span style="color: rgb(0, 102, 153);">org.quartz.Trigger</span><span style="color: rgb(51, 153, 51);">;</span>
+<span style="color: rgb(0, 0, 0); font-weight: bold;">import</span> <span style="color: rgb(0, 102, 153);">org.quartz.TriggerBuilder</span><span style="color: rgb(51, 153, 51);">;</span>
+<span style="color: rgb(0, 0, 0); font-weight: bold;">import</span> <span style="color: rgb(0, 102, 153);">org.quartz.impl.StdSchedulerFactory</span><span style="color: rgb(51, 153, 51);">;</span>
+&nbsp;
+<span style="color: rgb(0, 0, 0); font-weight: bold;">public</span> <span style="color: rgb(0, 0, 0); font-weight: bold;">class</span> CronTriggerExample 
+<span style="color: rgb(0, 153, 0);">{</span>
+    <span style="color: rgb(0, 0, 0); font-weight: bold;">public</span> <span style="color: rgb(0, 0, 0); font-weight: bold;">static</span> <span style="color: rgb(0, 0, 102); font-weight: bold;">void</span> main<span style="color: rgb(0, 153, 0);">(</span> <span style="color: rgb(0, 51, 153);">String</span><span style="color: rgb(0, 153, 0);">[</span><span style="color: rgb(0, 153, 0);">]</span> args <span style="color: rgb(0, 153, 0);">)</span> <span style="color: rgb(0, 0, 0); font-weight: bold;">throws</span> <span style="color: rgb(0, 51, 153);">Exception</span>
+    <span style="color: rgb(0, 153, 0);">{</span>
+    	<span style="color: rgb(102, 102, 102); font-style: italic;">//Quartz 1.6.3</span>
+    	<span style="color: rgb(102, 102, 102); font-style: italic;">//JobDetail job = new JobDetail();</span>
+    	<span style="color: rgb(102, 102, 102); font-style: italic;">//job.setName("dummyJobName");</span>
+    	<span style="color: rgb(102, 102, 102); font-style: italic;">//job.setJobClass(HelloJob.class);    	</span>
+    	JobDetail job <span style="color: rgb(51, 153, 51);">=</span> JobBuilder.<span style="color: rgb(0, 102, 51);">newJob</span><span style="color: rgb(0, 153, 0);">(</span>HelloJob.<span style="color: rgb(0, 0, 0); font-weight: bold;">class</span><span style="color: rgb(0, 153, 0);">)</span>
+		.<span style="color: rgb(0, 102, 51);">withIdentity</span><span style="color: rgb(0, 153, 0);">(</span><span style="color: rgb(0, 0, 255);">"dummyJobName"</span>, <span style="color: rgb(0, 0, 255);">"group1"</span><span style="color: rgb(0, 153, 0);">)</span>.<span style="color: rgb(0, 102, 51);">build</span><span style="color: rgb(0, 153, 0);">(</span><span style="color: rgb(0, 153, 0);">)</span><span style="color: rgb(51, 153, 51);">;</span>
+&nbsp;
+	<span style="color: rgb(102, 102, 102); font-style: italic;">//Quartz 1.6.3</span>
+    	<span style="color: rgb(102, 102, 102); font-style: italic;">//CronTrigger trigger = new CronTrigger();</span>
+    	<span style="color: rgb(102, 102, 102); font-style: italic;">//trigger.setName("dummyTriggerName");</span>
+    	<span style="color: rgb(102, 102, 102); font-style: italic;">//trigger.setCronExpression("0/5 * * * * ?");</span>
+&nbsp;
+    	Trigger trigger <span style="color: rgb(51, 153, 51);">=</span> TriggerBuilder
+		.<span style="color: rgb(0, 102, 51);">newTrigger</span><span style="color: rgb(0, 153, 0);">(</span><span style="color: rgb(0, 153, 0);">)</span>
+		.<span style="color: rgb(0, 102, 51);">withIdentity</span><span style="color: rgb(0, 153, 0);">(</span><span style="color: rgb(0, 0, 255);">"dummyTriggerName"</span>, <span style="color: rgb(0, 0, 255);">"group1"</span><span style="color: rgb(0, 153, 0);">)</span>
+		.<span style="color: rgb(0, 102, 51);">withSchedule</span><span style="color: rgb(0, 153, 0);">(</span>
+			CronScheduleBuilder.<span style="color: rgb(0, 102, 51);">cronSchedule</span><span style="color: rgb(0, 153, 0);">(</span><span style="color: rgb(0, 0, 255);">"0/5 * * * * ?"</span><span style="color: rgb(0, 153, 0);">)</span><span style="color: rgb(0, 153, 0);">)</span>
+		.<span style="color: rgb(0, 102, 51);">build</span><span style="color: rgb(0, 153, 0);">(</span><span style="color: rgb(0, 153, 0);">)</span><span style="color: rgb(51, 153, 51);">;</span>
+&nbsp;
+    	<span style="color: rgb(102, 102, 102); font-style: italic;">//schedule it</span>
+    	Scheduler scheduler <span style="color: rgb(51, 153, 51);">=</span> <span style="color: rgb(0, 0, 0); font-weight: bold;">new</span> StdSchedulerFactory<span style="color: rgb(0, 153, 0);">(</span><span style="color: rgb(0, 153, 0);">)</span>.<span style="color: rgb(0, 102, 51);">getScheduler</span><span style="color: rgb(0, 153, 0);">(</span><span style="color: rgb(0, 153, 0);">)</span><span style="color: rgb(51, 153, 51);">;</span>
+    	scheduler.<span style="color: rgb(0, 102, 51);">start</span><span style="color: rgb(0, 153, 0);">(</span><span style="color: rgb(0, 153, 0);">)</span><span style="color: rgb(51, 153, 51);">;</span>
+    	scheduler.<span style="color: rgb(0, 102, 51);">scheduleJob</span><span style="color: rgb(0, 153, 0);">(</span>job, trigger<span style="color: rgb(0, 153, 0);">)</span><span style="color: rgb(51, 153, 51);">;</span>
+&nbsp;
+    <span style="color: rgb(0, 153, 0);">}</span>
+<span style="color: rgb(0, 153, 0);">}</span></pre> 
+  </div> 
+ </div> 代码下载：
+ <a target="_blank" href="http://pan.baidu.com/s/1c0s6xoO">http://pan.baidu.com/s/1c0s6xoO</a>
+ <br>      
+</div></body></html>

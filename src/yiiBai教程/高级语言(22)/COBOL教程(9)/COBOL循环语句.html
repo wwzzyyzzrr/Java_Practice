@@ -1,0 +1,180 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">COBOL循环语句</h1><div style="width:100%;float:left;" class="article-content">   
+ <p> 有一些任务需要执行一遍又一遍，如读取文件中的每个记录，直到结束为止。以下是在COBOL中使用的循环语句：</p> 
+ <ul> 
+  <li> 执行直通</li> 
+  <li> 执行直到</li> 
+  <li> 执行时间</li> 
+  <li> 进行时变</li> 
+ </ul> 
+ <h2> 执行直通</h2> 
+ <p> 完成直通所使用的序列在给第一个和最后一段的名字来执行一系列段落。执行最后一段控件后会返回。</p> 
+ <h3> 一行进行</h3> 
+ <p> 里面的PERFORM语句将直到结束，PERFORM达成执行。</p> 
+ <p> 语法</p> 
+ <p> 以下是语法在一行进行：</p> 
+ <pre class="prettyprint" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+PERFORM 
+DISPLAY 'HELLO WORLD'
+END-PERFORM.</pre> 
+ <h3> 多行执行</h3> 
+ <p> 语句是在一个段中执行，然后控制被转移到其他段或部分。</p> 
+ <p> 语法</p> 
+ <p> 以下是多行执行的语法：</p> 
+ <pre class="prettyprint" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+PERFORM PARAGRAPH1 THRU PARAGRAPH2</pre> 
+ <p> 例子</p> 
+ <pre class="prettyprint tryit" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); background-image: url(http://www.yiibai.com/images/link.png) !important; background-attachment: initial !important; background-size: initial !important; background-origin: initial !important; background-clip: initial !important; background-position: 100% 0%; background-repeat: no-repeat !important;">
+IDENTIFICATION DIVISION.
+PROGRAM-ID. HELLO.
+PROCEDURE DIVISION.
+A-PARA.
+PERFORM DISPLAY 'IN A-PARA'
+END-PERFORM.
+PERFORM C-PARA THRU E-PARA.
+B-PARA.
+DISPLAY 'IN B-PARA'.
+STOP RUN.
+C-PARA.
+DISPLAY 'IN C-PARA'.
+D-PARA.
+DISPLAY 'IN D-PARA'.
+E-PARA.
+DISPLAY 'IN E-PARA'.</pre> 
+ <p> JCL以上COBOL程序执行。</p> 
+ <pre class="prettyprint" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+//SAMPLE JOB(TESTJCL,XXXXXX),CLASS=A,MSGCLASS=C
+//STEP1 EXEC PGM=HELLO</pre> 
+ <p> 当编译并执行上面的程序它会产生以下结果：</p> 
+ <pre class="result" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+IN A-PARA
+IN C-PARA
+IN D-PARA
+IN E-PARA
+IN B-PARA</pre> 
+ <h2> 执行直到</h2> 
+ <p> 在执行之前，段将被执行，直到给定的条件为真。与之前的测试是默认的状态，表示条件在一段语句执行前检查。</p> 
+ <p> 语法</p> 
+ <p> 以下是执行直到的语法：</p> 
+ <pre class="prettyprint" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+PERFORM A-PARA UNTIL COUNT=5
+
+PERFORM A-PARA WITH TEST BEFORE UNTIL COUNT=5
+
+PERFORM A-PARA WITH TEST AFTER UNTIL COUNT=5</pre> 
+ <p> 例子</p> 
+ <pre class="prettyprint tryit" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); background-image: url(http://www.yiibai.com/images/link.png) !important; background-attachment: initial !important; background-size: initial !important; background-origin: initial !important; background-clip: initial !important; background-position: 100% 0%; background-repeat: no-repeat !important;">
+IDENTIFICATION DIVISION.
+PROGRAM-ID. HELLO.
+DATA DIVISION.
+WORKING-STORAGE SECTION.
+01 WS-CNT PIC 9(1) VALUE 0. 
+PROCEDURE DIVISION.
+A-PARA.
+PERFORM B-PARA WITH TEST AFTER UNTIL WS-CNT&gt;3.
+STOP RUN.
+B-PARA.
+DISPLAY 'WS-CNT : 'WS-CNT.
+ADD 1 TO WS-CNT.</pre> 
+ <p> JCL以上COBOL程序执行。</p> 
+ <pre class="prettyprint" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+//SAMPLE JOB(TESTJCL,XXXXXX),CLASS=A,MSGCLASS=C
+//STEP1 EXEC PGM=HELLO</pre> 
+ <p> 当编译并执行上面的程序它会产生以下结果：</p> 
+ <pre class="result" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+WS-CNT : 0
+WS-CNT : 1
+WS-CNT : 2
+WS-CNT : 3</pre> 
+ <h2> 执行时期</h2> 
+ <p> 在执行时期，段将被执行指定的次数。</p> 
+ <p> 语法</p> 
+ <p> 以下是执行时间的语法：</p> 
+ <pre class="prettyprint" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+PERFORM A-PARA 5 TIMES.</pre> 
+ <p> 例子</p> 
+ <pre class="prettyprint tryit" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); background-image: url(http://www.yiibai.com/images/link.png) !important; background-attachment: initial !important; background-size: initial !important; background-origin: initial !important; background-clip: initial !important; background-position: 100% 0%; background-repeat: no-repeat !important;">
+IDENTIFICATION DIVISION.
+PROGRAM-ID. HELLO.
+PROCEDURE DIVISION.
+A-PARA.
+PERFORM B-PARA 3 TIMES.
+STOP RUN.
+B-PARA.
+DISPLAY 'IN B-PARA'.</pre> 
+ <p> JCL以上COBOL程序执行。</p> 
+ <pre class="prettyprint" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+//SAMPLE JOB(TESTJCL,XXXXXX),CLASS=A,MSGCLASS=C
+//STEP1 EXEC PGM=HELLO</pre> 
+ <p> 当编译并执行上面的程序它会产生以下结果：</p> 
+ <pre class="result" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+IN B-PARA
+IN B-PARA
+IN B-PARA</pre> 
+ <h2> 执行时变</h2> 
+ <p> 在执行不同的段会直到，直到短语变成真的条件来执行。</p> 
+ <p> 语法</p> 
+ <p> 以下是进行改变的语法：</p>   
+ <pre class="prettyprint" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+PERFORM A-PARA VARYING A FROM 1 BY 1 UNTIL A=5.</pre> 
+ <p> 例子</p> 
+ <pre class="prettyprint tryit" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); background-image: url(http://www.yiibai.com/images/link.png) !important; background-attachment: initial !important; background-size: initial !important; background-origin: initial !important; background-clip: initial !important; background-position: 100% 0%; background-repeat: no-repeat !important;">
+IDENTIFICATION DIVISION.
+PROGRAM-ID. HELLO.
+DATA DIVISION.
+WORKING-STORAGE SECTION.
+01 WS-A PIC 9 VALUE 0.
+PROCEDURE DIVISION.
+A-PARA.
+PERFORM B-PARA VARYING WS-A FROM 1 BY 1 UNTIL WS-A=5
+STOP RUN.
+B-PARA.
+DISPLAY 'IN B-PARA ' WS-A.</pre> 
+ <p> JCL执行以上COBOL程序。</p> 
+ <pre class="prettyprint" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+//SAMPLE JOB(TESTJCL,XXXXXX),CLASS=A,MSGCLASS=C
+//STEP1 EXEC PGM=HELLO</pre> 
+ <p> 当编译并执行上面的程序它会产生以下结果：</p> 
+ <pre class="result" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+IN B-PARA 1
+IN B-PARA 2
+IN B-PARA 3
+IN B-PARA 4</pre> 
+ <h2> GO TO 语句</h2> 
+ <p> GO TO语句用于改变程序的执行流程。在GO TO语句传递仅在前进方向去。它用于退出该段。不同类型的GO TO语句是：</p> 
+ <p> 无条件GO TO</p> 
+ <pre class="prettyprint" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+GO TO para-name.</pre> 
+ <p style="box-sizing: border-box; color: rgb(0, 0, 0); line-height: 24px; margin: 0em 0.2em 1em; padding: 0px; text-align: justify; font-family: 'Open Sans', Arial, sans-serif; font-size: 14px;"> <b style="box-sizing: border-box;">条件GO TO</b></p> 
+ <pre class="prettyprint" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+GO TO para-1 para-2 para-3 DEPENDING ON x.</pre> 
+ <p> 如果“x”等于1，那么控制将被传递到第一段和如果'x'是等于2，则控制将被转移到第二个段落等等。</p> 
+ <p> 例子</p> 
+ <pre class="prettyprint tryit" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); cursor: default; background-image: url(http://www.yiibai.com/images/link.png) !important; background-attachment: initial !important; background-size: initial !important; background-origin: initial !important; background-clip: initial !important; background-position: 100% 0%; background-repeat: no-repeat !important;">
+IDENTIFICATION DIVISION.
+PROGRAM-ID. HELLO.
+DATA DIVISION.
+WORKING-STORAGE SECTION.
+01 WS-A PIC 9 VALUE 2.
+PROCEDURE DIVISION.
+A-PARA.
+DISPLAY 'IN A-PARA'
+GO TO B-PARA.
+B-PARA.
+DISPLAY 'IN B-PARA '.
+GO TO C-PARA D-PARA DEPENDING ON WS-A.
+C-PARA.
+DISPLAY 'IN C-PARA '.
+D-PARA.
+DISPLAY 'IN D-PARA '.
+STOP RUN.</pre> 
+ <p> JCL以上COBOL程序执行。</p> 
+ <pre class="prettyprint" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+//SAMPLE JOB(TESTJCL,XXXXXX),CLASS=A,MSGCLASS=C
+//STEP1 EXEC PGM=HELLO</pre> 
+ <p> 当编译并执行上面的程序它会产生以下结果：</p> 
+ <pre class="result" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+IN A-PARA
+IN B-PARA 
+IN D-PARA </pre> 
+ <br>      
+</div></body></html>

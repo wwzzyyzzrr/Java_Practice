@@ -1,0 +1,179 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Maven依赖管理</h1><div style="width:100%;float:left;" class="article-content">   
+ <p> 其中一个Maven的核心特征是依赖管理。管理依赖关系变得困难的任务一旦我们处理多模块项目（包含数百个模块/子项目）。 Maven提供了一个高程度的控制来管理这样的场景。</p> 
+ <h2> 传递依赖发现</h2> 
+ <p> 这是很通常情况下，当一个库说A就依赖于其他库说B的情况下，另一个项目Ç想用A，则该项目需要使用库中B。</p> 
+ <p> 在Maven帮助下以避免这样的要求来发现所有需要的库。 Maven通过读取依赖项项目文件（pom.xml中），找出它们的依赖等。</p> 
+ <p> 我们只需要在每个项目POM定义直接依赖关系。 Maven自动处理其余部分。</p> 
+ <p> 传递依赖，包括库的图形可能会快速增长在很大程度上。可能出现情况下，当有重复的库。 Maven提供一些功能来控制传递依赖程度</p> 
+ <table class="src" style="margin: 8px 0px; padding: 0px;  border-color: rgb(214, 214, 214); width: 560px; border-collapse: collapse; vertical-align: top; background-color: rgb(247, 247, 247); color: rgb(0, 0, 0); font-family: Helvetica, Arial, sans-serif;"> 
+  <tbody style="margin: 0px; padding: 0px;"> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <th style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214); background-color: rgb(238, 238, 238); width: 101px;"> Feature</th> 
+    <th style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214); background-color: rgb(238, 238, 238);"> 描述</th> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> Dependency mediation</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> Determines what version of a dependency is to be used when multiple versions of an artifact are encountered. If two dependency versions are at the same depth in the dependency tree, the first declared dependency will be used.</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> Dependency management</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> Directly specify the versions of artifacts to be used when they are encountered in transitive dependencies. For an example project C can include B as a dependency in its dependencyManagement section and directly control which version of B is to be used when it is ever referenced.</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> Dependency scope</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> Includes dependencies as per the current stage of the build</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> Excluded dependencies</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> Any transitive dependency can be excluede using "exclusion" element. As example, A depends upon B and B depends upon C then A can mark C as excluded.</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> Optional dependencies</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> Any transitive dependency can be marked as optional using "optional" element. As example, A depends upon B and B depends upon C. Now B marked C as optional. Then A will not use C.</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h2> 依赖范围</h2> 
+ <p> 传递依赖发现可以使用各种依赖范围如下文所述受到限制</p> 
+ <table class="src" style="margin: 8px 0px; padding: 0px;  border-color: rgb(214, 214, 214); width: 560px; border-collapse: collapse; vertical-align: top; background-color: rgb(247, 247, 247); color: rgb(0, 0, 0); font-family: Helvetica, Arial, sans-serif;"> 
+  <tbody style="margin: 0px; padding: 0px;"> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <th style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214); background-color: rgb(238, 238, 238); width: 101px;"> Scope</th> 
+    <th style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214); background-color: rgb(238, 238, 238);"> 描述</th> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> compile</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> This scope indicates that dependency is available in classpath of project. It is default scope.</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> provided</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> This scope indicates that dependency is to be provided by JDK or web-Server/Container at runtime.</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> runtime</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> This scope indicates that dependency is not required for compilation, but is required during execution.</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> test</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> This scope indicates that the dependency is only available for the test compilation and execution phases.</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> system</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> This scope indicates that you have to provide the system path.</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> import</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> This scope is only used when dependency is of type pom. This scopes indicates that the specified POM should be replaced with the dependencies in that POM's &lt;dependencyManagement&gt; section.</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h2> 依赖关系管理</h2> 
+ <p> 通常情况下，我们已经一套项目在一个共同的项目下。在这种情况下，我们可以创造让所有的公共依赖一个共同的POM，然后进行分项目POMS为这个POM父。下面的例子将帮助你理解这个概念</p> 
+ <img alt="dependency graph" src="/uploads/allimg/131228/212042K00-0.jpg" style="margin: auto; padding: 0px 0px 10px; border: 0px; max-width: 560px; height: auto; display: block; color: rgb(0, 0, 0); font-family: Helvetica, Arial, sans-serif;"> 
+ <p> 以下是上述的依赖图的细节</p> 
+ <ul> 
+  <li> <p> APP-UI-WAR依赖于App-Core-lib和&nbsp;App-Data-lib。</p> </li> 
+  <li> <p> Root 是&nbsp;App-Core-lib 和&nbsp;App-Data-lib 的父类。</p> </li> 
+  <li> <p> Root 定义LIB1，LIB2，Lib3作为其依赖部分依赖关系。</p> </li> 
+ </ul> 
+ <p> App-UI-WAR</p> 
+ <pre class="prettyprint prettyprinted" style="font-size: 12px;">
+<span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;project</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="atn" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">xmlns</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">=</span><span class="atv" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"http://maven.apache.org/POM/4.0.0"</span><span class="pln" style="margin: 0px; padding: 0px;">
+   </span><span class="atn" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">xmlns:xsi</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">=</span><span class="atv" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"http://www.w3.org/2001/XMLSchema-instance"</span><span class="pln" style="margin: 0px; padding: 0px;">
+   </span><span class="atn" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">xsi:schemaLocation</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">=</span><span class="atv" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"http://maven.apache.org/POM/4.0.0
+   http://maven.apache.org/xsd/maven-4.0.0.xsd"</span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">
+      </span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;modelVersion&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">4.0.0</span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;/modelVersion&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">
+      </span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;groupId&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">com.companyname.groupname</span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;/groupId&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">
+      </span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;artifactId&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">App-UI-WAR</span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;/artifactId&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">
+      </span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;version&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">1.0</span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;/version&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">
+      </span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;packaging&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">war</span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;/packaging&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">
+      </span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;dependencies&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">
+         </span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;dependency&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">
+            </span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;groupId&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">com.companyname.groupname</span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;/groupId&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">
+            </span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;artifactId&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">App-Core-lib</span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;/artifactId&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">
+            </span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;version&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">1.0</span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;/version&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">
+         </span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;/dependency&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">
+      </span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;/dependencies&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">  
+      </span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;dependencies&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">
+         </span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;dependency&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">
+            </span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;groupId&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">com.companyname.groupname</span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;/groupId&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">
+            </span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;artifactId&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">App-Data-lib</span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;/artifactId&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">
+            </span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;version&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">1.0</span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;/version&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">
+         </span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;/dependency&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">
+      </span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;/dependencies&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">  
+</span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;/project&gt;</span></pre> 
+ <p style="margin: 0.8em 0px 1em; padding: 0px; text-align: justify; color: rgb(0, 0, 0); font-family: Helvetica, Arial, sans-serif;"> App-Core-lib</p> 
+ <pre class="prettyprint prettyprinted" style="font-size: 12px;">
+<span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;project</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="atn" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">xmlns</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">=</span><span class="atv" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"http://maven.apache.org/POM/4.0.0"</span><span class="pln" style="margin: 0px; padding: 0px;">
+   </span><span class="atn" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">xmlns:xsi</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">=</span><span class="atv" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"http://www.w3.org/2001/XMLSchema-instance"</span><span class="pln" style="margin: 0px; padding: 0px;">
+   </span><span class="atn" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">xsi:schemaLocation</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">=</span><span class="atv" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"http://maven.apache.org/POM/4.0.0
+   http://maven.apache.org/xsd/maven-4.0.0.xsd"</span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">
+      </span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;parent&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">
+         </span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;artifactId&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">Root</span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;/artifactId&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">
+         </span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;groupId&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">com.companyname.groupname</span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;/groupId&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">
+         </span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;version&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">1.0</span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;/version&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">
+      </span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;/parent&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">
+      </span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;modelVersion&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">4.0.0</span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;/modelVersion&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">
+      </span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;groupId&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">com.companyname.groupname</span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;/groupId&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">
+      </span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;artifactId&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">App-Core-lib</span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;/artifactId&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">
+      </span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;version&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">1.0</span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;/version&gt;</span><span class="pln" style="margin: 0px; padding: 0px;"> 
+      </span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;packaging&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">jar</span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;/packaging&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">
+</span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;/project&gt;</span></pre> 
+ <p style="margin: 0.8em 0px 1em; padding: 0px; text-align: justify; color: rgb(0, 0, 0); font-family: Helvetica, Arial, sans-serif;"> App-Data-lib</p> 
+ <pre class="prettyprint prettyprinted" style="font-size: 12px;">
+<span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;project</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="atn" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">xmlns</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">=</span><span class="atv" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"http://maven.apache.org/POM/4.0.0"</span><span class="pln" style="margin: 0px; padding: 0px;">
+   </span><span class="atn" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">xmlns:xsi</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">=</span><span class="atv" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"http://www.w3.org/2001/XMLSchema-instance"</span><span class="pln" style="margin: 0px; padding: 0px;">
+   </span><span class="atn" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">xsi:schemaLocation</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">=</span><span class="atv" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"http://maven.apache.org/POM/4.0.0
+   http://maven.apache.org/xsd/maven-4.0.0.xsd"</span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">
+      </span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;parent&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">
+         </span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;artifactId&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">Root</span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;/artifactId&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">
+         </span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;groupId&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">com.companyname.groupname</span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;/groupId&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">
+         </span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;version&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">1.0</span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;/version&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">
+      </span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;/parent&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">
+      </span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;modelVersion&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">4.0.0</span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;/modelVersion&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">
+      </span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;groupId&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">com.companyname.groupname</span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;/groupId&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">
+      </span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;artifactId&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">App-Data-lib</span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;/artifactId&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">
+      </span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;version&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">1.0</span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;/version&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">   
+      </span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;packaging&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">jar</span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;/packaging&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">
+</span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;/project&gt;</span></pre> 
+ <p style="margin: 0.8em 0px 1em; padding: 0px; text-align: justify; color: rgb(0, 0, 0); font-family: Helvetica, Arial, sans-serif;"> Root</p>   
+ <pre class="prettyprint prettyprinted" style="font-size: 12px;">
+<span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;project</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="atn" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">xmlns</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">=</span><span class="atv" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"http://maven.apache.org/POM/4.0.0"</span><span class="pln" style="margin: 0px; padding: 0px;">
+   </span><span class="atn" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">xmlns:xsi</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">=</span><span class="atv" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"http://www.w3.org/2001/XMLSchema-instance"</span><span class="pln" style="margin: 0px; padding: 0px;">
+   </span><span class="atn" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">xsi:schemaLocation</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">=</span><span class="atv" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"http://maven.apache.org/POM/4.0.0
+   http://maven.apache.org/xsd/maven-4.0.0.xsd"</span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">
+      </span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;modelVersion&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">4.0.0</span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;/modelVersion&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">
+      </span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;groupId&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">com.companyname.groupname</span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;/groupId&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">
+      </span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;artifactId&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">Root</span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;/artifactId&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">
+      </span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;version&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">1.0</span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;/version&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">
+	  </span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;packaging&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">pom</span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;/packaging&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">
+      </span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;dependencies&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">
+         </span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;dependency&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">
+            </span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;groupId&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">com.companyname.groupname1</span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;/groupId&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">
+            </span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;artifactId&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">Lib1</span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;/artifactId&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">
+            </span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;version&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">1.0</span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;/version&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">
+         </span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;/dependency&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">
+      </span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;/dependencies&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">  
+      </span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;dependencies&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">
+         </span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;dependency&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">
+            </span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;groupId&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">com.companyname.groupname2</span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;/groupId&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">
+            </span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;artifactId&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">Lib2</span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;/artifactId&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">
+            </span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;version&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">2.1</span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;/version&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">
+         </span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;/dependency&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">
+      </span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;/dependencies&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">  
+      </span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;dependencies&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">
+         </span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;dependency&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">
+            </span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;groupId&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">com.companyname.groupname3</span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;/groupId&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">
+            </span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;artifactId&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">Lib3</span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;/artifactId&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">
+            </span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;version&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">1.1</span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;/version&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">
+         </span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;/dependency&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">
+      </span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;/dependencies&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">  
+</span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;/project&gt;</span></pre> 
+ <p> 现在，当我们建立App-UI-WAR项目，Maven会发现所有的依赖通过遍历依赖图和构建应用程序。</p> 
+ <p> 从上面的例子中，我们可以学到以下关键概念</p> 
+ <ul> 
+  <li> <p> 常见的依赖关系可以用父POM的概念被放置在一个地方。&nbsp;App-Data-lib&nbsp;和&nbsp;App-Core-lib&nbsp;项目列表在&nbsp;Root&nbsp;目录(见Roots包类型。它是POM).</p> </li> 
+  <li> <p> 不需要Lib1, lib2, Lib3 作为依赖于 App-UI-WAR. Maven使用传递性依赖机制来管理这些细节。</p> </li> 
+ </ul> 
+ <br>      
+</div></body></html>

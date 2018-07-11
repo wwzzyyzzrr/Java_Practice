@@ -1,0 +1,93 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">进程组，会话和作业控制</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>在本章中，我们将学习进程组，会话和作业控制。</p> 
+ <p><strong>进程组</strong> - 进程组是一个或多个进程的集合。 进程组由共享相同进程组标识符(PGID)的一个或多个进程组成。 进程组ID(PGID)与进程ID具有相同的类型(pid_t)。 进程组有一个进程组领导，即创建组的进程，进程ID变为组的进程组标识。</p> 
+ <p><strong>会话</strong> - 它是各种进程组的集合。</p> 
+ <p><strong>作业控制</strong> - 这允许shell用户同时执行多个命令(或作业)，一个在前台，另一个在后台。 也可以将作业从前台移动到后台，反之亦然。</p> 
+ <p>让我们通过使用shell(BASH)的例子程序的帮助来理解这一点。</p> 
+ <ul> 
+  <li>Shell脚本(在BASH中)执行名为<code>basic_commands.sh</code>的基本命令(日期，回显，睡眠和校准)</li>
+  <li>Shell脚本(在BASH中)执行基本命令(ps，echo)</li>
+ </ul> 
+ <p>两个Shell脚本如下 - </p> 
+ <pre><code class="lang-shell">#!/bin/bash
+#basic_commands.sh
+
+date
+echo "Now sleeping for 250 seconds, so that testing job control functionality is smooth"
+sleep 250
+cal
+</code></pre> 
+ <p>第二个脚本 - </p> 
+ <pre><code class="lang-shell">#!/bin/bash
+#process_status.sh
+
+ps
+echo "Now sleeping for 200 seconds, so that testing job control functionality is smooth"
+sleep 200
+ps
+</code></pre> 
+ <p>使用<code>chmod</code>命令给文件执行权限。 默认情况下，普通文件只能读取和写入权限而不能执行权限。</p> 
+ <p>要停止当前正在运行的进程，需要输入<code>CTRL + Z</code>。 这给一个作业编号。 作业可以在前台或后台恢复。 如果需要，在前台使用“<code>fg”</code>命令恢复作业。 如果需要，要在后台恢复作业，请使用<code>“bg”</code>命令。 通过使用它，它将只运行最后一个停止的进程。 如果您想要启动除最后一个停止的进程之外呢？ 只需使用<code>fg</code>或<code>bg</code>(例如bg%2或bg%3等)之后的作业编号即可。 如果正在运行的作业在后台，则可以在前台运行任何其他任务。 要获取作业列表，请使用命令 - <code>jobs</code>。 也可以用<code>CTRL + C</code>或<code>kill</code>命令终止进程。 您可以使用<code>kill</code>命令之后指定作业编号来终止作业。</p>   
+ <pre><code class="lang-shell">chmod u+x basic_commands.sh
+chmod u+x process_status.sh
+
+./basic_commands.sh
+Wed Jul 5 18:30:27 IST 2017
+Now sleeping for 250 seconds, so that testing job control functionality is smooth
+^Z
+[1]+ Stopped ./basic_commands.sh
+./process_status.sh
+PID   TTY   TIME     CMD
+2295  pts/1 00:00:00 bash
+4222  pts/1 00:00:00 basic_commands.
+4224  pts/1 00:00:00 sleep
+4225  pts/1 00:00:00 process_status.
+4226  pts/1 00:00:00 ps
+Now sleeping for 200 seconds, so that testing job control functionality is smooth
+^Z
+[2]+ Stopped      ./process_status.sh
+jobs
+[1]- Stopped      ./basic_commands.sh
+[2]+ Stopped      ./process_status.sh
+fg
+./process_status.sh
+^Z
+[2]+ Stopped      ./process_status.sh
+fg %2
+./process_status.sh
+^Z
+[2]+ Stopped      ./process_status.sh
+fg %1
+./basic_commands.sh
+^Z
+[1]+ Stopped      ./basic_commands.sh
+
+jobs
+[1]+ Stopped      ./basic_commands.sh
+[2]- Stopped      ./process_status.sh
+
+bg %2
+[2]- ./process_status.sh &amp;
+fg
+./basic_commands.sh
+^Z
+[1]+ Stopped      ./basic_commands.sh
+jobs
+[1]+ Stopped      ./basic_commands.sh
+[2]- Running      ./process_status.sh &amp;
+fg %2
+./process_status.sh
+^Z
+[2]+ Stopped      ./process_status.sh
+jobs
+[1]- Stopped      ./basic_commands.sh
+[2]+ Stopped      ./process_status.sh
+kill %1 %2
+[1]- Stopped      ./basic_commands.sh
+[2]+ Stopped      ./process_status.sh
+
+[1]- Terminated   ./basic_commands.sh
+[2]+ Terminated   ./process_status.sh
+</code></pre>
+ <br>      
+</div></body></html>

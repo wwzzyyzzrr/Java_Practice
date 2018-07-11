@@ -1,0 +1,209 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Servlet HttpSession登录注销实例</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>在前面一节教程文章中，已经介绍了什么是<code>HttpSession</code>，如何存储和从会话对象获取数据。<br>我们可以绑定<code>HttpSession</code>实例上的对象，并使用<code>setAttribute</code>和<code>getAttribute</code>方法获取对象的数据信息。<br>在这里，将演示一个在不使用数据库连接的情况下，创建一个真实的登录和注销应用程序。假设有一个用户名是：<code>admin</code>，它密码是<code>admin123</code>。</p> 
+ <blockquote> 
+  <p>注： 访问这里查看：<a target="_blank" href="http://www.yiibai.com/servlet/servlet-login-and-logout-example-using-cookies.html" title="使用cookies登录和注销的应用程序示例">使用cookies登录和注销的应用程序示例</a> ，有助于学习本节文章的内容。</p> 
+ </blockquote> 
+ <p>在这个例子中，我们创建了<code>3</code>个链接页面：登录，注销和个人资料。实现功能：用户在登录之前不能进入个人资料页面。如果用户已经注销，则需要再次登录才能访问个人资料页面。</p> 
+ <p>在这个应用程序中，创建了以下几个文件。</p> 
+ <ul> 
+  <li><em>index.html</em> - Web应用程序首页。</li>
+  <li><em>link.html</em> - 链接页面。</li>
+  <li><em>login.html</em> - 登录页面。</li>
+  <li><em>LoginServlet.java</em> - 登录Servlet处理。</li>
+  <li><em>LogoutServlet.java</em> - 注销Servlet处理。</li>
+  <li><em>ProfileServlet.java</em> - 用户个人资料Servlet。</li>
+  <li><em>web.xml</em> - Servlet配置文件。</li>
+ </ul> 
+ <p>打开Eclipse，创建一个动态Web项目：<em>SessionLoginout</em>，其完整的目录结构如下所示 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/1210/143161050_72350.png" alt=""></p> 
+ <p>以下是这个项目中的几个主要的代码文件。</p> 
+ <p>文件：<em>index.html</em> -</p> 
+ <pre><code class="lang-html">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;meta charset="UTF-8"&gt;
+&lt;title&gt;Session登录注销实例&lt;/title&gt;
+&lt;/head&gt;
+&lt;body style="text-algin: center;"&gt;
+    &lt;h2&gt;欢迎Session登录注销应用程序&lt;/h2&gt;
+    &lt;a href="login.html"&gt;登录&lt;/a&gt;|
+    &lt;a href="logout"&gt;注销&lt;/a&gt;|
+    &lt;a href="profile"&gt;个人信息&lt;/a&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>文件：<em>link.html</em> -</p> 
+ <pre><code class="lang-html">&lt;a href="login.html"&gt;登录&lt;/a&gt;|
+&lt;a href="logout"&gt;注销&lt;/a&gt;|
+&lt;a href="profile"&gt;个人信息&lt;/a&gt;
+&lt;hr&gt;
+</code></pre> 
+ <p>文件：<em>login.html</em> -</p> 
+ <pre><code class="lang-html">    &lt;div style="text-algin: center; padding-top:12px;"&gt;
+        &lt;form action="login" method="post"&gt;
+            用户名：&lt;input type="text" name="username"&gt;  密码：&lt;input type="password"
+                name="password"&gt;&lt;input type="submit" value="登录"&gt;
+        &lt;/form&gt;
+    &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>文件：<em>LoginServlet.java</em> -</p> 
+ <pre><code class="lang-java">package com.yiibai;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+public class LoginServlet extends HttpServlet {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("text/html;charset=UTF-8");
+        PrintWriter out = response.getWriter();
+        request.setCharacterEncoding("UTF-8");
+        request.getRequestDispatcher("link.html").include(request, response);
+
+        String username = request.getParameter("username");
+        String password = request.getParameter("password");
+        if (username == null) {
+            username = "";
+        }
+        if (password == null) {
+            password = "";
+        }
+
+        if (username.equals("admin") &amp;&amp; password.equals("admin123")) {
+            out.print("Welcome, " + username);
+            HttpSession session = request.getSession();
+            session.setAttribute("username", username);
+            session.setAttribute("nickname", "苏小牛");
+            session.setAttribute("age", "21");
+        } else {
+            out.print("&lt;font style='color:rec;'&gt;对不起，用户名或密码错误!&lt;/font&gt;");
+            request.getRequestDispatcher("login.html").include(request, response);
+        }
+        out.close();
+    }
+}
+</code></pre> 
+ <p>文件：<em>logoutServlet.java</em> -</p> 
+ <pre><code class="lang-java">package com.yiibai;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+public class LogoutServlet extends HttpServlet {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("text/html;charset=UTF-8");
+        PrintWriter out = response.getWriter();
+        request.setCharacterEncoding("UTF-8");
+        request.getRequestDispatcher("link.html").include(request, response);
+        HttpSession session = request.getSession();
+        // 清除数据
+        session.invalidate();
+        out.print("您已成功注销退出系统!");
+        out.close();
+    }
+}
+</code></pre> 
+ <p>文件：<em>ProfileServlet.java</em> -</p> 
+ <pre><code class="lang-java">package com.yiibai;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+public class ProfileServlet extends HttpServlet {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("text/html;charset=UTF-8");
+        request.setCharacterEncoding("UTF-8");
+        PrintWriter out = response.getWriter();
+        request.getRequestDispatcher("link.html").include(request, response);
+
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            String name = (String) session.getAttribute("username");
+            String nickname = (String) session.getAttribute("nickname");
+            String age = (String) session.getAttribute("age");
+            out.print("您好, " + name + " 欢迎您来到个人信息中心！");
+            out.print("&lt;hr/&gt;个人信息如下, 昵称：" + nickname + " ，年龄："+age);
+        } else {
+            out.print("请登录系统！");
+            request.getRequestDispatcher("login.html").include(request, response);
+        }
+        out.close();
+    }
+}
+</code></pre> 
+ <p>文件：<em>web.xml</em> -</p>   
+ <pre><code class="lang-xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+    xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
+    id="WebApp_ID" version="3.1"&gt;
+    &lt;display-name&gt;SessionLoginout&lt;/display-name&gt;
+    &lt;welcome-file-list&gt;
+        &lt;welcome-file&gt;index.html&lt;/welcome-file&gt;
+        &lt;welcome-file&gt;index.jsp&lt;/welcome-file&gt;
+    &lt;/welcome-file-list&gt;
+    &lt;servlet&gt;
+        &lt;description&gt;&lt;/description&gt;
+        &lt;servlet-name&gt;LoginServlet&lt;/servlet-name&gt;
+        &lt;servlet-class&gt;com.yiibai.LoginServlet&lt;/servlet-class&gt;
+    &lt;/servlet&gt;
+    &lt;servlet-mapping&gt;
+        &lt;servlet-name&gt;LoginServlet&lt;/servlet-name&gt;
+        &lt;url-pattern&gt;/login&lt;/url-pattern&gt;
+    &lt;/servlet-mapping&gt;
+    &lt;servlet&gt;
+        &lt;servlet-name&gt;ProfileServlet&lt;/servlet-name&gt;
+        &lt;servlet-class&gt;com.yiibai.ProfileServlet&lt;/servlet-class&gt;
+    &lt;/servlet&gt;
+    &lt;servlet-mapping&gt;
+        &lt;servlet-name&gt;ProfileServlet&lt;/servlet-name&gt;
+        &lt;url-pattern&gt;/profile&lt;/url-pattern&gt;
+    &lt;/servlet-mapping&gt;
+    &lt;servlet&gt;
+        &lt;servlet-name&gt;LogoutServlet&lt;/servlet-name&gt;
+        &lt;servlet-class&gt;com.yiibai.LogoutServlet&lt;/servlet-class&gt;
+    &lt;/servlet&gt;
+    &lt;servlet-mapping&gt;
+        &lt;servlet-name&gt;LogoutServlet&lt;/servlet-name&gt;
+        &lt;url-pattern&gt;/logout&lt;/url-pattern&gt;
+    &lt;/servlet-mapping&gt;
+&lt;/web-app&gt;
+</code></pre> 
+ <p>在编写上面代码后，部署此Web应用程序(在项目名称上点击右键-&gt;”Run On Server…”)，打开浏览器访问URL： <a target="_blank" href="http://localhost:8080/SessionLoginout/">http://localhost:8080/SessionLoginout/</a> ，如果没有错误，应该会看到以下结果 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/1210/749161040_45104.png" alt=""></p> 
+ <p>点击“登录”，如下界面 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/1210/232161041_48790.png" alt=""></p> 
+ <p>使用用户名：<code>admin</code> ，密码：<code>admin123</code>，点击登录成功后，如下界面 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/1210/982161048_25367.png" alt=""></p> 
+ <p>用户名或密码错误时，显示如下 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/1210/835161047_51637.png" alt=""></p> 
+ <p>点击“个人信息”链接，显示如下 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/1210/180161048_65418.png" alt=""></p> 
+ <p>点击“注销”链接，显示如下 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/1210/112161049_42170.png" alt=""></p>
+ <br>      
+</div></body></html>

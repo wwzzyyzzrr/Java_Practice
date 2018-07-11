@@ -1,0 +1,169 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Android Activity</h1><div style="width:100%;float:left;" class="article-content">   
+ <p> 活动(activity)表示一个单一屏幕上的用户界面。例如，电子邮件应用程序可能是一个活动，显示新的电子邮件列表是另一个活动，撰写电子邮件，阅读电子邮件可能又是其它的活动。如果应用程序有一个以上的活动，那么应该将其中的一个活动标记为活动启动应用程序。</p> 
+ <p> 如果曾使用C，C++或<a target="_blank" href="http://www.yiibai.com/java">Java</a>编程语言，那么可以知道一般程序是从 main() 函数开始。相似地，Android系统是一个Activity 的 onCreate() 方法调用开始启动程序。一个回调方法 - 启动一个活动，以及其它回调方法，如销毁一个活动，活动的生命周期如下图所示序列：</p> 
+ <img alt="Android Activity lifecycle" src="/uploads/allimg/131022/0AP410D-0.jpg"> 
+ <p> Activity类定义了以下的回调方法，即事件。并不需要实现所有的回调方法。然而重要的是了解每一个变化以及实现，以确保应用程序如用户所期望的行为或方式。</p> 
+ <table class="src" style="margin: 8px 0px; padding: 0px; border-style: solid; border-color: rgb(214, 214, 214); width: 560px; border-collapse: collapse; vertical-align: top; background-color: rgb(247, 247, 247); color: rgb(0, 0, 0); "> 
+  <tbody style="margin: 0px; padding: 0px;"> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <th style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214); background-color: rgb(238, 238, 238); width: 101px;"> 回调方法</th> 
+    <th style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214); background-color: rgb(238, 238, 238);"> 描述</th> 
+   </tr> 
+   <tr> 
+    <td> onCreate()</td> 
+    <td> 这是第一次回调，活动在第一次创建时调用。</td> 
+   </tr> 
+   <tr> 
+    <td> onStart()</td> 
+    <td> 这个回调被称为活动时变成对用户可见。</td> 
+   </tr> 
+   <tr> 
+    <td> onResume()</td> 
+    <td> 这就是所谓的启动，当用户与应用程序交互。</td> 
+   </tr> 
+   <tr> 
+    <td> onPause()</td> 
+    <td> 暂停活动不接收用户输入并不执行任何代码并调用时，当前的活动被暂停，恢复以前的活动。</td> 
+   </tr> 
+   <tr> 
+    <td> onStop()</td> 
+    <td> 这个回调被称为活动时不再可见</td> 
+   </tr> 
+   <tr> 
+    <td> onDestroy()</td> 
+    <td> 活动前由系统被销毁，调用此回调</td> 
+   </tr> 
+   <tr> 
+    <td> onRestart()</td> 
+    <td> 活动重新启动时，停止后调用此回调</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h2> 例子</h2> 
+ <p> 这个例子通过简单的步骤，显示Android应用程序活动的生命周期。按照下面的步骤来修改Android应用程序，在创建的 Hello World 范例章节：</p> 
+ <table class="src" style="margin: 8px 0px; padding: 0px; border-style: solid; border-color: rgb(214, 214, 214); width: 560px; border-collapse: collapse; vertical-align: top; background-color: rgb(247, 247, 247); color: rgb(0, 0, 0); "> 
+  <tbody style="margin: 0px; padding: 0px;"> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <th class="fivepct" style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214); background-color: rgb(238, 238, 238); width: 26px;"> 步骤</th> 
+    <th style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214); background-color: rgb(238, 238, 238);"> 描述</th> 
+   </tr> 
+   <tr> 
+    <td> 1</td> 
+    <td> 我们将使用Eclipse IDE中创建一个Android应用程序，并将其命名在 HelloWorld 的包下，如：com.example.helloworld的Hello World范例章节解释。</td> 
+   </tr> 
+   <tr> 
+    <td> 2</td> 
+    <td> 修改Main活动文件MainActivity.java,其余文件保持不变。</td> 
+   </tr> 
+   <tr> 
+    <td> 3</td> 
+    <td> 运行该应用程序启动Android模拟器并验证应用程序中所做的更改结果。</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p> 以下是修改主要活动文件src/com.example.helloworld/MainActivity.java后的内容，该文件包含了每个基本生命周期方法。&nbsp;Log.d()&nbsp;方法是用来生成日志消息：&nbsp;</p> 
+ <pre class="prettyprint prettyprinted" style="font-size: 12px;">
+<span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">package</span><span class="pln" style="margin: 0px; padding: 0px;"> com</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">.</span><span class="pln" style="margin: 0px; padding: 0px;">example</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">.</span><span class="pln" style="margin: 0px; padding: 0px;">helloworld</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">;</span><span class="pln" style="margin: 0px; padding: 0px;">
+
+</span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">import</span><span class="pln" style="margin: 0px; padding: 0px;"> android</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">.</span><span class="pln" style="margin: 0px; padding: 0px;">os</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">.</span><span class="typ" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">Bundle</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">;</span><span class="pln" style="margin: 0px; padding: 0px;">
+</span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">import</span><span class="pln" style="margin: 0px; padding: 0px;"> android</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">.</span><span class="pln" style="margin: 0px; padding: 0px;">app</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">.</span><span class="typ" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">Activity</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">;</span><span class="pln" style="margin: 0px; padding: 0px;">
+</span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">import</span><span class="pln" style="margin: 0px; padding: 0px;"> android</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">.</span><span class="pln" style="margin: 0px; padding: 0px;">util</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">.</span><span class="typ" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">Log</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">;</span><span class="pln" style="margin: 0px; padding: 0px;">
+
+</span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">public</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">class</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="typ" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">MainActivity</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">extends</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="typ" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">Activity</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">{</span><span class="pln" style="margin: 0px; padding: 0px;">
+   </span><span class="typ" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">String</span><span class="pln" style="margin: 0px; padding: 0px;"> msg </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">=</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="str" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"Android : "</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">;</span><span class="pln" style="margin: 0px; padding: 0px;">
+   
+   </span><span class="com" style="margin: 0px; padding: 0px; color: rgb(136, 0, 0);">/** Called when the activity is first created. */</span><span class="pln" style="margin: 0px; padding: 0px;">
+   </span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">@Override</span><span class="pln" style="margin: 0px; padding: 0px;">
+   </span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">public</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">void</span><span class="pln" style="margin: 0px; padding: 0px;"> onCreate</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="typ" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">Bundle</span><span class="pln" style="margin: 0px; padding: 0px;"> savedInstanceState</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">)</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">{</span><span class="pln" style="margin: 0px; padding: 0px;">
+      </span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">super</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">.</span><span class="pln" style="margin: 0px; padding: 0px;">onCreate</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="pln" style="margin: 0px; padding: 0px;">savedInstanceState</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">);</span><span class="pln" style="margin: 0px; padding: 0px;">
+      setContentView</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="pln" style="margin: 0px; padding: 0px;">R</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">.</span><span class="pln" style="margin: 0px; padding: 0px;">layout</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">.</span><span class="pln" style="margin: 0px; padding: 0px;">activity_main</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">);</span><span class="pln" style="margin: 0px; padding: 0px;">
+      </span><span class="typ" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">Log</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">.</span><span class="pln" style="margin: 0px; padding: 0px;">d</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="pln" style="margin: 0px; padding: 0px;">msg</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">,</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="str" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"The onCreate() event"</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">);</span><span class="pln" style="margin: 0px; padding: 0px;">
+   </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">}</span><span class="pln" style="margin: 0px; padding: 0px;">
+
+   </span><span class="com" style="margin: 0px; padding: 0px; color: rgb(136, 0, 0);">/** Called when the activity is about to become visible. */</span><span class="pln" style="margin: 0px; padding: 0px;">
+   </span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">@Override</span><span class="pln" style="margin: 0px; padding: 0px;">
+   </span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">protected</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">void</span><span class="pln" style="margin: 0px; padding: 0px;"> onStart</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">()</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">{</span><span class="pln" style="margin: 0px; padding: 0px;">
+      </span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">super</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">.</span><span class="pln" style="margin: 0px; padding: 0px;">onStart</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">();</span><span class="pln" style="margin: 0px; padding: 0px;">
+      </span><span class="typ" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">Log</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">.</span><span class="pln" style="margin: 0px; padding: 0px;">d</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="pln" style="margin: 0px; padding: 0px;">msg</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">,</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="str" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"The onStart() event"</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">);</span><span class="pln" style="margin: 0px; padding: 0px;">
+   </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">}</span><span class="pln" style="margin: 0px; padding: 0px;">
+
+   </span><span class="com" style="margin: 0px; padding: 0px; color: rgb(136, 0, 0);">/** Called when the activity has become visible. */</span><span class="pln" style="margin: 0px; padding: 0px;">
+   </span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">@Override</span><span class="pln" style="margin: 0px; padding: 0px;">
+   </span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">protected</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">void</span><span class="pln" style="margin: 0px; padding: 0px;"> onResume</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">()</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">{</span><span class="pln" style="margin: 0px; padding: 0px;">
+      </span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">super</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">.</span><span class="pln" style="margin: 0px; padding: 0px;">onResume</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">();</span><span class="pln" style="margin: 0px; padding: 0px;">
+      </span><span class="typ" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">Log</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">.</span><span class="pln" style="margin: 0px; padding: 0px;">d</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="pln" style="margin: 0px; padding: 0px;">msg</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">,</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="str" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"The onResume() event"</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">);</span><span class="pln" style="margin: 0px; padding: 0px;">
+   </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">}</span><span class="pln" style="margin: 0px; padding: 0px;">
+
+   </span><span class="com" style="margin: 0px; padding: 0px; color: rgb(136, 0, 0);">/** Called when another activity is taking focus. */</span><span class="pln" style="margin: 0px; padding: 0px;">
+   </span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">@Override</span><span class="pln" style="margin: 0px; padding: 0px;">
+   </span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">protected</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">void</span><span class="pln" style="margin: 0px; padding: 0px;"> onPause</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">()</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">{</span><span class="pln" style="margin: 0px; padding: 0px;">
+      </span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">super</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">.</span><span class="pln" style="margin: 0px; padding: 0px;">onPause</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">();</span><span class="pln" style="margin: 0px; padding: 0px;">
+      </span><span class="typ" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">Log</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">.</span><span class="pln" style="margin: 0px; padding: 0px;">d</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="pln" style="margin: 0px; padding: 0px;">msg</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">,</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="str" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"The onPause() event"</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">);</span><span class="pln" style="margin: 0px; padding: 0px;">
+   </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">}</span><span class="pln" style="margin: 0px; padding: 0px;">
+
+   </span><span class="com" style="margin: 0px; padding: 0px; color: rgb(136, 0, 0);">/** Called when the activity is no longer visible. */</span><span class="pln" style="margin: 0px; padding: 0px;">
+   </span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">@Override</span><span class="pln" style="margin: 0px; padding: 0px;">
+   </span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">protected</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">void</span><span class="pln" style="margin: 0px; padding: 0px;"> onStop</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">()</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">{</span><span class="pln" style="margin: 0px; padding: 0px;">
+      </span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">super</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">.</span><span class="pln" style="margin: 0px; padding: 0px;">onStop</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">();</span><span class="pln" style="margin: 0px; padding: 0px;">
+      </span><span class="typ" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">Log</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">.</span><span class="pln" style="margin: 0px; padding: 0px;">d</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="pln" style="margin: 0px; padding: 0px;">msg</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">,</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="str" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"The onStop() event"</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">);</span><span class="pln" style="margin: 0px; padding: 0px;">
+   </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">}</span><span class="pln" style="margin: 0px; padding: 0px;">
+
+   </span><span class="com" style="margin: 0px; padding: 0px; color: rgb(136, 0, 0);">/** Called just before the activity is destroyed. */</span><span class="pln" style="margin: 0px; padding: 0px;">
+   </span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">@Override</span><span class="pln" style="margin: 0px; padding: 0px;">
+   </span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">public</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">void</span><span class="pln" style="margin: 0px; padding: 0px;"> onDestroy</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">()</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">{</span><span class="pln" style="margin: 0px; padding: 0px;">
+      </span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">super</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">.</span><span class="pln" style="margin: 0px; padding: 0px;">onDestroy</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">();</span><span class="pln" style="margin: 0px; padding: 0px;">
+      </span><span class="typ" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">Log</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">.</span><span class="pln" style="margin: 0px; padding: 0px;">d</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="pln" style="margin: 0px; padding: 0px;">msg</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">,</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="str" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"The onDestroy() event"</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">);</span><span class="pln" style="margin: 0px; padding: 0px;">
+   </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">}</span><span class="pln" style="margin: 0px; padding: 0px;">
+</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">}</span></pre> 
+ <p> 活动类加载UI组件，使用在项目的&nbsp;res/layout&nbsp;文件夹的XML文件。下面的语句从&nbsp;res/layout/activity_main.xml 文件加载UI组件：</p>   
+ <pre class="prettyprint prettyprinted" style="font-size: 12px;">
+<span class="pln" style="margin: 0px; padding: 0px;">setContentView</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="pln" style="margin: 0px; padding: 0px;">R</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">.</span><span class="pln" style="margin: 0px; padding: 0px;">layout</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">.</span><span class="pln" style="margin: 0px; padding: 0px;">activity_main</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">);</span></pre> 
+ <p> 应用程序可以有一个或多个活动受任何限制。每个活动定义为应用程序必须在AndroidManifest.xml文件中声明，必须声明应用程序的主要活动列表&lt;intent-filter&gt;，包括如下<strong>MAIN</strong> 操作和 <strong>LAUNCHER</strong>&nbsp;类：</p> 
+ <pre class="prettyprint prettyprinted" style="font-size: 12px;">
+<span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;manifest</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="atn" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">xmlns:android</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">=</span><span class="atv" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"http://schemas.android.com/apk/res/android"</span><span class="pln" style="margin: 0px; padding: 0px;">
+   </span><span class="atn" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">package</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">=</span><span class="atv" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"com.example.helloworld"</span><span class="pln" style="margin: 0px; padding: 0px;">
+   </span><span class="atn" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">android:versionCode</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">=</span><span class="atv" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"1"</span><span class="pln" style="margin: 0px; padding: 0px;">
+   </span><span class="atn" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">android:versionName</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">=</span><span class="atv" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"1.0"</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">
+   </span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;uses-sdk</span><span class="pln" style="margin: 0px; padding: 0px;">
+      </span><span class="atn" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">android:minSdkVersion</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">=</span><span class="atv" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"8"</span><span class="pln" style="margin: 0px; padding: 0px;">
+      </span><span class="atn" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">android:targetSdkVersion</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">=</span><span class="atv" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"15"</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">/&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">
+   </span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;application</span><span class="pln" style="margin: 0px; padding: 0px;">
+       </span><span class="atn" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">android:icon</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">=</span><span class="atv" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"@drawable/ic_launcher"</span><span class="pln" style="margin: 0px; padding: 0px;">
+       </span><span class="atn" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">android:label</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">=</span><span class="atv" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"@string/app_name"</span><span class="pln" style="margin: 0px; padding: 0px;">
+       </span><span class="atn" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">android:theme</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">=</span><span class="atv" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"@style/AppTheme"</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">
+       </span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;activity</span><span class="pln" style="margin: 0px; padding: 0px;">
+           </span><span class="atn" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">android:name</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">=</span><span class="atv" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">".MainActivity"</span><span class="pln" style="margin: 0px; padding: 0px;">
+           </span><span class="atn" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">android:label</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">=</span><span class="atv" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"@string/title_activity_main"</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">
+           </span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;intent-filter&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">
+               </span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;action</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="atn" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">android:name</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">=</span><span class="atv" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"android.intent.action.MAIN"</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">/&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">
+               </span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;category</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="atn" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">android:name</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">=</span><span class="atv" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"android.intent.category.LAUNCHER"</span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">/&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">
+           </span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;/intent-filter&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">
+       </span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;/activity&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">
+   </span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;/application&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">
+</span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;/manifest&gt;</span></pre> 
+ <p> 如果 MAIN&nbsp;动作或LAUNCHER类不声明一个活动，那么应用程序图标将不会出现在应用程序列表的主屏幕上。&nbsp;</p> 
+ <p> 现在尝试运行修改后的 Hello World！应用程序。假设已经创建了AVD，同时做环境设置。从Eclipse运行应用程序，打开一个项目的活动文件，并单击“<strong>Run</strong>”&nbsp;<img alt="Eclipse Run Icon" src="/uploads/allimg/131022/0AP44W4-1.png">&nbsp;图标。Eclipse 在 AVD上安装应用程序，并启动它，如果设置和应用都没有问题，它会显示仿真器窗口中，也应该看到以下日志消息在Eclipse IDE LogCat 窗口：</p> 
+ <pre class="result" style="margin-bottom: 0px; background-color: rgb(241, 241, 241); font-size: 12px;">
+07-19 15:00:43.405: D/Android :(866): The onCreate() event
+07-19 15:00:43.405: D/Android :(866): The onStart() event
+07-19 15:00:43.415: D/Android :(866): The onResume() event</pre> 
+ <img alt="Android LotCat Window" src="/uploads/allimg/131022/0AP410X-2.jpg" style="margin: auto; padding: 0px 0px 10px; border: 0px; max-width: 560px; height: auto; display: block; color: rgb(0, 0, 0); "> 
+ <p> 点击红色按钮<img alt="Android Red Button" src="/uploads/allimg/131022/0AP43H6-3.png">&nbsp;-&nbsp;在Android模拟器上的红色按钮，它会在Eclipse IDE窗口LogCat中生成以下事件消息：&nbsp;&nbsp;</p> 
+ <pre class="result" style="margin-bottom: 0px; background-color: rgb(241, 241, 241); font-size: 12px;">
+07-19 15:01:10.995: D/Android :(866): The onPause() event
+07-19 15:01:12.705: D/Android :(866): The onStop() event</pre> 
+ <p> 让我们再次尝试单击菜单按钮<img alt="Android Menu Button" src="/uploads/allimg/131022/0AP42053-4.png">&nbsp;-&nbsp;Android菜单按钮在Android模拟器中，它会在Eclipse IDE 的 LogCat窗口中生成以下事件消息：&nbsp;</p> 
+ <div style="float:left;margin-bottom: 10px;">  
+ </div>
+ <div style="float:left;margin-bottom: 10px;">  
+ </div>
+ <pre class="result" style="margin-bottom: 0px; background-color: rgb(241, 241, 241); font-size: 12px;">
+07-19 15:01:13.995: D/Android :(866): The onStart() event
+07-19 15:01:14.705: D/Android :(866): The onResume() event</pre> 
+ <p> 接下来，就让我们再次尝试点击后退按钮<img alt="Android Back Button" src="/uploads/allimg/131022/0AP43223-5.png">&nbsp;-&nbsp;Android后退按钮在Android模拟器，它会生成以下事件消息在Eclipse IDE LogCat窗口中，以上完成Android应用程序Acitivity&nbsp;的生命周期。&nbsp;</p> 
+ <pre class="result" style="margin-bottom: 0px; background-color: rgb(241, 241, 241); font-size: 12px;">
+07-19 15:33:15.687: D/Android :(992): The onPause() event
+07-19 15:33:15.525: D/Android :(992): The onStop() event
+07-19 15:33:15.525: D/Android :(992): The onDestroy() event</pre> 
+ <br>      
+</div></body></html>

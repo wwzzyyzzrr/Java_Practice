@@ -1,0 +1,285 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">VB.Net数据库访问</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>应用程序与数据库进行通信，首先检索存储在数据库中的数据，并以便于用户使用的方式显示;其次，通过插入，修改和删除数据来更新数据库中的数据。</p> 
+ <p>Microsoft ActiveX Data Objects.Net(<a target="_blank" href="http://www.yiibai.com/ado.net/" title="ADO.Net">ADO.Net</a>)是一个模型，是.NET应用程序用于检索，访问和更新数据的.Net框架的一部分。</p> 
+ <h2 id="h2-ado-net-"><a name="ADO.Net对象模型" class="reference-link"></a><span class="header-link octicon octicon-link"></span>ADO.Net对象模型</h2>
+ <p>ADO.Net对象模型不过是通过各种组件的结构化流程流程。对象模型可以描述如下图所示：</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201711/1611/800161110_29694.jpg" alt=""></p> 
+ <p>在数据存储或数据库中的数据通过数据提供者(<em>DataProvider</em>)检索。数据提供者的各种组件检索应用程序的数据并更新数据。</p> 
+ <p>应用程序通过数据集或数据读取器访问数据。</p> 
+ <ul> 
+  <li>数据集(<em>Datasets</em>)将数据存储在已断开连接的缓存中，应用程序将从中检索数据。</li>
+  <li>数据读取器(<em>Data readers</em>)以只读和只进模式向应用程序提供数据。</li>
+ </ul> 
+ <h2 id="h2-u6570u636Eu63D0u4F9Bu8005"><a name="数据提供者" class="reference-link"></a><span class="header-link octicon octicon-link"></span>数据提供者</h2>
+ <p>数据提供者用于连接到数据库，执行命令和检索数据，将其存储在数据集中，读取检索到的数据并更新数据库。</p> 
+ <p><code>ADO.Net</code>中的数据提供者由以下四个对象组成：</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>编号</th> 
+    <th>对象</th> 
+    <th>描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>1</td> 
+    <td><code>Connection</code></td> 
+    <td>该组件用于与数据源建立连接。</td> 
+   </tr> 
+   <tr> 
+    <td>2</td> 
+    <td><code>Command</code></td> 
+    <td>命令是用于检索，插入，删除或修改数据源中的数据的SQL语句或存储过程。</td> 
+   </tr> 
+   <tr> 
+    <td>3</td> 
+    <td><code>DataReader</code></td> 
+    <td>数据读取器用于以只读和只进模式从数据源检索数据。</td> 
+   </tr> 
+   <tr> 
+    <td>4</td> 
+    <td><code>DataAdapter</code></td> 
+    <td>这对ADO.Net的工作是不可或缺的，因为数据通过数据适配器传输到数据库和从数据库传输。它从数据库检索数据到数据集并更新数据库。对数据集进行更改时，数据库中的更改实际上是由数据适配器完成的。</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p>ADO.Net中包含以下不同类型的数据提供程序 - </p> 
+ <ul> 
+  <li>SQL Server的.Net Framework数据提供程序 - 提供对Microsoft SQL Server的访问。</li>
+  <li>OLE DB的.Net Framework数据提供程序 - 提供对使用OLE DB公开的数据源的访问。</li>
+  <li>用于ODBC的.Net Framework数据提供程序 - 提供对由ODBC公开的数据源的访问。</li>
+  <li>Oracle的.Net Framework数据提供程序 - 提供对Oracle数据源的访问。</li>
+  <li>EntityClient提供者 - 允许通过实体数据模型(EDM)应用程序访问数据。</li>
+ </ul> 
+ <h2 id="h2--dataset-"><a name="数据集(DataSet)" class="reference-link"></a><span class="header-link octicon octicon-link"></span>数据集(DataSet)</h2>
+ <p>数据集(DataSet)是数据的内存中表示。 它是从数据库中检索的一个断开的，高速缓存的一组记录。 与数据库建立连接后，数据适配器将创建一个数据集并在其中存储数据。 在数据被检索并存储在数据集中之后，与数据库的连接被关闭。这被称为“断开连接的架构”。 该数据集作为包含表，行和列的虚拟数据库运行。</p> 
+ <p>下图显示了数据集对象模型：</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201711/1611/807161123_27023.jpg" alt=""></p> 
+ <p><code>DataSet</code>类存在于<code>System.Data</code>命名空间中。下表介绍了<code>DataSet</code>的所有组件：</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>编号</th> 
+    <th>组件</th> 
+    <th>描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>1</td> 
+    <td><code>DataTableCollection</code></td> 
+    <td>它包含从数据源检索的所有表。</td> 
+   </tr> 
+   <tr> 
+    <td>2</td> 
+    <td><code>DataRelationCollection</code></td> 
+    <td>它包含数据集中表之间的关系和链接。</td> 
+   </tr> 
+   <tr> 
+    <td>3</td> 
+    <td><code>ExtendedProperties</code></td> 
+    <td>它包含额外的信息，如用于检索数据的SQL语句，检索时间等。</td> 
+   </tr> 
+   <tr> 
+    <td>4</td> 
+    <td><code>DataTable</code></td> 
+    <td>它表示数据集<code>DataTableCollection</code>中的一个表。它是由<code>DataRow</code>和<code>DataColumn</code>对象组成。<code>DataTable</code>对象区分大小写。</td> 
+   </tr> 
+   <tr> 
+    <td>5</td> 
+    <td><code>DataRelation</code></td> 
+    <td>它表示数据集<code>DataRelationshipCollection</code>中的关系。 它用于通过<code>DataColumn</code>对象将两个<code>DataTable</code>对象相互关联。</td> 
+   </tr> 
+   <tr> 
+    <td>6</td> 
+    <td><code>DataRowCollection</code></td> 
+    <td>它包含<code>DataTable</code>中的所有行。</td> 
+   </tr> 
+   <tr> 
+    <td>7</td> 
+    <td><code>DataView</code></td> 
+    <td>它代表一个<code>DataTable</code>的固定定制视图，用于排序，过滤，搜索，编辑和导航。</td> 
+   </tr> 
+   <tr> 
+    <td>8</td> 
+    <td><code>PrimaryKey</code></td> 
+    <td>它表示唯一标识<code>DataTable</code>中的行的列。</td> 
+   </tr> 
+   <tr> 
+    <td>9</td> 
+    <td><code>DataRow</code></td> 
+    <td>它表示<code>DataTable</code>中的一行。 <code>DataRow</code>对象及其属性和方法用于检索，评估，插入，删除和更新<code>DataTable</code>中的值。 <code>NewRow</code>方法用于创建新行，<code>Add</code>方法向表中添加一行。</td> 
+   </tr> 
+   <tr> 
+    <td>10</td> 
+    <td><code>DataColumnCollection</code></td> 
+    <td>它代表<code>DataTable</code>中的所有列。</td> 
+   </tr> 
+   <tr> 
+    <td>11</td> 
+    <td><code>DataColumn</code></td> 
+    <td>它由组成<code>DataTable</code>的列数组成。</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h2 id="h2-u8FDEu63A5u5230u6570u636Eu5E93"><a name="连接到数据库" class="reference-link"></a><span class="header-link octicon octicon-link"></span>连接到数据库</h2>
+ <p>.Net框架提供了两种类型的连接类：</p> 
+ <ul> 
+  <li><em>SqlConnection</em> - 用于连接到Microsoft SQL Server。</li>
+  <li><em>OleDbConnection</em> - 设计用于连接到各种数据库，如Microsoft Access和Oracle。</li>
+ </ul> 
+ <h2 id="h2--1"><a name="示例1" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例1</h2>
+ <p>在名为testDB的数据库中有一个名为<code>Customers</code>的存储在Microsoft SQL Server中的表。请参阅SQL Server教程在SQL Server中创建数据库和数据库表。</p> 
+ <p>下面演示如何连接到这个数据库(假设已经创建好了一个名称为：<em>testdb</em> 的数据库)，参考以下步骤：</p> 
+ <ul> 
+  <li>选择<em>工具</em> -&gt; <em>连接到数据库</em>，如下图所示 - </li>
+ </ul> 
+ <p><img src="http://www.yiibai.com/uploads/images/201711/1611/893091116_21750.png" alt=""></p> 
+ <ul> 
+  <li>在“添加连接”对话框中选择一个服务器名称(这是里：<em>MY-PC</em>)和数据库名称。如下图所示 - </li>
+ </ul> 
+ <p><img src="http://www.yiibai.com/uploads/images/201711/1611/130091123_77468.png" alt=""></p> 
+ <ul> 
+  <li>点击<em>测试连接</em> 按钮，检查连接是否成功。成功如下图所示 - </li>
+ </ul> 
+ <p><img src="http://www.yiibai.com/uploads/images/201711/1611/962091125_57823.png" alt=""></p> 
+ <ul> 
+  <li>在窗体上添加一个<code>DataGridView</code>。</li>
+ </ul> 
+ <p><img src="http://www.yiibai.com/uploads/images/201711/1611/665091126_99077.png" alt=""></p> 
+ <ul> 
+  <li>点击<em>选择数据源</em>组合框。没有任何数据源的情况下如下所示 - </li>
+ </ul> 
+ <p><img src="http://www.yiibai.com/uploads/images/201711/1611/212091128_37304.png" alt=""></p> 
+ <ul> 
+  <li><p>在上图中，点击<em>添加项目数据源</em>链接。</p> </li>
+  <li><p>这将打开数据源配置向导。选择<em>数据库</em> 作为数据源类型。然后下一步 - </p> </li>
+ </ul> 
+ <p><img src="http://www.yiibai.com/uploads/images/201711/1611/349091130_14303.png" alt=""></p> 
+ <ul> 
+  <li>选择<em>数据集</em>作为数据库模型。如下图所示 - </li>
+ </ul> 
+ <p><img src="http://www.yiibai.com/uploads/images/201711/1611/755091131_47560.png" alt=""></p> 
+ <ul> 
+  <li>选择已经建立的连接。如下图所示 - </li>
+ </ul> 
+ <p><img src="http://www.yiibai.com/uploads/images/201711/1611/603091132_13152.png" alt=""></p> 
+ <ul> 
+  <li>保存连接字符串。如下图所示 - </li>
+ </ul> 
+ <p><img src="http://www.yiibai.com/uploads/images/201711/1611/549091134_15150.png" alt=""></p> 
+ <ul> 
+  <li>在这个示例中选择数据库对象<code>customers</code>表，然后单击<em>完成</em> 按钮。如下图所示 - </li>
+ </ul> 
+ <p><img src="http://www.yiibai.com/uploads/images/201711/1611/271091135_74738.png" alt=""></p> 
+ <ul> 
+  <li>选择<em>预览数据</em> 链接以查看网格中的数据，如下图所示 - </li>
+ </ul> 
+ <p><img src="http://www.yiibai.com/uploads/images/201711/1611/570091136_69649.png" alt=""></p> 
+ <p>当使用Microsoft Visual Studio工具栏上的“开始”按钮运行应用程序时，它将显示以下窗口：</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201711/1611/500091138_24027.png" alt=""></p> 
+ <h3 id="h3--2"><a name="示例2" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例2</h3>
+ <p>在这个例子中，将演示如何使用代码访问<code>DataGridView</code>控件中的数据(创建一个新的项目：<em>DatabaseAccess2</em>)。参考以下步骤：</p> 
+ <ul> 
+  <li>在窗体中添加一个<code>DataGridView</code>控件和一个按钮。</li>
+  <li>将按钮控件的文本更改为<em>“从数据库表加载数据”</em>。</li>
+ </ul> 
+ <p>双击按钮控件为按钮的<code>Click</code>事件添加所需的代码，如下所示：</p>   
+ <pre><code class="lang-vbnet">Imports System.Data.SqlClient
+Public Class Form1
+    Private Sub Form1_Load(sender As Object, e As EventArgs) _
+    Handles MyBase.Load
+        'TODO: This line of code loads data into the 'TestDBDataSet.CUSTOMERS' table.   You can move, or remove it, as needed.
+        'Me.CUSTOMERSTableAdapter.Fill(Me.TestDBDataSet.CUSTOMERS)
+
+        ' Set the caption bar text of the form.   
+        'Me.Text = "yiibai.com"
+    End Sub
+    Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
+        Dim connection As SqlConnection = New SqlConnection()
+        connection.ConnectionString = "Data Source=MY-PC;Initial Catalog=testdb;Integrated Security=True"
+        connection.Open()
+        Dim adp As SqlDataAdapter = New SqlDataAdapter _
+        ("select * from customers", connection)
+        Dim ds As DataSet = New DataSet()
+        adp.Fill(ds)
+        DataGridView1.DataSource = ds.Tables(0)
+    End Sub
+End Class
+</code></pre> 
+ <p>当上面的代码执行并使用Microsoft Visual Studio工具栏上的“开始”按钮运行时，它将显示以下窗口：</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201711/1611/880091150_20037.png" alt=""></p> 
+ <p>单击<em>从数据库表加载数据</em>按钮将显示数据网格视图控件上的表格：</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201711/1611/739091151_95338.png" alt=""></p> 
+ <p><strong>创建表，列和行</strong></p> 
+ <p>前面我们已经讨论过，像<code>DataTable</code>，<code>DataColumn</code>和<code>DataRow</code>这样的<code>DataSet</code>组件可用于分别创建表，列和行。</p> 
+ <p>以下<em>示例3</em>中演示了这个概念。</p> 
+ <h2 id="h2--3"><a name="示例3" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例3</h2>
+ <p>到目前为止，我们已经使用了计算机中已有的数据库和表。 在这个例子中，将创建一个表，向其中添加列，行和数据，并使用<code>DataGridView</code>对象显示该表结构和数据记录。创建一个名称为：<em>DatabaseAccess3</em> 的项目。</p> 
+ <p>参考以下步骤：</p> 
+ <ul> 
+  <li>在窗体中添加一个DataGridView控件和一个按钮。</li>
+  <li>将按钮控件的<code>Text</code>属性值更改为<em>“从数据库表中加载数据”</em>。</li>
+ </ul> 
+ <p>在代码编辑器中添加下面的代码。</p> 
+ <pre><code class="lang-vbnet">Public Class Form1
+    Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        ' Set the caption bar text of the form.   
+        Me.Text = "从数据库表中加载数据示例 - yiibai.com"
+    End Sub
+
+    Private Function CreateDataSet() As DataSet
+        'creating a DataSet object for tables
+        Dim dataset As DataSet = New DataSet()
+        ' creating the student table
+        Dim Students As DataTable = CreateStudentTable()
+        dataset.Tables.Add(Students)
+        Return dataset
+    End Function
+
+    Private Function CreateStudentTable() As DataTable
+        Dim Students As DataTable
+        Students = New DataTable("Student")
+        ' adding columns
+        AddNewColumn(Students, "System.Int32", "StudentID")
+        AddNewColumn(Students, "System.String", "StudentName")
+        AddNewColumn(Students, "System.String", "StudentCity")
+        ' adding rows
+        AddNewRow(Students, 1, "牛大大", "北京")
+        AddNewRow(Students, 2, "张培胜", "上海")
+        AddNewRow(Students, 3, "李乔森", "深圳")
+        AddNewRow(Students, 4, "王小达", "广州")
+        AddNewRow(Students, 5, "Maxsu", "海口")
+        Return Students
+    End Function
+
+    Private Sub AddNewColumn(ByRef table As DataTable,
+    ByVal columnType As String, ByVal columnName As String)
+        Dim column As DataColumn =
+         table.Columns.Add(columnName, Type.GetType(columnType))
+    End Sub
+
+    'adding data into the table
+    Private Sub AddNewRow(ByRef table As DataTable, ByRef id As Integer,
+        ByRef name As String, ByRef city As String)
+
+        Dim newrow As DataRow = table.NewRow()
+        newrow("StudentID") = id
+        newrow("StudentName") = name
+        newrow("StudentCity") = city
+        table.Rows.Add(newrow)
+    End Sub
+    Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
+        Dim ds As New DataSet
+        ds = CreateDataSet()
+        DataGridView1.DataSource = ds.Tables("Student")
+    End Sub
+End Class
+</code></pre> 
+ <p>当上面的代码执行并使用Microsoft Visual Studio工具栏上的“开始”按钮运行时，它将显示以下窗口：</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201711/1611/765101106_12024.png" alt=""></p> 
+ <p>单击<em>“从数据库表中加载数据”</em>按钮将显示数据网格视图控件上的表格：</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201711/1611/975101107_15715.png" alt=""></p>
+ <br>      
+</div></body></html>

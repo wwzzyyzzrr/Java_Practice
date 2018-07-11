@@ -1,0 +1,103 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Yii URL格式</h1><div style="width:100%;float:left;" class="article-content">   
+ <div> 
+  <div>
+    当一个Yii应用处理请求URL，首先它解析URL到路由。然后处理请求，路路是用来实例化相应的控制器动作。这个过程被称为路由。相反的过程被称为URL创建。urlManager应用组件负责路由和URL创建。它提供了两个方法&nbsp;- 
+  </div> 
+ </div> 
+ <div> 
+  <ul> 
+   <li> <p style="text-align:justify;"> parseRequest()&nbsp;−&nbsp;解析请求到路由。 </p> </li> 
+   <li> <p style="text-align:justify;"> createUrl()&nbsp;−&nbsp;从一个给定的路由创建URL。 </p> </li> 
+  </ul> 
+  <h2> URL格式 </h2> 
+  <div>
+    urlManager应用组件支持两种格式的URL&nbsp;- 
+  </div> 
+  <ul> 
+   <li> <p style="text-align:justify;"> 默认格式使用查询参数&nbsp;r&nbsp;来表示路由。例如，URL =&gt; /index.php?r=news/view&amp;id=5表示路由为news/view&nbsp;和查询参数id的值为5。 </p> </li> 
+   <li> <p style="text-align:justify;"> 第二种URL格式(PrettyUrl)使用入口脚本加上名额外的路径。例如，在前面的例子，漂亮的格式将是 </p> <p style="text-align:justify;"> /index.php/news/view/5.&nbsp;要使用此格式则需要设置URL规则。 </p> </li> 
+  </ul> 
+  <div>
+    为了使URL格式并隐藏入口脚本名称，请按照下列步骤&nbsp;- 
+  </div> 
+  <div>
+    步骤1-&nbsp;以下列方式修改config/web.php文件。 
+  </div> 
+  <pre>&lt;?php
+   $params = require(__DIR__ . '/params.php');
+   $config = [
+      'id' =&gt; 'basic',
+      'basePath' =&gt; dirname(__DIR__),
+      'bootstrap' =&gt; ['log'],
+      'components' =&gt; [
+         'request' =&gt; [
+            // !!! insert a secret key in the following (if it is empty) -
+               //this is required by cookie validation
+            'cookieValidationKey' =&gt; 'yiibai.com',
+         ],
+         'cache' =&gt; [
+            'class' =&gt; 'yii\caching\FileCache',
+         ],
+         'user' =&gt; [
+            'identityClass' =&gt; 'app\models\User',
+            'enableAutoLogin' =&gt; true,
+         ],
+         'errorHandler' =&gt; [
+            'errorAction' =&gt; 'site/error',
+         ],
+         'mailer' =&gt; [
+            'class' =&gt; 'yii\swiftmailer\Mailer',
+            // send all mails to a file by default. You have to set
+            // 'useFileTransport' to false and configure a transport
+            // for the mailer to send real emails.
+            'useFileTransport' =&gt; true,
+         ],
+         'log' =&gt; [
+            'traceLevel' =&gt; YII_DEBUG ? 3 : 0,
+            'targets' =&gt; [
+               [
+                  'class' =&gt; 'yii\log\FileTarget',
+                  'levels' =&gt; ['error', 'warning'],
+               ],
+            ],
+         ],
+         'urlManager' =&gt; [ 
+            'showScriptName' =&gt; false, 
+            'enablePrettyUrl' =&gt; true 
+         ], 
+         'db' =&gt; require(__DIR__ . '/db.php'), 
+      ], 
+      'modules' =&gt; [
+         'admin' =&gt; [
+            'class' =&gt; 'app\modules\admin\Hello',
+         ],
+      ],
+      'params' =&gt; $params,
+   ];
+   if (YII_ENV_DEV) {
+      // configuration adjustments for 'dev' environment
+      $config['bootstrap'][] = 'debug';
+      $config['modules']['debug'] = [
+         'class' =&gt; 'yii\debug\Module',
+      ];
+      $config['bootstrap'][] = 'gii';
+      $config['modules']['gii'] = [
+         'class' =&gt; 'yii\gii\Module',
+      ];
+   }
+   return $config;
+?&gt;</pre> 
+  <div>
+    我们刚刚启用了第二种URL格式(PrettyUrl)，并禁用了入口脚本名称。 
+  </div> 
+  <div>
+    第2步&nbsp;-&nbsp;现在，如果输入URL=&gt;
+   <a target="_blank" href="http://localhost:8080/site/about">http://localhost:8080/site/about</a>，就会看到第二种URL请求结果。
+   <br> 
+   <img src="/uploads/tutorial/20160530/1-160530214636404.png" width="625" height="442" title="Yii URL格式" alt="Yii URL格式">
+   <br> 
+  </div> 
+  <p> 请注意，URL不再是&nbsp;http://localhost:8080/index.php?r=site/about. </p> 
+ </div>
+ <br>      
+</div></body></html>

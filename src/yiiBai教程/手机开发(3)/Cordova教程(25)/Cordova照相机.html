@@ -1,0 +1,182 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Cordova照相机</h1><div style="width:100%;float:left;" class="article-content">   
+ <div> 
+  <div>
+    这个插件用于拍照或使用图库文件。 
+  </div> 
+ </div> 
+ <div> 
+  <h2> 
+   <div>
+     第1步&nbsp;-&nbsp;安装照相机插件 
+   </div> </h2> 
+  <div>
+    在提示符窗口运行下面命令代码来安装这个插件。 
+  </div> 
+  <pre><span style="line-height:1.5;background-color:inherit;">D:\worksp\cordova\CordovaProject&gt;cordova&nbsp;plugin&nbsp;add&nbsp;cordova-plugin-camera</span></pre> 
+  <h2> 
+   <div>
+     第2步&nbsp;-&nbsp;添加按钮和图象 
+   </div> </h2> 
+  <p style="text-align:justify;"> 在这一步中，我们将调用图像显示一次拍摄的摄像头和图像创建按钮。这将被添加到的 index.html 的 div&nbsp;class&nbsp;=&nbsp;"app" 元素中。 </p> 
+  <pre>&lt;button id = "cameraTakePicture"&gt;TAKE PICTURE&lt;/button&gt;
+&lt;img id = "myImage"&gt;&lt;/img&gt;</pre> 
+  <h2> 
+   <div>
+     第3步&nbsp;-&nbsp;添加事件监听器 
+   </div> </h2> 
+  <div>
+    事件侦听器添加到&nbsp;onDeviceReady 函数中，以确保我们开始使用它之前被Cordova加载。 
+  </div> 
+  <pre>document.getElementById("cameraTakePicture").addEventListener
+   ("click", cameraTakePicture);	</pre> 
+  <h2> 
+   <div>
+     第4步&nbsp;-&nbsp;添加功能(拍照) 
+   </div> </h2> 
+  <p style="text-align:justify;"> 我们创建一个cameraTakePicture函数回调到我们的事件监听器。当按钮被点击它会被触发。在这个函数中调用由插件API提供navigator.camera全局对象。如果拍照是成功的，该数据将被发送到 onSuccess 回调函数，如果不成功，将显示错误消息提示。将会把这个代码在 index.js 的底部。 </p> 
+  <pre>function cameraTakePicture() {
+   navigator.camera.getPicture(onSuccess, onFail, { 
+      quality: 50,
+      destinationType: Camera.DestinationType.DATA_URL
+   });
+
+   function onSuccess(imageData) {
+      var image = document.getElementById('myImage');
+      image.src = "data:image/jpeg;base64," + imageData;
+   }
+
+   function onFail(message) {
+      alert('Failed because: ' + message);
+   }
+}</pre> 
+  <div>
+    当我们运行应用程序，并按下按钮，本机摄像头将被触发。
+   <br> 
+   <img src="/uploads/tutorial/20160217/1-16021GJQU09.jpg" alt="">
+   <br> 
+  </div> 
+  <img src="file://E:/data/youdao/qq24B39E2329F08D9F4C3146A571A415EF/7a2cd8024c4a4759b7686741ffc26692/ra-take-img.jpeg" alt="Cordova Camera Take Picture"> 
+  <div>
+    当我们需要保存的图片，它会显示在屏幕上。
+   <br> 
+   <img src="/uploads/tutorial/20160217/1-16021GJT2622.jpg" alt="">
+   <br> 
+  </div> 
+  <img src="file://E:/data/youdao/qq24B39E2329F08D9F4C3146A571A415EF/14c2d2ecf63a432d96c2b86972362497/display-img.jpeg" alt="Cordova Camera Display Image"> 
+  <p style="text-align:justify;"> 相同的过程可用于从本地文件系统获取的图像。唯一不同的是在最后一个步骤中创建的函数。你可以看到，sourceType可选参数已被添加。 </p> 
+  <h2> 
+   <div>
+     步骤1B 
+   </div> </h2> 
+  <pre>D:\worksp\cordova\CordovaProject&gt;cordova&nbsp;plugin&nbsp;add&nbsp;cordova-plugin-camera</pre> 
+  <h2> 步骤2B </h2> 
+  <pre>&lt;button id = "cameraGetPicture"&gt;GET PICTURE&lt;/button&gt;</pre> 
+  <h2> 步骤3B </h2> 
+  <pre>document.getElementById("cameraGetPicture").addEventListener("click", cameraGetPicture);</pre> 
+  <h2> 步骤4B </h2> 
+  <pre>function cameraGetPicture() {
+   navigator.camera.getPicture(onSuccess, onFail, { quality: 50,
+      destinationType: Camera.DestinationType.DATA_URL,
+      sourceType: Camera.PictureSourceType.PHOTOLIBRARY
+   });
+
+   function onSuccess(imageURL) {
+      var image = document.getElementById('myImage');
+      image.src = imageURL;
+   }
+
+   function onFail(message) {
+      alert('Failed because: ' + message);
+   }
+
+}</pre> 
+  <div>
+    当我们按下第二个按钮，文件系统就会打开，但不是相机，我们可以选择想要显示的图像。
+   <br> 
+   <img src="/uploads/tutorial/20160217/1-16021GJ915304.jpg" alt="">
+   <br> 
+  </div> 
+  <img src="file://E:/data/youdao/qq24B39E2329F08D9F4C3146A571A415EF/86e90e13d3624f6ea37bf28989a9dd1a/file-system.jpeg" alt="Cordova Camera File System"> 
+  <div>
+    这个插件提供了许多定制可选参数。 
+  </div> 
+  <table border="1" cellpadding="2" cellspacing="0" style="font-size:14px;color:#313131;font-family:Verdana, Geneva, Tahoma,  Helvetica, background-color:inherit;"> 
+   <tbody> 
+    <tr> 
+     <th style="border:1px solid #999999;background-color:#EEEEEE;"> SN </th> 
+     <th style="border:1px solid #999999;background-color:#EEEEEE;"> 参数 &amp; 详细 </th> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 1 </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>quality</b> </p> 
+      <div style="background-color:inherit;">
+        在0-100的范围内的图像质量。默认值是50。 
+      </div> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 2 </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>destinationType</b> </p> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>DATA_URL</b>&nbsp;或&nbsp;<b>0</b>&nbsp;<span style="background-color:inherit;font-size:inherit;color:#313131;line-height:1.5;">返回base64编码字符串</span> </p> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>FILE_URI</b>&nbsp;<span style="font-family:Verdana, Geneva, Tahoma,  Helvetica,;">或&nbsp;</span><b>1</b>&nbsp;<span style="background-color:inherit;font-size:inherit;color:#313131;line-height:1.5;">返回图像文件URI</span> </p> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>NATIVE_URI</b>&nbsp;或&nbsp;<b>2</b>&nbsp;<span style="background-color:inherit;font-size:inherit;color:#313131;line-height:1.5;">返回图像本地URI</span> </p> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 3 </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>sourceType</b> </p> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>PHOTOLIBRARY</b>&nbsp;或&nbsp;<b>0</b>&nbsp;<span style="background-color:inherit;font-size:inherit;color:#313131;line-height:1.5;">打开照片库</span> </p> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>CAMERA</b>&nbsp;或&nbsp;<b>1</b>&nbsp;<span style="background-color:inherit;font-size:inherit;color:#313131;line-height:1.5;">打开机摄像头</span> </p> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>SAVEDPHOTOALBUM</b>&nbsp;或&nbsp;<b>2</b>&nbsp;<span style="background-color:inherit;font-size:inherit;color:#313131;line-height:1.5;">打开保存相册</span> </p> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 4 </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>allowEdit</b> </p> 
+      <div style="background-color:inherit;">
+        允许图像编辑 
+      </div> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 5 </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>encodingType</b> </p> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>JPEG</b>&nbsp;或&nbsp;<b>0</b>&nbsp;<span style="background-color:inherit;font-size:inherit;color:#313131;line-height:1.5;">返回JPEG编码的图像</span> </p> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>PNG</b>&nbsp;或&nbsp;<b>1</b>&nbsp;<span style="background-color:inherit;font-size:inherit;color:#313131;line-height:1.5;">返回PNG编码的图像</span> </p> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 6 </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>targetWidth</b> </p> 
+      <div style="background-color:inherit;">
+        图像中的像素缩放宽度 
+      </div> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 7 </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>targetHeight</b> </p> 
+      <div style="background-color:inherit;">
+        图像中的像素比例的高度 
+      </div> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 8 </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>mediaType</b> </p> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>PICTURE</b>&nbsp;或&nbsp;<b>0</b>&nbsp;<span style="background-color:inherit;font-size:inherit;color:#313131;line-height:1.5;">只允许<span style="font-family:Verdana, Geneva, Tahoma,  Helvetica,;">选择</span>照片</span> </p> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>VIDEO</b>&nbsp;或&nbsp;<b>1</b>&nbsp;<span style="background-color:inherit;font-size:inherit;color:#313131;line-height:1.5;">只允许<span style="font-family:Verdana, Geneva, Tahoma,  Helvetica,;">选择</span>视频</span> </p> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>ALLMEDIA</b>&nbsp;或&nbsp;<b>2</b>&nbsp;<span style="background-color:inherit;font-size:inherit;color:#313131;line-height:1.5;">允许<span style="font-family:Verdana, Geneva, Tahoma,  Helvetica,;">选择</span>所有媒体类型</span> </p> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 9 </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>correctOrientation</b> </p> 
+      <div style="background-color:inherit;">
+        用于校正图象的方向 
+      </div> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 10 </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>saveToPhotoAlbum</b> </p> 
+      <div style="background-color:inherit;">
+        用于将图像保存到相册 
+      </div> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 11 </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>popoverOptions</b> </p> 
+      <div style="background-color:inherit;">
+        用于在IOS设置酥弹出的位置 
+      </div> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 12 </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>cameraDirection</b> </p> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>FRONT</b>&nbsp;或&nbsp;<b>0</b>&nbsp;<span style="background-color:inherit;font-size:inherit;color:#313131;line-height:1.5;">前置摄像头</span> </p> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>BACK</b>&nbsp;或&nbsp;<b>1</b>&nbsp;<span style="background-color:inherit;font-size:inherit;color:#313131;line-height:1.5;">后置摄像头</span> </p> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>ALLMEDIA</b> </p> </td> 
+    </tr> 
+   </tbody> 
+  </table> 
+ </div>
+ <br>      
+</div></body></html>

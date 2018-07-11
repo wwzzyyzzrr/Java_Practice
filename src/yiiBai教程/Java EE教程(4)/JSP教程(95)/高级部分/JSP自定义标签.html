@@ -1,0 +1,392 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">JSP自定义标签</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>在本章中，我们将讨论JSP中的自定义标签。自定义标签是用户定义的JSP语言元素。当包含自定义标签的JSP页面被转换成一个servlet时，标签被转换为一个名为标签处理程序的对象的操作。 然后，Web容器在执行JSP页面的servlet时调用这些操作。</p> 
+ <p>JSP标签扩展允许创建可以直接插入JSP的新标签。JSP 2.0规范引入了用于编写这些自定义标签的简单标签处理程序。</p> 
+ <p>要编写自定义标签，可以简单地扩展<code>SimpleTagSupport</code>类并覆盖<code>doTag()</code>方法，可以在这个方法中放置代码来为标签生成内容。</p> 
+ <h2 id="h2-u521Bu5EFAu6807u7B7Eu793Au4F8B"><a name="创建标签示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>创建标签示例</h2>
+ <p>为了更好的演示如何使用JSP中的自定义标签，打开Eclipse创建一个动态Web项目：<em>CustomTags</em>，其项目结构如下所示 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/2610/555111024_97987.png" alt=""></p> 
+ <p>假设要定义一个名为<code>&lt;ex:Hello&gt;</code>的自定义标签，并且希望以下列方式来使用它：</p> 
+ <pre><code class="lang-xml">&lt;ex:Hello /&gt;
+</code></pre> 
+ <p>要创建自定义JSP标记，必须首先创建一个充当标记处理程序的<code>Java</code>类。在这个示例中创建一个<code>HelloTag</code>类，如下所示：</p> 
+ <p>文件：<em>HelloTag.java</em></p> 
+ <pre><code class="lang-java">package com.yiibai;
+
+import javax.servlet.jsp.tagext.*;
+import javax.servlet.jsp.*;
+import java.io.*;
+
+public class HelloTag extends SimpleTagSupport {
+    public void doTag() throws JspException, IOException {
+        JspWriter out = getJspContext().getOut();
+        out.println("您好，这是一个自定义标签内容!");
+    }
+}
+</code></pre> 
+ <p>上述代码只是简单的编码，其中<code>doTag()</code>方法使用<code>getJspContext()</code>方法获取当前的<code>JspContext</code>对象，并使用它发送<code>“Hello Custom Tag！”</code>到当前的<code>JspWriter</code>对象</p> 
+ <p>最后，创建以下标签库文件：<em>
+   <tomcat-installation-directory>
+    {webapps}/WEB-INF/custom.tld
+   </tomcat-installation-directory></em> ， 内容如下 - </p> 
+ <pre><code class="lang-xml">&lt;taglib&gt;
+   &lt;tlib-version&gt;1.0&lt;/tlib-version&gt;
+   &lt;jsp-version&gt;2.0&lt;/jsp-version&gt;
+   &lt;short-name&gt;Custom TLD&lt;/short-name&gt;
+   &lt;tag&gt;
+      &lt;name&gt;Hello&lt;/name&gt;
+      &lt;tag-class&gt;com.yiibai.HelloTag&lt;/tag-class&gt;
+      &lt;body-content&gt;empty&lt;/body-content&gt;
+   &lt;/tag&gt;
+&lt;/taglib&gt;
+</code></pre> 
+ <p>在JSP程序中使用上面定义的自定义标签<code>Hello</code>，如下所示：</p> 
+ <pre><code>&lt;%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%&gt;
+&lt;!-- 需要指示定义的声明文件 --&gt;
+&lt;%@ taglib prefix="ex" uri="WEB-INF/custom.tld"%&gt;
+&lt;!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;meta http-equiv="Content-Type" content="text/html; charset=UTF-8"&gt;
+&lt;title&gt;自定义标签示例&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div style="margin: auto; width: 80%"&gt;
+    &lt;b&gt;以下是自定义标签输出的内容：&lt;/b&gt;&lt;hr/&gt;
+    &lt;ex:Hello/&gt;
+    &lt;/div&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+ <p>调用上述JSP，这应该产生以下结果 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/2610/640101033_27627.png" alt=""></p> 
+ <h2 id="h2-u8BBFu95EEu6807u7B7Eu4F53"><a name="访问标签体" class="reference-link"></a><span class="header-link octicon octicon-link"></span>访问标签体</h2>
+ <p>可以在标签正文中添加一条消息，如标准标签所示。 考虑想定义一个名为<code>&lt;ex:Hello&gt;</code>的自定义标签，并且使用下面的方式来使用它 -</p> 
+ <pre><code class="lang-xml">&lt;ex:Hello&gt;
+   This is message body
+&lt;/ex:Hello&gt;
+</code></pre> 
+ <p>在上述标签代码中进行以下更改来处理标签的正文 -</p> 
+ <pre><code class="lang-java">package com.yiibai;
+
+import javax.servlet.jsp.tagext.*;
+import javax.servlet.jsp.*;
+import java.io.*;
+
+import javax.servlet.jsp.tagext.*;
+import javax.servlet.jsp.*;
+import java.io.*;
+
+public class HelloTag extends SimpleTagSupport {
+    StringWriter sw = new StringWriter();
+
+    public void doTag()
+
+            throws JspException, IOException {
+        getJspBody().invoke(sw);
+        getJspContext().getOut().println(sw.toString());
+    }
+}
+</code></pre> 
+ <p>这里，由调用产生的输出首先捕获到一个<code>StringWriter</code>中，然后再写入与该标签关联的<code>JspWriter</code>。需要更改TLD文件，如下所示：</p> 
+ <p>文件：<em>custom.tld</em></p> 
+ <pre><code class="lang-xml">&lt;taglib&gt;
+   &lt;tlib-version&gt;1.0&lt;/tlib-version&gt;
+   &lt;jsp-version&gt;2.0&lt;/jsp-version&gt;
+   &lt;short-name&gt;Example TLD with Body&lt;/short-name&gt;
+
+   &lt;tag&gt;
+      &lt;name&gt;Hello&lt;/name&gt;
+      &lt;tag-class&gt;com.yiibai.HelloTag&lt;/tag-class&gt;
+      &lt;body-content&gt;scriptless&lt;/body-content&gt;
+   &lt;/tag&gt;
+&lt;/taglib&gt;
+</code></pre> 
+ <p>现在在正文中调用上面的标签，如下所示：</p> 
+ <p>文件：<em>index2.jsp</em></p> 
+ <pre><code class="lang-html">&lt;%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%&gt;
+&lt;!-- 需要指示定义的声明文件 --&gt;
+&lt;%@ taglib prefix="ex" uri="WEB-INF/custom.tld"%&gt;
+&lt;!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;meta http-equiv="Content-Type" content="text/html; charset=UTF-8"&gt;
+&lt;title&gt;自定义标签示例&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div style="margin: auto; width: 80%"&gt;
+        &lt;b&gt;以下是自定义标签输出的内容：&lt;/b&gt;
+        &lt;hr /&gt;
+        &lt;ex:Hello&gt;
+        这是标签体的内容
+      &lt;/ex:Hello&gt;
+    &lt;/div&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>执行上面示例代码，将得到以下结果 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/2610/245101038_17454.png" alt=""></p> 
+ <h2 id="h2-u81EAu5B9Au4E49u6807u7B7Eu5C5Eu6027"><a name="自定义标签属性" class="reference-link"></a><span class="header-link octicon octicon-link"></span>自定义标签属性</h2>
+ <p>也可以使用各种属性以及自定义标签。要接受属性值，自定义标签类需要实现<code>setter</code>方法，与JavaBean <code>setter</code>方法相同，如下所示：</p> 
+ <p>文件：<em>CTagAttr.java</em></p> 
+ <pre><code class="lang-java">package com.yiibai;
+
+
+import javax.servlet.jsp.tagext.*;
+import javax.servlet.jsp.*;
+import java.io.*;
+
+public class CTagAttr extends SimpleTagSupport {
+   private String message;
+
+   public void setMessage(String msg) {
+      this.message = msg;
+   }
+   StringWriter sw = new StringWriter();
+   public void doTag()
+
+   throws JspException, IOException {
+      if (message != null) {
+         /* Use message from attribute */
+         JspWriter out = getJspContext().getOut();
+         out.println( message );
+      } else {
+         /* use message from the body */
+         getJspBody().invoke(sw);
+         getJspContext().getOut().println(sw.toString());
+      }
+   }
+}
+</code></pre> 
+ <p>属性的名称是<code>message</code>，所以<code>setter</code>方法是<code>setMessage()</code>。现在使用<code>&lt;attribute&gt;</code>元素在TLD文件中添加此属性，如下所示：</p> 
+ <pre><code class="lang-xml">&lt;taglib&gt;
+   &lt;tlib-version&gt;1.0&lt;/tlib-version&gt;
+   &lt;jsp-version&gt;2.0&lt;/jsp-version&gt;
+   &lt;short-name&gt;Example TLD with Body&lt;/short-name&gt;
+
+   &lt;tag&gt;
+      &lt;name&gt;Hello&lt;/name&gt;
+      &lt;tag-class&gt;com.yiibai.CTagAttr&lt;/tag-class&gt;
+      &lt;body-content&gt;scriptless&lt;/body-content&gt;
+
+      &lt;attribute&gt;
+         &lt;name&gt;message&lt;/name&gt;
+      &lt;/attribute&gt;
+
+   &lt;/tag&gt;
+&lt;/taglib&gt;
+</code></pre> 
+ <p>在JSP中使用HelloTag的<code>message</code>属性如下 -</p> 
+ <p>文件：<em>ctagattr.jsp</em></p> 
+ <pre><code class="lang-html">&lt;%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%&gt;
+&lt;!-- 需要指示定义的声明文件 --&gt;
+&lt;%@ taglib prefix="ex" uri="WEB-INF/ctagattr.tld"%&gt;
+&lt;!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;meta http-equiv="Content-Type" content="text/html; charset=UTF-8"&gt;
+&lt;title&gt;自定义标签属性示例&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div style="margin: auto; width: 80%"&gt;
+    &lt;b&gt;以下是自定义标签输出的内容：&lt;/b&gt;&lt;hr/&gt;
+    &lt;ex:Hello message = "This is custom tag attribute" /&gt;
+    &lt;/div&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>这将产生以下结果 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/2610/892101044_34854.png" alt=""></p> 
+ <p>下面是包括的属性及说明 -</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>编号</th> 
+    <th>属性</th> 
+    <th>描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>1</td> 
+    <td><code>name</code></td> 
+    <td><code>name</code>元素定义属性的名称。每个属性名称对于特定标签必须是唯一的。</td> 
+   </tr> 
+   <tr> 
+    <td>2</td> 
+    <td><code>required</code></td> 
+    <td>此规范如果此属性是必需的或是可选的。则可设置为：<code>false</code>。</td> 
+   </tr> 
+   <tr> 
+    <td>3</td> 
+    <td><code>rtexprvalue</code></td> 
+    <td>声明<code>tag</code>属性的运行时表达式值是否有效</td> 
+   </tr> 
+   <tr> 
+    <td>4</td> 
+    <td><code>type</code></td> 
+    <td>定义此属性的Java类类型。 默认情况下，它被假定为<code>String</code>类型</td> 
+   </tr> 
+   <tr> 
+    <td>5</td> 
+    <td><code>description</code></td> 
+    <td>可以提供信息描述。</td> 
+   </tr> 
+   <tr> 
+    <td>6</td> 
+    <td><code>fragment</code></td> 
+    <td>声明此属性值是否应被视为JspFragment。</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p>以下是指定属性相关属性的示例 -</p>   
+ <pre><code class="lang-xml">.....
+   &lt;attribute&gt;
+      &lt;name&gt;attribute_name&lt;/name&gt;
+      &lt;required&gt;false&lt;/required&gt;
+      &lt;type&gt;java.util.Date&lt;/type&gt;
+      &lt;fragment&gt;false&lt;/fragment&gt;
+   &lt;/attribute&gt;
+.....
+</code></pre> 
+ <p>如果使用两个属性，则可以按如下所示修改TLD：</p> 
+ <pre><code class="lang-xml">.....
+   &lt;attribute&gt;
+      &lt;name&gt;attribute_name1&lt;/name&gt;
+      &lt;required&gt;false&lt;/required&gt;
+      &lt;type&gt;java.util.Boolean&lt;/type&gt;
+      &lt;fragment&gt;false&lt;/fragment&gt;
+   &lt;/attribute&gt;
+
+   &lt;attribute&gt;
+      &lt;name&gt;attribute_name2&lt;/name&gt;
+      &lt;required&gt;true&lt;/required&gt;
+      &lt;type&gt;java.util.Date&lt;/type&gt;
+   &lt;/attribute&gt;
+.....
+</code></pre> 
+ <h2 id="h2-jsp-"><a name="JSP自定义标签属性操作数据库示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>JSP自定义标签属性操作数据库示例</h2>
+ <p>在上面几个示例中，我们已经演示了如何创建一个自定义标签，打印给定标签名称和特定属性内容。这里将进一步演示如何在自定义标签中读取数据库表中的数据记录。假设要使用自定义标签来显示最新入职的<code>3</code>名员工，参考以下实现步骤。</p> 
+ <p>创建数据库和表 - </p> 
+ <pre><code class="lang-sql">DROP TABLE IF EXISTS `employees`;
+CREATE TABLE `employees` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(64) NOT NULL DEFAULT '',
+  `age` int(3) unsigned NOT NULL DEFAULT '0',
+  `education` varchar(32) DEFAULT '' COMMENT '学历',
+  `address` varchar(254) DEFAULT NULL,
+  `salary` float(8,2) unsigned DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=16 DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of employees
+-- ----------------------------
+INSERT INTO `employees` VALUES ('1', '李家诚', '23', '其它', '海口市人民大道1800号', '8900.00');
+INSERT INTO `employees` VALUES ('2', '张辉', '28', '本科', '广州天河区珠村市场', '19999.99');
+INSERT INTO `employees` VALUES ('3', '林贤弟', '29', '博士', '广州白云区龙塘村120号', '18990.99');
+INSERT INTO `employees` VALUES ('4', '王小简', '23', '本科', '海口人民大道1688号', '899.98');
+INSERT INTO `employees` VALUES ('5', '蔡世杰', '27', '专科', '上海市宝山区联杨路2211弄26号', '15800.00');
+</code></pre> 
+ <p>创建一个Java类文件：<em>Employee.java</em> </p> 
+ <pre><code class="lang-java">package com.yiibai;
+
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.JspWriter;
+import javax.servlet.jsp.tagext.TagSupport;
+import java.sql.*;
+
+public class EmployeeTag extends TagSupport {
+    private String number;
+
+    public String getNumber() {
+        return number;
+    }
+
+    public void setNumber(String number) {
+        this.number = number;
+    }
+
+    public int doStartTag() throws JspException {
+        JspWriter out = pageContext.getOut();
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+            Connection con = DriverManager.getConnection("jdbc:mysql://localhost/testdb?useSSL=false&amp;characterEncoding=utf8", "root", "123456");
+            PreparedStatement ps = con.prepareStatement("SELECT name,education,age FROM `employees` ORDER BY id DESC limit "+this.number);
+            //ps.setInt(1, Integer.parseInt(this.number));
+            System.out.println("number =&gt; "+this.number);
+            ResultSet rs = ps.executeQuery();
+            if (rs != null) {
+                // column name
+                out.write("&lt;table border='1'&gt;");
+                out.write("&lt;tr&gt;");
+                out.write("&lt;th&gt;姓名&lt;/th&gt;&lt;th&gt;学历&lt;/th&gt;&lt;th&gt;年龄&lt;/th&gt;");
+                out.write("&lt;/tr&gt;");
+                // column value
+
+                while (rs.next()) {
+                    out.write("&lt;tr&gt;");
+                    out.write("&lt;td&gt;" + rs.getString("name") + "&lt;/td&gt;&lt;td&gt;" + rs.getString("education") + "&lt;/td&gt;&lt;td&gt;" + rs.getString("age") + "&lt;/td&gt;");
+                    out.write("&lt;/tr&gt;");
+                }
+                out.write("&lt;/table&gt;");
+            }
+            con.close();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        return SKIP_BODY;
+    }
+}
+</code></pre> 
+ <p>文件：<em>empl.tld</em></p> 
+ <pre><code class="lang-xml">&lt;?xml version="1.0" encoding="ISO-8859-1" ?&gt;    
+&lt;!DOCTYPE taglib    
+        PUBLIC "-//Sun Microsystems, Inc.//DTD JSP Tag Library 1.2//EN"    
+    "http://java.sun.com/j2ee/dtd/web-jsptaglibrary_1_2.dtd"&gt;
+
+&lt;taglib&gt;
+
+    &lt;tlib-version&gt;1.2&lt;/tlib-version&gt;
+    &lt;jsp-version&gt;2.0&lt;/jsp-version&gt;
+    &lt;short-name&gt;c&lt;/short-name&gt;
+    &lt;uri&gt;yiibai&lt;/uri&gt;
+
+    &lt;tag&gt;
+        &lt;name&gt;NewEmpl&lt;/name&gt;
+        &lt;tag-class&gt;com.yiibai.EmployeeTag&lt;/tag-class&gt;
+        &lt;attribute&gt;
+            &lt;name&gt;number&lt;/name&gt;
+            &lt;required&gt;true&lt;/required&gt;
+        &lt;/attribute&gt;
+    &lt;/tag&gt;
+&lt;/taglib&gt;
+</code></pre> 
+ <p>文件：<em>new_empl.jsp</em></p> 
+ <pre><code class="lang-html">&lt;%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%&gt;
+&lt;%@ taglib prefix="ex" uri="WEB-INF/empl.tld"%&gt;
+&lt;!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;meta http-equiv="Content-Type" content="text/html; charset=UTF-8"&gt;
+&lt;title&gt;自定义标签+数据库&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;center&gt;
+        最新加入的3位员工：
+        &lt;hr /&gt;
+        &lt;ex:NewEmpl number="3"/&gt;
+    &lt;/center&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>在编写完成上面示例代码后，运行这个JSP文件，应该会看到以下结果 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/2610/731111023_66500.png" alt=""></p>
+ <br>      
+</div></body></html>

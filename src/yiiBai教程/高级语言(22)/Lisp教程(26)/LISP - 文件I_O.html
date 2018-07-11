@@ -1,0 +1,94 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">LISP - 文件I/O</h1><div style="width:100%;float:left;" class="article-content">   
+ <p> 我们已经了解如何使用标准的输入和输出是由Common Lisp处理的参数。所有这些函数读取和写入文本文件和二进制文件。唯一不同的是在这种情况下，我们使用流不是标准输入或输出，但对于写入或读取文件的特定目的的流创建的。</p> 
+ <p> 在本章中，我们将看到的LISP如何创建，打开，关闭文本或二进制文件的数据存储。</p> 
+ <p> 文件代表一个字节序列，如果它是一个文本文件或二进制文件。本章将引导完成重要的功能/宏的文件管理。</p> 
+ <h2> 打开文件</h2> 
+ <p> 可以使用open 函数来创建一个新文件或打开一个现有的文件。这是最基本的功能为打开一个文件。然而，with-open-file通常更方便，更常用，因为我们将在本节后面看。</p> 
+ <p> 当一个文件被打开，一个流对象被创建来代表它在LISP环境。流上的所有操作基本上等同于操作上的文件。</p> 
+ <p> open 函数语法是：</p> 
+ <pre class="prettyprint" style="font-size: 12px; overflow: auto;">
+open filename &amp;key :direction :element-type :if-exists :if-does-not-exist :external-format
+</pre> 
+ <p> 那么,</p> 
+ <ul> 
+  <li> <p> &nbsp;filename&nbsp;参数是要打开或创建的文件的名称。</p> </li> 
+  <li> <p> keyword 参数指定的数据流和错误处理方式的类型。</p> </li> 
+  <li> <p> :direction&nbsp;keyword 指定的流是否应处理的输入，输出，或两者兼而有之，它采用下列值：</p> 
+   <ul> 
+    <li> <p> :input - 用于输入流（默认值）</p> </li> 
+    <li> <p> :output - 输出流</p> </li> 
+    <li> <p> :io - 双向流</p> </li> 
+    <li> <p> :probe - 只是检查一个文件是否存在;该流被打开，然后关闭。</p> </li> 
+   </ul> </li> 
+  <li> <p> <strong>&nbsp;:element-type&nbsp;</strong>指定事务单元的流类型。</p> </li> 
+  <li> <p> <strong>:if-exists</strong>&nbsp;参数指定要采取的操作，如果&nbsp;:direction 是 :output or :io和指定的名称已存在的文件。如果方向是direction 为 :input 或&nbsp;:probe，则忽略此参数。它采用下列值：</p> 
+   <ul> 
+    <li> <p> :error - 它发出错误信号。</p> </li> 
+    <li> <p> :new-version - 它将创建一个具有相同名称但大版本号的新文件。</p> </li> 
+    <li> <p> :rename - 它重命名现有的文件。</p> </li> 
+    <li> <p> :rename-and-delete -&nbsp;它重命名现有的文件，然后将其删除。</p> </li> 
+    <li> <p> :append - 它追加到现有文件。</p> </li> 
+    <li> <p> :supersede - 它将取代现有的文件。</p> </li> 
+    <li> <p> nil - 它不创建一个文件甚至流只是返回零表示失败。</p> </li> 
+   </ul> </li> 
+  <li> <p> <strong>&nbsp;:if-does-not-exist&nbsp;</strong>参数指定，如果指定名称的文件已经不存在应采取的操作。它采用下列值：</p> 
+   <ul> 
+    <li> <p> :error - 它发出错误信号。</p> </li> 
+    <li> <p> :create - 它创建具有指定名称的空文件，然后使用它。</p> </li> 
+    <li> <p> nil - 它不创建一个文件或流，而是简单地返回nil表示失败。</p> </li> 
+   </ul> </li> 
+  <li> <p> :external-format 参数指定用于表示文件的字符的实施认可制度</p> </li> 
+ </ul> 
+ <p> 例如，可以打开一个名为myfile.txt的存储在/ tmp文件夹的文件：</p> 
+ <pre class="prettyprint" style="font-size: 12px; overflow: auto;">
+(open "/tmp/myfile.txt")
+</pre> 
+ <h2> 写入和读取文件</h2> 
+ <p> with-open-file允许读取或写入到一个文件中，用与读/写事务相关联的流变量。一旦这项工作完成后，它会自动关闭文件。它使用极为方便。</p> 
+ <p> 它的语法如下：</p> 
+ <pre class="prettyprint" style="font-size: 12px; overflow: auto;">
+with-open-file (stream filename {options}*)
+       {declaration}* {form}*
+</pre> 
+ <ul> 
+  <li> <p> <strong>filename</strong>&nbsp;是要打开的文件的名称;它可以是一个字符串，一个路径，或一个流。</p> </li> 
+  <li> <p> &nbsp;<strong>options</strong>&nbsp;就像keyword 参数给函数打开的一样。</p> </li> 
+ </ul> 
+ <p> 示例 1</p> 
+ <p> 创建一个名为main.lisp一个新的源代码文件，并在其中输入如下代码：</p>   
+ <pre class="prettyprint" style="font-size: 12px; overflow: auto;">
+(with-open-file (stream "/tmp/myfile.txt" :direction :output)
+  (format stream "Welcome to Tutorials Yiibai!")
+  (terpri stream)
+  (format stream "This is a tutorials database")
+  (terpri stream)
+  (format stream "Submit your Tutorials, White Papers and Articles into our Tutorials   Directory."))
+
+</pre> 
+ <p> 请注意，在前面的章节，如，terpri和format讨论的所有输入输出函数正在编写到创建的文件。</p> 
+ <p> 当执行代码，它不返回任何东西;然而，数据被写入到该文件中。 :direction :output关键字可以做到这一点。</p> 
+ <p> 不过，我们可以使用read-line函数从这个文件中读取。</p> 
+ <p> <strong>实例 2</strong></p> 
+ <p> 创建一个名为main.lisp一个新的源代码文件，并在其中输入如下代码：</p> 
+ <div style="float:left;margin-bottom: 10px;">  
+ </div>
+ <div style="float:left;margin-bottom: 10px;">  
+ </div>
+ <pre class="prettyprint" style="font-size: 12px; overflow: auto;">
+(let ((in (open "/tmp/myfile.txt" :if-does-not-exist nil)))
+  (when in
+    (loop for line = (read-line in nil)
+         while line do (format t "~a~%" line))
+    (close in)))
+
+</pre> 
+ <p> 当执行代码，它返回以下结果：</p> 
+ <pre class="prettyprint" style="font-size: 12px; overflow: auto;">
+Welcome to Tutorials Yiibai!
+This is a tutorials database
+Submit your Tutorials, White Papers and Articles into our Tutorials   Directory.
+</pre> 
+ <h2> 关闭文件</h2> 
+ <p> close函数关闭一个流。</p> 
+ <br>      
+</div></body></html>

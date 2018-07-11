@@ -1,0 +1,368 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">集合Map多对多映射（使用xml文件）</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>我们可以使用<code>set</code>，<code>bag</code>，<code>map</code>等来映射多对多关系。在这里，我们将使用<code>map</code>来进行多对多映射。 在这种情况下，将创建三个表。</p> 
+ <h2 id="h2-u591Au5BF9u591Au6620u5C04u793Au4F8B"><a name="多对多映射示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>多对多映射示例</h2>
+ <p>我们需要创建以下文件来映射<code>map</code>元素。首先创建一个项目：<code>ternaryobject</code>，它们分别如下 -</p> 
+ <ol> 
+  <li>Question.java</li>
+  <li>User.java</li>
+  <li>question.hbm.xml</li>
+  <li>user.hbm.xml</li>
+  <li>hibernate.cfg.xml</li>
+  <li>MainTest.java</li>
+  <li>FetchTest.java</li>
+ </ol> 
+ <p>项目：<code>ternaryobject</code>的目录结构如下图所示 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201703/2703/110090328_50739.png" alt=""></p> 
+ <p>下面我们看看每个文件的代码。</p> 
+ <p><em>文件：Question.java</em></p> 
+ <pre><code class="lang-java">package com.yiibai;
+
+import java.util.Map;
+
+public class Question {
+    private int id;
+    private String name;
+    private Map&lt;String, User&gt; answers;
+
+    public Question() {
+    }
+
+    public Question(String name, Map&lt;String, User&gt; answers) {
+        super();
+        this.name = name;
+        this.answers = answers;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Map&lt;String, User&gt; getAnswers() {
+        return answers;
+    }
+
+    public void setAnswers(Map&lt;String, User&gt; answers) {
+        this.answers = answers;
+    }
+
+}
+</code></pre> 
+ <p><em>文件：User.java</em></p> 
+ <pre><code class="lang-java">package com.yiibai;
+
+public class User {
+    private int id;
+    private String username, email, country;
+
+    public User() {
+    }
+
+    public User(String username, String email, String country) {
+        super();
+        this.username = username;
+        this.email = email;
+        this.country = country;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
+    }
+
+}
+</code></pre> 
+ <p><em>文件：question.hbm.xml</em></p> 
+ <pre><code class="lang-xml">&lt;?xml version='1.0' encoding='UTF-8'?&gt;
+&lt;!DOCTYPE hibernate-mapping PUBLIC
+          "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+          "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd"&gt;
+
+&lt;hibernate-mapping&gt;
+    &lt;class name="com.yiibai.Question" table="question_m2m"&gt;
+        &lt;id name="id"&gt;
+            &lt;generator class="native"&gt;&lt;/generator&gt;
+        &lt;/id&gt;
+        &lt;property name="name"&gt;&lt;/property&gt;
+
+        &lt;map name="answers" table="answer_m2m" cascade="all"&gt;
+            &lt;key column="questionid"&gt;&lt;/key&gt;
+            &lt;index column="answer" type="string"&gt;&lt;/index&gt;
+            &lt;many-to-many class="com.yiibai.User" column="userid"&gt;&lt;/many-to-many&gt;
+        &lt;/map&gt;
+    &lt;/class&gt;
+
+&lt;/hibernate-mapping&gt;
+</code></pre> 
+ <p><em>文件：user.hbm.xml</em></p> 
+ <pre><code class="lang-xml">&lt;?xml version='1.0' encoding='UTF-8'?&gt;
+&lt;!DOCTYPE hibernate-mapping PUBLIC
+          "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+          "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd"&gt;
+
+&lt;hibernate-mapping&gt;
+    &lt;class name="com.yiibai.User" table="user_m2m"&gt;
+        &lt;id name="id"&gt;
+            &lt;generator class="native"&gt;&lt;/generator&gt;
+        &lt;/id&gt;
+        &lt;property name="username"&gt;&lt;/property&gt;
+        &lt;property name="email"&gt;&lt;/property&gt;
+        &lt;property name="country"&gt;&lt;/property&gt;
+    &lt;/class&gt;
+
+&lt;/hibernate-mapping&gt;
+</code></pre> 
+ <p><em>文件：hibernate.cfg.xml</em></p> 
+ <pre><code class="lang-xml">&lt;?xml version='1.0' encoding='UTF-8'?&gt;
+&lt;!DOCTYPE hibernate-mapping PUBLIC
+          "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+          "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd"&gt;
+
+&lt;hibernate-mapping&gt;
+    &lt;class name="com.yiibai.Question" table="question_m2m"&gt;
+        &lt;id name="id"&gt;
+            &lt;generator class="native"&gt;&lt;/generator&gt;
+        &lt;/id&gt;
+        &lt;property name="name"&gt;&lt;/property&gt;
+
+        &lt;map name="answers" table="answer_m2m" cascade="all"&gt;
+            &lt;key column="questionid"&gt;&lt;/key&gt;
+            &lt;index column="answer" type="string"&gt;&lt;/index&gt;
+            &lt;many-to-many class="com.yiibai.User" column="userid"&gt;&lt;/many-to-many&gt;
+        &lt;/map&gt;
+    &lt;/class&gt;
+
+&lt;/hibernate-mapping&gt;
+</code></pre> 
+ <p><em>文件：MainTest.java</em></p> 
+ <pre><code class="lang-java">package com.yiibai;
+
+import java.util.HashMap;
+import org.hibernate.*;
+import org.hibernate.boot.MetadataSources;
+import org.hibernate.boot.registry.StandardServiceRegistry;
+import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
+import org.hibernate.cfg.*;
+
+public class MainTest {
+    public static void main(String[] args) {
+        // 在5.1.0版本中，hibernate则采用如下新方式获取：
+        // 1. 配置类型安全的准服务注册类，这是当前应用的单例对象，不作修改，所以声明为final
+        // 在configure("cfg/hibernate.cfg.xml")方法中，如果不指定资源路径，默认在类路径下寻找名为hibernate.cfg.xml的文件
+        final StandardServiceRegistry registry = new StandardServiceRegistryBuilder()
+                .configure("hibernate.cfg.xml").build();
+        // 2. 根据服务注册类创建一个元数据资源集，同时构建元数据并生成应用一般唯一的的session工厂
+        SessionFactory sessionFactory = new MetadataSources(registry)
+                .buildMetadata().buildSessionFactory();
+
+        /**** 上面是配置准备，下面开始我们的数据库操作 ******/
+        Session session = sessionFactory.openSession();// 从会话工厂获取一个session
+
+        // creating transaction object
+        Transaction t = session.beginTransaction();
+
+        HashMap&lt;String, User&gt; map1 = new HashMap&lt;String, User&gt;();
+        map1.put("java is a programming language", new User("张小哥",
+                "user2@gmail.com", "usa"));
+        map1.put("java is a platform", new User("王达叔",
+                "user1@gmail.com", "China"));
+
+        HashMap&lt;String, User&gt; map2 = new HashMap&lt;String, User&gt;();
+        map2.put("servlet technology is a server side programming", new User(
+                "John Milton", "john.su@gmail.com", "usa"));
+        map2.put("Servlet is an Interface", new User("Ashok Kumar",
+                "as-top@gmail.com", "China"));
+
+        Question question1 = new Question("Java是什么?", map1);
+        Question question2 = new Question("Servlet是什么?", map2);
+
+        session.persist(question1);
+        session.persist(question2);
+
+        t.commit();
+        session.close();
+        System.out.println("successfully stored");
+    }
+}
+</code></pre> 
+ <p><em>文件：FetchTest.java</em></p> 
+ <pre><code class="lang-java">package com.yiibai;
+
+import java.util.*;
+import org.hibernate.*;
+import org.hibernate.boot.MetadataSources;
+import org.hibernate.boot.registry.StandardServiceRegistry;
+import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
+import org.hibernate.cfg.*;
+
+public class FetchTest {
+    public static void main(String[] args) {
+        // 在5.1.0版本中，hibernate则采用如下新方式获取：
+        // 1. 配置类型安全的准服务注册类，这是当前应用的单例对象，不作修改，所以声明为final
+        // 在configure("cfg/hibernate.cfg.xml")方法中，如果不指定资源路径，默认在类路径下寻找名为hibernate.cfg.xml的文件
+        final StandardServiceRegistry registry = new StandardServiceRegistryBuilder()
+                .configure("hibernate.cfg.xml").build();
+        // 2. 根据服务注册类创建一个元数据资源集，同时构建元数据并生成应用一般唯一的的session工厂
+        SessionFactory sessionFactory = new MetadataSources(registry)
+                .buildMetadata().buildSessionFactory();
+
+        /**** 上面是配置准备，下面开始我们的数据库操作 ******/
+        Session session = sessionFactory.openSession();// 从会话工厂获取一个session
+
+        // creating transaction object
+        Transaction t = session.beginTransaction();
+
+        Query query = session.createQuery("from Question ");
+        List&lt;Question&gt; list = query.list();
+
+        Iterator&lt;Question&gt; iterator = list.iterator();
+        while (iterator.hasNext()) {
+            Question question = iterator.next();
+            System.out.println("question id:" + question.getId());
+            System.out.println("question name:" + question.getName());
+            System.out.println("answers.....");
+            Map&lt;String, User&gt; map = question.getAnswers();
+            Set&lt;Map.Entry&lt;String, User&gt;&gt; set = map.entrySet();
+
+            Iterator&lt;Map.Entry&lt;String, User&gt;&gt; iteratoranswer = set.iterator();
+            while (iteratoranswer.hasNext()) {
+                Map.Entry&lt;String, User&gt; entry = (Map.Entry&lt;String, User&gt;) iteratoranswer
+                        .next();
+                System.out.println("answer name:" + entry.getKey());
+                System.out.println("answer posted by.........");
+                User user = entry.getValue();
+                System.out.println("username:" + user.getUsername());
+                System.out.println("user emailid:" + user.getEmail());
+                System.out.println("user country:" + user.getCountry());
+            }
+        }
+        session.close();
+    }
+}
+</code></pre> 
+ <h2 id="h2-u8FD0u884Cu793Au4F8B"><a name="运行示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>运行示例</h2>
+ <p>首先，运行 <code>MainTest.java</code>，它创建表，并把演示数据添加到所创建的表串，得到结果如下 -</p>   
+ <pre><code class="lang-shell">log4j:WARN No appenders could be found for logger (org.jboss.logging).
+log4j:WARN Please initialize the log4j system properly.
+log4j:WARN See http://logging.apache.org/log4j/1.2/faq.html#noconfig for more info.
+Mon Mar 27 21:43:24 CST 2017 WARN: Establishing SSL connection without server's identity verification is not recommended. According to MySQL 5.5.45+, 5.6.26+ and 5.7.6+ requirements SSL connection must be established by default if explicit option isn't set. For compliance with existing applications not using SSL the verifyServerCertificate property is set to 'false'. You need either to explicitly disable SSL by setting useSSL=false, or set useSSL=true and provide truststore for server certificate verification.
+Hibernate: create table answer_m2m (questionid integer not null, answer varchar(255) not null, userid integer not null, primary key (questionid, answer)) engine=InnoDB
+Hibernate: create table question_m2m (id integer not null auto_increment, name varchar(255), primary key (id)) engine=InnoDB
+Hibernate: create table user_m2m (id integer not null auto_increment, username varchar(255), email varchar(255), country varchar(255), primary key (id)) engine=InnoDB
+Hibernate: alter table answer_m2m add constraint FKkwn39v22curkbevluik274npg foreign key (userid) references user_m2m (id)
+Hibernate: alter table answer_m2m add constraint FK7cy207rewp4u6fbkjekvuyo5 foreign key (questionid) references question_m2m (id)
+Hibernate: insert into question_m2m (name) values (?)
+Hibernate: insert into user_m2m (username, email, country) values (?, ?, ?)
+Hibernate: insert into user_m2m (username, email, country) values (?, ?, ?)
+Hibernate: insert into question_m2m (name) values (?)
+Hibernate: insert into user_m2m (username, email, country) values (?, ?, ?)
+Hibernate: insert into user_m2m (username, email, country) values (?, ?, ?)
+Hibernate: insert into answer_m2m (questionid, answer, userid) values (?, ?, ?)
+Hibernate: insert into answer_m2m (questionid, answer, userid) values (?, ?, ?)
+Hibernate: insert into answer_m2m (questionid, answer, userid) values (?, ?, ?)
+Hibernate: insert into answer_m2m (questionid, answer, userid) values (?, ?, ?)
+successfully stored
+</code></pre> 
+ <p>接下来，运行 <code>FetchTest.java</code> 来读取上面的数据 -</p> 
+ <pre><code class="lang-shell">log4j:WARN No appenders could be found for logger (org.jboss.logging).
+log4j:WARN Please initialize the log4j system properly.
+log4j:WARN See http://logging.apache.org/log4j/1.2/faq.html#noconfig for more info.
+Mon Mar 27 21:50:16 CST 2017 WARN: Establishing SSL connection without server's identity verification is not recommended. According to MySQL 5.5.45+, 5.6.26+ and 5.7.6+ requirements SSL connection must be established by default if explicit option isn't set. For compliance with existing applications not using SSL the verifyServerCertificate property is set to 'false'. You need either to explicitly disable SSL by setting useSSL=false, or set useSSL=true and provide truststore for server certificate verification.
+Hibernate: select question0_.id as id1_1_, question0_.name as name2_1_ from question_m2m question0_
+question id:1
+question name:Java是什么?
+answers.....
+Hibernate: select answers0_.questionid as question1_0_0_, answers0_.userid as userid3_0_0_, answers0_.answer as answer2_0_, user1_.id as id1_2_1_, user1_.username as username2_2_1_, user1_.email as email3_2_1_, user1_.country as country4_2_1_ from answer_m2m answers0_ inner join user_m2m user1_ on answers0_.userid=user1_.id where answers0_.questionid=?
+answer name:java is a programming language
+answer posted by.........
+username:张小哥
+user emailid:john@gmail.com
+user country:usa
+answer name:java is a platform
+answer posted by.........
+username:王达叔
+user emailid:ashok@gmail.com
+user country:india
+question id:2
+question name:Servlet是什么?
+answers.....
+Hibernate: select answers0_.questionid as question1_0_0_, answers0_.userid as userid3_0_0_, answers0_.answer as answer2_0_, user1_.id as id1_2_1_, user1_.username as username2_2_1_, user1_.email as email3_2_1_, user1_.country as country4_2_1_ from answer_m2m answers0_ inner join user_m2m user1_ on answers0_.userid=user1_.id where answers0_.questionid=?
+answer name:servlet technology is a server side programming
+answer posted by.........
+username:John Milton
+user emailid:john@gmail.com
+user country:usa
+answer name:Servlet is an Interface
+answer posted by.........
+username:Ashok Kumar
+user emailid:ashok@gmail.com
+user country:india
+question id:3
+question name:Java是什么?
+answers.....
+Hibernate: select answers0_.questionid as question1_0_0_, answers0_.userid as userid3_0_0_, answers0_.answer as answer2_0_, user1_.id as id1_2_1_, user1_.username as username2_2_1_, user1_.email as email3_2_1_, user1_.country as country4_2_1_ from answer_m2m answers0_ inner join user_m2m user1_ on answers0_.userid=user1_.id where answers0_.questionid=?
+answer name:java is a programming language
+answer posted by.........
+username:张小哥
+user emailid:user2@gmail.com
+user country:usa
+answer name:java is a platform
+answer posted by.........
+username:王达叔
+user emailid:user1@gmail.com
+user country:China
+question id:4
+question name:Servlet是什么?
+answers.....
+Hibernate: select answers0_.questionid as question1_0_0_, answers0_.userid as userid3_0_0_, answers0_.answer as answer2_0_, user1_.id as id1_2_1_, user1_.username as username2_2_1_, user1_.email as email3_2_1_, user1_.country as country4_2_1_ from answer_m2m answers0_ inner join user_m2m user1_ on answers0_.userid=user1_.id where answers0_.questionid=?
+answer name:servlet technology is a server side programming
+answer posted by.........
+username:John Milton
+user emailid:john.su@gmail.com
+user country:usa
+answer name:Servlet is an Interface
+answer posted by.........
+username:Ashok Kumar
+user emailid:as-top@gmail.com
+user country:China
+</code></pre>
+ <br>      
+</div></body></html>

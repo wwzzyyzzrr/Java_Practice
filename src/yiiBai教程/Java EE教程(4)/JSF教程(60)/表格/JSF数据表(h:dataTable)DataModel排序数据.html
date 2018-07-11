@@ -1,0 +1,341 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">JSF数据表(h:dataTable)DataModel排序数据</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>JSF中有一个叫作<code>DataTable</code>的控件，可用来渲染和格式化<code>html</code>表格。使用<code>DataTable</code>，我们可以迭代收集或数组数组来显示数据。下面我们来学习如何向<code>DataTable</code>使用<code>DataModel</code>排序数据。</p> 
+ <p>要使用<code>DataTable</code>，我们需要添加以下HTML头。</p> 
+ <pre><code class="lang-html">&lt;html 
+   xmlns="http://www.w3.org/1999/xhtml"   
+   xmlns:h="http://java.sun.com/jsf/html"&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>以下JSF标签 - </p> 
+ <pre><code class="lang-html">&lt;h:dataTable value="#{userData.employees}" var="employee"
+   styleClass="employeeTable"
+   headerClass="employeeTableHeader"
+   rowClasses="employeeTableOddRow,employeeTableEvenRow"&gt;
+   &lt;h:column&gt;            
+      &lt;f:facet name="header"&gt;Name&lt;/f:facet&gt;            
+      #{employee.name}
+   &lt;/h:column&gt;
+   &lt;h:column&gt;
+      &lt;f:facet name="header"&gt;Department&lt;/f:facet&gt;
+      #{employee.department}
+   &lt;/h:column&gt;
+   &lt;h:column&gt;
+      &lt;f:facet name="header"&gt;Age&lt;/f:facet&gt;
+      #{employee.age}
+   &lt;/h:column&gt;
+   &lt;h:column&gt;
+      &lt;f:facet name="header"&gt;Salary&lt;/f:facet&gt;
+      #{employee.salary}
+   &lt;/h:column&gt;
+&lt;/h:dataTable&gt;
+</code></pre> 
+ <p>被渲染成以下HTML标签。</p> 
+ <pre><code class="lang-html">&lt;table class="employeeTable"&gt;
+&lt;thead&gt;&lt;tr&gt;
+   &lt;th class="employeeTableHeader" scope="col"&gt;Name&lt;/th&gt;
+   &lt;th class="employeeTableHeader" scope="col"&gt;Department&lt;/th&gt;
+   &lt;th class="employeeTableHeader" scope="col"&gt;Age&lt;/th&gt;
+   &lt;th class="employeeTableHeader" scope="col"&gt;Salary&lt;/th&gt;
+&lt;/tr&gt;&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr class="employeeTableOddRow"&gt;
+   &lt;td&gt;Tom&lt;/td&gt;
+   &lt;td&gt;Marketing&lt;/td&gt;
+   &lt;td&gt;10&lt;/td&gt;
+   &lt;td&gt;2000.0&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class="employeeTableEvenRow"&gt;
+   &lt;td&gt;Robert&lt;/td&gt;
+   &lt;td&gt;Marketing&lt;/td&gt;
+   &lt;td&gt;15&lt;/td&gt;
+   &lt;td&gt;1000.0&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/table&gt;
+</code></pre> 
+ <h2 id="h2-jsf-"><a name="JSF数据表更新行数据实例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>JSF数据表更新行数据实例</h2>
+ <p>打开 <strong>NetBeans IDE</strong> 创建一个Web工程：<strong>DataTableSortDataModel</strong>，其目录结构如下所示 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201704/2604/608100458_78594.png" alt=""></p> 
+ <p>创建以下文件代码，文件：<em>index.xhtml</em> 的代码内容如下所示 -</p> 
+ <pre><code class="lang-html">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"&gt;
+&lt;html xmlns="http://www.w3.org/1999/xhtml"   
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:c="http://java.sun.com/jsp/jstl/core"
+      &gt;
+    &lt;h:head&gt;
+        &lt;h:outputStylesheet library="css" name="table-style.css"  /&gt;
+    &lt;/h:head&gt;
+    &lt;h:body&gt;
+
+        &lt;h1&gt;JSF 2 dataTable sorting example&lt;/h1&gt;
+        &lt;h:form&gt;
+            &lt;h:dataTable value="#{book.bookList}" var="o"
+                         styleClass="book-table"
+                         headerClass="book-table-header"
+                         rowClasses="book-table-odd-row,book-table-even-row"&gt;
+                &lt;h:column&gt;
+                    &lt;f:facet name="header"&gt;
+                        &lt;h:commandLink action="#{book.sortByBookNo}"&gt;
+                            Book No
+                        &lt;/h:commandLink&gt;
+                    &lt;/f:facet&gt;
+                    #{o.bookNo}
+                &lt;/h:column&gt;
+
+                &lt;h:column&gt;
+                    &lt;f:facet name="header"&gt;
+                        Product Name
+                    &lt;/f:facet&gt;
+                    #{o.productName}
+                &lt;/h:column&gt;
+
+                &lt;h:column&gt;
+                    &lt;f:facet name="header"&gt;Price&lt;/f:facet&gt;
+                        #{o.price}
+                &lt;/h:column&gt;
+
+                &lt;h:column&gt;
+                    &lt;f:facet name="header"&gt;Quantity&lt;/f:facet&gt;
+                        #{o.qty}
+                &lt;/h:column&gt;
+
+            &lt;/h:dataTable&gt;
+        &lt;/h:form&gt;
+
+    &lt;/h:body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>文件：<em>User.java</em> 的代码内容如下所示 -</p> 
+ <pre><code class="lang-java">/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package com.yiibai;
+
+/**
+ *
+ * @author Maxsu
+ */
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.Comparator;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.SessionScoped;
+import javax.faces.model.ArrayDataModel;
+import javax.faces.model.DataModel;
+import java.util.Arrays;
+import java.util.Comparator;
+import javax.faces.model.DataModel;
+
+@ManagedBean(name = "book")
+@SessionScoped
+public class User implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
+    private SortableDataModel&lt;Book&gt; sotableDataModel;
+
+    private boolean sortAscending = true;
+
+    private static final Book[] bookList = {
+        new Book("1", "CSS", new BigDecimal("1500.00"), 3),
+        new Book("2", "HTML", new BigDecimal("421.00"), 6),
+        new Book("3", "Java", new BigDecimal("5222.00"), 10),
+        new Book("4", "Javascript", new BigDecimal("1111.00"), 9),
+        new Book("5", "SQL", new BigDecimal("211.00"), 20)
+    };
+
+    public User() {
+        sotableDataModel = new SortableDataModel&lt;Book&gt;(new ArrayDataModel&lt;Book&gt;(bookList));
+
+    }
+
+    public DataModel&lt;Book&gt; getBookList() {
+
+        return sotableDataModel;
+
+    }
+
+    //sort by book no
+    public String sortByBookNo() {
+        if (sortAscending) {
+            sotableDataModel.sortBy(new Comparator&lt;Book&gt;() {
+                @Override
+                public int compare(Book o1, Book o2) {
+                    return o1.getBookNo().compareTo(o2.getBookNo());
+                }
+            });
+            sortAscending = false;
+        } else {
+            //descending book
+            sotableDataModel.sortBy(new Comparator&lt;Book&gt;() {
+                @Override
+                public int compare(Book o1, Book o2) {
+                    return o2.getBookNo().compareTo(o1.getBookNo());
+                }
+            });
+            sortAscending = true;
+        }
+        return null;
+    }
+
+    public static class Book {
+
+        String bookNo;
+        String productName;
+        BigDecimal price;
+        int qty;
+
+        public Book(String bookNo, String productName,
+                BigDecimal price, int qty) {
+            this.bookNo = bookNo;
+            this.productName = productName;
+            this.price = price;
+            this.qty = qty;
+        }
+
+        public String getBookNo() {
+            return bookNo;
+        }
+
+        public void setBookNo(String bookNo) {
+            this.bookNo = bookNo;
+        }
+
+        public String getProductName() {
+            return productName;
+        }
+
+        public void setProductName(String productName) {
+            this.productName = productName;
+        }
+
+        public BigDecimal getPrice() {
+            return price;
+        }
+
+        public void setPrice(BigDecimal price) {
+            this.price = price;
+        }
+
+        public int getQty() {
+            return qty;
+        }
+
+        public void setQty(int qty) {
+            this.qty = qty;
+        }
+
+    }
+}
+
+class SortableDataModel&lt;E&gt; extends DataModel&lt;E&gt; {
+
+    DataModel&lt;E&gt; model;
+    private Integer[] rows;
+
+    SortableDataModel(DataModel&lt;E&gt; model) {
+        this.model = model;
+        initRows();
+    }
+
+    public void initRows() {
+        int rowCount = model.getRowCount();
+        if (rowCount != -1) {
+            this.rows = new Integer[rowCount];
+            for (int i = 0; i &lt; rowCount; ++i) {
+                rows[i] = i;
+            }
+        }
+    }
+
+    public void sortBy(final Comparator&lt;E&gt; comparator) {
+        Comparator&lt;Integer&gt; rowComp = new Comparator&lt;Integer&gt;() {
+            public int compare(Integer i1, Integer i2) {
+                E o1 = getData(i1);
+                E o2 = getData(i2);
+                return comparator.compare(o1, o2);
+            }
+        };
+        Arrays.sort(rows, rowComp);
+
+    }
+
+    private E getData(int row) {
+        int originalRowIndex = model.getRowIndex();
+
+        model.setRowIndex(row);
+        E newRowData = model.getRowData();
+        model.setRowIndex(originalRowIndex);
+
+        return newRowData;
+    }
+
+    @Override
+    public void setRowIndex(int rowIndex) {
+
+        if (0 &lt;= rowIndex &amp;&amp; rowIndex &lt; rows.length) {
+            model.setRowIndex(rows[rowIndex]);
+        } else {
+            model.setRowIndex(rowIndex);
+        }
+    }
+
+    @Override
+    public boolean isRowAvailable() {
+        return model.isRowAvailable();
+    }
+
+    @Override
+    public int getRowCount() {
+        return model.getRowCount();
+    }
+
+    @Override
+    public E getRowData() {
+        return model.getRowData();
+    }
+
+    @Override
+    public int getRowIndex() {
+        return model.getRowIndex();
+    }
+
+    @Override
+    public Object getWrappedData() {
+        return model.getWrappedData();
+    }
+
+    @Override
+    public void setWrappedData(Object data) {
+
+        model.setWrappedData(data);
+        initRows();
+    }
+}
+</code></pre> 
+ <p>文件：<em>table-style.css</em> 的代码内容如下所示 -</p>   
+ <pre><code class="lang-css">.book-table-header{
+  bbook-bottom:1px solid #BBB;
+  padding:16px;
+}
+
+.book-table-odd-row{
+  bbook-top:1px solid #BBB;
+}
+
+.book-table-even-row{
+  bbook-top:1px solid #BBB;
+}
+</code></pre> 
+ <p>右键运行工程：<strong>DataTableSortDataModel</strong>，如果没有任何错误，打开浏览器访问：</p> 
+ <pre><code>http://localhost:8084/DataTableSortDataModel/
+</code></pre>
+ <p>应该会看到以下结果 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201704/2604/338110400_12010.png" alt=""></p> 
+ <p>在上图中，您可以点击”<strong>Book No</strong>“，就可以看到排序情况了。</p>
+ <br>      
+</div></body></html>

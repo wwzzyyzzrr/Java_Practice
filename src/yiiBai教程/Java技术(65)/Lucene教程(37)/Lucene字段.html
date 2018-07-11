@@ -1,0 +1,115 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Lucene字段</h1><div style="width:100%;float:left;" class="article-content">   
+ <p> 字段是最低单元或索引过程的起点。它代表其中一个键被用于识别要被索引的值的键值对关系。用于表示一个文件的内容的字段中将具有键为“内容”和值,可以包含文本或文档的数字内容的部分或全部。</p> 
+ <p> Lucene可以索引仅文本或仅数字内容。此类表示索引的存储位置，并通常是文件的列表。这些文件被称为索引文件。索引文件通常创建一次，然后用于读操作或可以被删除。</p> 
+ <h2> 类声明</h2> 
+ <p> 以下是 org.apache.lucene.document.Field 类的声明：</p> 
+ <pre class="prettyprint prettyprinted" style="border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; font-size: 12px; overflow: auto;">
+<span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">public</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">final</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">class</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="typ" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">Field</span><span class="pln" style="margin: 0px; padding: 0px;">
+   </span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">extends</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="typ" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">AbstractField</span><span class="pln" style="margin: 0px; padding: 0px;"> 
+      </span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">implements</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="typ" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">Fieldable</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">,</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="typ" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">Serializable</span></pre> 
+ <h2> 类的构造函数</h2> 
+ <table class="src" style="margin: 8px 0px; padding: 0px;  border-color: rgb(214, 214, 214); width: 560px; border-collapse: collapse; vertical-align: top; color: rgb(0, 0, 0);  background-color: rgb(247, 247, 247);"> 
+  <tbody style="margin: 0px; padding: 0px;"> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <th style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214); width: 23px; background-color: rgb(238, 238, 238);"> S.N.</th> 
+    <th style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214); background-color: rgb(238, 238, 238);"> 构造函数和说明</th> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 1</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> <b style="margin: 0px; padding: 0px;">Field(String name, boolean internName, String value, Field.Store store, Field.Index index, Field.TermVector termVector)</b><br style="margin: 0px; padding: 0px;"> 通过指定名称，值将如何被保存在索引中创建一个字段</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 2</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> <b style="margin: 0px; padding: 0px;">Field(String name, byte[] value)</b><br style="margin: 0px; padding: 0px;"> 创建一个二进制值存储字段中</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 3</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> <b style="margin: 0px; padding: 0px;">Field(String name, byte[] value, Field.Store store)</b><br style="margin: 0px; padding: 0px;"> 不推荐使用</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 4</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> <b style="margin: 0px; padding: 0px;">Field(String name, byte[] value, int offset, int length)</b><br style="margin: 0px; padding: 0px;"> 创建一个二进制值存储字段中</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 5</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> <b style="margin: 0px; padding: 0px;">Field(String name, byte[] value, int offset, int length, Field.Store store)</b><br style="margin: 0px; padding: 0px;"> 不推荐使用</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 6</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> <b style="margin: 0px; padding: 0px;">Field(String name, Reader reader)</b><br style="margin: 0px; padding: 0px;"> 创建未存储一个记号化和索引字段</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 7</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> <b style="margin: 0px; padding: 0px;">Field(String name, Reader reader, Field.TermVector termVector)</b><br style="margin: 0px; padding: 0px;"> 创建未存储，任选具有存储术语矢量的标记化和索引字段</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 8</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> <b style="margin: 0px; padding: 0px;">Field(String name, String value, Field.Store store, Field.Index index)</b><br style="margin: 0px; padding: 0px;"> 通过指定名称，值将如何被保存在索引中创建一个字段</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 9</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> <b style="margin: 0px; padding: 0px;">Field(String name, String value, Field.Store store, Field.Index index, Field.TermVector termVector)</b><br style="margin: 0px; padding: 0px;"> 通过指定名称，值将如何被保存在索引中创建一个字段</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 10</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> <b style="margin: 0px; padding: 0px;">Field(String name, TokenStream tokenStream)</b><br style="margin: 0px; padding: 0px;"> 创建未存储标记化和索引字段</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 11</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> <b style="margin: 0px; padding: 0px;">Field(String name, TokenStream tokenStream, Field.TermVector termVector)</b><br style="margin: 0px; padding: 0px;"> 创建未存储，任选具有存储术语向量标记化和索引字段</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h2> 类方法</h2>   
+ <table class="src" style="margin: 8px 0px; padding: 0px;  border-color: rgb(214, 214, 214); width: 560px; border-collapse: collapse; vertical-align: top; color: rgb(0, 0, 0);  background-color: rgb(247, 247, 247);"> 
+  <tbody style="margin: 0px; padding: 0px;"> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <th style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214); width: 23px; background-color: rgb(238, 238, 238);"> S.N.</th> 
+    <th style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214); background-color: rgb(238, 238, 238);"> 方法及说明</th> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 1</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> <b style="margin: 0px; padding: 0px;">void clearLock(String name)</b><br style="margin: 0px; padding: 0px;"> 尝试清除（强行解锁和删除）指定锁</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 2</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> <b style="margin: 0px; padding: 0px;">Reader readerValue()</b><br style="margin: 0px; padding: 0px;"> 字段作为读取器Reader，或null&nbsp;</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 3</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> <b style="margin: 0px; padding: 0px;">void setTokenStream(TokenStream tokenStream)</b><br style="margin: 0px; padding: 0px;"> 设置要用于索引记号流并引起 isIndexed()和 isTokenized()返回 true</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 4</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> <b style="margin: 0px; padding: 0px;">void setValue(byte[] value)</b><br style="margin: 0px; padding: 0px;"> 改变这个字段的值</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 5</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> <b style="margin: 0px; padding: 0px;">void setValue(byte[] value, int offset, int length)</b><br style="margin: 0px; padding: 0px;"> 改变这个字段的值</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 6</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> <b style="margin: 0px; padding: 0px;">void setValue(Reader value)</b><br style="margin: 0px; padding: 0px;"> 改变这个字段的值</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 7</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> <b style="margin: 0px; padding: 0px;">void setValue(String value)</b><br style="margin: 0px; padding: 0px;"> 改变这个字段的值</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 8</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> <b style="margin: 0px; padding: 0px;">String stringValue()</b><br style="margin: 0px; padding: 0px;"> 字段作为一个字符串，或 null</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 9</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> <b style="margin: 0px; padding: 0px;">TokenStream tokenStreamValue()</b><br style="margin: 0px; padding: 0px;"> 要使用TokesStream&nbsp;字段建立索引，或者为null。</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h2> 继承的方法</h2> 
+ <p> 这个类继承了以下类方法：</p> 
+ <ul> 
+  <li> <p> org.apache.lucene.document.AbstractField</p> </li> 
+  <li> <p> java.lang.Object</p> </li> 
+ </ul> 
+ <br>      
+</div></body></html>

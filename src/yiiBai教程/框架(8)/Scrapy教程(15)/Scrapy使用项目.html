@@ -1,0 +1,395 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Scrapy使用项目</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>项目（Item）对象是Python中的常规的字典类型。我们可以用下面的语法来访问类的属性：</p> 
+ <pre><code>&gt;&gt;&gt; item = YiibaiItem()
+&gt;&gt;&gt; item['title'] = 'sample title'
+&gt;&gt;&gt; item['title']
+'sample title'
+</code></pre>
+ <p>添加上述代码到下面的例子中：</p> 
+ <pre><code># -*- coding: utf-8 -*-
+
+# Define here the models for your scraped items
+#
+# See documentation in:
+# http://doc.scrapy.org/en/latest/topics/items.html
+
+import scrapy
+
+
+from first_scrapy.items import YiibaiItem
+
+class firstSpider(scrapy.Spider):
+    name = "first"
+    allowed_domains = ["yiibai.com"]
+    start_urls = [
+        "http://www.yiibai.com/scrapy/scrapy_create_project.html",
+        "http://www.yiibai.com/scrapy/scrapy_environment.html"
+    ]
+
+    def parse(self, response):
+        # 所有教程名称及链接 ...
+        for sel in response.xpath('//ul/li'):
+            item = YiibaiItem()
+            item['title'] = sel.xpath('a/text()').extract()
+            item['link'] = sel.xpath('a/@href').extract()
+            item['desc'] = sel.xpath('text()').extract()
+            yield item
+</code></pre>
+ <p>因此，上述蜘蛛的部分输出结果是：</p> 
+ <pre><code>2016-10-03 13:11:06 [scrapy] DEBUG: Scraped from &lt;200 http://www.yiibai.com/scrapy/scrapy_environment.html&gt;
+{'desc': [u'
+                ', u'
+            '],
+ 'link': [u'http://www.yiibai.com/python3/'],
+ 'title': [u'Python3u6559u7a0b']}
+2016-10-03 13:11:06 [scrapy] DEBUG: Scraped from &lt;200 http://www.yiibai.com/scrapy/scrapy_environment.html&gt;
+{'desc': [u'
+                ', u'
+            '],
+ 'link': [u'http://www.yiibai.com/php7/'],
+ 'title': [u'PHP7u6559u7a0b']}
+2016-10-03 13:11:06 [scrapy] DEBUG: Scraped from &lt;200 http://www.yiibai.com/scrapy/scrapy_environment.html&gt;
+{'desc': [u'
+                ', u'
+            '],
+ 'link': [u'http://www.yiibai.com/excel/'],
+ 'title': [u'Excelu6559u7a0b']}
+2016-10-03 13:11:06 [scrapy] DEBUG: Scraped from &lt;200 http://www.yiibai.com/scrapy/scrapy_environment.html&gt;
+{'desc': [u'
+                ', u'
+            '],
+ 'link': [u'http://www.yiibai.com/html/uml/'],
+ 'title': [u'UML']}
+2016-10-03 13:11:06 [scrapy] DEBUG: Scraped from &lt;200 http://www.yiibai.com/scrapy/scrapy_environment.html&gt;
+{'desc': [u'
+                ', u'
+            '],
+ 'link': [u'http://www.yiibai.com/html/socket/'],
+ 'title': [u'Socketu7f16u7a0b']}
+2016-10-03 13:11:06 [scrapy] DEBUG: Scraped from &lt;200 http://www.yiibai.com/scrapy/scrapy_environment.html&gt;
+{'desc': [u'
+                ', u'
+            '],
+ 'link': [u'http://www.yiibai.com/html/radius/'],
+ 'title': [u'Radiusu6559u7a0b']}
+2016-10-03 13:11:06 [scrapy] DEBUG: Scraped from &lt;200 http://www.yiibai.com/scrapy/scrapy_environment.html&gt;
+{'desc': [u'
+                ', u'
+            '],
+ 'link': [u'http://www.yiibai.com/nodejs/'],
+ 'title': [u'Node.jsu6559u7a0b']}
+2016-10-03 13:11:06 [scrapy] DEBUG: Scraped from &lt;200 http://www.yiibai.com/scrapy/scrapy_environment.html&gt;
+{'desc': [u'
+                ', u'
+            '],
+ 'link': [u'http://www.yiibai.com/svn/'],
+ 'title': [u'SVNu6559u7a0b']}
+2016-10-03 13:11:06 [scrapy] DEBUG: Scraped from &lt;200 http://www.yiibai.com/scrapy/scrapy_environment.html&gt;
+{'desc': [u'
+                ', u'
+            '],
+ 'link': [u'http://www.yiibai.com/git/'],
+ 'title': [u'Gitu6559u7a0b']}
+2016-10-03 13:11:06 [scrapy] DEBUG: Scraped from &lt;200 http://www.yiibai.com/scrapy/scrapy_environment.html&gt;
+{'desc': [u'
+                ', u'
+            '],
+ 'link': [u'http://www.yiibai.com/makefile/'],
+ 'title': [u'Makefile']}
+2016-10-03 13:11:06 [scrapy] DEBUG: Scraped from &lt;200 http://www.yiibai.com/scrapy/scrapy_environment.html&gt;
+{'desc': [u'
+                ', u'
+            '],
+ 'link': [u'http://www.yiibai.com/unix/'],
+ 'title': [u'Unix']}
+2016-10-03 13:11:06 [scrapy] DEBUG: Scraped from &lt;200 http://www.yiibai.com/scrapy/scrapy_environment.html&gt;
+{'desc': [u'
+                ', u'
+            '],
+ 'link': [u'http://www.yiibai.com/unix_commands/'],
+ 'title': [u'Linux/Unixu547du4ee4']}
+2016-10-03 13:11:06 [scrapy] DEBUG: Scraped from &lt;200 http://www.yiibai.com/scrapy/scrapy_environment.html&gt;
+{'desc': [u'
+                ', u'
+            '],
+ 'link': [u'http://www.yiibai.com/unix_system_calls/'],
+ 'title': [u'Unix/Linuxu7cfbu7edfu8c03u7528']}
+2016-10-03 13:11:06 [scrapy] DEBUG: Scraped from &lt;200 http://www.yiibai.com/scrapy/scrapy_environment.html&gt;
+{'desc': [u'
+                ', u'
+            '],
+ 'link': [u'http://www.yiibai.com/shell/'],
+ 'title': [u'Shell']}
+2016-10-03 13:11:06 [scrapy] DEBUG: Scraped from &lt;200 http://www.yiibai.com/scrapy/scrapy_environment.html&gt;
+{'desc': [u'
+                ', u'
+            '],
+ 'link': [u'http://www.yiibai.com/drools/'],
+ 'title': [u'Droolsu6559u7a0b']}
+2016-10-03 13:11:06 [scrapy] DEBUG: Scraped from &lt;200 http://www.yiibai.com/scrapy/scrapy_environment.html&gt;
+{'desc': [u'
+                ', u'
+            '],
+ 'link': [u'http://www.yiibai.com/linq/'],
+ 'title': [u'LinQu6559u7a0b']}
+2016-10-03 13:11:06 [scrapy] DEBUG: Scraped from &lt;200 http://www.yiibai.com/scrapy/scrapy_environment.html&gt;
+{'desc': [u'
+                ', u'
+            '],
+ 'link': [u'http://www.yiibai.com/wcf/'],
+ 'title': [u'WCFu6559u7a0b']}
+2016-10-03 13:11:06 [scrapy] DEBUG: Scraped from &lt;200 http://www.yiibai.com/scrapy/scrapy_environment.html&gt;
+{'desc': [u'
+                ', u'
+            '],
+ 'link': [u'http://www.yiibai.com/mysql/'],
+ 'title': [u'MySQLu6559u7a0b']}
+2016-10-03 13:11:06 [scrapy] DEBUG: Scraped from &lt;200 http://www.yiibai.com/scrapy/scrapy_environment.html&gt;
+{'desc': [u'
+                ', u'
+            '],
+ 'link': [u'http://www.yiibai.com/plsql/'],
+ 'title': [u'PL/SQLu6559u7a0b']}
+2016-10-03 13:11:06 [scrapy] DEBUG: Scraped from &lt;200 http://www.yiibai.com/scrapy/scrapy_environment.html&gt;
+{'desc': [u'
+                ', u'
+            '],
+ 'link': [u'http://www.yiibai.com/postgresql/'],
+ 'title': [u'PostgreSQLu6559u7a0b']}
+2016-10-03 13:11:06 [scrapy] DEBUG: Scraped from &lt;200 http://www.yiibai.com/scrapy/scrapy_environment.html&gt;
+{'desc': [u'
+                ', u'
+            '],
+ 'link': [u'http://www.yiibai.com/mongodb/'],
+ 'title': [u'MongoDBu6559u7a0b']}
+2016-10-03 13:11:06 [scrapy] DEBUG: Scraped from &lt;200 http://www.yiibai.com/scrapy/scrapy_environment.html&gt;
+{'desc': [u'
+                ', u'
+            '],
+ 'link': [u'http://www.yiibai.com/sqlite/'],
+ 'title': [u'SQLiteu6559u7a0b']}
+2016-10-03 13:11:06 [scrapy] DEBUG: Scraped from &lt;200 http://www.yiibai.com/scrapy/scrapy_environment.html&gt;
+{'desc': [u'
+                ', u'
+            '],
+ 'link': [u'http://www.yiibai.com/db2/'],
+ 'title': [u'DB2u6559u7a0b']}
+2016-10-03 13:11:06 [scrapy] DEBUG: Scraped from &lt;200 http://www.yiibai.com/scrapy/scrapy_environment.html&gt;
+{'desc': [u'
+                ', u'
+            '],
+ 'link': [u'http://www.yiibai.com/redis/'],
+ 'title': [u'Redisu6559u7a0b']}
+2016-10-03 13:11:06 [scrapy] DEBUG: Scraped from &lt;200 http://www.yiibai.com/scrapy/scrapy_environment.html&gt;
+{'desc': [u'
+                ', u'
+            '],
+ 'link': [u'http://www.yiibai.com/memcached/'],
+ 'title': [u'Memcachedu6559u7a0b']}
+2016-10-03 13:11:06 [scrapy] DEBUG: Scraped from &lt;200 http://www.yiibai.com/scrapy/scrapy_environment.html&gt;
+{'desc': [u'
+                ', u'
+            '],
+ 'link': [u'http://www.yiibai.com/access/'],
+ 'title': [u'Accessu6559u7a0b']}
+2016-10-03 13:11:06 [scrapy] DEBUG: Scraped from &lt;200 http://www.yiibai.com/scrapy/scrapy_environment.html&gt;
+{'desc': [u'
+                ', u'
+            '],
+ 'link': [u'http://www.yiibai.com/sql/'],
+ 'title': [u'SQLu6559u7a0b']}
+2016-10-03 13:11:06 [scrapy] DEBUG: Scraped from &lt;200 http://www.yiibai.com/scrapy/scrapy_environment.html&gt;
+{'desc': [u'
+                ', u'
+            '],
+ 'link': [u'http://www.yiibai.com/sql_server/'],
+ 'title': [u'SQL Serveru6559u7a0b']}
+2016-10-03 13:11:06 [scrapy] DEBUG: Scraped from &lt;200 http://www.yiibai.com/scrapy/scrapy_environment.html&gt;
+{'desc': [u'
+                    ', u'
+                '],
+ 'link': [u'http://www.yiibai.com/java/'],
+ 'title': [u'Java']}
+2016-10-03 13:11:06 [scrapy] DEBUG: Scraped from &lt;200 http://www.yiibai.com/scrapy/scrapy_environment.html&gt;
+{'desc': [u'
+                    ', u'
+                '],
+ 'link': [u'http://www.yiibai.com/python/'],
+ 'title': [u'Python']}
+2016-10-03 13:11:06 [scrapy] DEBUG: Scraped from &lt;200 http://www.yiibai.com/scrapy/scrapy_environment.html&gt;
+{'desc': [u'
+                    ', u'
+                '],
+ 'link': [u'http://www.yiibai.com/mysql/'],
+ 'title': [u'MySQL']}
+2016-10-03 13:11:06 [scrapy] DEBUG: Scraped from &lt;200 http://www.yiibai.com/scrapy/scrapy_environment.html&gt;
+{'desc': [u'
+                    ', u'
+                '],
+ 'link': [u'http://www.yiibai.com/articles'],
+ 'title': [u'u6700u65b0u6587u7ae0']}
+2016-10-03 13:11:06 [scrapy] DEBUG: Scraped from &lt;200 http://www.yiibai.com/scrapy/scrapy_environment.html&gt;
+{'desc': [u'
+                    ', u'
+                '],
+ 'link': [u'http://www.yiibai.com/login/byqq'],
+ 'title': []}
+2016-10-03 13:11:06 [scrapy] DEBUG: Scraped from &lt;200 http://www.yiibai.com/scrapy/scrapy_environment.html&gt;
+{'desc': [u'
+            ',
+          u'
+            ',
+          u'
+',
+          u'
+            ',
+          u'
+',
+          u'
+        '],
+ 'link': [],
+ 'title': []}
+2016-10-03 13:11:06 [scrapy] DEBUG: Scraped from &lt;200 http://www.yiibai.com/scrapy/scrapy_environment.html&gt;
+{'desc': [u'
+            ', u'
+            ', u'
+        '], 'link': [], 'title': []}
+2016-10-03 13:11:06 [scrapy] DEBUG: Scraped from &lt;200 http://www.yiibai.com/scrapy/scrapy_environment.html&gt;
+{'desc': [u'
+            ', u'
+        '], 'link': [], 'title': []}
+2016-10-03 13:11:06 [scrapy] DEBUG: Scraped from &lt;200 http://www.yiibai.com/scrapy/scrapy_environment.html&gt;
+{'desc': [u'
+            u5b89u88c5xa0', u'&amp;amd64
+        '],
+ 'link': [u'http://sourceforge.net/projects/pywin32/'],
+ 'title': [u'pywin32']}
+2016-10-03 13:11:06 [scrapy] DEBUG: Scraped from &lt;200 http://www.yiibai.com/scrapy/scrapy_environment.html&gt;
+{'desc': [u'
+            u5b89u88c5 Python2.7.9 u4ee5u4e0bu7684xa0',
+          u'xa0u6216u8005u4e0bu8f7du5730u5740uff1axa0',
+          u' 
+        '],
+ 'link': [u'https://pip.pypa.io/en/latest/installing/',
+          u'https://pypi.python.org/pypi/setuptools#files',
+          u'https://pypi.python.org/pypi/setuptools#files'],
+ 'title': [u'pip', u'https://pypi.python.org/pypi/setuptools#files', u'xa0']}
+2016-10-03 13:11:06 [scrapy] DEBUG: Scraped from &lt;200 http://www.yiibai.com/scrapy/scrapy_environment.html&gt;
+{'desc': [u'
+            u60a8u53efu4ee5u901au8fc7u4f7fu7528u4ee5u4e0bu547du4ee4u6765u68c0u67e5 pip u7248u672cuff1a
+',
+          u'
+        '],
+ 'link': [],
+ 'title': []}
+2016-10-03 13:11:06 [scrapy] DEBUG: Scraped from &lt;200 http://www.yiibai.com/scrapy/scrapy_environment.html&gt;
+{'desc': [u'
+            u5b89u88c5twisteduff0cu4e0bu8f7du5730u5740 -',
+          u' 
+        '],
+ 'link': [u'https://pypi.python.org/packages/2.7/T/Twisted/Twisted-13.0.0.win32-py2.7.msi#md5=c2d453a344f56cf6f77204c5769288c0'],
+ 'title': [u'https://pypi.python.org/packages/2.7/T/Twisted/Twisted-13.0.0.win32-py2.7.msi#md5=c2d453a344f56cf6f77204c5769288c0']}
+2016-10-03 13:11:06 [scrapy] DEBUG: Scraped from &lt;200 http://www.yiibai.com/scrapy/scrapy_environment.html&gt;
+{'desc': [u'
+            u5b89u88c5xa0zope u63a5u53e3uff1a',
+          u'xa0u9009u62e9u5012u6570u7b2cu4e8cu4e2axa0',
+          u'xa0',
+          u'
+        '],
+ 'link': [u'https://pypi.python.org/pypi/zope.interface/4.1.0',
+          u'https://pypi.python.org/packages/2.7/z/zope.interface/zope.interface-4.1.0.win32-py2.7.exe#md5=c0100a3cd6de6ecc3cd3b4d678ec7931'],
+ 'title': [u'https://pypi.python.org/pypi/zope.interface/4.1.0',
+           u'zope.interface-4.1.0.win32-py2.7.exe']}
+2016-10-03 13:11:06 [scrapy] DEBUG: Scraped from &lt;200 http://www.yiibai.com/scrapy/scrapy_environment.html&gt;
+{'desc': [u'
+            u5b89u88c5 lxml uff0cu7248u672cu8981u9009u5bf9u5e94u7cfbu7edfuff0cu9519u8befu7684u662fu7528u4e0du4e86u7684u3002u4e0bu8f7du5730u5740uff1axa0',
+          u' 
+        '],
+ 'link': [u'https://pypi.python.org/pypi/lxml/3.2.3'],
+ 'title': [u'https://pypi.python.org/pypi/lxml/3.2.3']}
+2016-10-03 13:11:06 [scrapy] DEBUG: Scraped from &lt;200 http://www.yiibai.com/scrapy/scrapy_environment.html&gt;
+{'desc': [u'
+        u8981u5b89u88c5scrapyuff0cu8fd0u884cu4ee5u4e0bu547du4ee4uff1a
+',
+          u'
+    '],
+ 'link': [],
+ 'title': []}
+2016-10-03 13:11:06 [scrapy] DEBUG: Scraped from &lt;200 http://www.yiibai.com/scrapy/scrapy_environment.html&gt;
+{'desc': [u'
+            ', u'
+', u'
+        '], 'link': [], 'title': []}
+2016-10-03 13:11:06 [scrapy] DEBUG: Scraped from &lt;200 http://www.yiibai.com/scrapy/scrapy_environment.html&gt;
+{'desc': [u'
+            ', u'
+', u'
+        '], 'link': [], 'title': []}
+2016-10-03 13:11:06 [scrapy] DEBUG: Scraped from &lt;200 http://www.yiibai.com/scrapy/scrapy_environment.html&gt;
+{'desc': [u'
+            ', u'
+', u'
+        '], 'link': [], 'title': []}
+2016-10-03 13:11:06 [scrapy] DEBUG: Scraped from &lt;200 http://www.yiibai.com/scrapy/scrapy_environment.html&gt;
+{'desc': [u'
+            u5b89u88c5', u' 
+        '],
+ 'link': [u'http://brew.sh/'],
+ 'title': [u'homebrew']}
+2016-10-03 13:11:06 [scrapy] DEBUG: Scraped from &lt;200 http://www.yiibai.com/scrapy/scrapy_environment.html&gt;
+{'desc': [u'
+            u8bbeu7f6eu73afu5883u53d8u91cf PATH u6307u5b9axa0homebrewxa0u5305u5728u7cfbu7edfu8f6fu4ef6u5305u524du4f7fu7528uff1a
+',
+          u'
+        '],
+ 'link': [],
+ 'title': []}
+2016-10-03 13:11:06 [scrapy] DEBUG: Scraped from &lt;200 http://www.yiibai.com/scrapy/scrapy_environment.html&gt;
+{'desc': [u'
+            u53d8u66f4u5b8cu6210u540euff0cu91cdu65b0u52a0u8f7d .bashrc u4f7fu7528u4e0bu9762u7684u547du4ee4uff1a
+',
+          u'
+        '],
+ 'link': [],
+ 'title': []}
+2016-10-03 13:11:06 [scrapy] DEBUG: Scraped from &lt;200 http://www.yiibai.com/scrapy/scrapy_environment.html&gt;
+{'desc': [u'
+            u63a5u4e0bu6765uff0cu4f7fu7528u4e0bu9762u7684u547du4ee4u5b89u88c5xa0Pythonuff1a
+',
+          u'
+        '],
+ 'link': [],
+ 'title': []}
+2016-10-03 13:11:06 [scrapy] DEBUG: Scraped from &lt;200 http://www.yiibai.com/scrapy/scrapy_environment.html&gt;
+{'desc': [u'
+            u63a5u4e0bu6765uff0cu5b89u88c5scrapyuff1a
+',
+          u'
+        '],
+ 'link': [],
+ 'title': []}
+2016-10-03 13:11:06 [scrapy] INFO: Closing spider (finished)
+2016-10-03 13:11:06 [scrapy] INFO: Dumping Scrapy stats:
+{'downloader/request_bytes': 709,
+ 'downloader/request_count': 3,
+ 'downloader/request_method_count/GET': 3,
+ 'downloader/response_bytes': 15401,
+ 'downloader/response_count': 3,
+ 'downloader/response_status_count/200': 3,
+ 'finish_reason': 'finished',
+ 'finish_time': datetime.datetime(2016, 10, 3, 5, 11, 6, 478000),
+ 'item_scraped_count': 210,
+ 'log_count/DEBUG': 214,
+ 'log_count/INFO': 7,
+ 'response_received_count': 3,
+ 'scheduler/dequeued': 2,
+ 'scheduler/dequeued/memory': 2,
+ 'scheduler/enqueued': 2,
+ 'scheduler/enqueued/memory': 2,
+ 'start_time': datetime.datetime(2016, 10, 3, 5, 11, 5, 197000)}
+2016-10-03 13:11:06 [scrapy] INFO: Spider closed (finished)
+
+D:first_scrapy&gt;
+</code></pre>
+ <br>      
+</div></body></html>

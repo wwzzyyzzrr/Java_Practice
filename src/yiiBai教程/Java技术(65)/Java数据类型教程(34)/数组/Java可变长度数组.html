@@ -1,0 +1,128 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Java可变长度数组</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>Java数组声明后其长度就固定了，不能增加长度。 要创建一个可扩展的数组可以使用<code>ArrayList</code>或<code>Vector</code>。<code>ArrayList</code>和<code>Vector</code>类的工作方式都是相同的，只是<code>Vector</code>类中的方法是同步的，而<code>ArrayList</code>中的方法不同步。<br><code>ArrayList</code>类仅适用于对象，不适用于原始数据类型。</p> 
+ <p><code>ArrayList</code>类是一个通用类，它将其元素的类型作为类型参数。要使用原始值，请声明一个包装类 - <code>ArrayList</code>。 例如，使用<code>ArrayList &lt;Integer&gt;</code>来处理<code>int</code>类型的元素。</p> 
+ <h2 id="h2-u793Au4F8B"><a name="示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例</h2>
+ <p>以下代码片段说明了<code>ArrayList</code>类的使用：</p> 
+ <pre><code class="lang-java">import java.util.ArrayList;
+
+public class Main {
+  public static void main(String[] args) {
+    ArrayList&lt;Integer&gt; ids = new ArrayList&lt;&gt;();
+
+    int total = ids.size(); // total will be zero
+
+    System.out.println("ArrayList size is  " + total);
+    System.out.println("ArrayList elements are   " + ids);
+
+    ids.add(new Integer(10)); // Adding an Integer object.
+    ids.add(20); // Autoboxing
+    ids.add(30); // Autoboxing
+
+    total = ids.size(); // total will be 3
+
+    System.out.println("ArrayList size is  " + total);
+    System.out.println("ArrayList elements are   " + ids);
+
+    ids.clear();
+
+    total = ids.size(); // total will be 0
+    System.out.println("ArrayList size is  " + total);
+    System.out.println("ArrayList elements are   " + ids);
+  }
+}
+</code></pre> 
+ <p>上面的代码生成以下结果。</p> 
+ <pre><code class="lang-java">ArrayList size is  0
+ArrayList elements are   []
+ArrayList size is  3
+ArrayList elements are   [10, 20, 30]
+ArrayList size is  0
+ArrayList elements are   []
+</code></pre> 
+ <h2 id="h2--2"><a name="实例-2" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实例-2</h2>
+ <p>像数组一样，<code>ArrayList</code>使用基于<code>0</code>的索引。<code>ArrayList</code>的第一个元素的索引为<code>0</code>。<br>以下代码说明了如何使用<code>for</code>循环来遍历<code>ArrayList</code>中的每个元素。</p> 
+ <pre><code class="lang-java">import java.util.ArrayList;
+
+public class Main {
+  public static void main(String[] args) {
+    ArrayList&lt;String&gt; namelist = new ArrayList&lt;String&gt;();
+
+    // Add some names
+    namelist.add("A");
+    namelist.add("B");
+    namelist.add("C");
+
+    // Get the count of names in the list
+    int count = namelist.size();
+
+    for (int i = 0; i &lt; count; i++) {
+      String name = namelist.get(i);
+      System.out.println(name);
+    }
+
+    namelist.remove("A");
+
+    count = namelist.size();
+
+    for (int i = 0; i &lt; count; i++) {
+      String name = namelist.get(i);
+      System.out.println(name);
+    }
+  }
+}
+</code></pre> 
+ <p>上面的代码生成以下结果。</p>   
+ <pre><code class="lang-java">A
+B
+C
+B
+C
+</code></pre> 
+ <h2 id="h2--arraylist-vector-"><a name="将ArrayList/Vector转换为数组" class="reference-link"></a><span class="header-link octicon octicon-link"></span>将ArrayList/Vector转换为数组</h2>
+ <p><code>ArrayList</code>类有一个名为<code>toArray()</code>的重载方法：</p> 
+ <pre><code class="lang-java">Object[]     toArray( )
+&lt;T&gt; T[]      toArray(T[ ] a)
+</code></pre> 
+ <p>第一个方法返回<code>ArrayList</code>的元素作为<code>Object</code>的数组。第二种方法将任何类型的数组作为参数。</p> 
+ <p>以下代码显示了如何将<code>ArrayList</code>转换为数组。</p> 
+ <pre><code class="lang-java">import java.util.ArrayList;
+import java.util.Arrays;
+
+public class Main {
+  public static void main(String[] args) {
+    ArrayList&lt;String&gt; al = new ArrayList&lt;String&gt;();
+    al.add("Java");
+    al.add("SQL");
+    al.add("Data");
+
+    System.out.println("ArrayList:" + al);
+    String[] s1 = new String[al.size()];
+
+    String[] s2 = al.toArray(s1);
+
+    System.out.println("s1 == s2:" + (s1 == s2));
+    System.out.println("s1:" + Arrays.toString(s1));
+    System.out.println("s2:" + Arrays.toString(s2));
+
+    s1 = new String[1];
+    s1[0] = "hello"; // Store hello in first element
+
+    s2 = al.toArray(s1);
+
+    System.out.println("s1 == s2:" + (s1 == s2));
+    System.out.println("s1:" + Arrays.toString(s1));
+    System.out.println("s2:" + Arrays.toString(s2));
+  }
+}
+</code></pre> 
+ <p>上面的代码生成以下结果。</p> 
+ <pre><code class="lang-java">ArrayList:[Java, SQL, Data]
+s1 == s2:true
+s1:[Java, SQL, Data]
+s2:[Java, SQL, Data]
+s1 == s2:false
+s1:[hello]
+s2:[Java, SQL, Data]
+</code></pre>
+ <br>      
+</div></body></html>

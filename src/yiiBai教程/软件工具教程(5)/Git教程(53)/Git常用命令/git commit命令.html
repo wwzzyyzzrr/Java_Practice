@@ -1,0 +1,65 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">git commit命令</h1><div style="width:100%;float:left;" class="article-content">   
+ <p><code>git commit</code>命令用于将更改记录(提交)到存储库。将索引的当前内容与描述更改的用户和日志消息一起存储在新的提交中。</p> 
+ <p><strong>简介</strong></p> 
+ <pre><code class="lang-shell">git commit [-a | --interactive | --patch] [-s] [-v] [-u&lt;mode&gt;] [--amend]
+       [--dry-run] [(-c | -C | --fixup | --squash) &lt;commit&gt;]
+       [-F &lt;file&gt; | -m &lt;msg&gt;] [--reset-author] [--allow-empty]
+       [--allow-empty-message] [--no-verify] [-e] [--author=&lt;author&gt;]
+       [--date=&lt;date&gt;] [--cleanup=&lt;mode&gt;] [--[no-]status]
+       [-i | -o] [-S[&lt;keyid&gt;]] [--] [&lt;file&gt;…​]
+</code></pre> 
+ <h2 id="h2-u63CFu8FF0"><a name="描述" class="reference-link"></a><span class="header-link octicon octicon-link"></span>描述</h2>
+ <p><code>git commit</code>命令将索引的当前内容与描述更改的用户和日志消息一起存储在新的提交中。</p> 
+ <p>要添加的内容可以通过以下几种方式指定：</p> 
+ <ol> 
+  <li>在使用<code>git commit</code>命令之前，通过使用<code>git add</code>对索引进行递增的“添加”更改(注意：修改后的文件的状态必须为“<code>added</code>”);</li>
+  <li>通过使用<code>git rm</code>从工作树和索引中删除文件，再次使用<code>git commit</code>命令;</li>
+  <li>通过将文件作为参数列出到<code>git commit</code>命令(不使用<code>--interactive</code>或<code>--patch</code>选项)，在这种情况下，提交将忽略索引中分段的更改，而是记录列出的文件的当前内容(必须已知到Git的内容) ;</li>
+  <li>通过使用带有<code>-a</code>选项的<code>git commit</code>命令来自动从所有已知文件(即所有已经在索引中列出的文件)中添加“更改”，并自动从已从工作树中删除索引中的“<code>rm</code>”文件 ，然后执行实际提交;</li>
+  <li>通过使用<code>--interactive</code>或<code>--patch</code>选项与<code>git commit</code>命令一起确定除了索引中的内容之外哪些文件或hunks应该是提交的一部分，然后才能完成操作。</li>
+ </ol> 
+ <p><code>--dry-run</code>选项可用于通过提供相同的参数集(选项和路径)来获取上一个任何内容包含的下一个提交的摘要。</p> 
+ <p>如果您提交，然后立即发现错误，可以使用 <a target="_blank" href="http://www.yiibai.com/git/git_reset.html" title="git reset">git reset</a> 命令恢复。</p> 
+ <h2 id="h2-u793Au4F8B"><a name="示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例</h2>
+ <p>以下是一些示例 -</p> 
+ <p>提交已经被<code>git add</code>进来的改动。</p> 
+ <pre><code class="lang-shell">$ git add . 
+$ # 或者~
+$ git add newfile.txt
+$ git commit -m "the commit message" #
+$ git commit -a # 会先把所有已经track的文件的改动`git add`进来，然后提交(有点像svn的一次提交,不用先暂存)。对于没有track的文件,还是需要执行`git add &lt;file&gt;` 命令。
+$ git commit --amend # 增补提交，会使用与当前提交节点相同的父节点进行一次新的提交，旧的提交将会被取消。
+</code></pre> 
+ <p>录制自己的工作时，工作树中修改后的文件的内容将临时存储到使用<code>git add</code>命名为“索引”的暂存区域。 一个文件只能在索引中恢复，而不是在工作树中，使用<code>git reset HEAD - &lt;file&gt;</code>进行上一次提交的文件，这有效地恢复了git的添加，并阻止了对该文件的更改，以参与下一个提交在使用这些命令构建状态之后，<code>git commit</code>(没有任何<code>pathname</code>参数)用于记录到目前为止已经进行了什么更改。 这是命令的最基本形式。一个例子：</p>   
+ <pre><code class="lang-shell">$ vi hello.c
+$ git rm goodbye.c
+$ git add hello.c
+$ git commit
+</code></pre> 
+ <p>可以在每次更改后暂存文件，而不是在<code>git commit</code>中关注工作树中跟踪内容的文件的更改，可使用相应的<code>git add</code>和<code>git rm</code>。 也就是说，如果您的工作树中没有其他更改(<em>hello.c</em>文件内容不变)，则该示例与前面的示例相同：</p> 
+ <pre><code class="lang-shell">$ vi hello.c
+$ rm goodbye.c
+$ git commit -a
+</code></pre> 
+ <p>命令<code>git commit -a</code>首先查看您的工作树，注意您已修改<code>hello.c</code>并删除了<code>goodbye.c</code>，并执行必要的<code>git add</code>和<code>git rm</code>。</p> 
+ <p>在更改许多文件之后，可以通过给出<code>git commit</code>的路径名来更改记录更改的顺序。当给定路径名时，该命令提交只记录对命名路径所做的更改：</p> 
+ <pre><code class="lang-shell">$ edit hello.c hello.h # 修改了这两个文件的内容
+$ git add hello.c hello.h
+$ edit Makefile
+$ git commit Makefile
+</code></pre> 
+ <p>这提供了一个记录Makefile修改的提交。 在<code>hello.c</code>和<code>hello.h</code>中升级的更改不会包含在生成的提交中。然而，它们的变化并没有消失 - 他们仍然有更改，只是被阻止。 按照上述顺序执行：</p> 
+ <pre><code class="lang-shell">$ git commit
+</code></pre> 
+ <p>这个第二个提交将按照预期记录更改为<code>hello.c</code>和<code>hello.h</code>。</p> 
+ <p>合并后(由<code>git merge</code>或<code>git pull</code>发起)由于冲突而停止，干净合并的路径已经被暂存为提交，并且冲突的路径保持在未加载状态。 您必须首先检查哪些路径与git状态冲突，并在手工将其固定在工作树中之后，要像往常一样使用<code>git add</code>：</p> 
+ <pre><code class="lang-shell">$ git status | grep unmerged
+unmerged: hello.c
+$ edit hello.c
+$ git add hello.c
+</code></pre> 
+ <p>解决冲突和暂存结果后，<code>git ls-files -u</code>将停止提及冲突的路径。完成后，运行<code>git commit</code>最后记录合并：</p> 
+ <pre><code class="lang-shell">$ git commit
+</code></pre>
+ <br>      
+</div></body></html>

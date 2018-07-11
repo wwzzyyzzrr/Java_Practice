@@ -1,0 +1,36 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Go通道缓冲实例</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>默认情况下，通道是未缓冲的，意味着如果有相应的接收(<code>&lt;- chan</code>)准备好接收发送的值，它们将只接受发送(<code>chan &lt;-</code> )。 缓冲通道接受有限数量的值，而没有用于这些值的相应接收器。</p> 
+ <p>这里使一个字符串的通道缓冲多达<code>2</code>个值。因为这个通道被缓冲，所以可以将这些值发送到通道中，而没有相应的并发接收。</p> 
+ <p>之后可以照常接收这两个值。</p> 
+ <blockquote> 
+  <p>所有的示例代码，都放在 <code>F:\worksp\golang</code> 目录下。安装Go编程环境请参考：<a target="_blank" href="http://www.yiibai.com/go/go_environment.html">http://www.yiibai.com/go/go_environment.html</a> </p> 
+ </blockquote> 
+ <p><code>channel-buffering.go</code>的完整代码如下所示 -</p> 
+ <pre><code class="lang-go">package main
+
+import "fmt"
+
+func main() {
+
+    // Here we `make` a channel of strings buffering up to
+    // 2 values.
+    messages := make(chan string, 2)
+
+    // Because this channel is buffered, we can send these
+    // values into the channel without a corresponding
+    // concurrent receive.
+    messages &lt;- "buffered"
+    messages &lt;- "channel"
+
+    // Later we can receive these two values as usual.
+    fmt.Println(&lt;-messages)
+    fmt.Println(&lt;-messages)
+}
+</code></pre> 
+ <p>执行上面代码，将得到以下输出结果 - </p>   
+ <pre><code class="lang-go">F:\worksp\golang&gt;go run channel-buffering.go
+buffered
+channel
+</code></pre>
+ <br>      
+</div></body></html>

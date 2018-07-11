@@ -1,0 +1,381 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">VueJS事件</h1><div style="width:100%;float:left;" class="article-content">   
+ <p><code>v-on</code>是添加到DOM元素以监听VueJS中的事件的属性。</p> 
+ <h2 id="h2-u70B9u51FBu4E8Bu4EF6"><a name="点击事件" class="reference-link"></a><span class="header-link octicon octicon-link"></span>点击事件</h2>
+ <p>创建一个文件：<em>event-click.html</em> -</p> 
+ <pre><code class="lang-html">&lt;html&gt;
+   &lt;head&gt;
+      &lt;meta charset="utf-8" /&gt;
+      &lt;title&gt;VueJs事件示例&lt;/title&gt;
+      &lt;script type = "text/javascript" src = "js/vue.js"&gt;&lt;/script&gt;
+   &lt;/head&gt;
+   &lt;body&gt;
+      &lt;div id = "databinding"&gt;
+         &lt;button v-on:click = "displaynumbers"&gt;点击计算结果&lt;/button&gt;
+         &lt;h2&gt; 100 + 200 = {{total}}&lt;/h2&gt;
+      &lt;/div&gt;
+      &lt;script type = "text/javascript"&gt;
+         var vm = new Vue({
+            el: '#databinding',
+            data: {
+               num1: 100,
+               num2 : 200,
+               total : ''
+            },
+            methods : {
+               displaynumbers : function(event) {
+                  console.log(event);
+                  return this.total =  this.num1+ this.num2;
+               }
+            },
+         });
+      &lt;/script&gt;
+   &lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>在浏览器中查看，如下所示 -<br><img src="http://www.yiibai.com/uploads/images/201712/2112/872081257_55096.png" alt=""></p> 
+ <p>以下代码用于为DOM元素分配一个单击事件。</p> 
+ <pre><code class="lang-html">&lt;button v-on:click = "displaynumbers"&gt;点击计算结果&lt;/button&gt;
+</code></pre> 
+ <p>有一个<code>v-on</code>的简写，这意味着也可以按如下方式调用事件 -</p> 
+ <pre><code class="lang-html">&lt;button @click = "displaynumbers"&gt;点击计算结果&lt;/button&gt;
+</code></pre> 
+ <p>点击按钮，它将调用方法<code>displaynumbers</code>，它将接受事件，已经在浏览器中同样如上所示。</p> 
+ <p>我们现在来看看一个事件鼠标悬停鼠标效果。参考以下代码(<em>event-click2.html</em>) - </p> 
+ <p>在上面的例子中，创建了一个宽度和高度均为<code>100px</code>的div。 它被赋予了红色的背景颜色。在鼠标悬停时，将颜色更改为绿色，在鼠标悬停时，又将颜色更改为红色。</p> 
+ <p>因此，在鼠标悬停期间，调用<code>changebgcolor</code>方法，将鼠标移出<code>div</code>时，调用一个方法：<code>originalcolor</code>。</p> 
+ <p>这是如下完成的 -</p> 
+ <pre><code class="lang-`html">&lt;div v-bind:style = "styleobj" v-on:mouseover = "changebgcolor" v-on:mouseout = "originalcolor"&gt;&lt;/div&gt;
+</code></pre> 
+ <p>如上所示，将两个事件(<code>mouseover</code>和<code>mouseout</code>)分配给div。已经创建了一个<code>styleobj</code>变量，并给定了要分配给div的所需样式。 使用<code>v-bind</code>将相同的变量绑定到：<code>div：style ="styleobj"</code></p> 
+ <p>在<code>changebgcolor</code>中，使用以下代码将颜色更改为绿色。</p> 
+ <pre><code class="lang-html">changebgcolor : function() {
+   this.styleobj.backgroundColor = "green";
+}
+</code></pre> 
+ <p>使用<code>stylobj</code>变量，将颜色更改为绿色。同样，下面的代码用于将其更改回原始颜色。</p> 
+ <pre><code class="lang-html">originalcolor : function() {
+   this.styleobj.backgroundColor = "red";
+}
+</code></pre> 
+ <p>在浏览器中看到如下效果 -<br><img src="http://www.yiibai.com/uploads/images/201712/2112/547091218_24746.gif" alt=""></p> 
+ <h2 id="h2-u4E8Bu4EF6u4FEEu9970u7B26"><a name="事件修饰符" class="reference-link"></a><span class="header-link octicon octicon-link"></span>事件修饰符</h2>
+ <p>VueJS在<code>v-on</code>属性上有一些事件修饰符。以下是可用的修改器 - </p> 
+ <h4 id="h4-1-once"><a name="1. 修饰符  .once" class="reference-link"></a><span class="header-link octicon octicon-link"></span>1. 修饰符 .once</h4>
+ <p>允许该事件只执行一次。语法如下 - </p> 
+ <pre><code class="lang-html">&lt;button v-on:click.once = "buttonclicked"&gt;点击一次&lt;/button&gt;
+</code></pre> 
+ <p>在下面示例中，实现在调用修饰符的同时添加点运算符，并理解一次修饰符的工作。创建一个文件：<em>event-modifiers.html</em> - </p> 
+ <pre><code class="lang-html">&lt;html&gt;
+   &lt;head&gt;
+      &lt;meta charset="utf-8" /&gt;
+      &lt;title&gt;VueJs事件示例&lt;/title&gt;
+      &lt;script type = "text/javascript" src = "js/vue.js"&gt;&lt;/script&gt;
+   &lt;/head&gt;
+   &lt;body&gt;
+      &lt;div id = "databinding"&gt;
+         &lt;button v-on:click.once = "buttonclickedonce" v-bind:style = "styleobj"&gt;点击一次&lt;/button&gt;
+         输出结果: {{clicknum}}
+         &lt;br/&gt;&lt;br/&gt;
+         &lt;button v-on:click = "buttonclicked"  v-bind:style = "styleobj"&gt;点击我&lt;/button&gt;
+         输出结果: {{clicknum1}}
+      &lt;/div&gt;
+      &lt;script type = "text/javascript"&gt;
+         var vm = new Vue({
+            el: '#databinding',
+            data: {
+               clicknum : 0,
+               clicknum1 :0,
+               styleobj: {
+                  backgroundColor: '#2196F3!important',
+                  cursor: 'pointer',
+                  padding: '8px 16px',
+                  verticalAlign: 'middle',
+               }
+            },
+            methods : {
+               buttonclickedonce : function() {
+                  this.clicknum++;
+               },
+               buttonclicked : function() {
+                  this.clicknum1++;
+               }
+            }
+         });
+      &lt;/script&gt;
+   &lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>在浏览器中浏览看到如下效果 -<br><img src="http://www.yiibai.com/uploads/images/201712/2112/225091224_57552.png" alt=""></p> 
+ <p>在上面的例子中，我们创建了两个按钮。 点击一次标签的按钮添加了<code>once</code>修饰符，另一个按钮没有任何修饰符。这是按钮的定义方式。</p> 
+ <pre><code class="lang-html">&lt;button v-on:click.once = "buttonclickedonce" v-bind:style = "styleobj"&gt;点击一次&lt;/button&gt;
+         输出结果: {{clicknum}}
+&lt;button v-on:click = "buttonclicked"  v-bind:style = "styleobj"&gt;点击我&lt;/button&gt;
+</code></pre> 
+ <p>第一个按钮调用方法<code>buttonclickedonce</code>，第二个按钮调用方法<code>buttonclicked</code>。</p> 
+ <pre><code class="lang-html">buttonclickedonce : function() {
+   this.clicknum++;
+},
+buttonclicked : function() {
+   this.clicknum1++;
+}
+</code></pre> 
+ <p>定义了两个变量：<code>clicknum</code>和<code>clicknum1</code>。 当按钮被点击时，两者都增加。 两个变量都初始化为<code>0</code>，显示在上面的输出中。</p> 
+ <p>点击第一个按钮时，变量<code>clicknum</code>加<code>1</code>。第二次点击时，数字不会递增，因为<code>once</code>修饰符阻止它执行或执行任何按钮单击指定的操作项目。</p> 
+ <p>在点击第二个按钮时，执行相同的动作，即变量增加。 在每次点击时，值都会递增并显示。</p> 
+ <p>以下是在浏览器中获得的输出 -<br><img src="http://www.yiibai.com/uploads/images/201712/2112/548091232_94093.gif" alt=""></p> 
+ <h4 id="h4-2-prevent"><a name="2. 修饰符 .prevent" class="reference-link"></a><span class="header-link octicon octicon-link"></span>2. 修饰符 .prevent</h4>
+ <p>语法 - </p> 
+ <pre><code class="lang-html">&lt;a href = "http://www.yiibai.com" v-on:click.prevent = "clickme"&gt;Click Me&lt;/a&gt;
+</code></pre> 
+ <p>创建一个文件：<em>event-modifiers2.html</em> - </p> 
+ <pre><code class="lang-html">&lt;html&gt;
+   &lt;head&gt;
+      &lt;meta charset="utf-8" /&gt;
+      &lt;title&gt;VueJs事件示例&lt;/title&gt;
+      &lt;script type = "text/javascript" src = "js/vue.js"&gt;&lt;/script&gt;
+   &lt;/head&gt;
+   &lt;body&gt;
+      &lt;div id = "databinding"&gt;
+         &lt;a href = "http://www.yiibai.com" v-on:click = "clickme" target = "_blank" v-bind:style = "styleobj"&gt;点击我&lt;/a&gt;
+      &lt;/div&gt;
+      &lt;script type = "text/javascript"&gt;
+         var vm = new Vue({
+            el: '#databinding',
+            data: {
+               clicknum : 0,
+               clicknum1 :0,
+               styleobj: {
+                  color: '#4CAF50',
+                  marginLeft: '20px',
+                  fontSize: '30px'
+               }
+            },
+            methods : {
+               clickme : function() {
+                  alert("锚点标签被点击了~");
+               }
+            }
+         });
+      &lt;/script&gt;
+   &lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>如果点击<code>"点击我"</code>的链接，它将会发送一个警示为：<code>"锚点标签被点击了~"</code>，它会在一个新的选项卡中打开链接 - <a target="_blank" href="http://www.yiibai.com">http://www.yiibai.com</a> ，如以下屏幕截图所示。<br><img src="http://www.yiibai.com/uploads/images/201712/2112/214091242_48078.gif" alt=""></p> 
+ <p>这是一个正常的方式，即打开链接的网站。如果不希望链接打开，可添加一个修饰符“阻止”到这个事件，如下面的代码所示。</p> 
+ <pre><code class="lang-html">&lt;a href = "http://www.yiibai.com" v-on:click.prevent = "clickme" target = "_blank" v-bind:style = "styleobj"&gt;Click Me&lt;/a&gt;
+</code></pre> 
+ <p>当添加，如果点击按钮，它会发送一个警告消息，不会再打开链接。 阻止修饰符防止链接打开，只执行分配给标签的方法。</p> 
+ <p>创建一个文件：<em>event-modifiers3.html</em> - </p> 
+ <pre><code class="lang-html">&lt;html&gt;
+   &lt;head&gt;
+      &lt;meta charset="utf-8" /&gt;
+      &lt;title&gt;VueJs事件示例&lt;/title&gt;
+      &lt;script type = "text/javascript" src = "js/vue.js"&gt;&lt;/script&gt;
+   &lt;/head&gt;
+   &lt;body&gt;
+      &lt;div id = "databinding"&gt;
+         &lt;a href = "http://www.yiibai.com" v-on:click.prevent = "clickme" target = "_blank" v-bind:style = "styleobj"&gt;点击我&lt;/a&gt;
+      &lt;/div&gt;
+      &lt;script type = "text/javascript"&gt;
+         var vm = new Vue({
+            el: '#databinding',
+            data: {
+               clicknum : 0,
+               clicknum1 :0,
+               styleobj: {
+                  color: '#4CAF50',
+                  marginLeft: '20px',
+                  fontSize: '30px'
+               }
+            },
+            methods : {
+               clickme : function() {
+                  alert("锚点标签被点击了~");
+               }
+            }
+         });
+      &lt;/script&gt;
+   &lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>以下是在浏览器中获得的输出 -<br><img src="http://www.yiibai.com/uploads/images/201712/2112/599091249_40464.png" alt=""></p> 
+ <h2 id="h2--"><a name="事件 - 键修饰符" class="reference-link"></a><span class="header-link octicon octicon-link"></span>事件 - 键修饰符</h2>
+ <p>VueJS提供了可以控制事件处理的按键修饰符。 考虑如果有一个文本框，我们希望只有当按<em>Enter</em> 键时才会调用这个方法。那么可以通过向事件添加键修饰符来完成，如下所示。<br><strong>语法</strong></p> 
+ <pre><code class="lang-html">&lt;input type = "text"  v-on:keyup.enter = "showinputvalue"/&gt;
+</code></pre> 
+ <p>想要应用于事件的键是：<code>v-on.eventname.keyname</code>(如上代码所示)，也可以使用多个键。 例如，<code>v-on.keyup.ctrl.enter</code>，参考以下代码(<em>event-key-modifiers.html</em>) </p> 
+ <pre><code class="lang-html">&lt;html&gt;
+   &lt;head&gt;
+      &lt;meta charset="utf-8" /&gt;
+      &lt;title&gt;VueJs事件示例&lt;/title&gt;
+      &lt;script type = "text/javascript" src = "js/vue.js"&gt;&lt;/script&gt;
+   &lt;/head&gt;
+   &lt;body&gt;
+      &lt;div id = "databinding"&gt;
+         &lt;input type = "text" v-on:keyup.enter = "showinputvalue" v-bind:style = "styleobj" placeholder = "请输入名字，完成后回车~"/&gt;
+         &lt;h3&gt; {{name}}&lt;/h3&gt;
+      &lt;/div&gt;
+      &lt;script type = "text/javascript"&gt;
+         var vm = new Vue({
+            el: '#databinding',
+            data: {
+               name:'',
+               styleobj: {
+                  width: "50%",
+                  padding: "12px 20px",
+                  margin: "8px 0",
+                  boxSizing: "border-box"
+               }
+            },
+            methods : {
+               showinputvalue : function(event) {
+                  this.name=event.target.value;
+               }
+            }
+         });
+      &lt;/script&gt;
+   &lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>在浏览器中，输入一个名字：<code>Maxsu</code>，然后按回车键，效果如下 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201712/2112/558101203_47628.gif" alt=""></p> 
+ <h2 id="h2-u81EAu5B9Au4E49u4E8Bu4EF6"><a name="自定义事件" class="reference-link"></a><span class="header-link octicon octicon-link"></span>自定义事件</h2>
+ <p>父组件可以使用<code>prop</code>属性将数据传递给其组件，但是，当子组件发生更改时，需要告诉父项。 为此，可以使用自定义事件。</p> 
+ <p>父组件可以使用<code>v-on</code>属性来侦听子组件事件。创建一个文件：<em>event-custom.html</em> - </p>   
+ <pre><code class="lang-html">&lt;html&gt;
+   &lt;head&gt;
+   &lt;meta charset="UTF-8"&gt;
+      &lt;title&gt;VueJs自定义事件&lt;/title&gt;
+      &lt;script type = "text/javascript" src = "js/vue.js"&gt;&lt;/script&gt;
+   &lt;/head&gt;
+   &lt;body&gt;
+      &lt;div id = "databinding"&gt;
+         &lt;div id = "counter-event-example"&gt;
+            &lt;p style = "font-size:25px;"&gt;语言显示 : &lt;b&gt;{{ languageclicked }}&lt;/b&gt;&lt;/p&gt;
+            &lt;button-counter
+            v-for = "(item, index) in languages"
+            v-bind:item = "item"
+            v-bind:index = "index"
+            v-on:showlanguage = "languagedisp"&gt;&lt;/button-counter&gt;
+         &lt;/div&gt;
+      &lt;/div&gt;
+      &lt;script type = "text/javascript"&gt;
+         Vue.component('button-counter', {
+            template: '&lt;button v-on:click = "displayLanguage(item)"&gt;&lt;span style = "font-size:25px;"&gt;{{ item }}&lt;/span&gt;&lt;/button&gt;',
+            data: function () {
+               return {
+                  counter: 0
+               }
+            },
+            props:['item'],
+            methods: {
+               displayLanguage: function (lng) {
+                  console.log(lng);
+                  this.$emit('showlanguage', lng);
+               }
+            },
+         });
+         var vm = new Vue({
+            el: '#databinding',
+            data: {
+               languageclicked: "",
+               languages : ["Java", "PHP", "C++", "C", "Javascript", "C#", "Python", "HTML"]
+            },
+            methods: {
+               languagedisp: function (a) {
+                  this.languageclicked = a;
+               }
+            }
+         })
+      &lt;/script&gt;
+   &lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>以下是在浏览器中获得的输出 -<br><img src="http://www.yiibai.com/uploads/images/201712/2112/607101219_92704.gif" alt=""></p> 
+ <p>上面的代码显示了父组件和子组件之间的数据传输。该组件是使用以下代码创建的。</p> 
+ <pre><code class="lang-html">&lt;button-counter
+   v-for = "(item, index) in languages"
+   v-bind:item = "item"
+   v-bind:index = "index"
+   v-on:showlanguage = "languagedisp"&gt;
+&lt;/button-counter&gt;
+</code></pre> 
+ <p>有一个<code>v-for</code>属性，它将与语言数组一起循环。 该数组中有一个语言列表。需要将详细信息发送给子组件。 数组的值存储在项目和索引中。</p> 
+ <pre><code class="lang-html">v-bind:item = "item"
+v-bind:index = "index"
+</code></pre> 
+ <p>为了引用数组的值，需要先将它绑定到一个变量，然后使用<code>props</code>属性来引用变量，如下所示。</p> 
+ <pre><code class="lang-html">Vue.component('button-counter', {
+   template: '&lt;button v-on:click = "displayLanguage(item)"&gt;&lt;span style = "font-size:25px;"&gt;{{ item }}&lt;/span&gt;&lt;/button&gt;',
+   data: function () {
+      return {
+         counter: 0
+      }
+   },
+   props:['item'],
+   methods: {
+      displayLanguage: function (lng) {
+         console.log(lng);
+         this.$emit('showlanguage', lng);
+      }
+   },
+});
+</code></pre> 
+ <p><code>props</code>属性以数组形式包含项目。也可以参考索引 -</p> 
+ <pre><code class="lang-html">props:[‘item’, ‘index’]
+</code></pre> 
+ <p>还有一个事件添加到组件如下 -</p> 
+ <pre><code class="lang-html">&lt;button-counter
+   v-for = "(item, index) in languages"
+   v-bind:item = "item"
+   v-bind:index = "index"
+   v-on:showlanguage = "languagedisp"&gt;
+&lt;/button-counter&gt;
+</code></pre> 
+ <p>事件的名称是<code>showlanguage</code>，它调用一个在Vue实例中定义的名为<code>languagedisp</code>的方法。<br>在组件中，模板定义如下 -</p> 
+ <pre><code class="lang-html">template: '&lt;button v-on:click = "displayLanguage(item)"&gt;&lt;span style = "font-size:25px;"&gt;{{ item }}&lt;/span&gt;&lt;/button&gt;',
+</code></pre> 
+ <p>有一个按钮创建。该按钮将在语言数组中使用尽可能多的计数创建。点击按钮，有一个叫做<code>displayLanguage</code>的方法，按钮被点击的项目作为参数传递给函数。 现在，组件需要将<code>clicked</code>元素发送到父组件以进行显示，具体步骤如下 -</p> 
+ <pre><code class="lang-html">Vue.component('button-counter', {
+   template: '&lt;button v-on:click = "displayLanguage(item)"&gt;&lt;span style = "font-size:25px;"&gt;{{ item }}&lt;/span&gt;&lt;/button&gt;',
+   data: function () {
+      return {
+         counter: 0
+      }
+   },
+   props:['item'],
+   methods: {
+      displayLanguage: function (lng) {
+         console.log(lng);
+         this.$emit('showlanguage', lng);
+      }
+   },
+});
+</code></pre> 
+ <p>方法<code>displayLanguage</code>调用这个<code>this.$emit(‘showlanguage’, lng);</code><br><code>$emit</code>用于调用父组件方法。<code>showlanguage</code>是使用<code>v-on</code>在组件上给出的事件名称。</p> 
+ <pre><code class="lang-html">&lt;button-counter
+   v-for = "(item, index) in languages"
+   v-bind:item = "item"
+   v-bind:index = "index"
+   v-on:showlanguage = "languagedisp"&gt;
+&lt;/button-counter&gt;
+</code></pre> 
+ <p>正在传递一个参数，即被点击到主Vue实例的方法的语言名称，定义如下。</p> 
+ <pre><code class="lang-html">var vm = new Vue({
+   el: '#databinding',
+   data: {
+      languageclicked: "",
+      languages : ["Java", "PHP", "C++", "C", "Javascript", "C#", "Python", "HTML"]
+   },
+   methods: {
+      languagedisp: function (a) {
+         this.languageclicked = a;
+      }
+   }
+})
+</code></pre> 
+ <p>在这里，发出触发器<code>showlanguage</code>，然后调用Vue实例方法中的<code>languagedisp</code>。 它将语言点击值赋给变量<code>languageclicked</code>，并在浏览器中显示相同的内容。如下所示 -</p> 
+ <pre><code class="lang-html">&lt;p style = "font-size:25px;"&gt;Language displayed : &lt;b&gt;{{ languageclicked }}&lt;/b&gt;&lt;/p&gt;
+</code></pre>
+ <br>      
+</div></body></html>

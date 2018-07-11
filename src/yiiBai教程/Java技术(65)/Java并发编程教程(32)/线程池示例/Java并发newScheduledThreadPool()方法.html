@@ -1,0 +1,45 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Java并发newScheduledThreadPool()方法</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>可以通过调用<code>Executors</code>类的<code>static newScheduledThreadPool()</code>方法获得一个调度的线程池。</p> 
+ <p><strong>语法</strong></p> 
+ <pre><code class="lang-java">ExecutorService executor = Executors.newScheduledThreadPool(1);
+</code></pre> 
+ <h2 id="h2-u793Au4F8B"><a name="示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例</h2>
+ <p>以下<code>TestThread</code>程序显示了基于线程的环境中<code>newScheduledThreadPool()</code>方法的使用。</p> 
+ <pre><code class="lang-java">import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
+
+public class TestThread {
+
+   public static void main(final String[] arguments) throws InterruptedException {
+      final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+
+      final ScheduledFuture&lt;?&gt; beepHandler = 
+         scheduler.scheduleAtFixedRate(new BeepTask(), 2, 2, TimeUnit.SECONDS);
+
+      scheduler.schedule(new Runnable() {
+         @Override
+         public void run() {
+            beepHandler.cancel(true);'
+            scheduler.shutdown();            
+         }
+      }, 10, TimeUnit.SECONDS);
+   }  
+
+   static class BeepTask implements Runnable {
+      public void run() {
+         System.out.println("beep");      
+      }
+   }
+}
+</code></pre> 
+ <p>这将产生以下结果 - </p>   
+ <pre><code class="lang-java">beep
+beep
+beep
+beep
+beep
+</code></pre>
+ <br>      
+</div></body></html>

@@ -1,0 +1,117 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">JavaScript表单验证</h1><div style="width:100%;float:left;" class="article-content">   
+ <p> 表单验证用于发生在服务器，客户端已经输入所有必要的数据，然后按下提交按钮之后。如果一些已被输入的客户端的数据的已在错误形式或者被简单地丢失，则服务器将必须的所有数据发送回客户端，并请求的形式以正确的信息重新提交。这是一个漫长的过程，会增加服务器负担。</p> 
+ <p> JavaScript中，提供了一种方法将其发送到web服务器之前验证客户端的计算机上的形式的数据。表单验证通常执行两种方式。</p> 
+ <ul> 
+  <li> <p> <strong>基本验证</strong> - 首先，该表必须进行检查，以确保数据输入的需要将其每一个表单字段。这将通过表格的每个字段只需要循环，并检查数据。</p> </li> 
+  <li> <p> <strong>数据格式验证</strong> - 其次，该被输入的数据必须检查正确格式和值。这将需要放置更多的逻辑来测试数据的正确性。</p> </li> 
+ </ul> 
+ <p> 我们将举一个例子来了解验证的过程。下面是简单的形式进行：</p> 
+ <pre style="'Courier New', monospace; font-size: 12px; ">
+&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;Form Validation&lt;/title&gt;
+&lt;script type="text/javascript"&gt;
+&lt;!--
+// Form validation code will come here.
+//--&gt;
+&lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;
+ &lt;form action="/cgi-bin/test.cgi" name="myForm"  
+          onsubmit="return(validate());"&gt;
+ &lt;table cellspacing="2" cellpadding="2" border="1"&gt;
+ &lt;tr&gt;
+   &lt;td align="right"&gt;Name&lt;/td&gt;
+   &lt;td&gt;&lt;input type="text" name="Name" /&gt;&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+   &lt;td align="right"&gt;EMail&lt;/td&gt;
+   &lt;td&gt;&lt;input type="text" name="EMail" /&gt;&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+   &lt;td align="right"&gt;Zip Code&lt;/td&gt;
+   &lt;td&gt;&lt;input type="text" name="Zip" /&gt;&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td align="right"&gt;Country&lt;/td&gt;
+ &lt;td&gt;
+ &lt;select name="Country"&gt;
+   &lt;option value="-1" selected&gt;[choose yours]&lt;/option&gt;
+   &lt;option value="1"&gt;USA&lt;/option&gt;
+   &lt;option value="2"&gt;UK&lt;/option&gt;
+   &lt;option value="3"&gt;INDIA&lt;/option&gt;
+ &lt;/select&gt;
+ &lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+   &lt;td align="right"&gt;&lt;/td&gt;
+   &lt;td&gt;&lt;input type="submit" value="Submit" /&gt;&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;/table&gt;
+ &lt;/form&gt;
+ &lt;/body&gt;
+ &lt;/html&gt;</pre> 
+ <h1> 基本表单验证：</h1> 
+ <p> 首先，我们将展示如何做一个基本的表单验证。在上面的表格要求validate()函数来验证数据在onsubmit事件发生。以下是validate()函数的实现：</p> 
+ <pre style="'Courier New', monospace; font-size: 12px; ">
+&lt;script type="text/javascript"&gt;
+&lt;!--
+// Form validation code will come here.
+function validate()
+{
+ 
+   if( document.myForm.Name.value == "" )
+   {
+     alert( "Please provide your name!" );
+     document.myForm.Name.focus() ;
+     return false;
+   }
+   if( document.myForm.EMail.value == "" )
+   {
+     alert( "Please provide your Email!" );
+     document.myForm.EMail.focus() ;
+     return false;
+   }
+   if( document.myForm.Zip.value == "" ||
+           isNaN( document.myForm.Zip.value ) ||
+           document.myForm.Zip.value.length != 5 )
+   {
+     alert( "Please provide a zip in the format #####." );
+     document.myForm.Zip.focus() ;
+     return false;
+   }
+   if( document.myForm.Country.value == "-1" )
+   {
+     alert( "Please provide your country!" );
+     return false;
+   }
+   return( true );
+}
+//--&gt;
+&lt;/script&gt;</pre> 
+ <p style="text-align: justify; verdana, helvetica, arial,  color: rgb(0, 0, 0);"> &nbsp;</p> 
+ <h1> 数据格式验证：</h1> 
+ <p> 现在，我们将看到我们如何将其提交到Web服务器之前，验证我们输入的表单数据。</p> 
+ <p> 这个例子说明了如何验证输入的电子邮件地址，这意味着电子邮件地址必须至少包含一个@符号和一个点（.）。此外，@绝不能是电子邮件地址的第一个字符，最后点必须在@符号后面的一个字符：</p>   
+ <pre style="'Courier New', monospace; font-size: 12px; ">
+&lt;script type="text/javascript"&gt;
+&lt;!--
+function validateEmail()
+{
+ 
+   var emailID = document.myForm.EMail.value;
+   atpos = emailID.indexOf("@");
+   dotpos = emailID.lastIndexOf(".");
+   if (atpos &lt; 1 || ( dotpos - atpos &lt; 2 )) 
+   {
+       alert("Please enter correct email ID")
+       document.myForm.EMail.focus() ;
+       return false;
+   }
+   return( true );
+}
+//--&gt;
+&lt;/script&gt;</pre> 
+ <p style="text-align: justify; verdana, helvetica, arial,  color: rgb(0, 0, 0);"> &nbsp;</p> 
+ <br>      
+</div></body></html>

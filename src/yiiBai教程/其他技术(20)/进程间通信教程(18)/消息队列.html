@@ -1,0 +1,236 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">消息队列</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>为什么已经拥有了共享内存时需要消息队列呢？ 这将是多种原因，让我们将其分解为多个点来简化 -</p> 
+ <ul> 
+  <li>据了解，一旦消息被一个进程接收到，它将不再可用于任何其他进程。 而在共享内存中，数据可供多个进程访问。</li>
+  <li>如果想使用小信息格式进行通信。</li>
+  <li>当多个进程同时进行通信时，共享内存数据需要同步保护。</li>
+  <li>使用共享内存的写入和读取频率很高，那么实现功能将会非常复杂。 在这种情况下不值得使用。</li>
+  <li>如果所有的进程不需要访问共享内存，但是很少的进程只需要它，那么用消息队列实现会更好。</li>
+  <li>如果想要与不同的数据包进行通信，比如进程A正在发送消息类型1给进程B，消息类型10给进程C，消息类型20给进程D。在这种情况下，用消息队列实现是比较简单的。 为了将给定的消息类型简化为<code>1</code>,<code>10</code>,<code>20</code>，它可以是<code>0</code>或<code>+ve</code>或<code>-ve</code>，如下所述。</li>
+  <li>当然，消息队列的顺序是FIFO(先进先出)。 插入到队列中的第一条消息是第一条要检索的消息。</li>
+ </ul> 
+ <p>使用共享内存或消息队列取决于应用程序的需要以及如何有效地使用它。</p> 
+ <p>使用消息队列的通信可以通过以下方式进行 -</p> 
+ <ul> 
+  <li>通过一个进程写入共享内存，并由另一个进程读取共享内存。 正如我们所知道的，读取也可以用多个进程来完成。<br><img src="http://www.yiibai.com/uploads/images/201802/0802/765190249_83970.jpg" alt=""></li>
+  <li>通过一个进程用不同的数据包写入共享存储器，并通过多个进程，即按照消息类型读出。<br><img src="http://www.yiibai.com/uploads/images/201802/0802/317190250_92253.jpg" alt=""><br>看到消息队列中的某些信息后，现在是检查支持消息队列的系统调用(System V)的时候了。</li>
+ </ul> 
+ <p>要使用消息队列执行通信，请执行以下步骤 -</p> 
+ <p><strong>第1步</strong> - 创建一个消息队列或连接到一个已经存在的消息队列(<code>msgget()</code>)<br><strong>第2步</strong> - 写入消息队列(<code>msgsnd()</code>)<br><strong>第3步</strong> - 从消息队列中读取(<code>msgrcv()</code>)<br><strong>第4步</strong> - 对消息队列(<code>msgctl()</code>)执行控制操作</p> 
+ <p>现在，让我们看看上述调用的语法和某些信息。</p> 
+ <pre><code class="lang-cpp">#include &lt;sys/types.h&gt;
+#include &lt;sys/ipc.h&gt;
+#include &lt;sys/msg.h&gt;
+
+int msgget(key_t key, int msgflg)
+</code></pre> 
+ <p>这个系统调用创建或分配一个System V消息队列。需要传递以下参数 -</p> 
+ <ul> 
+  <li>第一个参数<code>key</code>用于识别消息队列。<code>key</code>可以是任意值，也可以是来自库函数<code>ftok()</code>的值。</li>
+  <li>第二个参数<code>shmflg</code>指定所需的消息队列标志，例如IPC_CREAT(如果不存在则创建消息队列)或IPC_EXCL(与IPC_CREAT一起用于创建消息队列，如果消息队列已经存在，则调用失败)。 还需要传递权限。</li>
+ </ul> 
+ <blockquote> 
+  <p>注 - 有关权限的详细信息，请参阅前面几节。</p> 
+ </blockquote> 
+ <p>这个调用会在成功时返回一个有效的消息队列标识符(用于进一步调用消息队列)，在失败的情况下返回<code>-1</code>。 要知道失败的原因，请检查<code>errno</code>变量或<code>perror()</code>函数。</p> 
+ <p>关于这个调用的各种错误是EACCESS(权限被拒绝)，EEXIST(队列已经存在不能创建)，ENOENT(队列不存在)，ENOMEM(没有足够的内存来创建队列)等</p> 
+ <pre><code class="lang-cpp">#include &lt;sys/types.h&gt;
+#include &lt;sys/ipc.h&gt;
+#include &lt;sys/msg.h&gt;
+
+int msgsnd(int msgid, const void *msgp, size_t msgsz, int msgflg)
+</code></pre> 
+ <p>此系统调用将消息发送/附加到消息队列(System V)中。 需要传递以下参数 -</p> 
+ <ul> 
+  <li>第一个参数<code>msgid</code>识别消息队列，即消息队列标识符。 <code>msgget()</code>成功时收到标识符的值</li>
+  <li><p>第二个参数<code>msgp</code>是发送给调用者的消息的指针，定义在以下形式的结构中 -</p> <pre><code class="lang-cpp">struct msgbuf {
+ long mtype;
+ char mtext[1];
+};
+</code></pre> <p>变量<code>mtype</code>用于与不同的消息类型进行通信，在<code>msgrcv()</code>调用中详细解释。 变量<code>mtext</code>是一个数组或其他大小由<code>msgsz</code>(正值)指定的结构。 如果没有提到<code>mtext</code>字段，则将其视为<code>0</code>大小消息，这是允许的。</p> </li>
+  <li><p>第三个参数<code>msgsz</code>是消息的大小(消息应该以空字符结尾)</p> </li>
+  <li>第四个参数<code>msgflg</code>表示某些标志，例如IPC_NOWAIT(当在队列中找不到消息时立即返回)或MSG_NOERROR(截断消息文本，如果超过msgsz字节)</li>
+ </ul> 
+ <p>这个调用在成功时将返回<code>0</code>，在失败的情况下为<code>-1</code>。 要知道失败的原因，请检查<code>errno</code>变量或<code>perror()</code>函数。</p> 
+ <pre><code class="lang-cpp">#include &lt;sys/types.h&gt;
+#include &lt;sys/ipc.h&gt;
+#include &lt;sys/msg.h&gt;
+
+int msgrcv(int msgid, const void *msgp, size_t msgsz, long msgtype, int msgflg)
+</code></pre> 
+ <p>该系统调用从消息队列(系统V)中检索消息。 需要传递以下参数 -</p> 
+ <ul> 
+  <li>第一个参数<code>msgid</code>识别消息队列，即消息队列标识符。 <code>msgget()</code>成功时收到标识符的值</li>
+  <li>第二个参数<code>msgp</code>是从调用者接收的消息的指针。 它在以下形式的结构中被定义 -<pre><code class="lang-cpp">struct msgbuf {
+ long mtype;
+ char mtext[1];
+};
+</code></pre> 变量<code>mtype</code>用于与不同的消息类型进行通信。 变量<code>mtext</code>是一个数组或其他大小由<code>msgsz</code>(正值)指定的结构。 如果没有提到<code>mtext</code>字段，则将其视为<code>0</code>大小消息，这是允许的。</li>
+  <li>第三个参数<code>msgsz</code>是收到的消息的大小(消息应该以空字符结尾)</li>
+  <li>第四个参数<code>msgtype</code>表示消息的类型 -
+   <ul> 
+    <li>如果<code>msgtype</code>是<code>0</code> - 读取队列中的第一个收到的消息。</li>
+    <li>如果<code>msgtype</code>是<code>+ve</code> - 读取类型为<code>msgtype</code>的队列中的第一条消息(如果<code>msgtype</code>为<code>10</code>，则只读取类型<code>10</code>的第一条消息，即使其他类型可能位于队列中的开头)</li>
+    <li>如果<code>msgtype</code>是<code>-ve</code> - 读取小于或等于消息类型的绝对值的最小类型的第一个消息(例如，如果<code>msgtype</code>是<code>-5</code>，则它读取类型小于<code>5</code>的第一个消息，即消息类型从<code>1</code>到<code>5</code>)</li>
+   </ul> </li>
+  <li>第五个参数<code>msgflg</code>表示某些标志，例如<code>IPC_NOWAIT</code>(当队列中没有消息时立即返回，或MSG_NOERROR(如果超过了msgsz字节则截断消息文本)</li>
+ </ul> 
+ <p>这个调用将返回成功时在<code>mtext</code>数组中实际接收的字节数，在失败的情况下返回<code>-1</code>。 要知道失败的原因，请检查<code>errno</code>变量或<code>perror()</code>函数。</p> 
+ <pre><code class="lang-cpp">#include &lt;sys/types.h&gt;
+#include &lt;sys/ipc.h&gt;
+#include &lt;sys/msg.h&gt;
+
+int msgctl(int msgid, int cmd, struct msqid_ds *buf)
+</code></pre> 
+ <p>这个系统调用执行消息队列(系统V)的控制操作。 需要传递以下参数 -</p> 
+ <ul> 
+  <li>第一个参数<code>msgid</code>识别消息队列，即消息队列标识符。 <code>msgget()</code>成功时收到标识符的值</li>
+  <li>第二个参数<code>cmd</code>是对消息队列执行所需控制操作的命令。 <code>cmd</code>的有效值是 -
+   <ul> 
+    <li><code>IPC_STAT</code> - 将<code>struct msqid_ds</code>的每个成员的当前值的信息复制到由<code>buf</code>指向的传递结构中。 该命令需要消息队列的读取权限。</li>
+    <li><code>IPC_SET</code> - 设置结构buf指向的用户ID，所有者的组ID，权限等。</li>
+    <li><code>IPC_RMID</code> - 立即删除消息队列。</li>
+    <li><code>IPC_INFO</code> - 返回有关<code>buf</code>指向的结构中的消息队列限制和参数的信息，该结构的类型为<code>struct msginfo</code></li>
+    <li><code>MSG_INFO</code> - 返回一个<code>msginfo</code>结构，其中包含有关消息队列消耗的系统资源的信息。</li>
+   </ul> </li>
+  <li>第三个参数<code>buf</code>是一个指向名为<code>struct msqid_ds</code>的消息队列结构的指针。 这个结构的值将被用于任一集或者按照<code>cmd</code>得到。</li>
+ </ul> 
+ <p>这个调用将根据传递的命令返回值。 IPC_INFO和MSG_INFO或MSG_STAT的成功返回消息队列的索引或标识符，其他操作返回<code>0</code>，失败时返回<code>-1</code>。 要知道失败的原因，请检查<code>errno</code>变量或<code>perror()</code>函数。</p> 
+ <p>上面已经看到有关消息队列的基本信息和系统调用，现在是时候来看看程序代码了。</p> 
+ <p>让我们看看这个程序实现的描述 -</p> 
+ <p><strong>第1步 </strong> - 创建两个进程，一个用于发送到消息队列(<em>msgq_send.c</em>)，另一个用于从消息队列(<em>msgq_recv.c</em>)<br><strong>第2步</strong> - 使用<code>ftok()</code>函数创建键(<code>Key</code>)。 为此，最初创建文件<code>msgq.txt</code>以获取唯一的键。<br><strong>第3步 </strong> - 发送过程执行以下操作。</p> 
+ <ul> 
+  <li>读取用户输入的字符串</li>
+  <li>删除新行，如果存在</li>
+  <li>发送到消息队列</li>
+  <li>重复这个过程直到输入结束(CTRL + D)</li>
+  <li>一旦收到输入结束，发送消息<code>“end”</code>来表示进程结束。</li>
+ </ul> 
+ <p><strong>第4步 </strong> - 在接收过程中，执行以下操作。</p> 
+ <ul> 
+  <li>从队列中读取消息</li>
+  <li>显示输出</li>
+  <li>如果收到的消息是<code>“end”</code>，则结束该过程并退出。</li>
+ </ul> 
+ <p>为了简化，我们没有使用这个示例的消息类型。 另外，一个进程正在写入队列，另一个进程正在从队列中读取。 这可以根据需要进行扩展，即理想情况下一个进程将写入队列中，多个进程从队列中读取。</p> 
+ <p>现在，让我们看看一下进程(消息发送到队列) - 文件:msgq_send.c</p>   
+ <pre><code class="lang-cpp">/* Filename: msgq_send.c */
+#include &lt;stdio.h&gt;
+#include &lt;string.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;errno.h&gt;
+#include &lt;string.h&gt;
+#include &lt;sys/types.h&gt;
+#include &lt;sys/ipc.h&gt;
+#include &lt;sys/msg.h&gt;
+
+#define PERMS 0644
+struct my_msgbuf {
+   long mtype;
+   char mtext[200];
+};
+
+int main(void) {
+   struct my_msgbuf buf;
+   int msqid;
+   int len;
+   key_t key;
+   system("touch msgq.txt");
+
+   if ((key = ftok("msgq.txt", 'B')) == -1) {
+      perror("ftok");
+      exit(1);
+   }
+
+   if ((msqid = msgget(key, PERMS | IPC_CREAT)) == -1) {
+      perror("msgget");
+      exit(1);
+   }
+   printf("message queue: ready to send messages.\n");
+   printf("Enter lines of text, ^D to quit:\n");
+   buf.mtype = 1; /* we don't really care in this case */
+
+   while(fgets(buf.mtext, sizeof buf.mtext, stdin) != NULL) {
+      len = strlen(buf.mtext);
+      /* remove newline at end, if it exists */
+      if (buf.mtext[len-1] == '\n') buf.mtext[len-1] = '\0';
+      if (msgsnd(msqid, &amp;buf, len+1, 0) == -1) /* +1 for '\0' */
+      perror("msgsnd");
+   }
+   strcpy(buf.mtext, "end");
+   len = strlen(buf.mtext);
+   if (msgsnd(msqid, &amp;buf, len+1, 0) == -1) /* +1 for '\0' */
+   perror("msgsnd");
+
+   if (msgctl(msqid, IPC_RMID, NULL) == -1) {
+      perror("msgctl");
+      exit(1);
+   }
+   printf("message queue: done sending messages.\n");
+   return 0;
+}
+</code></pre> 
+ <p>执行上面示例代码，得到以下输出结果 - </p> 
+ <pre><code class="lang-shell">message queue: ready to send messages.
+Enter lines of text, ^D to quit:
+this is line 1
+this is line 2
+message queue: done sending messages.
+</code></pre> 
+ <p>以下是来自消息接收过程的代码(从队列中检索消息) - 文件:<em>msgq_recv.c</em> - </p> 
+ <pre><code class="lang-cpp">/* Filename: msgq_recv.c */
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;errno.h&gt;
+#include &lt;sys/types.h&gt;
+#include &lt;sys/ipc.h&gt;
+#include &lt;sys/msg.h&gt;
+
+#define PERMS 0644
+struct my_msgbuf {
+   long mtype;
+   char mtext[200];
+};
+
+int main(void) {
+   struct my_msgbuf buf;
+   int msqid;
+   int toend;
+   key_t key;
+
+   if ((key = ftok("msgq.txt", 'B')) == -1) {
+      perror("ftok");
+      exit(1);
+   }
+
+   if ((msqid = msgget(key, PERMS)) == -1) { /* connect to the queue */
+      perror("msgget");
+      exit(1);
+   }
+   printf("message queue: ready to receive messages.\n");
+
+   for(;;) { /* normally receiving never ends but just to make conclusion 
+             /* this program ends wuth string of end */
+      if (msgrcv(msqid, &amp;buf, sizeof(buf.mtext), 0, 0) == -1) {
+         perror("msgrcv");
+         exit(1);
+      }
+      printf("recvd: \"%s\"\n", buf.mtext);
+      toend = strcmp(buf.mtext,"end");
+      if (toend == 0)
+      break;
+   }
+   printf("message queue: done receiving messages.\n");
+   system("rm msgq.txt");
+   return 0;
+}
+</code></pre> 
+ <p>执行上面示例代码，得到以下输出结果 - </p> 
+ <pre><code class="lang-shell">message queue: ready to receive messages.
+recvd: "this is line 1"
+recvd: "this is line 2"
+recvd: "end"
+message queue: done receiving messages.
+</code></pre>
+ <br>      
+</div></body></html>

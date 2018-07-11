@@ -1,0 +1,109 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">R语言平均值，中位数和众数</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>R中的统计分析通过使用许多内置函数来执行的。这些函数大部分是R基础包的一部分。这些函数将R向量与参数一起作为输入，并在执行计算后给出结果。</p> 
+ <p>我们在本章中讨论的是如何求平均值，中位数和众数。下面将分别一个个演示和讲解 - </p> 
+ <h2 id="h2-1-"><a name="1.平均值" class="reference-link"></a><span class="header-link octicon octicon-link"></span>1.平均值</h2>
+ <p>平均值是通过取数值的总和并除以数据序列中的值的数量来计算。函数<code>mean()</code>用于在R中计算平均值。</p> 
+ <p><strong>语法</strong></p> 
+ <p>R中计算平均值的基本语法是 -</p> 
+ <pre><code class="lang-r">mean(x, trim = 0, na.rm = FALSE, ...)
+</code></pre> 
+ <p>以下是使用的参数的描述 - </p> 
+ <ul> 
+  <li><em>x</em> - 是输入向量。</li>
+  <li><em>trim</em> - 用于从排序的向量的两端删除一些观测值。</li>
+  <li><em>na.rm</em> - 用于从输入向量中删除缺少的值。</li>
+ </ul> 
+ <p><strong>示例</strong></p> 
+ <pre><code class="lang-r"># Create a vector. 
+x &lt;- c(17,8,6,4.12,11,8,54,-11,18,-7)
+
+# Find Mean.
+result.mean &lt;- mean(x)
+print(result.mean)
+</code></pre> 
+ <p>当我们执行上述代码时，会产生以下结果 -</p> 
+ <pre><code class="lang-shell">[1] 10.812
+</code></pre> 
+ <h3 id="h3-1-1-"><a name="1.1.应用修剪选项" class="reference-link"></a><span class="header-link octicon octicon-link"></span>1.1.应用修剪选项</h3>
+ <p>当提供<code>trim</code>参数时，向量中的值进行排序，然后从计算平均值中删除所需数量的观察值。</p> 
+ <p>例如，当<code>trim = 0.3</code>时，每一端的<code>3</code>个值将从计算中删除以找到均值。</p> 
+ <p>在这种情况下，排序的向量为<code>(-21，-5,2,3,42,7,8,12,18,54)</code>，从用于计算平均值的向量中从左边删除：<code>(-21，-5,2)</code>和从右边删除：<code>(12,18,54)</code>这几个值。</p> 
+ <pre><code class="lang-r"># Create a vector.
+x &lt;- c(12,7,3,4.2,18,2,54,-21,8,-5)
+
+# Find Mean.
+result.mean &lt;-  mean(x,trim = 0.3)
+print(result.mean)
+</code></pre> 
+ <p>当我们执行上述代码时，会产生以下结果 -</p> 
+ <pre><code class="lang-shell">[1] 5.55
+</code></pre> 
+ <h3 id="h3-1-2-na-"><a name="1.2.应用NA选项" class="reference-link"></a><span class="header-link octicon octicon-link"></span>1.2.应用NA选项</h3>
+ <p>如果缺少值，则平均函数返回<code>NA</code>。要从计算中删除缺少的值，请使用<code>na.rm = TRUE</code>。 这意味着删除<code>NA</code>值。参考以下示例代码 - </p> 
+ <pre><code class="lang-r"># Create a vector. 
+x &lt;- c(12,7,3,4.2,18,2,54,-21,8,-5,NA)
+
+# Find mean.
+result.mean &lt;-  mean(x)
+print(result.mean)
+
+# Find mean dropping NA values.
+result.mean &lt;-  mean(x,na.rm = TRUE)
+print(result.mean)
+</code></pre> 
+ <p>当我们执行上述代码时，会产生以下结果 -</p> 
+ <pre><code class="lang-shell">[1] NA
+[1] 8.22
+</code></pre> 
+ <h2 id="h2-2-"><a name="2.中位数" class="reference-link"></a><span class="header-link octicon octicon-link"></span>2.中位数</h2>
+ <p>数据系列中的中间值被称为中位数。R中使用<code>median()</code>函数来计算中位数。</p> 
+ <p><strong>语法</strong></p> 
+ <p>R中计算位数的基本语法是 -</p>   
+ <pre><code class="lang-r">median(x, na.rm = FALSE)
+</code></pre> 
+ <p>以下是使用的参数的描述 - </p> 
+ <ul> 
+  <li><em>x</em> - 是输入向量。</li>
+  <li><em>na.rm</em> - 用于从输入向量中删除缺少的值。</li>
+ </ul> 
+ <p><strong>示例</strong></p> 
+ <pre><code class="lang-r"># Create the vector.
+x &lt;- c(12,7,3,4.2,18,2,54,-21,8,-5)
+
+# Find the median.
+median.result &lt;- median(x)
+print(median.result)
+</code></pre> 
+ <p>当我们执行上述代码时，会产生以下结果 -</p> 
+ <pre><code class="lang-shell">[1] 5.6
+</code></pre> 
+ <h2 id="h2-3-"><a name="3.众数" class="reference-link"></a><span class="header-link octicon octicon-link"></span>3.众数</h2>
+ <p>众数是指给定的一组数据集合中出现次数最多的值。不同于平均值和中位数，众数可以同时具有数字和字符数据。</p> 
+ <p>R没有标准的内置函数来计算众数。因此，我们将创建一个用户自定义函数来计算R中的数据集的众数。该函数将向量作为输入，并将众数值作为输出。</p> 
+ <p><strong>示例</strong></p> 
+ <pre><code class="lang-r"># Create the function.
+getmode &lt;- function(v) {
+   uniqv &lt;- unique(v)
+   uniqv[which.max(tabulate(match(v, uniqv)))]
+}
+
+# Create the vector with numbers.
+v &lt;- c(2,1,2,3,1,2,3,4,1,5,5,3,2,3)
+
+# Calculate the mode using the user function.
+result &lt;- getmode(v)
+print(result)
+
+# Create the vector with characters.
+charv &lt;- c("baidu.com","tmall.com","yiibai.com","qq.com","yiibai.com")
+
+# Calculate the mode using the user function.
+result &lt;- getmode(charv)
+print(result)
+</code></pre> 
+ <p>当我们执行上述代码时，会产生以下结果 -</p> 
+ <pre><code class="lang-shell">[1] 2
+[1] "yiibai.com"
+</code></pre>
+ <br>      
+</div></body></html>

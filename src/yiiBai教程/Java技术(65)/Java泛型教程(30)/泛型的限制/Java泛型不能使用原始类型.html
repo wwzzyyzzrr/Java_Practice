@@ -1,0 +1,44 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Java泛型不能使用原始类型</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>使用泛型，原始类型不能作为类型参数传递。在下面给出的例子中，如果将<code>int</code>原始类型传递给<code>Box</code>类，那么编译器会报错。为了避免这种情况，我们需要传递<code>Integer</code>对象(而不是int原始类型)。</p> 
+ <h2 id="h2-u793Au4F8B"><a name="示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例</h2>
+ <p>创建一个名称为：<em>NoPrimitiveTypes.java</em> 文件，并编写以下代码 - </p> 
+ <pre><code class="lang-java">package com.yiibai.dem4;
+
+public class NoPrimitiveTypes {
+
+    public static void main(String[] args) {
+
+        Box&lt;Integer&gt; integerBox = new Box&lt;Integer&gt;();
+
+        // compiler errror
+        // ReferenceType
+        // - Syntax error, insert "Dimensions" to complete
+        // ReferenceType
+        // Box&lt;int&gt; stringBox = new Box&lt;int&gt;();
+
+        integerBox.add(new Integer(1990));
+        printBox(integerBox);
+    }
+
+    private static void printBox(Box box) {
+        System.out.println("Value: " + box.get());
+    }
+}
+
+class Box&lt;T&gt; {
+    private T t;
+
+    public void add(T t) {
+        this.t = t;
+    }
+
+    public T get() {
+        return t;
+    }
+}
+</code></pre> 
+ <p>执行上面代码，得到输出结果如下 -</p>   
+ <pre><code class="lang-shell">Value: 1990
+</code></pre>
+ <br>      
+</div></body></html>

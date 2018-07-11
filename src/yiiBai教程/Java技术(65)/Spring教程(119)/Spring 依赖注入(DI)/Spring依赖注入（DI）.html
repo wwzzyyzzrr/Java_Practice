@@ -1,0 +1,115 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Spring依赖注入（DI）</h1><div style="width:100%;float:left;" class="article-content">   
+ <div> 
+  <div>
+    在Spring框架中，依赖注入(DI)的设计模式是用来定义对象彼此间的依赖。它主要有两种类型： 
+  </div> 
+ </div> 
+ <div> 
+  <ul> 
+   <li> Setter方法注入 </li> 
+   <li> 
+    <div>
+      构造器注入 
+    </div> </li> 
+  </ul> 
+  <h2> 1. Setter方法注入 </h2> 
+  <div>
+    这是最流行最简单的DI注入方法，通过设置方法注入依赖。 
+  </div> 
+  <h4> 示例 </h4> 
+  <div>
+    帮助器类和指定的setter方法 
+  </div> 
+  <pre>package com.yiibai.output;
+
+import com.yiibai.output.IOutputGenerator;
+
+public class OutputHelper
+{
+	IOutputGenerator outputGenerator;
+	
+	public void setOutputGenerator(IOutputGenerator outputGenerator){
+		this.outputGenerator = outputGenerator;
+	}
+	
+}</pre> 
+  <div>
+    一个 bean 配置文件用来声明bean&nbsp;和通过&nbsp;setter&nbsp;设置注入(property标签)的依赖。 
+  </div> 
+  <pre>&lt;beans xmlns="http://www.springframework.org/schema/beans"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans-2.5.xsd"&gt;
+
+	&lt;bean id="OutputHelper" class="com.yiibai.output.OutputHelper"&gt;
+		&lt;property name="outputGenerator"&gt;
+			&lt;ref bean="CsvOutputGenerator" /&gt;
+		&lt;/property&gt;
+	&lt;/bean&gt;
+	
+&lt;bean id="CsvOutputGenerator" class="com.yiibai.output.impl.CsvOutputGenerator" /&gt;
+&lt;bean id="JsonOutputGenerator" class="com.yiibai.output.impl.JsonOutputGenerator" /&gt;
+		
+&lt;/beans&gt;</pre> 
+  <div>
+    只需注入一个“CsvOutputGenerator”&nbsp;bean&nbsp;到&nbsp;“OutputHelper”对象，通过一个&nbsp;setter&nbsp;方法(setOutputGenerator)。 
+  </div> 
+  <h2> 
+   <div>
+     2.构造函数注入 
+   </div> </h2> 
+  <div>
+    此DI方法将通过构造函数注入依赖。 
+  </div> 
+  <h4> 示例 </h4> 
+  <div>
+    一个辅助类的构造函数。 
+  </div> 
+  <pre>package com.yiibai.output;
+
+import com.yiibai.output.IOutputGenerator;
+
+public class OutputHelper
+{
+	IOutputGenerator outputGenerator;
+	
+        OutputHelper(IOutputGenerator outputGenerator){
+		this.outputGenerator = outputGenerator;
+	}
+}</pre> 
+  <div>
+    bean&nbsp;配置文件来声明bean并通过构造函数(constructor-arg标签)设置注入依赖。 
+  </div>   
+  <pre>&lt;beans xmlns="http://www.springframework.org/schema/beans"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans-2.5.xsd"&gt;
+
+	&lt;bean id="OutputHelper" class="com.yiibai.output.OutputHelper"&gt;
+		&lt;constructor-arg&gt;
+			&lt;bean class="com.yiibai.output.impl.CsvOutputGenerator" /&gt;
+		&lt;/constructor-arg&gt;
+	&lt;/bean&gt;
+	
+&lt;bean id="CsvOutputGenerator" class="com.yiibai.output.impl.CsvOutputGenerator" /&gt;
+&lt;bean id="JsonOutputGenerator" class="com.yiibai.output.impl.JsonOutputGenerator" /&gt;
+		
+&lt;/beans&gt;</pre> 
+  <div>
+    只需通过一个构造函数注入一个&nbsp;“CsvOutputGenerator”&nbsp;Bean&nbsp;到&nbsp;“OutputHelper”&nbsp;对象。 
+  </div> 
+  <h2> 
+   <div>
+     setter方法还是构造函数注入？ 
+   </div> </h2> 
+  <div>
+    Spring框架的设置有没有硬性规定，只需要使用适合你的项目需要的类型注入。然而，由于setter方法注入简单，它总是大部分使用场景的选择。 
+  </div> 
+  <h2> 
+   <div>
+     参考 
+   </div> </h2> 
+  <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:16px;"> 1.&nbsp;<a target="_blank" href="http://en.wikipedia.org/wiki/Dependency_injection">http://en.wikipedia.org/wiki/Dependency_injection</a> </p> 
+ </div>
+ <br>      
+</div></body></html>

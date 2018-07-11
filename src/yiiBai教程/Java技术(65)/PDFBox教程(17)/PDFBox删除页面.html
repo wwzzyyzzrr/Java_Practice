@@ -1,0 +1,71 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">PDFBox删除页面</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>现在让我们学习如何从PDF文档中移除页面。</p> 
+ <h2 id="h2-u4ECEu73B0u6709u6587u6863u4E2Du5220u9664u9875u9762"><a name="从现有文档中删除页面" class="reference-link"></a><span class="header-link octicon octicon-link"></span>从现有文档中删除页面</h2>
+ <p>使用<code>PDDocument</code>类的<code>removePage()</code>方法从现有的PDF文档中移除页面。</p> 
+ <p><strong>第1步:加载现有的PDF文档</strong></p> 
+ <p>使用<code>PDDocument</code>类的静态方法<code>load()</code>加载现有的PDF文档。 此方法接受一个文件对象作为参数，因为这是一个静态方法，可以使用类名称调用它，如下所示。</p> 
+ <pre><code class="lang-java">File file = new File("path-of-the-document") 
+PDDocument.load(file);
+</code></pre> 
+ <p><strong>第2步:列出页数</strong></p> 
+ <p>使用<code>getNumberOfPages()</code>方法列出PDF文档中存在的页面数量，如下所示。</p> 
+ <pre><code class="lang-java">int noOfPages= document.getNumberOfPages();
+System.out.print(noOfPages);
+</code></pre> 
+ <p><strong>第3步:删除页面</strong></p> 
+ <p>使用<code>PDDocument</code>类的<code>removePage()</code>方法从PDF文档中移除页面。 对于此方法，需要传递要删除的页面的索引。</p> 
+ <p>在为PDF文档中的页面指定索引时，请记住，这些页面的索引从零开始，即如果要删除第<code>1</code>页，则索引值为<code>0</code>。</p> 
+ <pre><code class="lang-java">document.removePage(2); // 删除第三页
+</code></pre> 
+ <p><strong>第4步:保存文档</strong></p> 
+ <p>删除页面后，使用<code>PDDocument</code>类的<code>save()</code>方法保存PDF文档，如以下代码块中所示。</p> 
+ <pre><code class="lang-java">document.save("Path");
+</code></pre> 
+ <p><strong>第5步:关闭文档</strong></p> 
+ <p>最后，使用<code>PDDocument</code>类的<code>close()</code>方法关闭文档，如下所示。</p> 
+ <pre><code class="lang-java">document.close();
+</code></pre> 
+ <h2 id="h2-u793Au4F8B"><a name="示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例</h2>
+ <p>假设有一个名称为<code>sample.pdf</code>的PDF文档，它包含三个空页面，如下所示。<br><img src="http://www.yiibai.com/uploads/images/201803/1003/175100306_19802.png" alt=""></p> 
+ <p>这个例子演示了如何从现有的PDF文档中删除页面。 在这里，将加载上面名称为<code>sample.pdf</code>的PDF文档，从中删除一个页面，并将其保存在:<code>F:\worksp\pdfbox\sample-remove-pages.pdf</code>文件中。 将此代码保存在名称为<code>RemovingPages.java</code>的文件中。</p>   
+ <pre><code class="lang-java">package com.yiibai;
+
+import java.io.File;
+import java.io.IOException;
+
+import org.apache.pdfbox.pdmodel.PDDocument;
+
+public class RemovingPages {
+
+   public static void main(String args[]) throws IOException {
+
+      //Loading an existing document
+      File file = new File("F:/worksp/pdfbox/sample.pdf");
+      PDDocument document = PDDocument.load(file);
+
+      //Listing the number of existing pages
+      int noOfPages= document.getNumberOfPages();
+      System.out.println(noOfPages);
+
+      //Removing the pages
+      document.removePage(2);
+
+      System.out.println("page removed");
+
+      //Saving the document
+      document.save("F:/worksp/pdfbox/sample-remove-pages.pdf");
+
+      //Closing the document
+      document.close();
+
+   }
+}
+</code></pre> 
+ <p>执行上面示例代码后，将会创建一个PDF文档，其中包含显示以下消息的空白页面。</p> 
+ <pre><code class="lang-shell">3
+page removed
+</code></pre> 
+ <p>如果验证指定的路径，则可以发现所需页面已被删除，并且文档中只剩下两页，如下所示。</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201803/1003/923100309_32033.png" alt=""></p>
+ <br>      
+</div></body></html>

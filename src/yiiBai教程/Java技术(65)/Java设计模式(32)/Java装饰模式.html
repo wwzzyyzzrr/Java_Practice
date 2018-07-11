@@ -1,0 +1,105 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Java装饰模式</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>装饰器模式允许用户向现有对象添加新功能而不改变其结构。 这种类型的设计模式属于结构模式，因为此模式充当现有类的包装器。</p> 
+ <p>此模式创建一个装饰器类，它包装原始类并提供附加功能，保持类方法签名完整。</p> 
+ <p>我们通过以下示例展示装饰器模式的使用，其中我们将用一些颜色装饰形状而不改变形状类。</p> 
+ <h2 id="h2-u5B9Eu73B0u5B9Eu4F8B"><a name="实现实例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实现实例</h2>
+ <p>在这个实例中，将创建一个<code>Shape</code>接口和实现<code>Shape</code>接口的具体类。然后再创建一个抽象装饰器类-<code>ShapeDecorator</code>，实现<code>Shape</code>接口并使用<code>Shape</code>对象作为其实例变量。</p> 
+ <p>这里的<code>RedShapeDecorator</code>是实现<code>ShapeDecorator</code>的具体类。</p> 
+ <p><code>DecoratorPatternDemo</code>这是一个演示类，将使用<code>RedShapeDecorator</code>来装饰<code>Shape</code>对象。装饰模式示例的结构如下所示 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201612/08/758141222_60071.jpg" alt=""></p> 
+ <h3 id="h3--1-"><a name="第1步" class="reference-link"></a><span class="header-link octicon octicon-link"></span>第1步</h3>
+ <p>创建一个简单的接口。<br><em>Shape.java</em></p> 
+ <pre><code class="lang-java">public interface Shape {
+   void draw();
+}
+</code></pre> 
+ <h3 id="h3--2-"><a name="第2步" class="reference-link"></a><span class="header-link octicon octicon-link"></span>第2步</h3>
+ <p>创建两个实现相同接口的具体类。<br><em>Rectangle.java</em></p> 
+ <pre><code class="lang-java">public class Rectangle implements Shape {
+
+   @Override
+   public void draw() {
+      System.out.println("Shape: Rectangle");
+   }
+}
+</code></pre> 
+ <p><em>Circle.java</em></p> 
+ <pre><code class="lang-java">public class Circle implements Shape {
+
+   @Override
+   public void draw() {
+      System.out.println("Shape: Circle");
+   }
+}
+</code></pre> 
+ <h3 id="h3--3-"><a name="第3步" class="reference-link"></a><span class="header-link octicon octicon-link"></span>第3步</h3>
+ <p>创建实现<code>Shape</code>接口的抽象装饰器类。</p> 
+ <p><em>ShapeDecorator.java</em></p> 
+ <pre><code class="lang-java">public abstract class ShapeDecorator implements Shape {
+   protected Shape decoratedShape;
+
+   public ShapeDecorator(Shape decoratedShape){
+      this.decoratedShape = decoratedShape;
+   }
+
+   public void draw(){
+      decoratedShape.draw();
+   }
+}
+</code></pre> 
+ <h3 id="h3--4-"><a name="第4步" class="reference-link"></a><span class="header-link octicon octicon-link"></span>第4步</h3>
+ <p>创建扩展<code>ShapeDecorator</code>类的具体装饰器类。<br><em>RedShapeDecorator.java</em></p>   
+ <pre><code class="lang-java">public class RedShapeDecorator extends ShapeDecorator {
+
+   public RedShapeDecorator(Shape decoratedShape) {
+      super(decoratedShape);        
+   }
+
+   @Override
+   public void draw() {
+      decoratedShape.draw();           
+      setRedBorder(decoratedShape);
+   }
+
+   private void setRedBorder(Shape decoratedShape){
+      System.out.println("Border Color: Red");
+   }
+}
+</code></pre> 
+ <h3 id="h3--5-"><a name="第5步" class="reference-link"></a><span class="header-link octicon octicon-link"></span>第5步</h3>
+ <p>使用<code>RedShapeDecorator</code>装饰<code>Shape</code>对象。</p> 
+ <p><em>DecoratorPatternDemo.java</em></p> 
+ <pre><code class="lang-java">public class DecoratorPatternDemo {
+   public static void main(String[] args) {
+
+      Shape circle = new Circle();
+
+      Shape redCircle = new RedShapeDecorator(new Circle());
+
+      Shape redRectangle = new RedShapeDecorator(new Rectangle());
+      System.out.println("Circle with normal border");
+      circle.draw();
+
+      System.out.println("\nCircle of red border");
+      redCircle.draw();
+
+      System.out.println("\nRectangle of red border");
+      redRectangle.draw();
+   }
+}
+</code></pre> 
+ <h3 id="h3--6-"><a name="第6步" class="reference-link"></a><span class="header-link octicon octicon-link"></span>第6步</h3>
+ <p>验证输出，执行上面的代码得到以下结果 -</p> 
+ <pre><code class="lang-java">Circle with normal border
+Shape: Circle
+
+Circle of red border
+Shape: Circle
+Border Color: Red
+
+Rectangle of red border
+Shape: Rectangle
+Border Color: Red
+</code></pre>
+ <br>      
+</div></body></html>

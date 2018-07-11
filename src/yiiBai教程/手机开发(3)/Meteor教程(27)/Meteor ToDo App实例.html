@@ -1,0 +1,205 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Meteor ToDo App实例</h1><div style="width:100%;float:left;" class="article-content">   
+ <div> 
+  <div>
+    在本章中，我们将创建一个简单的待办事项应用程序。 
+  </div> 
+ </div> 
+ <div> 
+  <h2> 
+   <div>
+     第1步&nbsp;-&nbsp;创建应用程序 
+   </div> </h2> 
+  <div>
+    打开命令提示符，运行以下命令&nbsp;- 
+  </div> 
+  <pre>C:\Users\Administrator\Desktop&gt;meteor create todo-app&nbsp;</pre> 
+  <p style="text-align:justify;"> 创建成功后生成目录结构如下所示(看网络情况，可能需要好几分钟才能完成)：<br> <img src="/uploads/tutorial/20160427/1-16042FG03K04.png" alt=""> </p> 
+  <p style="text-align:justify;"> <img src="file://E:/data/youdao/qq24B39E2329F08D9F4C3146A571A415EF/154844849c594669b53e6a8b0fccb947/clipboard.png"> </p> 
+  <p style="text-align:justify;"> 要查看应用程序，需要运行的命令&nbsp;meteor&nbsp;应用程序，然后在浏览器中打开URL：http://localhost:3000 </p> 
+  <pre>C:\Users\Administrator\Desktop\todo-app&gt;meteor</pre> 
+  <h2> 
+   <div>
+     第2步&nbsp;-&nbsp;创建文件夹和文件 
+   </div> </h2> 
+  <p style="text-align:justify;"> 取而代之默认的文件结构，我们将重构它。让我们创建&nbsp;client&nbsp;文件夹，并创建&nbsp;todo-app.html,&nbsp;todo-app.css和todo-app.js。 </p> 
+  <p style="text-align:justify;"> 创建项目时程序自动创建了&nbsp;client 和 server 这两个目录，这里我们先要把 client 和 server 这两个目录中的文件内容清空，接着再创建以下所需的文件，执行如下命令： </p> 
+  <pre>C:\Users\Administrator\Desktop\todo-app\client&gt;touch todo-app.html</pre> 
+  <pre>C:\Users\Administrator\Desktop\todo-app\client&gt;touch todo-app.js</pre> 
+  <div>
+    我们还将在&nbsp;server&nbsp;文件夹里创建 server.js(原来有则无需再创建)。 
+  </div> 
+  <pre>C:\Users\Administrator\Desktop\todo-app\server&gt;touch server.js</pre> 
+  <div>
+    最后，让我们创建&nbsp;collections&nbsp;一个和一个&nbsp;task-collection.js&nbsp;文件夹里面。 
+  </div> 
+  <pre>C:\Users\Administrator\Desktop\todo-app&gt;mkdir server</pre> 
+  <pre>C:\Users\Administrator\Desktop\todo-app\collections&gt;touch task-collection.js</pre> 
+  <div>
+    可以看到下面的图片所显示的应用程序结构&nbsp;-
+   <br> 
+   <img src="/uploads/tutorial/20160427/1-16042FFTc06.png" alt="">
+   <br> 
+  </div> 
+  <img src="file://E:/data/youdao/qq24B39E2329F08D9F4C3146A571A415EF/dc2d2d7361a04e2c9b84b9c9afb84df9/o-structure.jpeg" alt="Meteor Todo App Structure"> 
+  <h2> 步骤 3 - client/todo-app.html </h2> 
+  <p style="text-align:justify;"> 我们开发的第一个开发步骤是为应用程序创建HTML。我们需要输入字段，来添加新的任务。任务将有删除和检查功能列表的形式。我们也将显示或隐藏已完成的任务的功能。 </p> 
+  <pre>&lt;head&gt;
+   &lt;title&gt;Todo App&lt;/title&gt;
+&lt;/head&gt;
+
+&lt;body&gt;
+   &lt;h1&gt;Todo List ({{incompleteCount}})&lt;/h1&gt;
+
+   &lt;label class = "hide-completed"&gt;
+      &lt;input type = "checkbox" checked = "{{hideCompleted}}" /&gt;
+      Hide Completed Tasks
+   &lt;/label&gt;
+
+   &lt;form class = "new-task"&gt;
+      &lt;input type = "text" name = "text" placeholder = "Add new tasks" /&gt;
+   &lt;/form&gt;
+
+   &lt;ul&gt;
+      {{#each tasks}}
+         {{&gt; task}}
+      {{/each}}
+   &lt;/ul&gt;
+	
+&lt;/body&gt;
+
+&lt;template name = "task"&gt;
+   &lt;li class = "{{#if checked}}checked{{/if}}"&gt;
+      &lt;button class = "delete"&gt;x&lt;/button&gt;
+      &lt;input type = "checkbox" checked = "{{checked}}" class = "toggle-checked" /&gt;
+      &lt;span&gt;{{username}} - {{text}}&lt;/span&gt;
+   &lt;/li&gt;
+&lt;/template&gt;</pre> 
+  <h2> 步骤4 - collections/task-collection.js </h2> 
+  <div>
+    在这里，我们只是创建新的 MongoDB 集合，所以我们可以在服务器和客户端使用它。 
+  </div> 
+  <pre>Tasks = new Mongo.Collection("tasks");</pre> 
+  <h2> 步骤5 - server/server.js </h2> 
+  <p style="text-align:justify;"> 我们将在服务器端定义应用程序的方法。这些方法将来自客户端的调用。在这个文件中，我们还将发布数据库查询功能。 </p> 
+  <pre>//Publishing tasks from the server...
+Meteor.publish("tasks", function () {
+   return Tasks.find({});
+});
+
+//Methods for handling MongoDb Tasks collection data...
+Meteor.methods({
+   addTask: function (text) {
+      Tasks.insert({
+         text: text,
+         createdAt: new Date(),
+      });
+   },
+	
+   deleteTask: function (taskId) {
+      var task = Tasks.findOne(taskId);
+      Tasks.remove(taskId);
+   },
+	
+   setChecked: function (taskId, setChecked) {
+      var task = Tasks.findOne(taskId);
+      Tasks.update(taskId, { $set: { checked: setChecked} });
+   }
+});</pre> 
+  <h2> 步骤 6 - client/todo-app.js </h2> 
+  <p style="text-align:justify;"> 这是主要的客户端JavaScript文件。该文件也可以被重构，但我们会在这里编写所有的客户端代码。首先，我们订阅在服务器上发布的任务集合。然后，我们在创建助手能够处理应用程序逻辑，最后我们定义调用来自服务器的方法事件。 </p>   
+  <pre>// Subscribing to the published tasks
+Meteor.subscribe("tasks");
+
+// Show/Hide functionality
+Template.body.helpers({
+   tasks: function () {
+      if (Session.get("hideCompleted")) {
+         // If hide completed is checked, filter tasks
+         return Tasks.find({checked: {$ne: true}}, {sort: {createdAt: -1}});
+      } else {
+         // Otherwise, return all of the tasks
+         return Tasks.find({}, {sort: {createdAt: -1}});
+      }
+   },
+	
+   hideCompleted: function () {
+      return Session.get("hideCompleted");
+   },
+	
+   incompleteCount: function () {
+      return Tasks.find({checked: {$ne: true}}).count();
+   }
+	
+});
+
+// Events for creating new tasks and Show/Hide functionality. Calling methods from the server
+
+Template.body.events({
+   "submit .new-task": function (event) {
+      event.preventDefault();
+      var text = event.target.text.value;
+		
+      Meteor.call("addTask", text);
+      event.target.text.value = "";
+   },
+	
+   "change .hide-completed input": function (event) {
+      Session.set("hideCompleted", event.target.checked);
+   }
+	
+});
+
+// Events for Deleting and Check/Uncheck functionality
+Template.task.events({
+   "click .toggle-checked": function () {
+      // Set the checked property to the opposite of its current value
+      Meteor.call("setChecked", this._id, ! this.checked);
+   },
+	
+   "click .delete": function () {
+      Meteor.call("deleteTask", this._id);
+   }
+	
+});</pre> 
+  <h2> 
+   <div>
+     第7步&nbsp;-&nbsp;部署 
+   </div> </h2> 
+  <p style="text-align:justify;"> 我们正在开发完成后，我们可以在命令提示符窗口中部署应用程序。应用程序的部署名称是&nbsp;my-first-todo-app。 </p> 
+  <pre>C:\Users\Administrator\Desktop\todo-app&gt;meteor deploy my-first-todo-app</pre> 
+  <div>
+    我们可以打开&nbsp;
+   <a target="_blank" href="http://my-first-todo-app.meteor.com/">http://my-first-todo-app.meteor.com/</a>&nbsp;开始使用我们的应用程序(可能需要使用到 Meteor 开发者帐号)。 
+  </div> 
+  <div>
+    或直接打&nbsp;
+   <a target="_blank" href="http://localhost:3000/">http://localhost:3000/</a>&nbsp;访问，如下结果： 
+  </div> 
+  <img src="file://E:/data/youdao/qq24B39E2329F08D9F4C3146A571A415EF/3d224be99a5f49559e3e3299c5e378d9/clipboard.png"> 
+ </div> 
+ <div> 
+  <img src="/uploads/tutorial/20160427/1-16042FF92H40.png" alt="">
+  <br> 
+ </div> 
+ <div>
+   出错： 
+ </div> 
+ <div>
+   1、Exception&nbsp;in&nbsp;template&nbsp;helper:&nbsp;ReferenceError:&nbsp;Session&nbsp;is&nbsp;not&nbsp;defined ...
+  <img src="/uploads/tutorial/20160427/1-16042FF950a5.png" alt=""> 
+ </div> 
+ <div style="font-family:微软雅黑;font-size:14px;background-color:#FFFFFF;"> 
+  <br> 解决方法 - 执行以下命令添加插件： 
+ </div> 
+ <div style="font-family:微软雅黑;font-size:14px;background-color:#FFFFFF;"> 
+  <pre>C:\Users\Administrator\Desktop\todo-app&gt;meteor add session</pre> 
+  <div style="background-color:inherit;"> 
+   <br> 
+  </div> 
+  <div style="background-color:inherit;"> 
+   <br> 
+  </div> 
+  <br> 
+ </div>
+ <br>      
+</div></body></html>

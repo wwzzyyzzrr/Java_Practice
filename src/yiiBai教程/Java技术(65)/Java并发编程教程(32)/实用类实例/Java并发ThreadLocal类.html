@@ -1,0 +1,93 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Java并发ThreadLocal类</h1><div style="width:100%;float:left;" class="article-content">   
+ <p><code>ThreadLocal</code>类用于创建只能由同一个线程读取和写入的线程局部变量。 例如，如果两个线程正在访问引用相同<code>threadLocal</code>变量的代码，那么每个线程都不会看到任何其他线程操作完成的线程变量。</p> 
+ <h2 id="h2-u7EBFu7A0Bu65B9u6CD5"><a name="线程方法" class="reference-link"></a><span class="header-link octicon octicon-link"></span>线程方法</h2>
+ <p>以下是<code>ThreadLocal</code>类中可用的重要方法的列表。</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>编号</th> 
+    <th>方法</th> 
+    <th>描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>1</td> 
+    <td><code>public T get()</code></td> 
+    <td>返回当前线程的线程局部变量的副本中的值。</td> 
+   </tr> 
+   <tr> 
+    <td>2</td> 
+    <td><code>protected T initialValue()</code></td> 
+    <td>返回此线程局部变量的当前线程的“初始值”。</td> 
+   </tr> 
+   <tr> 
+    <td>3</td> 
+    <td><code>public void remove()</code></td> 
+    <td>删除此线程局部变量的当前线程的值。</td> 
+   </tr> 
+   <tr> 
+    <td>4</td> 
+    <td><code>public void set(T value)</code></td> 
+    <td>将当前线程的线程局部变量的副本设置为指定的值。</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h2 id="h2-u5B9Eu4F8B"><a name="实例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实例</h2>
+ <p>以下<code>TestThread</code>程序演示了<code>ThreadLocal</code>类的上面一些方法。 这里我们使用了两个计数器(<code>counter</code>)变量，一个是常量变量，另一个是<code>ThreadLocal</code>变量。</p> 
+ <pre><code class="lang-java">class RunnableDemo implements Runnable {
+   int counter;
+   ThreadLocal&lt;Integer&gt; threadLocalCounter = new ThreadLocal&lt;Integer&gt;();
+
+   public void run() {     
+      counter++;
+      if(threadLocalCounter.get() != null){
+         threadLocalCounter.set(threadLocalCounter.get().intValue() + 1);
+      }else{
+         threadLocalCounter.set(0);
+      }
+      System.out.println("Counter: " + counter);
+      System.out.println("threadLocalCounter: " + threadLocalCounter.get());
+   }
+}
+
+public class TestThread {
+
+   public static void main(String args[]) {
+      RunnableDemo commonInstance = new RunnableDemo();
+
+      Thread t1 = new Thread( commonInstance);
+      Thread t2 = new Thread( commonInstance);
+      Thread t3 = new Thread( commonInstance);
+      Thread t4 = new Thread( commonInstance);
+
+      t1.start();
+      t2.start();
+      t3.start();
+      t4.start();
+
+      // wait for threads to end
+      try {
+         t1.join();
+         t2.join();
+         t3.join();
+         t4.join();
+      }catch( Exception e) {
+         System.out.println("Interrupted");
+      }
+   }
+}
+</code></pre> 
+ <p>这将产生以下结果 - </p>   
+ <pre><code>Counter: 1
+threadLocalCounter: 0
+Counter: 2
+threadLocalCounter: 0
+Counter: 4
+Counter: 3
+threadLocalCounter: 0
+threadLocalCounter: 0
+</code></pre>
+ <p>您可以看到变量(<code>counter</code>)的值由每个线程增加，但是<code>ThreadLocalCounter</code>对于每个线程都保持为<code>0</code>。</p>
+ <br>      
+</div></body></html>

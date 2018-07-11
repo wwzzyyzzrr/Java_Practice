@@ -1,0 +1,230 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">VueJS实例</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>在使用VueJS之前，需要创建一个叫做根<code>Vue</code>实例的Vue实例(可以简单的理解为：创建一个Vue对象的实例)。</p> 
+ <p>语法如下 - </p> 
+ <pre><code class="lang-js">var app = new Vue({
+   // options
+})
+</code></pre> 
+ <p>下面来看看一个例子，以理解Vue构造函数需要哪些东西。</p> 
+ <p>文件：<em>instances.html</em> - </p> 
+ <pre><code class="lang-html">&lt;html&gt;
+   &lt;head&gt;
+      &lt;meta charset="utf-8" /&gt;
+      &lt;title&gt;VueJs实例&lt;/title&gt;
+      &lt;script type = "text/javascript" src = "js/vue.js"&gt;&lt;/script&gt;
+   &lt;/head&gt;
+   &lt;body&gt;
+      &lt;div id = "vue_det"&gt;
+         &lt;p&gt;姓名 : {{name}}&lt;/p&gt;
+         &lt;p&gt;城市 : {{city}}&lt;/p&gt;
+         &lt;p&gt;{{mydetails()}}&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;script type = "text/javascript" src = "js/vue_instance.js"&gt;&lt;/script&gt;
+   &lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>文件：<em>vue_instance.js</em> - </p> 
+ <pre><code class="lang-js">var  vm = new Vue({
+   el: '#vue_det',
+   data: {
+      name : "Maxsu",
+      city  : "海口",
+      address    : "海口市美兰区人民大道58号"
+   },
+   methods: {
+      mydetails : function() {
+         return "我叫 "+this.name +" ，所在城市： "+ this.city;
+      }
+   }
+})
+</code></pre> 
+ <p>对于Vue，有一个叫做<code>e1</code>的参数。它采用DOM元素的<code>id</code>。在上面的例子的<em>instances.html</em>文件中，有一个<code>div</code>标签，它的<code>id</code>是<code>vue_det</code>。 </p> 
+ <pre><code class="lang-html">&lt;div id = "vue_det"&gt;&lt;/div&gt;
+</code></pre> 
+ <p>现在，无论要做什么来影响这个<code>div</code>元素，但是不会影响它。<br>接下来，我们定义了数据对象。它是一个有值的名字，城市和地址。<br><code>div</code>内部分配的是相同的。 例如，</p> 
+ <pre><code class="lang-html">&lt;div id = "vue_det"&gt;
+    &lt;p&gt;名字 : {{name}}&lt;/p&gt;
+    &lt;p&gt;城市 : {{city}}&lt;/p&gt;
+    &lt;p&gt;{{mydetails()}}&lt;/p&gt;
+&lt;/div&gt;
+</code></pre> 
+ <p>名字：<code>{{name}}</code>值将在插值内被替换，即<code>{{}}</code>与在数据对象中分配的值，即：<code>Maxsu</code>。 城市也是如此。<br>接下来，有一个方法定义了一个函数：<code>mydetails</code>和一个返回值。它被分配在<code>div</code>内。</p> 
+ <pre><code class="lang-html">&lt;p&gt;{{mydetails()}}&lt;/p&gt;
+</code></pre> 
+ <p>因此，在<code>{{}}</code>中的<code>mydetails</code>函数被调用。 Vue实例将函数返回的值打印在<code>{{}}</code>中。 下面在浏览器中打开上面创建的文件：<em>instances.html</em> ，查看效果如下 -<br><img src="http://www.yiibai.com/uploads/images/201712/2012/513151252_70698.png" alt=""></p> 
+ <p>现在，我们需要将选项传递给Vue构造函数，主要是数据，模板，要挂载的元素，方法，回调函数等。</p> 
+ <p>让我们来看看传递给Vue的选项。</p> 
+ <p><em>#data</em> - 这种类型的数据可以是对象或函数。Vue将其属性转换为：<code>getter/setter</code>以使其反应。</p> 
+ <h2 id="h2-u793Au4F8Bu4E00"><a name="示例一" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例一</h2>
+ <p>下面来看看如何在选项中传递数据。</p> 
+ <p>创建一个文件：<em>instances-obj.html</em> - </p> 
+ <pre><code class="lang-html">&lt;html&gt;
+   &lt;head&gt;
+      &lt;meta charset="utf-8" /&gt;
+      &lt;title&gt;VueJs实例-示例二&lt;/title&gt;
+      &lt;script type = "text/javascript" src = "js/vue.js"&gt;&lt;/script&gt;
+   &lt;/head&gt;
+   &lt;body&gt;
+      &lt;script type = "text/javascript"&gt;
+         var _obj = { name: "Maxsu", city: "海口"}
+
+         // direct instance creation
+         var vm = new Vue({
+            data: _obj
+         });
+         console.log(vm.name);         
+         console.log(vm.$data.city);
+         console.log(vm.$data);
+      &lt;/script&gt;
+   &lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>打开浏览器，浏览上面文件，在终端下应该会看到以下效果 -<br><img src="http://www.yiibai.com/uploads/images/201712/2012/969161204_65773.png" alt=""></p> 
+ <p><code>console.log(vm.name);</code> - //打印Raj<br><code>console.log(vm.$data.city);</code> - 如上所示打印城市<br><code>console.log(vm.$data);</code> - 如上所示打印完整的对象</p> 
+ <p>如果有一个组件，数据对象必须从一个函数中引用，如下面的代码所示(<em>instances-component.html</em>) -</p> 
+ <pre><code class="lang-html">&lt;html&gt;
+   &lt;head&gt;
+      &lt;meta charset="utf-8" /&gt;
+      &lt;title&gt;VueJs实例-示例二&lt;/title&gt;
+      &lt;script type = "text/javascript" src = "js/vue.js"&gt;&lt;/script&gt;
+   &lt;/head&gt;
+   &lt;body&gt;
+      &lt;script type = "text/javascript"&gt;
+         var _obj = { name: "Maxsu", city: "海口"};
+
+         // direct instance creation
+         var vm = new Vue({
+            data: _obj
+         });
+         console.log(vm.name);
+         console.log(vm.$data);
+         console.log(vm.$data.city);
+
+         // must use function when in Vue.extend()
+         var Component = Vue.extend({
+            data: function () {
+               return _obj
+            }
+         });
+         var myComponentInstance = new Component();
+         console.log(myComponentInstance.name);
+         console.log(myComponentInstance.$data);
+      &lt;/script&gt;
+   &lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>在一个组件的情况下，数据是一个函数，与<code>Vue.extend</code>一起使用，如上所示。<code>data</code>是一个函数。 例如，</p> 
+ <pre><code class="lang-js">data: function () {
+   return _obj
+}
+</code></pre> 
+ <p>要引用组件中的<code>data</code>数据，需要创建它的一个实例。 例如，</p> 
+ <pre><code class="lang-js">var myComponentInstance = new Component();
+</code></pre> 
+ <p>为了从<code>data</code>中获取细节，需要像上面的父组件那样做。 例如 - </p> 
+ <pre><code class="lang-js">console.log(myComponentInstance.name);
+console.log(myComponentInstance.$data);
+</code></pre> 
+ <p>以下是浏览器中显示的详细信息 -<br><img src="http://www.yiibai.com/uploads/images/201712/2012/920161224_16660.png" alt=""></p> 
+ <p>类型的 <em>props</em> 是一个字符串或对象的数组。 它采用基于数组或基于对象的语法。它们被认为是用来接受父组件数据的属性。</p> 
+ <p><strong>示例-1</strong></p>   
+ <pre><code class="lang-js">Vue.component('props-demo-simple', {
+   props: ['size', 'myMessage']
+})
+</code></pre> 
+ <p><strong>示例-2</strong></p> 
+ <pre><code class="lang-js">Vue.component('props-demo-advanced', {
+   props: {
+      // just type check
+      height: Number,
+
+      // type check plus other validations
+      age: {
+         type: Number,
+         default: 0,
+         required: true,
+         validator: function (value) {
+            return value &gt;= 0
+         }
+      }
+   }
+})
+</code></pre> 
+ <p><code>propsData</code> - 用于单元测试。<br><code>Type</code> - 字符串数组。例如，<code>{[key:string]:any}</code>。它需要在创建Vue实例的时候传递。</p> 
+ <p><strong>示例</strong></p> 
+ <pre><code class="lang-js">var Comp = Vue.extend({
+   props: ['msg'],
+   template: '&lt;div&gt;{{ msg }}&lt;/div&gt;'
+})
+var vm = new Comp({
+   propsData: {
+      msg: 'hello'
+   }
+})
+</code></pre> 
+ <p><em>Computed</em> − 输入: <code>{ [key: string]: Function | { get: Function, set: Function } }</code></p> 
+ <h2 id="h2-u793Au4F8Bu4E09"><a name="示例三" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例三</h2>
+ <p>创建一个文件：<em>instances-computed.html</em> - </p> 
+ <pre><code class="lang-html">&lt;html&gt;
+   &lt;head&gt;
+      &lt;meta charset="utf-8" /&gt;
+      &lt;title&gt;VueJs实例- 示例三&lt;/title&gt;
+      &lt;script type = "text/javascript" src = "js/vue.js"&gt;&lt;/script&gt;
+   &lt;/head&gt;
+   &lt;body&gt;
+      &lt;script type = "text/javascript"&gt;
+         var vm = new Vue({
+            data: { a: 2 },
+            computed: {
+
+               // get only, just need a function
+               aSum: function () {
+                  return this.a + 2;
+               },
+
+               // both get and set
+               aSquare: {
+                  get: function () {
+                     return this.a*this.a;
+                  },
+                  set: function (v) {
+                     this.a = v*2;
+                  }
+               }
+            }
+         })
+         console.log(vm.aSquare);  // -&gt; 4
+         vm.aSquare = 3;
+         console.log(vm.a);       // -&gt; 6
+         console.log(vm.aSum); // -&gt; 8
+      &lt;/script&gt;
+   &lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>计算有两个函数：<code>aSum</code>和<code>aSquare</code>。<br>函数<code>aSum</code>只是返回<code>this.a + 2</code>。函数<code>aSquare</code>再次调用两个函数：<code>get</code>和<code>set</code>。</p> 
+ <p>变量<code>vm</code>是Vue的一个实例，它调用<code>aSquare</code>和<code>aSum</code>函数。 另外<code>vm.aSquare = 3</code>从<code>aSquare</code>函数调用<code>set</code>函数，<code>vm.aSquare</code>调用<code>get</code>函数。可以查看浏览器中的输出，如下图所示。<br><img src="http://www.yiibai.com/uploads/images/201712/2012/311161237_90323.png" alt=""></p> 
+ <p><strong>方法</strong> - <code>methods</code>将包含在Vue实例中，如以下代码所示。可以使用Vue对象来访问函数。</p> 
+ <pre><code class="lang-html">&lt;html&gt;
+   &lt;head&gt;
+      &lt;title&gt;VueJs Introduction&lt;/title&gt;
+      &lt;script type = "text/javascript" src = "js/vue.js"&gt;&lt;/script&gt;
+   &lt;/head&gt;
+   &lt;body&gt;
+      &lt;script type = "text/javascript"&gt;
+         var vm = new Vue({
+            data: { a: 5 },
+            methods: {
+               asquare: function () {
+                  this.a *= this.a;
+               }
+            }
+         })
+         vm.asquare();
+         console.log(vm.a); // 25
+      &lt;/script&gt;
+   &lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p><code>methods</code>是Vue构造函数的一部分。使用Vue对象<code>vm.asquare()</code>调用方法，在<code>asquare</code>函数中更新属性<code>a</code>的值。 <code>a</code>的值从<code>1</code>更改为<code>25</code>。</p>
+ <br>      
+</div></body></html>

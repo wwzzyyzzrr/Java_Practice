@@ -1,0 +1,284 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">JSF转换日期时间</h1><div style="width:100%;float:left;" class="article-content">   
+ <p><code>&lt;f:convertDateTime&gt;</code>标签用于将用户输入转换为指定的日期。 您可以通过将组件标签内的<code>convertDateTime</code>标签嵌套来将组件的数据转换为<code>java.util.Date</code>。 <code>convertDateTime</code>标签有几个属性，可以指定数据的格式和类型。</p> 
+ <h2 id="h2-u6807u7B7Eu5C5Eu6027"><a name="标签属性" class="reference-link"></a><span class="header-link octicon octicon-link"></span>标签属性</h2>
+ <table> 
+  <thead> 
+   <tr> 
+    <th>属性</th> 
+    <th>类型</th> 
+    <th>描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>binding</td> 
+    <td>DateTimeConverter</td> 
+    <td>它用于将转换器绑定到受委托Bean属性。</td> 
+   </tr> 
+   <tr> 
+    <td>dateStyle</td> 
+    <td>String</td> 
+    <td>它用于定义由<code>java.text.DateFormat</code>指定的日期或日期字符串的日期部分的格式。 只适用于<code>type</code>是<code>date</code>或<code>both</code>，如果<code>pattern</code>未定义。 有效值：<code>default</code>，<code>short</code>，<code>medium</code>，<code>long</code>和<code>full</code>。 如果没有指定值，则使用默认值。</td> 
+   </tr> 
+   <tr> 
+    <td>for</td> 
+    <td>String</td> 
+    <td>它用于引用该标签嵌套在其中的复合组件内的一个对象。</td> 
+   </tr> 
+   <tr> 
+    <td>locale</td> 
+    <td>String 或 Locale</td> 
+    <td>它是一个区域设置的实例，它在格式化或解析期间使用了日期和时间的预定义样式。 如果未指定，将使用<code>FacesContext.getLocale</code>返回的区域设置。</td> 
+   </tr> 
+   <tr> 
+    <td>pattern</td> 
+    <td>String</td> 
+    <td>它用于自定义格式化模式，用于确定如何格式化和解析日期/时间字符串。 如果指定了此属性，则将忽略<code>dateStyle</code>，<code>timeStyle</code>和<code>type</code>属性。</td> 
+   </tr> 
+   <tr> 
+    <td>timeStyle</td> 
+    <td>String</td> 
+    <td>它用于定义由<code>java.text.DateFormat</code>指定的时间或日期字符串的时间部分的格式。 仅当类型为时间和模式未定义时才应用。有效值：<code>default</code>，<code>short</code>，<code>medium</code>，<code>long</code>和<code>full</code>。 如果没有指定值，则使用默认值。</td> 
+   </tr> 
+   <tr> 
+    <td>timeStyle</td> 
+    <td>String</td> 
+    <td>它用于定义由<code>java.text.DateFormat</code>指定的时间或日期字符串的时间部分的格式。 仅当类型为时间和模式未定义时才应用。有效值：<code>default</code>，<code>short</code>，<code>medium</code>，<code>long</code>和<code>full</code>。如果没有指定值，则使用默认值。</td> 
+   </tr> 
+   <tr> 
+    <td>timeZone</td> 
+    <td>String 或 TimeZone</td> 
+    <td>它用于解释日期字符串中任何时间信息的时区。</td> 
+   </tr> 
+   <tr> 
+    <td>type</td> 
+    <td>String</td> 
+    <td>它用于指定字符串值是否包含日期，时间或两者。有效值是日期，时间或两者。 如果未指定值，则使用日期。</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h2 id="h2-jsf-code-lt-f-convertdatetime-gt-code-"><a name="JSF <code><f:convertDateTime></code>实例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>JSF <code>&lt;f:convertDateTime&gt;</code>实例</h2>
+ <p>打开<strong>NetBeans IDE</strong>创建一个Web工程：<strong>convertDateTime</strong>，其目录结构如下所示 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201704/2504/657090415_51540.png" alt=""></p> 
+ <p>创建以下文件代码，文件：<em>index.xhtml</em> 的代码内容如下所示 -</p> 
+ <pre><code class="lang-html">&lt;?xml version='1.0' encoding='UTF-8' ?&gt;
+&lt;!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"&gt;
+&lt;html xmlns="http://www.w3.org/1999/xhtml"   
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:c="http://java.sun.com/jsp/jstl/core"&gt;
+    &lt;h:head&gt;
+        &lt;title&gt;Facelet Title&lt;/title&gt;
+    &lt;/h:head&gt;
+    &lt;h:body&gt;
+        &lt;h:form&gt;  
+            &lt;h:outputLabel for="username"&gt;User Name&lt;/h:outputLabel&gt;  
+            &lt;h:inputText id="user-id" value="#{user.name}"/&gt;&lt;br/&gt;  
+            &lt;h:outputLabel for="age"&gt;Date of Birth&lt;/h:outputLabel&gt;  
+            &lt;h:inputText id="dob-id" value="#{user.dob}" converterMessage="Please provide date of birth in yyyy-mm-dd format"&gt;  
+                &lt;f:convertDateTime pattern="yyyy-mm-dd" /&gt;  
+            &lt;/h:inputText&gt;&lt;br/&gt;  
+            &lt;h:commandButton action="result.xhtml" value="Submit"/&gt;  
+        &lt;/h:form&gt;   
+    &lt;/h:body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>文件：<em>result.xhtml</em> 的代码内容如下所示 -</p> 
+ <pre><code class="lang-html">&lt;?xml version='1.0' encoding='UTF-8' ?&gt;
+&lt;!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"&gt;
+&lt;html xmlns="http://www.w3.org/1999/xhtml"   
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:c="http://java.sun.com/jsp/jstl/core"&gt;
+    &lt;h:head&gt;
+        &lt;title&gt;Facelet Title&lt;/title&gt;
+    &lt;/h:head&gt;
+    &lt;h:body&gt;  
+        &lt;h1&gt; Hello,   
+            &lt;h:outputText value="#{user.name}"/&gt;  
+        &lt;/h1&gt;  
+        &lt;h:outputLabel&gt;Your date of birth is: &lt;/h:outputLabel&gt;  
+        &lt;h:outputText value="#{user.dob}"&gt;  
+            &lt;f:convertDateTime pattern="yyyy-mm-dd"/&gt;  
+        &lt;/h:outputText&gt;  
+    &lt;/h:body&gt;  
+&lt;/html&gt;
+</code></pre> 
+ <p>文件：<em>User.java</em> 的代码内容如下所示 -</p> 
+ <pre><code class="lang-java">/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package com.yiibai;
+
+/**
+ *
+ * @author Administrator
+ */
+import java.util.Date;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.RequestScoped;
+
+@ManagedBean
+@RequestScoped
+public class User {
+
+    String name;
+    Date dob;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Date getDob() {
+        return dob;
+    }
+
+    public void setDob(Date dob) {
+        this.dob = dob;
+    }
+}
+</code></pre> 
+ <p>右键运行工程：<strong>convertDateTime</strong>，如果没有任何错误，打开浏览器访问：</p> 
+ <pre><code>http://localhost:8084/convertDateTime/
+</code></pre>
+ <p>应该会看到以下结果 -<br><img src="http://www.yiibai.com/uploads/images/201704/2504/633090414_97987.png" alt=""></p> 
+ <p>简单写入一些信息，然后提交 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201704/2504/498090414_88594.png" alt=""></p> 
+ <h2 id="h2-jsf-code-lt-f-convertdatetime-gt-code-2"><a name="JSF <code><f:convertDateTime></code>实例2" class="reference-link"></a><span class="header-link octicon octicon-link"></span>JSF <code>&lt;f:convertDateTime&gt;</code>实例2</h2>
+ <p>打开<strong>NetBeans IDE</strong>创建一个Web工程：<strong>convertDateTime2</strong>，其目录结构如下所示 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201704/2504/852090420_28106.png" alt=""></p> 
+ <p>创建以下文件代码，文件：<em>index.xhtml</em> 的代码内容如下所示 -</p> 
+ <pre><code class="lang-html">&lt;?xml version='1.0' encoding='UTF-8' ?&gt;
+&lt;!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"&gt;
+&lt;html xmlns="http://www.w3.org/1999/xhtml"   
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:c="http://java.sun.com/jsp/jstl/core"&gt;
+    &lt;h:head&gt;
+        &lt;title&gt;Facelet Title&lt;/title&gt;
+    &lt;/h:head&gt;
+    &lt;h:body&gt;
+        &lt;h:form&gt;  
+            &lt;h:outputLabel for="username"&gt;User Name&lt;/h:outputLabel&gt;  
+            &lt;h:inputText id="user-id" value="#{user.name}"/&gt;&lt;br/&gt;  
+            &lt;h:outputLabel for="age"&gt;Date of Birth&lt;/h:outputLabel&gt;  
+            &lt;h:inputText id="dob-id" value="#{user.dob}"&gt;  
+                &lt;f:convertDateTime pattern="yyyy-mm-dd"/&gt;  
+            &lt;/h:inputText&gt;  
+            &lt;br/&gt;  
+            &lt;h:commandButton action="result.xhtml" value="Submit"/&gt;  
+        &lt;/h:form&gt;     
+    &lt;/h:body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>文件：<em>result.xhtml</em> 的代码内容如下所示 -</p>   
+ <pre><code class="lang-html">&lt;?xml version='1.0' encoding='UTF-8' ?&gt;  
+&lt;!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"&gt;  
+&lt;html xmlns="http://www.w3.org/1999/xhtml"  
+      xmlns:h="http://xmlns.jcp.org/jsf/html"  
+      xmlns:f="http://java.sun.com/jsf/core"&gt;  
+
+    &lt;h:head&gt;  
+        &lt;title&gt;Response Page&lt;/title&gt;  
+    &lt;/h:head&gt;  
+    &lt;h:body&gt;  
+        &lt;h1&gt; Hello,   
+            &lt;h:outputText value="#{user.name}"/&gt;  
+        &lt;/h1&gt;  
+        &lt;h:outputLabel value="Your date of birth in different-different formats is given below:"&gt;&lt;/h:outputLabel&gt;&lt;br/&gt;  
+        &lt;h:outputText value="#{user.dob}"&gt;  
+            &lt;f:convertDateTime type="date" dateStyle="medium"/&gt;  
+        &lt;/h:outputText&gt;  
+        &lt;br/&gt;  
+        &lt;h:outputText value="#{user.dob}"&gt;  
+            &lt;f:convertDateTime type="date" dateStyle="full"/&gt;  
+        &lt;/h:outputText&gt;  
+        &lt;br/&gt;  
+        &lt;h:outputText value="#{user.dob}"&gt;  
+            &lt;f:convertDateTime type="time" dateStyle="full"/&gt;  
+        &lt;/h:outputText&gt;  
+        &lt;br/&gt;  
+        &lt;h:outputText value="#{user.dob}"&gt;  
+            &lt;f:convertDateTime type="date" pattern="dd/mm/yyyy"/&gt;  
+        &lt;/h:outputText&gt;  
+        &lt;br/&gt;  
+        &lt;h:outputText value="#{user.dob}"&gt;  
+            &lt;f:convertDateTime dateStyle="full" pattern="yyyy-mm-dd"/&gt;  
+        &lt;/h:outputText&gt;  
+        &lt;br/&gt;  
+        &lt;h:outputText value="#{user.dob}"&gt;  
+            &lt;f:convertDateTime dateStyle="full" pattern="yyyy.MM.dd 'at' HH:mm:ss z"/&gt;  
+        &lt;/h:outputText&gt;  
+        &lt;br/&gt;  
+        &lt;h:outputText value="#{user.dob}"&gt;  
+            &lt;f:convertDateTime dateStyle="full" pattern="h:mm a"/&gt;  
+        &lt;/h:outputText&gt;  
+        &lt;br/&gt;  
+        &lt;h:outputText value="#{user.dob}"&gt;  
+            &lt;f:convertDateTime dateStyle="long" timeZone="EST" type="both"/&gt;  
+        &lt;/h:outputText&gt;  
+        &lt;br/&gt;  
+        &lt;h:outputText value="#{user.dob}"&gt;  
+            &lt;f:convertDateTime locale="de" timeStyle="long" type="both" dateStyle="full"/&gt;  
+        &lt;/h:outputText&gt;  
+        &lt;br/&gt;  
+        &lt;h:outputText value="#{user.dob}"&gt;  
+            &lt;f:convertDateTime locale="en" timeStyle="short" type="both" dateStyle="full"/&gt;  
+        &lt;/h:outputText&gt;  
+    &lt;/h:body&gt;  
+&lt;/html&gt;
+</code></pre> 
+ <p>文件：<em>User.java</em> 的代码内容如下所示 -</p> 
+ <pre><code class="lang-java">/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package com.yiibai;
+
+/**
+ *
+ * @author Administrator
+ */
+import java.util.Date;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.RequestScoped;
+
+@ManagedBean
+@RequestScoped
+public class User {
+
+    String name;
+    Date dob;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Date getDob() {
+        return dob;
+    }
+
+    public void setDob(Date dob) {
+        this.dob = dob;
+    }
+}
+</code></pre> 
+ <p>右键运行工程：<strong>convertDateTime2</strong>，如果没有任何错误，打开浏览器访问：</p> 
+ <pre><code>http://localhost:8084/convertDateTime2/
+</code></pre>
+ <p>应该会看到以下结果 -<br><img src="http://www.yiibai.com/uploads/images/201704/2504/829090421_36330.png" alt=""></p> 
+ <p>简单写入一些信息，然后提交 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201704/2504/365090422_84104.png" alt=""></p>
+ <br>      
+</div></body></html>

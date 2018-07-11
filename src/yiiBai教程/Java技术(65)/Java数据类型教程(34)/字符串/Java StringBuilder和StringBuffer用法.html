@@ -1,0 +1,144 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Java StringBuilder和StringBuffer用法</h1><div style="width:100%;float:left;" class="article-content">   
+ <p><code>StringBuilder</code>和<code>StringBuffer</code>是<code>String</code>类的同伴类。它们表示一个可变的字符序列。<code>StringBuffer</code>是线程安全的，<code>StringBuilder</code>不是线程安全的。</p> 
+ <p>两个类都有相同的方法，除了<code>StringBuffer</code>中的所有方法都是同步的。<code>StringBuilder</code>对象是可修改的字符串。<code>StringBuilder</code>类包含四个构造函数：</p> 
+ <pre><code class="lang-java">StringBuilder()
+StringBuilder(CharSequence seq)
+StringBuilder(int capacity)
+StringBuilder(String str)
+</code></pre> 
+ <p>无参数构造函数创建一个默认容量为<code>16</code>的空<code>StringBuilder</code>对象。第二个构造函数使用<code>CharSequence</code>对象作为参数。它创建一个<code>StringBuilder</code>对象，其内容与指定的<code>CharSequence</code>相同。</p> 
+ <p>第三个构造函数使用<code>int</code>作为参数; 它创建一个空的<code>StringBuilder</code>对象，其初始容量与指定的参数相同。</p> 
+ <p>以下是创建<code>StringBuilder</code>对象的一些示例：</p> 
+ <pre><code class="lang-java">StringBuilder sb1  = new StringBuilder();
+StringBuilder sb2  = new StringBuilder("Here is  the   content");
+StringBuilder sb3  = new StringBuilder(200);
+</code></pre> 
+ <p><code>append()</code>方法将文本添加到<code>StringBuilder</code>的结尾处。它可使用多种类型的参数。<code>insert()</code>和<code>delete()</code>用于修改字符串的内容。</p> 
+ <h2 id="h2-u957Fu5EA6u548Cu5BB9u91CF"><a name="长度和容量" class="reference-link"></a><span class="header-link octicon octicon-link"></span>长度和容量</h2>
+ <p><code>StringBuilder</code>类有两个属性：<code>length</code>和<code>capacity</code>。它的长度是指其内容的长度，而其容量是指它可以容纳而不分配新的内存的最大字符数。<code>length()</code>和<code>capacity()</code>方法分别返回其长度和容量。例如，</p> 
+ <pre><code class="lang-java">public class Main {
+  public static void main(String[] args) {
+    StringBuilder sb = new StringBuilder(200); // Capacity:200, length:0
+    sb.append("Hello"); // Capacity:200, length:5
+    int len = sb.length(); // len is assigned 5
+    int capacity = sb.capacity(); // capacity is assigned 200
+
+  }
+}
+</code></pre> 
+ <h2 id="h2-u8F6Cu6362u4E3Au5B57u7B26u4E32"><a name="转换为字符串" class="reference-link"></a><span class="header-link octicon octicon-link"></span>转换为字符串</h2>
+ <p>可以通过使用<code>toString()</code>方法将<code>StringBuilder</code>的内容作为<code>String</code>类型的字符串值。</p> 
+ <pre><code class="lang-java">public class Main {
+  public static void main(String[] args) {
+    // Create a String object
+    String s1 = new String("Hello");
+    // Create a StringBuilder from of the String object s1
+    StringBuilder sb = new StringBuilder(s1);
+
+    // Append " Java" to the StringBuilder's content
+    sb.append(" Java"); // Now, sb contains "Hello Java"
+
+    // Get a String from the StringBuilder
+    String s2 = sb.toString(); // s2 contains "Hello Java"
+
+  }
+}
+</code></pre> 
+ <p><code>StringBuilder</code>有一个<code>setLength()</code>方法，它的新长度作为参数。如果新长度大于旧长度，则额外位置(多过的部分)用空字符填充(空字符为<code>\u0000</code>)。</p> 
+ <p>如果新长度小于旧长度，则其内容将被截断以适应新长度。</p> 
+ <pre><code class="lang-java">public class Main {
+  public static void main(String[] args) {
+    // Length is 5
+    StringBuilder sb = new StringBuilder("Hello");
+
+    // Now the length is 7 with last two characters as null character '\u0000'
+    sb.setLength(7);
+
+    // Now the length is 2 and the content is "He"
+    sb.setLength(2);
+
+  }
+}
+</code></pre> 
+ <h2 id="h2-u793Au4F8B"><a name="示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例</h2>
+ <p><code>StringBuilder</code>类有一个<code>reverse()</code>方法，它用相同的字符序列替换其内容，但顺序相反。以下代码显示了<code>StringBuilder</code>类的一些方法的使用。</p>   
+ <pre><code class="lang-java">public class Main {
+  public static void main(String[] args) {
+    // Create an empty StringBuffer
+    StringBuilder sb = new StringBuilder();
+    printDetails(sb);
+
+    // Append "good"
+    sb.append("good");
+    printDetails(sb);
+
+    // Insert "Hi " in the beginning
+    sb.insert(0, "Hi ");
+    printDetails(sb);
+
+    // Delete the first o
+    sb.deleteCharAt(1);
+    printDetails(sb);
+
+    // Append "  be  with  you"
+    sb.append(" be  with  you");
+    printDetails(sb);
+
+    // Set the length to 3
+    sb.setLength(3);
+    printDetails(sb);
+
+    // Reverse the content
+    sb.reverse();
+    printDetails(sb);
+  }
+
+  public static void printDetails(StringBuilder sb) {
+    System.out.println("Content: \"" + sb + "\"");
+    System.out.println("Length: " + sb.length());
+    System.out.println("Capacity: " + sb.capacity());
+
+    // Print an empty line to separate results
+    System.out.println();
+  }
+}
+</code></pre> 
+ <p>上面的代码生成以下结果。</p> 
+ <pre><code class="lang-java">Content: ""
+Length: 0
+Capacity: 16
+
+Content: "good"
+Length: 4
+Capacity: 16
+
+Content: "Hi good"
+Length: 7
+Capacity: 16
+
+Content: "H good"
+Length: 6
+Capacity: 16
+
+Content: "H good be  with  you"
+Length: 20
+Capacity: 34
+
+Content: "H g"
+Length: 3
+Capacity: 34
+
+Content: "g H"
+Length: 3
+Capacity: 34
+</code></pre> 
+ <h2 id="h2--"><a name="字符串连接运算符(+)" class="reference-link"></a><span class="header-link octicon octicon-link"></span>字符串连接运算符(+)</h2>
+ <p>在开发过程中，也经常使用<code>+</code>运算符将字符串，原始类型值或对象连接成另一个字符串。</p> 
+ <p>例如，</p> 
+ <pre><code class="lang-java">String str = "X" + "Y" + 12.56;
+</code></pre> 
+ <p>为了优化字符串连接操作，编译器用一个使用<code>StringBuilder</code>的语句替换字符串连接。</p> 
+ <pre><code class="lang-java">String str = new StringBuilder().append("X").append("Y").append(12.56).toString();
+</code></pre>
+ <br>      
+</div></body></html>

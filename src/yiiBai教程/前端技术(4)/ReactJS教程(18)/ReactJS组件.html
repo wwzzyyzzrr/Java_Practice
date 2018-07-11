@@ -1,0 +1,115 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">ReactJS组件</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>在本章中，我们将学习如何组合组件以使应用程序更易于维护。 这种方法允许更新和更改组件，而不会影响页面的其余部分。</p> 
+ <h2 id="h2-u65E0u72B6u6001u793Au4F8B"><a name="无状态示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>无状态示例</h2>
+ <p>下例中的第一个组件是App。 此组件是标题和内容的所有者。这里分别创建<code>Header</code>和<code>Content</code>，并将其添加到App组件的JSX树中。 只有App组件需要导出。</p> 
+ <p>文件：<em>App.jsx</em> -</p> 
+ <pre><code class="lang-js">import React from 'react';
+
+class App extends React.Component {
+   render() {
+      return (
+         &lt;div&gt;
+            &lt;Header/&gt;
+            &lt;Content/&gt;
+         &lt;/div&gt;
+      );
+   }
+}
+class Header extends React.Component {
+   render() {
+      return (
+         &lt;div&gt;
+            &lt;h1&gt;Header&lt;/h1&gt;
+         &lt;/div&gt;
+      );
+   }
+}
+class Content extends React.Component {
+   render() {
+      return (
+         &lt;div&gt;
+            &lt;h2&gt;Content&lt;/h2&gt;
+            &lt;p&gt;The content text ~ &lt;/p&gt;
+         &lt;/div&gt;
+      );
+   }
+}
+export default App;
+</code></pre> 
+ <p>为了能够在页面上呈现，需要将它导入<code>main.js</code>文件并调用<code>reactDOM.render()</code>。 在设置环境的时候就已经这样做了。</p> 
+ <p>文件：<em>main.js</em> - </p> 
+ <pre><code class="lang-js">import React from 'react';
+import ReactDOM from 'react-dom';
+import App from './App.jsx';
+
+ReactDOM.render(&lt;App /&gt;, document.getElementById('app'));
+</code></pre> 
+ <p>上面的代码将生成以下结果 -<br><img src="http://www.yiibai.com/uploads/images/201801/0201/107090101_19053.png" alt=""></p> 
+ <h2 id="h2-u6709u72B6u6001u7684u4F8Bu5B50"><a name="有状态的例子" class="reference-link"></a><span class="header-link octicon octicon-link"></span>有状态的例子</h2>
+ <p>在这个例子中，我们将设置所有者组件(App)的状态。 <code>Header</code>组件就像上一个例子一样添加，但它不需要任何状态。这里创建<code>table</code>和<code>tbody</code>元素，而不是<code>content</code>标签，在这里为数据数组中的每个对象动态插入<code>TableRow</code>。<br>可以看出，我们使用的<code>EcmaScript 2015</code>箭头语法(⇒)看起来比旧的JavaScript语法更清晰。 这将帮助我们用更少的代码来创建元素。 当需要创建一个包含很多项目的列表的时候，它是非常有用的。</p> 
+ <p>文件：<em>App.jsx</em> - </p> 
+ <pre><code class="lang-js">import React from 'react';
+
+class App extends React.Component {
+   constructor() {
+      super();
+      this.state = {
+         data: 
+         [
+            {
+               "id":1,
+               "name":"Foo",
+               "age":"20"
+            },
+            {
+               "id":2,
+               "name":"Bar",
+               "age":"30"
+            },
+            {
+               "id":3,
+               "name":"Baz",
+               "age":"40"
+            }
+         ]
+      }
+   }
+   render() {
+      return (
+         &lt;div&gt;
+            &lt;Header/&gt;
+            &lt;table&gt;
+               &lt;tbody&gt;
+                  {this.state.data.map((person, i) =&gt; &lt;TableRow key = {i} 
+                     data = {person} /&gt;)}
+               &lt;/tbody&gt;
+            &lt;/table&gt;
+         &lt;/div&gt;
+      );
+   }
+}
+class Header extends React.Component {
+   render() {
+      return (
+         &lt;div&gt;
+            &lt;h1&gt;Header&lt;/h1&gt;
+         &lt;/div&gt;
+      );
+   }
+}
+class TableRow extends React.Component {
+   render() {
+      return (
+         &lt;tr&gt;
+            &lt;td&gt;{this.props.data.id}&lt;/td&gt;
+            &lt;td&gt;{this.props.data.name}&lt;/td&gt;
+            &lt;td&gt;{this.props.data.age}&lt;/td&gt;
+         &lt;/tr&gt;
+      );
+   }
+}
+export default App;
+</code></pre> 
+ <p>注意 - 注意我们在<code>map()</code>函数中使用<code>key = {i}</code>。 这将有助于React更新只有必要的元素，而不是在发生更改时重新呈现整个列表。 对于大量动态创建的元素来说，这是一个巨大的性能提升。得到以下结果 -<br><img src="http://www.yiibai.com/uploads/images/201801/0201/770090104_32099.png" alt=""></p>
+ <br>      
+</div></body></html>

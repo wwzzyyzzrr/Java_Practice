@@ -1,0 +1,102 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">adjtimex()函数 Unix/Linux</h1><div style="width:100%;float:left;" class="article-content">   
+ <h1> 名称</h1> 
+ <p> adjtimex - 调内核时钟</p> 
+ <h1> 内容简介</h1> 
+ <table cellpadding="5" class="src" style="font-family: verdana, helvetica, arial, sans-serif;  border-color: rgb(170, 170, 170); width: 552px; background-color: rgb(241, 241, 241); border-collapse: collapse; padding-left: 5px; vertical-align: top; color: rgb(0, 0, 0);"> 
+  <tbody> 
+   <tr> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse;  border-color: rgb(170, 170, 170);"> <pre style="font-family: 'Courier New', monospace; font-size: 12px; margin-bottom: 0px;">
+<b>#include &lt;sys/timex.h&gt;</b>
+<b>int adjtimex(struct timex *</b><i>buf</i><b>);</b> 
+</pre> </td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h1> 描述</h1> 
+ <p> Linux使用大卫L. Mills的时钟调整算法（参见RFC1305）。&nbsp;adjtimex()系统调用读取和任选设置该算法的调整参数。这需要一个指针的TIMEX结构，更新内核参数字段值，并返回相同的结构与当前的内核值。这种结构的声明如下：</p> 
+ <table cellpadding="5" cellspacing="5" class="src" style="font-family: verdana, helvetica, arial, sans-serif;  border-color: rgb(170, 170, 170); width: 552px; background-color: rgb(241, 241, 241); border-collapse: collapse; padding-left: 5px; vertical-align: top; color: rgb(0, 0, 0);"> 
+  <tbody> 
+   <tr> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse;  border-color: rgb(170, 170, 170);"> <pre style="font-family: 'Courier New', monospace; font-size: 12px; margin-bottom: 0px;">
+struct timex {
+    int modes;           /* mode selector */
+    long offset;         /* time offset (usec) */
+    long freq;           /* frequency offset (scaled ppm) */
+    long maxerror;       /* maximum error (usec) */
+    long esterror;       /* estimated error (usec) */
+    int status;          /* clock command/status */
+    long constant;       /* pll time constant */
+    long precision;      /* clock precision (usec) (read only) */
+    long tolerance;      /* clock frequency tolerance (ppm)
+                            (read only) */
+    struct timeval time; /* current time (read only) */
+    long tick;           /* usecs between clock ticks */
+};
+</pre> </td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> <span style="color: rgb(34, 34, 34); font-family: Arial, Verdana, sans-serif;">“</span><i>modes</i>&nbsp;<span style="color: rgb(34, 34, 34); font-family: Arial, Verdana, sans-serif;">”字段确定的参数，如果有的话就设置。它可能包含一个按位或组合的零个或多个以下bits：</span></p> 
+ <table cellpadding="5" cellspacing="5" class="src" style="font-family: verdana, helvetica, arial, sans-serif;  border-color: rgb(170, 170, 170); width: 552px; background-color: rgb(241, 241, 241); border-collapse: collapse; padding-left: 5px; vertical-align: top; color: rgb(0, 0, 0);"> 
+  <tbody> 
+   <tr> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse;  border-color: rgb(170, 170, 170);"> <pre style="font-family: 'Courier New', monospace; font-size: 12px; margin-bottom: 0px;">
+#define ADJ_OFFSET            0x0001 /* time offset */
+#define ADJ_FREQUENCY         0x0002 /* frequency offset */
+#define ADJ_MAXERROR          0x0004 /* maximum time error */
+#define ADJ_ESTERROR          0x0008 /* estimated time error */
+#define ADJ_STATUS            0x0010 /* clock status */
+#define ADJ_TIMECONST         0x0020 /* pll time constant */
+#define ADJ_TICK              0x4000 /* tick value */
+#define ADJ_OFFSET_SINGLESHOT 0x8001 /* old-fashioned adjtime() */
+</pre> </td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p> 普通用户限制到零值模式mode。只有超级用户可以设置任何参数。</p> 
+ <h1> 返回值</h1> 
+ <p> 成功，adjtimex() 返回时钟状态：</p> 
+ <table cellpadding="5" cellspacing="5" class="src" style="font-family: verdana, helvetica, arial, sans-serif;  border-color: rgb(170, 170, 170); width: 552px; background-color: rgb(241, 241, 241); border-collapse: collapse; padding-left: 5px; vertical-align: top; color: rgb(0, 0, 0);"> 
+  <tbody> 
+   <tr> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse;  border-color: rgb(170, 170, 170);"> <pre style="font-family: 'Courier New', monospace; font-size: 12px; margin-bottom: 0px;">
+#define TIME_OK   0 /* clock synchronized */
+#define TIME_INS  1 /* insert leap second */
+#define TIME_DEL  2 /* delete leap second */
+#define TIME_OOP  3 /* leap second in progress */
+#define TIME_WAIT 4 /* leap second has occurred */
+#define TIME_BAD  5 /* clock not synchronized */
+</pre> </td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p> 如果失败，adjtimex（）返回-1，并设置errno。</p> 
+ <h1> 错误</h1> 
+ <table border="1" cellpadding="5" cellspacing="0" class="src" style="font-family: verdana, helvetica, arial, sans-serif; border: 1px solid rgb(170, 170, 170); width: 552px; background-color: rgb(241, 241, 241); border-collapse: collapse; padding-left: 5px; vertical-align: top; color: rgb(0, 0, 0);"> 
+  <tbody> 
+   <tr> 
+    <th style="background-color: rgb(205, 205, 205); border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" width="25%"> 标签</th> 
+    <th style="background-color: rgb(205, 205, 205); border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> 描述</th> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>EFAULT</b></td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" valign="bottom"> <i>buf</i>&nbsp;does not point to writable memory.</td> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>EINVAL</b></td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" valign="bottom"> An attempt is made to set<i>buf.offset</i>&nbsp;to a value outside the range -131071 to +131071,or to set&nbsp;<i>buf.status</i>&nbsp;to a value other than those listed above,or to set&nbsp;<i>buf.tick</i>&nbsp;to a value outside the range 900000/<b>HZ</b>&nbsp;to 1100000/<b>HZ</b>, where&nbsp;<b>HZ</b>&nbsp;is the system timer interrupt frequency.</td> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>EPERM</b></td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" valign="bottom"> <i>buf.mode</i>&nbsp;is non-zero and the caller does not have sufficient privilege.Under Linux the&nbsp;<b>CAP_SYS_TIME</b>&nbsp;capability is required.</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h1> 遵循于</h1> 
+ <p> adjtimex() 是Linux特有的，并且不应该被用在程序准备移植.&nbsp;查看adjtime（3）用于调整系统时钟的方法，更轻便，但弹性较差。</p> 
+ <h1> 另请参阅</h1> 
+ <ul> 
+  <li> <p> <a target="_blank" href="http://www.yiibai.com/unix_system_calls/settimeofday.html">settimeofday (2)</a></p> </li> 
+ </ul> 
+ <br>      
+</div></body></html>

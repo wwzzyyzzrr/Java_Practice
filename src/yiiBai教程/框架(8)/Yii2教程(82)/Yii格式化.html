@@ -1,0 +1,210 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Yii格式化</h1><div style="width:100%;float:left;" class="article-content">   
+ <div> 
+  <div>
+    要以可读格式来显示数据，可以使用 格式化(formatter)应用程序组件。 
+  </div> 
+ </div> 
+ <div> 
+  <div>
+    第1步&nbsp;-&nbsp;将&nbsp;actionFormatter()&nbsp;方法添加到&nbsp;SiteController。 
+  </div> 
+  <pre>public function actionFormatter(){
+   return $this-&gt;render('formatter');
+}</pre> 
+  <div>
+    在上面的代码中，我们只呈现格式化视图。 
+  </div> 
+  <div>
+    第2步&nbsp;-&nbsp;现在，在&nbsp;views/site&nbsp;文件夹内创建&nbsp;formatter.php&nbsp;视图文件。 
+  </div> 
+  <pre>&lt;?php
+   $formatter = \Yii::$app-&gt;formatter;
+   // output: January 1, 2016
+   echo $formatter-&gt;asDate('2019-10-01', 'long'),"&lt;br&gt;";
+   // output: 51.50%
+   echo $formatter-&gt;asPercent(0.515, 2),"&lt;br&gt;";
+   // output: &lt;a href = "mailto:yiibai.com@gmail.com"&gt;yiibai.com@gmail.com&lt;/a&gt;
+   echo $formatter-&gt;asEmail('yiiibai.com@gmail.com'),"&lt;br&gt;";
+   // output: Yes
+   echo $formatter-&gt;asBoolean(true),"&lt;br&gt;";
+   // output: (Not set)
+   echo $formatter-&gt;asDate(null),"&lt;br&gt;";
+?&gt;</pre> 
+  <div>
+    第3步&nbsp;-&nbsp;访问URL：
+   <a target="_blank" href="http://localhost:8080/index.php?r=site/formatter">http://localhost:8080/index.php?r=site/formatter</a>，&nbsp;就会看到下面的输出：
+   <br> 
+   <img src="/uploads/tutorial/20160531/1-160531215533294.png" alt="">
+   <br> 
+  </div> 
+  <div>
+    格式化组件支持日期和时间相关的格式如下&nbsp;-&nbsp; 
+  </div> 
+  <table border="1" cellpadding="2" cellspacing="0" style="font-size:14px;color:#313131;font-family:Verdana, Geneva, Tahoma,  Helvetica, text-align:center;background-color:inherit;"> 
+   <tbody> 
+    <tr> 
+     <th style="border:1px solid #999999;background-color:#EEEEEE;"> 输出格式 </th> 
+     <th style="border:1px solid #999999;background-color:#EEEEEE;"> 示例 </th> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> date </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> January 01, 2016 </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> time </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 16:06 </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> datetime </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> January 01, 2016 16:06 </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> timestamp </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 1512609983 </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> relativeTime </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 1 hour ago </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> duration </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 5 minutes </td> 
+    </tr> 
+   </tbody> 
+  </table> 
+  <p style="text-align:justify;"> 第4步&nbsp;-&nbsp;使用以下这种方式修改&nbsp;formatter.php&nbsp;&nbsp;视图。 </p> 
+  <pre>&lt;?php
+   $formatter = \Yii::$app-&gt;formatter;
+   echo $formatter-&gt;asDate(date('Y-m-d'), 'long'),"&lt;br&gt;";
+   echo $formatter-&gt;asTime(date("Y-m-d")),"&lt;br&gt;";
+   echo $formatter-&gt;asDatetime(date("Y-m-d")),"&lt;br&gt;";
+
+   echo $formatter-&gt;asTimestamp(date("Y-m-d")),"&lt;br&gt;";
+   echo $formatter-&gt;asRelativeTime(date("Y-m-d")),"&lt;br&gt;";
+?&gt;</pre> 
+  <div>
+    第5步&nbsp;-&nbsp;在Web浏览器访问：
+   <a target="_blank" href="http://localhost:8080/index.php?r=site/formatter">http://localhost:8080/index.php?r=site/formatter</a>&nbsp;，就会看到下面的输出。
+   <br> 
+   <img src="/uploads/tutorial/20160531/1-160531215551361.png" alt="">
+   <br> 
+  </div> 
+  <h2> 日期格式 </h2> 
+  <p style="text-align:justify;"> 另外还有四个日期格式的快捷方式：short, medium, long 和 full&nbsp; </p> 
+  <div>
+    第1步&nbsp;-&nbsp;使用以下这种方式修改&nbsp;formatter&nbsp;视图文件。 
+  </div> 
+  <pre>&lt;?php
+   $formatter = \Yii::$app-&gt;formatter;
+   echo $formatter-&gt;asDate(date('Y-m-d'), 'short'),"&lt;br&gt;";
+   echo $formatter-&gt;asDate(date('Y-m-d'), 'medium'),"&lt;br&gt;";
+   echo $formatter-&gt;asDate(date('Y-m-d'), 'long'),"&lt;br&gt;";
+   echo $formatter-&gt;asDate(date('Y-m-d'), 'full'),"&lt;br&gt;";
+?&gt;</pre> 
+  <div>
+    第2步&nbsp;-&nbsp;打开Web浏览器输入：
+   <a target="_blank" href="http://localhost:8080/index.php?r=site/formatter,">http://localhost:8080/index.php?r=site/formatter,</a>，将会看到下面的输出。
+   <br> 
+   <img src="/uploads/tutorial/20160531/1-16053121560Y39.png" alt="">
+   <br> 
+  </div> 
+  <h2> 
+   <div>
+     数字格式 
+   </div> </h2> 
+  <div>
+    格式化组件支持数字有关下列格式- 
+  </div> 
+  <table border="1" cellpadding="2" cellspacing="0" style="font-size:14px;color:#313131;font-family:Verdana, Geneva, Tahoma,  Helvetica, text-align:center;background-color:inherit;"> 
+   <tbody> 
+    <tr> 
+     <th style="border:1px solid #999999;background-color:#EEEEEE;"> 输出格式 </th> 
+     <th style="border:1px solid #999999;background-color:#EEEEEE;"> 示例 </th> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> integer </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 51 </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> decimal </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 105.51 </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> percent </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 51% </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> scientific </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 1.050000E+2 </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> currency </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> $105 </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> size </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 105 bytes </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> shortSize </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 105 B </td> 
+    </tr> 
+   </tbody> 
+  </table> 
+  <div>
+    第1步&nbsp;-&nbsp;使用以下这种方式修改&nbsp;formatter&nbsp;视图。 
+  </div>   
+  <pre>&lt;?php
+   $formatter = \Yii::$app-&gt;formatter;
+   echo Yii::$app-&gt;formatter-&gt;asInteger(105),"&lt;br&gt;";
+   echo Yii::$app-&gt;formatter-&gt;asDecimal(105.41),"&lt;br&gt;";
+   echo Yii::$app-&gt;formatter-&gt;asPercent(0.51),"&lt;br&gt;";
+   echo Yii::$app-&gt;formatter-&gt;asScientific(105),"&lt;br&gt;";
+   echo Yii::$app-&gt;formatter-&gt;asCurrency(105),"&lt;br&gt;";
+   echo Yii::$app-&gt;formatter-&gt;asSize(105),"&lt;br&gt;";
+   echo Yii::$app-&gt;formatter-&gt;asShortSize(105),"&lt;br&gt;";
+?&gt;</pre> 
+  <div>
+    第2步&nbsp;-&nbsp;访问&nbsp;
+   <a target="_blank" href="http://localhost:8080/index.php?r=site/formatter">http://localhost:8080/index.php?r=site/formatter</a>，&nbsp;会看到下面的输出结果：
+   <br> 
+   <img src="/uploads/tutorial/20160531/1-16053121562S14.png" alt="Yii格式化">
+   <br> 
+  </div> 
+  <h2> 
+   <div>
+     其他格式 
+   </div> </h2> 
+  <div>
+    Yii也可以支持其他格式&nbsp;- 
+  </div> 
+  <ul> 
+   <li> <p style="text-align:justify;"> text&nbsp;−&nbsp;值是HTML编码 </p> </li> 
+   <li> <p style="text-align:justify;"> raw&nbsp;−&nbsp;值是被输出的 </p> </li> 
+   <li> <p style="text-align:justify;"> paragraphs&nbsp;−&nbsp;值被格式化为HTML文本段落，并包裹成p标签 </p> </li> 
+   <li> <p style="text-align:justify;"> ntext&nbsp;−&nbsp;值被格式化为一个HTML纯文本换行,新行的地方被转换成换行符 </p> </li> 
+   <li> <p style="text-align:justify;"> html&nbsp;−&nbsp;值是使用&nbsp;HtmlPurifier&nbsp;纯化避免&nbsp;XSS&nbsp;攻击 </p> </li> 
+   <li> <p style="text-align:justify;"> image&nbsp;−&nbsp;值被格式化为图像标记 </p> </li> 
+   <li> <p style="text-align:justify;"> boolean&nbsp;−&nbsp;值被格式化为一个布尔值 </p> </li> 
+   <li> <p style="text-align:justify;"> url&nbsp;−&nbsp;值被格式化为一个链接 </p> </li> 
+   <li> <p style="text-align:justify;"> email&nbsp;−&nbsp;值被格式化为一个 mailto 链接 </p> </li> 
+  </ul> 
+  <div>
+    格式化可以使用当前活动的语言环境来确定如何格式化指定国家格式的值。 
+  </div> 
+  <div>
+    下面的例子说明如何在不同的语言环境格式化日期。 
+  </div> 
+  <pre>&lt;?php
+   Yii::$app-&gt;formatter-&gt;locale = 'ru-RU';
+   echo Yii::$app-&gt;formatter-&gt;asDate('2020-01-01'); // output: 1 января 2020 г.
+   Yii::$app-&gt;formatter-&gt;locale = 'de-DE';
+   // output: 1. Januar 2016
+   echo Yii::$app-&gt;formatter-&gt;asDate('2018-01-01');
+   Yii::$app-&gt;formatter-&gt;locale = 'en-US';
+   // output: January 1, 2016
+   echo Yii::$app-&gt;formatter-&gt;asDate('2018-01-01');
+?&gt;</pre> 
+ </div>
+ <br>      
+</div></body></html>

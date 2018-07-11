@@ -1,0 +1,90 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Scala final关键字</h1><div style="width:100%;float:left;" class="article-content">   
+ <p><code>final</code>是一个关键字，用于防止超类成员继承为派生类。也可以声明<code>final</code>变量，方法和类。</p> 
+ <h2 id="h2-scala-final-"><a name="Scala final变量示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>Scala final变量示例</h2>
+ <p>不能覆盖子类中的<code>final</code>变量，我们来看下面一个例子。</p> 
+ <p><strong>Scala单继承示例</strong></p> 
+ <pre><code class="lang-scala">class Vehicle{  
+     final val speed:Int = 60  
+}  
+class Bike extends Vehicle{  
+   override val speed:Int = 100  
+    def show(){  
+        println(speed)  
+    }  
+}  
+
+object Demo{  
+    def main(args:Array[String]){  
+        var b = new Bike()  
+        b.show()  
+    }  
+}
+</code></pre> 
+ <p>将上面代码保存到源文件：<em>Demo.scala</em>中，使用以下命令编译并执行代码 - </p> 
+ <pre><code class="lang-shell">D:\software\scala-2.12.3\bin&gt;scalac Demo.scala
+Demo.scala:5: error: overriding value speed in class Vehicle of type Int;
+ value speed cannot override final member
+   override val speed:Int = 100
+                ^
+one error found
+</code></pre> 
+ <h2 id="h2-scala-final-"><a name="Scala final方法" class="reference-link"></a><span class="header-link octicon octicon-link"></span>Scala final方法</h2>
+ <p>在父类中的<code>final</code>方法声明不能被覆盖。 如果不想让它被覆盖，则可以把方法定义成为<code>final</code>。尝试覆盖<code>final</code>方法将导致编译时错误。</p> 
+ <p><strong>Scala final方法示例</strong></p> 
+ <pre><code class="lang-scala">class Vehicle{  
+     final def show(){  
+         println("vehicle is running")  
+     }  
+}  
+class Bike extends Vehicle{  
+   //override val speed:Int = 100  
+    override def show(){  
+        println("bike is running")  
+    }  
+}  
+object Demo{  
+    def main(args:Array[String]){  
+        var b = new Bike()  
+        b.show()  
+    }  
+}
+</code></pre> 
+ <p>将上面代码保存到源文件：<em>Demo.scala</em>中，使用以下命令编译并执行代码 - </p>   
+ <pre><code class="lang-shell">D:\software\scala-2.12.3\bin&gt;scalac Demo.scala
+Demo.scala:8: error: overriding method show in class Vehicle of type ()Unit;
+ method show cannot override final member
+    override def show(){
+                 ^
+one error found
+</code></pre> 
+ <p><strong>Scala final类示例</strong></p> 
+ <p>也可以定义<code>final</code>类，<code>final</code>类不能继承。 如果定义了一个类为<code>final</code>类，那就不能进一步扩展了。</p> 
+ <pre><code class="lang-scala">final class Vehicle{  
+     def show(){  
+         println("vehicle is running")  
+     }  
+
+}  
+
+class Bike extends Vehicle{  
+       override def show(){  
+        println("bike is running")  
+    }  
+}  
+
+object Demo{  
+    def main(args:Array[String]){  
+        var b = new Bike()  
+        b.show()  
+    }  
+}
+</code></pre> 
+ <p>将上面代码保存到源文件：<em>Demo.scala</em>中，使用以下命令编译并执行代码 - </p> 
+ <pre><code class="lang-shell">D:\software\scala-2.12.3\bin&gt;scalac Demo.scala
+Demo.scala:8: error: illegal inheritance from final class Vehicle
+class Bike extends Vehicle{
+                   ^
+one error found
+</code></pre>
+ <br>      
+</div></body></html>

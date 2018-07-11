@@ -1,0 +1,78 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Memcached Stats命令</h1><div style="width:100%;float:left;" class="article-content">   
+ <p> Memcached的stats命令用于返回就类似pid，版本，连接等服务器统计</p> 
+ <h2> 语法</h2> 
+ <p> memcached的stats命令的基本语法如下所示：</p> 
+ <pre class="prettyprint prettyprinted" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 603.767395019531px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+stats</pre> 
+ <h3> 示例</h3> 
+ <pre class="prettyprint prettyprinted" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 603.767395019531px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+stats
+STAT pid 1162
+STAT uptime 5022
+STAT time 1415208270
+STAT version 1.4.14
+STAT libevent 2.0.19-stable
+STAT pointer_size 64
+STAT rusage_user 0.096006
+STAT rusage_system 0.152009
+STAT curr_connections 5
+STAT total_connections 6
+STAT connection_structures 6
+STAT reserved_fds 20
+STAT cmd_get 6
+STAT cmd_set 4
+STAT cmd_flush 0
+STAT cmd_touch 0
+STAT get_hits 4
+STAT get_misses 2
+STAT delete_misses 1
+STAT delete_hits 1
+STAT incr_misses 2
+STAT incr_hits 1
+STAT decr_misses 0
+STAT decr_hits 1
+STAT cas_misses 0
+STAT cas_hits 0
+STAT cas_badval 0
+STAT touch_hits 0
+STAT touch_misses 0
+STAT auth_cmds 0
+STAT auth_errors 0
+STAT bytes_read 262
+STAT bytes_written 313
+STAT limit_maxbytes 67108864
+STAT accepting_conns 1
+STAT listen_disabled_num 0
+STAT threads 4
+STAT conn_yields 0
+STAT hash_power_level 16
+STAT hash_bytes 524288
+STAT hash_is_expanding 0
+STAT expired_unfetched 1
+STAT evicted_unfetched 0
+STAT bytes 142
+STAT curr_items 2
+STAT total_items 6
+STAT evictions 0
+STAT reclaimed 1
+END</pre> 
+ <h2> 使用Java应用程序统计</h2> 
+ <p> 为了得到memcached服务器的统计，需要使用memcached的stats方法。</p> 
+ <h3> 示例</h3>   
+ <pre class="prettyprint prettyprinted" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 603.767395019531px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+import net.spy.memcached.MemcachedClient;
+public class MemcachedJava {
+   public static void main(String[] args) {
+      //Connecting to Memcached server on localhost
+      MemcachedClient mcc = new MemcachedClient(new InetSocketAddress("127.0.0.1", 11211));
+      System.out.println("Connection to server sucessfully");
+      System.out.println("Stats:"+mcc.stats);
+   }
+}</pre> 
+ <h3> 输出</h3> 
+ <p> 当上述程序编译和运行，它提供了以下的输出：</p> 
+ <pre class="result prettyprinted" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 603.767395019531px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+Connection to server successfully
+Stats:[/127.0.0.1:11211:[delete_hits:0, bytes:71, total_items:4, rusage_system:0.2</pre> 
+ <br>      
+</div></body></html>

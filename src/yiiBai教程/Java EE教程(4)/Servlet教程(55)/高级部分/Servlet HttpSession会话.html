@@ -1,0 +1,160 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Servlet HttpSession会话</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>在本节中，我们将介绍Servlet中的HttpSession对象的使用，在应用容器中，它为每个用户创建会话ID。容器使用此标识来识别特定的用户。HttpSession的一个对象可用于执行两个任务：</p> 
+ <ol> 
+  <li>绑定对象</li>
+  <li>查看和操作有关会话的信息，如会话标识符，创建时间和上次访问时间。</li>
+ </ol> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/1210/713141050_90733.jpg" alt=""></p> 
+ <p><strong>如何获取HttpSession对象？</strong></p> 
+ <p><code>HttpServletRequest</code>接口提供了两种获取<code>HttpSession</code>对象的方法：</p> 
+ <ul> 
+  <li><code>public HttpSession getSession()</code>：返回与此请求相关联的当前会话，或者如果请求没有会话，则创建一个会话。</li>
+  <li><code>public HttpSession getSession(boolean create)</code>： 返回与此请求相关联的当前<code>HttpSession</code>，如果没有当前会话，并且<code>create</code>的值为<code>true</code>，则返回一个新会话。</li>
+ </ul> 
+ <p><strong>HttpSession接口的常用方法</strong></p> 
+ <ol> 
+  <li><code>public String getId()</code> - 返回一个包含唯一标识符值的字符串。</li>
+  <li><code>public long getCreationTime()</code> - 返回创建此会话的时间，以1970年1月1日GMT格林尼治时间以来的毫秒为单位。</li>
+  <li><code>public long getLastAccessedTime()</code> - 返回客户端发送与此会话相关联的请求的最后一次，为1970年1月1日GMT以来的毫秒数。</li>
+  <li><code>public void invalidate()</code> - 使此会话无效，然后取消绑定绑定到该对象的任何对象。</li>
+ </ol> 
+ <h2 id="h2-httpsession-"><a name="HttpSession应用示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>HttpSession应用示例</h2>
+ <p>在本示例中，我们将在会话范围中的属性设置在一个servlet中，并从另一个servlet中的会话范围获取该值。要在会话范围内设置属性，可使用<code>HttpSession</code>接口的<code>setAttribute()</code>方法设置属性，并使用<code>getAttribute()</code>方法获取属性。</p> 
+ <p>打开Eclipse，创建一个动态Web项目：<em>HttpSession</em>，其完整的目录结构如下所示 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/1210/221151028_43658.png" alt=""></p> 
+ <p>以下是这个项目中的几个主要的代码文件。</p> 
+ <p>文件：<em>index.html</em> - </p> 
+ <pre><code class="lang-html">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;meta charset="UTF-8"&gt;
+&lt;title&gt;HttpSession会话跟踪示例&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div style="text-algin: center; padding-top: 12px;"&gt;
+        &lt;form action="servlet1" method="get"&gt;
+            名字：&lt;input type="text" name="username" value="maxsu"/&gt;&lt;input type="submit"
+                value="提交" /&gt;
+        &lt;/form&gt;
+    &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>文件：<em>FirstServlet.java</em> - </p> 
+ <pre><code class="lang-java">package com.yiibai;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+/**
+ * Servlet implementation class FirstServlet
+ */
+public class FirstServlet extends HttpServlet {
+    private static final long serialVersionUID = 1L;
+
+    /**
+     * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
+     *      response)
+     */
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        // TODO Auto-generated method stub
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("text/html;charset=UTF-8");
+        try {
+            PrintWriter out = response.getWriter();
+            String username = request.getParameter("username");
+            out.print("你好， " + username);
+
+            HttpSession session = request.getSession();
+            session.setAttribute("username", username);
+            session.setAttribute("age", "22");
+            out.print("&lt;hr/&gt;&lt;a href='servlet2'&gt;在第二个Servlet访问Session属性值&lt;/a&gt;");
+
+            out.close();
+
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
+
+}
+</code></pre> 
+ <p>文件：<em>SecondServlet.java</em> - </p> 
+ <pre><code class="lang-java">package com.yiibai;
+
+import java.io.*;
+import javax.servlet.*;
+import javax.servlet.http.*;
+
+public class SecondServlet extends HttpServlet {
+
+    public void doGet(HttpServletRequest request, HttpServletResponse response) {
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("text/html;charset=UTF-8");
+        try {
+            PrintWriter out = response.getWriter();
+            HttpSession session = request.getSession(false);
+            String n = (String) session.getAttribute("username");
+            String age = (String) session.getAttribute("age");
+            out.print("您好， " + n + " !&lt;br/&gt; ");
+            out.print("你的年龄是： " + age + " 岁 ");
+            out.close();
+
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
+}
+</code></pre> 
+ <p>文件：<em>web.xml</em> - </p>   
+ <pre><code class="lang-xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+    xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
+    id="WebApp_ID" version="3.1"&gt;
+    &lt;display-name&gt;HttpSession&lt;/display-name&gt;
+    &lt;welcome-file-list&gt;
+        &lt;welcome-file&gt;index.html&lt;/welcome-file&gt;
+        &lt;welcome-file&gt;index.jsp&lt;/welcome-file&gt;
+    &lt;/welcome-file-list&gt;
+
+    &lt;servlet&gt;
+        &lt;servlet-name&gt;serv1&lt;/servlet-name&gt;
+        &lt;servlet-class&gt;com.yiibai.FirstServlet&lt;/servlet-class&gt;
+    &lt;/servlet&gt;
+
+    &lt;servlet-mapping&gt;
+        &lt;servlet-name&gt;serv1&lt;/servlet-name&gt;
+        &lt;url-pattern&gt;/servlet1&lt;/url-pattern&gt;
+    &lt;/servlet-mapping&gt;
+
+    &lt;servlet&gt;
+        &lt;servlet-name&gt;s2&lt;/servlet-name&gt;
+        &lt;servlet-class&gt;com.yiibai.SecondServlet&lt;/servlet-class&gt;
+    &lt;/servlet&gt;
+
+    &lt;servlet-mapping&gt;
+        &lt;servlet-name&gt;s2&lt;/servlet-name&gt;
+        &lt;url-pattern&gt;/servlet2&lt;/url-pattern&gt;
+    &lt;/servlet-mapping&gt;
+&lt;/web-app&gt;
+</code></pre> 
+ <p>在编写上面代码后，部署此Web应用程序(在项目名称上点击右键-&gt;”Run On Server…”)，打开浏览器访问URL： <a target="_blank" href="http://localhost:8080/HttpSession/">http://localhost:8080/HttpSession/</a> ，如果没有错误，应该会看到以下结果 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/1210/548151023_80802.png" alt=""></p> 
+ <p>在上面输入框中输入：<code>maxsu</code>，提交应该会看到以下结果 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/1210/222151024_71101.png" alt=""></p> 
+ <blockquote> 
+  <p>注意：此时<code>FirstServlet</code>中<code>HttpSession</code>的对象调用了<code>setAttribute()</code>方法，设置了两个属性：<code>username</code>和<code>age</code>的值。</p> 
+ </blockquote> 
+ <p>点击上面的“在第二个Servlet访问<code>Session</code>属性值”链接，可以看到读取<code>Session</code>属性的结果如下 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/1210/186151027_55689.png" alt=""></p>
+ <br>      
+</div></body></html>

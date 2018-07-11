@@ -1,0 +1,288 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">JSP Cookies处理</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>在本章中，我们将讨论JSP中的Cookie处理。 Cookie是存储在客户端计算机上的文本文件，它们用于各种信息的跟踪。JSP透明地支持使用底层servlet技术的HTTP Cookie。</p> 
+ <p>识别和返回用户信息有三个步骤 -</p> 
+ <ul> 
+  <li>服务器脚本将一组Cookie发送到浏览器。例如姓名，年龄或身份证号等</li>
+  <li>浏览器将此信息存储在本地机器上以备将来使用。</li>
+  <li>当下一次浏览器向Web服务器发送任何请求时，浏览器将这些cookie信息发送到服务器，服务器使用该信息来识别用户，或者也可以用于其他目的。</li>
+ </ul> 
+ <p>本章将介绍如何设置或重置Cookie，如何访问它们以及如何使用JSP程序来删除它们。</p> 
+ <h2 id="h2-cookie-"><a name="Cookie剖析" class="reference-link"></a><span class="header-link octicon octicon-link"></span>Cookie剖析</h2>
+ <p>Cookie通常设置在HTTP标头中(尽管JavaScript也可以直接在浏览器上设置<code>cookie</code>)。设置cookie的JSP响应头发送看起来类似这样 -</p> 
+ <pre><code class="lang-shell">HTTP/1.1 200 OK
+Date: Fri, 04 Feb 2000 21:03:38 GMT
+Server: Apache/1.3.9 (UNIX) PHP/4.0b3
+Set-Cookie: name = xyz; expires = Friday, 04-Feb-07 22:03:38 GMT; 
+   path = /; domain = yiibai.com
+Connection: close
+Content-Type: text/html
+</code></pre> 
+ <p>可以看到，<code>Set-Cookie</code>头包含<code>name</code>，<code>GMT</code>，<code>path</code>和<code>domain</code>的键值对。名称和值将被URL编码。 <code>expires</code>字段是指定的时间和日期之后浏览器删除cookie的指令。</p> 
+ <p>如果浏览器配置为存储cookie，那么它将保留此信息直到指定期日。如果用户将浏览器指向与Cookie的路径和域匹配的任何页面，则它将重新发送到服务器的cookie。浏览器的请求标头看起来像这样 -</p> 
+ <pre><code class="lang-shell">GET / HTTP/1.0
+Connection: Keep-Alive
+User-Agent: Mozilla/4.6 (X11; I; Linux 2.2.6-15apmac ppc)
+Host: zink.demon.co.uk:1126
+
+Accept: image/gif, */*
+Accept-Encoding: gzip
+Accept-Language: en
+Accept-Charset: iso-8859-1,*,utf-8
+Cookie: name = xyz
+</code></pre> 
+ <p>然后，JSP脚本将通过请求方法<code>request.getCookies()</code>访问Cookie，该方法返回一个<code>Cookie</code>对象数组。</p> 
+ <h2 id="h2-servlet-cookie-"><a name="Servlet Cookie方法" class="reference-link"></a><span class="header-link octicon octicon-link"></span>Servlet Cookie方法</h2>
+ <p>下表列出了与<code>Cookie</code>对象相关联的有用方法，我们可以在JSP中操作Cookie时调用它们。</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>编号</th> 
+    <th>方法</th> 
+    <th>描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>1</td> 
+    <td><code>public void setDomain(String pattern)</code></td> 
+    <td>此方法设置适用Cookie的域; 例如，<code>yiibai.com</code>。</td> 
+   </tr> 
+   <tr> 
+    <td>2</td> 
+    <td><code>public String getDomain()</code></td> 
+    <td>此方法获取适用Cookie的域; 例如，<code>yiibai.com</code>。</td> 
+   </tr> 
+   <tr> 
+    <td>3</td> 
+    <td><code>public void setMaxAge(int expiry)</code></td> 
+    <td>此方法设置在cookie过期之前经过多少时间(以秒为单位)。如果没有设置此项，cookie将仅持续到当前会话结束。</td> 
+   </tr> 
+   <tr> 
+    <td>4</td> 
+    <td><code>public int getMaxAge()</code></td> 
+    <td>此方法返回cookie的最大时间，以秒为单位指定。默认情况下，<code>-1</code>表示cookie将持续到浏览器关闭。</td> 
+   </tr> 
+   <tr> 
+    <td>5</td> 
+    <td><code>public String getName()</code></td> 
+    <td>此方法返回cookie的名称。创建后不能更改名称。</td> 
+   </tr> 
+   <tr> 
+    <td>6</td> 
+    <td><code>public void setValue(String newValue)</code></td> 
+    <td>此方法设置与Cookie关联的值。</td> 
+   </tr> 
+   <tr> 
+    <td>7</td> 
+    <td><code>public String getValue()</code></td> 
+    <td>该方法获取与cookie相关联的值。</td> 
+   </tr> 
+   <tr> 
+    <td>8</td> 
+    <td><code>public void setPath(String uri)</code></td> 
+    <td>此方法设置此cookie适用的路径。如果不指定路径，则将返回与当前页面以及所有子目录位于同一目录中的所有URL的Cookie。</td> 
+   </tr> 
+   <tr> 
+    <td>9</td> 
+    <td><code>public String getPath()</code></td> 
+    <td>此方法获取此cookie应用的路径。</td> 
+   </tr> 
+   <tr> 
+    <td>10</td> 
+    <td><code>public void setSecure(boolean flag)</code></td> 
+    <td>此方法设置布尔值，指示Cookie是否应仅通过加密(即SSL)连接发送。</td> 
+   </tr> 
+   <tr> 
+    <td>11</td> 
+    <td><code>public void setComment(String purpose)</code></td> 
+    <td>此方法指定描述Cookie目的的注释。 如果浏览器向用户显示cookie，则该注释很有用。</td> 
+   </tr> 
+   <tr> 
+    <td>12</td> 
+    <td><code>public String getComment()</code></td> 
+    <td>此方法返回描述此cookie目的的注释，如果cookie没有注释，则返回<code>null</code>。</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h2 id="h2--jsp-cookies"><a name="使用JSP设置Cookies" class="reference-link"></a><span class="header-link octicon octicon-link"></span>使用JSP设置Cookies</h2>
+ <p>使用JSP设置cookie包括三个步骤 - </p> 
+ <p><strong>步骤1：创建一个Cookie对象</strong></p> 
+ <p>指定Cookie名称和Cookie值调用Cookie构造函数，这两者都是字符串。参考以下代码 - </p> 
+ <pre><code class="lang-java">Cookie cookie = new Cookie("key","value");
+</code></pre> 
+ <p>请记住，名称和值都不应包含空格或任何以下字符 -</p> 
+ <pre><code class="lang-shell">[ ] ( ) = , " / ? @ : ;
+</code></pre> 
+ <p><strong>步骤2：设置最大有效时间</strong></p> 
+ <p>可以使用<code>setMaxAge</code>指定cookie应该有效的时间(以秒为单位)。以下代码将设置一个<code>24</code>小时有效时间的cookie。</p> 
+ <pre><code class="lang-java">Cookie cookie = new Cookie("key","value");
+cookie.setMaxAge(60*60*24);
+</code></pre> 
+ <p><strong>步骤3：将Cookie发送到HTTP响应头</strong></p> 
+ <p>使用<code>response.addCookie</code>在HTTP响应标头中添加Cookie，如下所示 - </p> 
+ <pre><code class="lang-java">Cookie cookie = new Cookie("key","value");
+cookie.setMaxAge(60*60*24); 
+response.addCookie(cookie);
+</code></pre> 
+ <h2 id="h2-jsp-cookies-"><a name="JSP操作Cookies示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>JSP操作Cookies示例</h2>
+ <p>打开Eclipse，创建一个动态Web项目：<em>CookiesHandling</em>，其结构如下所示 - </p> 
+ <p>假设要实现将用户提交上来的用户名和Email设置到cookie中，并返回到客户端浏览器。请参考以下代码 - </p> 
+ <p>文件：<em>setCookies.jsp</em> - </p> 
+ <pre><code class="lang-html">&lt;%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%&gt;
+&lt;!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;meta http-equiv="Content-Type" content="text/html; charset=UTF-8"&gt;
+&lt;title&gt;接收表单并设置Cookies&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;%
+        // Create cookies for first and last names.      
+        Cookie cookie1 = new Cookie("username", request.getParameter("username"));
+        Cookie cookie2 = new Cookie("email", request.getParameter("email"));
+
+        // Set expiry date after 24 Hrs for both the cookies.
+        cookie1.setMaxAge(60 * 60 * 24);
+        cookie2.setMaxAge(60 * 60 * 24);
+
+        // Add both the cookies in the response header.
+        response.addCookie(cookie1);
+        response.addCookie(cookie2);
+    %&gt;
+    &lt;div style="margin: auto; width: 80%;"&gt;
+        &lt;center&gt;
+            &lt;h2&gt;设置Cookies&lt;/h2&gt;
+        &lt;/center&gt;
+        &lt;ul&gt;
+            &lt;li&gt;&lt;p&gt;
+                    &lt;b&gt;用户名:&lt;/b&gt;
+                    &lt;%=request.getParameter("username")%&gt;
+                &lt;/p&gt;&lt;/li&gt;
+            &lt;li&gt;&lt;p&gt;
+                    &lt;b&gt;Email:&lt;/b&gt;
+                    &lt;%=request.getParameter("email")%&gt;
+                &lt;/p&gt;&lt;/li&gt;
+        &lt;/ul&gt;
+    &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>创建另一个显示表单的HTML文件：<em>form.jsp</em>，其内容如下所示 -</p> 
+ <pre><code class="lang-html">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;meta charset="UTF-8"&gt;
+&lt;title&gt;用户表单&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div style="margin: auto; width: 80%"&gt;
+        &lt;form action="setCookies.jsp" method="POST"&gt;
+            用户名: &lt;input type="text" name="username"&gt;
+            Email: &lt;input type="text" name="email" /&gt; &lt;input
+                type="submit" value="提交" /&gt;
+        &lt;/form&gt;
+    &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>当编写上面代码完成后，部署和运行这个项目，打开浏览器访问URL：<a target="_blank" href="http://localhost:8080/CookiesHandling/form.html">http://localhost:8080/CookiesHandling/form.html</a>　，　在显示的表单中输入用户名和Email，然后单击提交按钮。这将在屏幕上显示用户名和Email，并且还将设置两个cookie：<code>username</code>和<code>email</code>。当下次访问页面时，这些Cookie将被传回服务器。</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/2010/630151022_67632.png" alt=""></p> 
+ <p>分别在用户名和Email输入框中填写：<em>maxsu</em> 和 <em><a target="_blank" href="mailto:maxsu@yiibai.com">maxsu@yiibai.com</a></em> ， 然后点击提交 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/2010/841151024_74247.png" alt=""></p> 
+ <p>在下一节中，我们将介绍如何在Web应用程序中访问这些cookie。</p> 
+ <h2 id="h2--jsp-cookies"><a name="使用JSP读取Cookies" class="reference-link"></a><span class="header-link octicon octicon-link"></span>使用JSP读取Cookies</h2>
+ <p>要使用JSP读取cookie，需要通过调用<code>HttpServletRequest</code>的<code>getCookies()</code>方法来创建一个<code>javax.servlet.http.Cookie</code>对象的数组。 然后循环遍历数组，并使用<code>getName()</code>和<code>getValue()</code>方法来访问每个cookie和关联的值。</p> 
+ <p>现在来看看如何读取前面的例子中设置的cookie，创建一个JSP文件：<em>getCookies.jsp</em> - </p>   
+ <pre><code class="lang-html">&lt;%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%&gt;
+&lt;!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;meta http-equiv="Content-Type" content="text/html; charset=UTF-8"&gt;
+&lt;title&gt;读取Cookies&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div style="margin: auto; width: 80%;"&gt;
+        &lt;%
+            Cookie cookie = null;
+            Cookie[] cookies = null;
+
+            // Get an array of Cookies associated with the this domain
+            cookies = request.getCookies();
+
+            if (cookies != null) {
+                out.println("&lt;h2&gt;找到的Cookie名称和值&lt;/h2&gt;");
+
+                for (int i = 0; i &lt; cookies.length; i++) {
+                    cookie = cookies[i];
+                    out.print("Name : " + cookie.getName() + ",  ");
+                    out.print("Value: " + cookie.getValue() + " &lt;br/&gt;");
+                }
+            } else {
+                out.println("&lt;h2&gt;No cookies founds&lt;/h2&gt;");
+            }
+        %&gt;
+    &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>重新部署项目，打开浏览器访问URL： <a target="_blank" href="http://localhost:8080/CookiesHandling/getCookies.jsp">http://localhost:8080/CookiesHandling/getCookies.jsp</a> ，应该会看到结果如下 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/2010/449151026_78512.png" alt=""></p> 
+ <h2 id="h2--jsp-cookie"><a name="使用JSP删除Cookie" class="reference-link"></a><span class="header-link octicon octicon-link"></span>使用JSP删除Cookie</h2>
+ <p>删除cookies非常简单。如果想要删除一个cookie，那么只需要按照这三个步骤 -</p> 
+ <ul> 
+  <li>读取已存在的cookie并将其存储在Cookie对象中。</li>
+  <li>使用<code>setMaxAge()</code>方法将Cookie的过期时间设置为零，以删除现有的Cookie。</li>
+  <li>将此cookie添加回响应头。</li>
+ </ul> 
+ <p>以下示例将显示如何删除名为<code>username</code>的现有Cookie，并且下次运行访问<code>getcookies.jsp</code>时，将不再返回<code>username</code>的cookies值。</p> 
+ <p>文件：<em>deleteCookies.jsp</em> - </p> 
+ <pre><code class="lang-html">&lt;%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%&gt;
+&lt;!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;meta http-equiv="Content-Type" content="text/html; charset=UTF-8"&gt;
+&lt;title&gt;删除Cookies&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div style="margin: auto; width: 80%;"&gt;
+        &lt;center&gt;
+         &lt;h1&gt;删除Cookies&lt;/h1&gt;
+      &lt;/center&gt;
+      &lt;%
+         Cookie cookie = null;
+         Cookie[] cookies = null;
+
+         // Get an array of Cookies associated with the this domain
+         cookies = request.getCookies();
+
+         if( cookies != null ) {
+            out.println("&lt;h2&gt;找到的Cookie名称和值&lt;/h2&gt;");
+            for (int i = 0; i &lt; cookies.length; i++) {
+               cookie = cookies[i];
+               if(cookie.getName().equals("username")) {
+                  cookie.setMaxAge(0);
+                  response.addCookie(cookie);
+                  out.print("Deleted cookie: " + cookie.getName( ) + "&lt;br/&gt;");
+               }
+               out.print("Name : " + cookie.getName( ) + ",  ");
+               out.print("Value: " + cookie.getValue( )+" &lt;br/&gt;");
+            }
+         } else {
+            out.println(
+            "&lt;h2&gt;No cookies founds&lt;/h2&gt;");
+         }
+      %&gt;
+    &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>重新部署项目，打开浏览器访问URL： <a target="_blank" href="http://localhost:8080/CookiesHandling/deleteCookies.jsp">http://localhost:8080/CookiesHandling/deleteCookies.jsp</a> ，应该会看到结果如下 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/2010/107151035_93880.png" alt=""></p> 
+ <p>现在再次运行：<em>getCookies.jsp</em>，它应该只显示一个cookie，如下所示：</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/2010/814151036_50374.png" alt=""></p> 
+ <p>也可以手动删除浏览器中的Cookie。从工具菜单开始，选择Internet选项。要删除所有Cookie，请单击删除Cookie按钮。</p>
+ <br>      
+</div></body></html>

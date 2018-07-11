@@ -1,0 +1,57 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">bdflush()函数 Unix/Linux</h1><div style="width:100%;float:left;" class="article-content">   
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> 名称</h1> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> bdflush - 启动，刷新，或调缓冲区脏刷新守护</p> 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> 内容简介</h1> 
+ <table cellpadding="5" cellspacing="5" class="src" style="font-family: verdana, helvetica, arial, sans-serif;  border-color: rgb(170, 170, 170); width: 552px; background-color: rgb(241, 241, 241); border-collapse: collapse; padding-left: 5px; vertical-align: top; color: rgb(0, 0, 0);"> 
+  <tbody> 
+   <tr> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse;  border-color: rgb(170, 170, 170);"> <pre style="font-family: 'Courier New', monospace; font-size: 12px; margin-bottom: 0px;">
+</pre> <p style="text-align: justify;"> <b>int bdflush(int </b><i>func</i><b>, long *</b><i>address</i><b>);</b> <b>int bdflush(int </b><i>func</i><b>, long </b><i>data</i><b>);</b></p> </td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> 描述</h1> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> <b>bdflush</b>() starts, flushes, or tunes the buffer-dirty-flush daemon. Only a privileged process (one with the&nbsp;<b>CAP_SYS_ADMIN</b>&nbsp;capability) may call&nbsp;<b>bdflush</b>().</p> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> If&nbsp;<i>func</i>&nbsp;is negative or 0, and no daemon has been started, then&nbsp;<b>bdflush</b>() enters the daemon code and never returns.</p> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> If&nbsp;<i>func</i>&nbsp;is 1, some dirty buffers are written to disk.</p> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> If&nbsp;<i>func</i>&nbsp;is 2 or more and is even (low bit is 0), then&nbsp;<i>address</i>&nbsp;is the address of a long word, and the tuning parameter numbered (<i>func</i>-2)/2 is returned to the caller in that address.</p> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> If&nbsp;<i>func</i>&nbsp;is 3 or more and is odd (low bit is 1), then&nbsp;<i>data</i>&nbsp;is a long word, and the kernel sets tuning parameter numbered (<i>func</i>-3)/2 to that value.</p> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> The set of parameters, their values, and their legal ranges are defined in the kernel source file&nbsp;<i>fs/buffer.c</i>.</p> 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> 返回值</h1> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> If&nbsp;<i>func</i>&nbsp;is negative or 0 and the daemon successfully starts,&nbsp;<b>bdflush</b>() never returns. Otherwise, the return value is 0 on success and -1 on failure, with&nbsp;<i>errno</i>&nbsp;set to indicate the error.</p> 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> 错误</h1> 
+ <table border="1" cellpadding="5" cellspacing="0" class="src" style="font-family: verdana, helvetica, arial, sans-serif; border: 1px solid rgb(170, 170, 170); width: 552px; background-color: rgb(241, 241, 241); border-collapse: collapse; padding-left: 5px; vertical-align: top; color: rgb(0, 0, 0);"> 
+  <tbody> 
+   <tr> 
+    <th style="background-color: rgb(205, 205, 205); border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" width="25%"> 标签</th> 
+    <th style="background-color: rgb(205, 205, 205); border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> 描述</th> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>EBUSY</b></td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" valign="bottom"> An attempt was made to enter the daemon code after another process has already entered.</td> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>EFAULT</b></td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" valign="bottom"> <i>address</i>&nbsp;points outside your accessible address space.</td> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>EINVAL</b></td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" valign="bottom"> An attempt was made to read or write an invalid parameter number, or to write an invalid value to a parameter.</td> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>EPERM</b></td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" valign="bottom"> Caller does not have the&nbsp;<b>CAP_SYS_ADMIN</b>&nbsp;capability.</td> 
+   </tr> 
+  </tbody> 
+ </table>   
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> 遵循于</h1> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> <b>bdflush</b>() Linux特有的，并且不应该被用在程序准备移植。</p> 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> 另请参阅</h1> 
+ <ul style="font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> 
+  <li> <p style="text-align: justify;"> <a target="_blank" href="http://www.yiibai.com/unix_system_calls/fsync.html" style="color: rgb(144, 11, 9); background-color: transparent;">fsync (2)</a></p> </li> 
+  <li> <p style="text-align: justify;"> <a target="_blank" href="http://www.yiibai.com/unix_system_calls/sync.html" style="color: rgb(144, 11, 9); background-color: transparent;">sync (2)</a></p> </li> 
+  <li> <p style="text-align: justify;"> <a target="_blank" href="http://www.yiibai.com/unix_commands/sync.html" style="color: rgb(144, 11, 9); background-color: transparent;">sync (8)</a></p> </li> 
+  <li> <p style="text-align: justify;"> <a target="_blank" href="http://www.yiibai.com/unix_commands/update.html" style="color: rgb(144, 11, 9); background-color: transparent;">update (8)</a></p> </li> 
+ </ul> 
+ <br>      
+</div></body></html>

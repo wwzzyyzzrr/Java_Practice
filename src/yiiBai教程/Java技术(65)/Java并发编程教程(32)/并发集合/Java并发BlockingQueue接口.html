@@ -1,0 +1,152 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Java并发BlockingQueue接口</h1><div style="width:100%;float:left;" class="article-content">   
+ <p><code>java.util.concurrent.BlockingQueue</code>接口是<code>Queue</code>接口的子接口，另外还支持诸如在检索元素之前等待队列变为非空的操作，并在存储元素之前等待队列中的空间变得可用 。</p> 
+ <h2 id="h2-blockingqueue-"><a name="BlockingQueue接口中的方法" class="reference-link"></a><span class="header-link octicon octicon-link"></span>BlockingQueue接口中的方法</h2>
+ <table> 
+  <thead> 
+   <tr> 
+    <th>序号</th> 
+    <th>方法</th> 
+    <th>描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>1</td> 
+    <td><code>boolean add(E e)</code></td> 
+    <td>将指定的元素插入到此队列中，如果可以立即执行此操作，而不会违反容量限制，在成功时返回<code>true</code>，并且如果当前没有空间可用，则抛出<code>IllegalStateException</code>。</td> 
+   </tr> 
+   <tr> 
+    <td>2</td> 
+    <td><code>boolean contains(Object o)</code></td> 
+    <td>如果此队列包含指定的元素，则返回<code>true</code>。</td> 
+   </tr> 
+   <tr> 
+    <td>3</td> 
+    <td><code>int drainTo(Collection&lt;? super E&gt; c)</code></td> 
+    <td>从该队列中删除所有可用的元素，并将它们添加到给定的集合中。</td> 
+   </tr> 
+   <tr> 
+    <td>4</td> 
+    <td><code>int drainTo(Collection&lt;? super E&gt; c, int maxElements)</code></td> 
+    <td>最多从该队列中删除给定数量的可用元素，并将它们添加到给定的集合中。</td> 
+   </tr> 
+   <tr> 
+    <td>5</td> 
+    <td><code>boolean offer(E e)</code></td> 
+    <td>将指定的元素插入到此队列中，如果可以立即执行此操作而不违反容量限制，则成功返回<code>true</code>，如果当前没有空间可用，则返回<code>false</code>。</td> 
+   </tr> 
+   <tr> 
+    <td>6</td> 
+    <td><code>boolean offer(E e, long timeout, TimeUnit unit)</code></td> 
+    <td>将指定的元素插入到此队列中，等待指定的等待时间(如有必要)才能使空间变得可用。</td> 
+   </tr> 
+   <tr> 
+    <td>7</td> 
+    <td><code>E poll(long timeout, TimeUnit unit)</code></td> 
+    <td>检索并删除此队列的头，等待指定的等待时间(如有必要)使元素变为可用。</td> 
+   </tr> 
+   <tr> 
+    <td>8</td> 
+    <td><code>void put(E e)</code></td> 
+    <td>将指定的元素插入到此队列中，等待空间/容量可用。</td> 
+   </tr> 
+   <tr> 
+    <td>9</td> 
+    <td><code>int remainingCapacity()</code></td> 
+    <td>返回此队列可理想地(在没有内存或资源约束的情况下)接受而不阻止的附加元素数，如果没有内在限制则返回<code>Integer.MAX_VALUE</code>。</td> 
+   </tr> 
+   <tr> 
+    <td>10</td> 
+    <td><code>boolean remove(Object o)</code></td> 
+    <td>从该队列中删除指定元素的单个实例(如果存在)。</td> 
+   </tr> 
+   <tr> 
+    <td>11</td> 
+    <td><code>E take()</code></td> 
+    <td>检索并删除此队列的头，如有必要，等待元素可用。</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h2 id="h2-u5B9Eu4F8B"><a name="实例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实例</h2>
+ <p>以下<code>TestThread</code>程序显示了基于线程的环境中<code>BlockingQueue</code>接口的使用。</p> 
+ <pre><code class="lang-java">import java.util.Random;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
+
+public class TestThread {
+
+   public static void main(final String[] arguments) throws InterruptedException {
+      BlockingQueue&lt;Integer&gt; queue = new ArrayBlockingQueue&lt;Integer&gt;(10);
+
+      Producer producer = new Producer(queue);
+      Consumer consumer = new Consumer(queue);
+
+      new Thread(producer).start();
+      new Thread(consumer).start();
+
+      Thread.sleep(4000);
+   }  
+
+
+   static class Producer implements Runnable {
+
+      private BlockingQueue&lt;Integer&gt; queue;
+
+      public Producer(BlockingQueue queue){
+         this.queue = queue;
+      }
+
+      @Override
+      public void run() {
+         Random random = new Random();
+
+         try {
+            int result = random.nextInt(100);
+            Thread.sleep(1000);
+            queue.put(result);
+            System.out.println("Added: " + result);
+            result = random.nextInt(100);
+            Thread.sleep(1000);
+            queue.put(result);
+            System.out.println("Added: " + result);
+            result = random.nextInt(100);
+            Thread.sleep(1000);
+            queue.put(result);
+            System.out.println("Added: " + result);
+         } catch (InterruptedException e) {
+            e.printStackTrace();
+         }
+      }       
+   }
+
+   static class Consumer implements Runnable {
+
+      private BlockingQueue&lt;Integer&gt; queue;
+
+      public Consumer(BlockingQueue queue){
+         this.queue = queue;
+      }
+
+      @Override
+      public void run() {
+         try {
+            System.out.println("Removed: " + queue.take());
+            System.out.println("Removed: " + queue.take());
+            System.out.println("Removed: " + queue.take());
+         } catch (InterruptedException e) {
+            e.printStackTrace();
+         }
+      }
+   }
+}
+</code></pre> 
+ <p>这将产生以下结果 - </p>   
+ <pre><code class="lang-shell">Added: 73
+Removed: 73
+Added: 19
+Removed: 19
+Added: 47
+Removed: 47
+</code></pre>
+ <br>      
+</div></body></html>

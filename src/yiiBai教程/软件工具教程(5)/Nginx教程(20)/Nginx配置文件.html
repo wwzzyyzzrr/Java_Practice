@@ -1,0 +1,62 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Nginx配置文件</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>NGINX与其他服务类似，因为它具有以特定格式编写的基于文本的配置文件。 默认情况下，文件名为<code>nginx.conf</code>并放在<code>/etc/nginx</code>目录中(对于开源NGINX产品，位置取决于用于安装NGINX和操作系统的软件包系统，它通常位于<code>/usr/local/nginx/conf/etc/nginx</code>或<code>/usr/local/etc/nginx</code>。)</p> 
+ <p>配置文件由指令及其参数组成。 简单(单行)指令各自以分号结尾。 其他指令作为“容器”，将相关指令组合在一起，将其包围在花括号(<code>{}</code>)中。 以下是简单指令的一些示例。</p> 
+ <pre><code>user             nobody;
+error_log        logs/error.log notice;
+worker_processes 1;
+</code></pre>
+ <p>为了使配置更易于维护，建议您将其拆分为存储在<code>/etc/nginx/conf.d</code>目录中的一组功能特定文件，并在主<code>nginx.conf</code>文件中使用<code>include</code>指令引用(包函)指定文件的内容。如下所示 -</p> 
+ <pre><code>include conf.d/http;
+include conf.d/stream;
+include conf.d/exchange-enhanced;
+</code></pre>
+ <p>几个顶级指令(称为上下文)将适用于不同流量类型的指令组合在一起：</p> 
+ <ul> 
+  <li><a target="_blank" href="http://nginx.org/en/docs/ngx_core_module.html?&amp;_ga=1.10035445.1509956953.1490042234#events" title="events">events</a> – 一般连接处理</li>
+  <li><a target="_blank" href="http://nginx.org/en/docs/http/ngx_http_core_module.html?&amp;_ga=1.10035445.1509956953.1490042234#http" title="http">http</a> – HTTP协议流量</li>
+  <li><a target="_blank" href="http://nginx.org/en/docs/mail/ngx_mail_core_module.html?&amp;_ga=1.85614937.1509956953.1490042234#mail" title="mail">mail</a> – Mail协议流量</li>
+  <li><a target="_blank" href="http://nginx.org/en/docs/stream/ngx_stream_core_module.html?&amp;_ga=1.85614937.1509956953.1490042234#stream" title="stream">stream</a> – TCP协议流量</li>
+ </ul> 
+ <p>指定在这些上下文之外的指令是在主上下文中。<br>在每个流量处理上下文中，可包括一个或多个服务器上下文来定义控制请求处理的虚拟服务器。 您可以在服务器环境中包含的指令根据流量类型而有所不同。</p> 
+ <p>对于HTTP流量(http上下文)，每个服务器指令控制对特定域或IP地址上的资源请求的处理。 服务器上下文中的一个或多个位置上下文定义了如何处理特定的URI集合。</p> 
+ <p>对于邮件和TCP流量(<code>mail</code> 和 <code>stream</code> 上下文)，服务器指令各自控制到达特定TCP端口或UNIX套接字的流量处理。</p> 
+ <p>以下配置说明了上下文的使用情况。</p>   
+ <pre><code>user nobody; # a directive in the 'main' context
+
+events {
+    # configuration of connection processing
+}
+
+http {
+
+    # Configuration specific to HTTP and affecting all virtual servers
+
+    server {
+        # configuration of HTTP virtual server 1
+
+        location /one {
+            # configuration for processing URIs with '/one'
+        }
+
+        location /two {
+            # configuration for processing URIs with '/two'
+        }
+    }
+
+    server {
+        # configuration of HTTP virtual server 2
+    }
+}
+
+stream {
+    # Configuration specific to TCP and affecting all virtual servers
+
+    server {
+        # configuration of TCP virtual server 1 
+    }
+}
+</code></pre>
+ <p>对于大多数指令，在另一个上下文(子上下文)中定义的上下文将继承父级中包含的伪指令的值。 要覆盖从父进程继承的值，请在子上下文中包含该指令。 有关上下文遗留的更多信息，请参阅<a target="_blank" href="http://nginx.org/en/docs/http/ngx_http_proxy_module.html?&amp;_ga=1.110839877.1509956953.1490042234#proxy_set_header" title="proxy_set_header">proxy_set_header</a>伪指令的文档。</p> 
+ <p>要更改配置文件才能生效，NGINX必须重新加载该文件。可以重新启动nginx进程或发送<code>reload</code>信号来升级配置，而不会中断当前请求的处理。</p>
+ <br>      
+</div></body></html>

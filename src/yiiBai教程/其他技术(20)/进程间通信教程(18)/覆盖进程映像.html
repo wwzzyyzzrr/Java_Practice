@@ -1,0 +1,185 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">覆盖进程映像</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>假设我们正在运行一个程序，想从当前程序运行另一个程序。 这可能吗？ 如果我们实现覆盖进程映像的概念。 当前正在运行的程序呢，也可以运行的。 当前的程序与新程序叠加，如果想运行两个程序，而不会丢失当前正在运行的程序，有可能吗？这是可能做到的。</p> 
+ <p>创建一个子进程，以便有一个父进程和一个新创建的子进程。 我们已经在父进程中运行当前程序，所以在子进程中运行新创建的进程。 这样可以从当前程序运行另一个程序。 不仅是一个程序，而且可以通过创建许多子进程来运行当前程序中的任意数量的程序。</p> 
+ <p>看看以下面的程序示例。文件:<em>helloworld.c</em> - </p> 
+ <pre><code class="lang-cpp">#include&lt;stdio.h&gt;
+
+void main() {
+   printf("Hello World\n");
+   return;
+}
+</code></pre> 
+ <p>另一个文件:<em>execl_test.c</em> - </p> 
+ <pre><code class="lang-cpp">#include&lt;stdio.h&gt;
+#include&lt;unistd.h&gt;
+
+void main() {
+   execl("./helloworld", "./helloworld", (char *)0);
+   printf("This wouldn't print\n");
+   return;
+}
+</code></pre> 
+ <p>上面的程序中，<code>helloworld</code>程序将覆盖<code>execl_test</code>的进程映像。 这就是执行<code>execl_test(printf())</code>的过程映像代码的原因。</p> 
+ <p>编译和执行的结果如下 - </p> 
+ <pre><code class="lang-cpp">Hello World
+</code></pre> 
+ <p>现在，我们将从一个程序运行以下两个程序，即<code>execl_run_two_prgms.c</code>。</p> 
+ <ul> 
+  <li>Hello World程序(helloworld.c)</li>
+  <li>while循环程序从1到10打印 (while_loop.c)</li>
+ </ul> 
+ <p>文件:<em>while_loop.c</em> - </p> 
+ <pre><code class="lang-cpp">/* Prints numbers from 1 to 10 using while loop */
+#include&lt;stdio.h&gt;
+
+void main() {
+   int value = 1;
+   while (value &lt;= 10) {
+      printf("%d\t", value);
+      value++;
+   }
+   printf("\n");
+   return;
+}
+</code></pre> 
+ <p>以下是运行两个程序的程序(一个来自子程序，另一个来自父程序)。</p> 
+ <p>文件:<em>execl_run_two_prgms.c</em> - </p> 
+ <pre><code class="lang-cpp">#include&lt;stdio.h&gt;
+#include&lt;unistd.h&gt;
+
+void main() {
+   int pid;
+   pid = fork();
+
+   /* Child process */
+   if (pid == 0) {
+      printf("Child process: Running Hello World Program\n");
+      execl("./helloworld", "./helloworld", (char *)0);
+      printf("This wouldn't print\n");
+   } else { /* Parent process */
+      sleep(3);
+      printf("Parent process: Running While loop Program\n");
+      execl("./while_loop", "./while_loop", (char *)0);
+      printf("Won't reach here\n");
+   }
+   return;
+}
+</code></pre> 
+ <p><strong>注</strong> - 放置<code>sleep()</code>调用以确保子进程和父进程顺序运行(不重叠结果)。</p> 
+ <p>执行上面示例代码，得到以下结果 - </p> 
+ <pre><code class="lang-shell">Child process: Running Hello World Program
+This wouldn't print
+Parent process: Running While loop Program
+Won't reach here
+</code></pre> 
+ <p>现在从一个程序运行两个程序，即<code>execl_run_two_prgms.c</code>，与上面相同的程序，但带有命令行参数。 所以运行了两个程序，即子进程中的<code>helloworld.c</code>和父进程中的<code>while_loop.c</code>程序。 这是如下 -</p> 
+ <ul> 
+  <li>Hello World程序(helloworld.c)</li>
+  <li>while循环程序根据命令行参数(while_loop.c)从<code>1</code>打印到<code>num_times_str</code>次数。</li>
+ </ul> 
+ <p>这个程序大致执行以下操作 -</p> 
+ <ul> 
+  <li>创建一个子进程</li>
+  <li>子进程执行<code>helloworld.c</code>程序</li>
+  <li>父进程执行<code>while_loop.c</code>程序将命令行参数值作为参数传递给程序。 如果命令行参数没有被传递，那么默认值为<code>10</code>。否则，它取得给定的参数值。 参数值应该是数字; 代码不会验证。</li>
+ </ul> 
+ <p>文件:<em>execl_run_two_prgms.c</em> - </p> 
+ <pre><code class="lang-cpp">#include&lt;stdio.h&gt;
+#include&lt;string.h&gt;
+#include&lt;unistd.h&gt;
+
+void main(int argc, char *argv[0]) {
+   int pid;
+   int err;
+   int num_times;
+   char num_times_str[5];
+
+   /* In no command line arguments are passed, then loop maximum count taken as 10 */
+   if (argc == 1) {
+      printf("Taken loop maximum as 10\n");
+      num_times = 10;
+      sprintf(num_times_str, "%d", num_times);
+   } else {
+      strcpy(num_times_str, argv[1]);
+      printf("num_times_str is %s\n", num_times_str);
+      pid = fork();
+   }
+
+   /* Child process */
+   if (pid == 0) {
+      printf("Child process: Running Hello World Program\n");
+      err = execl("./helloworld", "./helloworld", (char *)0);
+      printf("Error %d\n", err);
+      perror("Execl error: ");
+      printf("This wouldn't print\n");
+   } else { /* Parent process */
+      sleep(3);
+      printf("Parent process: Running While loop Program\n");
+      execl("./while_loop", "./while_loop", (char *)num_times_str, (char *)0);
+      printf("Won't reach here\n");
+   }
+   return;
+}
+</code></pre> 
+ <p>以下是从<code>execl_run_two_prgms.c</code>程序的子进程调用<code>helloworld.c</code>程序。</p> 
+ <p>文件:<em>helloworld.c</em> - </p>   
+ <pre><code class="lang-cpp">#include&lt;stdio.h&gt;
+
+void main() {
+   printf("Hello World\n");
+   return;
+}
+</code></pre> 
+ <p>以下是从<code>execl_run_two_prgms.c</code>程序的父进程调用的<code>while_loop.c</code>程序。 这个程序的参数是从<code>execl_run_two_prgms.c</code>程序传递来的。</p> 
+ <p>文件:<em>while_loop.c</em> - </p> 
+ <pre><code class="lang-cpp">#include&lt;stdio.h&gt;
+
+void main(int argc, char *argv[]) {
+   int start_value = 1;
+   int end_value;
+   if (argc == 1)
+   end_value = 10;
+   else
+   end_value = atoi(argv[1]);
+   printf("Argv[1] is %s\n", argv[1]);
+   while (start_value &lt;= end_value) {
+      printf("%d\t", start_value);
+      start_value++;
+   }
+   printf("\n");
+   return;
+}
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 - </p> 
+ <pre><code class="lang-shell">Taken loop maximum as 10
+num_times_str is 10
+Child process: Running Hello World Program
+Hello World
+Parent process: Running While loop Program
+Argv[1] is 10
+1 2 3 4 5 6 7 8 9 10
+Taken loop maximum as 15
+num_times_str is 15
+Child process: Running Hello World Program
+Hello World
+Parent process: Running While loop Program
+Argv[1] is 15
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15
+</code></pre> 
+ <p>现在让看看覆盖映像相关的库函数。</p> 
+ <pre><code class="lang-cpp">#include&lt;unistd.h&gt;
+
+int execl(const char *path, const char *arg, ...);
+</code></pre> 
+ <p>这个函数会覆盖当前正在运行的进程映像和参数<code>path</code>，<code>arg</code>中提到的新进程。 如果任何参数需要传递给新的进程映像，那么将通过<code>“arg”</code>参数发送，最后一个参数应该是<code>NULL</code>。</p> 
+ <p>这个函数只会在错误的情况下返回一个值。 覆盖图像相关调用的过程如下所述 -</p> 
+ <pre><code class="lang-cpp">int execl(const char *path, const char *arg, ...);
+int execlp(const char *file, const char *arg, ...);
+int execle(const char *path, const char *arg, ..., char * const envp[]);
+int execv(const char *path, char *const argv[]);
+int execvp(const char *file, char *const argv[]);
+int execvpe(const char *file, char *const argv[], char *const envp[]);
+</code></pre> 
+ <p>这些调用将处理传递命令行参数(<code>argv []</code>)，环境变量(<code>envp []</code>)和其他参数。</p>
+ <br>      
+</div></body></html>

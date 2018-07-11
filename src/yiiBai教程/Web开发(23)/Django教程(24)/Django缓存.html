@@ -1,0 +1,185 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Django缓存</h1><div style="width:100%;float:left;" class="article-content">   
+ <div> 
+  <div>
+    若要缓存一些昂贵的计算结果，&nbsp;下一次你需要它时不需要再执行它。以下是解释缓存如何工作的伪代码− 
+  </div> 
+ </div> 
+ <div> 
+  <pre>given a URL, try finding that page in the cache
+
+if the page is in the cache:
+   return the cached page
+else:
+   generate the page
+   save the generated page in the cache (for next time)
+   return the generated page&nbsp;</pre> 
+  <p style="text-align:justify;"> Django提供了自己的缓存系统，可以让您保存动态网页，为了避免在需要时重新计算它们。Django缓存架构的优点是，让你缓存&nbsp;- </p> 
+  <ul> 
+   <li> 
+    <div>
+      特定视图的输出 
+    </div> </li> 
+   <li> 
+    <div>
+      模板的一部分 
+    </div> </li> 
+   <li> 
+    <div>
+      整个网站 
+    </div> </li> 
+  </ul> 
+  <p style="text-align:justify;"> 要使用在Django中使用高速缓存，首先要做的是设置在那里的缓存会保存下来。高速缓存框架提供了不同的可能性&nbsp;-&nbsp;高速缓存可以被保存在数据库中，关于文件系统，或直接在内存中。可在项目的 settings.py 文件设置完成。 </p> 
+  <h2> 在数据库设置缓存 </h2> 
+  <div>
+    只需在项目settings.py文件添加如下- 
+  </div> 
+  <pre>CACHES = {
+   'default': {
+      'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+      'LOCATION': 'my_table_name',
+   }
+}&nbsp;</pre> 
+  <p style="text-align:justify;"> 对于这项工作，并完成设置，我们需要创建高速缓存表“my_table_name”。对于这一点，需要做到以下几点&nbsp;- </p> 
+  <pre>python manage.py createcachetable</pre> 
+  <h2> 
+   <div>
+     在文件系统设置高速缓存 
+   </div> </h2> 
+  <div>
+    只需在项目settings.py文件添加如下- 
+  </div> 
+  <pre>CACHES = {
+   'default': {
+      'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+      'LOCATION': '/var/tmp/django_cache',
+   }
+}</pre> 
+  <h2> 
+   <div>
+     设置缓存在内存中 
+   </div> </h2> 
+  <div>
+    这是缓存的最有效的方法，你可以使用它这取决于Python绑定库选择了内存高速缓存，如下列选项之一&nbsp;- 
+  </div> 
+  <pre>CACHES = {
+   'default': {
+      'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+      'LOCATION': '127.0.0.1:11211',
+   }
+}</pre> 
+  <p style="font-family:Verdana, Geneva, Tahoma,  Helvetica, text-align:justify;font-size:15px !important;background-color:inherit;"> <b>或</b> </p> 
+  <pre>CACHES = {
+   'default': {
+      'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+      'LOCATION': 'unix:/tmp/memcached.sock',
+   }
+}</pre> 
+  <h2> 
+   <div>
+     缓存整个网站 
+   </div> </h2> 
+  <p style="text-align:justify;"> 使用高速缓存在Django的最简单的方法就是缓存整个网站。这可以通过编辑项目settings.py的MIDDLEWARE_CLASSES选项来完成。以下需要添加到选项- </p> 
+  <pre>MIDDLEWARE_CLASSES += (
+   'django.middleware.cache.UpdateCacheMiddleware',
+   'django.middleware.common.CommonMiddleware',
+   'django.middleware.cache.FetchFromCacheMiddleware',
+)</pre> 
+  <div>
+    请注意，这里的顺序是很重要的，更新应在获取中间件之前。 
+  </div> 
+  <div>
+    然后在同一个文件，还需要设置&nbsp;- 
+  </div> 
+  <pre>CACHE_MIDDLEWARE_ALIAS – The cache alias to use for storage.
+CACHE_MIDDLEWARE_SECONDS – The number of seconds each page should be cached.</pre> 
+  <h2> 
+   <div>
+     缓存视图 
+   </div> </h2> 
+  <p style="text-align:justify;"> 如果不想缓存整个网站，可以缓存特定视图。这可通过使用附带 Django 的 cache_page 修饰符完成。我们要缓存视图viewArticles的结果- </p> 
+  <pre>from django.views.decorators.cache import cache_page
+
+@cache_page(60 * 15)
+
+def viewArticles(request, year, month):
+   text = "Displaying articles of : %s/%s"%(year, month)
+   return HttpResponse(text)&nbsp;</pre> 
+  <p style="text-align:justify;"> 正如你所看到 cache_page 是您希望视图结果被缓存的需要的秒数(参数)。在上面的例子中，结果将会缓存 15 分钟。 </p> 
+  <div>
+    注&nbsp;-&nbsp;正如我们之前看到的上述视图是映射到&nbsp;- 
+  </div>   
+  <pre>urlpatterns = patterns('myapp.views',
+   url(r'^articles/(?P&lt;month&gt;\d{2})/(?P&lt;year&gt;\d{4})/', 'viewArticles', name = 'articles'),)&nbsp;</pre> 
+  <p style="text-align:justify;"> 由于URL使用参数，每一个不同的调用将被单独地执行缓存。例如，请求 /myapp/articles/02/2007&nbsp;将分别缓存到&nbsp;/myapp/articles/03/2008。 </p> 
+  <p style="text-align:justify;"> 缓存一个视图也可以直接在url.py文件中完成。接着下面有相同的结果与上所述。只要编辑 myapp/url.py 文件并更改(以上)的相关映射URL为 - </p> 
+  <pre>urlpatterns = patterns('myapp.views',
+   url(r'^articles/(?P&lt;month&gt;\d{2})/(?P&lt;year&gt;\d{4})/', 
+   cache_page(60 * 15)('viewArticles'), name = 'articles'),)</pre> 
+  <div>
+    当然，它不再需要myapp/views.py。 
+  </div> 
+  <h2> 
+   <div>
+     缓存模板片段 
+   </div> </h2> 
+  <div>
+    也可以缓存模板的一部分，这是通过使用&nbsp;cache&nbsp;标签进行的。让我们把&nbsp;hello.html&nbsp;模板修改&nbsp;- 
+  </div> 
+  <pre>{% extends "main_template.html" %}
+{% block title %}My Hello Page{% endblock %}
+{% block content %}
+
+Hello World!!!&lt;p&gt;Today is {{today}}&lt;/p&gt;
+We are
+{% if today.day == 1 %}
+
+the first day of month.
+{% elif today == 30 %}
+
+the last day of month.
+{% else %}
+
+I don't know.
+{%endif%}
+
+&lt;p&gt;
+   {% for day in days_of_week %}
+   {{day}}
+&lt;/p&gt;
+
+{% endfor %}
+{% endblock %}</pre> 
+  <div>
+    缓存内容块模板将成为&nbsp;- 
+  </div> 
+  <pre>{% load cache %}
+{% extends "main_template.html" %}
+{% block title %}My Hello Page{% endblock %}
+{% cache 500 content %}
+{% block content %}
+
+Hello World!!!&lt;p&gt;Today is {{today}}&lt;/p&gt;
+We are
+{% if today.day == 1 %}
+
+the first day of month.
+{% elif today == 30 %}
+
+the last day of month.
+{% else %}
+
+I don't know.
+{%endif%}
+
+&lt;p&gt;
+   {% for day in days_of_week %}
+   {{day}}
+&lt;/p&gt;
+
+{% endfor %}
+{% endblock %}
+{% endcache %}&nbsp;</pre> 
+  <p style="text-align:justify;"> 正如你可以在上面看到，缓存标签将需要2个参数&nbsp;−&nbsp;想要的块被缓存(秒)以及名称提供给缓存片段。 </p> 
+ </div>
+ <br>      
+</div></body></html>

@@ -1,0 +1,227 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">WebGL绘制四边形</h1><div style="width:100%;float:left;" class="article-content">   
+ <div> 
+  <div>
+    在前面的章节中，我们讨论了WebGL提供不同的绘图模式。我们也可以使用索引来绘制使用这些模式中的一个原语。要在WebGL中绘制模型，我们要选择这些原语其中的一种，并绘制所需的网格(即使用一个或多个原语形成一个模型)。 
+  </div> 
+ </div> 
+ <div> 
+  <div>
+    在本章中，我们将举一个例子来演示如何使用 WebGL 来绘制一个四边形。 
+  </div> 
+  <h2> 
+   <div>
+     绘制四边形的步骤 
+   </div> </h2> 
+  <div>
+    下面是创建一个WebGL应用程序来绘制一个四边形的步骤。 
+  </div> 
+  <div> 
+   <strong>第1步&nbsp;-&nbsp;准备Canvas和获取WebGL渲染上下文</strong> 
+  </div> 
+  <div>
+    在这一步中，我们得到了 WebGL 的渲染上下文对象 usinggetContext()。 
+  </div> 
+  <div> 
+   <strong>第2步&nbsp;-&nbsp;定义几何并将其存储在缓冲区对象</strong> 
+  </div> 
+  <div>
+    正方形可以用两个三角形来绘制。在这个例子中，我们提供的顶点两个三角形(具有一个公共边缘)和索引。 
+  </div> 
+  <pre>var vertices = [
+   -0.5,0.5,0.0,
+   -0.5,-0.5,0.0,
+   0.5,-0.5,0.0,
+   0.5,0.5,0.0 
+];
+
+indices = [3,2,1,3,1,0]; </pre> 
+  <div> 
+   <strong>第3步&nbsp;-&nbsp;创建和编译着色器程序</strong> 
+  </div> 
+  <div>
+    在这一步中，你需要编写的顶点着色器和片段着色器程序，编译它们，并通过连接这两个程序将创建一个合并程序。 
+  </div> 
+  <ul> 
+   <li> 
+    <div>
+      顶点着色器-&nbsp;在程序的顶点着色器，我们定义向量属性来存储三维坐标，并指定为&nbsp;gl_position。 
+    </div> </li> 
+  </ul> 
+  <pre>var vertCode =
+   'attribute vec3 coordinates;' +
+   'void main(void) {' +
+      ' gl_Position = vec4(coordinates, 1.0);' +
+   '}';</pre> 
+  <ul style="background-color:inherit;color:#313131;font-family:Verdana, Geneva, Tahoma,  Helvetica,;"> 
+   <li> 
+    <div>
+      片段着色器-&nbsp;在片段着色器，我们只分配碎片颜色到&nbsp;gl_FragColor&nbsp;变量。 
+    </div> </li> 
+  </ul> 
+  <pre>var fragCode = 'void main(void) {' +' gl_FragColor = vec4(0.5, 0.3, 0.0, 7.5);' +'}';</pre> 
+  <div> 
+   <strong>第4步&nbsp;-&nbsp;关联着色器程序到缓冲区对象</strong> 
+  </div> 
+  <div>
+    在这一步，我们关联着色器程序到缓冲器的对象。 
+  </div> 
+  <div>
+    第5步&nbsp;-&nbsp;绘制所需的对象 
+  </div> 
+  <div>
+    由于我们正在绘制两个三角形，形成四边形，使用索引，我们将使用的方法 drawElements()。对于这个方法，我们必须传递索引的数量。&nbsp;indices.length 值为索引的数量。 
+  </div> 
+  <pre>gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_SHORT,0);</pre> 
+  <h2> 
+   <div>
+     示例&nbsp;-&nbsp;画一个四边形 
+   </div> </h2> 
+  <div>
+    下面的程序展示了如何创建一个 WebGL 的应用程序来绘制一个四边形。 
+  </div> 
+  <pre>&lt;!doctype html&gt;
+&lt;html&gt;
+   &lt;body&gt;
+      &lt;canvas width = "300" height = "300" id = "my_Canvas"&gt;&lt;/canvas&gt;
+
+      &lt;script&gt;
+
+         /*============ Creating a canvas =================*/
+      
+         var canvas = document.getElementById('my_Canvas');
+         gl = canvas.getContext('experimental-webgl');
+      
+         /*========== Defining and storing the geometry =========*/
+
+         var vertices = [
+            -0.5,0.5,0.0,
+            -0.5,-0.5,0.0,
+            0.5,-0.5,0.0,
+            0.5,0.5,0.0 
+         ];
+          
+         indices = [3,2,1,3,1,0];
+      
+         // Create an empty buffer object to store vertex buffer
+         var vertex_buffer = gl.createBuffer();
+
+         // Bind appropriate array buffer to it
+         gl.bindBuffer(gl.ARRAY_BUFFER, vertex_buffer);
+ 
+         // Pass the vertex data to the buffer
+         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+
+         // Unbind the buffer
+         gl.bindBuffer(gl.ARRAY_BUFFER, null);
+
+         // Create an empty buffer object to store Index buffer
+         var Index_Buffer = gl.createBuffer();
+
+         // Bind appropriate array buffer to it
+         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, Index_Buffer);
+
+         // Pass the vertex data to the buffer
+         gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.STATIC_DRAW);
+
+         // Unbind the buffer
+         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
+
+         /*====================== Shaders =======================*/
+ 
+         // Vertex shader source code
+         var vertCode =
+            'attribute vec3 coordinates;' +
+            'void main(void) {' +
+               ' gl_Position = vec4(coordinates, 1.0);' +
+            '}';
+         
+         // Create a vertex shader object
+         var vertShader = gl.createShader(gl.VERTEX_SHADER);
+
+         // Attach vertex shader source code
+         gl.shaderSource(vertShader, vertCode);
+
+         // Compile the vertex shader
+         gl.compileShader(vertShader);
+
+         // Fragment shader source code
+         var fragCode =
+            'void main(void) {' +
+               ' gl_FragColor = vec4(0.0, 0.0, 0.0, 0.1);' +
+            '}';
+         
+         // Create fragment shader object 
+         var fragShader = gl.createShader(gl.FRAGMENT_SHADER);
+
+         // Attach fragment shader source code
+         gl.shaderSource(fragShader, fragCode);
+
+         // Compile the fragmentt shader
+         gl.compileShader(fragShader);
+
+         // Create a shader program object to
+         // store the combined shader program
+         var shaderProgram = gl.createProgram();
+
+         // Attach a vertex shader
+         gl.attachShader(shaderProgram, vertShader);
+
+         // Attach a fragment shader
+         gl.attachShader(shaderProgram, fragShader);
+
+         // Link both the programs
+         gl.linkProgram(shaderProgram);
+
+         // Use the combined shader program object
+         gl.useProgram(shaderProgram);
+
+         /* ======= Associating shaders to buffer objects =======*/
+
+         // Bind vertex buffer object
+         gl.bindBuffer(gl.ARRAY_BUFFER, vertex_buffer);
+
+         // Bind index buffer object
+         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, Index_Buffer); 
+ 
+         // Get the attribute location
+         var coord = gl.getAttribLocation(shaderProgram, "coordinates");
+
+         // Yiibai an attribute to the currently bound VBO
+         gl.vertexAttribYiibaier(coord, 3, gl.FLOAT, false, 0, 0);
+ 
+         // Enable the attribute
+         gl.enableVertexAttribArray(coord);
+
+         /*============= Drawing the Quad ================*/
+
+         // Clear the canvas
+         gl.clearColor(0.5, 0.5, 0.5, 0.9);
+
+         // Enable the depth test
+         gl.enable(gl.DEPTH_TEST);
+
+         // Clear the color buffer bit
+         gl.clear(gl.COLOR_BUFFER_BIT);
+
+         // Set the view port
+         gl.viewport(0,0,canvas.width,canvas.height);
+
+         // Draw the triangle
+         gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_SHORT,0);
+
+      &lt;/script&gt;
+   
+   &lt;/body&gt;
+&lt;/html&gt;</pre> 
+  <div>
+    这将产生以下结果&nbsp;-
+   <br> 
+   <img src="/uploads/tutorial/20151220/1-151220214JVM.png" alt="">
+   <br> 
+  </div> 
+ </div> 
+ <div style="font-family:微软雅黑;font-size:14px;background-color:#FFFFFF;"> 
+  <img src="file://E:/data/youdao/qq24B39E2329F08D9F4C3146A571A415EF/a51684f897764d9b8ec500a90d5f1af7/clipboard.png"> 
+ </div>
+ <br>      
+</div></body></html>

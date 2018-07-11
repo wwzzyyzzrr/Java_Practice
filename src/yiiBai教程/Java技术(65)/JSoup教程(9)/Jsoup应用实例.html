@@ -1,0 +1,48 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Jsoup应用实例</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>在本篇文章中，将列出了一些常用的jsoup例子，例如获取URL或HTML文档的标题，链接，图像和元数据。</p> 
+ <p><strong> 1. 获取URL的标题</strong></p> 
+ <pre><code class="lang-java">Document doc = Jsoup.connect("http://www.yiibai.com").get();  
+String title = doc.title();
+</code></pre> 
+ <p><strong>2. 从HTML文件获取标题</strong></p> 
+ <pre><code class="lang-java">Document doc = Jsoup.parse(new File("e:\\register.html"),"utf-8");//assuming register.html file in e drive  
+String title = doc.title();
+</code></pre> 
+ <p><strong>3. 获取URL的链接</strong></p> 
+ <pre><code class="lang-java">Document doc = Jsoup.connect("http://www.yiibai.com").get();  
+Elements links = doc.select("a[href]");  
+for (Element link : links) {  
+    System.out.println("\nlink : " + link.attr("href"));  
+    System.out.println("text : " + link.text());  
+}
+</code></pre> 
+ <p><strong>4. 获取URL的元信息</strong></p> 
+ <pre><code class="lang-java">Document doc = Jsoup.connect("http://www.yiibai.com").get();  
+String keywords = doc.select("meta[name=keywords]").first().attr("content");  
+System.out.println("Meta keyword : " + keywords);  
+String description = doc.select("meta[name=description]").get(0).attr("content");  
+System.out.println("Meta description : " + description);
+</code></pre> 
+ <p><strong>5. 获取URL的图像</strong></p> 
+ <pre><code class="lang-java">Document doc = Jsoup.connect("http://www.yiibai.com").get();  
+Elements images = doc.select("img[src~=(?i)\\.(png|jpe?g|gif)]");  
+for (Element image : images) {  
+    System.out.println("src : " + image.attr("src"));  
+    System.out.println("height : " + image.attr("height"));  
+    System.out.println("width : " + image.attr("width"));  
+    System.out.println("alt : " + image.attr("alt"));  
+}
+</code></pre> 
+ <p><strong>6. 获取表单参数</strong></p>   
+ <pre><code class="lang-java">Document doc = Jsoup.parse(new File("e:\\register.html"),"utf-8");  
+Element loginform = doc.getElementById("registerform");  
+
+Elements inputElements = loginform.getElementsByTag("input");  
+for (Element inputElement : inputElements) {  
+    String key = inputElement.attr("name");  
+    String value = inputElement.attr("value");  
+    System.out.println("Param name: "+key+" \nParam value: "+value);  
+}
+</code></pre>
+ <br>      
+</div></body></html>

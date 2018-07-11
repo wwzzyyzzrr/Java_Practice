@@ -1,0 +1,64 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Nginx配置日志</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>本节介绍如何在NGINX中配置日志记录错误和处理的请求。在本文章中将涉及以下内容 -</p> 
+ <ol> 
+  <li>设置错误日志</li>
+  <li>设置访问日志</li>
+  <li>启用条件日志记录</li>
+  <li>日志记录到Syslog</li>
+ </ol> 
+ <h2 id="h2-1-"><a name="1. 设置错误日志" class="reference-link"></a><span class="header-link octicon octicon-link"></span>1. 设置错误日志</h2>
+ <p>NGINX将遇到的不同严重性级别问题的信息写入错误日志。 <code>error_log</code>指令将日志记录设置为特定文件，<code>stderr</code>或<code>syslog</code>，并指定要记录的消息的最低级别。 默认情况下，错误日志位于<code>{NGING_INSTALL_PATH}/logs/error.log</code>(绝对路径取决于操作系统和安装)，并记录来自所指定的所有严重级别的消息。</p> 
+ <p>以下配置将错误消息的最小严重性级别更改为从错误记录到警告：</p> 
+ <pre><code class="lang-shell">error_log logs/error.log warn;
+## 或者可写为： error_log /var/logs/nginx/error.log warn;
+</code></pre> 
+ <p>在这种情况下，将记录 <code>warn</code>, <code>error crit</code>, <code>alert</code> 和 <code>emerg</code> 级别的消息。<br>错误日志的默认设置全局工作。 要覆盖它，将<code>error_log</code>指令放在 <code>main</code> (顶级)配置上下文中。<code>main</code> 上下文中的设置始终由其他配置级别继承。 还可以在 <code>http</code>, <code>stream</code>, <code>server</code> 和 <code>location</code> 级别指定<code>error_log</code>指令，并覆盖从较高级别继承的设置。 如果发生错误，则该消息只写入一个错误日志，最接近发生错误的级别的错误日志。 但是，如果在同一级别指定了多个<code>error_log</code>伪指令，则会将消息写入所有指定的日志。</p> 
+ <blockquote> 
+  <p>注意：在开源NGINX版本<a target="_blank" href="http://nginx.org/en/CHANGES?_ga=1.115499334.1509956953.1490042234" title="1.5.2">1.5.2</a>中添加了在同一配置级别指定多个<code>error_log</code>伪指令的功能。</p> 
+ </blockquote> 
+ <h2 id="h2-2-"><a name="2. 设置访问日志" class="reference-link"></a><span class="header-link octicon octicon-link"></span>2. 设置访问日志</h2>
+ <p>在处理请求之后，NGINX在访问日志中写入有关客户端请求的信息。 默认情况下，访问日志位于<code>{NGING_INSTALL_PATH}logs/access.log</code>中，<code>{NGING_INSTALL_PATH}</code>为安装nginx的目录，信息以预定义的组合格式写入日志。要覆盖这个默认设置，请使用<a target="_blank" href="http://nginx.org/en/docs/http/ngx_http_log_module.html?&amp;_ga=1.89196891.1509956953.1490042234#log_format" title="log_format">log_format</a>指令更改记录消息的格式，以及<a target="_blank" href="http://nginx.org/en/docs/http/ngx_http_log_module.html?&amp;_ga=1.89196891.1509956953.1490042234#access_log" title="access_log">access_log</a>指令，以指定日志的位置及其格式。 日志格式使用变量定义。</p> 
+ <p>以下示例定义扩展预定义组合格式的日志格式，其值指示响应<code>gzip</code>的压缩比。 然后将格式应用于启用压缩的虚拟服务器。</p> 
+ <pre><code class="lang-shell">http {
+    log_format compression '$remote_addr - $remote_user [$time_local] '
+                           '"$request" $status $body_bytes_sent '
+                           '"$http_referer" "$http_user_agent" "$gzip_ratio"';
+
+    server {
+        gzip on;
+        access_log /spool/logs/nginx-access.log compression;
+        ...
+    }
+}
+</code></pre> 
+ <p>以下是一些如何读取生成时间值的规则：</p> 
+ <ul> 
+  <li>当通过多个服务器处理请求时，变量包含由逗号分隔的多个值。</li>
+  <li>当从一个上游组到另一个上游组有内部重定向时，这些值以分号分隔。</li>
+  <li>当请求无法到达上游服务器或无法接收到完整报头时，变量包含“0”(零)。</li>
+  <li>在连接到上游或从缓存中获取回复时出现内部错误的情况下，该变量包含“ <code>-</code> ”(连字符)。</li>
+ </ul> 
+ <p>可以通过启用缓冲区的日志消息和名称包含变量的常用日志文件的描述符缓存来优化日志记录。 要启用缓冲，请使用access_log指令的缓冲区参数来指定缓冲区的大小。 当下一个日志消息不适合缓冲区以及<a target="_blank" href="http://nginx.org/en/docs/http/ngx_http_log_module.html?&amp;_ga=1.52175977.1509956953.1490042234#access_log" title="其他情况">其他情况</a>时，缓冲的消息将被写入日志文件。</p> 
+ <p>要启用日志文件描述符的缓存，请使用<a target="_blank" href="http://nginx.org/en/docs/http/ngx_http_log_module.html?&amp;_ga=1.52635496.1509956953.1490042234#open_log_file_cache" title="open_log_file_cache">open_log_file_cache</a>指令。<br>与<code>error_log</code>指令类似，在特定配置级别定义的<code>access_log</code>伪指令将覆盖以前级别的设置。 当请求的处理完成时，消息将被写入到当前级别上配置的日志中，或者从先前的级别继承。 如果一个级别定义了多个访问日志，则会将消息写入所有的访问日志。</p> 
+ <h2 id="h2-3-"><a name="3. 启用条件日志记录" class="reference-link"></a><span class="header-link octicon octicon-link"></span>3. 启用条件日志记录</h2>
+ <p>条件记录允许从访问日志中排除琐碎或不重要的日志条目。在NGINX中，条件日志记录由<code>access_log</code>伪指令的<code>if</code>参数启用。</p> 
+ <p>此示例不包括使用HTTP状态代码<code>2xx</code>(成功)和<code>3xx</code>(重定向)的请求：</p>   
+ <pre><code class="lang-shell">map $status $loggable {
+    ~^[23]  0;
+    default 1;
+}
+
+access_log /path/to/access.log combined if=$loggable;
+</code></pre> 
+ <h2 id="h2-4-syslog"><a name="4. 日志记录到Syslog" class="reference-link"></a><span class="header-link octicon octicon-link"></span>4. 日志记录到Syslog</h2>
+ <p><code>syslog</code>实用程序是计算机消息记录的标准，并允许从单个<code>syslog</code>服务器上的不同设备收集日志消息。 在NGINX中，对<code>syslog</code>的日志记录使用<code>error_log</code>和<code>access_log</code>伪指令中的<code>syslog：</code>前缀进行配置。</p> 
+ <p>Syslog消息可以发送到服务器=可以是域名，IP地址或UNIX域的套接字路径。 可以使用端口指定域名或IP地址来覆盖默认端口<code>514</code>. 可以在<code>unix：prefix</code>之后指定UNIX域套接字路径：</p> 
+ <pre><code class="lang-shell">error_log server=unix:/var/log/nginx.sock debug;
+access_log syslog:server=[2001:db8::1]:1234,facility=local7,tag=nginx,severity=info;
+</code></pre> 
+ <p>在该示例中，NGINX错误日志消息将在调试日志记录级别写入UNIX域套接字，并将访问日志写入具有IPv6地址和端口<code>1234</code>的syslog服务器。</p> 
+ <p><code>facility =</code>参数指定正在记录消息的程序类型。 默认值为<code>local7</code>。 其他可能的值是：<code>auth</code>，<code>authpriv</code>，<code>daemon</code>，<code>cron</code>，<code>ftp</code>，<code>lpr</code>，<code>kern</code>，<code>mail</code>，<code>news</code>，<code>syslog</code>，<code>user</code>，<code>uucp</code>，<code>local0</code> … <code>local7</code>。</p> 
+ <p><code>tag =</code>参数将自定义标签应用于<code>syslog</code>消息(在我们的示例中为nginx)。</p> 
+ <p><code>severity =</code>参数设置访问日志的syslog消息的严重性级别。 严重性越来越高的可能值为：<code>debug</code>，<code>info</code>，<code>notice</code>，<code>warn</code>，<code>error(default)</code>，<code>crit</code>，<code>alert</code>和<code>emerg</code>。 消息记录在指定的级别和更严重的级别。 在我们的示例中，严重性级别错误还使得可以 <code>crit</code>, <code>alert</code> 和 <code>emerg</code> 级别。</p>
+ <br>      
+</div></body></html>

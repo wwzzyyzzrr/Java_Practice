@@ -1,0 +1,184 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Node.js规范化应用</h1><div style="width:100%;float:left;" class="article-content">   
+ <p> Node.js运行在一个单线程模式，但它使用一个事件驱动范例来处理并发。它还有助于创建子进程，以充分利用并行处理的多核CPU系统。</p> 
+ <p> 子进程总是有三个流child.stdin，child.stdout和child.stderr这可能与父进程stdio流共享。</p> 
+ <p> Node提供child_process模块，该模块具有以下三个主要的方法来创建子进程。</p> 
+ <ul> 
+  <li> <p> <strong>exec&nbsp;</strong>- child_process.exec方法在shell/控制台运行一个命令并缓冲输出。</p> </li> 
+  <li> <p> <strong>spawn</strong>&nbsp;- child_process.spawn启动一个新的过程，一个给定的指令</p> </li> 
+  <li> <p> <strong>fork</strong>&nbsp;- child_process.fork方法是指定spawn()来创建子进程的一个特例。</p> </li> 
+ </ul> 
+ <h2> exec() 方法</h2> 
+ <p> child_process.exec方法在shell运行一个命令并缓冲输出。它具有以下特征：</p> 
+ <pre class="prettyprint notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+child_process.exec(command[, options], callback)</pre> 
+ <h3> 参数</h3> 
+ <p> 下面是使用的参数的说明：</p> 
+ <ul> 
+  <li> <p> <strong>command</strong>&nbsp;字符串是要运行的命令，用空格分隔的参数</p> </li> 
+  <li> <p> <strong>options</strong>&nbsp;对象可包括以下一个或多个选项：</p> 
+   <ul> 
+    <li> <p> <strong>cwd</strong>&nbsp;子进程的字符串当前工作目录</p> </li> 
+    <li> <p> <strong>env</strong>&nbsp;对象环境的键值对</p> </li> 
+    <li> <p> <strong>encoding</strong>&nbsp;字符串（缺省：“UTF8”）</p> </li> 
+    <li> <p> <strong>shell</strong>&nbsp;字符串执行（默认命令：在UNIX上为 '/bin/sh'，在Windows为cmd.exe“， 在shell应该明白/s /c 在Windows或 -c 在UNIX/；在Windows中，命令行解析应与cmd.exe兼容）</p> </li> 
+    <li> <p> <strong>timeout&nbsp;</strong>数字(默认: 0)</p> </li> 
+    <li> <p> <strong>maxBuffer</strong>&nbsp;数字(默认: 200*1024)</p> </li> 
+    <li> <p> <strong>killSignal</strong>&nbsp;字符串 (默认: 'SIGTERM')</p> </li> 
+    <li> <p> <strong>uid</strong>&nbsp;数字用于设置过程的用户的身份</p> </li> 
+    <li> <p> <strong>gid</strong>&nbsp;数字设置进程的组标识</p> </li> 
+   </ul> </li> 
+  <li> <p> <strong>callback&nbsp;</strong>函数获取三个参数错误，输出和错误被称为与下面的输出，当进程终止。</p> </li> 
+ </ul> 
+ <p> 在exec()方法返回一个缓冲带最大尺寸，等待结束该进程，并尝试一次返回所有缓存数据。</p> 
+ <h2> 例子</h2> 
+ <p> 让我们创建两个JS文件名分别为：support.js和master.js：</p> 
+ <p style="box-sizing: border-box; color: rgb(0, 0, 0); line-height: 24px; margin: 0em 0.2em 1em; word-wrap: break-word; padding: 0px; text-align: justify;  font-size: 14px;"> <i style="box-sizing: border-box;">File: support.js</i></p> 
+ <pre class="prettyprint notranslate" id="worker_js" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+console.log("Child Process " + process.argv[2] + " executed." );</pre> 
+ <p style="box-sizing: border-box; color: rgb(0, 0, 0); line-height: 24px; margin: 0em 0.2em 1em; word-wrap: break-word; padding: 0px; text-align: justify;  font-size: 14px;"> <i style="box-sizing: border-box;">File: master.js</i></p> 
+ <pre class="prettyprint tryit" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); cursor: default; background-image: url(http://www.yiibai.com/nodejs/images/try-it.jpg) !important; background-attachment: initial !important; background-size: initial !important; background-origin: initial !important; background-clip: initial !important; background-position: 100% 0%; background-repeat: no-repeat !important;" title="worker_js">
+const fs = require('fs');
+const child_process = require('child_process');
+
+for(var i=0; i&lt;3; i++) {
+   var workerProcess = child_process.exec('node support.js '+i,
+      function (error, stdout, stderr) {
+         if (error) {
+            console.log(error.stack);
+            console.log('Error code: '+error.code);
+            console.log('Signal received: '+error.signal);
+         }
+         console.log('stdout: ' + stdout);
+         console.log('stderr: ' + stderr);
+      });
+
+      workerProcess.on('exit', function (code) {
+      console.log('Child process exited with exit code '+code);
+   });
+}</pre> 
+ <p> 现在运行master.js看到结果：</p> 
+ <pre class="prettyprint notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+$ node master.js</pre> 
+ <p> 验证输出。服务器已经启动</p> 
+ <pre class="result notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace;  border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+Child process exited with exit code 0
+stdout: Child Process 1 executed.
+
+stderr:
+Child process exited with exit code 0
+stdout: Child Process 0 executed.
+
+stderr:
+Child process exited with exit code 0
+stdout: Child Process 2 executed.</pre> 
+ <h2> spawn() 方法</h2> 
+ <p> child_process.spawn 方法启动使用给定命令一个新的进程。它具有以下特征：</p> 
+ <pre class="prettyprint notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+child_process.spawn(command[, args][, options])</pre> 
+ <h3> 参数</h3> 
+ <p> 下面是使用的参数的说明：</p> 
+ <ul> 
+  <li> <p> <strong>command</strong>&nbsp;字符串运行的命令</p> </li> 
+  <li> <p> <strong>args</strong>&nbsp;字符串参数数组列表</p> </li> 
+  <li> <p> <strong>options</strong>&nbsp;对象可包括以下一个或多个选项：</p> 
+   <ul> 
+    <li> <p> <strong>cwd</strong>&nbsp;子进程的字符串为当前工作目录</p> </li> 
+    <li> <p> <strong>env</strong>&nbsp;对象环境的键值对</p> </li> 
+    <li> <p> <strong>stdio</strong>&nbsp;数组|子串的标准输入输出配置</p> </li> 
+    <li> <p> <strong>customFds</strong>&nbsp;数组，不推荐使用文件描述符的子数组，使用作为标准输入输出</p> </li> 
+    <li> <p> <strong>detached</strong>&nbsp;布尔将是一个子进程组</p> </li> 
+    <li> <p> <strong>uid</strong>&nbsp;数目设置进程的用户的身份。</p> </li> 
+    <li> <p> <strong>gid</strong>&nbsp;数目设置进程的组标识。</p> </li> 
+   </ul> </li> 
+ </ul> 
+ <p> spawn()方法返回流（标准输出与标准错误），它当处理返回大量的数据被使用。spawn()开始接收到响应的进程开始执行。</p> 
+ <h2> 例子</h2> 
+ <p> 创建两个JS文件名分别为support.js和master.js：</p> 
+ <p style="box-sizing: border-box; color: rgb(0, 0, 0); line-height: 24px; margin: 0em 0.2em 1em; word-wrap: break-word; padding: 0px; text-align: justify;  font-size: 14px;"> <i style="box-sizing: border-box;">File: support.js</i></p> 
+ <pre class="prettyprint notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+console.log("Child Process " + process.argv[2] + " executed." );</pre> 
+ <p style="box-sizing: border-box; color: rgb(0, 0, 0); line-height: 24px; margin: 0em 0.2em 1em; word-wrap: break-word; padding: 0px; text-align: justify;  font-size: 14px;"> <i style="box-sizing: border-box;">File: master.js</i></p> 
+ <pre class="prettyprint tryit" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); cursor: default; background-image: url(http://www.yiibai.com/nodejs/images/try-it.jpg) !important; background-attachment: initial !important; background-size: initial !important; background-origin: initial !important; background-clip: initial !important; background-position: 100% 0%; background-repeat: no-repeat !important;" title="worker_js">
+const fs = require('fs');
+const child_process = require('child_process');
+ 
+for(var i=0; i&lt;3; i++) {
+   var workerProcess = child_process.spawn('node', ['support.js', i]);
+
+   workerProcess.stdout.on('data', function (data) {
+      console.log('stdout: ' + data);
+   });
+
+   workerProcess.stderr.on('data', function (data) {
+      console.log('stderr: ' + data);
+   });
+
+   workerProcess.on('close', function (code) {
+      console.log('child process exited with code ' + code);
+   });
+}</pre> 
+ <p> 现在运行master.js看到的结果：</p>   
+ <pre class="prettyprint notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+$ node master.js</pre> 
+ <p> 验证输出。服务器已经启动</p> 
+ <pre class="result notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace;  border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+stdout: Child Process 0 executed.
+
+child process exited with code 0
+stdout: Child Process 1 executed.
+
+stdout: Child Process 2 executed.
+
+child process exited with code 0
+child process exited with code 0</pre> 
+ <h2> fork方法</h2> 
+ <p> child_process.fork方法是spawn()来创建节点的过程的一个特例。它具有以下签名</p> 
+ <pre class="prettyprint notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+child_process.fork(modulePath[, args][, options])</pre> 
+ <h3> 参数</h3> 
+ <p> 下面是使用的参数的说明：</p> 
+ <ul> 
+  <li> <p> <strong>modulePath</strong>&nbsp;字符串 - 该模块在运行子进程</p> </li> 
+  <li> <p> <strong>args&nbsp;</strong>字符串 - 参数数组列表</p> </li> 
+  <li> <p> <strong>options</strong>&nbsp;对象可包括以下一个或多个选项：</p> 
+   <ul> 
+    <li> <p> <strong>cwd&nbsp;</strong>字符串 - 子进程的当前工作目录</p> </li> 
+    <li> <p> <strong>env</strong>&nbsp;对象环境的键值对</p> </li> 
+    <li> <p> <strong>execPath</strong>&nbsp;字符串 - 可执行用于创建子进程</p> </li> 
+    <li> <p> <strong>execArgv</strong>&nbsp;传递给可执行字符串参数数组列表（默认值：process.execArgv）</p> </li> 
+    <li> <p> <strong>silent&nbsp;</strong>Boolean - 如果为true，标准输入，stdout和子标准错误将通过管道输送到父进程，否则会从父继承，看到“pipe”和“inherit”选项spawn()更多细节标准输入输出（默认为false）</p> </li> 
+    <li> <p> <strong>uid</strong>&nbsp;数字 - 设置进程的用户的身份。</p> </li> 
+    <li> <p> <strong>gid</strong>&nbsp;数字&nbsp;- 设置进程的组标识。</p> </li> 
+   </ul> </li> 
+ </ul> 
+ <p> fork 方法返回与对象内置除了具有在正常ChildProcess实例的所有方法的通信信道。</p> 
+ <h2> 例子</h2> 
+ <p> 创建两个JS文件名为support.js和master.js：</p> 
+ <p style="box-sizing: border-box; color: rgb(0, 0, 0); line-height: 24px; margin: 0em 0.2em 1em; word-wrap: break-word; padding: 0px; text-align: justify;  font-size: 14px;"> <i style="box-sizing: border-box;">File: support.js</i></p> 
+ <pre class="prettyprint notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+console.log("Child Process " + process.argv[2] + " executed." );</pre> 
+ <p style="box-sizing: border-box; color: rgb(0, 0, 0); line-height: 24px; margin: 0em 0.2em 1em; word-wrap: break-word; padding: 0px; text-align: justify;  font-size: 14px;"> <i style="box-sizing: border-box;">File: master.js</i></p> 
+ <pre class="prettyprint tryit" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); cursor: default; background-image: url(http://www.yiibai.com/nodejs/images/try-it.jpg) !important; background-attachment: initial !important; background-size: initial !important; background-origin: initial !important; background-clip: initial !important; background-position: 100% 0%; background-repeat: no-repeat !important;" title="worker_js">
+const fs = require('fs');
+const child_process = require('child_process');
+ 
+for(var i=0; i&lt;3; i++) {
+   var worker_process = child_process.fork("support.js", [i]);	
+
+   worker_process.on('close', function (code) {
+      console.log('child process exited with code ' + code);
+   });
+}</pre> 
+ <p> 现在运行master.js看到的结果：</p> 
+ <pre class="prettyprint notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+$ node master.js</pre> 
+ <p> 验证输出。服务器已经启动</p> 
+ <pre class="result notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace;  border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+Child Process 0 executed.
+Child Process 1 executed.
+Child Process 2 executed.
+child process exited with code 0
+child process exited with code 0
+child process exited with code 0</pre> 
+ <br>      
+</div></body></html>

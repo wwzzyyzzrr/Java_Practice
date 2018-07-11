@@ -1,0 +1,40 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Java9模块系统</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>Java 9是一种称为模块的新型编程组件。模块是一个自我描述的代码和数据集合，并有一个名称来标识它。</p> 
+ <h2 id="h2-u6A21u5757u7CFBu7EDFu7279u5F81"><a name="模块系统特征" class="reference-link"></a><span class="header-link octicon octicon-link"></span>模块系统特征</h2>
+ <p>使用模块组件，Java 9中增加了以下增强功能 -</p> 
+ <ul> 
+  <li>引入了一个新的可选阶段，即链接时间。这个阶段介于编译时间和运行时间之间。 在此阶段，可以组合和优化一组模块，使用jlink工具制作自定义运行时映像。</li>
+  <li>javac，jlink和java有额外的选项来指定模块路径，它们进一步定位模块的定义。</li>
+  <li>JAR格式更新为模块化JAR，其中包含根目录中的<code>module-info.class</code>文件。</li>
+  <li>引入了JMOD格式，这是一种打包格式(类似于JAR)，可以包含本机代码和配置文件。</li>
+ </ul> 
+ <h2 id="h2-u521Bu5EFAu6A21u5757"><a name="创建模块" class="reference-link"></a><span class="header-link octicon octicon-link"></span>创建模块</h2>
+ <p>按照下面步骤来创建一个模块:<code>com.yiibai.greetings</code>。</p> 
+ <p><strong>第1步</strong><br>创建一个文件夹<code>F:\worksp\java9\src</code>。 在这个目录下，创建一个与创建的模块名称相同的文件夹<code>com.yiibai.greetings</code>。</p> 
+ <p>第2步<br>使用以下代码在<code>F:\worksp\java9\src\com.yiibai.greetings</code>文件夹中创建一个文件:<em>module-info.java</em>，添加以下内容 - </p> 
+ <pre><code class="lang-java">module com.yiibai.greetings { }
+</code></pre> 
+ <p><code>module-info.java</code>是用来创建模块的文件。 在这一步中，我们创建了一个名为<code>com.yiibai.greetings</code>的模块。 按照惯例，这个文件应该存储在名称与模块名称相同的文件夹中。</p> 
+ <p><strong>第3步</strong></p> 
+ <p>在模块中添加源代码。在<code>F:\worksp\java9\src\com.yiibai.greetings\com\yiibai\greetings</code>文件夹中创建一个Java文件:<em>Java9Tester.java</em>，其代码如下 - </p>   
+ <pre><code class="lang-java">package com.yiibai.greetings;
+
+public class Java9Tester {
+   public static void main(String[] args) {
+      System.out.println("Hello World!");
+   }
+}
+</code></pre> 
+ <p>按照惯例，模块的源代码位于与模块名称相同的目录中。</p> 
+ <p><strong>第4步</strong><br>创建一个文件夹<em>F:\worksp\java9\mods</em>。 现在创建一个与创建的模块名称相同的文件夹<code>F:\worksp\java9\mods\com.yiibai.greetings</code>。 现在编译模块到<code>mods</code>目录。如下所示 - </p> 
+ <pre><code class="lang-shell">F:\worksp\java9&gt; javac -d mods/com.yiibai.greetings src/com.yiibai.greetings/module-info.java src/com.yiibai.greetings/com/yiibai/greetings/JavaTester.java
+</code></pre> 
+ <p><strong>第5步</strong><br>运行模块来查看结果，执行以下命令。</p> 
+ <pre><code class="lang-shell">F:\worksp\java9&gt;java --module-path mods -m com.yiibai.greetings/com.yiibai.greetings.JavaTester
+Hello World!
+</code></pre> 
+ <p>这里<code>module-path</code>将<code>mods</code>作为模块位置提供，而<code>-m</code>则表示主模块。</p> 
+ <p>完整的过程如下图所示 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201802/2802/364110317_70616.png" alt=""></p>
+ <br>      
+</div></body></html>

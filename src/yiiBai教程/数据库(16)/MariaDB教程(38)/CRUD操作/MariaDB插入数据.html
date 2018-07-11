@@ -1,0 +1,52 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">MariaDB插入数据</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>在MariaDB中，<code>INSERT INTO</code>语句用于在选定的表中插入数据。</p> 
+ <p><strong>语法1：</strong></p> 
+ <pre><code class="lang-sql">INSERT INTO tablename (field,field2,...) VALUES (value, value2,...);
+</code></pre> 
+ <p><strong>语法2：</strong></p> 
+ <pre><code class="lang-sql">INSERT INTO table  
+(column1, column2, ... )  
+VALUES  
+(expression1, expression2, ... ),  
+(expression1, expression2, ... ),  
+...;
+</code></pre> 
+ <p><strong>语法3：</strong></p> 
+ <p>也可以在<code>WHERE</code>条件下使用它。</p> 
+ <pre><code class="lang-sql">INSERT INTO table  
+(column1, column2, ... )  
+SELECT expression1, expression2, ...  
+FROM source_table  
+[WHERE conditions];
+</code></pre> 
+ <blockquote> 
+  <p>注意：在MariaDB表中插入记录时，必须为每个<code>NOT NULL</code>列提供一个值。 如果列允许<code>NULL</code>值，则只以省略此列。</p> 
+ </blockquote> 
+ <h4 id="h4-1-"><a name="1. 插入一行示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>1. 插入一行示例</h4>
+ <p>让我们向<code>students</code>表中插入一些数据。如果还没有创建<code>students</code>表，请参考： <a target="_blank" href="http://www.yiibai.com/mariadb/mariadb-create-table.html">http://www.yiibai.com/mariadb/mariadb-create-table.html</a> </p> 
+ <pre><code class="lang-sql">INSERT INTO students  
+(student_id, student_name, student_address, admission_date)  
+VALUES(1,'Maxsu','Haikou','2017-01-07 00:00:00');
+</code></pre> 
+ <p>执行上面插入语句后，记录就被插入到表中了。可以使用<code>SELECT</code>语句来检查它。</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201711/2711/189081144_29225.png" alt=""></p> 
+ <h4 id="h4-2-"><a name="2. 向表插入多个记录示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>2. 向表插入多个记录示例</h4>
+ <p>也可以一次向MariaDB表中插入多个行记录。参考以下语句 - </p>   
+ <pre><code class="lang-sql">INSERT INTO students  
+(student_id, student_name, student_address, admission_date)  
+VALUES  
+(3,'JMaster','Beijing','2016-05-07 00:00:00'),  
+(4,'Mahesh','Guangzhou','2016-06-07 00:00:00'),  
+(5,'Kobe','Shanghai','2016-02-07 00:00:00'),  
+(6,'Blaba','Shengzhen','2016-08-07 00:00:00');
+</code></pre> 
+ <p>执行上面示例代码后，现在使用<code>SELECT</code>语句检查插入的记录。</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201711/2711/267081150_55828.png" alt=""></p> 
+ <h4 id="h4-2-"><a name="2. 从其它表查询插入示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>2. 从其它表查询插入示例</h4>
+ <p>通过<code>INSERT ... SELECT</code>，可以快速将多行插入到一个或多个其他表中。 例如：</p> 
+ <pre><code class="lang-sql">INSERT INTO tbl_temp2 (fld_id)
+  SELECT tbl_temp1.fld_order_id
+  FROM tbl_temp1 WHERE tbl_temp1.fld_order_id &gt; 100;
+</code></pre>
+ <br>      
+</div></body></html>

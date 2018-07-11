@@ -1,0 +1,497 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Servlet增删改查</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>CRUD(创建，读取，更新和删除)应用程序是任何项目开发的最重要的应用程序。 在Servlet中，我们可以轻松创建CRUD应用程序。</p> 
+ <h2 id="h2-servlet-crud-"><a name="Servlet CRUD示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>Servlet CRUD示例</h2>
+ <p>在MySQL数据库中使用序列自动递增ID创建<code>“employees”</code>表。这个表中有以下几个字段：<code>id</code>，<code>name</code>，<code>age</code>，<code>address</code>和<code>salary</code>。</p> 
+ <p>创建表的SQL语句如下 - </p> 
+ <pre><code class="lang-sql">CREATE TABLE `employees` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(64) NOT NULL DEFAULT '',
+  `age` int(3) unsigned NOT NULL DEFAULT '0',
+  `education` varchar(32) DEFAULT '' COMMENT '学历',
+  `address` varchar(254) DEFAULT NULL,
+  `salary` float(8,2) unsigned DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+</code></pre> 
+ <p>打开Eclipse，创建一个动态Web项目：<em>ServletCURD</em>，其完整的目录结构如下所示 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/1510/582131057_66482.png" alt=""></p> 
+ <p>以下是这个项目中的几个主要的代码文件。</p> 
+ <p>文件：<em>index.html</em> - </p> 
+ <pre><code class="lang-html">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;meta charset="UTF-8"&gt;
+&lt;title&gt;添加新员工&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h1&gt;添加新员工&lt;/h1&gt;
+    &lt;form action="SaveServlet" method="post"&gt;
+        &lt;table&gt;
+            &lt;tr&gt;
+                &lt;td&gt;姓名:&lt;/td&gt;
+                &lt;td&gt;&lt;input type="text" name="name" /&gt;&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+                &lt;td&gt;年龄:&lt;/td&gt;
+                &lt;td&gt;&lt;input type="text" name="age" /&gt;&lt;/td&gt;
+            &lt;/tr&gt;
+
+            &lt;tr&gt;
+                &lt;td&gt;学历:&lt;/td&gt;
+                &lt;td&gt;&lt;select name="education" style="width: 150px"&gt;
+                        &lt;option value="专科"&gt;专科&lt;/option&gt;
+                        &lt;option value="本科"&gt;本科&lt;/option&gt;
+                        &lt;option value="研究生"&gt;研究生&lt;/option&gt;
+                        &lt;option value="博士"&gt;博士&lt;/option&gt;
+                        &lt;option value="其它"&gt;其它&lt;/option&gt;
+                &lt;/select&gt;&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+                &lt;td&gt;地址:&lt;/td&gt;
+                &lt;td&gt;&lt;input type="text" name="address" /&gt;&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+                &lt;td&gt;薪水:&lt;/td&gt;
+                &lt;td&gt;&lt;input type="text" name="salary" /&gt;&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+                &lt;td colspan="2"&gt;&lt;input type="submit" value="保存员工信息" /&gt;&lt;/td&gt;
+            &lt;/tr&gt;
+        &lt;/table&gt;
+    &lt;/form&gt;
+
+    &lt;br /&gt;
+    &lt;a href="ViewServlet"&gt;查看员工信息列表&lt;/a&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>文件：<em>Emp.java</em> - </p> 
+ <pre><code class="lang-java">package com.yiibai;
+
+public class Emp {
+
+    private int id;
+    private String name;
+    private int age;
+    private String address;
+    private String education;
+    private float salary;
+
+    public int getId() {
+        return id;
+    }
+
+    public String getEducation() {
+        return education;
+    }
+
+    public void setEducation(String education) {
+        this.education = education;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public float getSalary() {
+        return salary;
+    }
+
+    public void setSalary(float salary) {
+        this.salary = salary;
+    }
+
+}
+</code></pre> 
+ <p>文件：<em>EmpDao.java</em> - </p> 
+ <pre><code class="lang-java">package com.yiibai;
+
+import java.util.*;
+import java.sql.*;
+
+public class EmpDao {
+    // 表名称
+    private static String tbName = "employees";
+
+    public static Connection getConnection() {
+        Connection con = null;
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+            con = DriverManager.getConnection("jdbc:mysql://localhost/testdb?useSSL=false&amp;characterEncoding=utf8", "root", "123456");
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        return con;
+    }
+
+    public static int save(Emp e) {
+        int status = 0;
+        try {
+            Connection con = EmpDao.getConnection();
+            String sql = "INSERT INTO " + tbName + "(name,age,education,address,salary) values (?,?,?,?,?)";
+            PreparedStatement ps = con.prepareStatement(sql);
+
+            ps.setString(1, e.getName());
+            ps.setInt(2, e.getAge());
+            ps.setString(3, e.getEducation());
+            ps.setString(4, e.getAddress());
+            ps.setFloat(5, e.getSalary());
+
+            status = ps.executeUpdate();
+
+            con.close();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+        return status;
+    }
+
+    public static int update(Emp e) {
+        int status = 0;
+        try {
+            String sql = "UPDATE " + tbName + " SET name=?,age=?,education=?,address=?,salary=? where id=?";
+            Connection con = EmpDao.getConnection();
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setString(1, e.getName());
+            ps.setInt(2, e.getAge());
+            ps.setString(3, e.getEducation());
+            ps.setString(4, e.getAddress());
+            ps.setFloat(5, e.getSalary());
+            ps.setInt(6, e.getId());
+
+            status = ps.executeUpdate();
+
+            con.close();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+        return status;
+    }
+
+    public static int delete(int id) {
+        int status = 0;
+        try {
+            String sql = "DELETE FROM " + tbName + " WHERE id=?";
+            Connection con = EmpDao.getConnection();
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setInt(1, id);
+            status = ps.executeUpdate();
+
+            con.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return status;
+    }
+
+    public static Emp getEmployeeById(int id) {
+        Emp e = new Emp();
+
+        try {
+            String sql = "SELECT * FROM " + tbName + " WHERE id=?";
+            Connection con = EmpDao.getConnection();
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                e.setId(rs.getInt("id"));
+                e.setName(rs.getString("name"));
+                e.setAge(rs.getInt("age"));
+                e.setAddress(rs.getString("address"));
+                e.setEducation(rs.getString("education"));
+                e.setSalary(rs.getFloat("salary"));
+            }
+            con.close();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+        return e;
+    }
+
+    public static List&lt;Emp&gt; getAllEmployees() {
+        List&lt;Emp&gt; list = new ArrayList&lt;Emp&gt;();
+
+        try {
+            String sql = "SELECT * FROM " + tbName+" ORDER BY id DESC";
+            Connection con = EmpDao.getConnection();
+            PreparedStatement ps = con.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Emp e = new Emp();
+                e.setId(rs.getInt("id"));
+                e.setName(rs.getString("name"));
+                e.setAddress(rs.getString("address"));
+                e.setAge(rs.getInt("age"));
+                e.setEducation(rs.getString("education"));
+                e.setSalary(rs.getFloat("salary"));
+                list.add(e);
+            }
+            con.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return list;
+    }
+}
+</code></pre> 
+ <p>文件：<em>SaveServlet.java</em> - </p> 
+ <pre><code class="lang-java">package com.yiibai;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+@WebServlet("/SaveServlet")
+public class SaveServlet extends HttpServlet {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("text/html;charset=UTF-8");
+        request.setCharacterEncoding("UTF-8");
+        PrintWriter out = response.getWriter();
+
+        String name = request.getParameter("name");
+        String age = request.getParameter("age");
+        //System.out.println("age is :"+age);
+        String education = request.getParameter("education");
+        String address = request.getParameter("address");
+        String salary = request.getParameter("salary");
+
+        Emp e = new Emp();
+        e.setName(name);
+        e.setAge(Integer.parseInt(age));
+        e.setAddress(address);
+        e.setEducation(education);
+        e.setSalary(Float.parseFloat(salary));
+
+        int status = EmpDao.save(e);
+        if (status &gt; 0) {
+            out.print("&lt;p&gt;保存员工信息记录成功！&lt;/p&gt;");
+            request.getRequestDispatcher("index.html").include(request, response);
+        } else {
+            out.println("对不起，保存失败！");
+        }
+
+        out.close();
+    }
+
+}
+</code></pre> 
+ <p>文件：<em>EditServlet.java</em> - </p> 
+ <pre><code class="lang-java">package com.yiibai;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+@WebServlet("/EditServlet")
+public class EditServlet extends HttpServlet {
+
+    // 显示要修改的用户信息
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("text/html;charset=UTF-8");
+        request.setCharacterEncoding("UTF-8");
+        PrintWriter out = response.getWriter();
+        out.println("&lt;h1&gt;更新员工信息&lt;/h1&gt;");
+        String sid = request.getParameter("id");
+        int id = Integer.parseInt(sid);
+
+        Emp e = EmpDao.getEmployeeById(id);
+
+        String education = e.getEducation();
+
+        out.print("&lt;form action='EditServlet' method='post'&gt;");
+        out.print("&lt;table&gt;");
+        out.print("&lt;tr&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;input type='hidden' name='id' value='" + e.getId() + "'/&gt;&lt;/td&gt;&lt;/tr&gt;");
+        out.print("&lt;tr&gt;&lt;td&gt;名字:&lt;/td&gt;&lt;td&gt;&lt;input type='text' name='name' value='" + e.getName() + "'/&gt;&lt;/td&gt;&lt;/tr&gt;");
+        out.print("&lt;tr&gt;&lt;td&gt;年龄:&lt;/td&gt;&lt;td&gt;&lt;input type='text' name='age' value='" + e.getAge()+ "'/&gt;&lt;/td&gt;&lt;/tr&gt;");
+        out.print("&lt;tr&gt;&lt;td&gt;地址:&lt;/td&gt;&lt;td&gt;&lt;input type='text' name='address' value='" + e.getAddress() + "'/&gt;&lt;/td&gt;&lt;/tr&gt;");
+        out.print("&lt;tr&gt;&lt;td&gt;学历:&lt;/td&gt;&lt;td&gt;");
+        out.print("&lt;select name='education' style='width:150px'&gt;");
+        if(education == "专科") {
+            out.print("&lt;option value='专科' selected='selected'&gt;专科&lt;/option&gt;");
+        }else {
+            out.print("&lt;option value='专科'&gt;专科&lt;/option&gt;");
+        }
+
+        if(education == "本科") {
+            out.print("&lt;option value='本科' selected='selected'&gt;本科&lt;/option&gt;");
+        }else {
+            out.print("&lt;option value='本科'&gt;本科&lt;/option&gt;");
+        }
+
+        if(education == "研究生") {
+            out.print("&lt;option value='研究生' selected='selected'&gt;研究生&lt;/option&gt;");
+        }else {
+            out.print("&lt;option value='研究生'&gt;研究生&lt;/option&gt;");
+        }
+        if(education == "博士") {
+            out.print("&lt;option value='博士' selected='selected'&gt;博士&lt;/option&gt;");
+        }else {
+            out.print("&lt;option value='博士'&gt;博士&lt;/option&gt;");
+        }
+
+        if(education == "其它") {
+            out.print("&lt;option value='其它' selected='selected'&gt;其它&lt;/option&gt;");
+        }else {
+            out.print("&lt;option value='其它'&gt;其它&lt;/option&gt;");
+        }
+        out.print("&lt;/select&gt;");
+        out.print("&lt;/td&gt;&lt;/tr&gt;");
+        out.print("&lt;tr&gt;&lt;td&gt;薪水:&lt;/td&gt;&lt;td&gt;&lt;input type='text' name='salary' value='" + e.getSalary() + "'/&gt;&lt;/td&gt;&lt;/tr&gt;");
+        out.print("&lt;tr&gt;&lt;td colspan='2'&gt;&lt;input type='submit' value='编辑&amp;保存'/&gt;&lt;/td&gt;&lt;/tr&gt;");
+        out.print("&lt;/table&gt;");
+        out.print("&lt;/form&gt;");
+
+        out.close();
+    }
+
+    // 收集表单信息并将修改更新到数据库
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("text/html;charset=UTF-8");
+        request.setCharacterEncoding("UTF-8");
+        PrintWriter out = response.getWriter();
+
+        String sid = request.getParameter("id");
+        int id = Integer.parseInt(sid);
+        String name = request.getParameter("name");
+        String age = request.getParameter("age");
+        String address = request.getParameter("address");
+        String education = request.getParameter("education");
+        String salary = request.getParameter("salary");
+
+        Emp e = new Emp();
+        e.setId(id);
+        e.setName(name);
+        e.setAddress(address);
+        e.setAge(Integer.parseInt(age));
+        e.setSalary(Float.parseFloat(salary));
+        e.setEducation(education);
+
+        int status = EmpDao.update(e);
+        if (status &gt; 0) {
+            response.sendRedirect("ViewServlet");
+        } else {
+            out.println("对不起更新信息失败！");
+        }
+        out.close();
+    }
+}
+</code></pre> 
+ <p>文件：<em>DeleteServlet.java</em> - </p>   
+ <pre><code class="lang-java">package com.yiibai;
+
+import java.io.IOException;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+@WebServlet("/DeleteServlet")
+public class DeleteServlet extends HttpServlet {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("text/html;charset=UTF-8");
+        request.setCharacterEncoding("UTF-8");
+        String sid = request.getParameter("id");
+        int id = Integer.parseInt(sid);
+        EmpDao.delete(id);
+        response.sendRedirect("ViewServlet");
+    }
+}
+</code></pre> 
+ <p>文件：<em>ViewServlet.java</em> - </p> 
+ <pre><code class="lang-java">package com.yiibai;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.List;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+@WebServlet("/ViewServlet")
+public class ViewServlet extends HttpServlet {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)   
+               throws ServletException, IOException {  
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("text/html;charset=UTF-8");
+        request.setCharacterEncoding("UTF-8");
+        PrintWriter out=response.getWriter();  
+        out.println("&lt;a href='index.html'&gt;添加新员工&lt;/a&gt;");  
+        out.println("&lt;h1&gt;员工列表&lt;/h1&gt;");  
+
+        List&lt;Emp&gt; list=EmpDao.getAllEmployees();  
+
+        out.print("&lt;table border='1' width='100%'");  
+        out.print("&lt;tr&gt;&lt;th&gt;编号&lt;/th&gt;&lt;th&gt;姓名&lt;/th&gt;&lt;th&gt;年龄&lt;/th&gt;&lt;th&gt;学历&lt;/th&gt;&lt;th&gt;薪水&lt;/th&gt;&lt;th&gt;地址&lt;/th&gt;&lt;th&gt;操作&lt;/th&gt;&lt;/tr&gt;");  
+        for(Emp e:list){  
+         out.print("&lt;tr&gt;&lt;td&gt;"+e.getId()+"&lt;/td&gt;&lt;td&gt;"+e.getName()+"&lt;/td&gt;&lt;td&gt;"+e.getAge()+"&lt;/td&gt;&lt;td&gt;"+e.getEducation()+"&lt;/td&gt;&lt;td&gt;"+e.getSalary()+"&lt;/td&gt;&lt;td&gt;"+e.getAddress()+"&lt;/td&gt;&lt;td&gt;&lt;a href='EditServlet?id="+e.getId()+"'&gt;编辑&lt;/a&gt; | &lt;a href='DeleteServlet?id="+e.getId()+"' onClick=\"return confirm('确定要删除吗？')\"&gt;删除&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;");  
+        }  
+        out.print("&lt;/table&gt;");  
+        out.close();  
+    }
+}
+</code></pre> 
+ <blockquote> 
+  <p>注意： 这里不需要配置<em>web.xml</em>，所有Servlet的模式映射都是使用<code><a target="_blank" href="https://github.com/WebServlet" title="@WebServlet" class="at-link">@WebServlet</a>("/mapurl")</code> 注解来声明了。</p> 
+ </blockquote> 
+ <p>在编写上面代码后，部署此Web应用程序(在项目名称上点击右键-&gt;”Run On Server…”)，打开浏览器访问URL： <a target="_blank" href="http://localhost:8080/ServletCURD/">http://localhost:8080/ServletCURD/</a> ，如果没有错误，应该会看到以下结果 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/1510/768131052_46414.png" alt=""></p> 
+ <p>添加一个员工信息，如下 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/1510/527131053_48994.png" alt=""></p> 
+ <p>点击<em>保存员工信息</em>提交后，得到以下结果 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/1510/339131054_72369.png" alt=""></p> 
+ <p>查看员工列表： <a target="_blank" href="http://localhost:8080/ServletCURD/">http://localhost:8080/ServletCURD/</a></p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/1510/632131055_63627.png" alt=""></p> 
+ <p>其它的操作：修改，删除等请自行运行本示例，然后点击对应链接来进行测试，这里不再截图演示了。</p>
+ <br>      
+</div></body></html>

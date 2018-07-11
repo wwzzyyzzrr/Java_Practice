@@ -1,0 +1,164 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">进程资源</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>进程需要一定的资源，如CPU和内存来执行任务。 现在我们将查看相关的命令和系统调用来了解资源利用和监视的信息。 此外，资源上的每个过程在默认情况下都有一定的限制，如果需要，可以增加限制以适应应用需求。</p> 
+ <p>以下是使用命令的基本系统或过程资源信息 -</p> 
+ <p><strong>top命令</strong></p> 
+ <pre><code class="lang-shell">yiibai$ top
+</code></pre> 
+ <p><code>top</code>命令不断显示系统资源的使用情况。 如果任何进程使系统处于某种挂起状态(消耗更多的CPU或内存)，则可能会记录进程信息并采取相应的措施(例如，杀死相关进程)。</p> 
+ <p><strong>ps命令</strong></p> 
+ <pre><code class="lang-shell">yiibai$ ps
+</code></pre> 
+ <p><code>ps</code>命令提供有关所有正在运行的进程的信息。 这有助于监视和控制过程。</p> 
+ <p><strong>vmstat命令</strong></p> 
+ <pre><code class="lang-shell">yiibai$ vmstat
+</code></pre> 
+ <p><code>vmstat</code>命令报告虚拟内存子系统的统计信息。 它报告进程(等待运行，睡眠，可运行进程等)，内存(虚拟内存信息，如空闲，已使用等)，交换区域，IO设备，系统信息(中断数目，上下文切换 )和CPU(用户，系统和空闲时间)。</p> 
+ <p><strong>lsof命令</strong></p> 
+ <pre><code class="lang-shell">yiibai$ lsof
+</code></pre> 
+ <p><code>lsof</code>命令打印所有当前正在运行的进程(包括系统进程)的打开文件列表。</p> 
+ <p><strong>getconf命令</strong></p> 
+ <pre><code class="lang-shell">yiibai$ getconf
+</code></pre> 
+ <p><code>getconf</code>命令显示系统配置变量信息。现在，让我们看看相关的系统调用。</p> 
+ <ul> 
+  <li>系统调用<code>getrusage()</code>，它提供有关系统资源使用情况的信息。</li>
+  <li>与访问和设置资源限制(即<code>getrlimit()</code>，<code>setrlimit()</code>，<code>prlimit()</code>)有关的系统调用。</li>
+ </ul> 
+ <h2 id="h2-u7CFBu7EDFu8D44u6E90u4F7Fu7528u8C03u7528"><a name="系统资源使用调用" class="reference-link"></a><span class="header-link octicon octicon-link"></span>系统资源使用调用</h2>
+ <p>参考以下代码 - </p> 
+ <pre><code class="lang-cpp">#include &lt;sys/time.h&gt;
+#include &lt;sys/resource.h&gt;
+
+int getrusage(int who, struct rusage *usage);
+</code></pre> 
+ <p>系统调用<code>getrusage()</code>返回有关系统资源使用情况的信息。 这可以包括关于自身，子进程或调用线程的信息，使用标志<code>RUSAGE_SELF</code>，<code>RUSAGE_CHILDREN</code>，<code>RUSAGE_THREAD</code>来表示“who”变量。 通话结束后，它返回结构中的信息。</p> 
+ <p>这个调用会在成功时返回<code>“0”</code>，在失败时返回<code>“-1”</code>。</p> 
+ <p>让我们看看下面的示例程序。</p> 
+ <p><strong>文件:</strong> <em>sysinfo_getrusage.c</em> - </p> 
+ <pre><code class="lang-cpp">#include&lt;stdio.h&gt;
+#include&lt;sys/time.h&gt;
+#include&lt;sys/resource.h&gt;
+
+void main(void) {
+   struct rusage res_usage;
+   int retval;
+   retval = getrusage(RUSAGE_SELF, &amp;res_usage);
+   if (retval == -1) {
+      perror("getrusage error");
+      return;
+   }
+   printf("Details of getrusage:\n");
+   printf("User CPU time (seconds) is %d\n", (int)res_usage.ru_utime.tv_sec);
+   printf("User CPU time (micro seconds) is %d\n", (int)res_usage.ru_utime.tv_usec);
+   printf("Maximum size of resident set (kb) is %ld\n", res_usage.ru_maxrss);
+   printf("Soft page faults (I/O not required) is %ld\n", res_usage.ru_minflt);
+   printf("Hard page faults (I/O not required) is %ld\n", res_usage.ru_majflt);
+   printf("Block input operations via file system is %ld\n", res_usage.ru_inblock);
+   printf("Block output operations via file system is %ld\n", res_usage.ru_oublock);
+   printf("Voluntary context switches are %ld\n", res_usage.ru_nvcsw);
+   printf("Involuntary context switches are %ld\n", res_usage.ru_nivcsw);
+   return;
+}
+</code></pre> 
+ <p>编译和执行后，得到以下结果 - </p> 
+ <pre><code class="lang-shell">Details of getrusage:
+User CPU time (seconds) is 0
+User CPU time (micro seconds) is 0
+Maximum size of resident set (kb) is 364
+Soft page faults (I/O not required) is 137
+Hard page faults (I/O not required) is 0
+Block input operations via file system is 0
+Block output operations via file system is 0
+Voluntary context switches are 0
+Involuntary context switches are 1
+</code></pre> 
+ <p>现在让我们看看访问和设置资源限制有关的系统调用。</p> 
+ <pre><code class="lang-cpp">#include &lt;sys/time.h&gt;
+#include &lt;sys/resource.h&gt;
+
+int getrlimit(int resource, struct rlimit *rlim);
+int setrlimit(int resource, const struct rlimit *rlim);
+int prlimit(pid_t pid, int resource, const struct rlimit *new_limit, struct rlimit *old_limit);
+</code></pre> 
+ <p>系统调用<code>getrlimit()</code>通过输入一个需要的资源(如<code>RLIMIT_NOFILE</code>，<code>RLIMIT_NPROC</code>，<code>RLIMIT_STACK</code>等等)来获取结构<code>rlimit</code>中的资源限制。<br>系统调用<code>setrlimit()</code>尽可能地在<code>rlimit</code>结构中设置资源限制。<br>系统调用<code>prlimit()</code>用于检索当前资源限制或将资源限制更新为新值。</p> 
+ <p>结构<code>rlimit</code>包含两个值 -</p> 
+ <ul> 
+  <li><strong>软限制</strong> - 当前限制</li>
+  <li><strong>硬限制</strong> - 可以扩展的最大限制。</li>
+ </ul> 
+ <p><strong>RLIMIT_NOFILE</strong> - 返回此进程可以打开的最大文件描述符数量。 例如，如果它返回<code>1024</code>，那么该进程具有从<code>0</code>到<code>1023</code>的文件描述符。<br><strong>RLIMIT_NPROC</strong> - 可以为该进程的用户创建的最大进程数。<br><strong>RLIMIT_STACK</strong> - 该进程的堆栈段的最大字节数。</p> 
+ <p>所有这些调用都会在成功时返回<code>“0”</code>，在失败时返回<code>“-1”</code>。</p> 
+ <p>让我们看看使用<code>getrlimit()</code>系统调用的例子。<strong>文件:</strong> <em>sysinfo_getrlimit.c</em> - </p>   
+ <pre><code class="lang-cpp">#include&lt;stdio.h&gt;
+#include&lt;sys/time.h&gt;
+#include&lt;sys/resource.h&gt;
+
+void main(void) {
+   struct rlimit res_limit;
+   int retval;
+   int resources[] = {RLIMIT_NOFILE, RLIMIT_NPROC, RLIMIT_STACK};
+   int max_res;
+   int counter = 0;
+   printf("Details of resource limits for NOFILE, NPROC, STACK are as follows: \n");
+   max_res = sizeof(resources)/sizeof(int);
+   while (counter &lt; max_res) {
+      retval = getrlimit(resources[counter], &amp;res_limit);
+      if (retval == -1) {
+         perror("getrlimit error");
+         return;
+      }
+      printf("Soft Limit is %ld\n", res_limit.rlim_cur);
+      printf("Hard Limit (ceiling) is %ld\n", res_limit.rlim_max);
+      counter++;
+   }
+   return;
+}
+</code></pre> 
+ <p>编译和执行后，得到以下结果 - </p> 
+ <pre><code class="lang-shell">Details of resource limits for NOFILE, NPROC, STACK are as follows: 
+Soft Limit is 516
+Hard Limit (ceiling) is 516
+Soft Limit is 256
+Hard Limit (ceiling) is 256
+Soft Limit is 33554432
+Hard Limit (ceiling) is 33554432
+</code></pre> 
+ <p>下面是<code>getrlimit()</code>系统调用的另一个例子，但现在用<code>prlimit()</code>系统调用。<br>文件:<em>sysinfo_prlimit.c</em> - </p> 
+ <pre><code class="lang-cpp">#include&lt;stdio.h&gt;
+#include&lt;unistd.h&gt;
+#include&lt;sys/time.h&gt;
+#include&lt;sys/resource.h&gt;
+
+void main(void) {
+   struct rlimit res_limit;
+   int retval;
+   int resources[] = {RLIMIT_NOFILE, RLIMIT_NPROC, RLIMIT_STACK};
+   int max_res;
+   int counter = 0;
+   printf("Details of resource limits for NOFILE, NPROC, STACK using prlimit are as follows: \n");
+   max_res = sizeof(resources)/sizeof(int);
+   while (counter &lt; max_res) {
+      retval = prlimit(getpid(), resources[counter], NULL, &amp;res_limit);
+      if (retval == -1) {
+         perror("prlimit error");
+         return;
+      }
+      printf("Soft Limit is %ld\n", res_limit.rlim_cur);
+      printf("Hard Limit (ceiling) is %ld\n", res_limit.rlim_max);
+      counter++;
+   }
+   return;
+}
+</code></pre> 
+ <p>编译和执行后，得到以下结果 - </p> 
+ <pre><code class="lang-shell">Details of resource limits for NOFILE, NPROC, STACK using prlimit are as follows: 
+Soft Limit is 516
+Hard Limit (ceiling) is 516
+Soft Limit is 256
+Hard Limit (ceiling) is 256
+Soft Limit is 33554432
+Hard Limit (ceiling) is 33554432
+</code></pre>
+ <br>      
+</div></body></html>

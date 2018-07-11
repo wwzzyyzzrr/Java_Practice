@@ -1,0 +1,106 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">log4j日志记录级别</h1><div style="width:100%;float:left;" class="article-content">   
+ <p style="margin: 0.8em 0px 1em; padding: 0px; text-align: justify; color: rgb(0, 0, 0); "> org.apache.log4j.Level类提供以下级别，但也可以通过Level类的子类自定义级别。</p> 
+ <table class="src" style="margin: 8px 0px; padding: 0px;  border-color: rgb(214, 214, 214); width: 560px; border-collapse: collapse; vertical-align: top; color: rgb(0, 0, 0);  background-color: rgb(247, 247, 247);"> 
+  <tbody style="margin: 0px; padding: 0px;"> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <th style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214); width: 129px; background-color: rgb(238, 238, 238);"> Level</th> 
+    <th style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214); background-color: rgb(238, 238, 238);"> 描述</th> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> ALL</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 各级包括自定义级别</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> DEBUG</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 指定细粒度信息事件是最有用的应用程序调试</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> ERROR</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 错误事件可能仍然允许应用程序继续运行</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> FATAL</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 指定非常严重的错误事件，这可能导致应用程序中止</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> INFO</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 指定能够突出在粗粒度级别的应用程序运行情况的信息的消息</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> OFF</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 这是最高等级，为了关闭日志记录</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> TRACE</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 指定细粒度比DEBUG更低的信息事件</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> WARN</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 指定具有潜在危害的情况</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h2> 日志级别是如何工作？</h2> 
+ <p> 级别p的级别使用q，在记录日志请求时，如果p&gt;=q启用。这条规则是log4j的核心。它假设级别是有序的。对于标准级别它们关系如下：ALL &lt; DEBUG &lt; INFO &lt; WARN &lt; ERROR &lt; FATAL &lt; OFF。</p> 
+ <p> 下面的例子明确指出如何可以过滤所有的DEBUG和INFO消息。这个程序使用记录并执行setLevel（Level.X）方法来设置所需的日志记录级别：</p> 
+ <p> 这个例子将打印，除了调试和信息的所有消息：</p> 
+ <pre class="prettyprint" style="border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; font-size: 12px; overflow: auto;">
+import org.apache.log4j.*;
+
+public class LogClass {
+   private static org.apache.log4j.Logger log = Logger
+                                    .getLogger(LogClass.class);
+   public static void main(String[] args) {
+      log.setLevel(Level.WARN);
+
+      log.trace("Trace Message!");
+      log.debug("Debug Message!");
+      log.info("Info Message!");
+      log.warn("Warn Message!");
+      log.error("Error Message!");
+      log.fatal("Fatal Message!");
+   }
+}</pre> 
+ <p> 当编译并运行LogClass程序会产生以下结果：</p>   
+ <pre class="prettyprint" style="border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; font-size: 12px; overflow: auto;">
+Warn Message!
+Error Message!
+Fatal Message!</pre> 
+ <h2> 使用配置文件设置级别：</h2> 
+ <p> Log4j提供这些可以让程序员自由更改源代码，改变调试级别的配置级别是基于文件设置。</p> 
+ <p> 以下是上面的例子使用 log.setLevel（Level.WARN）方法的配置文件与上面的例子例子功能一样。</p> 
+ <pre class="prettyprint" style="border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; font-size: 12px; overflow: auto;">
+# Define the root logger with appender file
+log = /usr/home/log4j
+log4j.rootLogger = WARN, FILE
+
+# Define the file appender
+log4j.appender.FILE=org.apache.log4j.FileAppender
+log4j.appender.FILE.File=${log}/log.out
+
+# Define the layout for file appender
+log4j.appender.FILE.layout=org.apache.log4j.PatternLayout
+log4j.appender.FILE.layout.conversionPattern=%m%n</pre> 
+ <p style="margin: 0.8em 0px 1em; padding: 0px; text-align: justify; color: rgb(0, 0, 0); "> 现在，使用下面的程序：</p> 
+ <pre class="prettyprint" style="border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; font-size: 12px; overflow: auto;">
+import org.apache.log4j.*;
+
+public class LogClass {
+   private static org.apache.log4j.Logger log = Logger
+                                    .getLogger(LogClass.class);
+   public static void main(String[] args) {
+      log.trace("Trace Message!");
+      log.debug("Debug Message!");
+      log.info("Info Message!");
+      log.warn("Warn Message!");
+      log.error("Error Message!");
+      log.fatal("Fatal Message!");
+   }
+}</pre> 
+ <p> 现在，编译和运行上面的程序，得到以下结果在 /usr/home/log4j/log.out 文件：</p> 
+ <pre class="prettyprint" style="border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; font-size: 12px; overflow: auto;">
+Warn Message!
+Error Message!
+Fatal Message!</pre> 
+ <br>      
+</div></body></html>

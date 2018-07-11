@@ -1,0 +1,75 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">R语言协方差分析</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>我们使用回归分析来创建描述预测变量变量对响应变量的影响的模型。有时，如果我们有类似于<em>是/否</em>或<em>男/女</em>等值的分类变量，简单回归分析为分类变量的每个值提供多个结果。在这种情况下，可以通过使用分类变量和预测变量来研究分类变量的影响，并比较分类变量的每个级别的回归线。 这样的分析被称为协方差分析，也称为<em>ANCOVA</em>。</p> 
+ <p><strong>输入数据</strong></p> 
+ <p>从R提供的数据集<code>mtcars</code>创建一个包含字段<code>“mpg”</code>，<code>“hp”</code>和<code>“am”</code>的数据框。 这里我们将<code>“mpg”</code>作为响应变量，将<code>“hp”</code>作为预测变量，将<code>“am”</code>作为分类变量。</p> 
+ <pre><code class="lang-r">input &lt;- mtcars[,c("am","mpg","hp")]
+print(head(input))
+</code></pre> 
+ <p>当我们执行上述代码时，会产生以下结果 -</p> 
+ <pre><code class="lang-r">                   am   mpg   hp
+Mazda RX4          1    21.0  110
+Mazda RX4 Wag      1    21.0  110
+Datsun 710         1    22.8   93
+Hornet 4 Drive     0    21.4  110
+Hornet Sportabout  0    18.7  175
+Valiant            0    18.1  105
+</code></pre> 
+ <h2 id="h2-ancova-"><a name="ANCOVA分析" class="reference-link"></a><span class="header-link octicon octicon-link"></span>ANCOVA分析</h2>
+ <p>我们创建一个回归模型，将<code>“hp”</code>作为预测变量，将<code>“mpg”</code>作为响应变量，考虑到<code>“am”</code>和<code>“hp”</code>之间的相互作用，参考以下示例代码 - </p> 
+ <p>模型与分类变量和预测变量之间的交互 </p> 
+ <pre><code class="lang-r"># Get the dataset.
+input &lt;- mtcars
+
+# Create the regression model.
+result &lt;- aov(mpg~hp*am,data = input)
+print(summary(result))
+</code></pre> 
+ <p>当我们执行上述代码时，会产生以下结果 -</p> 
+ <pre><code class="lang-shell">            Df Sum Sq Mean Sq F value   Pr(&gt;F)    
+hp           1  678.4   678.4  77.391 1.50e-09 ***
+am           1  202.2   202.2  23.072 4.75e-05 ***
+hp:am        1    0.0     0.0   0.001    0.981    
+Residuals   28  245.4     8.8                     
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+</code></pre> 
+ <p>该结果表明，马力和变速箱型均具有对每加仑英里数的显着影响，因为这两种情况下的<code>p</code>值均小于<code>0.05</code>。但是，这两个变量之间的相互作用并不重要，因为<code>p</code>值大于0.05。</p> 
+ <p>分类变量与预测变量之间没有交互的模型 - </p> 
+ <pre><code class="lang-r"># Get the dataset.
+input &lt;- mtcars
+
+# Create the regression model.
+result &lt;- aov(mpg~hp+am,data = input)
+print(summary(result))
+</code></pre> 
+ <p>当我们执行上述代码时，会产生以下结果 -</p>   
+ <pre><code class="lang-shell">            Df  Sum Sq  Mean Sq   F value   Pr(&gt;F)    
+hp           1  678.4   678.4   80.15 7.63e-10 ***
+am           1  202.2   202.2   23.89 3.46e-05 ***
+Residuals   29  245.4     8.5                     
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+</code></pre> 
+ <p>该结果表明，马力和变速箱型均具有对每加仑英里数的显着影响，因为这两种情况下的<code>p</code>值均小于<code>0.05</code>。</p> 
+ <h2 id="h2-u6BD4u8F83u4E24u4E2Au6A21u578B"><a name="比较两个模型" class="reference-link"></a><span class="header-link octicon octicon-link"></span>比较两个模型</h2>
+ <p>现在可以比较这两个模型来确定变量的相互作用是否真的有意义的。 为此，我们使用<code>anova()</code>函数。</p> 
+ <pre><code class="lang-r"># Get the dataset.
+input &lt;- mtcars
+
+# Create the regression models.
+result1 &lt;- aov(mpg~hp*am,data = input)
+result2 &lt;- aov(mpg~hp+am,data = input)
+
+# Compare the two models.
+print(anova(result1,result2))
+</code></pre> 
+ <p>当我们执行上述代码时，会产生以下结果 -</p> 
+ <pre><code class="lang-shell">Model 1: mpg ~ hp * am
+Model 2: mpg ~ hp + am
+  Res.Df    RSS Df  Sum of Sq     F Pr(&gt;F)
+1     28 245.43                           
+2     29 245.44 -1 -0.0052515 6e-04 0.9806
+</code></pre> 
+ <p>由于<code>p</code>值大于<code>0.05</code>，我们得出结论，马力与传播类型之间的相互作用不明显。所以每加仑里程将取决于自动和手动变速模式的马力。</p>
+ <br>      
+</div></body></html>

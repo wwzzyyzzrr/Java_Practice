@@ -1,0 +1,53 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">批处理脚本调试</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>通常情况下，运行批处理文件时可能会遇到问题，而且大多数情况下都需要以某种方式调试批处理文件，以确定是批处理文件本身的问题。 以下是一些可以帮助调试批处理脚本文件的技术。</p> 
+ <h2 id="h2-u9519u8BEFu6D88u606F"><a name="错误消息" class="reference-link"></a><span class="header-link octicon octicon-link"></span>错误消息</h2>
+ <p>要找出消息的来源，请按照下列步骤操作 - </p> 
+ <p><strong>第1步</strong> - 移除<code>REM <a target="_blank" href="https://github.com/ECHO" title="@ECHO" class="at-link">@ECHO</a> OFF</code>，即<code>REM <a target="_blank" href="https://github.com/ECHO" title="@ECHO" class="at-link">@ECHO</a> OFF</code>或<code>:: <a target="_blank" href="https://github.com/ECHO" title="@ECHO" class="at-link">@ECHO</a> OFF</code>。<br><strong>第2步</strong> - 使用必要的命令行参数运行批处理文件，将所有输出重定向到日志文件以供以后比较。</p> 
+ <pre><code class="lang-bat">test.bat &gt; batch.log 2&gt;&amp;1
+</code></pre> 
+ <p><strong>第3步</strong> - 在文件<code>batch.log</code>中搜索错误消息</p> 
+ <p><strong>第4步</strong> - 检查上一行是否有任何意外或无效的命令，命令行开关或值; 要特别注意命令中使用的任何环境变量的值。</p> 
+ <p><strong>第5步</strong> - 纠正错误并重复此过程，直到所有错误消息都消失。</p> 
+ <h2 id="h2-u590Du6742u7684u547Du4EE4u884C"><a name="复杂的命令行" class="reference-link"></a><span class="header-link octicon octicon-link"></span>复杂的命令行</h2>
+ <p>另一个常见的错误来源是不正确的重定向命令，例如，使用不正确的搜索字符串“嵌套” <code>FIND</code>或<code>FINDSTR</code>命令，有时在<code>FOR / F</code>循环中。</p> 
+ <p>要检查这些复杂命令的有效性，请按照下列步骤操作 -</p> 
+ <p><strong>第1步</strong> - 在使用复杂命令集的行之前插入“命令检查行”。</p> 
+ <p>以下是插入<code>ECHO</code>命令以标记第一个<code>TYPE</code>命令的输出结束和下一个开始的位置的示例。</p> 
+ <pre><code class="lang-bat">TYPE %Temp%.\apipaorg.reg
+ECHO.================================================ TYPE %Temp%.\apipaorg.reg 
+| FIND 
+"[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\TCPIP\Parameters\Interfaces\"
+</code></pre> 
+ <p><strong>第2步</strong> - 按照程序查找上述错误消息来源。</p> 
+ <p><strong>第3步</strong> - 特别注意“简化”命令行的输出:预期格式的输出是什么？ “令牌”值或位置是否如预期的那样？</p> 
+ <h2 id="h2-u5B50u7A0Bu5E8F"><a name="子程序" class="reference-link"></a><span class="header-link octicon octicon-link"></span>子程序</h2>
+ <p>生成错误消息的子例程在查找错误原因时会带来额外的“挑战”，因为它们可能在同一个批处理文件中被多次调用。</p> 
+ <p>为了找出是什么导致不正确的调用子程序，请按照下列步骤 -</p> 
+ <p><strong>第1步</strong> - 在脚本的开头添加并重置一个计数器变量 -</p>   
+ <pre><code class="lang-bat">SET Counter=0
+</code></pre> 
+ <p><strong>第2步</strong> - 每次调用子程序时递增计数器，在子程序的开始插入以下行 - </p> 
+ <pre><code class="lang-bat">SET /A Counter+=1
+</code></pre> 
+ <p><strong>第3步</strong> - 在计数器递增之后插入另一行，仅包含<code>SET</code>命令; 这将列出所有的环境变量及其值。</p> 
+ <p><strong>第4步</strong> - 按照程序查找上述错误消息源。</p> 
+ <h2 id="h2-windows-"><a name="Windows版本" class="reference-link"></a><span class="header-link octicon octicon-link"></span>Windows版本</h2>
+ <p>如果打算将批处理文件分发给可能运行或不可运行相同Windows版本的其他计算机，则需要尽可能多的Windows版本测试批处理文件。</p> 
+ <p>以下示例显示如何检查各种操作系统版本以检查相关的Windows版本。</p> 
+ <pre><code class="lang-bat">@ECHO OFF
+:: Check for Windows NT 4 and later
+
+IF NOT "%OS%"=="Windows_NT" GOTO DontRun
+:: Check for Windows NT 4
+VER | FIND "Windows NT" &gt;NUL &amp;&amp; GOTO DontRun
+:: Check for Windows 2000
+VER | FIND "Windows 2000" &gt;NUL &amp;&amp; GOTO DontRun
+:: Place actual code here . . .
+:: End of actual code . . .
+EXIT
+
+:DontRun
+ECHO Sorry, this batch file was written for Windows XP and later versions only
+</code></pre>
+ <br>      
+</div></body></html>

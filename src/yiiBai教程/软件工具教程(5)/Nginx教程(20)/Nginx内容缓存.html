@@ -1,0 +1,231 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Nginx内容缓存</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>本节介绍如何启用和配置从代理服务器接收的响应的缓存。主要涉及以下内容 - </p> 
+ <ul> 
+  <li>缓存介绍</li>
+  <li>启用响应缓存</li>
+  <li>涉及缓存的NGINX进程</li>
+  <li>指定要缓存的请求</li>
+  <li>限制或绕过缓存</li>
+  <li>从缓存中清除内容
+   <ul> 
+    <li>配置缓存清除</li>
+    <li>发送清除命令</li>
+    <li>限制访问清除命令</li>
+    <li>从缓存中完全删除文件</li>
+    <li>缓存清除配置示例</li>
+   </ul> </li>
+  <li>字节缓存</li>
+  <li>组合配置示例</li>
+ </ul> 
+ <h2 id="h2-1-"><a name="1. 介绍" class="reference-link"></a><span class="header-link octicon octicon-link"></span>1. 介绍</h2>
+ <p>当启用缓存时，NGINX将响应保存在磁盘缓存中，并使用它们来响应客户端，而不必每次都为同一内容代理请求。</p> 
+ <h2 id="h2-2-"><a name="2. 启用响应缓存" class="reference-link"></a><span class="header-link octicon octicon-link"></span>2. 启用响应缓存</h2>
+ <p>要启用缓存，请在顶层的<code>http</code>上下文中包含<a target="_blank" href="http://nginx.org/en/docs/http/ngx_http_proxy_module.html?&amp;_ga=1.14314615.1509956953.1490042234#proxy_cache_path" title="proxy_cache_path">proxy_cache_path</a>指令。 强制的第一个参数是缓存内容的本地文件系统路径，强制<code>keys_zone</code>参数定义用于存储有关缓存项目的元数据的共享内存区域的名称和大小：</p> 
+ <pre><code class="lang-shell">http {
+    ...
+    proxy_cache_path /data/nginx/cache keys_zone=one:10m;
+}
+</code></pre> 
+ <p>然后在要缓存服务器响应的上下文(协议类型，虚拟服务器或位置)中包含<code>proxy_cache</code>指令，将由<code>keys_zone</code>参数定义的区域名称指定为<code>proxy_cache_path</code>指令(在本例中为一)：</p> 
+ <pre><code class="lang-shell">http {
+    ...
+    proxy_cache_path /data/nginx/cache keys_zone=one:10m;
+
+    server {
+        proxy_cache one;
+        location / {
+            proxy_pass http://localhost:8000;
+        }
+    }
+}
+</code></pre> 
+ <p>请注意，由<code>keys_zone</code>参数定义的大小不会限制缓存的响应数据的总量。 缓存响应本身存储在文件系统上的特定文件中的元数据副本。 要限制缓存的响应数据量，请将<code>max_size</code>参数包含到<code>proxy_cache_path</code>指令中(但请注意，缓存数据的数量可能会临时超出此限制，如以下部分所述。)</p> 
+ <h2 id="h2-3-nginx-"><a name="3. 涉及缓存的NGINX进程" class="reference-link"></a><span class="header-link octicon octicon-link"></span>3. 涉及缓存的NGINX进程</h2>
+ <p>缓存中还有两个额外的NGINX进程：</p> 
+ <ul> 
+  <li><p>缓存管理器周期性地被激活以检查缓存的状态。 如果缓存大小超过了由<code>max_cize_path</code>指令设置的<code>max_size</code>参数，缓存管理器将删除最近访问的数据。如前所述，高速缓存管理器激活之间的缓存数据量可以临时超过限制。</p> </li>
+  <li><p>NGINX启动后，缓存加载程序只运行一次。 它将有关以前缓存的数据的元数据加载到共享内存区域。一次加载整个缓存可能会在启动后的最初几分钟内消耗足够的资源来减慢NGINX的性能。 为了避免这种情况，请通过将以下参数包含到<code>proxy_cache_path</code>伪指令来配置缓存的迭代加载：</p> 
+   <ul> 
+    <li><code>loader_threshold</code> - 迭代的持续时间，以毫秒为单位(默认为<code>200</code>)</li>
+    <li><code>loader_files</code> - 在一次迭代期间加载的最大项目数(默认为<code>100</code>)</li>
+    <li><code>loader_sleeps</code> - 迭代之间的延迟(以毫秒为单位)(默认为<code>50</code>)</li>
+   </ul> </li>
+ </ul> 
+ <p>在以下示例中，迭代持续<code>300</code>毫秒或直到加载了<code>200</code>个项目：</p> 
+ <pre><code class="lang-shell">proxy_cache_path /data/nginx/cache keys_zone=one:10m loader_threshold=300 loader_files=200;
+</code></pre> 
+ <h2 id="h2-4-"><a name="4. 指定要缓存的请求" class="reference-link"></a><span class="header-link octicon octicon-link"></span>4. 指定要缓存的请求</h2>
+ <p>默认情况下，NGINX首次从代理服务器接收到这样的响应后，缓存对<code>HTTP GET</code>和<code>HEAD</code>方法的请求的所有响应。 作为请求的密钥(标识符)，NGINX使用请求字符串。 如果请求具有与缓存响应相同的密钥，则NGINX将缓存的响应发送给客户端。 您可以在<code>http</code>, <code>server</code>, 或 <code>location</code>上下文中包含各种指令，以控制哪些响应被缓存。</p> 
+ <p>要更改在计算密钥时使用的请求字符，请包括<code>proxy_cache_key</code>伪指令：</p> 
+ <pre><code class="lang-shell">proxy_cache_key "$host$request_uri$cookie_user";
+</code></pre> 
+ <p>要定义在缓存响应之前必须进行具有相同密钥的请求的最小次数，请包括<a target="_blank" href="http://nginx.org/en/docs/http/ngx_http_proxy_module.html?&amp;_ga=1.48448358.1509956953.1490042234#proxy_cache_min_uses" title="proxy_cache_min_uses">proxy_cache_min_uses</a>指令：</p> 
+ <pre><code class="lang-shell">proxy_cache_min_uses 5;
+</code></pre> 
+ <p>要使用除GET和HEAD之外的方法来缓存对请求的响应，请将它们与GET和HEAD一起列为<a target="_blank" href="http://nginx.org/en/docs/http/ngx_http_proxy_module.html?&amp;_ga=1.48448358.1509956953.1490042234#proxy_cache_methods" title="proxy_cache_methods">proxy_cache_methods</a>伪指令的参数：</p> 
+ <pre><code class="lang-shell">proxy_cache_methods GET HEAD POST;
+</code></pre> 
+ <h2 id="h2-5-"><a name="5. 限制或绕过缓存" class="reference-link"></a><span class="header-link octicon octicon-link"></span>5. 限制或绕过缓存</h2>
+ <p>默认情况下，响应将无限期地保留在缓存中。 只有缓存超过最大配置大小，然后按照最后一次请求的时间长度，它们才被删除。 您可以通过在<code>http</code>, <code>server</code>, 或 <code>location</code>上下文中包含指令来设置缓存响应被认为有效的时间长度，甚至是否使用它们。</p> 
+ <p>要限制缓存响应与特定状态代码被认为有效的时间，请包括<a target="_blank" href="http://nginx.org/en/docs/http/ngx_http_proxy_module.html?&amp;_ga=1.18424953.1509956953.1490042234#proxy_cache_valid" title="proxy_cache_valid">proxy_cache_valid</a>指令：</p> 
+ <pre><code class="lang-shell">proxy_cache_valid 200 302 10m;
+proxy_cache_valid 404      1m;
+</code></pre> 
+ <p>在此示例中，使用代码<code>200</code>或<code>302</code>的响应有效时间为<code>10</code>分钟，并且代码<code>404</code>的响应有效<code>1</code>分钟。 要定义具有所有状态代码的响应的有效时间，请指定<code>any</code>作为第一个参数：</p> 
+ <pre><code class="lang-shell">proxy_cache_valid any 5m;
+</code></pre> 
+ <p>要定义NGINX不会向客户端发送缓存响应的条件，请包括<code>proxy_cache_bypass</code>指令。 每个参数定义一个条件并由多个变量组成。 如果至少有一个参数不为空，并且不等于“<code>0</code>”(零)，则NGINX不会在缓存中查找响应，而是将请求立即转发到后端服务器。</p> 
+ <pre><code class="lang-shell">proxy_cache_bypass $cookie_nocache $arg_nocache$arg_comment;
+</code></pre> 
+ <p>要定义NGINX根本不缓存响应的条件，请包括<a target="_blank" href="http://nginx.org/en/docs/http/ngx_http_proxy_module.html?&amp;_ga=1.11799668.1509956953.1490042234#proxy_no_cache" title="proxy_no_cache">proxy_no_cache</a>指令，以与<code>proxy_cache_bypass</code>伪指令相同的方式定义参数。</p> 
+ <pre><code class="lang-shell">proxy_no_cache $http_pragma $http_authorization;
+</code></pre> 
+ <h2 id="h2-6-"><a name="6. 从缓存中清除内容" class="reference-link"></a><span class="header-link octicon octicon-link"></span>6. 从缓存中清除内容</h2>
+ <p>NGINX可以从缓存中删除过期的缓存文件。删除过期的缓存内容以防止同时提供旧版本和新版本的网页。 在接收到包含自定义HTTP头或“PURGE” HTTP方法的特殊“<code>purge</code>”请求时，缓存被清除。</p> 
+ <h3 id="h3-6-1-"><a name="6.1 配置缓存清除" class="reference-link"></a><span class="header-link octicon octicon-link"></span>6.1 配置缓存清除</h3>
+ <p>我们设置一个配置来标识使用“PURGE” HTTP方法的请求并删除匹配的URL。</p> 
+ <ol> 
+  <li>在<code>http</code>块层级上，创建一个新变量，例如：<code>$purge_method</code>，这将取决于<code>$request_method</code>变量：</li>
+ </ol> 
+ <pre><code class="lang-shell">http {
+    ...
+    map $request_method $purge_method {
+        PURGE 1;
+        default 0;
+    }
+}
+</code></pre> 
+ <ol> 
+  <li><p>在<code>location</code>中配置高速缓存，包括指定缓存清除请求的条件的<a target="_blank" href="http://nginx.org/en/docs/http/ngx_http_proxy_module.html?&amp;_ga=1.15469686.1509956953.1490042234#proxy_cache_purge" title="proxy_cache_purge">proxy_cache_purge</a>指令。 在我们的例子中，它是在上一步配置的<code>$purge_method</code>：</p> <pre><code class="lang-shell">server {
+ listen      80;
+ server_name www.example.com;
+
+ location / {
+     proxy_pass  http://localhost:8002;
+     proxy_cache mycache;
+
+     proxy_cache_purge $purge_method;
+ }
+}
+</code></pre> <h3 id="h3-6-3-"><a name="6.3 发送清除命令" class="reference-link"></a><span class="header-link octicon octicon-link"></span>6.3 发送清除命令</h3></li>
+ </ol> 
+ <p>配置<code>proxy_cache_purge</code>指令后，您需要发送一个特殊的缓存清除请求来清除缓存。 您可以使用一系列工具发出清除请求，例如<code>curl</code>命令：</p> 
+ <pre><code class="lang-shell">$ curl -X PURGE -D – "http://www.example.com/*"
+HTTP/1.1 204 No Content
+Server: nginx/1.5.7
+Date: Sat, 01 Dec 2015 16:33:04 GMT
+Connection: keep-alive
+</code></pre> 
+ <p>在该示例中，具有公共URL部分(由星号通配符指定)的资源将被删除。 但是，这些高速缓存条目将不会从缓存中完全删除：它们将保留在磁盘上，直到它们被删除为非活动状态(<code>proxy_cache_path</code>的非活动参数)，或由缓存清除程序进程处理，或客户端尝试访问它们 。</p> 
+ <h3 id="h3-6-4-"><a name="6.4 限制访问清除命令" class="reference-link"></a><span class="header-link octicon octicon-link"></span>6.4 限制访问清除命令</h3>
+ <p>建议您配置允许发送缓存清除请求的有限数量的IP地址：</p>   
+ <pre><code class="lang-shell">geo $purge_allowed {
+   default         0;  # deny from other
+   10.0.0.1        1;  # allow from localhost
+   192.168.0.0/24  1;  # allow from 10.0.0.0/24
+}
+
+map $request_method $purge_method {
+   PURGE   $purge_allowed;
+   default 0;
+}
+</code></pre> 
+ <p>在这个例子中，NGINX检查请求中是否使用“<code>PURGE</code>”方法，如果是，分析客户端IP地址。 如果IP地址被列入白名单，那么<code>$purge_method</code>设置为<code>$purge_allowed：“1”</code>允许清除，“<code>0</code>”表示清除。</p> 
+ <h3 id="h3-6-5-"><a name="6.5 从缓存中完全删除文件" class="reference-link"></a><span class="header-link octicon octicon-link"></span>6.5 从缓存中完全删除文件</h3>
+ <p>要完全删除与星号相匹配的缓存文件，您将需要激活一个特殊的缓存清除程序，该过程将永久地遍历所有缓存条目，并删除与通配符相匹配的条目。 在<code>http</code>块级别上，将<code>purger</code>参数添加到<code>proxy_cache_path</code>指令中：</p> 
+ <pre><code class="lang-shell">proxy_cache_path /data/nginx/cache levels=1:2 keys_zone=mycache:10m purger=on;
+</code></pre> 
+ <h3 id="h3-6-6-"><a name="6.6 缓存清除配置示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>6.6 缓存清除配置示例</h3>
+ <pre><code class="lang-shell">http {
+    ...
+    proxy_cache_path /data/nginx/cache levels=1:2 keys_zone=mycache:10m purger=on;
+
+    map $request_method $purge_method {
+        PURGE 1;
+        default 0;
+    }
+
+    server {
+        listen      80;
+        server_name www.example.com;
+
+        location / {
+            proxy_pass        http://localhost:8002;
+            proxy_cache       mycache;
+            proxy_cache_purge $purge_method;
+        }
+    }
+
+    geo $purge_allowed {
+       default         0;
+       10.0.0.1        1;
+       192.168.0.0/24  1;
+    }
+
+    map $request_method $purge_method {
+       PURGE   $purge_allowed;
+       default 0;
+    }
+}
+</code></pre> 
+ <h2 id="h2-7-"><a name="7. 字节缓存" class="reference-link"></a><span class="header-link octicon octicon-link"></span>7. 字节缓存</h2>
+ <p>有时，初始缓存填充操作可能需要一些时间，特别是对于大文件。 当第一个请求开始下载视频文件的一部分时，下一个请求将不得不等待整个文件被下载并放入高速缓存。</p> 
+ <p>NGINX使缓存这样的范围请求成为可能，并逐渐用缓存片模块填充高速缓存。 该文件分为较小的“切片”。 每个范围请求选择将覆盖所请求范围的特定切片，并且如果此范围仍未缓存，请将其放入缓存中。 对这些切片的所有其他请求将从缓存中获取响应。</p> 
+ <p>要启用字节范围缓存：</p> 
+ <ol> 
+  <li><p>确保您的NGINX是使用<a target="_blank" href="http://nginx.org/en/docs/http/ngx_http_slice_module.html?_ga=1.110724421.1509956953.1490042234" title="slice">slice</a>模块编译的。</p> </li>
+  <li><p>使用<a target="_blank" href="http://nginx.org/en/docs/http/ngx_http_slice_module.html?_ga=1.110724421.1509956953.1490042234" title="slice">slice</a>指令指定切片的大小：</p> <pre><code class="lang-shell">location / {
+ slice  1m;
+}
+</code></pre> <p><code>slice</code>的大小应适当调整，使切片快速下载。 在处理请求时，太小的大小可能会导致内存使用量过多和大量打开的文件描述符，太大的值可能会导致延迟。</p> </li>
+  <li><p>将<code>$slice_range</code>变量包含到缓存键中：</p> </li>
+ </ol> 
+ <pre><code class="lang-shell">proxy_cache_key $uri$is_args$args$slice_range;
+</code></pre> 
+ <ol> 
+  <li><p>启用使用206状态代码缓存响应：</p> <pre><code class="lang-shell">proxy_cache_valid 200 206 1h;
+</code></pre> </li>
+  <li><p>通过在<code>Range</code>头字段中传递<code>$slice_range</code>变量来将传递范围请求设置为代理服务器：</p> </li>
+ </ol> 
+ <pre><code class="lang-shell">proxy_set_header  Range $slice_range;
+</code></pre> 
+ <p>字节范围缓存示例：</p> 
+ <pre><code class="lang-shell">location / {
+    slice             1m;
+    proxy_cache       cache;
+    proxy_cache_key   $uri$is_args$args$slice_range;
+    proxy_set_header  Range $slice_range;
+    proxy_cache_valid 200 206 1h;
+    proxy_pass        http://localhost:8000;
+}
+</code></pre> 
+ <p>请注意，如果切片(<code>slice</code>)缓存打开，则不应更改初始文件。</p> 
+ <h2 id="h2-8-"><a name="8. 组合配置示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>8. 组合配置示例</h2>
+ <p>以下示例配置组合了上述某些缓存选项。</p> 
+ <pre><code class="lang-shell">http {
+    ...
+    proxy_cache_path /data/nginx/cache keys_zone=one:10m loader_threshold=300 
+                     loader_files=200 max_size=200m;
+
+    server {
+        listen 8080;
+        proxy_cache one;
+
+        location / {
+            proxy_pass http://backend1;
+        }
+
+        location /some/path {
+            proxy_pass http://backend2;
+            proxy_cache_valid any 1m;
+            proxy_cache_min_uses 3;
+            proxy_cache_bypass $cookie_nocache $arg_nocache$arg_comment;
+        }
+    }
+}
+</code></pre> 
+ <p>在这个例子中，两个位置使用相同的缓存，但是以不同的方式。</p> 
+ <p>由于<code>backend1</code>服务器的响应很少更改，因此不包括缓存控制指令。 首次请求响应缓存，并无限期保持有效。</p> 
+ <p>相比之下，对<code>backend2</code>服务的请求的响应频繁变化，因此它们被认为只有<code>1</code>分钟有效，并且在相同请求<code>3</code>次之前不被缓存。 此外，如果请求符合<code>proxy_cache_bypass</code>指令定义的条件，则NGINX会立即将请求传递给<code>backend2</code>，而不在缓存中查找。</p>
+ <br>      
+</div></body></html>

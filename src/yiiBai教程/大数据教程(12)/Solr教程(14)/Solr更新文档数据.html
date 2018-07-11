@@ -1,0 +1,33 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Solr更新文档数据</h1><div style="width:100%;float:left;" class="article-content">   
+ <h2 id="h2--xml-"><a name="使用XML更新文档" class="reference-link"></a><span class="header-link octicon octicon-link"></span>使用XML更新文档</h2>
+ <p>以下是用于更新现有文档中的字段的XML文件。将下面的内容保存在名称为<code>update.xml</code>的文件中。</p> 
+ <pre><code class="lang-xml">&lt;add&gt;   
+   &lt;doc&gt;     
+      &lt;field name = "id"&gt;001&lt;/field&gt;     
+      &lt;field name = "first name" update = "set"&gt;Raj&lt;/field&gt;     
+      &lt;field name = "last name" update = "add"&gt;Malhotra&lt;/field&gt;     
+      &lt;field name = "phone" update = "add"&gt;9000000000&lt;/field&gt;    
+      &lt;field name = "city" update = "add"&gt;Delhi&lt;/field&gt;   
+   &lt;/doc&gt; 
+&lt;/add&gt;
+</code></pre> 
+ <p>正如上面看到的，写入更新数据的XML文件就类似之前用来添加文档的<code>XML</code>文件。 但唯一的区别是这里使用字段的一个<code>update</code>属性。</p> 
+ <p>在这个示例中，我们将使用上述文档并尝试更新<code>id</code>为<code>001</code>文档的字段。</p> 
+ <p>假设XML文档(<code>update.xml</code>)存在于Solr的bin目录中。更新的核心是名称为<code>my_core</code>的索引，可以使用<code>post</code>工具更新如下 -</p> 
+ <pre><code class="lang-shell">[yiibai@ubuntu:/usr/local/solr-6.4.0/bin]$ ./post -c my_core update.xml
+</code></pre> 
+ <p>执行上述命令后，将得到以下输出 - </p> 
+ <pre><code class="lang-shell">yiibai@ubuntu:/usr/local/solr-6.4.0/bin$ ./post -c my_core update.xml
+/usr/local/jdk1.8.0_65/bin/java -classpath /usr/local/solr-6.4.0/dist/solr-core-6.4.0.jar -Dauto=yes -Dc=my_core -Ddata=files org.apache.solr.util.SimplePostTool update.xml
+SimplePostTool version 5.0.0
+Posting files to [base] url http://localhost:8983/solr/my_core/update...
+Entering auto mode. File endings considered are xml,json,jsonl,csv,pdf,doc,docx,ppt,pptx,xls,xlsx,odt,odp,ods,ott,otp,ots,rtf,htm,html,txt,log
+POSTing file update.xml (application/xml) to [base]
+1 files indexed.
+COMMITting Solr index changes to http://localhost:8983/solr/my_core/update...
+Time spent: 0:00:00.246
+</code></pre> 
+ <h3 id="h3-u9A8Cu8BC1u4FEEu6539u7ED3u679C"><a name="验证修改结果" class="reference-link"></a><span class="header-link octicon octicon-link"></span>验证修改结果</h3>
+ <p>访问Apache Solr Web界面的主页，选择核心 - <strong>my_core</strong>。 尝试通过在文本区域<code>q</code>中传递查询“<code>：</code>”来检索所有文档，并执行查询。 执行时可以观察到文档已经更新了。如下图所示 -<br><img src="http://www.yiibai.com/uploads/images/201702/0402/279100258_23472.png" alt=""></p>
+ <br>      
+</div></body></html>

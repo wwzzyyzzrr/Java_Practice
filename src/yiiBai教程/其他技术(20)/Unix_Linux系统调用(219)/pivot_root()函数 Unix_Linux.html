@@ -1,0 +1,110 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">pivot_root()函数 Unix/Linux</h1><div style="width:100%;float:left;" class="article-content">   
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">pivot_root -&nbsp;</span>更改root文件系统 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> 内容简介</h1> 
+ <b style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">int pivot_root(const char *</b>
+ <i style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">new_root</i>
+ <b style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">, const char *</b>
+ <i style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">put_old</i>
+ <b style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">);</b> 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> 描述</h1> 
+ <b style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">pivot_root</b>
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">()&nbsp;</span>将当前进程的根文件系统的目录put_oldand使得new_root当前进程的新的根文件系统。 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> The typical use of&nbsp;<b>pivot_root</b>() is during system startup, when the system mounts a temporary root file system (e.g. an&nbsp;<b>initrd</b>), then mounts the real root file system, and eventually turns the latter into the current root of all relevant processes or threads.</p> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> <b>pivot_root</b>() may or may not change the current root and the current working directory (cwd) of any processes or threads which use the old root directory. The caller of<b>pivot_root</b>() must ensure that processes with root or cwd at the old root operate correctly in either case. An easy way to ensure this is to change their root and cwd to<i>new_root</i>&nbsp;before invoking&nbsp;<b>pivot_root</b>().</p> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> The paragraph above is intentionally vague because the implementation of&nbsp;<b>pivot_root</b>() may change in the future. At the time of writing,&nbsp;<b>pivot_root</b>() changes root and cwd of each process or thread to&nbsp;<i>new_root</i>&nbsp;if they yiibai to the old root directory. This is necessary in order to prevent kernel threads from keeping the old root directory busy with their root and cwd, even if they never access the file system in any way. In the future, there may be a mechanism for kernel threads to explicitly relinquish any access to the file system, such that this fairly intrusive mechanism can be removed from<b>pivot_root</b>().</p> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> Note that this also applies to the current process:&nbsp;<b>pivot_root</b>() may or may not affect its cwd. It is therefore recommended to call&nbsp;<b>chdir("/")</b>&nbsp;immediately after&nbsp;<b>pivot_root</b>().</p> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> The following restrictions apply to&nbsp;<i>new_root</i>&nbsp;and&nbsp;<i>put_old</i>:</p> 
+ <div style="float:left;margin-bottom: 10px;">  
+ </div>
+ <div style="float:left;margin-bottom: 10px;">  
+ </div>
+ <table border="1" cellpadding="5" cellspacing="0" class="src" style="font-family: verdana, helvetica, arial, sans-serif; border: 1px solid rgb(170, 170, 170); width: 552px; background-color: rgb(241, 241, 241); border-collapse: collapse; padding-left: 5px; vertical-align: top; color: rgb(0, 0, 0);"> 
+  <tbody> 
+   <tr> 
+    <th style="background-color: rgb(205, 205, 205); border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" width="25%"> 标签</th> 
+    <th style="background-color: rgb(205, 205, 205); border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> 描述</th> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" width="3%"> -</td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> They must be directories.</td> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" width="3%"> -</td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <i>new_root</i>&nbsp;and&nbsp;<i>put_old</i>&nbsp;must not be on the same file system as the current root.</td> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" width="3%"> -</td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <i>put_old</i>&nbsp;must be underneath&nbsp;<i>new_root</i>, i.e. adding a non-zero number of&nbsp;<i>/..</i>&nbsp;to the string yiibaied to by&nbsp;<i>put_old</i>&nbsp;must yield the same directory as&nbsp;<i>new_root</i>.</td> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" width="3%"> -</td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> No other file system may be mounted on&nbsp;<i>put_old</i>.</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">See also&nbsp;</span>
+ <b style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">pivot_root</b>
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">(8) for additional usage examples.</span> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> If the current root is not a mount yiibai (e.g. after&nbsp;<b>chroot</b>(2) or&nbsp;<b>pivot_root</b>(), see also below), not the old root directory, but the mount yiibai of that file system is mounted on<i>put_old</i>.</p> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> <i>new_root</i>&nbsp;does not have to be a mount yiibai. In this case,&nbsp;<i>/proc/mounts</i>&nbsp;will show the mount yiibai of the file system containing&nbsp;<i>new_root</i>&nbsp;as root (<i>/</i>).</p> 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> 返回值</h1> 
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">On success, zero is returned. On error, -1 is returned, and&nbsp;</span>
+ <i style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">errno</i>
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">&nbsp;is set appropriately.</span> 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> 错误</h1> 
+ <b style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">pivot_root</b>
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">() may return (in&nbsp;</span>
+ <i style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">errno</i>
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">) any of the errors returned by&nbsp;</span>
+ <b style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">stat</b>
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">(2). Additionally, it may return:</span> 
+ <table border="1" cellpadding="5" cellspacing="0" class="src" style="font-family: verdana, helvetica, arial, sans-serif; border: 1px solid rgb(170, 170, 170); width: 552px; background-color: rgb(241, 241, 241); border-collapse: collapse; padding-left: 5px; vertical-align: top; color: rgb(0, 0, 0);"> 
+  <tbody> 
+   <tr> 
+    <th style="background-color: rgb(205, 205, 205); border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" width="25%"> 标签</th> 
+    <th style="background-color: rgb(205, 205, 205); border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> 描述</th> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>EBUSY</b></td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" valign="bottom"> <i>new_root</i>&nbsp;or&nbsp;<i>put_old</i>&nbsp;are on the current root file system, or a file system is already mounted on&nbsp;<i>put_old</i>.</td> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>EINVAL</b></td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" valign="bottom"> <i>put_old</i>&nbsp;is not underneath&nbsp;<i>new_root</i>.</td> 
+   </tr> 
+   <tr valign="top"> 
+    <td colspan="2" style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>ENOTDIR</b></td> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" width="6%"> &nbsp;</td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <i>new_root</i>&nbsp;or&nbsp;<i>put_old</i>&nbsp;is not a directory.</td> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>EPERM</b></td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" valign="bottom"> The current process does not have the&nbsp;<b>CAP_SYS_ADMIN</b>capability.</td> 
+   </tr> 
+  </tbody> 
+ </table>   
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> 版本</h1> 
+ <b style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">pivot_root</b>
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">() was introduced in Linux 2.3.41.</span> 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> 遵循于</h1> 
+ <b style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">pivot_root</b>
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">()&nbsp;</span>是Linux特有的，因此是不可移植的。 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> BUGS</h1> 
+ <b style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">pivot_root</b>
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">()&nbsp;</span>不应该去更改root所有其他进程和 cwd 系统。 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> Some of the more obscure uses of&nbsp;<b>pivot_root</b>() may quickly lead to insanity.</p> 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> 注意</h1> 
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">Glibc does not provide a wrapper for this system call; call it using&nbsp;</span>
+ <b style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">syscall</b>
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">(2).</span> 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> 另请参阅</h1> 
+ <ul style="font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> 
+  <li> <p style="text-align: justify;"> <a target="_blank" href="http://www.yiibai.com/unix_system_calls/chdir.html" style="color: rgb(144, 11, 9); background-color: transparent;">chdir (2)</a></p> </li> 
+  <li> <p style="text-align: justify;"> <a target="_blank" href="http://www.yiibai.com/unix_system_calls/chroot.html" style="color: rgb(144, 11, 9); background-color: transparent;">chroot (2)</a></p> </li> 
+  <li> <p style="text-align: justify;"> <a target="_blank" href="http://www.yiibai.com/unix_system_calls/stat.html" style="color: rgb(144, 11, 9); background-color: transparent;">stat (2)</a></p> </li> 
+  <li> <p style="text-align: justify;"> <a target="_blank" href="http://www.yiibai.com/unix_commands/pivot_root.html" style="color: rgb(144, 11, 9); background-color: transparent;">pivot_root (8)</a></p> </li> 
+ </ul> 
+ <br>      
+</div></body></html>

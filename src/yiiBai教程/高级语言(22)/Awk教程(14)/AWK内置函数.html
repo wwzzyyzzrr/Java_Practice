@@ -1,0 +1,722 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">AWK内置函数</h1><div style="width:100%;float:left;" class="article-content">   
+ <p> AWK许多内置函数，随时可为程序员使用。本教程介绍了AWK的算术，字符串，时间，位操作和其他杂项函数的例子：</p> 
+ <h2> 算术函数</h2> 
+ <p> AWK具有以下内置的算术函数：</p> 
+ <h3> atan2(y, x)</h3> 
+ <p> 它返回弧度的反正切(y/x) 。下面简单的例子说明了这一点：</p> 
+ <pre class="prettyprint notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+[jerry]$ awk 'BEGIN {
+  PI = 3.14159265
+  x = -10
+  y = 10
+  result = atan2 (y,x) * 180 / PI;
+
+  printf "The arc tangent for (x=%f, y=%f) is %f degrees\n", x, y, result
+}'</pre> 
+ <p> 在执行上面的代码后，得到以下结果：</p> 
+ <pre class="result" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+The arc tangent for (x=-10.000000, y=10.000000) is 135.000000 degrees</pre> 
+ <h3> cos(expr)</h3> 
+ <p> 此函数返回expr的余弦（以弧度形式）。下面简单的例子说明了这一点：</p> 
+ <pre class="prettyprint notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+[jerry]$ awk 'BEGIN {
+  PI = 3.14159265
+  param = 60
+  result = cos(param * PI / 180.0);
+
+  printf "The cosine of %f degrees is %f.\n", param, result
+}'</pre> 
+ <p> 在执行上面的代码后，得到以下结果：</p> 
+ <pre class="result" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+The cosine of 60.000000 degrees is 0.500000.</pre> 
+ <h3> exp(expr)</h3> 
+ <p> 此函数被用于找到指数值。</p> 
+ <pre class="prettyprint notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+[jerry]$ awk 'BEGIN {
+  param = 5
+  result = exp(param);
+
+  printf "The exponential value of %f is %f.\n", param, result
+}'</pre> 
+ <p> 在执行上面的代码后，得到以下结果：</p> 
+ <pre class="result" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+The exponential value of 5.000000 is 148.413159.</pre> 
+ <h3> int(expr)</h3> 
+ <p> 这个函数截断expr为整数值。下面简单的例子说明了这一点：</p> 
+ <pre class="prettyprint notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+[jerry]$ awk 'BEGIN {
+  param = 5.12345
+  result = int(param)
+
+  print "Truncated value =", result
+}'</pre> 
+ <p> 在执行上面的代码后，得到以下结果：</p> 
+ <pre class="result" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+Truncated value = 5</pre> 
+ <h3> log(expr)</h3> 
+ <p> 此函数计算的自然对数。</p> 
+ <pre class="prettyprint notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+[jerry]$ awk 'BEGIN {
+  param = 5.5
+  result = log (param)
+
+  printf "log(%f) = %f\n", param, result
+}'</pre> 
+ <p> 在执行上面的代码后，得到以下结果：</p> 
+ <pre class="result" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+log(5.500000) = 1.704748</pre> 
+ <h3> rand</h3> 
+ <p> 该函数返回一个随机数N，在0和1之间，使得0&lt;= N &lt;1。例如下面的例子会产生三个随机数：</p> 
+ <pre class="prettyprint notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+[jerry]$ awk 'BEGIN {
+  print "Random num1 =" , rand()
+  print "Random num2 =" , rand()
+  print "Random num3 =" , rand()
+}'</pre> 
+ <p> 在执行上面的代码后，得到以下结果：</p> 
+ <pre class="result" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+Random num1 = 0.237788
+Random num2 = 0.291066
+Random num3 = 0.845814</pre> 
+ <h3> sin(expr)</h3> 
+ <p> 此函数返回expr的正弦（以弧度形式）。下面简单的例子说明了这一点：</p> 
+ <pre class="prettyprint notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+[jerry]$ awk 'BEGIN {
+  PI = 3.14159265
+  param = 30.0
+  result = sin(param * PI /180)
+
+  printf "The sine of %f degrees is %f.\n", param, result
+}'</pre> 
+ <p> 在执行上面的代码后，得到以下结果：</p> 
+ <pre class="result" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+The sine of 30.000000 degrees is 0.500000.</pre> 
+ <h3> sqrt(expr)</h3> 
+ <p> 该函数返回expr的平方根。</p> 
+ <pre class="prettyprint notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+[jerry]$ awk 'BEGIN {
+  param = 1024.0
+  result = sqrt(param)
+
+  printf "sqrt(%f) = %f\n", param, result
+}'</pre> 
+ <p> 在执行上面的代码后，得到以下结果：</p> 
+ <pre class="result" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+sqrt(1024.000000) = 32.000000</pre> 
+ <h3> srand([expr])</h3> 
+ <p> 这个函数使用产生种子值的随机数。它使用expr作为随机数生成的新的种子。如果没有expr，它使用一天的时间值作为种子值。</p> 
+ <pre class="prettyprint notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+[jerry]$ awk 'BEGIN {
+  param = 10
+
+  printf "srand() = %d\n", srand()
+  printf "srand(%d) = %d\n", param, srand(param)
+}'</pre> 
+ <p> 在执行上面的代码后，得到以下结果：</p> 
+ <pre class="result" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+srand() = 1
+srand(10) = 1417959587</pre> 
+ <h2> 字符串函数</h2> 
+ <p> AWK具有以下内置字符串函数：</p> 
+ <h3> asort(arr [, d [, how] ])</h3> 
+ <p> 这个函数排序arr，使用gawk的常规规则比较值的内容，并替换排序值的索引常用使用连续整数是从1开始。</p> 
+ <pre class="prettyprint notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+[jerry]$ awk 'BEGIN {
+	arr[0] = "Three"
+	arr[1] = "One"
+	arr[2] = "Two"
+
+	print "Array elements before sorting:"
+	for (i in arr) {
+		print arr[i]
+	}
+
+	asort(arr)
+
+	print "Array elements after sorting:"
+	for (i in arr) {
+		print arr[i]
+	}
+}'</pre> 
+ <p> 在执行上面的代码后，得到以下结果：</p> 
+ <pre class="result" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+Array elements before sorting:
+Three
+One
+Two
+Array elements after sorting:
+One
+Three
+Two</pre> 
+ <h3> asorti(arr [, d [, how] ])</h3> 
+ <p> 此函数的行为类似于asort()，所不同的是数组索引用于排序。</p> 
+ <pre class="prettyprint notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+[jerry]$ awk 'BEGIN {
+	arr["Two"] = 1
+	arr["One"] = 2
+	arr["Three"] = 3
+
+	asorti(arr)
+
+	print "Array indices after sorting:"
+	for (i in arr) {
+		print arr[i]
+	}
+}'</pre> 
+ <p> 在执行上面的代码后，得到以下结果：</p> 
+ <pre class="result" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+Array indices after sorting:
+One
+Three
+Two</pre> 
+ <h3> gsub(regex, sub, string)</h3> 
+ <p> gsub代表全局替换。它用正则表达式分每个匹配。第三个参数是可选的，如果省略它，那么$0被使用。</p> 
+ <pre class="prettyprint notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+[jerry]$ awk 'BEGIN {
+	str = "Hello, World"
+
+	print "String before replacement = " str
+
+	gsub("World", "Jerry", str)
+
+	print "String after replacement = " str
+}'</pre> 
+ <p> 在执行上面的代码后，得到以下结果：</p> 
+ <pre class="result" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+String before replacement = Hello, World
+String after replacement = Hello, Jerry</pre> 
+ <h3> index(str, sub)</h3> 
+ <p> 它检查sub是否是str的子字符串。如果成功则返回sub开始位置，否则返回0。str第一个字符的位置是1。</p> 
+ <pre class="prettyprint notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+[jerry]$ awk 'BEGIN {
+	str = "One Two Three"
+	subs = "Two"
+
+	ret = index(str, subs)
+
+	printf "Substring \"%s\" found at %d location.\n", subs, ret
+}'</pre> 
+ <p> 在执行上面的代码后，得到以下结果：</p> 
+ <pre class="result" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+Substring "Two" found at 5 location.</pre> 
+ <h3> length(str)</h3> 
+ <p> 它返回字符串字符串的长度。</p> 
+ <pre class="prettyprint notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+[jerry]$ awk 'BEGIN {
+	str = "Hello, World !!!"
+
+	print "Length = ", length(str)
+}'</pre> 
+ <p> 在执行上面的代码后，得到以下结果：</p> 
+ <pre class="result" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+Length = 16</pre> 
+ <h3 style="box-sizing: border-box; color: rgb(0, 0, 0); font-weight: normal; margin: 0.2em 0.2em 0.2em 0px; font-size: 1.3em; line-height: 1.5em; text-shadow: rgb(204, 204, 204) 1px 1px 2px; padding-right: 0px; padding-bottom: 0px; padding-left: 0px; position: relative; left: 0px;  padding-top: 10px !important;"> match(str, regex)</h3> 
+ <p style="box-sizing: border-box; color: rgb(0, 0, 0); line-height: 24px; margin: 0em 0.2em 1em; padding: 0px; text-align: justify;  font-size: 14px;"> 它返回正则表达式的字符串str第一个最长的匹配索引。如果没有找到匹配返回0。</p> 
+ <pre class="prettyprint notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+[jerry]$ awk 'BEGIN {
+	str = "One Two Three"
+	subs = "Two"
+
+	ret = match(str, subs)
+
+	printf "Substring \"%s\" found at %d location.\n", subs, ret
+}'</pre> 
+ <p> 在执行上面的代码后，得到以下结果：</p> 
+ <pre class="result" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+Substring "Two" found at 5 location.</pre> 
+ <h3> split(str, arr, regex)</h3> 
+ <p> 这个函数分割字符串str为正则表达式regex字段，字段被加载到数组arr。如果省略regex那么fs被使用。</p> 
+ <pre class="prettyprint notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+[jerry]$ awk 'BEGIN {
+	str = "One,Two,Three,Four"
+
+	split(str, arr, ",")
+
+	print "Array contains following values"
+
+	for (i in arr) {
+		print arr[i]
+	}
+}'</pre> 
+ <p> 在执行上面的代码后，得到以下结果：</p> 
+ <pre class="result" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+Array contains following values
+One
+Two
+Three
+Four</pre> 
+ <h3> sprintf(format, expr-list)</h3> 
+ <p> 该函数返回按照expr-list格式构造一个字符串。</p> 
+ <pre class="prettyprint notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+[jerry]$ awk 'BEGIN {
+	str = sprintf("%s", "Hello, World !!!")
+
+	print str
+}'</pre> 
+ <p> 在执行上面的代码后，得到以下结果：</p> 
+ <pre class="result" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+Hello, World !!!</pre> 
+ <h3> strtonum(str)</h3> 
+ <p> 这个函数检查str并返回它的数值。如果str以0开始，把它当作一个八进制数。如果str开头是0x或0X，那么它当作一个十六进制数。否则，假设它是一个十进制数。</p> 
+ <pre class="prettyprint notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+[jerry]$ awk 'BEGIN {
+	print "Decimal num = " strtonum("123")
+	print "Octal num = " strtonum("0123")
+	print "Hexadecimal num = " strtonum("0x123")
+}'</pre> 
+ <p> 在执行上面的代码后，得到以下结果：</p> 
+ <pre class="result" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+Decimal num = 123
+Octal num = 83
+Hexadecimal num = 291</pre> 
+ <h3> sub(regex, sub, string)</h3> 
+ <p> 这个函数执行单一的替代。它用正则表达式子第一次出现。第三个参数是可选的，如果它被删去，$0被使用。</p> 
+ <pre class="prettyprint notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+[jerry]$ awk 'BEGIN {
+	str = "Hello, World"
+
+	print "String before replacement = " str
+
+	sub("World", "Jerry", str)
+
+	print "String after replacement = " str
+}'</pre> 
+ <p> 在执行上面的代码后，得到以下结果：</p> 
+ <pre class="result" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+String before replacement = Hello, World
+String after replacement = Hello, Jerry</pre> 
+ <h3> substr(str, start, l)</h3> 
+ <p> 该函数返回字符串str的子字符串，起始于长度l为索引开始。如果省略长度，则返回str的后缀为索引起始。</p> 
+ <pre class="prettyprint notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+[jerry]$ awk 'BEGIN {
+	str = "Hello, World !!!"
+	subs = substr(str, 1, 5)
+
+	print "Substring = " subs
+}'</pre> 
+ <p> 在执行上面的代码后，得到以下结果：</p> 
+ <pre class="result" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+Substring = Hello</pre> 
+ <h3> tolower(str)</h3> 
+ <p> 该函数返回字符串str具有转换为小写全部大写字符的副本。</p> 
+ <pre class="prettyprint notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+[jerry]$ awk 'BEGIN {
+	str = "HELLO, WORLD !!!"
+
+	print "Lowercase string = " tolower(str)
+}'</pre> 
+ <p> 在执行上面的代码后，得到以下结果：</p> 
+ <pre class="result" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+Lowercase string = hello, world !!!</pre> 
+ <h3> toupper(str)</h3> 
+ <p> 该函数返回字符串str具有转换为大写小写字符的副本。</p> 
+ <pre class="prettyprint notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+[jerry]$ awk 'BEGIN {
+	str = "hello, world !!!"
+
+	print "Uppercase string = " toupper(str)
+}'</pre> 
+ <p> 在执行上面的代码后，得到以下结果：</p> 
+ <pre class="result" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+Uppercase string = HELLO, WORLD !!!</pre> 
+ <h2> 时间函数</h2> 
+ <p> AWK拥有的内置时间函数如下：</p> 
+ <h3> systime</h3> 
+ <p> 该函数返回当天的当前时间以来的大纪元（1970-01-0100:00:00 UTC在POSIX系统）的秒数。</p> 
+ <pre class="prettyprint notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+[jerry]$ awk 'BEGIN {
+	print "Number of seconds since the Epoch = " systime()
+}'</pre> 
+ <p> 在执行上面的代码后，得到以下结果：</p> 
+ <pre class="result" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+Number of seconds since the Epoch = 1418574432</pre> 
+ <h3> mktime(datespec)</h3> 
+ <p> 返回由systime()这个函数转换的timespec字符串进入相同的形式的时间标记。所述的timespec形式如YYYY MM DD HH MM SS的字符串。</p> 
+ <pre class="prettyprint notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+[jerry]$ awk 'BEGIN {
+	print "Number of seconds since the Epoch = " mktime("2014 12 14 30 20 10")
+}'</pre> 
+ <p> 在执行上面的代码后，得到以下结果：</p> 
+ <pre class="result" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+Number of seconds since the Epoch = 1418604610</pre> 
+ <h3 style="box-sizing: border-box; color: rgb(0, 0, 0); font-weight: normal; margin: 0.2em 0.2em 0.2em 0px; font-size: 1.3em; line-height: 1.5em; text-shadow: rgb(204, 204, 204) 1px 1px 2px; padding-right: 0px; padding-bottom: 0px; padding-left: 0px; position: relative; left: 0px;  padding-top: 10px !important;"> strftime([format [, timestamp[, utc-flag]]])</h3> 
+ <p> 根据格式规范此函数格式化时间戳。</p> 
+ <pre class="prettyprint notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+[jerry]$ awk 'BEGIN {
+	print strftime("Time = %m/%d/%Y %H:%M:%S", systime())
+}'</pre> 
+ <p> 在执行上面的代码后，得到以下结果：</p> 
+ <pre class="result" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+Time = 12/14/2014 22:08:42</pre> 
+ <p> 以下是由AWK支持的各种时间格式：</p> 
+ <table class="src" style="box-sizing: border-box; border-collapse: collapse; border-spacing: 0px;  border-color: rgb(214, 214, 214); width: 604px; vertical-align: top; margin-top: 8px; margin-bottom: 8px; color: rgb(49, 49, 49);  font-size: 14px; line-height: 22px; background-color: rgb(247, 247, 247);"> 
+  <tbody style="box-sizing: border-box;"> 
+   <tr style="box-sizing: border-box;"> 
+    <th style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px; width: 100px; background: rgb(238, 238, 238);"> 日期格式规范</th> 
+    <th style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px; background: rgb(238, 238, 238);"> 描述</th> 
+   </tr> 
+   <tr style="box-sizing: border-box;"> 
+    <td style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px;"> %a</td> 
+    <td style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px;"> The locale’s abbreviated weekday name.</td> 
+   </tr> 
+   <tr style="box-sizing: border-box;"> 
+    <td style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px;"> %A</td> 
+    <td style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px;"> The locale’s full weekday name.</td> 
+   </tr> 
+   <tr style="box-sizing: border-box;"> 
+    <td style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px;"> %b</td> 
+    <td style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px;"> The locale’s abbreviated month name.</td> 
+   </tr> 
+   <tr style="box-sizing: border-box;"> 
+    <td style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px;"> %B</td> 
+    <td style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px;"> The locale’s full month name.</td> 
+   </tr> 
+   <tr style="box-sizing: border-box;"> 
+    <td style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px;"> %c</td> 
+    <td style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px;"> The locale’s appropriate date and time representation. (This is %A %B %d %T %Y in the C locale.)</td> 
+   </tr> 
+   <tr style="box-sizing: border-box;"> 
+    <td style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px;"> %C</td> 
+    <td style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px;"> The century part of the current year. This is the year divided by 100 and truncated to the next lower integer.</td> 
+   </tr> 
+   <tr style="box-sizing: border-box;"> 
+    <td style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px;"> %d</td> 
+    <td style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px;"> The day of the month as a decimal number (01–31).</td> 
+   </tr> 
+   <tr style="box-sizing: border-box;"> 
+    <td style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px;"> %D</td> 
+    <td style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px;"> Equivalent to specifying %m/%d/%y.</td> 
+   </tr> 
+   <tr style="box-sizing: border-box;"> 
+    <td style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px;"> %e</td> 
+    <td style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px;"> The day of the month, padded with a space if it is only one digit.</td> 
+   </tr> 
+   <tr style="box-sizing: border-box;"> 
+    <td style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px;"> %F</td> 
+    <td style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px;"> Equivalent to specifying %Y-%m-%d. This is the ISO 8601 date format.</td> 
+   </tr> 
+   <tr style="box-sizing: border-box;"> 
+    <td style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px;"> %g</td> 
+    <td style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px;"> The year modulo 100 of the ISO 8601 week number, as a decimal number (00–99). For example, January 1, 1993 is in week 53 of 1992. Thus, the year of its ISO 8601 week number is 1992, even though its year is 1993. Similarly, December 31, 1973 is in week 1 of 1974. Thus, the year of its ISO week number is 1974, even though its year is 1973.</td> 
+   </tr> 
+   <tr style="box-sizing: border-box;"> 
+    <td style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px;"> %G</td> 
+    <td style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px;"> The full year of the ISO week number, as a decimal number.</td> 
+   </tr> 
+   <tr style="box-sizing: border-box;"> 
+    <td style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px;"> %h</td> 
+    <td style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px;"> Equivalent to %b.</td> 
+   </tr> 
+   <tr style="box-sizing: border-box;"> 
+    <td style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px;"> %H</td> 
+    <td style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px;"> The hour (24-hour clock) as a decimal number (00–23).</td> 
+   </tr> 
+   <tr style="box-sizing: border-box;"> 
+    <td style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px;"> %I</td> 
+    <td style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px;"> The hour (12-hour clock) as a decimal number (01–12).</td> 
+   </tr> 
+   <tr style="box-sizing: border-box;"> 
+    <td style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px;"> %j</td> 
+    <td style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px;"> The day of the year as a decimal number (001–366).</td> 
+   </tr> 
+   <tr style="box-sizing: border-box;"> 
+    <td style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px;"> %m</td> 
+    <td style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px;"> The month as a decimal number (01–12).</td> 
+   </tr> 
+   <tr style="box-sizing: border-box;"> 
+    <td style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px;"> %M</td> 
+    <td style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px;"> The minute as a decimal number (00–59).</td> 
+   </tr> 
+   <tr style="box-sizing: border-box;"> 
+    <td style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px;"> %n</td> 
+    <td style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px;"> A newline character (ASCII LF).</td> 
+   </tr> 
+   <tr style="box-sizing: border-box;"> 
+    <td style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px;"> %p</td> 
+    <td style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px;"> The locale’s equivalent of the AM/PM designations associated with a 12-hour clock.</td> 
+   </tr> 
+   <tr style="box-sizing: border-box;"> 
+    <td style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px;"> %r</td> 
+    <td style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px;"> The locale’s 12-hour clock time. (This is %I:%M:%S %p in the C locale.)</td> 
+   </tr> 
+   <tr style="box-sizing: border-box;"> 
+    <td style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px;"> %R</td> 
+    <td style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px;"> Equivalent to specifying %H:%M.</td> 
+   </tr> 
+   <tr style="box-sizing: border-box;"> 
+    <td style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px;"> %S</td> 
+    <td style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px;"> The second as a decimal number (00–60).</td> 
+   </tr> 
+   <tr style="box-sizing: border-box;"> 
+    <td style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px;"> %t</td> 
+    <td style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px;"> A TAB character.</td> 
+   </tr> 
+   <tr style="box-sizing: border-box;"> 
+    <td style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px;"> %T</td> 
+    <td style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px;"> Equivalent to specifying %H:%M:%S.</td> 
+   </tr> 
+   <tr style="box-sizing: border-box;"> 
+    <td style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px;"> %u</td> 
+    <td style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px;"> The weekday as a decimal number (1–7). Monday is day one.</td> 
+   </tr> 
+   <tr style="box-sizing: border-box;"> 
+    <td style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px;"> %U</td> 
+    <td style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px;"> The week number of the year (the first Sunday as the first day of week one) as a decimal number (00–53).</td> 
+   </tr> 
+   <tr style="box-sizing: border-box;"> 
+    <td style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px;"> %V</td> 
+    <td style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px;"> The week number of the year (the first Monday as the first day of week one) as a decimal number (01–53).</td> 
+   </tr> 
+   <tr style="box-sizing: border-box;"> 
+    <td style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px;"> %w</td> 
+    <td style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px;"> The weekday as a decimal number (0–6). Sunday is day zero.</td> 
+   </tr> 
+   <tr style="box-sizing: border-box;"> 
+    <td style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px;"> %W</td> 
+    <td style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px;"> The week number of the year (the first Monday as the first day of week one) as a decimal number (00–53).</td> 
+   </tr> 
+   <tr style="box-sizing: border-box;"> 
+    <td style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px;"> %x</td> 
+    <td style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px;"> The locale’s appropriate date representation. (This is %A %B %d %Y in the C locale.)</td> 
+   </tr> 
+   <tr style="box-sizing: border-box;"> 
+    <td style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px;"> %X</td> 
+    <td style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px;"> The locale’s appropriate time representation. (This is %T in the C locale.)</td> 
+   </tr> 
+   <tr style="box-sizing: border-box;"> 
+    <td style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px;"> %y</td> 
+    <td style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px;"> The year modulo 100 as a decimal number (00–99).</td> 
+   </tr> 
+   <tr style="box-sizing: border-box;"> 
+    <td style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px;"> %Y</td> 
+    <td style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px;"> The full year as a decimal number (e.g. 2011).</td> 
+   </tr> 
+   <tr style="box-sizing: border-box;"> 
+    <td style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px;"> %z</td> 
+    <td style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px;"> The time-zone offset in a +HHMM format (e.g., the format necessary to produce RFC 822/RFC 1036 date headers).</td> 
+   </tr> 
+   <tr style="box-sizing: border-box;"> 
+    <td style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px;"> %Z</td> 
+    <td style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px;"> The time zone name or abbreviation; no characters if no time zone is determinable.</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h2> 位操作函数</h2> 
+ <p> AWK具有以下内置位操作功能：</p> 
+ <h3> and</h3> 
+ <p> 执行按位与运算。</p>   
+ <pre class="prettyprint notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+[jerry]$ awk 'BEGIN {
+	num1 = 10
+	num2 = 6
+
+	printf "(%d AND %d) = %d\n", num1, num2, and(num1, num2)
+}'</pre> 
+ <p> 在执行上面的代码后，得到以下结果：</p> 
+ <pre class="result" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+(10 AND 6) = 2</pre> 
+ <h3> compl</h3> 
+ <p> 执行按位补操作。</p> 
+ <pre class="prettyprint notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+[jerry]$ awk 'BEGIN {
+	num1 = 10
+
+	printf "compl(%d) = %d\n", num1, compl(num1)
+}'</pre> 
+ <p> 在执行上面的代码后，得到以下结果：</p> 
+ <pre class="result" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+compl(10) = 9007199254740981</pre> 
+ <h3> lshift</h3> 
+ <p> 执行按位左移运算。</p> 
+ <pre class="prettyprint notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+[jerry]$ awk 'BEGIN {
+	num1 = 10
+
+	printf "lshift(%d) by 1 = %d\n", num1, lshift(num1, 1)
+}'</pre> 
+ <p> 在执行上面的代码后，得到以下结果：</p> 
+ <pre class="result" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+lshift(10) by 1 = 20</pre> 
+ <h3> rshift</h3> 
+ <p> 执行按位向右移位操作。</p> 
+ <pre class="prettyprint notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+[jerry]$ awk 'BEGIN {
+	num1 = 10
+
+	printf "rshift(%d) by 1 = %d\n", num1, rshift(num1, 1)
+}'</pre> 
+ <p> 在执行上面的代码后，得到以下结果：</p> 
+ <pre class="result" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+rshift(10) by 1 = 5</pre> 
+ <h3> or</h3> 
+ <p> 执行按位或运算。</p> 
+ <pre class="prettyprint notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+[jerry]$ awk 'BEGIN {
+	num1 = 10
+	num2 = 6
+
+	printf "(%d OR %d) = %d\n", num1, num2, or(num1, num2)
+}'</pre> 
+ <p> 在执行上面的代码后，得到以下结果：</p> 
+ <pre class="result" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+(10 OR 6) = 14</pre> 
+ <h3> xor</h3> 
+ <p> 执行按位异或操作。</p> 
+ <pre class="prettyprint notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+[jerry]$ awk 'BEGIN {
+	num1 = 10
+	num2 = 6
+
+	printf "(%d XOR %d) = %d\n", num1, num2, xor(num1, num2)
+}'</pre> 
+ <p> 在执行上面的代码后，得到以下结果：</p> 
+ <pre class="result" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+(10 bitwise xor 6) = 12</pre> 
+ <h2> 其它函数</h2> 
+ <p> AWK具有以下辅助功能：</p> 
+ <h3> close(expr)</h3> 
+ <p> 这个函数将关闭管道文件。</p> 
+ <pre class="prettyprint notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+[jerry]$ awk 'BEGIN {
+	cmd = "tr [a-z] [A-Z]"
+	print "hello, world !!!" |&amp; cmd
+	close(cmd, "to")
+	cmd |&amp; getline out
+	print out;
+	close(cmd);
+}'</pre> 
+ <p> 在执行上面的代码后，得到以下结果：</p> 
+ <pre class="result" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+HELLO, WORLD !!!</pre> 
+ <p> 让我们来看看下面的脚本解释：</p> 
+ <p> 第一条语句，cmd = "tr [a-z] [A-Z]" -是要从AWK建立双向通信的命令。</p> 
+ <p> 下一个语句即打印命令，提供输入到tr命令。此处&amp;|指示双向通信。</p> 
+ <p> 第三个语句，即close- 关闭完成后执行处理。</p> 
+ <p> 接下来语句cmd |&amp; getline函数输出到出变量，在函数getline函数的帮助下。</p> 
+ <p> 接下来print语句打印输出，并最终close函数关闭命令。</p> 
+ <h3> delete</h3> 
+ <p> 这个函数会删除数组中的元素。下面简单的例子显示了这个函数的使用：</p> 
+ <pre class="prettyprint notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+[jerry]$ awk 'BEGIN {
+	arr[0] = "One"
+	arr[1] = "Two"
+	arr[2] = "Three"
+	arr[3] = "Four"
+
+	print "Array elements before delete operation:"
+	for (i in arr) {
+		print arr[i]
+	}
+
+	delete arr[0]
+	delete arr[1]
+
+	print "Array elements after delete operation:"
+	for (i in arr) {
+		print arr[i]
+	}
+}'</pre> 
+ <p> 在执行上面的代码后，得到以下结果：</p> 
+ <pre class="result" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+Array elements before delete operation:
+One
+Two
+Three
+Four
+
+Array elements after delete operation:
+Three
+Four</pre> 
+ <h3> exit</h3> 
+ <p> 这个函数停止脚本的执行。它也接受一个可选的expr变成AWK的返回值。下面的例子说明了exit函数的用法。</p> 
+ <pre class="prettyprint notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+[jerry]$ awk 'BEGIN {
+	print "Hello, World !!!"
+
+	exit 10
+
+	print "AWK never executes this statement."
+}'</pre> 
+ <p> 在执行上面的代码后，得到以下结果：</p> 
+ <pre class="result" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+Hello, World !!!</pre> 
+ <h3> fflush</h3> 
+ <p> 这个函数用于清空打开输出文件或管道相关的缓冲区。下面是函数的语法。</p> 
+ <pre class="prettyprint notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+fflush([output-expr])</pre> 
+ <p> 如果没有提供output-expr，它清空标准输出。如果输出expr为空字符串（“”），则清空所有打开的文件和管道。</p> 
+ <h3> getline</h3> 
+ <p> 这个函数指示AWK读取下一行。下面的例子读取和使用getline函数的显示marks.txt文件的内容。</p> 
+ <pre class="prettyprint notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+[jerry]$ awk '{getline; print $0}' marks.txt </pre> 
+ <p> 在执行上面的代码后，得到以下结果：</p> 
+ <pre class="result" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+2)	Rahul	Maths	90
+4)	Kedar	English	85
+5)	Hari	History	89</pre> 
+ <p> 我们来一步一步解释以上代码：</p> 
+ <p> 在开始时，AWK从marks.txt文件读取第一行并将其存储到$0变量。</p> 
+ <p> 在接下来的语句，指示AWK使用函数getline读取下一行。因此AWK读取第二行，并将其存储到$0变量。</p> 
+ <p> 最后AWK的print语句打印第二行。这个过程继续，直到文件内容被读取完。</p> 
+ <h3> next</h3> 
+ <p> next函数改变程序流程。它会导致模式空间的当前处理停止。程序读取下一行，并开始使用新的行再次执行的命令。例如下面的程序模式匹配成功时不执行任何处理。</p> 
+ <pre class="prettyprint notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+[jerry]$ awk '{if ($0 ~/Shyam/) next; print $0}' marks.txt</pre> 
+ <p> 在执行上面的代码后，得到以下结果：</p> 
+ <pre class="result" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+1)	Amit	Physics	80
+2)	Rahul	Maths	90
+4)	Kedar	English	85
+5)	Hari	History	89</pre> 
+ <h3> nextfile</h3> 
+ <p> nextfile函数改变程序流。它停止处理当前输入的文件，并通过模式/程序语句启动新的周期，下一个文件的第一条记录开始。比如下面的例子模式匹配成功时将停止第一个文件的处理。</p> 
+ <p> 首先，创建两个文件。file1.txt内容看起来如下：</p> 
+ <pre class="result" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+file1:str1
+file1:str2
+file1:str3
+file1:str4</pre> 
+ <p> file2.txt内容看起来如下：</p> 
+ <pre class="result" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+file2:str1
+file2:str2
+file2:str3
+file2:str4</pre> 
+ <p> 现在，让我们使用nextfile函数：</p> 
+ <pre class="prettyprint notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+[jerry]$ awk '{ if ($0 ~ /file1:str2/) nextfile; print $0 }' file1.txt file2.txt</pre> 
+ <p> 在执行上面的代码后，得到以下结果：</p> 
+ <pre class="result" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+file1:str1
+file2:str1
+file2:str2
+file2:str3
+file2:str4</pre> 
+ <h3> return</h3> 
+ <p> 这个函数可以在用户定义函数内使用以返回该值。请注意，函数的返回值是不确定的，如果没有提供expr 。下面的例子说明了return函数的使用。</p> 
+ <p> 首先，创建一个包含AWK命令functions.awk文件，如下所示：</p> 
+ <pre class="prettyprint notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+function addition(num1, num2)
+{
+	result = num1 + num2
+
+	return result
+}
+
+BEGIN {
+	res = addition(10, 20)
+	print "10 + 20 = " res
+}</pre> 
+ <p> 在执行上面的代码后，得到以下结果：</p> 
+ <pre class="result" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+10 + 20 = 30</pre> 
+ <h3> system</h3> 
+ <p> 这个函数执行指定的命令，并返回它的退出状态。返回状态0表示命令执行成功。非零值表示命令执行的故障。例如下面的例子显示当前日期以及也显示命令的返回状态。</p> 
+ <pre class="prettyprint notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+[jerry]$ awk 'BEGIN { ret = system("date"); print "Return value = " ret }'</pre> 
+ <p> 在执行上面的代码后，得到以下结果：</p> 
+ <pre class="result" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+Sun Dec 21 23:16:07 IST 2014
+Return value = 0</pre> 
+ <br>      
+</div></body></html>

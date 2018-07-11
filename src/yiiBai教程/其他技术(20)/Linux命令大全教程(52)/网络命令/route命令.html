@@ -1,0 +1,153 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">route命令</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>Linux系统的<code>route</code>命令用于显示和操作IP路由表(show / manipulate the IP routing table)。要实现两个不同的子网之间的通信，需要一台连接两个网络的路由器，或者同时位于两个网络的网关来实现。在Linux系统中，设置路由通常是为了解决以下问题：该Linux系统在一个局域网中，局域网中有一个网关，能够让机器访问Internet，那么就需要将这台机器的IP地址设置为Linux机器的默认路由。要注意的是，直接在命令行下执行route命令来添加路由，不会永久保存，当网卡重启或者机器重启之后，该路由就失效了；可以在<code>/etc/rc.local</code>中添加<code>route</code>命令来保证该路由设置永久有效。</p> 
+ <h2 id="h2-1-"><a name="1．命令格式" class="reference-link"></a><span class="header-link octicon octicon-link"></span>1．命令格式</h2>
+ <pre><code class="lang-shell">route [-f] [-p] [Command [Destination] [mask Netmask] [Gateway] [metric Metric]] [if Interface]]
+</code></pre> 
+ <h2 id="h2-2-"><a name="2．命令功能" class="reference-link"></a><span class="header-link octicon octicon-link"></span>2．命令功能</h2>
+ <p><code>route</code>命令是用于操作基于内核ip路由表，它的主要作用是创建一个静态路由让指定一个主机或者一个网络通过一个网络接口，如<code>eth0</code>。当使用”<code>add</code>“或者”<code>del</code>“参数时，路由表被修改，如果没有参数，则显示路由表当前的内容。</p> 
+ <h2 id="h2-3-"><a name="3．命令参数" class="reference-link"></a><span class="header-link octicon octicon-link"></span>3．命令参数</h2>
+ <ul> 
+  <li><code>-c</code>显示更多信息</li>
+  <li><code>-n</code> 不解析名字</li>
+  <li><code>-v</code> 显示详细的处理信息</li>
+  <li><code>-F</code> 显示发送信息</li>
+  <li><code>-C</code> 显示路由缓存</li>
+  <li><code>-f</code> 清除所有网关入口的路由表。 </li>
+  <li><code>-p</code> 与 <code>add</code> 命令一起使用时使路由具有永久性。</li>
+  <li><code>add</code>:添加一条新路由。</li>
+  <li><code>del</code>:删除一条路由。</li>
+  <li><code>-net</code>:目标地址是一个网络。</li>
+  <li><code>-host</code>:目标地址是一个主机。</li>
+  <li><code>netmask</code>:当添加一个网络路由时，需要使用网络掩码。</li>
+  <li><code>gw</code>:路由数据包通过网关。注意，你指定的网关必须能够达到。</li>
+  <li><code>metric</code>：设置路由跳数。</li>
+  <li><code>Command</code> 指定您想运行的命令 (Add/Change/Delete/Print)。 </li>
+  <li><code>Destination</code> 指定该路由的网络目标。 </li>
+  <li><code>mask Netmask</code> 指定与网络目标相关的网络掩码(也被称作子网掩码)。 </li>
+  <li><code>Gateway</code> 指定网络目标定义的地址集和子网掩码可以到达的前进或下一跃点 IP 地址。 </li>
+  <li><code>metric Metric</code> 为路由指定一个整数成本值标(从 1 至 9999)，当在路由表(与转发的数据包目标地址最匹配)的多个路由中进行选择时可以使用。 </li>
+  <li><code>if Interface</code> 为可以访问目标的接口指定接口索引。若要获得一个接口列表和它们相应的接口索引，使用 <code>route print</code> 命令的显示功能。可以使用十进制或十六进制值进行接口索引。</li>
+ </ul> 
+ <h2 id="h2-4-"><a name="4．使用实例：" class="reference-link"></a><span class="header-link octicon octicon-link"></span>4．使用实例：</h2>
+ <h3 id="h3--1-"><a name="实例1：显示当前路由" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实例1：显示当前路由</h3>
+ <p>命令：</p> 
+ <pre><code class="lang-shell">route
+route -n
+</code></pre> 
+ <p>输出：</p> 
+ <pre><code class="lang-shell">[yiibai@localhost ~]$ route
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+default         gateway         0.0.0.0         UG    100    0        0 ens33
+192.168.0.0     0.0.0.0         255.255.255.0   U     100    0        0 ens33
+[yiibai@localhost ~]$ route -n
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+0.0.0.0         192.168.0.1     0.0.0.0         UG    100    0        0 ens33
+192.168.0.0     0.0.0.0         255.255.255.0   U     100    0        0 ens33
+[yiibai@localhost ~]$
+</code></pre> 
+ <p><strong>说明：</strong><br><strong>第一行</strong>表示主机所在网络的地址为<code>192.168.0.197</code>，若数据传送目标是在本局域网内通信，则可直接通过<code>ens33</code>转发数据包;<br><strong>第四行</strong>表示数据传送目的是访问 Internet，则由接口<code>ens33</code>，将数据包发送到网关<code>192.168.0.1</code><br>其中<code>Flags</code>为路由标志，标记当前网络节点的状态。</p> 
+ <p><strong>Flags标志说明：</strong></p> 
+ <ul> 
+  <li><code>U</code> Up表示此路由当前为启动状态</li>
+  <li><code>H</code> Host，表示此网关为一主机</li>
+  <li><code>G</code> Gateway，表示此网关为一路由器</li>
+  <li><code>R</code> Reinstate Route，使用动态路由重新初始化的路由</li>
+  <li><code>D</code> Dynamically,此路由是动态性地写入</li>
+  <li><code>M</code> Modified，此路由是由路由守护程序或导向器动态修改</li>
+  <li><code>!</code> 表示此路由当前为关闭状态</li>
+ </ul> 
+ <p><strong>备注：</strong><br><code>route -n</code> (<code>-n</code> 表示不解析名字,列出速度会比 <code>route</code> 快)</p> 
+ <h3 id="h3--2-"><a name="实例2：添加网关/设置网关" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实例2：添加网关/设置网关</h3>
+ <p>命令：</p> 
+ <pre><code class="lang-shell">route add -net 224.0.0.0 netmask 240.0.0.0 dev eth0
+</code></pre> 
+ <p>输出：</p> 
+ <pre><code class="lang-shell">[root@localhost ~]# route add -net 224.0.0.0 netmask 240.0.0.0 dev eth0
+[root@localhost ~]# route
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+192.168.120.0   *               255.255.255.0   U     0      0        0 eth0
+192.168.0.0     192.168.0.1   255.255.0.0     UG    0      0        0 eth0
+10.0.0.0        192.168.0.1   255.0.0.0       UG    0      0        0 eth0
+224.0.0.0       *               240.0.0.0       U     0      0        0 eth0
+default         192.168.0.240 0.0.0.0         UG    0      0        0 eth0
+</code></pre> 
+ <p>说明：增加一条 到达<code>244.0.0.0</code>的路由</p> 
+ <h3 id="h3--3-"><a name="实例3：屏蔽一条路由" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实例3：屏蔽一条路由</h3>
+ <p>命令：</p>   
+ <pre><code class="lang-shell">route add -net 224.0.0.0 netmask 240.0.0.0 reject
+</code></pre> 
+ <p>输出：</p> 
+ <pre><code class="lang-shell">[root@localhost ~]# route add -net 224.0.0.0 netmask 240.0.0.0 reject
+[root@localhost ~]# route
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+192.168.0.0   *               255.255.255.0   U     0      0        0 eth0
+192.168.0.0     192.168.0.1   255.255.0.0     UG    0      0        0 eth0
+10.0.0.0        192.168.0.1   255.0.0.0       UG    0      0        0 eth0
+224.0.0.0       -               240.0.0.0       !     0      -        0 -
+224.0.0.0       *               240.0.0.0       U     0      0        0 eth0
+default         192.168.0.240 0.0.0.0         UG    0      0        0 eth0
+</code></pre> 
+ <p><strong>说明：</strong>增加一条屏蔽的路由，目的地址为 224.x.x.x 将被拒绝</p> 
+ <h3 id="h3--4-"><a name="实例4：删除路由记录" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实例4：删除路由记录</h3>
+ <p>命令：</p> 
+ <pre><code class="lang-shell">route del -net 224.0.0.0 netmask 240.0.0.0
+route del -net 224.0.0.0 netmask 240.0.0.0 reject
+</code></pre> 
+ <p>输出：</p> 
+ <pre><code class="lang-shell">[root@localhost ~]# route
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+192.168.0.0   *               255.255.255.0   U     0      0        0 eth0
+192.168.0.0     192.168.0.1   255.255.0.0     UG    0      0        0 eth0
+10.0.0.0        192.168.0.1   255.0.0.0       UG    0      0        0 eth0
+224.0.0.0       -               240.0.0.0       !     0      -        0 -
+224.0.0.0       *               240.0.0.0       U     0      0        0 eth0
+default         192.168.0.240 0.0.0.0         UG    0      0        0 eth0
+[root@localhost ~]# route del -net 224.0.0.0 netmask 240.0.0.0
+[root@localhost ~]# route
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+192.168.0.0   *               255.255.255.0   U     0      0        0 eth0
+192.168.0.0     192.168.0.1   255.255.0.0     UG    0      0        0 eth0
+10.0.0.0        192.168.0.1   255.0.0.0       UG    0      0        0 eth0
+224.0.0.0       -               240.0.0.0       !     0      -        0 -
+default         192.168.0.240 0.0.0.0         UG    0      0        0 eth0
+[root@localhost ~]# route del -net 224.0.0.0 netmask 240.0.0.0 reject
+[root@localhost ~]# route
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+192.168.0.0   *               255.255.255.0   U     0      0        0 eth0
+192.168.0.0     192.168.0.1   255.255.0.0     UG    0      0        0 eth0
+10.0.0.0        192.168.0.1   255.0.0.0       UG    0      0        0 eth0
+default         192.168.0.240 0.0.0.0         UG    0      0        0 eth0
+[root@localhost ~]#
+</code></pre> 
+ <h3 id="h3--5-"><a name="实例5：删除和添加设置默认网关" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实例5：删除和添加设置默认网关</h3>
+ <p>命令：</p> 
+ <pre><code class="lang-shell">route del default gw 192.168.0.240
+route add default gw 192.168.0.240
+</code></pre> 
+ <p>输出：</p> 
+ <pre><code class="lang-shell">[root@localhost ~]# route del default gw 192.168.1.240
+[root@localhost ~]# route
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+192.168.1.0   *               255.255.255.0   U     0      0        0 eth0
+192.168.0.0     192.168.1.1   255.255.0.0     UG    0      0        0 eth0
+10.0.0.0        192.168.1.1   255.0.0.0       UG    0      0        0 eth0
+[root@localhost ~]# route add default gw 192.168.1.240
+[root@localhost ~]# route
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+192.168.1.0   *               255.255.255.0   U     0      0        0 eth0
+192.168.1.0     192.168.1.1   255.255.0.0     UG    0      0        0 eth0
+10.0.0.0        192.168.1.1   255.0.0.0       UG    0      0        0 eth0
+default         192.168.1.240 0.0.0.0         UG    0      0        0 eth0
+[root@localhost ~]#
+</code></pre>
+ <br>      
+</div></body></html>

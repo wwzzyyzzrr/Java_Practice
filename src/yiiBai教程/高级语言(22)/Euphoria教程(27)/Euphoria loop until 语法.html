@@ -1,0 +1,177 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Euphoria loop until 语法</h1><div style="width:100%;float:left;" class="article-content">   
+ <p> loop...until&nbsp;循环与while循环类似，除了loop...until&nbsp;循环保证能执行至少一次&nbsp;.</p> 
+ <h2> 语法:</h2> 
+ <p> &nbsp;loop...until 循环的语法是:</p> 
+ <table cellpadding="5" class="src" style="font-family: verdana, helvetica, arial, sans-serif; border-style: solid; border-color: rgb(170, 170, 170); width: 552px; background-color: rgb(241, 241, 241); border-collapse: collapse; padding-left: 5px; vertical-align: top; color: rgb(0, 0, 0);"> 
+  <tbody> 
+   <tr> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border-style: solid; border-color: rgb(170, 170, 170);"> <pre style="font-family: 'Courier New', monospace; font-size: 12px; margin-bottom: 0px;">
+loop do
+   -- Statements to be executed.
+until expression
+</pre> </td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p> 注意的表达出现在循环结束，所以循环中的语句执行前一次测试表达式的值。</p> 
+ <p> 如果表达式返回 true，控制流跳回起来做，并再次执行循环中的语句。重复这个过程，直到表达式为 false。</p> 
+ <h2> 示例:</h2> 
+ <table cellpadding="5" class="src" style="font-family: verdana, helvetica, arial, sans-serif; border-style: solid; border-color: rgb(170, 170, 170); width: 552px; background-color: rgb(241, 241, 241); border-collapse: collapse; padding-left: 5px; vertical-align: top; color: rgb(0, 0, 0);"> 
+  <tbody> 
+   <tr> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border-style: solid; border-color: rgb(170, 170, 170);"> <pre style="font-family: 'Courier New', monospace; font-size: 12px; margin-bottom: 0px;">
+#!/home/euphoria-4.0b2/bin/eui
+
+integer a = 10
+
+loop do
+   printf(1, "value of a : %d\n", a)
+   a = a + 1
+until a &lt; 20 
+</pre> </td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p> 这将产生以下结果：</p> 
+ <table cellpadding="5" class="src" style="font-family: verdana, helvetica, arial, sans-serif; border-style: solid; border-color: rgb(170, 170, 170); width: 552px; background-color: rgb(241, 241, 241); border-collapse: collapse; padding-left: 5px; vertical-align: top; color: rgb(0, 0, 0);"> 
+  <tbody> 
+   <tr> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border-style: solid; border-color: rgb(170, 170, 170);"> <pre style="font-family: 'Courier New', monospace; font-size: 12px; margin-bottom: 0px;">
+value of a : 10
+value of a : 11
+value of a : 12
+value of a : 13
+value of a : 14
+value of a : 15
+value of a : 16
+value of a : 17
+value of a : 18
+value of a : 19
+</pre> </td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h1> loop....with entry&nbsp;语句:</h1> 
+ <p> 这是通常的情况下，一个循环的第一次迭代是某种特殊。在循环开始之前，有些事情必须做。它们在语句开始循环之前就已工作。</p> 
+ <p> &nbsp;with entry&nbsp;语句提供的目的很好。需要使用此语句与loop...until&nbsp;只需添加输入关键字的时候，希望在第一次迭代开始。</p> 
+ <h2> 语法:</h2> 
+ <p> &nbsp;loop...until loop with entry 的语法是:</p> 
+ <table cellpadding="5" class="src" style="font-family: verdana, helvetica, arial, sans-serif; border-style: solid; border-color: rgb(170, 170, 170); width: 552px; background-color: rgb(241, 241, 241); border-collapse: collapse; padding-left: 5px; vertical-align: top; color: rgb(0, 0, 0);"> 
+  <tbody> 
+   <tr> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border-style: solid; border-color: rgb(170, 170, 170);"> <pre style="font-family: 'Courier New', monospace; font-size: 12px; margin-bottom: 0px;">
+loop with entry do
+   -- Statements to be executed.
+entry
+   -- Initialisation statements.
+until expression
+</pre> </td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p> 在执行表达式&nbsp;expression&nbsp;之前，它会执行初始化语句，那么它会作为一个正常的循环开始，后来这些初始化语句会成为循环体的一部分。</p> 
+ <h2> 例子:</h2> 
+ <table cellpadding="5" class="src" style="font-family: verdana, helvetica, arial, sans-serif; border-style: solid; border-color: rgb(170, 170, 170); width: 552px; background-color: rgb(241, 241, 241); border-collapse: collapse; padding-left: 5px; vertical-align: top; color: rgb(0, 0, 0);"> 
+  <tbody> 
+   <tr> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border-style: solid; border-color: rgb(170, 170, 170);"> <pre style="font-family: 'Courier New', monospace; font-size: 12px; margin-bottom: 0px;">
+#!/home/euphoria-4.0b2/bin/eui
+
+integer a = 10
+
+loop with entry do
+   printf(1, "value of a : %d\n", a)
+   a = a + 1
+entry
+   a = a + 2
+until a &gt; 20
+</pre> </td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> 这将产生以下结果：</p> 
+ <table cellpadding="5" class="src" style="font-family: verdana, helvetica, arial, sans-serif; border-style: solid; border-color: rgb(170, 170, 170); width: 552px; background-color: rgb(241, 241, 241); border-collapse: collapse; padding-left: 5px; vertical-align: top; color: rgb(0, 0, 0);"> 
+  <tbody> 
+   <tr> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border-style: solid; border-color: rgb(170, 170, 170);"> <pre style="font-family: 'Courier New', monospace; font-size: 12px; margin-bottom: 0px;">
+value of a : 12
+value of a : 15
+value of a : 18
+</pre> </td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h1> &nbsp;loop....label&nbsp;语句:</h1> 
+ <p> &nbsp;loop...until&nbsp;循环可以有一个标签子句之前首先&nbsp;do&nbsp;关键字。enter&nbsp;子句之前或之后，可以保持标签 label 子句。</p> 
+ <p> 这个标签只是用来循环命名块和标签名称必须用双引号字符串常量有单个或多个字。标签关键字是区分大小写的，应该写成标签&nbsp;label .</p> 
+ <h2> 语法:</h2> 
+ <p> &nbsp;loop...until with label 子句的语法是:</p> 
+ <table cellpadding="5" class="src" style="font-family: verdana, helvetica, arial, sans-serif; border-style: solid; border-color: rgb(170, 170, 170); width: 552px; background-color: rgb(241, 241, 241); border-collapse: collapse; padding-left: 5px; vertical-align: top; color: rgb(0, 0, 0);"> 
+  <tbody> 
+   <tr> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border-style: solid; border-color: rgb(170, 170, 170);">   <pre style="font-family: 'Courier New', monospace; font-size: 12px; margin-bottom: 0px;">
+loop label "Label Name" do
+   -- Statements to be executed.
+until expression
+</pre> </td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p> 标签将是非常有用的，当使用嵌套循环。可以使用标签名&nbsp;continue&nbsp;或&nbsp;exit&nbsp;循环控制语句的循环来控制流程。&nbsp;</p> 
+ <h2> 示例:</h2> 
+ <table cellpadding="5" class="src" style="font-family: verdana, helvetica, arial, sans-serif; border-style: solid; border-color: rgb(170, 170, 170); width: 552px; background-color: rgb(241, 241, 241); border-collapse: collapse; padding-left: 5px; vertical-align: top; color: rgb(0, 0, 0);"> 
+  <tbody> 
+   <tr> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border-style: solid; border-color: rgb(170, 170, 170);"> <pre style="font-family: 'Courier New', monospace; font-size: 12px; margin-bottom: 0px;">
+#!/home/euphoria-4.0b2/bin/eui
+
+integer a = 10
+integer b = 20
+
+loop label "OUTER" do
+   printf(1, "value of a : %d\n", a)
+   a = a + 1
+   loop label "INNER" do
+      printf(1, "value of b : %d\n", b)
+      b = b + 1
+      if b &gt; 25 then
+         continue "OUTER"  -- go to start of OUTER loop
+      end if
+   until b &gt; 30
+until a &gt; 20
+</pre> </td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> 这将产生以下结果：</p> 
+ <table cellpadding="5" class="src" style="font-family: verdana, helvetica, arial, sans-serif; border-style: solid; border-color: rgb(170, 170, 170); width: 552px; background-color: rgb(241, 241, 241); border-collapse: collapse; padding-left: 5px; vertical-align: top; color: rgb(0, 0, 0);"> 
+  <tbody> 
+   <tr> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border-style: solid; border-color: rgb(170, 170, 170);"> <pre style="font-family: 'Courier New', monospace; font-size: 12px; margin-bottom: 0px;">
+value of a : 10
+value of b : 20
+value of b : 21
+value of b : 22
+value of b : 23
+value of b : 24
+value of b : 25
+value of a : 11
+value of b : 26
+value of a : 12
+value of b : 27
+value of a : 13
+value of b : 28
+value of a : 14
+value of b : 29
+value of a : 15
+value of a : 16
+value of a : 17
+value of a : 18
+value of a : 19
+</pre> </td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p> 注:&nbsp;上面的例子作解释，但看起来像Euphoria解释有一定的问题，它是按预期工作，可能它会被固定在未来版本的Euphoria&nbsp;.</p> 
+ <br>      
+</div></body></html>

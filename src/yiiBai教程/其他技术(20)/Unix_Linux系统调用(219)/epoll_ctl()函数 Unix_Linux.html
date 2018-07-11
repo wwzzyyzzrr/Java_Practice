@@ -1,0 +1,140 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">epoll_ctl()函数 Unix/Linux</h1><div style="width:100%;float:left;" class="article-content">   
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> epoll_ctl - 一个epoll的描述符的控制接口</p> 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> 内容简介</h1> 
+ <pre style="font-family: 'Courier New', monospace; font-size: 12px; margin-bottom: 0px;">
+#include 
+  <sys epoll.h="">
+    
+
+int epoll_ctl(int epfd, int op, int fd, struct epoll_event *event)  
+  </sys></pre> 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> 描述</h1> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> Control an&nbsp;<b>epoll</b>&nbsp;descriptor,&nbsp;<i>epfd</i>, by requesting that the operation&nbsp;<i>op</i>&nbsp;be performed on the target file descriptor,&nbsp;<i>fd</i>. The&nbsp;<i>event</i>&nbsp;describes the object linked to the file descriptor<i>fd</i>. The&nbsp;<i>struct epoll_event</i>&nbsp;is defined as :</p> 
+ <pre style="font-family: 'Courier New', monospace; font-size: 12px; margin-bottom: 0px;">
+     typedef union epoll_data {
+        void *ptr;
+        int fd;
+        __uint32_t u32;
+        __uint64_t u64;
+    } epoll_data_t;
+
+    struct epoll_event {
+        __uint32_t events;      /* Epoll events */
+        epoll_data_t data;      /* User data variable */
+    };
+</pre> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> 该事件成员是位集由使用下列可用的事件类型：</p> 
+ <table border="1" cellpadding="5" cellspacing="0" class="src" style="font-family: verdana, helvetica, arial, sans-serif; border: 1px solid rgb(170, 170, 170); width: 552px; background-color: rgb(241, 241, 241); border-collapse: collapse; padding-left: 5px; vertical-align: top; color: rgb(0, 0, 0);"> 
+  <tbody> 
+   <tr> 
+    <th style="background-color: rgb(205, 205, 205); border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" width="25%"> 错误码</th> 
+    <th style="background-color: rgb(205, 205, 205); border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> 描述</th> 
+   </tr> 
+   <tr> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>EPOLLIN</b></td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> The associated file is available for<b>read</b>(2) operations.</td> 
+   </tr> 
+   <tr> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>EPOLLOUT</b></td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> The associated file is available for&nbsp;<b>write</b>(2) operations.</td> 
+   </tr> 
+   <tr> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>EPOLLRDHUP</b></td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> Stream socket peer closed connection, or shut down writing half of connection. (This flag is especially useful for writing simple code to detect peer shutdown when using Edge Triggered monitoring.)</td> 
+   </tr> 
+   <tr> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>EPOLLPRI</b></td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> There is urgent data available for&nbsp;<b>read</b>(2) operations.</td> 
+   </tr> 
+   <tr> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>EPOLLERR</b></td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> Error condition happened on the associated file descriptor.<b>epoll_wait</b>(2) will always wait for this event; it is not necessary to set it in&nbsp;<i>events</i>.</td> 
+   </tr> 
+   <tr> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>EPOLLHUP</b></td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> Hang up happened on the associated file descriptor.<b>epoll_wait</b>(2) will always wait for this event; it is not necessary to set it in&nbsp;<i>events</i>.</td> 
+   </tr> 
+   <tr> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>EPOLLET</b></td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> Sets the Edge Triggered behaviour for the associated file descriptor. The default behaviour for&nbsp;<b>epoll</b>&nbsp;is Level Triggered. See&nbsp;<b>epoll</b>(7) for more detailed information about Edge and Level Triggered event distribution architectures.</td> 
+   </tr> 
+   <tr> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>EPOLLONESHOT</b>(since kernel 2.6.2)</td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> Sets the one-shot behaviour for the associated file descriptor. This means that after an event is pulled out with&nbsp;<b>epoll_wait</b>(2) the associated file descriptor is internally disabled and no other events will be reported by the&nbsp;<b>epoll</b>&nbsp;interface. The user must call<b>epoll_ctl</b>(2) with&nbsp;<b>EPOLL_CTL_MOD</b>&nbsp;to re-enable the file descriptor with a new event mask.</td> 
+   </tr> 
+   <tr> 
+    <td colspan="2" style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> The&nbsp;<b>epoll</b>&nbsp;interface supports all file descriptors that support&nbsp;<b>poll</b>(2). Valid values for the&nbsp;<i>op</i>&nbsp;parameter are :</td> 
+   </tr> 
+   <tr> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" width="6%"> &nbsp;</td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> 
+     <table border="1" cellpadding="5" cellspacing="0" class="src" style="border: 1px solid rgb(170, 170, 170); width: 401px; border-collapse: collapse; padding-left: 5px; vertical-align: top;"> 
+      <tbody> 
+       <tr> 
+        <th style="background-color: rgb(205, 205, 205); border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" width="25%"> Code</th> 
+        <th style="background-color: rgb(205, 205, 205); border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> 描述</th> 
+       </tr> 
+       <tr> 
+        <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>EPOLL_CTL_ADD</b></td> 
+        <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> Add the target file descriptor&nbsp;<i>fd</i>&nbsp;to the<b>epoll</b>&nbsp;descriptor&nbsp;<i>epfd</i>&nbsp;and associate the event&nbsp;<i>event</i>&nbsp;with the internal file linked to<i>fd</i>.</td> 
+       </tr> 
+       <tr> 
+        <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>EPOLL_CTL_MOD</b></td> 
+        <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> Change the event&nbsp;<i>event</i>&nbsp;associated with the target file descriptor&nbsp;<i>fd</i>.</td> 
+       </tr> 
+       <tr> 
+        <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>EPOLL_CTL_DEL</b></td> 
+        <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> Remove the target file descriptor&nbsp;<i>fd</i>&nbsp;from the&nbsp;<b>epoll</b>&nbsp;file descriptor,&nbsp;<i>epfd</i>. The&nbsp;<i>event</i>&nbsp;is ignored and can be NULL (but see BUGS below).</td> 
+       </tr> 
+      </tbody> 
+     </table> </td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> 返回值</h1> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> When successful,&nbsp;<b>epoll_ctl</b>(2) returns zero. When an error occurs,&nbsp;<b>epoll_ctl</b>(2) returns -1 and&nbsp;<i>errno</i>&nbsp;is set appropriately.</p> 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> 错误</h1> 
+ <table border="1" cellpadding="5" cellspacing="0" class="src" style="font-family: verdana, helvetica, arial, sans-serif; border: 1px solid rgb(170, 170, 170); width: 552px; background-color: rgb(241, 241, 241); border-collapse: collapse; padding-left: 5px; vertical-align: top; color: rgb(0, 0, 0);"> 
+  <tbody> 
+   <tr> 
+    <th style="background-color: rgb(205, 205, 205); border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" width="25%"> 错误码</th> 
+    <th style="background-color: rgb(205, 205, 205); border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> 描述</th> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>EBADF</b></td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" valign="bottom"> <i>epfd</i>&nbsp;or&nbsp;<i>fd</i>&nbsp;is not a valid file descriptor.</td> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>EEXIST</b></td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" valign="bottom"> <i>op</i>&nbsp;was EPOLL_CTL_ADD, and the supplied file descriptor&nbsp;<i>fd</i>&nbsp;is already in&nbsp;<i>epfd</i>.</td> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>EINVAL</b></td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" valign="bottom"> <i>epfd</i>&nbsp;is not an&nbsp;<b>epoll</b>&nbsp;file descriptor, or&nbsp;<i>fd</i>&nbsp;is the same as&nbsp;<i>epfd</i>, or the requested operation&nbsp;<i>op</i>&nbsp;is not supported by this interface.</td> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>ENOENT</b></td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" valign="bottom"> <i>op</i>&nbsp;was EPOLL_CTL_MOD or EPOLL_CTL_DEL, and&nbsp;<i>fd</i>&nbsp;is not in<i>epfd</i>.</td> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>ENOMEM</b></td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" valign="bottom"> There was insufficient memory to handle the requested&nbsp;<i>op</i>control operation.</td> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>EPERM</b></td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" valign="bottom"> The target file&nbsp;<i>fd</i>&nbsp;does not support&nbsp;<b>epoll</b>.</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> 遵循于</h1> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> <b>epoll_ctl</b>(2) is a new API introduced in Linux kernel 2.5.44. The interface should be finalized by Linux kernel 2.5.66.</p> 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> BUG</h1> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> In kernel versions before 2.6.9, the&nbsp;<b>EPOLL_CTL_DEL</b>&nbsp;operation required a non-NULL pointer in&nbsp;<i>event</i>, even though this argument is ignored. Since kernel 2.6.9,&nbsp;<i>event</i>&nbsp;can be specified as NULL when using&nbsp;<b>EPOLL_CTL_DEL</b>.</p> 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> 另请参阅</h1> 
+ <ul style="font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> 
+  <li> <p style="text-align: justify;"> <a target="_blank" href="http://www.yiibai.com/unix_system_calls/epoll_create.html" style="color: rgb(144, 11, 9); background-color: transparent;">epoll_create (2)</a></p> </li> 
+  <li> <p style="text-align: justify;"> <a target="_blank" href="http://www.yiibai.com/unix_system_calls/poll.html" style="color: rgb(144, 11, 9); background-color: transparent;">poll (2)</a></p> </li> 
+  <li> <p style="text-align: justify;"> <a target="_blank" href="http://www.yiibai.com/unix_system_calls/epoll_wait.html" style="color: rgb(144, 11, 9); background-color: transparent;">epoll_wait (2)</a></p> </li> 
+ </ul> 
+ <br>      
+</div></body></html>

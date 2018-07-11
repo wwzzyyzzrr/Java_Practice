@@ -1,0 +1,313 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Struts2+Hibernate使用Full Hibernate Plugin集成</h1><div style="width:100%;float:left;" class="article-content">   
+ <div> 
+  <div>
+    在上篇&nbsp;
+   <a target="_blank" href="http://www.yiibai.com/struts_2/struts-2-hibernate-integration-example.html">Struts2 + Hibernate集成</a>&nbsp;实例中,&nbsp;它使用&nbsp;servlet&nbsp;上下文监听&nbsp;Hibernate&nbsp;的&nbsp;Session，而且把Struts2和Hibernate框架集成。 
+  </div> 
+ </div> 
+ <p> 但是，总有一些东西要提高。在本教程中，我们将展示如何整合Struts2+Hibernate，并使用Struts2一个名为“<a target="_blank" href="http://code.google.com/p/full-hibernate-plugin-for-struts2/">Full Hibernate Plugin</a>“的插件。 </p> 
+ <div>
+   见下面的集成步骤： 
+ </div> 
+ <ol> 
+  <li> 把 “Full Hibernate Plugin” jar 放入到工程类路径。 </li> 
+  <li> 使用 “@SessionTarget” 注释来注入到 Hibernate session; 当“@TransactionTarget” 注释注入到Hibernate 事务。 </li> 
+  <li> 在&nbsp;struts.xml, 让包扩展 “hibernate-default“，而不是默认的堆栈。 </li> 
+ </ol> 
+ <p> 看看下面的关系： </p> 
+ <pre>Struts 2 &lt;-- (Full Hibernate Plugin) ---&gt; Hibernate &lt;-----&gt; Database</pre> 
+ <div style="background-color:#E6E6FC;color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:16px;"> 
+  <strong>注，</strong>
+  <br> 
+  <span style="line-height:1.5;">本教程是从以前的</span>
+  <a target="_blank" href="http://www.yiibai.com/struts_2/struts-2-hibernate-integration-example.html">&nbsp;Struts2 + Hibernate集成</a>&nbsp;实例(servlet context listener)更新版本。
+  <span style="line-height:1.5;">因此，JSP 和 Hibernate 配置基本相同，只是</span>
+  <span style="background-color:inherit;font-family:微软雅黑;font-size:14px;line-height:1.5;">整合的部分是有点不同，尝试比较既能发现不同。</span> 
+ </div> 
+ <h2> 1. 工程结构 </h2> 
+ <div>
+   在节教程，我们创建一个工程名为 full-hibernate 的web工程。看看这个项目文件夹的完整结构。
+  <br> 
+  <img src="/uploads/tutorial/20151202/1-151202213550V2.png" alt="">
+  <br> 
+ </div> 
+ <div style="text-align:center;"> 
+  <img src="file://E:/data/youdao/qq24B39E2329F08D9F4C3146A571A415EF/b3adbb2c94e34af18d3cc2c9809f3074/clipboard.png"> 
+ </div> 
+ <h2> 2. MySQL创建表脚本 </h2> 
+ <p> Customer表结构 </p> 
+ <pre class="prettyprint lang-bsh">CREATE TABLE `customer` (
+  `customer_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(45) NOT NULL,
+  `address` varchar(255) NOT NULL,
+  `create_date` datetime NOT NULL,
+  PRIMARY KEY (`customer_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;</pre> 
+ <h2> 3. Hibernate相关配置 </h2> 
+ <div>
+   所有&nbsp;Hibernate&nbsp;的模型和配置的东西。 
+ </div> 
+ <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:16px;"> <strong>Customer.java</strong>&nbsp;– 为customer 表创建一个类。 </p> 
+ <pre>package com.yiibai.customer.model;
+
+import java.util.Date;
+
+public class Customer implements java.io.Serializable {
+
+	private Long customerId;
+	private String name;
+	private String address;
+	private Date createdDate;
+
+	//getter and setter methods
+}</pre> 
+ <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:16px;"> <strong>Customer.hbm.xml</strong>&nbsp;– Hibernate 的 customer 表映射。 </p> 
+ <pre>&lt;?xml version="1.0"?&gt;
+&lt;!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd"&gt;
+&lt;!-- Generated 20 Julai 2010 11:40:18 AM by Hibernate Tools 3.2.5.Beta --&gt;
+&lt;hibernate-mapping&gt;
+    &lt;class name="com.yiibai.customer.model.Customer" 
+		table="customer" catalog="yiibai"&gt;
+        &lt;id name="customerId" type="java.lang.Long"&gt;
+            &lt;column name="CUSTOMER_ID" /&gt;
+            &lt;generator class="identity" /&gt;
+        &lt;/id&gt;
+        &lt;property name="name" type="string"&gt;
+            &lt;column name="NAME" length="45" not-null="true" /&gt;
+        &lt;/property&gt;
+        &lt;property name="address" type="string"&gt;
+            &lt;column name="ADDRESS" not-null="true" /&gt;
+        &lt;/property&gt;
+        &lt;property name="createdDate" type="timestamp"&gt;
+            &lt;column name="CREATED_DATE" length="19" not-null="true" /&gt;
+        &lt;/property&gt;
+    &lt;/class&gt;
+&lt;/hibernate-mapping&gt;</pre> 
+ <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:16px;"> 文件: hibernate.cfg.xml, Hibernate 数据库配置 </p> 
+ <pre>&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;!DOCTYPE hibernate-configuration PUBLIC
+"-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd"&gt;
+&lt;hibernate-configuration&gt;
+  &lt;session-factory&gt;
+    &lt;property name="hibernate.bytecode.use_reflection_optimizer"&gt;false&lt;/property&gt;
+    &lt;property name="hibernate.connection.password"&gt;password&lt;/property&gt;
+    &lt;property name="hibernate.connection.url"&gt;jdbc:mysql://localhost:3306/yiibai&lt;/property&gt;
+    &lt;property name="hibernate.connection.username"&gt;root&lt;/property&gt;
+    &lt;property name="hibernate.dialect"&gt;org.hibernate.dialect.MySQLDialect&lt;/property&gt;
+    &lt;property name="show_sql"&gt;true&lt;/property&gt;
+    &lt;property name="format_sql"&gt;true&lt;/property&gt;
+    &lt;property name="use_sql_comments"&gt;false&lt;/property&gt;
+    &lt;mapping resource="com/yiibai/customer/hibernate/Customer.hbm.xml" /&gt;
+  &lt;/session-factory&gt;
+&lt;/hibernate-configuration&gt;</pre> 
+ <h2> 5. DAO </h2> 
+ <p> 实现DAO设计模式执行数据库操作。在&nbsp;CustomerDAOImpl&nbsp;类,&nbsp;声明Hibernate会话和事务为类成员。在Struts&nbsp;2的项目初始化，&nbsp;“Full Hibernate Plugin”&nbsp;使用&nbsp;@SessionTarget&nbsp;和&nbsp;@TransactionTarget&nbsp;分别标注将注入相应的 Hibernate 会话和事务成为类成员。 </p> 
+ <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:16px;"> <strong>CustomerDAO.java</strong> </p> 
+ <pre>package com.yiibai.customer.dao;
+
+import java.util.List;
+
+import com.yiibai.customer.model.Customer;
+ 
+public interface CustomerDAO{
+	
+	void addCustomer(Customer customer);
+	
+	List&lt;Customer&gt; listCustomer();
+	
+}</pre> 
+ <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:16px;"> <strong>CustomerDAOImpl.java</strong> </p> 
+ <pre>package com.yiibai.customer.dao.impl;
+
+import java.util.List;
+
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+
+import com.googlecode.s2hibernate.struts2.plugin.annotations.SessionTarget;
+import com.googlecode.s2hibernate.struts2.plugin.annotations.TransactionTarget;
+import com.yiibai.customer.dao.CustomerDAO;
+import com.yiibai.customer.model.Customer;
+ 
+public class CustomerDAOImpl implements CustomerDAO{
+	
+	@SessionTarget
+	Session session;
+	     
+	@TransactionTarget
+	Transaction transaction;
+	
+	//add the customer
+	public void addCustomer(Customer customer){
+		
+		session.save(customer);
+		
+	}
+	
+	//return all the customers in list
+	public List&lt;Customer&gt; listCustomer(){
+		
+		return session.createQuery("from Customer").list();
+		
+	}
+	
+}</pre> 
+ <h2> 6. Action </h2> 
+ <div>
+   在Action类，调用DAO类来执行数据库操作。 
+ </div> 
+ <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:16px;"> <strong>CustomerAction.java</strong> </p> 
+ <pre>package com.yiibai.customer.action;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import com.yiibai.customer.dao.CustomerDAO;
+import com.yiibai.customer.dao.impl.CustomerDAOImpl;
+import com.yiibai.customer.model.Customer;
+import com.opensymphony.xwork2.ActionSupport;
+import com.opensymphony.xwork2.ModelDriven;
+ 
+public class CustomerAction extends ActionSupport 
+	implements ModelDriven{
+
+	Customer customer = new Customer();
+	List&lt;Customer&gt; customerList = new ArrayList&lt;Customer&gt;();
+	CustomerDAO customerDAO = new CustomerDAOImpl();
+	
+	public String execute() throws Exception {
+		return SUCCESS;
+	}
+
+	public Object getModel() {
+		return customer;
+	}
+	
+	public List&lt;Customer&gt; getCustomerList() {
+		return customerList;
+	}
+
+	public void setCustomerList(List&lt;Customer&gt; customerList) {
+		this.customerList = customerList;
+	}
+
+	//save customer
+	public String addCustomer() throws Exception{
+		
+		//save it
+		customer.setCreatedDate(new Date());
+		customerDAO.addCustomer(customer);
+	 
+		//reload the customer list
+		customerList = null;
+		customerList = customerDAO.listCustomer();
+		
+		return SUCCESS;
+	
+	}
+	
+	//list all customers
+	public String listCustomer() throws Exception{
+		
+		customerList = customerDAO.listCustomer();
+		
+		return SUCCESS;
+	
+	}
+	
+}</pre> 
+ <h2> 7. JSP 页面 </h2> 
+ <div>
+   JSP页面添加并列出客户。 
+ </div> 
+ <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:16px;"> <strong>customer.jsp</strong> </p>   
+ <pre>&lt;%@ taglib prefix="s" uri="/struts-tags" %&gt;
+&lt;%@ taglib prefix="s" uri="/struts-tags" %&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;/head&gt;
+ 
+&lt;body&gt;
+&lt;h1&gt;Struts 2 Full Hibernate Plugin example&lt;/h1&gt;
+
+&lt;h2&gt;Add Customer&lt;/h2&gt;
+&lt;s:form action="addCustomerAction" &gt;
+  &lt;s:textfield name="name" label="Name" value="" /&gt;
+  &lt;s:textarea name="address" label="Address" value="" cols="50" rows="5" /&gt;
+  &lt;s:submit /&gt;
+&lt;/s:form&gt;
+
+&lt;h2&gt;All Customers&lt;/h2&gt;
+
+&lt;s:if test="customerList.size() &gt; 0"&gt;
+&lt;table border="1px" cellpadding="8px"&gt;
+	&lt;tr&gt;
+		&lt;th&gt;Customer Id&lt;/th&gt;
+		&lt;th&gt;Name&lt;/th&gt;
+		&lt;th&gt;Address&lt;/th&gt;
+		&lt;th&gt;Created Date&lt;/th&gt;
+	&lt;/tr&gt;
+	&lt;s:iterator value="customerList" status="userStatus"&gt;
+		&lt;tr&gt;
+			&lt;td&gt;&lt;s:property value="customerId" /&gt;&lt;/td&gt;
+			&lt;td&gt;&lt;s:property value="name" /&gt;&lt;/td&gt;
+			&lt;td&gt;&lt;s:property value="address" /&gt;&lt;/td&gt;
+			&lt;td&gt;&lt;s:date name="createdDate" format="dd/MM/yyyy" /&gt;&lt;/td&gt;
+		&lt;/tr&gt;
+	&lt;/s:iterator&gt;
+&lt;/table&gt;
+&lt;/s:if&gt;
+&lt;br/&gt;
+&lt;br/&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;</pre> 
+ <h2> 8. struts.xml </h2> 
+ <p> 链接所有〜让包扩展&nbsp;“hibernate-default” 来代替&nbsp;“struts-default“. </p> 
+ <pre>&lt;?xml version="1.0" encoding="UTF-8" ?&gt;
+&lt;!DOCTYPE struts PUBLIC
+"-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+"http://struts.apache.org/dtds/struts-2.0.dtd"&gt;
+ 
+&lt;struts&gt;
+  &lt;constant name="struts.devMode" value="true" /&gt;
+ 	
+  &lt;package name="default" namespace="/" extends="hibernate-default"&gt;
+		
+    &lt;action name="addCustomerAction" 
+	class="com.yiibai.customer.action.CustomerAction" method="addCustomer" &gt;
+       &lt;result name="success"&gt;pages/customer.jsp&lt;/result&gt;
+    &lt;/action&gt;
+	
+    &lt;action name="listCustomerAction" 
+	class="com.yiibai.customer.action.CustomerAction" method="listCustomer" &gt;
+        &lt;result name="success"&gt;pages/customer.jsp&lt;/result&gt;
+    &lt;/action&gt;
+		
+&lt;/package&gt;	
+&lt;/struts&gt;</pre> 
+ <h2> 9. 实例 </h2> 
+ <p> 访问以下网址 :&nbsp;<a target="_blank" href="http://localhost:8080/full-hibernate/addCustomerAction.action">http://localhost:8080/full-hibernate/addCustomerAction.action</a><br> <img src="/uploads/tutorial/20151202/1-151202213A3640.png" alt=""> </p> 
+ <p> <img src="/uploads/tutorial/20151202/1-151202213H1R9.png" alt=""> </p> 
+ <div style="text-align:center;"> 
+  <img src="file://E:/data/youdao/qq24B39E2329F08D9F4C3146A571A415EF/6217da7efe564f3a91ade1584e3b710d/clipboard.png"> 
+ </div> 
+ <div style="text-align:center;"> 
+  <img src="file://E:/data/youdao/qq24B39E2329F08D9F4C3146A571A415EF/9ff8829ec03d4de5b0b4725f4a4a569a/clipboard.png"> 
+ </div> 
+ <h2> 参考 </h2> 
+ <ol> 
+  <li> <a target="_blank" href="http://code.google.com/p/full-hibernate-plugin-for-struts2/">Struts2 Full Hibernate插件文档</a> </li> 
+  <li> <a target="_blank" href="http://www.yiibai.com/struts_2/struts-2-hibernate-integration-example.html">Struts2 + Hibernate集成实例</a> </li> 
+  <li> <a target="_blank" href="http://www.yiibai.com/maven/how-to-include-library-manully-into-maven-local-repository.html">安装库到Maven本地资源库</a> </li> 
+ </ol> 
+ <h2> 下载代码 </h2> 
+ <div>
+   下载所有源代码 –&nbsp;
+  <a target="_blank" href="http://pan.baidu.com/s/1o6tjSam">http://pan.baidu.com/s/1o6tjSam</a> 
+ </div>
+ <br>      
+</div></body></html>

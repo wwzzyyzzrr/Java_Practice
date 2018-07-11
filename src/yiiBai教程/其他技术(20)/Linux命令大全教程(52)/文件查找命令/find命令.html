@@ -1,0 +1,157 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">find命令</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>Linux中的<strong>find</strong>命令在目录结构中搜索文件，并执行指定的操作。Linux下<code>find</code>命令提供了相当多的查找条件，功能很强大。由于<code>find</code>具有强大的功能，所以它的选项也很多，其中大部分选项都值得我们花时间来了解一下。即使系统中含有网络文件系统( NFS)，<code>find</code>命令在该文件系统中同样有效，只你具有相应的权限。 在运行一个非常消耗资源的<code>find</code>命令时，很多人都倾向于把它放在后台执行，因为遍历一个大的文件系统可能会花费很长的时间(这里是指30G字节以上的文件系统)。</p> 
+ <h2 id="h2-1-"><a name="1．命令格式" class="reference-link"></a><span class="header-link octicon octicon-link"></span>1．命令格式</h2>
+ <pre><code class="lang-shell">find pathname -options [-print -exec -ok ...]
+</code></pre> 
+ <h2 id="h2-2-"><a name="2．命令功能" class="reference-link"></a><span class="header-link octicon octicon-link"></span>2．命令功能</h2>
+ <p>用于在文件树种查找文件，并作出相应的处理 </p> 
+ <h2 id="h2-3-"><a name="3．命令参数" class="reference-link"></a><span class="header-link octicon octicon-link"></span>3．命令参数</h2>
+ <ul> 
+  <li><code>pathname</code> - find命令所查找的目录路径。例如用.来表示当前目录，用/来表示系统根目录。 </li>
+  <li><code>-print</code> - find命令将匹配的文件输出到标准输出。 </li>
+  <li><code>-exec</code> - find命令对匹配的文件执行该参数所给出的shell命令。相应命令的形式为’command’ { } \;，注意{ }和\；之间的空格。 </li>
+  <li><code>-ok</code> - 和<code>-exec</code>的作用相同，只不过以一种更为安全的模式来执行该参数所给出的shell命令，在执行每一个命令之前，都会给出提示，让用户来确定是否执行。</li>
+ </ul> 
+ <h2 id="h2-4-"><a name="4．命令选项" class="reference-link"></a><span class="header-link octicon octicon-link"></span>4．命令选项</h2>
+ <ul> 
+  <li><code>-name</code> 按照文件名查找文件。</li>
+  <li><code>-perm</code> 按照文件权限来查找文件。</li>
+  <li><code>-prune</code> 使用这一选项可以使<code>find</code>命令不在当前指定的目录中查找，如果同时使用<code>-depth</code>选项，那么<code>-prune</code>将被<code>find</code>命令忽略。</li>
+  <li><code>-user</code> 按照文件属主来查找文件。</li>
+  <li><code>-group</code> 按照文件所属的组来查找文件。</li>
+  <li><code>-mtime -n +n</code> 按照文件的更改时间来查找文件， - n表示文件更改时间距现在n天以内，+ n表示文件更改时间距现在n天以前。<code>find</code>命令还有<code>-atime</code>和<code>-ctime</code> 选项，但它们都和<code>-m time</code>选项。</li>
+  <li><code>-nogroup</code> 查找无有效所属组的文件，即该文件所属的组在<code>/etc/groups</code>中不存在。</li>
+  <li><code>-nouser</code> 查找无有效属主的文件，即该文件的属主在<code>/etc/passwd</code>中不存在。</li>
+  <li><code>-newer file1 ! file2</code> 查找更改时间比文件<code>file1</code>新但比文件<code>file2</code>旧的文件。</li>
+  <li><code>-type</code> 查找某一类型的文件，诸如：</li>
+  <li><code>b</code> - 块设备文件。</li>
+  <li><code>d</code> - 目录。</li>
+  <li><code>c</code> - 字符设备文件。</li>
+  <li><code>p</code> - 管道文件。</li>
+  <li><code>l</code> - 符号链接文件。</li>
+  <li><code>f</code> - 普通文件。</li>
+  <li><code>-size n：[c]</code> 查找文件长度为<code>n</code>块的文件，带有<code>c</code>时表示文件长度以字节计。<code>-depth</code>：在查找文件时，首先查找当前目录中的文件，然后再在其子目录中查找。</li>
+  <li><code>-fstype</code>：查找位于某一类型文件系统中的文件，这些文件系统类型通常可以在配置文件<code>/etc/fstab</code>中找到，该配置文件中包含了本系统中有关文件系统的信息。</li>
+  <li><code>-mount</code>：在查找文件时不跨越文件系统<code>mount</code>点。</li>
+  <li><code>-follow</code>：如果find命令遇到符号链接文件，就跟踪至链接所指向的文件。</li>
+  <li><code>-cpio</code>：对匹配的文件使用<code>cpio</code>命令，将这些文件备份到磁带设备中。</li>
+ </ul> 
+ <p>另外,下面三个的区别:</p> 
+ <ul> 
+  <li><code>-amin n</code> 查找系统中最后<code>N</code>分钟访问的文件</li>
+  <li>-<code>atime n</code> 查找系统中最后<code>n*24</code>小时访问的文件</li>
+  <li><code>-cmin n</code> 查找系统中最后<code>N</code>分钟被改变文件状态的文件</li>
+  <li><code>-ctime n</code> 查找系统中最后<code>n*24</code>小时被改变文件状态的文件</li>
+  <li><code>-mmin n</code> 查找系统中最后<code>N</code>分钟被改变文件数据的文件</li>
+  <li><code>-mtime n</code> 查找系统中最后<code>n*24</code>小时被改变文件数据的文件</li>
+ </ul> 
+ <h2 id="h2-5-"><a name="5．使用实例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>5．使用实例</h2>
+ <h3 id="h3--1-"><a name="实例1：查找指定时间内修改过的文件" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实例1：查找指定时间内修改过的文件</h3>
+ <p>命令：</p>   
+ <pre><code class="lang-shell">find -atime -2
+</code></pre> 
+ <p>执行演示及输出：</p> 
+ <pre><code class="lang-shell">[yiibai@localhost ~]$ find -atime -2
+.
+./.bash_profile
+./.bashrc
+./test
+./test/log.log
+./test/is line 1.
+./test/t
+./test/t test]$ cat log.log
+./test/ping.log
+./mylog_link.log
+./.lesshst
+[yiibai@localhost ~]$
+</code></pre> 
+ <blockquote> 
+  <p>说明：超找48小时内修改过的文件 </p> 
+ </blockquote> 
+ <h3 id="h3--2-"><a name="实例2：根据关键字查找" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实例2：根据关键字查找</h3>
+ <p>命令：</p> 
+ <pre><code class="lang-shell">find . -name "*.log"
+</code></pre> 
+ <p>执行演示及输出：</p> 
+ <pre><code class="lang-shell">[yiibai@localhost ~]$ find . -name "*.log"
+./test/mylog1.log
+./test/mylog2.log
+./test/log.log
+./test/t test]$ cat log.log
+./test/ping.log
+./test5/mylog.log
+./mylog.log
+./mylog_link.log
+[yiibai@localhost ~]$
+</code></pre> 
+ <blockquote> 
+  <p>说明：在当前目录查找 以.log结尾的文件。 “. “代表当前目录 </p> 
+ </blockquote> 
+ <h3 id="h3--3-"><a name="实例3：按照目录或文件的权限来查找文件" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实例3：按照目录或文件的权限来查找文件</h3>
+ <p>命令：</p> 
+ <pre><code class="lang-shell">find /home/yiibai -perm 777
+</code></pre> 
+ <p>执行演示及输出：</p> 
+ <pre><code class="lang-shell">[yiibai@localhost ~]$ find /home/yiibai -perm 777
+/home/yiibai/mylog_link.log
+[yiibai@localhost ~]$
+</code></pre> 
+ <blockquote> 
+  <p>说明： 查找/opt/soft/test/目录下 权限为 777的文件</p> 
+ </blockquote> 
+ <h3 id="h3--4-"><a name="实例4：按类型查找" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实例4：按类型查找</h3>
+ <p>命令：</p> 
+ <pre><code class="lang-shell">find . -type f -name "*.log"
+</code></pre> 
+ <p>演示执行及输出：</p> 
+ <pre><code class="lang-shell">[yiibai@localhost ~]$ find . -type f -name "*.log"
+./test/mylog1.log
+./test/mylog2.log
+./test/log.log
+./test/t test]$ cat log.log
+./test/ping.log
+./test5/mylog.log
+./mylog.log
+[yiibai@localhost ~]$
+</code></pre> 
+ <blockquote> 
+  <p>说明：查找当目录，以.log结尾的普通文件 </p> 
+ </blockquote> 
+ <h3 id="h3--5-"><a name="实例5：查找当前所有目录并排序" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实例5：查找当前所有目录并排序</h3>
+ <p>命令：</p> 
+ <pre><code class="lang-shell">find . -type d | sort
+</code></pre> 
+ <p>演示执行及输出：</p> 
+ <pre><code class="lang-shell">[yiibai@localhost ~]$ find . -type d | sort
+.
+./test
+./test1
+./test2
+./test3
+./test3/test4
+./test3/test4/test41
+./test5
+./test5/test3
+./test5/test3/test4
+./test5/test3/test4/test41
+./test-noexists
+./test-noexists/test4
+./test-noexists/test4/test41
+</code></pre> 
+ <h3 id="h3--6-"><a name="实例6：按大小查找文件" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实例6：按大小查找文件</h3>
+ <p>命令：</p> 
+ <pre><code class="lang-shell">find . -size +1000c -print
+</code></pre> 
+ <p>演示执行及输出：</p> 
+ <pre><code class="lang-shell">[yiibai@localhost ~]$ find . -size +1000c -print
+./test/is line 1.
+./test/t
+./test/t test]$ cat log.log
+./test/ping.log
+[yiibai@localhost ~]$
+</code></pre> 
+ <blockquote> 
+  <p>说明：查找当前目录大于<code>1K</code>的文件 </p> 
+ </blockquote>
+ <br>      
+</div></body></html>

@@ -1,0 +1,102 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Spring SimpleJdbcTemplate batchUpdate()实例</h1><div style="width:100%;float:left;" class="article-content">   
+ <div>
+   在本教程中，我们将向你展示如何在了SimpleJdbcTemplate类使用batchUpdate()。详细请参见&nbsp;在SimpleJdbcTemplate&nbsp;类的&nbsp;batchUpdate()示例&nbsp;。 
+ </div> 
+ <div> 
+  <pre>//insert batch example
+public void insertBatch(final List&lt;Customer&gt; customers){
+	String sql = "INSERT INTO CUSTOMER " +
+		"(CUST_ID, NAME, AGE) VALUES (?, ?, ?)";
+			
+	List&lt;Object[]&gt; parameters = new ArrayList&lt;Object[]&gt;();
+       
+	for (Customer cust : customers) {
+        parameters.add(new Object[] {cust.getCustId(), 
+            cust.getName(), cust.getAge()}
+        );
+    }
+    getSimpleJdbcTemplate().batchUpdate(sql, parameters);        
+}</pre> 
+  <div>
+    或者，你可以直接执行SQL。 
+  </div> 
+  <pre>//insert batch example with SQL
+public void insertBatchSQL(final String sql){
+		
+	getJdbcTemplate().batchUpdate(new String[]{sql});
+		
+}</pre> 
+  <div>
+    Spring 的 bean 配置文件 
+  </div> 
+  <pre>&lt;beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-2.5.xsd"&gt;
+
+	&lt;bean id="customerSimpleDAO" 
+        class="com.yiibai.customer.dao.impl.SimpleJdbcCustomerDAO"&gt;
+
+		&lt;property name="dataSource" ref="dataSource" /&gt;
+	&lt;/bean&gt;
+	
+	&lt;bean id="dataSource" 
+        class="org.springframework.jdbc.datasource.DriverManagerDataSource"&gt;
+
+		&lt;property name="driverClassName" value="com.mysql.jdbc.Driver" /&gt;
+		&lt;property name="url" value="jdbc:mysql://localhost:3306/yiibai" /&gt;
+		&lt;property name="username" value="root" /&gt;
+		&lt;property name="password" value="" /&gt;
+	&lt;/bean&gt;
+	
+&lt;/beans&gt;</pre> 
+  <p> 执行它 </p> 
+  <pre>package com.yiibai.common;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+import com.yiibai.customer.dao.CustomerDAO;
+import com.yiibai.customer.model.Customer;
+
+public class App 
+{
+    public static void main( String[] args )
+    {
+    	ApplicationContext context = 
+    		new ClassPathXmlApplicationContext("Spring-Customer.xml");
+    	 
+        CustomerDAO customerSimpleDAO = 
+                      (CustomerDAO) context.getBean("customerSimpleDAO");
+
+        Customer customer1 = new Customer(1, "yiibai1",21);
+        Customer customer3 = new Customer(2, "yiibai2",22);
+        Customer customer2 = new Customer(3, "yiibai3",23);
+  
+        List&lt;Customer&gt;customers = new ArrayList&lt;Customer&gt;();
+        customers.add(customer1);
+        customers.add(customer2);
+        customers.add(customer3);
+        
+        customerSimpleDAO.insertBatch(customers);
+
+        String sql = "UPDATE CUSTOMER SET NAME ='BATCHUPDATE'";
+        customerSimpleDAO.insertBatchSQL(sql);
+      
+    }
+}</pre> 
+  <div>
+    在本例中，插入三个顾客的记录，并批量更新所有客户的名字。 
+  </div> 
+  <div> 
+   <br> 
+  </div> 
+  <div>
+    下载代码 –&nbsp;
+   <a target="_blank" href="http://pan.baidu.com/s/1bnKbZav">http://pan.baidu.com/s/1bnKbZav</a> 
+  </div> 
+ </div>
+ <br>      
+</div></body></html>

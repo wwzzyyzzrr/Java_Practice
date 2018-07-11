@@ -1,0 +1,225 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Java抽象工厂模式</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>抽象工厂模式是一个超级工厂，用来创建其他工厂。 这个工厂也被称为工厂的工厂。 这种类型的设计模式属于创建模式，因为此模式提供了创建对象的最佳方法之一。</p> 
+ <p>在抽象工厂模式中，接口负责创建相关对象的工厂，而不明确指定它们的类。 每个生成的工厂可以按照工厂模式提供对象。</p> 
+ <h2 id="h2-u5B9Eu73B0u5B9Eu4F8B"><a name="实现实例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实现实例</h2>
+ <p>我们将创建一个<code>Shape</code>和<code>Color</code>接口并实现这些接口的具体类。在下一步中，将创建一个抽象工厂类<code>AbstractFactory</code>。在每个工厂类<code>ShapeFactory</code>和<code>ColorFactory</code>定义都是扩展自<code>AbstractFactory</code>。创建工厂创建者/生成器类 - <code>FactoryProducer</code>。</p> 
+ <p><code>AbstractFactoryPatternDemo</code>这是一个演示类，使用<code>FactoryProducer</code>来获取<code>AbstractFactory</code>对象。 它会将信息(<code>CIRCLE</code> / <code>RECTANGLE</code> / <code>SQUARE</code>)传递给<code>AbstractFactory</code>以获取所需的对象类型。 它还将信息(用于<code>Color</code>的 <code>RED</code> / <code>GREEN</code> / <code>BLUE</code>)传递给<code>AbstractFactory</code>以获取所需的对象类型。</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201612/08/798091232_76651.jpg" alt=""></p> 
+ <h3 id="h3--1-"><a name="第1步" class="reference-link"></a><span class="header-link octicon octicon-link"></span>第1步</h3>
+ <p>创建<code>Shape</code>的接口。</p> 
+ <p><em>Shape.java</em></p> 
+ <pre><code class="lang-java">public interface Shape {
+   void draw();
+}
+</code></pre> 
+ <h3 id="h3--2-"><a name="第2步" class="reference-link"></a><span class="header-link octicon octicon-link"></span>第2步</h3>
+ <p>创建实现相同接口的具体类。</p> 
+ <p><em>Rectangle.java</em></p> 
+ <pre><code class="lang-java">public class Rectangle implements Shape {
+
+   @Override
+   public void draw() {
+      System.out.println("Inside Rectangle::draw() method.");
+   }
+}
+</code></pre> 
+ <p><em>Square.java</em></p> 
+ <pre><code class="lang-java">public class Square implements Shape {
+
+   @Override
+   public void draw() {
+      System.out.println("Inside Square::draw() method.");
+   }
+}
+</code></pre> 
+ <p><em>Circle.java</em></p> 
+ <pre><code class="lang-java">public class Circle implements Shape {
+
+   @Override
+   public void draw() {
+      System.out.println("Inside Circle::draw() method.");
+   }
+}
+</code></pre> 
+ <h3 id="h3--3-"><a name="第3步" class="reference-link"></a><span class="header-link octicon octicon-link"></span>第3步</h3>
+ <p>创建一个<code>Colors</code>接口，如下所示</p> 
+ <p><em>Color.java</em></p> 
+ <pre><code class="lang-java">public interface Color {
+   void fill();
+}
+</code></pre> 
+ <h3 id="h3--4-"><a name="第4步" class="reference-link"></a><span class="header-link octicon octicon-link"></span>第4步</h3>
+ <p>创建实现相同接口的具体类。</p> 
+ <pre><code class="lang-java">public class Red implements Color {
+
+   @Override
+   public void fill() {
+      System.out.println("Inside Red::fill() method.");
+   }
+}
+</code></pre> 
+ <p><em>Green.java</em></p> 
+ <pre><code class="lang-java">public class Green implements Color {
+
+   @Override
+   public void fill() {
+      System.out.println("Inside Green::fill() method.");
+   }
+}
+</code></pre> 
+ <p><em>Blue.java</em></p> 
+ <pre><code class="lang-java">public class Blue implements Color {
+
+   @Override
+   public void fill() {
+      System.out.println("Inside Blue::fill() method.");
+   }
+}
+</code></pre> 
+ <h3 id="h3--5-"><a name="第5步" class="reference-link"></a><span class="header-link octicon octicon-link"></span>第5步</h3>
+ <p>创建实现相同接口的具体类。 </p> 
+ <p><em>AbstractFactory.java</em></p> 
+ <pre><code class="lang-java">public abstract class AbstractFactory {
+   abstract Color getColor(String color);
+   abstract Shape getShape(String shape) ;
+}
+</code></pre> 
+ <h3 id="h3--6-"><a name="第6步" class="reference-link"></a><span class="header-link octicon octicon-link"></span>第6步</h3>
+ <p>创建实现相同接口的具体类。 </p> 
+ <p>创建工厂类，根据给定信息扩展<code>AbstractFactory</code>以生成具体类的对象。</p> 
+ <p><em>ShapeFactory.java</em></p> 
+ <pre><code class="lang-java">public class ShapeFactory extends AbstractFactory {
+
+   @Override
+   public Shape getShape(String shapeType){
+
+      if(shapeType == null){
+         return null;
+      }
+
+      if(shapeType.equalsIgnoreCase("CIRCLE")){
+         return new Circle();
+
+      }else if(shapeType.equalsIgnoreCase("RECTANGLE")){
+         return new Rectangle();
+
+      }else if(shapeType.equalsIgnoreCase("SQUARE")){
+         return new Square();
+      }
+
+      return null;
+   }
+
+   @Override
+   Color getColor(String color) {
+      return null;
+   }
+}
+</code></pre> 
+ <p><em>ColorFactory.java</em></p>   
+ <pre><code class="lang-java">public class ColorFactory extends AbstractFactory {
+
+   @Override
+   public Shape getShape(String shapeType){
+      return null;
+   }
+
+   @Override
+   Color getColor(String color) {
+
+      if(color == null){
+         return null;
+      }        
+
+      if(color.equalsIgnoreCase("RED")){
+         return new Red();
+
+      }else if(color.equalsIgnoreCase("GREEN")){
+         return new Green();
+
+      }else if(color.equalsIgnoreCase("BLUE")){
+         return new Blue();
+      }
+
+      return null;
+   }
+}
+</code></pre> 
+ <h3 id="h3--7-"><a name="第7步" class="reference-link"></a><span class="header-link octicon octicon-link"></span>第7步</h3>
+ <p>创建工厂生成器/生产器类，通过传递如<code>Shape</code>或<code>Color</code>等信息来获取工厂</p> 
+ <p><em>FactoryProducer.java</em></p> 
+ <pre><code class="lang-java">public class FactoryProducer {
+   public static AbstractFactory getFactory(String choice){
+
+      if(choice.equalsIgnoreCase("SHAPE")){
+         return new ShapeFactory();
+
+      }else if(choice.equalsIgnoreCase("COLOR")){
+         return new ColorFactory();
+      }
+
+      return null;
+   }
+}
+</code></pre> 
+ <h3 id="h3--8-"><a name="第8步" class="reference-link"></a><span class="header-link octicon octicon-link"></span>第8步</h3>
+ <p>使用<code>FactoryProducer</code>来获取<code>AbstractFactory</code>，以便通过传递类型等信息来获取具体类的工厂。</p> 
+ <p><code>AbstractFactoryPatternDemo.java</code></p> 
+ <pre><code class="lang-java">public class AbstractFactoryPatternDemo {
+   public static void main(String[] args) {
+
+      //get shape factory
+      AbstractFactory shapeFactory = FactoryProducer.getFactory("SHAPE");
+
+      //get an object of Shape Circle
+      Shape shape1 = shapeFactory.getShape("CIRCLE");
+
+      //call draw method of Shape Circle
+      shape1.draw();
+
+      //get an object of Shape Rectangle
+      Shape shape2 = shapeFactory.getShape("RECTANGLE");
+
+      //call draw method of Shape Rectangle
+      shape2.draw();
+
+      //get an object of Shape Square 
+      Shape shape3 = shapeFactory.getShape("SQUARE");
+
+      //call draw method of Shape Square
+      shape3.draw();
+
+      //get color factory
+      AbstractFactory colorFactory = FactoryProducer.getFactory("COLOR");
+
+      //get an object of Color Red
+      Color color1 = colorFactory.getColor("RED");
+
+      //call fill method of Red
+      color1.fill();
+
+      //get an object of Color Green
+      Color color2 = colorFactory.getColor("Green");
+
+      //call fill method of Green
+      color2.fill();
+
+      //get an object of Color Blue
+      Color color3 = colorFactory.getColor("BLUE");
+
+      //call fill method of Color Blue
+      color3.fill();
+   }
+}
+</code></pre> 
+ <h3 id="h3--9-"><a name="第9步" class="reference-link"></a><span class="header-link octicon octicon-link"></span>第9步</h3>
+ <p>验证输出，结果如下 - </p> 
+ <pre><code class="lang-java">Inside Circle::draw() method.
+Inside Rectangle::draw() method.
+Inside Square::draw() method.
+Inside Red::fill() method.
+Inside Green::fill() method.
+Inside Blue::fill() method.
+</code></pre>
+ <br>      
+</div></body></html>

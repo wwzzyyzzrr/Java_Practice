@@ -1,0 +1,68 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">MapReduce Hadoop程序连接数据</h1><div style="width:100%;float:left;" class="article-content">   
+ <p> 这里有两个数据集合在两个不同的文件中，如下所示：</p> 
+ <div style="widows: auto; color: rgb(52, 52, 52); 'Droid Sans'; font-size: 17px;"> 
+  <img alt="" src="/uploads/allimg/201509/1-1509131J53CD.png" style="width: 335px; height: 306px;">&nbsp;
+  <img alt="" src="/uploads/allimg/201509/1-1509131J6005I.png" style="width: 327px; height: 303px;">
+  <br> &nbsp;
+ </div> 
+ <p> DEPT_ID 键在这两个文件中常见的。</p> 
+ <p> 目标是使用 MapReduce 加入来组合这些文件。</p> 
+ <p> 输入:&nbsp;我们的输入数据集是两个txt文件：DeptName.txt 和 DepStrength.txt</p> 
+ <p> <a target="_blank" href="http://pan.baidu.com/s/1o6IfU8y">下载输入文件</a></p> 
+ <p> 前提条件：</p> 
+ <ul> 
+  <li> 本教程是在 Linux 上开发 - Ubuntu操作系统</li> 
+  <li> 已经安装的Hadoop(本教程使用2.7.1版本)</li> 
+  <li> Java的开发运行环境已经在系统上安装(本教程使用的版本是：1.8.0)</li> 
+ </ul> 
+ <p> 在我们开始实际操作之前，使用的用户 'hduser_'(使用 Hadoop 的用户)。</p> 
+ <pre style="'Courier New', Courier, monospace; widows: auto; color: rgb(51, 51, 51); font-size: 14px; background-color: rgb(245, 245, 245);">
+yiibai@ubuntu:~$ su hduser_</pre> 
+ <p style="margin: 5px 0px; color: rgb(0, 0, 0); 微软雅黑; line-height: 18px; widows: auto;"> &nbsp;</p> 
+ <p> <strong>步骤</strong></p> 
+ <p> <strong>Step 1)&nbsp;复制 zip 文件到您选择的位置</strong></p> 
+ <pre style="'Courier New', Courier, monospace; widows: auto; color: rgb(51, 51, 51); font-size: 14px; background-color: rgb(245, 245, 245);">
+hduser_@ubuntu:/home/yiibai$&nbsp;cp&nbsp;/home/yiibai/Downloads/MapReduceJoin.tar.gz&nbsp;/home/hduser_/
+hduser_@ubuntu:/home/yiibai$&nbsp;ls&nbsp;/home/hduser_/</pre> 
+ <p> 操作过程及结果如下：</p> 
+ <img alt="" src="/uploads/allimg/201509/1-1509131JA5210.png" style="width: 797px; height: 85px;">
+ <img data-attr-org-img-file="file:///D:/Program%20Files/qq24B39E2329F08D9F4C3146A571A415EF/4cb342b3d1b34dff85e52c7e1bb2ba49/clipboard.png" data-attr-org-src-id="8CE4597568AA4DC2A6606D55DDB2F8CB" data-media-type="image" src="file:///D:/Program%20Files/qq24B39E2329F08D9F4C3146A571A415EF/4cb342b3d1b34dff85e52c7e1bb2ba49/clipboard.png"> 
+ <p> &nbsp;</p> 
+ <p> <strong>Step 2) 解压缩ZIP文件，使用以下命令：</strong></p> 
+ <pre style="'Courier New', Courier, monospace; widows: auto; color: rgb(51, 51, 51); font-size: 14px; background-color: rgb(245, 245, 245);">
+<strong style="background-color: inherit;">hduser_@ubuntu:~$&nbsp;sudo&nbsp;tar&nbsp;-xvf&nbsp;MapReduceJoin.tar.gz</strong></pre> 
+ <p style="margin: 5px 0px; widows: auto; color: rgb(52, 52, 52); 'Droid Sans'; font-size: 17px;"> <img alt="" src="/uploads/allimg/201509/1-1509131K52TR.png" style="width: 563px; height: 433px;"><img data-attr-org-img-file="file:///D:/Program%20Files/qq24B39E2329F08D9F4C3146A571A415EF/03515ec9bd8a49cd94e1c7754b1faf44/clipboard.png" data-attr-org-src-id="E52BBAC0DBFD4119927B28172A746240" data-media-type="image" src="file:///D:/Program%20Files/qq24B39E2329F08D9F4C3146A571A415EF/03515ec9bd8a49cd94e1c7754b1faf44/clipboard.png" style="display: inline-block; margin-top: 8px; max-width: 800px; background-color: inherit;"></p> 
+ <p> <strong>Step 3) 进入目录 MapReduceJoin/</strong></p> 
+ <pre style="'Courier New', Courier, monospace; widows: auto; color: rgb(51, 51, 51); font-size: 14px; background-color: rgb(245, 245, 245);">
+hduser_@ubuntu:~$&nbsp;cd&nbsp;MapReduceJoin/</pre> 
+ <p> <strong>Step 4) &nbsp;启动&nbsp;Hadoop</strong></p> 
+ <pre style="'Courier New', Courier, monospace; widows: auto; color: rgb(51, 51, 51); font-size: 14px; background-color: rgb(245, 245, 245);">
+hduser_@ubuntu:~/MapReduceJoin$&nbsp;$HADOOP_HOME/sbin/start-dfs.sh
+hduser_@ubuntu:~/MapReduceJoin$&nbsp;$HADOOP_HOME/sbin/start-yarn.sh</pre> 
+ <p style="margin: 5px 0px; widows: auto; color: rgb(52, 52, 52); 'Droid Sans'; font-size: 17px;"> <img data-attr-org-img-file="file:///D:/Program%20Files/qq24B39E2329F08D9F4C3146A571A415EF/8ddcc65c3dd445fabdfc5f43e7f63d9c/clipboard.png" data-attr-org-src-id="9857142C486D4C77A589601E0ECC9261" data-media-type="image" src="file:///D:/Program%20Files/qq24B39E2329F08D9F4C3146A571A415EF/8ddcc65c3dd445fabdfc5f43e7f63d9c/clipboard.png" style="display: inline-block; margin-top: 8px; max-width: 800px; background-color: inherit;"><img alt="" src="/uploads/allimg/201509/1-1509131K551625.png" style="width: 795px; height: 235px;"></p> 
+ <p> <strong>Step 5) DeptStrength.txt 和 DeptName.txt 用于此项目的输入文件</strong></p> 
+ <p> 这些文件需要使用以下命令 - 复制到 HDFS 的根目录下，使用以下命令：</p> 
+ <pre style="'Courier New', Courier, monospace; widows: auto; color: rgb(51, 51, 51); font-size: 14px; background-color: rgb(245, 245, 245);">
+hduser_@ubuntu:~/MapReduceJoin$&nbsp;$HADOOP_HOME/bin/hdfs&nbsp;dfs&nbsp;-copyFromLocal&nbsp;DeptStrength.txt&nbsp;DeptName.txt&nbsp;/</pre> 
+ <p> <strong>Step 6) 使用以下命令 - 运行程序</strong></p> 
+ <pre>
+hduser_@ubuntu:~/MapReduceJoin$&nbsp;$HADOOP_HOME/bin/hadoop jar MapReduceJoin.jar /DeptStrength.txt /DeptName.txt /output_mapreducejoin</pre> 
+ <p style="margin: 5px 0px; widows: auto; color: rgb(52, 52, 52); 'Droid Sans'; font-size: 17px;"> <img data-attr-org-img-file="file:///D:/Program%20Files/qq24B39E2329F08D9F4C3146A571A415EF/4a708a55b08b411d8f0438731a71f48d/clipboard.png" data-attr-org-src-id="6D26C8E3429548F1981E6EC78FB35767" data-media-type="image" src="file:///D:/Program%20Files/qq24B39E2329F08D9F4C3146A571A415EF/4a708a55b08b411d8f0438731a71f48d/clipboard.png" style="display: inline-block; margin-top: 8px; max-width: 800px; background-color: inherit;"><img alt="" src="/uploads/allimg/201509/1-1509131K610405.png" style="width: 763px; height: 355px;"></p> 
+ <p> <strong>Step 7)</strong></p> 
+ <p> 在执行命令后, 输出文件 (named 'part-00000') 将会存储在&nbsp;HDFS目录 /output_mapreducejoin&nbsp;</p> 
+ <p> 结果可以使用命令行界面可以看到：</p>   
+ <pre>
+hduser_@ubuntu:~/MapReduceJoin$&nbsp;$HADOOP_HOME/bin/hdfs dfs -cat /output_mapreducejoin/part-00000</pre> 
+ <p style="margin: 5px 0px; widows: auto; color: rgb(52, 52, 52); 'Droid Sans'; font-size: 17px;"> <img data-attr-org-img-file="file:///D:/Program%20Files/qq24B39E2329F08D9F4C3146A571A415EF/c0a11e529dd442e5994140083d41f0c4/clipboard.png" data-attr-org-src-id="8B09BA02F8FB4FF991647ADDBFF3B0BE" data-media-type="image" src="file:///D:/Program%20Files/qq24B39E2329F08D9F4C3146A571A415EF/c0a11e529dd442e5994140083d41f0c4/clipboard.png" style="display: inline-block; margin-top: 8px; max-width: 800px; background-color: inherit;"><img alt="" src="/uploads/allimg/201509/1-1509131K634396.png" style="width: 770px; height: 105px;"></p> 
+ <p> 结果也可以通过 Web 界面查看(这里我的虚拟机的IP是 192.168.1.109)，如下图所示：</p> 
+ <p style="margin: 5px 0px; widows: auto; color: rgb(52, 52, 52); 'Droid Sans'; font-size: 17px;"> <img data-attr-org-img-file="file:///D:/Program%20Files/qq24B39E2329F08D9F4C3146A571A415EF/af38498b407e47c39ce71d589321b34e/clipboard.png" data-attr-org-src-id="21CB8E405EA040C58EF8A1876E8199BD" data-media-type="image" src="/uploads/allimg/201509/1-1509131KA4Y4.png" style="display: inline-block; margin-top: 8px; width: 800px; background-color: inherit;"></p> 
+ <p> 现在，选择 “Browse the filesystem”，并浏览到 /output_mapreducejoin</p> 
+ <p style="margin: 5px 0px; widows: auto; color: rgb(52, 52, 52); 'Droid Sans'; font-size: 17px;"> <img data-attr-org-img-file="file:///D:/Program%20Files/qq24B39E2329F08D9F4C3146A571A415EF/986265005c464dd39fafd50c051fb79e/clipboard.png" data-attr-org-src-id="9A5AAF38BCBD4E49BAAB5CC525CACE42" data-media-type="image" src="/uploads/allimg/201509/1-1509131KG0296.png" style="display: inline-block; margin-top: 8px; width: 800px; background-color: inherit;"></p> 
+ <p> 打开&nbsp;part-r-00000<br> <img alt="" src="/uploads/allimg/201509/1-1509131KI9542.png" style="width: 781px; height: 344px;"><img data-attr-org-img-file="file:///D:/Program%20Files/qq24B39E2329F08D9F4C3146A571A415EF/e323b27db412450ba98cba52d601da02/clipboard.png" data-attr-org-src-id="4E338B6C2DB54A65AD217196EC1020C0" data-media-type="image" src="file:///D:/Program%20Files/qq24B39E2329F08D9F4C3146A571A415EF/e323b27db412450ba98cba52d601da02/clipboard.png"></p> 
+ <p> 结果如下所示，点击 Download 链接下载：<br> <img alt="" src="/uploads/allimg/201509/1-1509131KPEc.png" style="width: 592px; height: 543px;"><br> <img data-attr-org-img-file="file:///D:/Program%20Files/qq24B39E2329F08D9F4C3146A571A415EF/57b1f593f916423eb94e1a92b2aa6aa7/clipboard.png" data-attr-org-src-id="02B80BCAAF1E40EFA67AA172A9E3F197" data-media-type="image" src="file:///D:/Program%20Files/qq24B39E2329F08D9F4C3146A571A415EF/57b1f593f916423eb94e1a92b2aa6aa7/clipboard.png"></p> 
+ <p> 打开下载后的 文件，结果如下所示：<br> <img alt="" src="/uploads/allimg/201509/1-1509131KT0402.png" style="width: 632px; height: 360px;"><img data-attr-org-img-file="file:///D:/Program%20Files/qq24B39E2329F08D9F4C3146A571A415EF/1f3c609625854400a440a0c651805950/clipboard.png" data-attr-org-src-id="156AB67EAEA247C2BD5E8D1F6C04E87F" data-media-type="image" src="file:///D:/Program%20Files/qq24B39E2329F08D9F4C3146A571A415EF/1f3c609625854400a440a0c651805950/clipboard.png"></p> 
+ <p> 注：请注意，下一次运行此程序之前，需要删除输出目录 /output_mapreducejoin</p> 
+ <p> $HADOOP_HOME/bin/hdfs dfs -rm -r /output_mapreducejoin</p> 
+ <p> 另一种方法是使用不同的名称作为输出目录。</p> 
+ <br>      
+</div></body></html>

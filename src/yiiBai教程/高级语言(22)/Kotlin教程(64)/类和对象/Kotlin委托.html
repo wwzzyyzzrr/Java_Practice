@@ -1,0 +1,22 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Kotlin委托</h1><div style="width:100%;float:left;" class="article-content">   
+ <h1 id="h1-u59D4u6258"><a name="委托" class="reference-link"></a><span class="header-link octicon octicon-link"></span>委托</h1>
+ <h2 id="h2-u7C7Bu59D4u6258"><a name="类委托" class="reference-link"></a><span class="header-link octicon octicon-link"></span>类委托</h2>
+ <p><a target="_blank" href="http://zh.wikipedia.org/wiki/%E5%A7%94%E6%89%98%E6%A8%A1%E5%BC%8F">委托模式</a>已经证明是实现继承的一个很好的替代方式，<br>而 Kotlin 可以零样板代码地原生支持它。<br>类 <code>Derived</code> 可以继承一个接口 <code>Base</code>，并将其所有共有的方法委托给一个指定的对象：</p> 
+ <pre><code class="lang-kotlin">interface Base {
+    fun print()
+}
+
+class BaseImpl(val x: Int) : Base {
+    override fun print() { print(x) }
+}
+
+class Derived(b: Base) : Base by b
+
+fun main(args: Array&lt;String&gt;) {
+    val b = BaseImpl(10)
+    Derived(b).print() // 输出 10
+}
+</code></pre> 
+ <p><code>Derived</code> 的超类型列表中的 <em>by</em>{: .keyword }-子句表示 <code>b</code> 将会在 <code>Derived</code> 中内部存储。<br>并且编译器将生成转发给 <code>b</code> 的所有 <code>Base</code> 的方法。</p>
+ <br>      
+</div></body></html>

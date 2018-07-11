@@ -1,0 +1,103 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Redis集合</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>Redis集合是唯一字符串的无序集合。 唯一值表示集合中不允许键中有重复的数据。</p> 
+ <p>在Redis中设置添加，删除和测试成员的存在(恒定时间O(1)，而不考虑集合中包含的元素数量)。列表的最大长度为<code>2^32 - 1</code>个元素(即4294967295，每组集合超过40亿个元素)。</p> 
+ <h2 id="h2-u793Au4F8B"><a name="示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例</h2>
+ <pre><code class="lang-shell">redis 127.0.0.1:6379&gt; SADD myset "redis" 
+(integer) 1 
+redis 127.0.0.1:6379&gt; SADD myset "mongodb" 
+(integer) 1 
+redis 127.0.0.1:6379&gt; SADD myset "mysql" 
+(integer) 1 
+redis 127.0.0.1:6379&gt; SADD myset "mysql" 
+(integer) 0 
+redis 127.0.0.1:6379&gt; SMEMBERS "myset"  
+1) "mysql" 
+2) "mongodb" 
+3) "redis"
+</code></pre> 
+ <p>在上面的示例中，通过命令<code>SADD</code>将三个值插入到名称为“<code>myset</code>”的Redis集合中。</p> 
+ <h2 id="h2-redis-"><a name="Redis集合命令" class="reference-link"></a><span class="header-link octicon octicon-link"></span>Redis集合命令</h2>
+ <p>下表列出了与集合相关的一些基本命令。</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>序号</th> 
+    <th>命令</th> 
+    <th>说明</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>1</td> 
+    <td><a target="_blank" href="http://www.yiibai.com/redis/sets_sadd.html" title="SADD key member1 [member2]">SADD key member1 [member2]</a></td> 
+    <td>将一个或多个成员添加到集合</td> 
+   </tr> 
+   <tr> 
+    <td>2</td> 
+    <td><a target="_blank" href="http://www.yiibai.com/redis/sets_scard.html" title="SCARD key">SCARD key</a></td> 
+    <td>获取集合中的成员数</td> 
+   </tr> 
+   <tr> 
+    <td>3</td> 
+    <td><a target="_blank" href="http://www.yiibai.com/redis/sets_sdiff.html" title="SDIFF key1 [key2]">SDIFF key1 [key2]</a></td> 
+    <td>减去多个集合</td> 
+   </tr> 
+   <tr> 
+    <td>4</td> 
+    <td><a target="_blank" href="http://www.yiibai.com/redis/sets_sdiffstore.html" title="SDIFFSTORE destination key1 [key2]">SDIFFSTORE destination key1 [key2]</a></td> 
+    <td>减去多个集并将结果集存储在键中</td> 
+   </tr> 
+   <tr> 
+    <td>5</td> 
+    <td><a target="_blank" href="http://www.yiibai.com/redis/sets_sinter.html" title="SINTER key1 [key2]">SINTER key1 [key2]</a></td> 
+    <td>相交多个集合</td> 
+   </tr> 
+   <tr> 
+    <td>6</td> 
+    <td><a target="_blank" href="http://www.yiibai.com/redis/sets_sinterstore.html" title="SINTERSTORE destination key1 [key2]">SINTERSTORE destination key1 [key2]</a></td> 
+    <td>交叉多个集合并将结果集存储在键中</td> 
+   </tr> 
+   <tr> 
+    <td>7</td> 
+    <td><a target="_blank" href="http://www.yiibai.com/redis/sets_sismember.html" title="SISMEMBER key member">SISMEMBER key member</a></td> 
+    <td>判断确定给定值是否是集合的成员</td> 
+   </tr> 
+   <tr> 
+    <td>8</td> 
+    <td><a target="_blank" href="http://www.yiibai.com/redis/sets_smove.html" title="SMOVE source destination member">SMOVE source destination member</a></td> 
+    <td>将成员从一个集合移动到另一个集合</td> 
+   </tr> 
+   <tr> 
+    <td>9</td> 
+    <td><a target="_blank" href="http://www.yiibai.com/redis/sets_spop.html" title="SPOP key">SPOP key</a></td> 
+    <td>从集合中删除并返回随机成员</td> 
+   </tr> 
+   <tr> 
+    <td>10</td> 
+    <td><a target="_blank" href="http://www.yiibai.com/redis/sets_srandmember.html" title="SRANDMEMBER key [count]">SRANDMEMBER key [count]</a></td> 
+    <td>从集合中获取一个或多个随机成员</td> 
+   </tr> 
+   <tr> 
+    <td>11</td> 
+    <td><a target="_blank" href="http://www.yiibai.com/redis/sets_srem.html" title="SREM key member1 [member2]">SREM key member1 [member2]</a></td> 
+    <td>从集合中删除一个或多个成员</td> 
+   </tr> 
+   <tr> 
+    <td>12</td> 
+    <td><a target="_blank" href="http://www.yiibai.com/redis/sets_sunion.html" title="SUNION key1 [key2]">SUNION key1 [key2]</a></td> 
+    <td>添加多个集合</td> 
+   </tr> 
+   <tr> 
+    <td>13</td> 
+    <td><a target="_blank" href="http://www.yiibai.com/redis/sets_sunionstore.html" title="SUNIONSTORE destination key1 [key2]">SUNIONSTORE destination key1 [key2]</a></td> 
+    <td>添加多个集并将结果集存储在键中</td> 
+   </tr> 
+   <tr> 
+    <td>14</td> 
+    <td><a target="_blank" href="http://www.yiibai.com/redis/sets_sscan.html" title="SSCAN key cursor [MATCH pattern] [COUNT count]">SSCAN key cursor [MATCH pattern] [COUNT count]</a></td> 
+    <td>递增地迭代集合中的元素</td> 
+   </tr> 
+  </tbody> 
+ </table>
+ <br>      
+</div></body></html>

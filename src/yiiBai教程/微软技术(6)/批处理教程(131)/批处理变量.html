@@ -1,0 +1,114 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">批处理变量</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>批处理文件中有两种类型的变量。 其中一个参数是在调用批处理文件时可以传递的参数，另一个是通过<code>set</code>命令完成的。</p> 
+ <h2 id="h2-u547Du4EE4u884Cu53C2u6570"><a name="命令行参数" class="reference-link"></a><span class="header-link octicon octicon-link"></span>命令行参数</h2>
+ <p>批处理脚本支持命令行参数的概念，其中参数可以在被调用时传递给批处理文件。参数可以通过变量<code>％1</code>，<code>％2</code>，<code>％3</code>等从批处理文件中调用。</p> 
+ <p>以下示例显示了一个批处理文件，它接受3个命令行参数，并将它们回显到命令行屏幕。</p> 
+ <pre><code class="lang-bat">@echo off 
+echo %1 
+echo %2 
+echo %3
+</code></pre> 
+ <p>如果上面的批处理脚本存储在一个名为<code>test.bat</code>的文件中，我们将运行该批处理 - </p> 
+ <pre><code class="lang-shell">Test.bat 1 2 3
+</code></pre> 
+ <p>以下是批处理文件执行时在命令提示符下的外观截图。</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201801/2101/916090105_67518.jpg" alt=""></p> 
+ <p>以上命令产生以下输出。</p> 
+ <pre><code class="lang-shell">1 
+2 
+3
+</code></pre> 
+ <p>如果要运行批处理 - </p> 
+ <pre><code class="lang-shell">Example 1 2 3 4
+</code></pre> 
+ <p>输出仍然与上面一样。 但是，第四个参数将被忽略。</p> 
+ <h2 id="h2-set-"><a name="set命令" class="reference-link"></a><span class="header-link octicon octicon-link"></span>set命令</h2>
+ <p>变量可以被初始化的另一种方式是通过<code>“set”</code>命令。 以下是<code>set</code>命令的语法。</p> 
+ <p><strong>语法</strong></p> 
+ <pre><code class="lang-bat">set /A variable-name=value
+</code></pre> 
+ <p>其中 - </p> 
+ <ul> 
+  <li><em>variable-name</em> - 是想要设置的变量的名称。</li>
+  <li><em>value</em> - 是需要根据变量设置的值。</li>
+  <li><em>/A</em> - 如果该值本质上是数值，则使用此开关。</li>
+ </ul> 
+ <p>以下示例显示了可以使用<code>set</code>命令的简单方法。</p> 
+ <p><strong>示例</strong></p> 
+ <pre><code class="lang-bat">@echo off 
+set message=Hello World 
+echo %message%
+</code></pre> 
+ <ul> 
+  <li>在上面的代码片段中，定义了一个名为<code>“message”</code>的变量，其值为<code>“Hello World”</code>。</li>
+  <li>要显示变量的值，请注意变量需要包含在<code>％</code>符号中。</li>
+ </ul> 
+ <p>以上命令产生以下输出 - </p> 
+ <pre><code class="lang-shell">Hello World
+</code></pre> 
+ <h2 id="h2-u4F7Fu7528u6570u5B57u503C"><a name="使用数字值" class="reference-link"></a><span class="header-link octicon octicon-link"></span>使用数字值</h2>
+ <p>在批处理脚本中，也可以定义一个变量来保存一个数值。 这可以通过使用<code>/A</code>开关完成。<br>以下代码显示了可以使用<code>/A</code>开关设置数值的一种简单方法。</p> 
+ <pre><code class="lang-bat">@echo off 
+SET /A a=5 
+SET /A b=10 
+SET /A c=%a% + %b% 
+echo %c%
+</code></pre> 
+ <ul> 
+  <li>首先将<code>2</code>个变量<code>a</code>和<code>b</code>的值分别设置为<code>5</code>和<code>10</code>。</li>
+  <li>相加这些值并存储在变量<code>c</code>中。</li>
+  <li>最后，显示变量<code>c</code>的值。</li>
+ </ul> 
+ <p>上述程序的输出结果为<code>15</code>。<br>所有的算术运算符都在批处理文件中工作。 以下示例显示算术运算符可以在批处理文件中使用。</p> 
+ <pre><code class="lang-bat">@echo off 
+SET /A a=5 
+SET /A b=10 
+SET /A c=%a% + %b% 
+echo %c% 
+SET /A c=%a% - %b% 
+echo %c% 
+SET /A c=%b% / %a% 
+echo %c% 
+SET /A c=%b% * %a% 
+echo %c%
+</code></pre> 
+ <p>以上命令产生以下输出。</p> 
+ <pre><code class="lang-shell">15 
+-5 
+2 
+50
+</code></pre> 
+ <h2 id="h2-u5C40u90E8u4E0Eu5168u5C40u53D8u91CF"><a name="局部与全局变量" class="reference-link"></a><span class="header-link octicon octicon-link"></span>局部与全局变量</h2>
+ <p>在任何编程语言中，都有一个选项可以将变量标记为具有某种范围，即可以访问它们的代码部分。 通常情况下，具有全局作用域的变量可以从程序中的任何地方访问，而局部作用域变量则有一个可以访问的定义的边界。</p> 
+ <p>DOS脚本还定义了局部和全局范围的变量。 默认情况下，变量是整个命令提示符会话的全局变量。 调用<code>SETLOCAL</code>命令，使变量局部在脚本的范围内。 在调用<code>SETLOCAL</code>之后，任何变量赋值在调用<code>ENDLOCAL</code>，调用<code>EXIT</code>，或者当执行到达脚本中的文件结尾(EOF)时都会返回。 以下示例显示了在脚本中设置局部和全局变量时的差异。</p> 
+ <p><strong>示例</strong></p>   
+ <pre><code class="lang-bat">@echo off 
+set globalvar=5
+SETLOCAL
+set var=13145
+set /A var=%var% + 5
+echo %var%
+echo %globalvar%
+ENDLOCAL
+</code></pre> 
+ <p>上述程序几乎没有重要的事情要注意。</p> 
+ <ul> 
+  <li><code>'globalvar'</code>是用全局范围定义的，在整个脚本中都是可用的。</li>
+  <li><code>var</code>变量是在局部范围内定义的，因为它被包含在<code>SETLOCAL</code>和<code>ENDLOCAL</code>块之间。 因此，这个变量在执行<code>'ENDLOCAL'</code>语句后就会被销毁。</li>
+ </ul> 
+ <p>以上命令产生以下输出。</p> 
+ <pre><code class="lang-shell">13150
+5
+</code></pre> 
+ <p>注意:命令<code>echo ％var％</code>不会产生任何东西，因为在<code>ENDLOCAL</code>语句之后，<code>'var'</code>变量将不再存在。</p> 
+ <h2 id="h2-u4F7Fu7528u73AFu5883u53D8u91CF"><a name="使用环境变量" class="reference-link"></a><span class="header-link octicon octicon-link"></span>使用环境变量</h2>
+ <p>如果有跨批处理文件使用的变量，那么最好使用环境变量。 当定义了环境变量，就可以通过<code>%</code>符号来访问它。 以下示例显示如何查看系统上定义的<code>JAVA_HOME</code>。 <code>JAVA_HOME</code>变量是各种应用程序通常使用的关键组件。</p> 
+ <pre><code class="lang-bat">@echo off 
+echo %JAVA_HOME%
+</code></pre> 
+ <p>输出将显示从系统到系统的<code>JAVA_HOME</code>目录。 以下是一个输出的例子。</p> 
+ <pre><code class="lang-shell">C:\Users\Administrator&gt;echo %JAVA_HOME%
+D:\Program Files\Java\jdk1.8.0_65
+</code></pre>
+ <br>      
+</div></body></html>

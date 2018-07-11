@@ -1,0 +1,84 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Java枚举体</h1><div style="width:100%;float:left;" class="article-content">   
+ <h2 id="h2-u5C06u4E3Bu4F53u6DFBu52A0u5230u679Au4E3Eu5E38u91CF"><a name="将主体添加到枚举常量" class="reference-link"></a><span class="header-link octicon octicon-link"></span>将主体添加到枚举常量</h2>
+ <p>可以为每个枚举常量添加一个不同的主体。主体可以有字段和方法。枚举常量的主体放在其名称后的大括号中。如果枚举常量接受参数，其主体将遵循其参数列表。将主体与枚举常量相关联的语法如下：</p> 
+ <pre><code class="lang-java">&lt;access-modifier&gt; enum &lt;enum-type-name&gt;  { 
+   ENUM_VALUE1  {
+      // Body for ENUM_VALUE1  goes  here
+   },
+   ENUM_VALUE2  {
+      // Body for ENUM_VALUE2  goes  here
+   },
+   ENUM_VALUE3(arguments-list)  {
+      // Body of  ENUM_VALUE3  goes  here
+   };
+
+   // Other  code  goes  here
+}
+</code></pre> 
+ <h2 id="h2-u793Au4F8B"><a name="示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例</h2>
+ <p>以下代码创建了<code>Level</code>枚举类型和它的主体。</p> 
+ <pre><code class="lang-java">enum Level {
+  LOW("Low Level", 30) {
+    public double getDistance() {
+      return 30.0;
+    }
+  },
+  MEDIUM("Medium Level", 15) {
+    public double getDistance() {
+      return 15.0;
+    }
+  },
+  HIGH("High Level", 7) {
+    public double getDistance() {
+      return 7.0;
+    }
+  },
+  URGENT("Urgent Level", 1) {
+    public double getDistance() {
+      return 1.0;
+    }
+  };
+
+  private int levelValue;
+  private String description;
+
+  private Level(String description, int levelValue) {
+    this.description = description;
+    this.levelValue = levelValue;
+  }
+
+  public int getLevelValue() {
+    return levelValue;
+  }
+
+  @Override
+  public String toString() {
+    return this.description;
+  }
+
+  public abstract double getDistance();
+}
+
+public class Main {
+  public static void main(String[] args) {
+    for (Level s : Level.values()) {
+      String name = s.name();
+      String desc = s.toString();
+      int ordinal = s.ordinal();
+      int levelValue = s.getLevelValue();
+      double distance = s.getDistance();
+      System.out.println("name=" + name + ",  description=" + desc
+          + ",  ordinal=" + ordinal + ", levelValue=" + levelValue
+          + ", distance=" + distance);
+    }
+  }
+}
+</code></pre> 
+ <p><code>Level</code>枚举有一个抽象方法<code>getDistance()</code>。每个实例常量都有一个实体为<code>getDistance()</code>方法提供实现。它覆盖了<code>Enum</code>类中的<code>toString()</code>方法。<br>执行上面的代码，得到如下结果 - </p>   
+ <pre><code class="lang-java">name=LOW,  description=Low Level,  ordinal=0, levelValue=30, distance=30.0
+name=MEDIUM,  description=Medium Level,  ordinal=1, levelValue=15, distance=15.0
+name=HIGH,  description=High Level,  ordinal=2, levelValue=7, distance=7.0
+name=URGENT,  description=Urgent Level,  ordinal=3, levelValue=1, distance=1.0
+</code></pre>
+ <br>      
+</div></body></html>

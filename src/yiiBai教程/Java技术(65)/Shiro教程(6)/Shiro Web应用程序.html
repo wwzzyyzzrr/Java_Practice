@@ -1,0 +1,306 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Shiro Web应用程序</h1><div style="width:100%;float:left;" class="article-content">   
+ <div class="markdown-toc editormd-markdown-toc">
+  [TOC]
+ </div>
+ <p>本文章是使用Apache Shiro保护Web应用程序的介绍性分步教程。Shiro的介绍性知识，并且假设您至少熟悉以下介绍性文章：</p> 
+ <ul> 
+  <li>Shiro快速入门教程</li>
+ </ul> 
+ <p>这个分步教程应该需要大概45分钟到1小时完成。 当你按照本文中给出的步骤一步步完成后，您应该会有一个很好的了解：Shiro是如何在一个Web应用程序中工作的。</p> 
+ <h2 id="h2-u6982u8FF0"><a name="概述" class="reference-link"></a><span class="header-link octicon octicon-link"></span>概述</h2>
+ <p>虽然Apache Shiro的核心设计目标允许它用于保护任何基于JVM的应用程序(如命令行应用程序，服务器守护程序，Web应用程序等)，但本指南将集中介绍最常见的用例：保护正在一个Servlet容器(如Tomcat或Jetty)中运行的Web应用程序。</p> 
+ <h2 id="h2-u5148u51B3u6761u4EF6"><a name="先决条件" class="reference-link"></a><span class="header-link octicon octicon-link"></span>先决条件</h2>
+ <p>以下工具预计将安装在本地开发机器上，以便遵循本教程。</p> 
+ <ul> 
+  <li>Git(1.7+)</li>
+  <li>Java SDK 7</li>
+  <li>Maven 3</li>
+ </ul> 
+ <p>选择您最喜欢的IDE，如：IntelliJ IDEA或Eclipse，甚至一个简单的文本编辑器，查看文件和进行更改。</p> 
+ <h2 id="h2-u6559u7A0Bu683Cu5F0F"><a name="教程格式" class="reference-link"></a><span class="header-link octicon octicon-link"></span>教程格式</h2>
+ <p>这是一个分步教程。 本教程及其所有步骤作为<a target="_blank" href="http://www.yiibai.com/git/" title="Git">Git</a>存储库存在。 当您克隆git存储库时，主分支是您的起点。本教程中的每一步都是一个单独的分支。可以简单地通过检查反映你当前正在审查的教程步骤的git分支。</p> 
+ <h2 id="h2-u5E94u7528u7A0Bu5E8F"><a name="应用程序" class="reference-link"></a><span class="header-link octicon octicon-link"></span>应用程序</h2>
+ <p>我们将要构建的Web应用程序是一个超级web应用程序，可以用作您自己的应用程序的起点。 在这个应用程序中将演示用户登录，注销，用户特定的欢迎消息，对Web应用程序的某些部分的访问控制，以及插入安全数据存储的集成。</p> 
+ <p>我们将首先设置项目，包括构建工具和声明依赖项，以及配置servlet的<code>web.xml</code>文件以启动Web应用程序和Shiro环境。<br>完成设置后，我们将分层单独的功能，包括与安全数据存储集成，然后启用用户登录，注销和访问控制。</p> 
+ <h2 id="h2-u9879u76EEu8BBEu7F6E"><a name="项目设置" class="reference-link"></a><span class="header-link octicon octicon-link"></span>项目设置</h2>
+ <p>这里不必手动设置目录结构和初始的基本文件集，我们已经在一个git存储库中为您做了这些工作了。</p> 
+ <h3 id="h3-1-"><a name="1. 下载教程项目" class="reference-link"></a><span class="header-link octicon octicon-link"></span>1. 下载教程项目</h3>
+ <p>在GitHub上，访问<a target="_blank" href="http://github.com/lhazlewood/apache-shiro-tutorial-webapp" title="教程项目">教程项目</a>，然后单击右上角的绿色<code>clone or download</code>按钮或者直接下载，并将下载后的文件解压到一个目录中，在本教程中放在：<code>F:\worksp\shiro\apache-shiro-tutorial-webapp-master</code> 目录中。</p> 
+ <h3 id="h3-2-"><a name="2. 项目结构" class="reference-link"></a><span class="header-link octicon octicon-link"></span>2. 项目结构</h3>
+ <p>当前下载的文件目录(<code>F:\worksp\shiro\shiro-webapp</code>)具有以下结构：</p> 
+ <pre><code class="lang-java">    shiro-webapp/
+      |-- src/
+      |  |-- main/
+      |    |-- resources/
+      |      |-- logback.xml
+      |    |-- webapp/
+      |      |-- WEB-INF/
+      |        |-- web.xml
+      |      |-- home.jsp
+      |      |-- include.jsp
+      |      |-- index.jsp
+      |-- .gitignore
+      |-- .travis.yml
+      |-- LICENSE
+      |-- README.md
+      |-- pom.xml
+</code></pre> 
+ <p>这里简单解释上面每个文件的含义：</p> 
+ <ul> 
+  <li><code>pom.xml</code>：Maven项目/构建文件。它配置了Jetty，因此可以通过运行<code>mvn jetty:run</code>来测试Web应用程序。</li>
+  <li><code>README.md</code>：一个简单的项目自述文件。</li>
+  <li><code>LICENSE</code>：项目的<code>Apache 2.0</code>许可证。</li>
+  <li><code>.travis.yml</code>: <a target="_blank" href="http://travis-ci.org/" title="Travis CI">Travis CI</a>配置文件，可在项目上运行持续集成，用来确保它始终构建。</li>
+  <li><code>.gitignore</code>： 一个git忽略文件，包含不应该被检入版本控制的后缀和目录。</li>
+  <li><code>src/main/resources/logback.xml</code>： 一个简单的<a target="_blank" href="http://logback.qos.ch/" title="Logback">Logback</a>配置文件。 对于本教程，我们选择了<code>SLF4J</code>作为日志记录API，<code>Logback</code>作为日志记录实现。也可以选择使用 <strong>Log4J</strong> 或 <strong>JUL</strong>。</li>
+  <li><code>src/main/webapp/WEB-INF/web.xml</code>：初始的<code>web.xml</code>文件，接下来将配置启用Shiro。</li>
+  <li><code>src/main/webapp/include.jsp</code>：包含常见导入和声明的页面，包含在其他JSP页面中。 这允许在一个地方管理导入和声明。</li>
+  <li><code>src/main/webapp/home.jsp</code>： 这个<code>webapp</code>项目的简单默认主页。 包括<code>include.jsp</code>。</li>
+  <li><code>src/main/webapp/index.jsp</code>： 默认站点索引页 - 只是将请求转发到<code>home.jsp</code>首页。</li>
+ </ul> 
+ <h3 id="h3-3-webapp"><a name="3.运行webapp" class="reference-link"></a><span class="header-link octicon octicon-link"></span>3.运行webapp</h3>
+ <p>现在已经完成了项目的基本配置，可以通过在命令行上执行以下命令来运行Web应用程序：</p> 
+ <pre><code class="lang-bash">$ mvn jetty:run
+</code></pre> 
+ <p>接下来，打开web浏览器访问：<a target="_blank" href="http://localhost：8080">http://localhost：8080</a> ， 应该会看到主页上有一个<code>Hello，World！</code>问候提示。<br><img src="http://www.yiibai.com/uploads/images/201703/1503/774170319_87594.png" alt=""></p> 
+ <blockquote> 
+  <p><strong>提示</strong>：同时按住<code>ctrl+C</code>关闭退出上面Web应用程序。</p> 
+ </blockquote> 
+ <h2 id="h2--shiro"><a name="一、启用 Shiro" class="reference-link"></a><span class="header-link octicon octicon-link"></span>一、启用 Shiro</h2>
+ <p>初始存储库主分支只是一个简单的通用Web应用程序，可以用作任何应用程序的模板。这里我们添加最低限度，以在Web应用程序中启用Shiro。</p> 
+ <p><strong>复制上面 <code>shiro-webapp</code> 项目为 <code>shiro-webapp1</code></strong></p> 
+ <p>并添加了一个新的<code>src/main/webapp/WEB-INF/shiro.ini</code>文件, 同时修改 <code>src/main/webapp/WEB-INF/web.xml</code> 文件。</p> 
+ <h3 id="h3-1-shiro-ini-"><a name="1. 添加 shiro.ini 文件" class="reference-link"></a><span class="header-link octicon octicon-link"></span>1. 添加 shiro.ini 文件</h3>
+ <p>Shiro可以在Web应用程序中以许多不同的方式进行配置，具体取决于使用的Web和/或MVC框架。 例如，可以通过Spring，Guice，Tapestry等等来配置Shiro。</p> 
+ <p>为了简化现在，我们使用Shiro的默认(非常简单)基于<code>INI</code>的配置来启动一个Shiro环境。<br>这个新的<code>src/main/webapp/WEB-INF/shiro.ini</code>文件的内容(为了简洁，删除了标头注释)如下所示：</p> 
+ <pre><code class="lang-yaml">[main]
+
+# Let's use some in-memory caching to reduce the number of runtime lookups against a remote user store.
+# A real application might want to use a more robust caching solution (e.g. ehcache or a
+# distributed cache).  When using such caches, be aware of your cache TTL settings: too high
+# a TTL and the cache won't reflect any potential changes in Stormpath fast enough.  Too low
+# and the cache could evict too often, reducing performance.
+cacheManager = org.apache.shiro.cache.MemoryConstrainedCacheManager
+securityManager.cacheManager = $cacheManager
+</code></pre> 
+ <p>这个<code>.ini</code>文件只包含一个带有一些最小配置的<code>[main]</code>块：</p> 
+ <ul> 
+  <li>它定义了一个新的<code>cacheManager</code>实例。 缓存是Shiro架构的重要组成部分 - 它减少了到各种数据存储的常规往返通信。 这个例子使用一个<code>MemoryConstrainedCacheManager</code>，它只对单个JVM应用程序有用。 如果应用程序部署在多个主机(例如，集群的Web服务器场)上，您需要使用集群化的<code>CacheManager</code>实现。</li>
+  <li>它在Shiro <code>securityManager</code>上配置新的<code>cacheManager</code>实例。 Shiro <code>SecurityManager</code>实例始终存在，因此不需要显式定义。</li>
+ </ul> 
+ <h3 id="h3-2-web-xml-shiro"><a name="2. 在web.xml中启用Shiro" class="reference-link"></a><span class="header-link octicon octicon-link"></span>2. 在web.xml中启用Shiro</h3>
+ <p>虽然我们有一个<code>shiro.ini</code>配置，要实际加载它并启动一个新的Shiro环境，并使该环境可用于Web应用程序。还要向现有的<code>src/main/webapp/WEB-INF/web.xml</code>文件中添加一些内容来完成所有这些：</p> 
+ <pre><code class="lang-xml">&lt;listener&gt;
+    &lt;listener-class&gt;org.apache.shiro.web.env.EnvironmentLoaderListener&lt;/listener-class&gt;
+&lt;/listener&gt;
+
+&lt;filter&gt;
+    &lt;filter-name&gt;ShiroFilter&lt;/filter-name&gt;
+    &lt;filter-class&gt;org.apache.shiro.web.servlet.ShiroFilter&lt;/filter-class&gt;
+&lt;/filter&gt;
+
+&lt;filter-mapping&gt;
+    &lt;filter-name&gt;ShiroFilter&lt;/filter-name&gt;
+    &lt;url-pattern&gt;/*&lt;/url-pattern&gt;
+    &lt;dispatcher&gt;REQUEST&lt;/dispatcher&gt;
+    &lt;dispatcher&gt;FORWARD&lt;/dispatcher&gt;
+    &lt;dispatcher&gt;INCLUDE&lt;/dispatcher&gt;
+    &lt;dispatcher&gt;ERROR&lt;/dispatcher&gt;
+&lt;/filter-mapping&gt;
+</code></pre> 
+ <ul> 
+  <li><code>&lt;listener&gt;</code>声明定义了一个<code>ServletContextListener</code>，在Web应用程序启动时启动Shiro环境(包括Shiro SecurityManager)。 默认情况下，此侦听器自动查找用于Shiro配置的<code>WEB-INF/shiro.ini</code>文件。</li>
+  <li><code>&lt;filter&gt;</code>声明定义主<code>ShiroFilter</code>。 此过滤器将过滤所有到Web应用程序的请求，以便Shiro可以在允许请求到达应用程序之前执行必要的身份和访问控制操作。</li>
+  <li><code>&lt;filter-mapping&gt;</code>声明确保所有请求类型都由<code>ShiroFilter</code>提交。 通常，过滤器映射声明不指定<code>&lt;dispatcher&gt;</code>元素，但Shiro需要它们全部定义，因此它可以过滤可能为Web应用程序执行的所有不同的请求类型。</li>
+ </ul> 
+ <h3 id="h3-3-webapp"><a name="3. 运行webapp" class="reference-link"></a><span class="header-link octicon octicon-link"></span>3. 运行webapp</h3>
+ <p>完成 <code>shiro-webapp1</code> 项目配置后，运行Web应用程序：</p> 
+ <pre><code class="lang-bash">$ mvn jetty:run
+</code></pre> 
+ <p>这一次，您将看到类似于以下内容的日志输出，这表明Shiro确实在<code>webapp</code>中运行了：<br><img src="http://www.yiibai.com/uploads/images/201703/1503/312170335_32188.png" alt=""></p> 
+ <h2 id="h2--"><a name="二、连接到用户存储" class="reference-link"></a><span class="header-link octicon octicon-link"></span>二、连接到用户存储</h2>
+ <p><strong>复制上面 <code>shiro-webapp1</code> 项目为 <code>shiro-webapp2</code></strong></p> 
+ <p>并添加了一个新的<code>src/main/webapp/WEB-INF/shiro.ini</code>文件, 同时修改 <code>src/main/webapp/WEB-INF/web.xml</code> 文件。</p> 
+ <p>在上一步中已经在webapp中集成并运行了Shiro。 但是我们没有实际告诉Shiro做任何事情。<br>在执行登录，注销，执行基于角色或基于权限的访问控制或任何其他安全相关之前，我们需要有用户。<br>我们需要配置Shiro以访问某种类型的用户存储，所以它可以查找用户执行登录尝试，或检查角色的安全决策等。任何应用程序可能需要访问的用户存储有许多类型： 也许你的用户存储在MySQL数据库，也许在MongoDB，也许你的公司的用户帐户存储在LDAP或Active Directory中的，也许你存储在一个简单的文件或一些其他专有的数据存储。</p> 
+ <p>但这都不要紧，Shiro通过它称为一个领域(<code>Realm</code>)。Shiro文档对<code>Realm</code>的解释如下：</p> 
+ <blockquote> 
+  <p>Realms act as the ‘bridge’ or ‘connector’ between Shiro and your application’s security data. When it comes time to actually interact with security-related data like user accounts to perform authentication (login) and authorization (access control), Shiro looks up many of these things from one or more Realms configured for an application.<br>In this sense a Realm is essentially a security-specific DAO: it encapsulates connection details for data sources and makes the associated data available to Shiro as needed. When configuring Shiro, you must specify at least one Realm to use for authentication and/or authorization. The SecurityManager may be configured with multiple Realms, but at least one is required.<br>Shiro provides out-of-the-box Realms to connect to a number of security data sources (aka directories) such as LDAP, relational databases (JDBC), text configuration sources like INI and properties files, and more. You can plug-in your own Realm implementations to represent custom data sources if the default Realms do not meet your needs.</p> 
+ </blockquote> 
+ <p>因此，需要配置一个领域(<code>Realm</code>)，以便我们可以访问用户。</p> 
+ <h3 id="h3-3-stormpath"><a name="3.  配置Stormpath" class="reference-link"></a><span class="header-link octicon octicon-link"></span>3. 配置Stormpath</h3>
+ <p>本教程尽可能简单，所以没有引入复杂性或范围，分散我们的学习Shiro的目的，将使用一个最简单的<code>Realm</code>：一个Stormpath <code>Realm</code>。</p> 
+ <p><a target="_blank" href="http://stormpath.com/" title="Stormpath">Stormpath</a>是一个云托管的用户管理服务，完全免费用于开发目的。所以启用Stormpath后，您将以下东西就会准备好了：</p> 
+ <ul> 
+  <li>当学习这个教程：用于管理应用程序，目录，帐户和组的用户界面。但Shiro不提供这些，所以使用 Stormpath 是非常方便，也节省您的时间。</li>
+  <li><p>用于用户密码的安全存储机制。应用程序从不需要担心密码安全性，密码比较或存储密码。 虽然Shiro可以做这些事情，还要你去配置它们，并知道加密概念。而Stormpath自动化密码安全，所以你(和Shiro)不需要担心它。</p> </li>
+  <li><p>安全工作流程，如帐户电子邮件验证和通过电子邮件重置密码。 Shiro不支持这个，因为它通常是应用程序特定。</p> </li>
+  <li>托管很方便 - 我们不必设置任何东西或维护任何东西。</li>
+ </ul> 
+ <p>对于本教程的目的，Stormpath比设置单独的RDBMS服务器和担心SQL或密码加密问题简单得多。所以我们现在就使用它吧。<br>当然，Stormpath只是Shiro可以通信的许多后端数据存储之一。 稍后我们将讨论更复杂的数据存储和特定于应用程序的配置。</p> 
+ <p><strong>注册Stormpath帐号</strong></p> 
+ <ol> 
+  <li>填写并提交Stormpath注册表单 - <a target="_blank" href="http://api.stormpath.com/register">http://api.stormpath.com/register</a> 。并发送确认电子邮件。</li>
+  <li>打开电子邮件，点击确认电子邮件中的链接，完事。</li>
+ </ol> 
+ <p><strong>获取Stormpath API密钥</strong><br><code>Stormpath Realm</code>与<code>Stormpath</code>通信需要Stormpath API密钥。按以下步骤获取Stormpath API密钥：</p> 
+ <ol> 
+  <li>使用您在Stormpath注册的电子邮件地址和密码登录<a target="_blank" href="http://api.stormpath.com/" title="Stormpath管理控制台">Stormpath管理控制台</a>。</li>
+  <li>在中间右侧的结果页面上，访问页面的<strong>DEVELOPER TOOLS</strong>部分中的<strong>API Keys: Manage API Keys</strong>。</li>
+  <li>在“帐户详细信息”页面的“<strong>Security Credentials</strong>”部分中，在“<strong>Api Keys</strong>”下单击“<strong>Create API Key</strong>”。这将生成您的API密钥并将其作为<code>apiKey.properties</code>文件下载到您的计算机。 如果在文本编辑器中打开文件，您将看到类似于以下内容的内容：<pre><code class="lang-bash">apiKey.id = 144JVZINOF5EBNCMG9EXAMPLE
+apiKey.secret = lWxOiKqKPNwJmSldbiSkEbkNjgh2uRSNAb+AEXAMPLE
+</code></pre> </li>
+  <li>将此文件保存在安全位置，例如，在用户主目录下的<code>.stormpath</code>目录中。例如：<pre><code class="lang-bash">$HOME/.stormpath/apiKey.properties
+</code></pre> </li>
+  <li>还要更改文件权限，以确保只有您可以读取此文件。 例如，在 <code>*nix</code> 操作系统：<pre><code class="lang-bash">$ chmod go-rwx $HOME/.stormpath/apiKey.properties
+$ chmod u-w $HOME/.stormpath/apiKey.properties
+</code></pre> 在Windows上，您可以类似地设置文件权限，参考：<a target="_blank" href="http://msdn.microsoft.com/en-us/library/bb727008.aspx">http://msdn.microsoft.com/en-us/library/bb727008.aspx</a> 。</li>
+ </ol> 
+ <p><strong>检索默认的Stormpath应用程序</strong></p> 
+ <p>当您注册Stormpath时，会自动为您创建一个空应用程序。 它的名称是：<code>My Application</code>。</p> 
+ <p>我们必须使用Stormpath注册我们的Web应用程序，以允许应用程序使用Stormpath进行用户管理和身份验证。 为了使用Stormpath 的 <code>My Application</code> 应用程序注册我们的Web应用程序，我们需要知道一些信息。我们可以使用Stormpath API检索这些信息。</p> 
+ <p>首先，需要您的租户在Stormpath中的位置。使用以下方法得到：</p> 
+ <pre><code class="lang-bash">curl -i --user $YOUR_API_KEY_ID:$YOUR_API_KEY_SECRET \
+'http://api.stormpath.com/v1/tenants/current'
+</code></pre> 
+ <p>其中：<br><code>$YOUR_API_KEY_ID</code>是<code>apiKey.properties</code>文件中的<code>apiKey.id</code>值<br><code>$YOUR_API_KEY_SECRET</code>是<code>apiKey.properties</code>文件中的<code>apiKey.secret</code>值</p> 
+ <p>执行<code>curl</code>后会得到这样的响应：</p>   
+ <pre><code class="lang-bash">HTTP/1.1 302 Found
+Date: Fri, 28 Aug 2015 18:34:51 GMT
+Location: http://api.stormpath.com/v1/tenants/sOmELoNgRaNDoMIdHeRe
+Server: Apache
+Set-Cookie: rememberMe=deleteMe; Path=/; Max-Age=0; Expires=Thu, 27-Aug-2015 18:34:52 GMT
+Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+Content-Length: 0
+Connection: keep-alive
+</code></pre> 
+ <blockquote> 
+  <p>注意：Windows系统默认没有 CURL 命令，需要额外安装。请参考：<a target="_blank" href="http://www.baidu.com/s?wd=window+curl&amp;">http://www.baidu.com/s?wd=window+curl&amp;</a></p> 
+ </blockquote> 
+ <p>注意<code>Location</code>头信息。这是您的Stormpath租户的位置。 现在再次使用API检索 Stormpath 的 <code>My Application</code>应用程序的位置：</p> 
+ <pre><code class="lang-bash">curl -u $API_KEY_ID:$API_KEY_SECRET \
+     -H "Accept: application/json" \
+     '$TENANT_HREF/applications?name=My%20Application'
+</code></pre> 
+ <p>其中：</p> 
+ <p><code>$YOUR_API_KEY_ID</code>是<code>apiKey.properties</code>文件中的<code>apiKey.id</code>值<br><code>$YOUR_API_KEY_SECRET</code>是<code>apiKey.properties</code>文件中的<code>apiKey.secret</code>值<br><code>$TENANT_HREF</code>是上一步骤的<code>Location</code>头信息的值</p> 
+ <p>这个响应有很多信息。下面只是响应中的一个例子的一部分：</p> 
+ <pre><code class="lang-bash">{
+    ...
+    "href": "http://api.stormpath.com/v1/applications/aLoNGrAnDoMAppIdHeRe",
+    "name": "My Application",
+    "description": "This application was automatically created for you in Stormpath for use with our Quickstart guides(http://docs.stormpath.com). It does apply to your subscription's number of reserved applications and can be renamed or reused for your own purposes.",
+    "status": "ENABLED",
+    "tenant": {
+        "href": "http://api.stormpath.com/v1/tenants/sOmELoNgRaNDoMIdHeRe"
+    },
+    ...
+}
+</code></pre> 
+ <p>从上面记下你的顶层<code>href</code> - 将使用这个<code>href</code>在<code>shiro.ini</code>配置下。</p> 
+ <p><strong>创建应用程序测试用户帐户</strong></p> 
+ <p>现在我们有一个应用程序，接下来将要为这个应用程序创建一个<code>sample/test</code>用户：</p> 
+ <pre><code class="lang-bash">curl --request POST --user $YOUR_API_KEY_ID:$YOUR_API_KEY_SECRET \
+    -H "Accept: application/json" \
+    -H "Content-Type: application/json" \
+    -d '{
+           "givenName": "Jean-Luc",
+           "surname": "Picard",
+           "username": "jlpicard",
+           "email": "capt@enterprise.com",
+           "password":"Changeme1"
+        }' \
+ "$YOUR_APPLICATION_HREF/accounts"
+</code></pre> 
+ <p>在上面代码中：</p> 
+ <p><code>$YOUR_API_KEY_ID</code>是<code>apiKey.properties</code>文件中的<code>apiKey.id</code>值<br><code>$YOUR_API_KEY_SECRET</code>是<code>apiKey.properties</code>中的<code>apiKey.secret</code>值<br><code>$YOUR_APPLICATION_HREF</code>是您记下的应用程序<code>href</code>，<br>同样，不要忘记更改上面的网址中的<code>$YOUR_APPLICATION_HREF</code>以匹配应用程序的<code>ID</code>！</p> 
+ <h3 id="h3-2-shiro-ini-realm"><a name="2. 配置 shiro.ini中的Realm" class="reference-link"></a><span class="header-link octicon octicon-link"></span>2. 配置 shiro.ini中的Realm</h3>
+ <p>选择至少一个用户存储来连接到Shiro，需要配置一个Realm来代表该数据存储，然后告诉Shiro SecurityManager。</p> 
+ <p>在 <code>src/main/webapp/WEB-INF/shiro.ini</code> 文件的<code>[main]</code>部分添加以下内容：</p> 
+ <pre><code class="lang-bash"># Configure a Realm to connect to a user datastore.  In this simple tutorial, we'll just point to Stormpath since it
+# takes 5 minutes to set up:
+stormpathClient = com.stormpath.shiro.client.ClientFactory
+stormpathClient.cacheManager = $cacheManager
+
+# (Optional) If you put your apiKey.properties in the non-default location, you set the location here
+#stormpathClient.apiKeyFileLocation = $HOME/.stormpath/apiKey.properties
+
+stormpathRealm = com.stormpath.shiro.realm.ApplicationRealm
+stormpathRealm.client = $stormpathClient
+
+# Find this URL in your Stormpath console for an application you create:
+# Applications -&gt; (choose application name) --&gt; Details --&gt; REST URL
+# (Optional) If you only have one Application
+#stormpathRealm.applicationRestUrl = http://api.stormpath.com/v1/applications/$STORMPATH_APPLICATION_ID
+
+stormpathRealm.groupRoleResolver.modeNames = name
+securityManager.realm = $stormpathRealm
+</code></pre> 
+ <p><strong>注意可选行：</strong></p> 
+ <p>如果您已经使用Stormpath一段时间，并且有多个Stormpath应用程序，则必须设置<code>stormpathRealm.applicationRestUrl</code>属性。</p> 
+ <h3 id="h3-3-webapp"><a name="3. 运行webapp" class="reference-link"></a><span class="header-link octicon octicon-link"></span>3. 运行webapp</h3>
+ <p>按照<strong>步骤1</strong>和<strong>步骤2</strong>中的指定进行更改后，继续并运行Web应用程序：</p> 
+ <pre><code class="lang-bash">mvn jetty:run
+</code></pre> 
+ <p>这一次，您将看到类似于以下的日志输出，表明Shiro和新的 Realm 在您的webapp中正确配置：</p> 
+ <pre><code class="lang-bash">16:08:25.466 [main] INFO  o.a.shiro.web.env.EnvironmentLoader - Starting Shiro environment initialization.
+16:08:26.201 [main] INFO  o.a.s.c.IniSecurityManagerFactory - Realms have been explicitly set on the SecurityManager instance - auto-setting of realms will not occur.
+16:08:26.201 [main] INFO  o.a.shiro.web.env.EnvironmentLoader - Shiro environment initialized in 731 ms.
+</code></pre> 
+ <h2 id="h2--"><a name="三、启用登录和注销" class="reference-link"></a><span class="header-link octicon octicon-link"></span>三、启用登录和注销</h2>
+ <p>现在我们有用户，可以在UI中轻松添加，删除和禁用它们。 现在可以在我们的应用程序中启用诸如登录/注销和访问控制等功能。</p> 
+ <p><strong>复制上面 <code>shiro-webapp2</code> 项目为 <code>shiro-webapp3</code></strong></p> 
+ <p>并添加以下<code>2</code>个附加文件：</p> 
+ <ul> 
+  <li>添加了一个新的<code>src/main/webapp/login.jsp</code>文件和一个简单的登录表单以使用它来登录。</li>
+  <li>更新<code>shiro.ini</code>文件，以支持特定于Web(URL)的功能。</li>
+ </ul> 
+ <h3 id="h3-1-shiro-"><a name="1. 启用Shiro表单登录和注销支持" class="reference-link"></a><span class="header-link octicon octicon-link"></span>1. 启用Shiro表单登录和注销支持</h3>
+ <p>将 <code>src/main/webapp/WEB-INF/shiro.ini</code> 文件包含以下<code>2</code>个附加项：</p> 
+ <pre><code class="lang-bash">[main]
+
+shiro.loginUrl = /login.jsp
+
+# Stuff we've configured here previously is omitted for brevity
+
+[urls]
+/login.jsp = authc
+/logout = logout
+</code></pre> 
+ <p><strong>shiro.* 行</strong></p> 
+ <p>在<code>[main]</code>部分的顶部，添加有一个新行：</p> 
+ <pre><code class="lang-bash">shiro.loginUrl = /login.jsp
+</code></pre> 
+ <p>这是一个特殊的配置指令，告诉Shiro“对于任何具有<code>loginUrl</code>属性的Shiro默认过滤器，我希望将属性值设置为<code>/login.jsp</code>“。</p> 
+ <p>这允许Shiro的默认<code>authc</code>过滤器(默认情况下，<code>FormAuthenticationFilter</code>)了解登录页面。 这是<code>FormAuthenticationFilter</code>正常工作所必需的。</p> 
+ <p><strong>[urls]部分</strong></p> 
+ <p><code>[urls]</code>部分是一个新的特定于web的INI部分。</p> 
+ <p>本部分允许您使用非常简洁的名称/值对语法来告诉shiro如何过滤任何给定URL路径的请求。 <code>[urls]</code>中的所有路径都是相对于Web应用程序的<a target="_blank" href="http://docs.oracle.com/javaee/1.3/api/javax/servlet/http/HttpServletRequest.html#getContextPath(">HttpServletRequest.getContextPath()</a>) 值。</p> 
+ <p>这些名称/值对提供了一种非常强大的方法来过滤请求，允许各种安全规则。 更深的URL和过滤器链的覆盖范围超出了本文档的范围，但如果你有兴趣，请阅读: <a target="_blank" href="http://shiro.apache.org/web.html#Web-%7B%7B%5Curls%5C%7D%7D">http://shiro.apache.org/web.html#Web-%7B%7B%5Curls%5C%7D%7D</a> 。</p> 
+ <p>现在，我们将介绍说明以下添加的两行：</p> 
+ <pre><code class="lang-bash">/login.jsp = authc
+/logout = logout
+</code></pre> 
+ <ul> 
+  <li>第一行表示“每当Shiro看到对<code>/login.jsp</code>的 URL 请求时，请求期间启用Shiro authc过滤器”。</li>
+  <li>第二行表示“每当Shiro看到对<code>/logout</code>的 URL 请求，请求期间启用Shiro <code>logout</code> 过滤器。</li>
+ </ul> 
+ <p>这两个过滤器有点特别：实际上不需要任何东西“在它们的后面”。他们实际上只是完全处理请求。没有任何东西可以处理这些URL - 因为没有编写任何控制器！ Shiro将根据需要处理请求。</p> 
+ <h3 id="h3-2-"><a name="2. 添加登录页面" class="reference-link"></a><span class="header-link octicon octicon-link"></span>2. 添加登录页面</h3>
+ <p>由于<strong>步骤3</strong>启用登录和注销支持，现在我们需要确保有一个<code>/login.jsp</code>页面来显示登录表单。</p> 
+ <p>在这个新的<code>src/main/webapp/login.jsp</code>页面中。 这是一个简单的引导主题的HTML登录页面，它有四个重要的事情：</p> 
+ <ol> 
+  <li>表单的操作值是空字符串。当表单没有操作值时，浏览器会将表单请求提交到同一个网址。 Shiro可以自动处理任何登录提交。<code>shiro.ini</code>中的<code>/login.jsp = authc</code>行是告诉<code>authc</code>过滤器处理提交的内容。</li>
+  <li>有一个用户名(<code>username</code>)表单字段。 Shiro <code>authc</code>过滤器将在登录提交期间自动查找用户名(<code>username</code>)请求参数，并将其用作登录期间的值(许多Realms允许这是电子邮件或用户名)。</li>
+  <li>有一个密码(<code>password</code>)表单字段。 Shiro <code>authc</code>过滤器将在登录提交期间自动查找密码请求参数。</li>
+  <li>有一个<code>rememberMe</code>复选框，其“选中”状态可以是“true”值(<code>true</code>，<code>t</code>，<code>1</code>，<code>enabled</code>，<code>y</code>，<code>yes</code>或<code>open</code>)。</li>
+ </ol> 
+ <p><code>login.jsp</code>中的表单只使用默认的:用户名，密码和rememberMe表单字段名。 如果想要更改这些名称，可以配置这些名称 - 有关更改配置信息，请参阅<a target="_blank" href="http://shiro.apache.org/static/current/apidocs/org/apache/shiro/web/filter/authc/FormAuthenticationFilter.html" title="FormAuthenticationFilter JavaDoc">FormAuthenticationFilter JavaDoc</a>。</p> 
+ <h3 id="h3-3-webapp"><a name="3. 运行webapp" class="reference-link"></a><span class="header-link octicon octicon-link"></span>3. 运行webapp</h3>
+ <p>按照<strong>步骤1</strong>和<strong>步骤2</strong>中的指定进行更改后，继续并运行Web应用程序：</p> 
+ <pre><code class="lang-bash">mvn jetty:run
+</code></pre> 
+ <h3 id="h3-4-"><a name="4. 尝试登录" class="reference-link"></a><span class="header-link octicon octicon-link"></span>4. 尝试登录</h3>
+ <p>使用Web浏览器，导航访问： localhost:8080/login.jsp ， 将看到新的登录表单。</p> 
+ <p>输入您在<strong>步骤2</strong>结束时创建的帐户的用户名和密码，然后点击“<strong>登录</strong>”。 如果登录成功，您将被定向到主页！ 如果登录失败，您将再次显示登录页面。</p>
+ <br>      
+</div></body></html>

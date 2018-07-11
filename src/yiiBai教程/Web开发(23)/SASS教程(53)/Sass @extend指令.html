@@ -1,0 +1,268 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Sass @extend指令</h1><div style="width:100%;float:left;" class="article-content">   
+ <div> 
+  <div>
+    @extend指令用于共享规则和选择器之间的关系。它可以扩展所有其他类的样式在一个类中，也可应用于自己特定的样式。以下是扩展的类型： 
+  </div> 
+ </div> 
+ <div> 
+  <table border="1" cellpadding="2" cellspacing="0" style="font-size:14px;color:#313131;font-family:Verdana, Geneva, Tahoma,  Helvetica, background-color:#F7F7F7;"> 
+   <tbody> 
+    <tr> 
+     <th style="border:1px solid #999999;background-color:#EEEEEE;"> 
+      <div style="background-color:inherit;">
+        类型和说明 
+      </div> </th> 
+     <th style="border:1px solid #999999;background-color:#EEEEEE;"> 语法 </th> 
+     <th style="border:1px solid #999999;background-color:#EEEEEE;"> 编译后代码 </th> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 
+      <div style="background-color:inherit;">
+        扩展复杂的选择器： 
+      </div> 
+      <div style="background-color:inherit;">
+        它可以仅由一个单一的元素或类选择器扩展选择器。 
+      </div> </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <pre>		h2{
+			font-size: 40px;
+		}
+		.container{
+			@extend h2
+		}
+	</pre> </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <pre>	h2, .container {
+		font-size: 40px;
+	}
+	</pre> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 
+      <div style="background-color:inherit;">
+        多个扩展: 
+      </div> 
+      <div style="background-color:inherit;">
+        一个以上的选择器可以由单个选择器进行扩展。 
+      </div> </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <pre>		.style{
+		font-size: 25px;
+		font-style: italic;
+		}
+
+		h2{
+		color: #61C8E1;
+		}
+
+		.container{
+		@extend .style;
+		@extend h2
+		}
+	</pre> </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <pre>	.style, .container {
+	  font-size: 25px;
+	  font-style: italic;
+	 }
+	h2, .container {
+  	  color: #61C8E1;
+  	}
+  	</pre> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 
+      <div style="background-color:inherit;">
+        链式扩展： 
+      </div> 
+      <div style="background-color:inherit;">
+        由第二选择器扩展第一选择器，和第二选择器被第三选择器扩展，因此这被称为链式扩展。 
+      </div> </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <pre>		.style{
+		font-size: 25px;
+		font-style: italic;
+		}
+
+		h2{
+		color: #61C8E1;
+		@extend .style
+		}
+
+		.container{
+		@extend h2
+		}
+	</pre> </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <pre>	.style, h2, .container {
+	font-size: 25px;
+	font-style: italic;
+	}
+	h2, .container {
+	color: #61C8E1;
+	}
+	</pre> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 
+      <div style="background-color:inherit;">
+        选择器序列： 
+      </div> 
+      <div style="background-color:inherit;">
+        嵌套选择器可以自己使用@extend。 
+      </div> 
+      <div style="background-color:inherit;">
+        合并选择器序列： 
+      </div> 
+      <div style="background-color:inherit;">
+        它合并两个序列，即一种序列扩展另一个序列其存在于其它序列。 
+      </div> </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <pre>		.style{
+		font-size: 25px;
+		font-style: italic;
+		color: #61C8E1;
+		}
+
+		h2 .container {
+		@extend .style
+		}
+	</pre> <pre>		.container .style a {
+		  font-weight: bold;
+		}
+		#id .example {
+		  @extend a;
+		}
+	</pre> </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <pre>	.style, h2 .container {
+	  font-size: 25px;
+	  font-style: italic;
+  	  color: #61C8E1;
+  	}
+	</pre> <pre>	.container .style a, .container .style #id
+	.example, #id .container .style .example {
+  	  font-weight: bold;
+  	}
+	</pre> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <b>@extend -&nbsp;</b><span style="font-size:inherit;line-height:1.5;">只有选择器</span><b><br> </b> 
+      <div style="background-color:inherit;">
+        它百分号(%)可以在任何地方使用ID或类，它可以防止自己的规则设置被渲染为CSS。 
+      </div> </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <pre>		.style a%extreme {
+		  font-size: 25px;
+		  font-style: italic;
+		  color: #61C8E1;
+		}
+
+		.container {
+		  @extend %extreme;
+		}
+	</pre> </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <pre>	.style a.container {
+	  font-size: 25px;
+	  font-style: italic;
+  	  color: #61C8E1;
+  	  }
+  	</pre> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <b>!optional 标志</b><br> 
+      <div style="background-color:inherit;">
+        !optional标志用来允许@extend不创造任何新的选择器。 
+      </div> </td> 
+     <td style="border:1px solid #999999;background-color:inherit;">   <pre>		h2.important {
+		  @extend .style !optional;
+		}
+	</pre> </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <pre>	A blank compile page gets display.
+	</pre> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <b>@extend在指令中</b><br> 
+      <div style="background-color:inherit;">
+        如果@extend使用了@media内部，那么它可以只扩展相同的指令块内存在的选择器。 
+      </div> </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <pre>		@media print {
+		  .style {
+			font-size: 25px;
+			font-style: italic;
+		  }
+		  .container {
+			@extend .style;
+			color: #61C8E1;
+		  }
+		}
+	</pre> </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <pre>	@media print {
+	  .style, .container {
+	    font-size: 25px;
+	    font-style: italic;
+	}
+	  .container {
+    	color: #61C8E1;
+    	}
+    }
+    </pre> </td> 
+    </tr> 
+   </tbody> 
+  </table> 
+  <h2> 示例 </h2> 
+  <div>
+    下面的例子演示了在SCSS文件使用@extend： 
+  </div> 
+  <h3> extend.html </h3> 
+  <pre>&lt;!doctype html&gt;
+&lt;head&gt;<span style="font-family:Monaco, Consolas, Courier, 'Lucida Console', monospace;line-height:1.5;">&lt;meta&nbsp;charset="UTF-8"&gt;</span> &lt;title&gt;扩展示例 -www.yiibai.com&lt;/title&gt;
+	&lt;link rel="stylesheet" href="extend.css" type="text/css" /&gt;
+&lt;/head&gt;
+&lt;body class="container"&gt;
+    &lt;h2&gt;扩展使用实例&lt;/h2&gt;
+    &lt;p class="style"&gt;Lorem Ipsum is simply dummy text of the printing and typesetting industry.&lt;/p&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre> 
+  <div>
+    接下来，创建文件extend.scss。 
+  </div> 
+  <h3> extend.scss </h3> 
+  <pre>.style{
+	font-size: 30px;
+	font-style: italic;
+}
+
+h2{
+	color: #787878;
+	@extend .style
+
+}
+.container{
+	@extend h2
+}</pre> 
+  <div style="background-color:inherit;">
+    可以告诉SASS监视文件，并随时使用下面的命令更新SASS文件来修改CSS： 
+  </div> 
+  <pre>sass --watch <span style="font-family:Monaco, Consolas, Courier, 'Lucida Console', monospace;line-height:1.5;">C:\Ruby22-x64</span><span style="font-family:Monaco, Consolas, Courier, 'Lucida Console', monospace;line-height:1.5;">\extend.scss:extend.css</span></pre> 
+  <div>
+    接着执行上面的命令，它会自动创建extend.css文件，如下面的代码： 
+  </div> 
+  <h3> extend.css </h3> 
+  <pre>.style, h2, .container {
+	font-size: 30px;
+	font-style: italic;
+ }
+
+h2, .container {
+	color: #787878;
+}</pre> 
+  <h2> 输出结果 </h2> 
+  <div>
+    让我们来执行以下步骤，看看上面的代码工作： 
+  </div> 
+  <ul> 
+   <li> 
+    <div>
+      保存上述的HTML代码到&nbsp;extend.html&nbsp;文件。 
+    </div> </li> 
+   <li> 
+    <div>
+      在浏览器中打开该HTML文件，得到输出如下显示。 
+    </div> </li> 
+  </ul> 
+ </div> 
+ <p> <img src="/uploads/tutorial/20151212/1-1512121KU52P.png" alt=""> </p>
+ <br>      
+</div></body></html>

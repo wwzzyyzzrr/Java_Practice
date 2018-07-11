@@ -1,0 +1,88 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Java对象相等比较(Equals)</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>以下代码显示如何实现<code>equals()</code>和<code>hashCode()</code>方法</p> 
+ <pre><code class="lang-java">class Point {
+  private int x;
+  private int y;
+
+  public Point(int x, int y) {
+    this.x = x;
+    this.y = y;
+  }
+
+  /* implement the equals() method */
+  public boolean equals(Object otherObject) {
+    // Are the same?
+    if (this == otherObject) {
+      return true;
+    }
+
+    // Is otherObject a null reference?
+    if (otherObject == null) {
+      return false;
+    }
+
+    // Do they belong to the same class?
+    if (this.getClass() != otherObject.getClass()) {
+      return false;
+    }
+
+    // Get the reference of otherObject in a SmartPoint variable
+    Point otherPoint = (Point) otherObject;
+
+    // Do they have the same x and y co-ordinates
+    boolean isSamePoint = (this.x == otherPoint.x &amp;&amp; this.y == otherPoint.y);
+
+    return isSamePoint;
+  }
+
+  /*
+   * implement hashCode() method of the Object class, which is a requirement
+   * when you implement equals() method
+   */
+  public int hashCode() {
+    return (this.x + this.y);
+  }
+}
+
+public class Main {
+  public static void main(String[] args) {
+    Point pt1 = new Point(10, 10);
+    Point pt2 = new Point(10, 10);
+    Point pt3 = new Point(12, 19);
+    Point pt4 = pt1;
+
+    System.out.println("pt1 == pt1: " + (pt1 == pt1));
+    System.out.println("pt1.equals(pt1): " + pt1.equals(pt1));
+
+    System.out.println("pt1 == pt2: " + (pt1 == pt2));
+    System.out.println("pt1.equals(pt2): " + pt1.equals(pt2));
+
+    System.out.println("pt1 == pt3: " + (pt1 == pt3));
+    System.out.println("pt1.equals(pt3): " + pt1.equals(pt3));
+
+    System.out.println("pt1 == pt4: " + (pt1 == pt4));
+    System.out.println("pt1.equals(pt4): " + pt1.equals(pt4));
+  }
+}
+</code></pre> 
+ <p>上面的代码生成以下结果。</p> 
+ <pre><code class="lang-java">pt1 == pt1: true
+pt1.equals(pt1): true
+pt1 == pt2: false
+pt1.equals(pt2): true
+pt1 == pt3: false
+pt1.equals(pt3): false
+pt1 == pt4: true
+pt1.equals(pt4): true
+</code></pre> 
+ <p>这里是<code>equals()</code>方法实现的规范。 假设<code>x</code>，<code>y</code>和<code>z</code>是三个对象的非空引用。</p> 
+ <ul> 
+  <li>自反性。 表达式<code>x.equals(x)</code>应该返回<code>true</code>。</li>
+  <li>对称性。 如果<code>x.equals(y)</code>返回<code>true</code>，那么<code>y.equals(x)</code>也必须返回<code>true</code>。</li>
+  <li>传递性。如果<code>x.equals(y)</code>返回<code>true</code>，那么<code>y.equals(z)</code>也返回<code>true</code>，则<code>x.equals(z)</code>必须返回<code>true</code>。</li>
+  <li>一致性。如果<code>x.equals(y)</code>返回<code>true</code>，它应该保持返回<code>true</code>，直到<code>x</code>或<code>y</code>的状态被修改。 如果<code>x.equals(y)</code>返回<code>false</code>，它应该保持返回<code>false</code>，直到<code>x</code>或<code>y</code>的状态被修改。</li>
+  <li>与<code>null</code>引用的比较：任何类的对象不应等于<code>null</code>引用。 表达式<code>x.equals(null)</code>应始终返回<code>false</code>。</li>
+  <li>与<code>hashCode()</code>方法的关系：如果<code>x.equals(y)</code>返回<code>true</code>，<code>x.hashCode()</code>必须返回与<code>y.hashCode()</code>相同的值。</li>
+ </ul>
+ <br>      
+</div></body></html>

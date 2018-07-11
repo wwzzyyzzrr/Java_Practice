@@ -1,0 +1,37 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">MVC框架 - 控制器</h1><div style="width:100%;float:left;" class="article-content">   
+ <p> Asp.net MVC控制器负责控制应用程序的执行流程。当你发出请求(指请求页)在MVC应用程序中，控制器负责返回响应这一请求。控制器可以有一个或多个动作。控制器的动作可以返回不同类型的操作结果到一个特定的请求。</p> 
+ <p> 控制器负责控制应用逻辑和充当视图和模型之间的协调器。控制器通过视图接收来自用户的输入，然后模型处理用户的数据和传递结果返回给视图。</p> 
+ <h2> 创建一个控制器</h2> 
+ <p> 要创建一个控制器，在MVC应用程序中创建一个空的MVC应用程序，然后右键单击控制器(Controller)文件夹，然后选择菜单选项Add-&gt;Controller。选择之后显示添加控制器对话框。命名为控制器DemoController。</p> 
+ <p> 控制器类文件将这样创建：</p> 
+ <img alt="mvc_new_controller" src="/uploads/allimg/150531/0P4433220-0.jpg" style="box-sizing: border-box; vertical-align: middle; max-width: 100%; display: block; margin-left: auto; margin-right: auto; padding-bottom: 4px; color: rgb(49, 49, 49);  font-size: 14px; line-height: 22px;"> 
+ <h2> 创建一个带有Icontroller的控制器</h2> 
+ <p> 在MVC框架，控制器类必须实现从System.Web.Mvc命名空间中的IController接口。</p> 
+ <pre class="prettyprint" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+public interface IController 
+{
+void Execute(RequestContext requestContext);
+}</pre> 
+ <p> 这是一个非常简单的接口。唯一的方法，执行，在调用时的请求是针对控制器类。所述MVC框架知道哪个控制器类已被定位于一个请求，通过读取路由数据生成控制器属性的值。</p> 
+ <img alt="add_new_contoller_class" src="/uploads/allimg/150531/0P443L00-1.jpg" style="box-sizing: border-box; vertical-align: middle; max-width: 100%; display: block; margin-left: auto; margin-right: auto; padding-bottom: 4px; color: rgb(49, 49, 49);  font-size: 14px; line-height: 22px;"> 
+ <p> 添加一个新的类文件，并将其命名为DemoCustomController。现在修改这个类来继承IController接口。</p> 
+ <img alt="contoller_using_icontroller" src="/uploads/allimg/150531/0P4432458-2.jpg" style="box-sizing: border-box; vertical-align: middle; max-width: 100%; display: block; margin-left: auto; margin-right: auto; padding-bottom: 4px; color: rgb(49, 49, 49);  font-size: 14px; line-height: 22px;"> 
+ <p> 复制下面的代码到这一个类中：</p>   
+ <pre class="prettyprint" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+public class DemoCustomController:IController
+    {
+        public void Execute(System.Web.Routing.RequestContext requestContext)
+        {
+            var controller = (string)requestContext.RouteData.Values["controller"];
+            var action = (string)requestContext.RouteData.Values["action"];
+            requestContext.HttpContext.Response.Write(
+            string.Format("Controller: {0}, Action: {1}", controller, action));
+        }
+    }</pre> 
+ <p> 现在，当运行应用程序，会看到这样的结果：</p> 
+ <img alt="call_demo_controller" src="/uploads/allimg/150531/0P4435G6-3.jpg" style="box-sizing: border-box; vertical-align: middle; max-width: 100%; display: block; margin-left: auto; margin-right: auto; padding-bottom: 4px; color: rgb(49, 49, 49);  font-size: 14px; line-height: 22px;"> 
+ <div>
+   &nbsp;
+ </div> 
+ <br>      
+</div></body></html>

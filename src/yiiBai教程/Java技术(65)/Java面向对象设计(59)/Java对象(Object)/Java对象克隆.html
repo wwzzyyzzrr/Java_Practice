@@ -1,0 +1,224 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Java对象克隆</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>Java不提供克隆(复制)对象的自动机制。克隆对象意味着逐位复制对象的内容。要支持克隆操作，请在类中实现<code>clone()</code>方法。<code>Object</code>类中的<code>clone()</code>方法的声明如下：</p> 
+ <pre><code class="lang-java">protected  Object clone()  throws   CloneNotSupportedException
+</code></pre> 
+ <p><code>clone()</code>方法声明为<code>protected</code>。 因此，不能从客户端代码调用它。以下代码无效：</p> 
+ <pre><code class="lang-java">Object obj  = new Object();
+Object clone = obj.clone(); // Error. Cannot  access protected clone() method
+</code></pre> 
+ <p>需要在类中声明<code>clone()</code>方法为<code>public</code>来克隆类的对象。<br>它的返回类型是<code>Object</code>。 这意味着将需要使用<code>clone()</code>方法转换返回值。<br>假设<code>MyClass</code>是可克隆的。 克隆代码将如下所示</p> 
+ <pre><code class="lang-java">MyClass mc  = new MyClass();
+MyClass clone = (MyClass)mc.clone(); // Need to use  a  cast
+</code></pre> 
+ <p><code>Object</code>类中的<code>clone()</code>方法会抛出<code>CloneNotSupportedException</code>。要调用<code>clone()</code>方法，需要将调用放在<code>try-catch</code>块中，或者重新抛出异常。</p> 
+ <h2 id="h2-u793Au4F8B"><a name="示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例</h2>
+ <p>以下代码显示了如何实现克隆方法。</p> 
+ <pre><code class="lang-java">class MyClass implements Cloneable {
+  private double value;
+  public MyClass(double value) {
+    this.value = value;
+  }
+
+  public void setValue(double value) {
+    this.value = value;
+  }
+
+  public double getValue() {
+    return this.value;
+  }
+
+  public Object clone() {
+    MyClass copy = null;
+    try {
+      copy = (MyClass) super.clone();
+    } catch (CloneNotSupportedException e) {
+      e.printStackTrace();
+    }
+    return copy;
+  }
+}
+
+public class Main {
+  public static void main(String[] args) {
+    MyClass dh = new MyClass(100.00);
+
+    MyClass dhClone = (MyClass) dh.clone();
+
+    System.out.println("Original:" + dh.getValue());
+    System.out.println("Clone :" + dhClone.getValue());
+
+    dh.setValue(100.00);
+    dhClone.setValue(200.00);
+
+    System.out.println("Original:" + dh.getValue());
+    System.out.println("Clone :" + dhClone.getValue());
+  }
+}
+</code></pre> 
+ <p>上面的代码生成以下结果。</p> 
+ <pre><code class="lang-java">Original:100.0
+Clone :100.0
+Original:100.0
+Clone :200.0
+</code></pre> 
+ <h2 id="h2--2"><a name="实例-2" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实例-2</h2>
+ <p>以下代码不从<code>clone()</code>方法返回对象类型，该方法仅在Java5或更高版本中编译。</p> 
+ <pre><code class="lang-java">class MyClass  implements Cloneable  {
+    public MyClass clone()  { 
+       Object copy  = null;
+       return  (MyClass)copy;
+    }
+}
+</code></pre> 
+ <p>下面的代码展示了如何做浅克隆。</p> 
+ <pre><code class="lang-java">class MyClass implements Cloneable {
+  private double value;
+
+  public MyClass(double value) {
+    this.value = value;
+  }
+
+  public void setValue(double value) {
+    this.value = value;
+  }
+
+  public double getValue() {
+    return this.value;
+  }
+
+  public Object clone() {
+    MyClass copy = null;
+    try {
+      copy = (MyClass) super.clone();
+    } catch (CloneNotSupportedException e) {
+      e.printStackTrace();
+    }
+    return copy;
+  }
+}
+
+class ShallowClone implements Cloneable {
+  private MyClass holder = new MyClass(0.0);
+
+  public ShallowClone(double value) {
+    this.holder.setValue(value);
+  }
+
+  public void setValue(double value) {
+    this.holder.setValue(value);
+  }
+
+  public double getValue() {
+    return this.holder.getValue();
+  }
+
+  public Object clone() {
+    ShallowClone copy = null;
+    try {
+      copy = (ShallowClone) super.clone();
+    } catch (CloneNotSupportedException e) {
+      e.printStackTrace();
+    }
+    return copy;
+  }
+}
+
+public class Main {
+  public static void main(String[] args) {
+    ShallowClone sc = new ShallowClone(100.00);
+    ShallowClone scClone = (ShallowClone) sc.clone();
+
+    System.out.println("Original:" + sc.getValue());
+    System.out.println("Clone :" + scClone.getValue());
+
+    sc.setValue(200.00);
+
+    System.out.println("Original:" + sc.getValue());
+    System.out.println("Clone :" + scClone.getValue());
+  }
+}
+</code></pre> 
+ <p>上面的代码生成以下结果。</p>   
+ <pre><code class="lang-java">Original:100.0
+Clone :100.0
+Original:200.0
+Clone :200.0
+</code></pre> 
+ <h2 id="h2--3"><a name="实例-3" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实例-3</h2>
+ <p><code>ShallowClone</code>类的<code>clone()</code>方法中的代码与<code>MyClass</code>类的<code>clone()</code>方法相同。当<code>ShallowClone</code>类使用<code>super.clone()</code>调用<code>Object</code>类的<code>clone()</code>方法时，它会接收自身的浅拷贝。也就是说，它与其克隆共享其实例变量中使用的<code>DoubleHolder</code>对象。</p> 
+ <p>在深克隆中，需要克隆对象的所有引用实例变量。</p> 
+ <pre><code class="lang-java">class MyClass implements Cloneable {
+  private double value;
+
+  public MyClass(double value) {
+    this.value = value;
+  }
+
+  public void setValue(double value) {
+    this.value = value;
+  }
+
+  public double getValue() {
+    return this.value;
+  }
+
+  public Object clone() {
+    MyClass copy = null;
+    try {
+      copy = (MyClass) super.clone();
+    } catch (CloneNotSupportedException e) {
+      e.printStackTrace();
+    }
+    return copy;
+  }
+}
+
+class DeepClone implements Cloneable {
+  private MyClass holder = new MyClass(0.0);
+
+  public DeepClone(double value) {
+    this.holder.setValue(value);
+  }
+
+  public void setValue(double value) {
+    this.holder.setValue(value);
+  }
+
+  public double getValue() {
+    return this.holder.getValue();
+  }
+  public Object clone() {
+    DeepClone copy = null;
+    try {
+      copy = (DeepClone) super.clone();
+      copy.holder = (MyClass) this.holder.clone();
+    } catch (CloneNotSupportedException e) {
+      e.printStackTrace();
+    }
+    return copy;
+  }
+}
+
+public class Main {
+  public static void main(String[] args) {
+    DeepClone sc = new DeepClone(100.00);
+    DeepClone scClone = (DeepClone) sc.clone();
+
+    System.out.println("Original:" + sc.getValue());
+    System.out.println("Clone :" + scClone.getValue());
+
+    sc.setValue(200.00);
+
+    System.out.println("Original:" + sc.getValue());
+    System.out.println("Clone :" + scClone.getValue());
+  }
+}
+</code></pre> 
+ <p>执行上面的代码，将生成以下结果 - </p> 
+ <pre><code class="lang-java">Original:100.0
+Clone :100.0
+Original:200.0
+Clone :100.0
+</code></pre>
+ <br>      
+</div></body></html>

@@ -1,0 +1,194 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">diff命令</h1><div style="width:100%;float:left;" class="article-content">   
+ <p><strong>diff命令</strong>是 linux上非常重要的工具，用于比较文件的内容，特别是比较两个版本不同的文件以找到改动的地方。<code>diff</code>在命令行中打印每一个行的改动。最新版本的<code>diff</code>还支持二进制文件。<code>diff</code>程序的输出被称为补丁 (patch)，因为Linux系统中还有一个patch程序，可以根据<code>diff</code>的输出将<code>a.c</code>的文件内容更新为<code>b.c</code>。<code>diff</code>是svn、cvs、git等版本控制工具不可或缺的一部分。</p> 
+ <h2 id="h2-1-"><a name="1．命令格式" class="reference-link"></a><span class="header-link octicon octicon-link"></span>1．命令格式</h2>
+ <p>diff[参数][文件1或目录1][文件2或目录2]</p> 
+ <h2 id="h2-2-"><a name="2．命令功能" class="reference-link"></a><span class="header-link octicon octicon-link"></span>2．命令功能</h2>
+ <p><code>diff</code>命令能比较单个文件或者目录内容。如果指定比较的是文件，则只有当输入为文本文件时才有效。以逐行的方式，比较文本文件的异同处。如果指定比较的是目录的的时候，<code>diff</code> 命令会比较两个目录下名字相同的文本文件。列出不同的二进制文件、公共子目录和只在一个目录出现的文件。</p> 
+ <h2 id="h2-3-"><a name="3．命令参数" class="reference-link"></a><span class="header-link octicon octicon-link"></span>3．命令参数</h2>
+ <ul> 
+  <li><code>-</code> 　指定要显示多少行的文本。此参数必须与-c或-u参数一并使用。</li>
+  <li><code>-a</code>或<code>--text</code> diff预设只会逐行比较文本文件。</li>
+  <li><code>-b</code>或<code>--ignore-space-change</code> 　不检查空格字符的不同。</li>
+  <li><code>-B</code>或<code>--ignore-blank-lines</code> 　不检查空白行。</li>
+  <li><code>-c</code> 　显示全部内文，并标出不同之处。</li>
+  <li><code>-C</code>或<code>--context</code> 　与执行”-c-“指令相同。</li>
+  <li><code>-d</code>或<code>--minimal</code> 　使用不同的演算法，以较小的单位来做比较。</li>
+  <li><code>-D</code>或<code>ifdef</code> 　此参数的输出格式可用于前置处理器巨集。</li>
+  <li><code>-e</code>或<code>--ed</code> 　此参数的输出格式可用于ed的script文件。</li>
+  <li><code>-f</code>或<code>-forward-ed</code> 　输出的格式类似ed的script文件，但按照原来文件的顺序来显示不同处。</li>
+  <li><code>-H</code>或<code>--speed-large-files</code> 　比较大文件时，可加快速度。</li>
+  <li><code>-l</code>或<code>--ignore-matching-lines</code> 　若两个文件在某几行有所不同，而这几行同时都包含了选项中指定的字符或字符串，则不显示这两个文件的差异。</li>
+  <li><code>-i</code>或<code>--ignore-case</code> 　不检查大小写的不同。</li>
+  <li><code>-l</code>或<code>--paginate</code> 　将结果交由pr程序来分页。</li>
+  <li><code>-n</code>或<code>--rcs</code> 　将比较结果以RCS的格式来显示。</li>
+  <li><code>-N</code>或<code>--new-file</code> 　在比较目录时，若文件A仅出现在某个目录中，预设会显示：Only in目录：文件A若使用-N参数，则diff会将文件A与一个空白的文件比较。</li>
+  <li><code>-p</code> 　若比较的文件为C语言的程序码文件时，显示差异所在的函数名称。</li>
+  <li><code>-P</code>或<code>--unidirectional-new-file</code> 　与-N类似，但只有当第二个目录包含了一个第一个目录所没有的文件时，才会将这个文件与空白的文件做比较。</li>
+  <li><code>-q</code>或<code>--brief</code> 　仅显示有无差异，不显示详细的信息。</li>
+  <li><code>-r</code>或<code>--recursive</code> 　比较子目录中的文件。</li>
+  <li><code>-s</code>或<code>--report-identical-files</code> 　若没有发现任何差异，仍然显示信息。</li>
+  <li><code>-S</code>或<code>--starting-file</code> 　在比较目录时，从指定的文件开始比较。</li>
+  <li><code>-t</code>或<code>--expand-tabs</code> 　在输出时，将tab字符展开。</li>
+  <li><code>-T</code>或<code>--initial-tab</code> 　在每行前面加上tab字符以便对齐。</li>
+  <li><code>-u</code>,<code>-U</code>或<code>--unified=</code> 　以合并的方式来显示文件内容的不同。</li>
+  <li><code>-v</code>或<code>--version</code> 　显示版本信息。</li>
+  <li><code>-w</code>或<code>--ignore-all-space</code> 　忽略全部的空格字符。</li>
+  <li><code>-W</code>或<code>--width</code> 　在使用-y参数时，指定栏宽。</li>
+  <li><code>-x</code>或<code>--exclude</code> 　不比较选项中所指定的文件或目录。</li>
+  <li><code>-X</code>或<code>--exclude-from</code> 　您可以将文件或目录类型存成文本文件，然后在=中指定此文本文件。</li>
+  <li><code>-y</code>或<code>--side-by-side</code> 　以并列的方式显示文件的异同之处。</li>
+  <li><code>--help</code> 　显示帮助。</li>
+  <li><code>--left-column</code> 　在使用-y参数时，若两个文件某一行内容相同，则仅在左侧的栏位显示该行内容。</li>
+  <li><code>--suppress-common-lines</code> 　在使用<code>-y</code>参数时，仅显示不同之处。</li>
+ </ul> 
+ <h2 id="h2-4-"><a name="4．使用实例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>4．使用实例</h2>
+ <h3 id="h3--1-"><a name="实例1：比较两个文件" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实例1：比较两个文件</h3>
+ <p>命令执行和输出：</p> 
+ <pre><code class="lang-shell">[yiibai@localhost ~]$ cat file1.txt
+1001
+1002
+1003
+[yiibai@localhost ~]$ cat file2.txt
+1001
+1002
+1003a
+1004
+[yiibai@localhost ~]$ diff file1.txt file2.txt
+3c3,4
+&lt; 1003
+---
+&gt; 1003a
+&gt; 1004
+[yiibai@localhost ~]$
+</code></pre> 
+ <p>说明：<br>上面的“<code>3c3,4</code>”表示<code>file1.txt</code>和<code>file2.txt</code>文件在3行和第4行内容有所不同；<br><code>diff</code> 的 normal 显示格式有三种提示:</p> 
+ <ul> 
+  <li>a - add</li>
+  <li>c - change</li>
+  <li>d - delete </li>
+ </ul> 
+ <h3 id="h3--2-"><a name="实例2：并排格式输出" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实例2：并排格式输出</h3>
+ <p>两个文件的每一行对比输出<br>命令：</p> 
+ <pre><code class="lang-shell">diff file1.txt file2.txt  -y -W 50
+</code></pre> 
+ <p>输出：</p> 
+ <pre><code class="lang-shell">[yiibai@localhost ~]$ diff file1.txt file2.txt  -y -W 50
+1001                    1001
+1002                    1002
+1003                  | 1003a
+                      &gt; 1004
+[yiibai@localhost ~]$
+</code></pre> 
+ <p>说明：</p> 
+ <ul> 
+  <li>“<code>|</code>”表示前后<code>2</code>个文件内容有不同</li>
+  <li>“<code>&lt;</code>”表示后面文件比前面文件少了<code>1</code>行内容</li>
+  <li>“<code>&gt;</code>”表示后面文件比前面文件多了<code>1</code>行内容</li>
+ </ul> 
+ <h3 id="h3--3-"><a name="实例3：上下文输出格式" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实例3：上下文输出格式</h3>
+ <p>命令：</p>   
+ <pre><code class="lang-shell">diff file1.txt file2.txt   -c
+</code></pre> 
+ <p>输出：</p> 
+ <pre><code class="lang-shell">[yiibai@localhost ~]$ diff file1.txt file2.txt   -c
+*** file1.txt   2017-02-23 20:34:51.752009952 -0500
+--- file2.txt   2017-02-23 20:35:12.590809278 -0500
+***************
+*** 1,3 ****
+  1001
+  1002
+! 1003
+--- 1,4 ----
+  1001
+  1002
+! 1003a
+! 1004
+[yiibai@localhost ~]$
+</code></pre> 
+ <h3 id="h3--4-"><a name="实例4：统一格式输出" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实例4：统一格式输出</h3>
+ <p>命令：</p> 
+ <pre><code class="lang-shell">diff file1.txt file2.txt  -u
+</code></pre> 
+ <p>输出：</p> 
+ <pre><code class="lang-shell">[yiibai@localhost ~]$ diff file1.txt file2.txt  -u
+--- file1.txt   2017-02-23 20:34:51.752009952 -0500
++++ file2.txt   2017-02-23 20:35:12.590809278 -0500
+@@ -1,3 +1,4 @@
+ 1001
+ 1002
+-1003
++1003a
++1004
+[yiibai@localhost ~]$
+</code></pre> 
+ <p><strong>说明：</strong><br>它的第一部分，也是文件的基本信息：</p> 
+ <pre><code class="lang-shell">--- file1.txt   2017-02-23 20:34:51.752009952 -0500
++++ file2.txt   2017-02-23 20:35:12.590809278 -0500
+</code></pre> 
+ <p>“<code>---"</code>表示变动前的文件，”<code>+++</code>“表示变动后的文件。<br>第二部分，变动的位置用两个@作为起首和结束。<br><code>@@ -1,3 +1,4 @@</code><br>前面的”<code>-1,3</code>“分成三个部分：减号表示第一个文件(即file1.txt)，”<code>1</code>“表示第<code>1</code>行，”3”表示连续<code>3</code>行。合在一起，就表示下面是第一个文件从第<code>1</code>行开始的连续<code>3</code>行。同样的，”<code>+1,4</code>“表示变动后，成为第二个文件从第<code>1</code>行开始的连续<code>4</code>行。</p> 
+ <h3 id="h3--5-"><a name="实例5：比较文件夹不同" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实例5：比较文件夹不同</h3>
+ <p>命令：</p> 
+ <pre><code class="lang-shell">diff  test4 test5
+</code></pre> 
+ <p>输出：</p> 
+ <pre><code class="lang-shell">[yiibai@localhost ~]$ ll test4/
+total 4
+-rw-rw-r-- 2 yiibai yiibai 559 Feb 23 20:13 newlog.log
+[yiibai@localhost ~]$ ll test5/
+total 16
+-rw-rw-r-- 1 yiibai yiibai  15 Feb 23 20:48 file1.txt
+-rw-rw-r-- 1 yiibai yiibai  21 Feb 23 20:48 file2.txt
+-rw-rw-r-- 1 yiibai yiibai 559 Feb 23 20:47 newlog.log
+-rw-rw-r-- 1 yiibai yiibai  12 Feb 23 20:47 run.py
+[yiibai@localhost ~]$ diff  test4 test5
+Only in test5: file1.txt
+Only in test5: file2.txt
+Only in test5: run.py
+[yiibai@localhost ~]$
+</code></pre> 
+ <h3 id="h3--6-"><a name="实例6：比较两个文件不同，并生产补丁" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实例6：比较两个文件不同，并生产补丁</h3>
+ <p>命令：</p> 
+ <pre><code class="lang-shell">diff -ruN file1.txt file2.txt &gt; patch.txt
+</code></pre> 
+ <p>输出：</p> 
+ <pre><code class="lang-shell">[yiibai@localhost ~]$ diff -ruN file1.txt file2.txt &gt; patch.txt
+[yiibai@localhost ~]$ cat patch.txt
+--- file1.txt   2017-02-23 20:34:51.752009952 -0500
++++ file2.txt   2017-02-23 20:35:12.590809278 -0500
+@@ -1,3 +1,4 @@
+ 1001
+ 1002
+-1003
++1003a
++1004
+[yiibai@localhost ~]$
+</code></pre> 
+ <h3 id="h3--7-"><a name="实例7：打补丁" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实例7：打补丁</h3>
+ <p>现在，要使用 <code>file1.txt</code> 文件的内容与 <code>file2.txt</code> 文件的内容一样，命令执行和输出：</p> 
+ <pre><code class="lang-shell">[yiibai@localhost ~]$ cat file1.txt
+1001
+1002
+1003
+[yiibai@localhost ~]$ cat file2.txt
+1001
+1002
+1003a
+1004
+[yiibai@localhost ~]$ diff -ruN file1.txt file2.txt &gt; patch.txt
+[yiibai@localhost ~]$ patch file1.txt patch.txt
+patching file file1.txt
+[yiibai@localhost ~]$ cat file1.txt
+1001
+1002
+1003a
+1004
+[yiibai@localhost ~]$ cat file2.txt
+1001
+1002
+1003a
+1004
+[yiibai@localhost ~]$
+</code></pre> 
+ <p>现在可以看到 <code>file1.txt</code> 与 <code>file2.txt</code> 文件的内容一样了。</p>
+ <br>      
+</div></body></html>

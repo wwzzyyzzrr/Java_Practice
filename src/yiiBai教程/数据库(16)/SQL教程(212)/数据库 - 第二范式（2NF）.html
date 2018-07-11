@@ -1,0 +1,43 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">数据库 - 第二范式（2NF）</h1><div style="width:100%;float:left;" class="article-content">   
+ <p> 第二范式指出，它应满足所有1NF的规则，必须有任意列不依赖主键关系：</p> 
+ <p> 考虑客户订单的关系，你想存储客户ID，客户名称，订单ID和订单的细节，以及购买日期：</p> 
+ <pre class="prettyprint prettyprinted" style="border-radius: 0px; font-size: 12px; overflow: auto;">
+<span class="pln" style="margin: 0px; padding: 0px;">CREATE TABLE CUSTOMERS</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="pln" style="margin: 0px; padding: 0px;">
+       CUST_ID    INT              NOT NULL</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">,</span><span class="pln" style="margin: 0px; padding: 0px;">
+       CUST_NAME VARCHAR </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">20</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">)</span><span class="pln" style="margin: 0px; padding: 0px;">      NOT NULL</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">,</span><span class="pln" style="margin: 0px; padding: 0px;">
+       ORDER_ID   INT              NOT NULL</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">,</span><span class="pln" style="margin: 0px; padding: 0px;">
+       ORDER_DETAIL VARCHAR </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">20</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">)</span><span class="pln" style="margin: 0px; padding: 0px;">  NOT NULL</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">,</span><span class="pln" style="margin: 0px; padding: 0px;">
+       SALE_DATE  DATETIME</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">,</span><span class="pln" style="margin: 0px; padding: 0px;">
+       PRIMARY KEY </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="pln" style="margin: 0px; padding: 0px;">CUST_ID</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">,</span><span class="pln" style="margin: 0px; padding: 0px;"> ORDER_ID</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">)</span><span class="pln" style="margin: 0px; padding: 0px;">
+</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">);</span></pre> 
+ <p> 此表是第一范式，因为它遵循了第一范式的所有规则。在该表中，主键由CUST_ID和ORDERID组成。 它们是唯一的，假设同一客户将很难订购同样的东西。</p> 
+ <p> 然而，该表不是在第二范式，因为有主键和列的部分相关性。CUST_NAME依赖于CUST_ID，并有一个客户的名字和他所购买之间没有真正的联系。订单细节和购买日期也取决于ORDERID，但他们不依赖于CUST_ID，因为有一个CUST_ID和订单的详细信息或SALE_DATE之间没有联系。</p> 
+ <p> 为了使这个表符合第二范式，需要的列分在三个表。</p> 
+ <p> 首先，创建一个表来存储客户的详细信息如下：</p> 
+ <pre class="prettyprint prettyprinted" style="border-radius: 0px; font-size: 12px; overflow: auto;">
+<span class="pln" style="margin: 0px; padding: 0px;">CREATE TABLE CUSTOMERS</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="pln" style="margin: 0px; padding: 0px;">
+       CUST_ID    INT              NOT NULL</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">,</span><span class="pln" style="margin: 0px; padding: 0px;">
+       CUST_NAME VARCHAR </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">20</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">)</span><span class="pln" style="margin: 0px; padding: 0px;">      NOT NULL</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">,</span><span class="pln" style="margin: 0px; padding: 0px;">
+       PRIMARY KEY </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="pln" style="margin: 0px; padding: 0px;">CUST_ID</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">)</span><span class="pln" style="margin: 0px; padding: 0px;">
+</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">);</span></pre> 
+ <p> 接下来，创建一个表来存储每个订单的详细信息：</p> 
+ <div style="float:left;margin-bottom: 10px;">  
+ </div>
+ <div style="float:left;margin-bottom: 10px;">  
+ </div>  
+ <pre class="prettyprint prettyprinted" style="border-radius: 0px; font-size: 12px; overflow: auto;">
+<span class="pln" style="margin: 0px; padding: 0px;">CREATE TABLE ORDERS</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="pln" style="margin: 0px; padding: 0px;">
+       ORDER_ID   INT              NOT NULL</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">,</span><span class="pln" style="margin: 0px; padding: 0px;">
+       ORDER_DETAIL VARCHAR </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">20</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">)</span><span class="pln" style="margin: 0px; padding: 0px;">  NOT NULL</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">,</span><span class="pln" style="margin: 0px; padding: 0px;">
+       PRIMARY KEY </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="pln" style="margin: 0px; padding: 0px;">ORDER_ID</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">)</span><span class="pln" style="margin: 0px; padding: 0px;">
+</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">);</span></pre> 
+ <p> 最后，创建第三个表存储只是CUST_ID和ORDER_ID让所有的客户订单可以跟踪：</p> 
+ <pre class="prettyprint prettyprinted" style="border-radius: 0px; font-size: 12px; overflow: auto;">
+<span class="pln" style="margin: 0px; padding: 0px;">CREATE TABLE CUSTMERORDERS</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="pln" style="margin: 0px; padding: 0px;">
+       CUST_ID    INT              NOT NULL</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">,</span><span class="pln" style="margin: 0px; padding: 0px;">
+       ORDER_ID   INT              NOT NULL</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">,</span><span class="pln" style="margin: 0px; padding: 0px;">
+       SALE_DATE  DATETIME</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">,</span><span class="pln" style="margin: 0px; padding: 0px;">
+       PRIMARY KEY </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="pln" style="margin: 0px; padding: 0px;">CUST_ID</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">,</span><span class="pln" style="margin: 0px; padding: 0px;"> ORDER_ID</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">)</span><span class="pln" style="margin: 0px; padding: 0px;">
+</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">);</span></pre> 
+ <br>      
+</div></body></html>

@@ -1,0 +1,69 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Cassandra更新数据</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>UPDATE命令用于更新Cassandra表中的数据。 如果在更新数据后看不到任何结果，则表示数据成功更新，否则将返回错误。 在更新Cassandra表中的数据时，通常使用以下关键字：</p> 
+ <ul> 
+  <li><code>Where</code>：WHERE子句用于选择要更新的行。</li>
+  <li><code>Set</code>：SET子句用于设置值。</li>
+  <li><code>Must</code>：它用于包括构成主键的所有列。</li>
+ </ul> 
+ <p>语法：</p> 
+ <pre><code class="lang-sql">UPDATE &lt;tablename&gt;  
+SET &lt;column name&gt; = &lt;new value&gt;  
+&lt;column name&gt; = &lt;value&gt;....  
+WHERE &lt;condition&gt;
+</code></pre> 
+ <p>又或者 - </p> 
+ <pre><code class="lang-sql">Update KeyspaceName.TableName   
+Set ColumnName1=new Column1Value,  
+      ColumnName2=new Column2Value,  
+      ColumnName3=new Column3Value,  
+       .  
+       .  
+       .  
+Where ColumnName=ColumnValue
+</code></pre> 
+ <blockquote> 
+  <p>注意：使用UPDATE命令并且给定的行可用时，UPDATE会创建一个新行。</p> 
+ </blockquote> 
+ <p><strong>示例：</strong></p> 
+ <p>我们举个例子来演示如何更新Cassandra表中的数据。 我们有一个名为“<code>student</code>”的表，其中列(<code>student_id</code>，<code>student_fees</code>，<code>student_name</code>)具有以下数据：</p> 
+ <pre><code class="lang-shell">cqlsh:yiibai_ks&gt; SELECT * FROM student;
+
+ student_id | student_fees | student_name
+------------+--------------+--------------
+          1 |         5000 |        Maxsu
+          2 |         3000 |        Minsu
+          3 |         2000 |       Modlee
+
+(3 rows)
+cqlsh:yiibai_ks&gt;
+</code></pre> 
+ <p>在这里，我们将<code>student_id</code>为<code>2</code>记录的<code>student_fees</code>的值更新为<code>10000</code>，<code>student_name</code>更新为<code>XunWang</code>。</p>   
+ <pre><code class="lang-sql">UPDATE student SET student_fees=10000,student_name='XunWang' WHERE student_id=2;
+</code></pre> 
+ <p>在执行上面语句之后，表已更新。 您可以使用SELECT命令验证它。</p> 
+ <pre><code class="lang-sql">SELECT * FROM student;
+</code></pre> 
+ <p>执行结果如下 -</p> 
+ <pre><code class="lang-sql">cqlsh:yiibai_ks&gt; SELECT * FROM student;
+
+ student_id | student_fees | student_name
+------------+--------------+--------------
+          1 |         5000 |        Maxsu
+          2 |         3000 |        Minsu
+          3 |         2000 |       Modlee
+
+(3 rows)
+cqlsh:yiibai_ks&gt; UPDATE student SET student_fees=10000,student_name='XunWang' WHERE student_id=2;
+cqlsh:yiibai_ks&gt; SELECT * FROM student;
+
+ student_id | student_fees | student_name
+------------+--------------+--------------
+          1 |         5000 |        Maxsu
+          2 |        10000 |      XunWang
+          3 |         2000 |       Modlee
+
+(3 rows)
+cqlsh:yiibai_ks&gt;
+</code></pre>
+ <br>      
+</div></body></html>

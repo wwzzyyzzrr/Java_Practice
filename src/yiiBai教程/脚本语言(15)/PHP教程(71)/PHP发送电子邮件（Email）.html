@@ -1,0 +1,115 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">PHP发送电子邮件（Email）</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>PHP <code>mail()</code>函数用于在PHP中发送电子邮件。 您可以使用PHP <code>mail()</code>函数来发送短信，HTML消息和附件与消息。</p> 
+ <h2 id="h2-php-mail-"><a name="PHP mail()函数" class="reference-link"></a><span class="header-link octicon octicon-link"></span>PHP mail()函数</h2>
+ <p><strong>语法</strong></p> 
+ <ul> 
+  <li><code>$to</code>：指定邮件的接收者或接收者。 接收器必须指定以下格式之一。
+   <ul> 
+    <li><a target="_blank" href="mailto:user@example.com"></a><a target="_blank" href="mailto:user@example.com">user@example.com</a></li>
+    <li><a target="_blank" href="mailto:user@example.com"></a><a target="_blank" href="mailto:user@example.com">user@example.com</a>, <a target="_blank" href="mailto:anotheruser@example.com"></a><a target="_blank" href="mailto:anotheruser@example.com">anotheruser@example.com</a></li>
+    <li>User <a target="_blank" href="mailto:user@example.com">user@example.com</a></li>
+    <li>User <a target="_blank" href="mailto:user@example.com">user@example.com</a>, User2 <a target="_blank" href="mailto:anotheruser@example.com">anotheruser@example.com</a></li>
+   </ul> </li>
+  <li><code>$subject</code>: 代表邮件的主题。</li>
+  <li><code>$message</code>: 表示要发送的邮件的消息。</li>
+  <li><code>$additional_headers</code>(可选)：指定附加头，如<code>From</code>，<code>CC</code>，<code>BCC</code>等。额外的附加头也应该用CRLF(<code>\r\n</code>)分隔。</li>
+ </ul> 
+ <blockquote> 
+  <p>注意：消息的每一行应使用CRLF(<code>\r\n</code>)分隔，并且行不应大于<code>70</code>个字符。</p> 
+ </blockquote> 
+ <h2 id="h2-php-"><a name="PHP邮件示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>PHP邮件示例</h2>
+ <p><em>文件：mailer.php</em></p> 
+ <pre><code class="lang-php">&lt;?php  
+   ini_set("sendmail_from", "maxsujaiswal@yiibai.com");  
+   $to = "maxsujaiswal1987@gmail.com";//change receiver address  
+   $subject = "This is subject";  
+   $message = "This is simple text message.";  
+   $header = "From:maxsujaiswal@yiibai.com \r\n";  
+
+   $result = mail ($to,$subject,$message,$header);  
+
+   if( $result == true ){  
+      echo "Message sent successfully...";  
+   }else{  
+      echo "Sorry, unable to send mail...";  
+   }  
+?&gt;
+</code></pre> 
+ <p>如果在运行服务器上运行此代码，它将向指定的接收方发送电子邮件。</p> 
+ <h2 id="h2-php-html-"><a name="PHP邮件：发送HTML消息" class="reference-link"></a><span class="header-link octicon octicon-link"></span>PHP邮件：发送HTML消息</h2>
+ <p>要发送HTML消息，您需要在消息标题中提及<code>Content-type text/html</code>。</p> 
+ <pre><code class="lang-php">&lt;?php  
+   $to = "abc@example.com";//change receiver address  
+   $subject = "This is subject";  
+   $message = "&lt;h1&gt;This is HTML heading&lt;/h1&gt;";  
+
+   $header = "From:xyz@example.com \r\n";  
+   $header .= "MIME-Version: 1.0 \r\n";  
+   $header .= "Content-type: text/html;charset=UTF-8 \r\n";  
+
+   $result = mail ($to,$subject,$message,$header);  
+
+   if( $result == true ){  
+      echo "Message sent successfully...";  
+   }else{  
+      echo "Sorry, unable to send mail...";  
+   }  
+?&gt;
+</code></pre> 
+ <h2 id="h2-php-"><a name="PHP邮件：使用附件发送邮件" class="reference-link"></a><span class="header-link octicon octicon-link"></span>PHP邮件：使用附件发送邮件</h2>
+ <p>要使用附件发送消息，您需要提及许多标题信息，在下面给出的示例中使用。</p>   
+ <pre><code class="lang-php">&lt;?php  
+  $to = "abc@example.com";  
+  $subject = "This is subject";  
+  $message = "This is a text message.";  
+  # Open a file  
+  $file = fopen("/tmp/test.txt", "r" );//change your file location  
+  if( $file == false )  
+  {  
+     echo "Error in opening file";  
+     exit();  
+  }  
+  # Read the file into a variable  
+  $size = filesize("/tmp/test.txt");  
+  $content = fread( $file, $size);  
+
+  # encode the data for safe transit  
+  # and insert \r\n after every 76 chars.  
+  $encoded_content = chunk_split( base64_encode($content));  
+
+  # Get a random 32 bit number using time() as seed.  
+  $num = md5( time() );  
+
+  # Define the main headers.  
+  $header = "From:xyz@example.com\r\n";  
+  $header .= "MIME-Version: 1.0\r\n";  
+  $header .= "Content-Type: multipart/mixed; ";  
+  $header .= "boundary=$num\r\n";  
+  $header .= "--$num\r\n";  
+
+  # Define the message section  
+  $header .= "Content-Type: text/plain\r\n";  
+  $header .= "Content-Transfer-Encoding:8bit\r\n\n";  
+  $header .= "$message\r\n";  
+  $header .= "--$num\r\n";  
+
+  # Define the attachment section  
+  $header .= "Content-Type:  multipart/mixed; ";  
+  $header .= "name=\"test.txt\"\r\n";  
+  $header .= "Content-Transfer-Encoding:base64\r\n";  
+  $header .= "Content-Disposition:attachment; ";  
+  $header .= "filename=\"test.txt\"\r\n\n";  
+  $header .= "$encoded_content\r\n";  
+  $header .= "--$num--";  
+
+  # Send email now  
+  $result = mail ( $to, $subject, "", $header );  
+  if( $result == true ){  
+      echo "Message sent successfully...";  
+   }else{  
+      echo "Sorry, unable to send mail...";  
+   }  
+?&gt;
+</code></pre>
+ <br>      
+</div></body></html>

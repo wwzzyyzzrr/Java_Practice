@@ -1,0 +1,101 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Java聚合</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>聚合</p> 
+ <p>如果一个类有一个类的实体引用(类中的类)，则它称为聚合。 聚合表示<strong>HAS-A</strong>关系。<br>考虑有一种情况，<code>Employee</code>对象包含许多信息，例如：<code>id</code>，<code>name</code>，<code>emailId</code>等。它包含另一个类对象：<code>address</code>，其包含它自己的信息，例如：城市，州，国家，邮政编码等，如下所示。</p> 
+ <pre><code class="lang-java">class Employee{  
+    int id;  
+    String name;  
+    Address address;//Address is a class  
+    ...  
+}
+</code></pre> 
+ <p>在这种情况下，<code>Employee</code>有一个实体引用地址(<code>Address</code>)，因此关系是：<code>Employee HAS-A Address</code>。</p> 
+ <h2 id="h2--"><a name="为什么要使用聚合？" class="reference-link"></a><span class="header-link octicon octicon-link"></span>为什么要使用聚合？</h2>
+ <ul> 
+  <li>代码可重用性。</li>
+ </ul> 
+ <h3 id="h3-u805Au5408u7684u7B80u5355u793Au4F8B"><a name="聚合的简单示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>聚合的简单示例</h3>
+ <p><img src="http://www.yiibai.com/uploads/images/201703/0603/965100309_75158.jpg" alt=""></p> 
+ <p>在这个例子中，在<code>Circle</code>类中创建了<code>Operation</code>类的引用。</p> 
+ <pre><code class="lang-java">class Operation {
+    int square(int n) {
+        return n * n;
+    }
+}
+
+class Circle {
+    Operation op;// aggregation
+    double pi = 3.14;
+
+    double area(int radius) {
+        op = new Operation();
+        int rsquare = op.square(radius);// code reusability (i.e. delegates the
+                                        // method call).
+        return pi * rsquare;
+    }
+
+    public static void main(String args[]) {
+        Circle c = new Circle();
+        double result = c.area(5);
+        System.out.println(result);
+    }
+}
+</code></pre> 
+ <p>执行上面代码，得到以下结果 - </p> 
+ <pre><code class="lang-java">78.5
+</code></pre> 
+ <h3 id="h3--"><a name="何时使用聚合？" class="reference-link"></a><span class="header-link octicon octicon-link"></span>何时使用聚合？</h3>
+ <ul> 
+  <li>当没有<code>is-a</code>关系时，通过聚合也能最好地实现代码重用。</li>
+  <li>只有在所涉及的对象的整个生命周期内维持关系为<code>is-a</code>时，才应使用继承; 否则，聚合是最好的选择。</li>
+ </ul> 
+ <h3 id="h3-u7406u89E3u805Au5408u7684u4E00u4E2Au793Au4F8B"><a name="理解聚合的一个示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>　理解聚合的一个示例</h3>
+ <p>在此示例中，<code>Employee</code>中拥有<code>Address</code>对象，<code>address</code>对象包含其自己的信息，例如城市，州，国家等。在这种情况下，关系是员工(<code>Employee</code>)<code>HAS-A</code>地址(<code>Address</code>)。</p> 
+ <p><strong>Address.java</strong></p>   
+ <pre><code class="lang-java">public class Address {
+    String city, province;
+
+    public Address(String city, String province) {
+        this.city = city;
+        this.province = province;
+    }
+
+}
+</code></pre> 
+ <p><strong>Emp.java</strong></p> 
+ <pre><code class="lang-java">public class Emp {
+    int id;
+    String name;
+    Address address;
+
+    public Emp(int id, String name, Address address) {
+        this.id = id;
+        this.name = name;
+        this.address = address;
+    }
+
+    void display() {
+        System.out.println(id + " " + name);
+        System.out.println(address.city + " " + address.province);
+    }
+
+    public static void main(String[] args) {
+        Address address1 = new Address("广州", "广东");
+        Address address2 = new Address("海口", "海南");
+
+        Emp e = new Emp(111, "Wang", address1);
+        Emp e2 = new Emp(112, "Zhang", address2);
+
+        e.display();
+        e2.display();
+
+    }
+}
+</code></pre> 
+ <p>执行上面代码，得到以下结果 - </p> 
+ <pre><code class="lang-java">111 Wang
+广州 广东
+112 Zhang
+海口 海南
+</code></pre>
+ <br>      
+</div></body></html>

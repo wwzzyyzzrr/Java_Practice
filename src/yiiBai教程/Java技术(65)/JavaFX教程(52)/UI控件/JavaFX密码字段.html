@@ -1,0 +1,76 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">JavaFX密码字段</h1><div style="width:100%;float:left;" class="article-content">   
+ <p><code>PasswordField</code>用于密码输入。用户键入的字符通过显示回显字符串被隐藏。</p> 
+ <h2 id="h2-u521Bu5EFAu5BC6u7801u5B57u6BB5"><a name="创建密码字段" class="reference-link"></a><span class="header-link octicon octicon-link"></span>创建密码字段</h2>
+ <p>以下代码使用来自<code>PasswordField</code>类的默认构造函数创建一个密码字段，然后为密码字段设置提示消息文本。 提示消息在字段中显示为灰色文本，并为用户提供该字段是什么的提示，而不使用标签控件。</p> 
+ <pre><code class="lang-java">PasswordField passwordField = new PasswordField();
+passwordField.setPromptText("Your password");
+</code></pre> 
+ <p><code>PasswordField</code>类有<code>setText</code>方法来为控件设置文本字符串。对于密码字段，指定的字符串由回显字符隐藏。默认情况下，回显字符是一个点(或是星号)。</p> 
+ <p>密码字段中的值可以通过<code>getText()</code>方法获取。</p> 
+ <h2 id="h2-u793Au4F8B"><a name="示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例</h2>
+ <p>密码字段和操作侦听器，如下所示 - </p> 
+ <pre><code class="lang-java">import javafx.application.Application;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Group;
+import javafx.scene.Scene;
+import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.stage.Stage;
+
+public class Main extends Application {
+
+  final Label message = new Label("");
+
+  @Override
+  public void start(Stage stage) {
+    Group root = new Group();
+    Scene scene = new Scene(root, 260, 80);
+    stage.setScene(scene);
+    stage.setTitle("Password Field Sample");
+
+    VBox vb = new VBox();
+    vb.setPadding(new Insets(10, 0, 0, 10));
+    vb.setSpacing(10);
+    HBox hb = new HBox();
+    hb.setSpacing(10);
+    hb.setAlignment(Pos.CENTER_LEFT);
+
+    Label label = new Label("Password");
+    final PasswordField pb = new PasswordField();
+
+    pb.setOnAction(new EventHandler&lt;ActionEvent&gt;() {
+      @Override
+      public void handle(ActionEvent e) {
+        if (!pb.getText().equals("abc")) {
+          message.setText("Your password is incorrect!");
+          message.setTextFill(Color.web("red"));
+        } else {
+          message.setText("Your password has been confirmed");
+          message.setTextFill(Color.web("black"));
+        }
+        pb.setText("");
+      }
+    });
+
+    hb.getChildren().addAll(label, pb);
+    vb.getChildren().addAll(hb, message);
+
+    scene.setRoot(vb);
+    stage.show();
+  }
+
+  public static void main(String[] args) {
+    launch(args);
+  }
+}
+</code></pre> 
+ <p>上面的代码生成以下结果。</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201701/16/984150108_50255.png" alt=""></p>
+ <br>      
+</div></body></html>

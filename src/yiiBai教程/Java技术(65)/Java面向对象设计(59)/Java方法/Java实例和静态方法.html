@@ -1,0 +1,67 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Java实例和静态方法</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>类可以有两种类型的方法：实例方法和类方法。 实例方法和类方法也分别称为类的非静态方法和静态方法。</p> 
+ <p>实例方法用于实现类的实例的行为。 实例方法只能在类的实例的上下文中调用。类方法用于实现类本身的行为。类方法可在类的上下文中执行。</p> 
+ <p><code>static</code> 修饰符用于定义类方法。 方法声明中不使用<code>static</code>修饰符，那么该方法则是一个实例方法。</p> 
+ <h3 id="h3-u793Au4F8B"><a name="示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例</h3>
+ <p>以下是声明一些静态和非静态方法的示例：</p> 
+ <pre><code class="lang-java">// A  static or  class method， 使用了 `static` 修饰符
+static void  aClassMethod()  {
+
+}
+
+// A  non-static or  instance method  ， 未使用 `static` 修饰符
+void  anInstanceMethod()  {
+
+}
+</code></pre> 
+ <h3 id="h3-u6CE8u610F"><a name="注意" class="reference-link"></a><span class="header-link octicon octicon-link"></span>注意</h3>
+ <p>当调用类的静态方法时，类的实例可能不存在。 因此，不允许从静态方法内部引用实例变量。</p> 
+ <p>类定义一加载到内存中，类变量就存在。 类定义在创建类的第一个实例之前就加载到内存中。类方法或静态方法只能引用类的变量或类的静态变量。 实例方法或非静态方法可以引用类变量以及类的实例变量。</p> 
+ <p>以下代码演示了在方法中访问的类字段的类型。</p> 
+ <pre><code class="lang-java">public class Main {
+  static int m = 100; // A static variable
+  int n = 200; // An instance variable
+
+  // Declare a static method
+  static void printM() {
+
+    /*
+     * We can refer to only static variable m in this method because you are
+     * inside a static method
+     */
+    System.out.println("printM() - m   = " + m);
+    // 注意这里边不能访问 实例变量 - n
+  }
+
+  // Declare an instance method
+  void printMN() {
+    /* We can refer to both static and instance variables m and n in this method */
+    System.out.println("printMN() - m   = " + m);
+    System.out.println("printMN() - n  = " + n);
+  }
+}
+</code></pre> 
+ <h3 id="h3-u8C03u7528u65B9u6CD5"><a name="调用方法" class="reference-link"></a><span class="header-link octicon octicon-link"></span>调用方法</h3>
+ <p>在方法的主体中执行代码称为调用方法。实例方法和类方法是以不同方式调用。使用点表示法在类的实例上调用实例方法。</p>   
+ <pre><code class="lang-java">&lt;instance reference&gt;.&lt;instance method name&gt;(&lt;actual parameters&gt;)
+</code></pre> 
+ <p>在调用类的实例方法之前，必须先引用一个类的实例（或创建一个类实例）。</p> 
+ <p>以下代码显示如何调用<code>Main</code>类的<code>printMN（）</code>实例方法：</p> 
+ <pre><code class="lang-java">// Create an  instance of  Main class  and
+// store its  reference in mt reference variable
+Main mt = new Main();
+
+// Invoke  the   printMN() instance  method  using the   mt reference variable 
+mt.printMN();
+</code></pre> 
+ <p>要调用类方法，请使用带有名称的点(<code>.</code>)表示法。下面的代码调用<code>Main</code>类的<code>printM（）</code>类方法：</p> 
+ <pre><code class="lang-java">// Invoke  the   printM() class  method
+Main.printM();
+</code></pre> 
+ <p>属于一个类的属性也属于该类的所有实例。因此也可以使用该类的实例的引用来调用类方法。</p> 
+ <pre><code class="lang-java">Main mt = new Main();
+mt.printM(); // Call the   class method  using an  instance mt
+</code></pre> 
+ <p>使用类名调用类方法比使用实例引用更直观。</p>
+ <br>      
+</div></body></html>

@@ -1,0 +1,81 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">faccessat()函数 Unix/Linux</h1><div style="width:100%;float:left;" class="article-content">   
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> faccessat - 文件相对于一个目录文件描述符的更改权限</p> 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> 内容简介</h1> 
+ <pre style="font-family: 'Courier New', monospace; font-size: 12px; margin-bottom: 0px;">
+#include 
+  <unistd.h> 
+   <b style="font-size: 10.5pt;">&lt;unistd.h&gt;</b>
+   <span style="font-size: 10.5pt; background-color: rgb(241, 241, 241);"> </span>
+
+
+int faccessat(int dirfd, const char *path, int  
+mode ", int " flags );
+
+  </unistd.h></pre> 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> 描述</h1> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> The&nbsp;<b>faccessat</b>() system call operates in exactly the same way as&nbsp;<b>access</b>(2), except for the differences described in this manual page.</p> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> If the pathname given in&nbsp;<i>path</i>&nbsp;is relative, then it is interpreted relative to the directory referred to by the file descriptor&nbsp;<i>dirfd</i>&nbsp;(rather than relative to the current working directory of the calling process, as is done by&nbsp;<b>access</b>(2) for a relative pathname).</p> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> If the pathname given in&nbsp;<i>path</i>&nbsp;is relative and&nbsp;<i>dirfd</i>&nbsp;is the special value&nbsp;<b>AT_FDCWD</b>, then<i>path</i>&nbsp;is interpreted relative to the current working directory of the calling process (like<b>access</b>(2)).</p> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> If the pathname given in&nbsp;<i>path</i>&nbsp;is absolute, then&nbsp;<i>dirfd</i>&nbsp;is ignored.</p> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> <i>flags</i>&nbsp;is constructed by ORing together zero or more of the following values:</p> 
+ <table border="1" cellpadding="5" cellspacing="0" class="src" style="font-family: verdana, helvetica, arial, sans-serif; border: 1px solid rgb(170, 170, 170); width: 552px; background-color: rgb(241, 241, 241); border-collapse: collapse; padding-left: 5px; vertical-align: top; color: rgb(0, 0, 0);"> 
+  <tbody> 
+   <tr> 
+    <th style="background-color: rgb(205, 205, 205); border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" width="25%"> Code</th> 
+    <th style="background-color: rgb(205, 205, 205); border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> 描述</th> 
+   </tr> 
+   <tr valign="top"> 
+    <td colspan="2" style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>AT_EACCESS</b></td> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" width="6%"> &nbsp;</td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> Perform access checks using the effective user and group IDs. By default,&nbsp;<b>faccessat</b>() uses the effective IDs (like&nbsp;<b>access</b>(2)).</td> 
+   </tr> 
+   <tr valign="top"> 
+    <td colspan="2" style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>AT_SYMLINK_NOFOLLOW</b></td> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" width="6%"> &nbsp;</td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> If&nbsp;<i>path</i>&nbsp;is a symbolic link, do not dereference it: instead return information about the link itself.</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> 返回值</h1> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> On success,&nbsp;<b>faccessat</b>() returns 0. On error, -1 is returned and&nbsp;<i>errno</i>&nbsp;is set to indicate the error.</p> 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> 错误</h1> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> The same errors that occur for&nbsp;<b>access</b>(2) can also occur for&nbsp;<b>faccessat</b>(). The following additional errors can occur for&nbsp;<b>faccessat</b>():</p> 
+ <table border="1" cellpadding="5" cellspacing="0" class="src" style="font-family: verdana, helvetica, arial, sans-serif; border: 1px solid rgb(170, 170, 170); width: 552px; background-color: rgb(241, 241, 241); border-collapse: collapse; padding-left: 5px; vertical-align: top; color: rgb(0, 0, 0);"> 
+  <tbody> 
+   <tr> 
+    <th style="background-color: rgb(205, 205, 205); border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" width="25%"> 标签</th> 
+    <th style="background-color: rgb(205, 205, 205); border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> 描述</th> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>EBADF</b></td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" valign="bottom"> <i>dirfd</i>&nbsp;is not a valid file descriptor.</td> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>EINVAL</b></td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" valign="bottom"> Invalid flag specified in&nbsp;<i>flags</i>.</td> 
+   </tr> 
+   <tr> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>ENOTDIR</b></td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <i>path</i>&nbsp;is a relative path and&nbsp;<i>dirfd</i>&nbsp;is a file descriptor referring to a file other than a directory.</td> 
+   </tr> 
+  </tbody> 
+ </table>   
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> 注意</h1> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> See&nbsp;<b>openat</b>(2) for an explanation of the need for&nbsp;<b>faccessat</b>().</p> 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> 遵循于</h1> 这个系统调用是非标准的，但建议列入POSIX.1将来的修订版。 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> glibc的注意事项</h1> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> The&nbsp;<b>AT_EACCESS</b>&nbsp;and&nbsp;<b>AT_SYMLINK_NOFOLLOW</b>&nbsp;flags are actually implemented within the glibc wrapper function for&nbsp;<b>faccessat</b>(). If either of these flags are specified, then the wrapper function employs&nbsp;<b>fstatat</b>(2) to determine access permissions.</p> 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> 版本</h1> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> <b>faccessat</b>() 加入到Linux 的&nbsp;kernel 2.6.16.</p> 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> 另请参阅</h1> 
+ <ul style="font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> 
+  <li> <p style="text-align: justify;"> <a target="_blank" href="http://www.yiibai.com/unix_system_calls/access.html" style="color: rgb(144, 11, 9); background-color: transparent;">access (2)</a></p> </li> 
+  <li> <p style="text-align: justify;"> <a target="_blank" href="http://www.yiibai.com/unix_system_calls/openat.html" style="color: rgb(144, 11, 9); background-color: transparent;">openat (2)</a></p> </li> 
+  <li> <p style="text-align: justify;"> <a target="_blank" href="http://www.yiibai.com/unix_system_calls/path_resolution.html" style="color: rgb(144, 11, 9); background-color: transparent;">path_resolution (2)</a></p> </li> 
+ </ul> 
+ <br>      
+</div></body></html>

@@ -1,0 +1,93 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Java备忘录模式</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>备忘录模式(<strong>Memento Pattern</strong>)用来恢复一个对象的状态到以前的状态。 备忘录模式下属于行为模式的类别。</p> 
+ <h2 id="h2-u5B9Eu73B0u5B9Eu4F8B"><a name="实现实例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实现实例</h2>
+ <p>在这个示例中，备忘录模式(<strong>Memento Pattern</strong>)使用三个操作者类。 <code>Memento</code>类中包含要恢复的对象的状态。 创建者在<code>Memento</code>对象中创建和存储状态，<code>Caretaker</code>对象负责从<code>Memento</code>中恢复对象状态。在这个示例中，创建了以下几个类：<code>Memento</code>，<code>Originator</code>和<code>CareTaker</code>。</p> 
+ <p><code>MementoPatternDemo</code>这是一个演示类，它将使用<code>CareTaker</code>和<code>Originator</code>对象来显示对象状态的恢复。</p> 
+ <p>备忘录模式(<strong>Memento Pattern</strong>)示例的结构如下图所示 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201612/08/621171222_57466.png" alt=""></p> 
+ <h3 id="h3--1-"><a name="第1步" class="reference-link"></a><span class="header-link octicon octicon-link"></span>第1步</h3>
+ <p>创建一个<code>Memento</code>类，其代码如下-<br><em>Memento.java</em></p> 
+ <pre><code class="lang-java">public class Memento {
+   private String state;
+
+   public Memento(String state){
+      this.state = state;
+   }
+
+   public String getState(){
+      return state;
+   }    
+}
+</code></pre> 
+ <h3 id="h3--2-"><a name="第2步" class="reference-link"></a><span class="header-link octicon octicon-link"></span>第2步</h3>
+ <p>创建一个<code>Originator</code>类，其代码如下-<br><em>Originator.java </em></p> 
+ <pre><code class="lang-java">public class Originator {
+   private String state;
+
+   public void setState(String state){
+      this.state = state;
+   }
+
+   public String getState(){
+      return state;
+   }
+
+   public Memento saveStateToMemento(){
+      return new Memento(state);
+   }
+
+   public void getStateFromMemento(Memento memento){
+      state = Memento.getState();
+   }
+}
+</code></pre> 
+ <h3 id="h3--3-"><a name="第3步" class="reference-link"></a><span class="header-link octicon octicon-link"></span>第3步</h3>
+ <p>创建一个<code>CareTaker</code>类，其代码如下-<br><em>CareTaker.java</em></p> 
+ <pre><code class="lang-java">import java.util.ArrayList;
+import java.util.List;
+
+public class CareTaker {
+   private List&lt;Memento&gt; mementoList = new ArrayList&lt;Memento&gt;();
+
+   public void add(Memento state){
+      mementoList.add(state);
+   }
+
+   public Memento get(int index){
+      return mementoList.get(index);
+   }
+}
+</code></pre> 
+ <h3 id="h3--4-"><a name="第4步" class="reference-link"></a><span class="header-link octicon octicon-link"></span>第4步</h3>
+ <p>创建一个类-<code>MementoPatternDemo</code>并使用<code>CareTaker</code>和<code>Originator</code>对象。<br><em>MementoPatternDemo.java</em></p>   
+ <pre><code class="lang-java">public class MementoPatternDemo {
+   public static void main(String[] args) {
+
+      Originator originator = new Originator();
+      CareTaker careTaker = new CareTaker();
+
+      originator.setState("State #1");
+      originator.setState("State #2");
+      careTaker.add(originator.saveStateToMemento());
+
+      originator.setState("State #3");
+      careTaker.add(originator.saveStateToMemento());
+
+      originator.setState("State #4");
+      System.out.println("Current State: " + originator.getState());        
+
+      originator.getStateFromMemento(careTaker.get(0));
+      System.out.println("First saved State: " + originator.getState());
+      originator.getStateFromMemento(careTaker.get(1));
+      System.out.println("Second saved State: " + originator.getState());
+   }
+}
+</code></pre> 
+ <h3 id="h3--5-"><a name="第5步" class="reference-link"></a><span class="header-link octicon octicon-link"></span>第5步</h3>
+ <p>验证输出，执行上面的代码得到以下结果 -</p> 
+ <pre><code class="lang-java">Current State: State #4
+First saved State: State #2
+Second saved State: State #3
+</code></pre>
+ <br>      
+</div></body></html>

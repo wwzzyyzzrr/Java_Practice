@@ -1,0 +1,136 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Laravel表单处理</h1><div style="width:100%;float:left;" class="article-content">   
+ <div> 
+  <div>
+    Laravel提供了各种内置的标签，以方便，安全地处理HTML表单。所有 HTML 的主要元素都是可以使用Laravel来产生的。为了支持这一点，我们需要使用composer来将HTML包添加到Laravel。 
+  </div> 
+ </div> 
+ <div> 
+  <p style="text-align:justify;"> 安装请参考：<a target="_blank" href="https://laravelcollective.com/docs/5.2/html#installation">https://laravelcollective.com/docs/5.2/html#installation</a> </p> 
+  <h2> 实例-1 </h2> 
+  <div> 
+  </div> 
+  <p> 通过Composer安装此软件包。编辑你项目里边的&nbsp;composer.json&nbsp;文件添加所需的&nbsp;<em>laravelcollective</em><em>/</em><em>html</em> </p> 
+  <pre>"require": {
+    "laravelcollective/html": "5.2.*"
+}</pre> 
+  <div>
+    在终端执行下一步，更新Composer&nbsp;： 
+  </div> 
+  <pre>D:\laravel&gt; composer update</pre> 
+  <p> 接下来，将新的提供程序加入到&nbsp;config/app.php&nbsp;文件中的&nbsp;&nbsp;providers&nbsp;数组 </p> 
+  <pre><span style="background-color:inherit;color:#555555;">'providers'</span><span style="background-color:rgba(255, 255, 255, 0.498039);color:#555555;">=</span><span style="background-color:rgba(255, 255, 255, 0.498039);color:#555555;">&gt;</span><span style="background-color:inherit;color:#999999;">[</span><span style="background-color:inherit;color:#999999;"> // ... </span><span style="background-color:inherit;color:#F66153;">Collective<span style="background-color:inherit;color:#999999;">\</span>Html<span style="background-color:inherit;color:#999999;">\</span>HtmlServiceProvider<span style="background-color:inherit;color:#999999;">::</span></span><span style="background-color:inherit;color:#0077AA;">class</span><span style="background-color:inherit;color:#999999;">,</span><span style="background-color:inherit;color:#999999;"> // ... </span><span style="background-color:inherit;color:#999999;">]</span><span style="background-color:inherit;color:#999999;">,</span></pre> 
+  <p> 最后，将新的提供程序加入到&nbsp;<em>config</em><em>/</em><em>app</em><em>.</em><em>php</em>&nbsp;文件中的&nbsp;&nbsp;<strong>aliases&nbsp;</strong>数组： </p> 
+  <pre><span style="background-color:inherit;color:#555555;">'aliases'</span><span style="background-color:rgba(255, 255, 255, 0.498039);color:#555555;">=</span><span style="background-color:rgba(255, 255, 255, 0.498039);color:#555555;">&gt;</span><span style="background-color:inherit;color:#999999;">[</span><span style="background-color:inherit;color:#999999;"> // ... </span><span style="background-color:inherit;color:#555555;">'Form'</span><span style="background-color:rgba(255, 255, 255, 0.498039);color:#555555;">=</span><span style="background-color:rgba(255, 255, 255, 0.498039);color:#555555;">&gt;</span><span style="background-color:inherit;color:#F66153;">Collective<span style="background-color:inherit;color:#999999;">\</span>Html<span style="background-color:inherit;color:#999999;">\</span>FormFacade<span style="background-color:inherit;color:#999999;">::</span></span><span style="background-color:inherit;color:#0077AA;">class</span><span style="background-color:inherit;color:#999999;">,</span><span style="background-color:inherit;color:#555555;">'Html'</span><span style="background-color:rgba(255, 255, 255, 0.498039);color:#555555;">=</span><span style="background-color:rgba(255, 255, 255, 0.498039);color:#555555;">&gt;</span><span style="background-color:inherit;color:#F66153;">Collective<span style="background-color:inherit;color:#999999;">\</span>Html<span style="background-color:inherit;color:#999999;">\</span>HtmlFacade<span style="background-color:inherit;color:#999999;">::</span></span><span style="background-color:inherit;color:#0077AA;">class</span><span style="background-color:inherit;color:#999999;">,</span><span style="background-color:inherit;color:#999999;"> // ... </span><span style="background-color:inherit;color:#999999;">]</span><span style="background-color:inherit;color:#999999;">,</span></pre> 
+  <p> 第3步&nbsp;-&nbsp;现在，我们需要把这个包添加到&nbsp;Laravel配置文件，它存储在 config/app.php 文件中。打开这个文件，你会看到如下图中的&nbsp;Laravel服务供应者的名称列表。添加HTML服务提供者，如下面的图片中所示的方框部分所概述。<br> <img src="http://www.yiibai.com/uploads/tutorial/20160512/1-160512131924245.png" alt=""> </p> 
+  <p> 第4步&nbsp;-&nbsp;在相同的文件为HTML和表单添加别名。&nbsp;请注意在下面的图中的概述方框中显示的两行，并添加这两行代码。<br> <img src="/uploads/tutorial/20160512/1-1605121321204W.png" alt=""> </p> 
+  <div>
+    第5步&nbsp;-&nbsp;现在一切都设置好了以后。就可以来看看如何使用使用Laravel标签生成各种HTML元素。 
+  </div> 
+  <h3> 
+   <div>
+     打开表单 
+   </div> </h3>   
+  <pre>{{ Form::open(array('url' =&gt; 'foo/bar')) }}
+   //
+{{ Form::close() }}</pre> 
+  <h3> 
+   <div>
+     生成标签元素 
+   </div> </h3> 
+  <pre>echo Form::label('email', 'E-Mail Address');</pre> 
+  <h3> 
+   <div>
+     生成一个文本输入框 
+   </div> </h3> 
+  <pre>echo Form::text('username');</pre> 
+  <h3> 
+   <div>
+     指定默认值 
+   </div> </h3> 
+  <pre>echo Form::text('email', 'example@gmail.com');</pre> 
+  <h3> 
+   <div>
+     生成一个密码输入框 
+   </div> </h3> 
+  <pre>echo Form::password('password');</pre> 
+  <h3> 
+   <div>
+     生成文件输入框 
+   </div> </h3> 
+  <pre>echo Form::file('image');</pre> 
+  <h3> 
+   <div>
+     生成多选框或单选输入框 
+   </div> </h3> 
+  <pre>echo Form::checkbox('name', 'value');
+echo Form::radio('name', 'value');</pre> 
+  <h3> 
+   <div>
+     生成并选中复选框或单选输入框 
+   </div> </h3> 
+  <pre>echo Form::checkbox('name', 'value', true);
+echo Form::radio('name', 'value', true);</pre> 
+  <h3> 
+   <div>
+     生成一个下拉列表 
+   </div> </h3> 
+  <pre>echo Form::select('size', array('L' =&gt; 'Large', 'S' =&gt; 'Small'));</pre> 
+  <h3> 
+   <div>
+     生成一个提交按钮 
+   </div> </h3> 
+  <pre>echo Form::submit('Click Me!');</pre> 
+  <h2> 实例 - 2 </h2> 
+  <p> 第1步&nbsp;-&nbsp;复制下面的代码创建一个视图名为<em><strong>&nbsp;</strong></em><em><strong>resources/views/form.php</strong></em> </p> 
+  <pre>&lt;html&gt;
+   &lt;body&gt;
+      
+      &lt;?php
+         echo Form::open(array('url' =&gt; 'foo/bar'));
+            echo Form::text('username','yiibai-user');
+            echo '&lt;br/&gt;';
+            
+            echo Form::text('email', 'example@yiibai.com');
+            echo '&lt;br/&gt;';
+     
+            echo Form::password('password');
+            echo '&lt;br/&gt;';
+            
+            echo Form::checkbox('name', 'value');
+            echo '&lt;br/&gt;';
+            
+            echo Form::radio('name', 'value');
+            echo '&lt;br/&gt;';
+            
+            echo Form::file('image');
+            echo '&lt;br/&gt;';
+            
+            echo Form::select('size', array('L' =&gt; '大妈', 'S' =&gt; '小码'));
+            echo '&lt;br/&gt;';
+            
+            echo Form::submit('点击我!');
+         echo Form::close();
+      ?&gt;
+   
+   &lt;/body&gt;
+&lt;/html&gt;</pre> 
+  <div>
+    第2步-&nbsp;添加应用程序中以下行到文件&nbsp;-&nbsp;app/Http/routes.php&nbsp;以添加视图&nbsp;form.php&nbsp;的路由 
+  </div> 
+  <p> app/Http/routes.php </p> 
+  <pre>Route::get('/form',function(){
+   return view('form');
+});</pre> 
+  <div>
+    第3步&nbsp;-&nbsp;访问以下网址来查看表单。 
+  </div> 
+  <p> http://localhost:8000/form </p> 
+  <div>
+    第4步&nbsp;-&nbsp;如下面的图输出结果。
+   <br> 
+   <img src="/uploads/tutorial/20160512/1-160512132002349.png" alt="">
+   <br> 
+  </div> 
+ </div>
+ <br>      
+</div></body></html>

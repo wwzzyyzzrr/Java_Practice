@@ -1,0 +1,147 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Pandas函数应用</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>要将自己或其他库的函数应用于<em>Pandas</em>对象，应该了解三种重要的方法。以下讨论了这些方法。 使用适当的方法取决于函数是否期望在整个<code>DataFrame</code>，行或列或元素上进行操作。</p> 
+ <ul> 
+  <li>表明智函数应用：<code>pipe()</code></li>
+  <li>行或列函数应用：<code>apply()</code></li>
+  <li>元素函数应用：<code>applymap()</code></li>
+ </ul> 
+ <h2 id="h2-u8868u683Cu51FDu6570u5E94u7528"><a name="表格函数应用" class="reference-link"></a><span class="header-link octicon octicon-link"></span>表格函数应用</h2>
+ <p>可以通过将函数和适当数量的参数作为管道参数来执行自定义操作。 因此，对整个DataFrame执行操作。</p> 
+ <p>例如，为DataFrame中的所有元素相加一个值<code>2</code>。 然后，</p> 
+ <p><strong>加法器函数</strong></p> 
+ <p>加法器函数将两个数值作为参数添加并返回总和。</p> 
+ <pre><code class="lang-python">def adder(ele1,ele2):
+return ele1+ele2
+</code></pre> 
+ <p>现在将使用自定义函数对DataFrame进行操作。</p> 
+ <pre><code class="lang-python">df = pd.DataFrame(np.random.randn(5,3),columns=['col1','col2','col3'])
+df.pipe(adder,2)
+</code></pre> 
+ <p>下面来看看完整的程序 -</p> 
+ <pre><code class="lang-python">import pandas as pd
+import numpy as np
+
+def adder(ele1,ele2):
+   return ele1+ele2
+
+df = pd.DataFrame(np.random.randn(5,3),columns=['col1','col2','col3'])
+df.pipe(adder,2)
+print df
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 - </p> 
+ <pre><code class="lang-shell">        col1       col2       col3
+0   2.176704   2.219691   1.509360
+1   2.222378   2.422167   3.953921
+2   2.241096   1.135424   2.696432
+3   2.355763   0.376672   1.182570
+4   2.308743   2.714767   2.130288
+</code></pre> 
+ <h2 id="h2-u884Cu6216u5217u667Au80FDu51FDu6570u5E94u7528"><a name="行或列智能函数应用" class="reference-link"></a><span class="header-link octicon octicon-link"></span>行或列智能函数应用</h2>
+ <p>可以使用<code>apply()</code>方法沿<code>DataFrame</code>或<code>Panel</code>的轴应用任意函数，它与描述性统计方法一样，采用可选的轴参数。 默认情况下，操作按列执行，将每列列为数组。</p> 
+ <p><strong>示例</strong></p> 
+ <pre><code class="lang-python">import pandas as pd
+import numpy as np
+
+df = pd.DataFrame(np.random.randn(5,3),columns=['col1','col2','col3'])
+df.apply(np.mean)
+print df
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 - </p> 
+ <pre><code class="lang-shell">      col1       col2        col3                                                      
+0   0.343569  -1.013287    1.131245 
+
+1   0.508922  -0.949778   -1.600569 
+
+2  -1.182331  -0.420703   -1.725400
+
+3   0.860265   2.069038   -0.537648
+
+4   0.876758  -0.238051    0.473992
+</code></pre> 
+ <p>通过传递<code>axis</code>参数，可以在行上执行操作。</p> 
+ <p><strong>示例-2</strong></p> 
+ <pre><code class="lang-python">import pandas as pd
+import numpy as np
+
+df = pd.DataFrame(np.random.randn(5,3),columns=['col1','col2','col3'])
+df.apply(np.mean,axis=1)
+print df
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 - </p> 
+ <pre><code class="lang-shell">     col1         col2         col3
+
+0  0.543255    -1.613418    -0.500731   
+
+1  0.976543    -1.135835    -0.719153   
+
+2  0.184282    -0.721153    -2.876206    
+
+3  0.447738     0.268062    -1.937888
+
+4 -0.677673     0.177455     1.397360
+</code></pre> 
+ <p><strong>示例-3</strong></p>   
+ <pre><code class="lang-python">import pandas as pd
+import numpy as np
+
+df = pd.DataFrame(np.random.randn(5,3),columns=['col1','col2','col3'])
+df.apply(lambda x: x.max() - x.min())
+print df
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 - </p> 
+ <pre><code class="lang-shell">       col1        col2      col3
+
+0   -0.585206   -0.104938   1.424115 
+
+1   -0.326036   -1.444798   0.196849 
+
+2   -2.033478    1.682253   1.223152  
+
+3   -0.107015    0.499846   0.084127
+
+4   -1.046964   -1.935617  -0.009919
+</code></pre> 
+ <h2 id="h2-u5143u7D20u667Au80FDu51FDu6570u5E94u7528"><a name="元素智能函数应用" class="reference-link"></a><span class="header-link octicon octicon-link"></span>元素智能函数应用</h2>
+ <p>并不是所有的函数都可以向量化(也不是返回另一个数组的NumPy数组，也不是任何值)，在DataFrame上的方法<code>applymap()</code>和类似地在Series上的<code>map()</code>接受任何Python函数，并且返回单个值。</p> 
+ <p><strong>示例-1</strong></p> 
+ <pre><code class="lang-python">import pandas as pd
+import numpy as np
+df = pd.DataFrame(np.random.randn(5,3),columns=['col1','col2','col3'])
+
+# My custom function
+df['col1'].map(lambda x:x*100)
+print df
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 - </p> 
+ <pre><code class="lang-shell">       col1      col2       col3    
+
+0    0.629348  0.088467  -1.790702 
+
+1   -0.592595  0.184113  -1.524998
+
+2   -0.419298  0.262369  -0.178849
+
+3   -1.036930  1.103169   0.941882 
+
+4   -0.573333 -0.031056   0.315590
+</code></pre> 
+ <p><strong>示例-2</strong></p> 
+ <pre><code class="lang-python">import pandas as pd
+import numpy as np
+
+# My custom function
+df = pd.DataFrame(np.random.randn(5,3),columns=['col1','col2','col3'])
+df.applymap(lambda x:x*100)
+print df
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 -</p> 
+ <pre><code class="lang-shell">output is as follows:
+         col1         col2         col3
+0   17.670426    21.969052    -49.064031
+1   22.237846    42.216693     195.392124
+2   24.109576   -86.457646     69.643171
+3   35.576312   -162.332803   -81.743023
+4   30.874333    71.476717     13.028751
+</code></pre>
+ <br>      
+</div></body></html>

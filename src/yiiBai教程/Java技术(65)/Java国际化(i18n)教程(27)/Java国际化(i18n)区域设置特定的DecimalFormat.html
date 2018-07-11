@@ -1,0 +1,34 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Java国际化(i18n)区域设置特定的DecimalFormat</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>默认情况下，<code>DecimalFormat</code>对象使用JVM的语言环境。 我们可以在使用<code>NumberFormat</code>类创建<code>DecimalFormat</code>对象时更改默认区域设置。 在下面的例子中，将为两个不同的区域设置使用相同的模式，可以在输出中看到差异。</p> 
+ <p>文件:<em>IOTester.java</em> - </p> 
+ <pre><code class="lang-java">import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.Locale;
+
+public class I18NTester {
+   public static void main(String[] args) {
+      String pattern = "###.##";
+      double number = 123.45;
+
+      Locale enlocale  = new Locale("en", "US");
+      Locale dalocale  = new Locale("da", "DK");
+
+      DecimalFormat decimalFormat = (DecimalFormat) NumberFormat.getNumberInstance(enlocale);
+      decimalFormat.applyPattern(pattern);
+
+      System.out.println(decimalFormat.format(number));
+
+
+      decimalFormat = (DecimalFormat) NumberFormat.getNumberInstance(dalocale);
+      decimalFormat.applyPattern(pattern);
+
+      System.out.println(decimalFormat.format(number));     
+   }
+}
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 - </p>   
+ <pre><code class="lang-shell">123.45
+123,45
+</code></pre>
+ <br>      
+</div></body></html>

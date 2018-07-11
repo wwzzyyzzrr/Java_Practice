@@ -1,0 +1,72 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">JPA标准API简介</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>标准(Criteria)API是构建实体及其持久状态查询的最常用方法之一。 它只是定义JPA查询的另一种方法。</p> 
+ <p>Criteria API定义了一个独立于平台的条件查询，用Java编程语言编写。 它是在JPA 2.0中引入的。 这背后的主要目的是提供一种类型安全的方式来表达查询。</p> 
+ <h2 id="h2-u521Bu5EFAu6761u4EF6u67E5u8BE2u7684u6B65u9AA4"><a name="创建条件查询的步骤" class="reference-link"></a><span class="header-link octicon octicon-link"></span>创建条件查询的步骤</h2>
+ <p>要创建标准查询，请按照以下步骤操作: -</p> 
+ <p><strong>第1步:</strong> 通过在<code>EntityManager</code>接口实例上调用<code>getCriteriaBuilder()</code>方法创建<code>CriteriaBuilder</code>接口的对象。</p> 
+ <pre><code class="lang-java">EntityManager em = emf.createEntityManager();  
+CriteriaBuilder cb=em.getCriteriaBuilder();
+</code></pre> 
+ <p><strong>第2步:</strong> 构建一个<code>CriteriaQuery</code>接口的实例来创建一个查询对象。</p> 
+ <pre><code class="lang-java">CriteriaQuery&lt;StudentEntity&gt; cq=cb.createQuery(StudentEntity.class);
+</code></pre> 
+ <p><strong>第3步:</strong> 从<code>CriteriaQuery</code>对象的方法调用来设置查询根。</p> 
+ <pre><code class="lang-java">Root&lt;StudentEntity&gt; stud=cq.from(StudentEntity.class);
+</code></pre> 
+ <p><strong>第4步:</strong> 调用<code>CriteriaQuery</code>对象的<code>select()</code>方法来指定查询结果的类型。</p> 
+ <pre><code class="lang-java">CriteriaQuery&lt;StudentEntity&gt; select = cq.select(stud);
+</code></pre> 
+ <p><strong>第5步:</strong> 创建<code>Query</code>接口的实例并指定用于访问数据库记录的方法的类型。</p> 
+ <pre><code class="lang-java">Query q = em.createQuery(select);
+</code></pre> 
+ <p><strong>第6步:</strong> 通过调用查询接口的方法来控制查询的执行。</p>   
+ <pre><code class="lang-java">List&lt;StudentEntity&gt; list = q.getResultList();
+</code></pre> 
+ <h2 id="h2--api-"><a name="标准API查询子句的方法" class="reference-link"></a><span class="header-link octicon octicon-link"></span>标准API查询子句的方法</h2>
+ <p>以下是相应接口和方法的子句列表。</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>子句</th> 
+    <th>Criteria API接口</th> 
+    <th>方法</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>SELECT</td> 
+    <td>CriteriaQuery</td> 
+    <td>select()</td> 
+   </tr> 
+   <tr> 
+    <td>FROM</td> 
+    <td>AbstractQuery</td> 
+    <td>from()</td> 
+   </tr> 
+   <tr> 
+    <td>WHERE</td> 
+    <td>AbstractQuery</td> 
+    <td>where()</td> 
+   </tr> 
+   <tr> 
+    <td>ORDER BY</td> 
+    <td>CriteriaQuery</td> 
+    <td>orderBy()</td> 
+   </tr> 
+   <tr> 
+    <td>GROUP BY</td> 
+    <td>AbstractQuery</td> 
+    <td>groupBy()</td> 
+   </tr> 
+   <tr> 
+    <td>HAVING</td> 
+    <td>AbstractQuery</td> 
+    <td>having()</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <blockquote> 
+  <p>注意: <code>CriteriaQuery</code>接口是<code>AbstractQuery</code>接口的子接口。</p> 
+ </blockquote>
+ <br>      
+</div></body></html>

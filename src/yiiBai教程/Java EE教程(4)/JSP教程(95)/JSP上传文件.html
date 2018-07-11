@@ -1,0 +1,139 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">JSP上传文件</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>在本章中，我们将讨论和学习如何在JSP中的文件上传。 JSP可以与HTML表单标签一起使用，以允许用户将文件上传到服务器。上传的文件可以是文本文件或二进制文件或图像文件，也可以是任何文档。</p> 
+ <p>为了方便演示，首先打开Eclipse创建一个动态Web项目：<em>UploadFile</em> ，其目录结构如下所示 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/2010/887181010_90221.png" alt=""></p> 
+ <h2 id="h2-u521Bu5EFAu6587u4EF6u4E0Au4F20u8868u5355"><a name="创建文件上传表单" class="reference-link"></a><span class="header-link octicon octicon-link"></span>创建文件上传表单</h2>
+ <p>现在来看看如何创建一个文件上传表单。 以下HTML代码创建一个上传器表单。 以下是要注意的重点 -</p> 
+ <ul> 
+  <li>表单中的<code>method</code>属性应设置为<code>POST</code>方法，不能使用<code>GET</code>方法。</li>
+  <li>表单中的<code>enctype</code>属性应设置为<code>multipart/form-data</code>。</li>
+  <li>表单中的<code>action</code>属性应该设置为一个JSP文件，它将处理后端服务器上的文件上传。 以下示例 - 使用<code>uploadhandle.jsp</code>程序处理上传文件。</li>
+ </ul> 
+ <p>要上传单个文件，应该在单个<code>&lt;input ... /&gt;</code>标签中指定使用<code>type ="file"</code>属性。 要允许多个文件上传，请将<code>name</code>属性包含多个具有不同值的输入标记。浏览器将浏览按钮与每个浏览器相关联。</p> 
+ <p>文件：<code>selectFile.html</code>文件代码如下 - </p> 
+ <pre><code class="lang-html">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;meta charset="UTF-8"&gt;
+&lt;title&gt;文件上传示例&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div style="margin: auto; width: 80%;"&gt;
+        &lt;h3&gt;文件上传示例&lt;/h3&gt;
+        选择要上传的文件: 
+        &lt;form action="uploadhandle.jsp" method="post" enctype="multipart/form-data"&gt;
+            &lt;input type="file" name="file" size="50" /&gt;&lt;input
+                type="submit" value="提交上传" /&gt;
+        &lt;/form&gt;
+    &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>这将显示以下结果。现在可以从本地电脑选择一个文件，并且当用户单击<em>“上传文件”</em>时，表单将随所选文件一起提交 -</p> 
+ <blockquote> 
+  <p>注意 - 上面的表单只是虚拟表单，不起作用，要处理上传还需要编写JSP相关处理文件上传的程序。</p> 
+ </blockquote> 
+ <h2 id="h2--jsp-"><a name="后端JSP脚本" class="reference-link"></a><span class="header-link octicon octicon-link"></span>后端JSP脚本</h2>
+ <p>现在定义一个存储上传文件的位置。可以在程序中对此进行硬编码，也可以使用外部配置(如<em>web.xml</em>中的<code>context-param</code>元素)添加此目录名称，如下所示：</p> 
+ <p>以下是<code>uploadFile.jsp</code>的源代码。这可以一次处理多个文件的上传。 在继续上传文件之前，需要考虑以下几点：</p> 
+ <ul> 
+  <li>以下示例依懒于<code>FileUpload</code>类库; 确保类路径中有最新版本的<code>commons-fileupload.x.x.jar</code>文件(可以从 <a target="_blank" href="http://commons.apache.org/fileupload/">http://commons.apache.org/fileupload/</a> 下载)。</li>
+  <li><code>FileUpload</code>类库依懒于<code>Commons IO</code>;确保类路径中有最新版本的<code>commons-io-x.x.jar</code>文件(可以从 <a target="_blank" href="http://commons.apache.org/io/">http://commons.apache.org/io/</a> 下载)。</li>
+  <li>在测试以下示例时，应该将上传的文件大小小于<code>maxFileSize</code>，否则文件将不会被上传。</li>
+  <li>这个项目中是将文件上传到项目部署的目录下，但您可配置并创建目录<em>c:\temp</em>和<em>c:\apache-tomcat8.5.29\webapps\data</em>或指定到其位置。</li>
+ </ul> 
+ <p>文件：<em>uploadhandle.jsp</em> 的代码实现如下 - </p> 
+ <pre><code class="lang-html">&lt;%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%&gt;
+&lt;%@ page import="java.io.*,java.util.*, javax.servlet.*"%&gt;
+&lt;%@ page import="javax.servlet.http.*"%&gt;
+&lt;%@ page import="org.apache.commons.fileupload.*"%&gt;
+&lt;%@ page import="org.apache.commons.fileupload.disk.*"%&gt;
+&lt;%@ page import="org.apache.commons.fileupload.servlet.*"%&gt;
+&lt;%@ page import="org.apache.commons.io.output.*"%&gt;
+
+&lt;%
+    File file;
+    int maxFileSize = 5000 * 1024;
+    int maxMemSize = 5000 * 1024;
+    ServletContext context = pageContext.getServletContext();
+    //String filePath = context.getInitParameter("file-upload");
+    String filePath = request.getSession().getServletContext().getRealPath("");
+    //String filePath = request.getContextPath(); 
+    System.out.println("filePath =&gt; " + filePath);
+    // Verify the content type
+    String contentType = request.getContentType();
+
+    if (contentType == null) {
+        System.out.println("contentType =&gt; " + contentType);
+        contentType = "";
+    }
+    if ((contentType.indexOf("multipart/form-data") &gt;= 0)) {
+        DiskFileItemFactory factory = new DiskFileItemFactory();
+        // maximum size that will be stored in memory
+        factory.setSizeThreshold(maxMemSize);
+
+        // Location to save data that is larger than maxMemSize.
+        factory.setRepository(new File("c:\\temp"));
+
+        // Create a new file upload handler
+        ServletFileUpload upload = new ServletFileUpload(factory);
+
+        // maximum file size to be uploaded.
+        upload.setSizeMax(maxFileSize);
+
+        try {
+            // Parse the request to get file items.
+            List fileItems = upload.parseRequest(request);
+
+            // Process the uploaded file items
+            Iterator i = fileItems.iterator();
+
+            out.println("&lt;html&gt;");
+            out.println("&lt;head&gt;");
+            out.println("&lt;title&gt;JSP File upload&lt;/title&gt;");
+            out.println("&lt;/head&gt;");
+            out.println("&lt;body&gt;");
+
+            while (i.hasNext()) {
+                FileItem fi = (FileItem) i.next();
+                if (!fi.isFormField()) {
+                    // Get the uploaded file parameters
+                    String fieldName = fi.getFieldName();
+                    String fileName = fi.getName();
+                    boolean isInMemory = fi.isInMemory();
+                    long sizeInBytes = fi.getSize();
+
+                    // Write the file
+                    if (fileName.lastIndexOf("\\") &gt;= 0) {
+                        file = new File(filePath + fileName.substring(fileName.lastIndexOf("\\")));
+                    } else {
+                        file = new File(filePath + fileName.substring(fileName.lastIndexOf("\\") + 1));
+                    }
+                    fi.write(file);
+                    out.println("Uploaded Filename: " + filePath + fileName + "&lt;br&gt;");
+                }
+            }
+            out.println("&lt;/body&gt;");
+            out.println("&lt;/html&gt;");
+        } catch (Exception ex) {
+            System.out.println(ex);
+        }
+    } else {
+        out.println("&lt;html&gt;");
+        out.println("&lt;head&gt;");
+        out.println("&lt;title&gt;Servlet upload&lt;/title&gt;");
+        out.println("&lt;/head&gt;");
+        out.println("&lt;body&gt;");
+        out.println("&lt;p&gt;No file uploaded&lt;/p&gt;");
+        out.println("&lt;/body&gt;");
+        out.println("&lt;/html&gt;");
+    }
+%&gt;
+</code></pre> 
+ <p>现在尝试使用上面创建的HTML表单上传文件。部署项目后，打开浏览器访问URL： <code>http://localhost:8080/UploadFile/selectFile.html</code> 时将显示以下结果。</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/2010/163181013_63915.png" alt=""></p> 
+ <p>如果编写的JSP脚本工作正常，选择的文件应该上传到项目的根目录中。</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/2010/448181017_48776.png" alt=""></p>
+ <br>      
+</div></body></html>

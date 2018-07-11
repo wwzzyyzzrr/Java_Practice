@@ -1,0 +1,68 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">JavaScript中调用Kotlin</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>Kotlin 编译器生成正常的 JavaScript 类，可以在 JavaScript 代码中自由地使用的函数和属性<br>。不过，你应该记住一些微妙的事情。</p> 
+ <h2 id="h2--javascript-"><a name="用独立的 JavaScript 隔离声明" class="reference-link"></a><span class="header-link octicon octicon-link"></span>用独立的 JavaScript 隔离声明</h2>
+ <p>为了防止损坏全局对象，Kotlin 创建一个包含当前模块中所有 Kotlin 声明的对象<br>。所以如果你把模块命名为 <code>myModule</code>，那么所有的声明都可以<br>通过 <code>myModule</code> 对象在 JavaScript 中可用。例如：</p> 
+ <pre><code class="lang-kotlin">fun foo() = "Hello"
+</code></pre> 
+ <p>可以在 JavaScript 中这样调用：</p> 
+ <pre><code class="lang-javascript">alert(myModule.foo());
+</code></pre> 
+ <p>这不适用于当你将 Kotlin 模块编译为 JavaScript 模块时(关于这点的详细信息请参见 <a target="_blank" href="js-modules.html">JavaScript 模块</a>)。<br>在这种情况下，不会有一个包装对象，而是将声明作为相应类型的 JavaScript 模块对外暴露。例如，<br>对于 CommonJS 的场景，你应该写：</p> 
+ <pre><code class="lang-javascript">alert(require('myModule').foo());
+</code></pre> 
+ <h2 id="h2-u5305u7ED3u6784"><a name="包结构" class="reference-link"></a><span class="header-link octicon octicon-link"></span>包结构</h2>
+ <p>Kotlin 将其包结构暴露给 JavaScript，因此除非你在根包中定义声明，<br>否则必须在 JavaScript 中使用完整限定的名称。例如：</p> 
+ <pre><code class="lang-kotlin">package my.qualified.packagename
+
+fun foo() = "Hello"
+</code></pre> 
+ <p>可以在 JavaScript 中这样调用：</p> 
+ <pre><code class="lang-javascript">alert(myModule.my.qualified.packagename.foo());
+</code></pre> 
+ <h3 id="h3--code-jsname-code-"><a name="<code>@JsName</code> 注解" class="reference-link"></a><span class="header-link octicon octicon-link"></span><code><a target="_blank" href="https://github.com/JsName" title="@JsName" class="at-link">@JsName</a></code> 注解</h3>
+ <p>在某些情况下(例如为了支持重载)，Kotlin 编译器会修饰(mangle) JavaScript 代码中生成的函数和属性<br>的名称。要控制生成的名称，可以使用 <code><a target="_blank" href="https://github.com/JsName" title="@JsName" class="at-link">@JsName</a></code> 注解：</p> 
+ <pre><code class="lang-kotlin">// 模块“kjs”
+class Person(val name: String) {
+    fun hello() {
+        println("Hello $name!")
+    }
+
+    @JsName("helloWithGreeting")
+    fun hello(greeting: String) {
+        println("$greeting $name!")
+    }
+}
+</code></pre> 
+ <p>现在，你可以通过以下方式在 JavaScript 中使用这个类：</p> 
+ <pre><code class="lang-javascript">var person = new kjs.Person("Dmitry");   // 引用到模块“kjs”
+person.hello();                          // 输出“Hello Dmitry!”
+person.helloWithGreeting("Servus");      // 输出“Servus Dmitry!”
+</code></pre> 
+ <p>如果我们没有指定 <code><a target="_blank" href="https://github.com/JsName" title="@JsName" class="at-link">@JsName</a></code> 注解，相应函数的名称会包含<br>从函数签名计算而来的后缀，例如 <code>hello_61zpoe$</code>。</p> 
+ <p>请注意，Kotlin 编译器不会对 <code>external</code> 声明应用这种修饰，因此你不必在其上<br>使用 <code><a target="_blank" href="https://github.com/JsName" title="@JsName" class="at-link">@JsName</a></code>。 值得注意的另一个例子是从外部类继承的非外部类。<br>在这种情况下，任何被覆盖的函数也不会被修饰。</p> 
+ <p><code><a target="_blank" href="https://github.com/JsName" title="@JsName" class="at-link">@JsName</a></code> 的参数需要是一个常量字符串字面值，该字面值是一个有效的标识符。<br>任何尝试将非标识符字符串传递给 <code><a target="_blank" href="https://github.com/JsName" title="@JsName" class="at-link">@JsName</a></code> 时，编译器都会报错。<br>以下示例会产生编译期错误：</p>   
+ <pre><code class="lang-kotlin">@JsName("new C()")   // 此处出错
+external fun newC()
+</code></pre> 
+ <h2 id="h2--javascript-kotlin-"><a name="在 JavaScript 中表示 Kotlin 类型" class="reference-link"></a><span class="header-link octicon octicon-link"></span>在 JavaScript 中表示 Kotlin 类型</h2>
+ <ul> 
+  <li>除了 <code>kotlin.Long</code> 的 Kotlin 数字类型映射到 JavaScript Number。</li>
+  <li><code>kotlin.Char</code> 映射到 JavaScript Number 来表示字符代码。</li>
+  <li><p>Kotlin 在运行时无法区分数字类型(<code>kotlin.Long</code> 除外)，即以下代码能够工作：</p> <pre><code class="lang-kotlin">fun f() {
+    val x: Int = 23
+    val y: Any = x
+    println(y as Float)
+}
+</code></pre> </li>
+  <li><p>Kotlin 保留了 <code>kotlin.Int</code>、 <code>kotlin.Byte</code>、 <code>kotlin.Short</code>、 <code>kotlin.Char</code> 和 <code>kotlin.Long</code> 的溢出语义。</p> </li>
+  <li>JavaScript 中没有 64 位整数，所以 <code>kotlin.Long</code> 没有映射到任何 JavaScript 对象，<br>它是由一个 Kotlin 类模拟的。</li>
+  <li><code>kotlin.String</code> 映射到 JavaScript String。</li>
+  <li><code>kotlin.Any</code> 映射到 JavaScript Object(即 <code>new Object()</code>、 <code>{}</code> 等)。</li>
+  <li><code>kotlin.Array</code> 映射到 JavaScript Array。</li>
+  <li>Kotlin 集合(即 <code>List</code>、 <code>Set</code>、 <code>Map</code> 等)没有映射到任何特定的 JavaScript 类型。</li>
+  <li><code>kotlin.Throwable</code> 映射到 JavaScript Error。</li>
+  <li>Kotlin 在 JavaScript 中保留了惰性对象初始化。</li>
+  <li>Kotlin 不会在 JavaScript 中实现顶层属性的惰性初始化。</li>
+ </ul>
+ <br>      
+</div></body></html>

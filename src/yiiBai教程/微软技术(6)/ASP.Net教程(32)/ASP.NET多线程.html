@@ -1,0 +1,341 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">ASP.NET多线程</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>线程被定义为程序的执行路径。 每个线程定义一个独特的控制流程。 如果应用程序涉及复杂和耗时的操作(如数据库访问或某些紧张的I/O操作)，那么设置不同的执行路径或线程通常会很有帮助，每个线程都执行特定的工作。</p> 
+ <p>线程是轻量级的过程。 使用线程的一个常见例子是由现代操作系统实现并发编程。 线程的使用节省了CPU周期的浪费并提高了应用程序的效率。</p> 
+ <p>到目前为止，我们编译的程序中，是以单个线程作为应用程序运行的实例来运行。 但是，这样应用程序一次可以只可执行一项工作。 为了一次执行多个任务，可以将其分成更小的线程。</p> 
+ <p>在.Net中，线程是通过<code>System.Threading</code>命名空间处理的。 创建<code>System.Threading.Thread</code>类型的变量允许您创建一个新的线程开始使用。它允许创建和访问程序中的各个线程。</p> 
+ <h2 id="h2-u521Bu5EFAu7EBFu7A0B"><a name="创建线程" class="reference-link"></a><span class="header-link octicon octicon-link"></span>创建线程</h2>
+ <p>一个线程是通过创建一个<code>Thread</code>类的对象来创建的，给它的构造器一个<code>ThreadStart</code>引用。</p> 
+ <pre><code class="lang-csharp">ThreadStart childthreat = new ThreadStart(childthreadcall);
+</code></pre> 
+ <h2 id="h2-u7EBFu7A0Bu751Fu547Du5468u671F"><a name="线程生命周期" class="reference-link"></a><span class="header-link octicon octicon-link"></span>线程生命周期</h2>
+ <p>线程的生命周期在<code>System.Threading.Thread</code>类的对象被创建时开始，并在线程被终止或完成执行时结束。</p> 
+ <p>以下是线程生命周期中的各种状态：</p> 
+ <ul> 
+  <li><em>未开始状态</em>：创建线程实例但未启动<code>Start</code>方法的情况。</li>
+  <li><em>就绪状态</em>：线程准备执行并等待CPU周期的情况。</li>
+  <li><em>不可运行状态</em>：一个线程不可运行，当：
+   <ul> 
+    <li><code>Sleep</code>方法已被调用</li>
+    <li><code>Wait</code>方法已被调用</li>
+    <li>被I/O操作阻止</li>
+   </ul> </li>
+  <li><em>死亡状态</em>：线程完成执行或被中止的情况。</li>
+ </ul> 
+ <h2 id="h2-u7EBFu7A0Bu4F18u5148"><a name="线程优先" class="reference-link"></a><span class="header-link octicon octicon-link"></span>线程优先</h2>
+ <p><code>Thread</code>类的<code>Priority</code>属性指定一个线程相对于其他线程的优先级。 .Net运行时选择具有最高优先级的就绪线程。</p> 
+ <p>优先级可以被分类为：</p> 
+ <ul> 
+  <li>超出正常水平</li>
+  <li>低于一般</li>
+  <li>最高</li>
+  <li>最低</li>
+  <li>正常</li>
+ </ul> 
+ <p>当线程被创建，它的优先级就使用线程类的<code>Priority</code>属性来设置。</p> 
+ <pre><code class="lang-csharp">NewThread.Priority = ThreadPriority.Highest;
+</code></pre> 
+ <h2 id="h2-u7EBFu7A0Bu5C5Eu6027u548Cu65B9u6CD5"><a name="线程属性和方法" class="reference-link"></a><span class="header-link octicon octicon-link"></span>线程属性和方法</h2>
+ <p><code>Thread</code>类具有以下重要的属性：</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>编号</th> 
+    <th>属性</th> 
+    <th>描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>1</td> 
+    <td><code>CurrentContext</code></td> 
+    <td>获取线程正在执行的当前上下文。</td> 
+   </tr> 
+   <tr> 
+    <td>2</td> 
+    <td><code>CurrentCulture</code></td> 
+    <td>获取或设置当前线程的文化。</td> 
+   </tr> 
+   <tr> 
+    <td>3</td> 
+    <td><code>CurrentPrinciple</code></td> 
+    <td>获取或设置线程当前的基于角色的安全性的主体。</td> 
+   </tr> 
+   <tr> 
+    <td>4</td> 
+    <td><code>CurrentThread</code></td> 
+    <td>获取当前正在运行的线程。</td> 
+   </tr> 
+   <tr> 
+    <td>5</td> 
+    <td><code>CurrentUICulture</code></td> 
+    <td>获取或设置资源管理器在运行时查找文化特定资源的当前文化。</td> 
+   </tr> 
+   <tr> 
+    <td>6</td> 
+    <td><code>ExecutionContext</code></td> 
+    <td>获取一个<code>ExecutionContext</code>对象，其中包含有关当前线程的各种上下文的信息。</td> 
+   </tr> 
+   <tr> 
+    <td>7</td> 
+    <td><code>IsAlive</code></td> 
+    <td>获取一个指示当前线程执行状态的值。</td> 
+   </tr> 
+   <tr> 
+    <td>8</td> 
+    <td><code>IsBackground</code></td> 
+    <td>获取或设置一个值，该值指示线程是否为后台线程。</td> 
+   </tr> 
+   <tr> 
+    <td>9</td> 
+    <td><code>IsThreadPoolThread</code></td> 
+    <td>获取一个值，该值指示线程是否属于托管线程池。</td> 
+   </tr> 
+   <tr> 
+    <td>10</td> 
+    <td><code>ManagedThreadId</code></td> 
+    <td>获取当前托管线程的唯一标识符。</td> 
+   </tr> 
+   <tr> 
+    <td>11</td> 
+    <td><code>Name</code></td> 
+    <td>获取或设置线程的名称。</td> 
+   </tr> 
+   <tr> 
+    <td>12</td> 
+    <td><code>Priority</code></td> 
+    <td>获取或设置一个指示线程调度优先级的值。</td> 
+   </tr> 
+   <tr> 
+    <td>13</td> 
+    <td><code>ThreadState</code></td> 
+    <td>获取包含当前线程状态的值。</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p><code>Thread</code>类具有以下重要的方法：</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>编号</th> 
+    <th>方法</th> 
+    <th>描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>1</td> 
+    <td><code>Abort</code></td> 
+    <td>在调用它的线程中引发<code>ThreadAbortException</code>异常，以开始终止线程的过程。 调用这个方法通常会终止线程。</td> 
+   </tr> 
+   <tr> 
+    <td>2</td> 
+    <td><code>AllocateDataSlot</code></td> 
+    <td>在所有线程上分配一个未命名的数据插槽。为了获得更好的性能，请使用<code>ThreadStaticAttribute</code>属性标记字段。</td> 
+   </tr> 
+   <tr> 
+    <td>3</td> 
+    <td><code>AllocateNamedDataSlot</code></td> 
+    <td>在所有线程上分配一个指定的数据插槽。 为了获得更好的性能，请使用<code>ThreadStaticAttribute</code>属性标记字段。</td> 
+   </tr> 
+   <tr> 
+    <td>4</td> 
+    <td><code>BeginCriticalRegion</code></td> 
+    <td>通知主机执行即将进入一个线程中止或未处理异常的影响可能危及应用程序域中的其他任务的代码区域。</td> 
+   </tr> 
+   <tr> 
+    <td>5</td> 
+    <td><code>BeginThreadAffinity</code></td> 
+    <td>通知主机托管代码即将执行取决于当前物理操作系统线程标识的指令。</td> 
+   </tr> 
+   <tr> 
+    <td>6</td> 
+    <td><code>EndCriticalRegion</code></td> 
+    <td>通知主机执行即将进入一个线程中止或未处理异常的影响被限制在当前任务的代码区域。</td> 
+   </tr> 
+   <tr> 
+    <td>7</td> 
+    <td><code>EndThreadAffinity</code></td> 
+    <td>通知主机，托管代码已经完成执行取决于当前物理操作系统线程的标识的指令。</td> 
+   </tr> 
+   <tr> 
+    <td>8</td> 
+    <td><code>FreeNamedDataSlot</code></td> 
+    <td>消除进程中所有线程的名称和插槽之间的关联。 为了获得更好的性能，请使用标记为<code>ThreadStaticAttribute</code>属性字段。</td> 
+   </tr> 
+   <tr> 
+    <td>9</td> 
+    <td><code>GetData</code></td> 
+    <td>从当前线程的当前域内的当前线程的指定插槽中检索值。 为了获得更好的性能，请使用标记为<code>ThreadStaticAttribute</code>属性字段。</td> 
+   </tr> 
+   <tr> 
+    <td>10</td> 
+    <td><code>GetDomain</code></td> 
+    <td>返回当前线程正在运行的当前域。</td> 
+   </tr> 
+   <tr> 
+    <td>11</td> 
+    <td><code>GetDomainID</code></td> 
+    <td>返回唯一的应用程序域标识符。</td> 
+   </tr> 
+   <tr> 
+    <td>12</td> 
+    <td><code>GetNamedDataSlot</code></td> 
+    <td>查找一个命名的数据插槽。 为了获得更好的性能，请使用<code>ThreadStaticAttribute</code>属性标记字段。</td> 
+   </tr> 
+   <tr> 
+    <td>13</td> 
+    <td><code>Interrupt</code></td> 
+    <td>中断处于<code>WaitSleepJoin</code>线程状态的线程。</td> 
+   </tr> 
+   <tr> 
+    <td>14</td> 
+    <td><code>Join</code></td> 
+    <td>阻塞调用线程，直到线程终止，同时继续执行标准COM和<code>SendMessage</code>抽取。这种方法有不同的重载形式。</td> 
+   </tr> 
+   <tr> 
+    <td>15</td> 
+    <td><code>MemoryBarrier</code></td> 
+    <td>同步内存访问，如下所示：执行当前线程的处理器不能重新排序指令，以便在调用<code>MemoryBarrier</code>之前执行内存访问之后，访问<code>MemoryBarrier</code>调用之后的内存访问。</td> 
+   </tr> 
+   <tr> 
+    <td>16</td> 
+    <td><code>ResetAbort</code></td> 
+    <td>取消当前线程所请求的中止。</td> 
+   </tr> 
+   <tr> 
+    <td>17</td> 
+    <td><code>SetData</code></td> 
+    <td>在当前正在运行的线程的指定槽中设置该线程当前域的数据。为了获得更好的性能，请使用标记为<code>ThreadStaticAttribute</code>属性的字段。</td> 
+   </tr> 
+   <tr> 
+    <td>18</td> 
+    <td><code>Start</code></td> 
+    <td>开始一个线程。</td> 
+   </tr> 
+   <tr> 
+    <td>19</td> 
+    <td><code>Sleep</code></td> 
+    <td>使线程暂停一段时间。</td> 
+   </tr> 
+   <tr> 
+    <td>20</td> 
+    <td><code>SpinWait</code></td> 
+    <td>使线程等待迭代参数定义的次数。</td> 
+   </tr> 
+   <tr> 
+    <td>21</td> 
+    <td><code>VolatileRead()</code></td> 
+    <td>读取一个字段的值。该值是计算机中任何处理器写入的最新值，无论处理器的数量或处理器高速缓存的状态如何。这种方法有不同的重载形式。</td> 
+   </tr> 
+   <tr> 
+    <td>22</td> 
+    <td><code>VolatileWrite()</code></td> 
+    <td>立即将值写入字段，以便计算机中的所有处理器都可以看到该值。 这种方法有不同的重载形式。</td> 
+   </tr> 
+   <tr> 
+    <td>23</td> 
+    <td><code>Yield</code></td> 
+    <td>使调用线程产生执行到另一个准备在当前处理器上运行的线程。 操作系统选择要产生的线程。</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h4 id="h4-u793Au4F8B"><a name="示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例</h4>
+ <p>以下示例说明了<code>Thread</code>类的用法。该页面具有用于显示来自子线程的消息的标签控件。 来自主程序的消息直接使用<code>Response.Write()</code>方法显示。 因此，它们出现在页面的顶部。</p> 
+ <p>首先打开<em>Visual Studio</em>，创建一个名称为：<em>MultiThreading</em> 的<em>ASP.Net空网站</em> 项目。并添加一个Web窗体文件 - <em>Default.aspx</em></p> 
+ <p>源文件(<em>Default.aspx</em>)如下：</p>   
+ <pre><code class="lang-aspnet">&lt;%@ Page Language="C#" AutoEventWireup="true" CodeFile="Default.aspx.cs" Inherits="_Default" %&gt;
+
+&lt;!DOCTYPE html&gt;
+
+&lt;html xmlns="http://www.w3.org/1999/xhtml"&gt;
+&lt;head runat="server"&gt;
+&lt;meta http-equiv="Content-Type" content="text/html; charset=utf-8"/&gt;
+    &lt;title&gt;ASP.Net多线程示例&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;form id="form1" runat="server"&gt;
+        &lt;div&gt;
+            &lt;h3&gt;ASP.Net多线程示例&lt;/h3&gt;
+         &lt;/div&gt;
+
+         &lt;asp:Label ID="lblmessage" runat="server" Text="Label"&gt;
+         &lt;/asp:Label&gt;
+    &lt;/form&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>后端代码文件(<em>Default.aspx.cs</em>)如下：</p> 
+ <pre><code class="lang-csharp">using System;
+using System.Collections;
+using System.Configuration;
+using System.Data;
+using System.Linq;
+
+using System.Web;
+using System.Web.Security;
+using System.Web.UI;
+using System.Web.UI.HtmlControls;
+using System.Web.UI.WebControls;
+using System.Web.UI.WebControls.WebParts;
+
+using System.Xml.Linq;
+using System.Threading;
+
+public partial class _Default : System.Web.UI.Page
+{
+    protected void Page_Load(object sender, EventArgs e)
+    {
+        ThreadStart childthreat = new ThreadStart(childthreadcall);
+        Response.Write("Child Thread Started &lt;br/&gt;");
+        Thread child = new Thread(childthreat);
+
+        child.Start();
+
+        Response.Write("Main sleeping  for 2 seconds.......&lt;br/&gt;");
+        Thread.Sleep(2000);
+        Response.Write("&lt;br/&gt;Main aborting child thread&lt;br/&gt;");
+
+        child.Abort();
+    }
+
+    public void childthreadcall()
+    {
+        try
+        {
+            lblmessage.Text = "&lt;br /&gt;Child thread started &lt;br/&gt;";
+            lblmessage.Text += "Child Thread: Coiunting to 10";
+
+            for (int i = 0; i &lt; 10; i++)
+            {
+                Thread.Sleep(500);
+                lblmessage.Text += "&lt;br/&gt; in Child thread &lt;/br&gt;";
+            }
+
+            lblmessage.Text += "&lt;br/&gt; child thread finished";
+
+        }
+        catch (ThreadAbortException e)
+        {
+
+            lblmessage.Text += "&lt;br /&gt; child thread - exception";
+
+        }
+        finally
+        {
+            lblmessage.Text += "&lt;br /&gt; child thread - unable to catch the  exception";
+        }
+    }
+}
+</code></pre> 
+ <p><strong>请注意以下几点</strong></p> 
+ <ul> 
+  <li>加载页面时，将使用<code>childthreadcall()</code>方法来启动一个新线程。主线程活动直接显示在网页上。</li>
+  <li>第二个线程运行并将消息发送到标签控件。</li>
+  <li>主线程休眠<code>2000</code>毫秒，在此期间子线程执行。</li>
+  <li>子线程一直运行到主线程中止。它引发<code>ThreadAbortException</code>异常并终止。</li>
+  <li>控制权返回到主线程。</li>
+ </ul> 
+ <p>运行项目程序后，得到以下结果 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201712/1112/793141256_50821.png" alt=""></p>
+ <br>      
+</div></body></html>

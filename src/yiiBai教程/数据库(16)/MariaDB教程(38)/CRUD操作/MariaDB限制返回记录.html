@@ -1,0 +1,111 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">MariaDB限制返回记录</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>在MariaDB数据库中，使用<code>SELECT</code>语句和<code>LIMIT</code>子句从表中检索一个或多个记录。</p> 
+ <p><strong>语法：</strong></p> 
+ <pre><code class="lang-sql">SELECT expressions  
+FROM tables  
+[WHERE conditions]  
+[ORDER BY expression [ ASC | DESC ]]  
+LIMIT row_count;
+</code></pre> 
+ <p><strong>示例1：</strong></p> 
+ <p>以降序检索记录：</p> 
+ <p>使用<code>SELECT</code>语句并带有<code>LIMIT</code>子句查询<code>students</code>表中的数据。结果<code>student_id</code>列的值按降序显示，<code>LIMIT</code>为<code>3</code>。参考如下语句 - </p> 
+ <pre><code class="lang-sql">SELECT student_id, student_name, student_address  
+FROM Students  
+WHERE student_id &lt;= 7  
+ORDER BY student_id DESC  
+LIMIT 3;
+</code></pre> 
+ <p>执行上面查询语句，得到以下结果 - </p> 
+ <pre><code class="lang-shell">MariaDB [testdb]&gt; SELECT student_id, student_name, student_address
+    -&gt; FROM Students
+    -&gt; WHERE student_id &lt;= 7
+    -&gt; ORDER BY student_id DESC
+    -&gt; LIMIT 3;
++------------+--------------+-----------------+
+| student_id | student_name | student_address |
++------------+--------------+-----------------+
+|          6 | Blaba        | Shengzheng      |
+|          5 | Kobe         | Shanghai        |
+|          4 | Mahesh       | Guangzhou       |
++------------+--------------+-----------------+
+3 rows in set (0.00 sec)
+</code></pre> 
+ <p><strong>示例2：</strong></p> 
+ <p>按<code>student_id</code>列的值升序检索记录：</p> 
+ <pre><code class="lang-sql">SELECT student_id, student_name, student_address  
+FROM Students  
+WHERE student_id &lt;= 7  
+ORDER BY student_id ASC  
+LIMIT 3;
+</code></pre> 
+ <p>执行上面查询语句，得到以下结果 - </p> 
+ <pre><code class="lang-shell">MariaDB [testdb]&gt; SELECT student_id, student_name, student_address
+    -&gt; FROM Students
+    -&gt; WHERE student_id &lt;= 7
+    -&gt; ORDER BY student_id ASC
+    -&gt; LIMIT 3;
++------------+--------------+-----------------+
+| student_id | student_name | student_address |
++------------+--------------+-----------------+
+|          1 | Maxsu        | Haikou          |
+|          3 | JMaster      | Beijing         |
+|          4 | Mahesh       | Guangzhou       |
++------------+--------------+-----------------+
+3 rows in set (0.00 sec)
+</code></pre> 
+ <p><strong>示例3：分页</strong></p> 
+ <p>在应用程序中，由于数据记录太多，不能全在一个页面中全部显示，我们经常要使用分页来显示。假设每页显示<code>3</code>条记录，参考以下语句 - </p>   
+ <pre><code class="lang-sql">-- 第1页数据
+SELECT student_id, student_name, student_address  
+FROM Students  
+WHERE student_id &gt; 0 
+ORDER BY student_id ASC  
+LIMIT 0,3; 
+
+-- 第2页数据
+SELECT student_id, student_name, student_address  
+FROM Students  
+WHERE student_id &gt; 0 
+ORDER BY student_id ASC  
+LIMIT 3,3; 
+
+-- 第3页数据
+SELECT student_id, student_name, student_address  
+FROM Students  
+WHERE student_id &gt; 0 
+ORDER BY student_id ASC  
+LIMIT 6,3;
+</code></pre> 
+ <p>执行上面查询语句，得到以下结果 - </p> 
+ <pre><code class="lang-shell">MariaDB [testdb]&gt; SELECT student_id, student_name, student_address
+    -&gt; FROM Students
+    -&gt; WHERE student_id &gt; 0
+    -&gt; ORDER BY student_id ASC
+    -&gt; LIMIT 0,3;
++------------+--------------+-----------------+
+| student_id | student_name | student_address |
++------------+--------------+-----------------+
+|          1 | Maxsu        | Haikou          |
+|          3 | JMaster      | Beijing         |
+|          4 | Mahesh       | Guangzhou       |
++------------+--------------+-----------------+
+3 rows in set (0.05 sec)
+
+MariaDB [testdb]&gt; SELECT student_id, student_name, student_address
+    -&gt; FROM Students
+    -&gt; WHERE student_id &gt; 0
+    -&gt; ORDER BY student_id ASC
+    -&gt; LIMIT 3,3;
++------------+--------------+-----------------+
+| student_id | student_name | student_address |
++------------+--------------+-----------------+
+|          5 | Kobe         | Shanghai        |
+|          6 | Blaba        | Shengzheng      |
++------------+--------------+-----------------+
+2 rows in set (0.00 sec)
+
+MariaDB [testdb]&gt;
+</code></pre>
+ <br>      
+</div></body></html>

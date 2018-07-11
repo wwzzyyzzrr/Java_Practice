@@ -1,0 +1,119 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Cordova文件传输</h1><div style="width:100%;float:left;" class="article-content">   
+ <div>
+   这个插件是用于上传和下载文件。 
+ </div> 
+ <div> 
+  <h2> 
+   <div>
+     第1步&nbsp;-&nbsp;安装文件传输插件 
+   </div> </h2> 
+  <div>
+    打开命令提示符，运行以下命令来安装插件。 
+  </div> 
+  <pre>C:\Users\username\Desktop\CordovaProject&gt;cordova plugin add cordova-plugin-file-transfer</pre> 
+  <h2> 
+   <div>
+     第2步&nbsp;-&nbsp;创建按钮 
+   </div> </h2> 
+  <div>
+    在本章中，我们将学习如何上传和下载文件。让我们创建index.html中两个按钮 
+  </div> 
+  <pre>&lt;button id = "uploadFile"&gt;UPLOAD&lt;/button&gt;
+&lt;button id = "downloadFile"&gt;DOWNLOAD&lt;/button&gt;</pre> 
+  <h2> 
+   <div>
+     第3步&nbsp;-&nbsp;添加事件监听器 
+   </div> </h2> 
+  <p style="text-align:justify;"> 在index.js&nbsp;onDeviceReady函数内创建事件侦听器。&nbsp;增加点击事件和回调函数如下。 </p> 
+  <pre>document.getElementById("uploadFile").addEventListener("click", uploadFile);
+document.getElementById("downloadFile").addEventListener("click", downloadFile);</pre> 
+  <h2> 
+   <div>
+     步骤4A-&nbsp;下载函数 
+   </div> </h2> 
+  <p style="text-align:justify;"> 这个功能将用于从服务器下载文件到设备。&nbsp;我们演示上传文件到 postimage.org。&nbsp;你可能会使用自己的服务器。&nbsp;这个函数放置在index.js并按下相应的按钮时触发。uri&nbsp;是服务器下载链接以及&nbsp;fileURI&nbsp;路径是设备上的DCIM文件夹。 </p> 
+  <pre>function downloadFile() {
+
+   var fileTransfer = new FileTransfer();
+   var uri = encodeURI("http://s14.postimg.org/i8qvaxyup/bitcoin1.jpg");
+   var fileURL =  "///storage/emulated/0/DCIM/myFile";
+
+   fileTransfer.download(
+      uri, fileURL, function(entry) {
+         console.log("download complete: " + entry.toURL());
+      },
+		
+      function(error) {
+         console.log("download error source " + error.source);
+         console.log("download error target " + error.target);
+         console.log("download error code" + error.code);
+      },
+		
+      false, {
+         headers: {
+            "Authorization": "Basic dGVzdHVzZXJuYW1lOnRlc3RwYXNzd29yZA=="
+         }
+      }
+   );
+}&nbsp;</pre> 
+  <p style="text-align:justify;"> 当我们按下下载按钮，文件将从postimg.org服务器上下载到我们的移动设备。我们可以查看指定的文件夹，看到&nbsp;myFile&nbsp;是存在的。 </p> 
+  <img src="file://E:/data/youdao/qq24B39E2329F08D9F4C3146A571A415EF/8371f195c2594935bdffd921bf5fd308/er-download.jpeg" alt="Cordova File Transfer Download"> 
+  <div>
+    控制台输出看起来就像这样&nbsp;-
+   <br> 
+   <img src="/uploads/tutorial/20160220/1-160220110531I4.jpg" alt="">
+   <br> 
+  </div> 
+  <img src="file://E:/data/youdao/qq24B39E2329F08D9F4C3146A571A415EF/3e543ba9fa9449d98a4e1f93c772d318/ownload-log.jpeg" alt="Cordova File Transfer Download Log"> 
+  <h2> 
+   <div>
+     步骤4B&nbsp;-&nbsp;上传函数 
+   </div> </h2> 
+  <p style="text-align:justify;"> 现在我们创建函数，选择文件并将其上传到服务器。再次，我们希望能够尽可能简化，所以将使用 posttestserver.com 在线服务器进行测试。uri的值将链接提交到 posttestserver。 </p>   
+  <pre>function uploadFile() {
+   var fileURL = "///storage/emulated/0/DCIM/myFile"
+   var uri = encodeURI("http://posttestserver.com/post.php");
+   var options = new FileUploadOptions();
+	
+   options.fileKey = "file";
+   options.fileName = fileURL.substr(fileURL.lastIndexOf('/')+1);
+   options.mimeType = "text/plain";
+
+   var headers = {'headerParam':'headerValue'};
+   options.headers = headers;
+
+   var ft = new FileTransfer();
+
+   ft.upload(fileURL, uri, onSuccess, onError, options);
+
+   function onSuccess(r) {
+      console.log("Code = " + r.responseCode);
+      console.log("Response = " + r.response);
+      console.log("Sent = " + r.bytesSent);
+   }
+
+   function onError(error) {
+      alert("An error has occurred: Code = " + error.code);
+      console.log("upload error source " + error.source);
+      console.log("upload error target " + error.target);
+   }
+	
+}</pre> 
+  <div>
+    现在，我们可以按下UPLOAD&nbsp;按钮来触发此函数。我们将得到的控制台输出，确认上传成功。
+   <br> 
+   <img src="/uploads/tutorial/20160220/1-16022011060M93.jpg" alt="">
+   <br> 
+  </div> 
+  <img src="file://E:/data/youdao/qq24B39E2329F08D9F4C3146A571A415EF/9469440486fa4173ab9f368071c6140a/-upload-log.jpeg" alt="Cordova File Transfer Upload Log"> 
+  <div>
+    我们也可以检查服务器，以确定该文件已经被上传了。
+   <br> 
+   <img src="/uploads/tutorial/20160220/1-160220110633948.jpg" alt="">
+   <br> 
+  </div> 
+  <img src="file://E:/data/youdao/qq24B39E2329F08D9F4C3146A571A415EF/9de0715ee10c4bce936b639f8eadefc4/er-response.jpeg" alt="Cordova File Transfer Upload Server Response">
+  <br> 
+ </div>
+ <br>      
+</div></body></html>

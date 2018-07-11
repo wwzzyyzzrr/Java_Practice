@@ -1,0 +1,141 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">JavaScript动画</h1><div style="width:100%;float:left;" class="article-content">   
+ <p> 你可以使用JavaScript来创建复杂的动画其中包括但不限于：</p> 
+ <ul> 
+  <li> 烟火</li> 
+  <li> 淡入淡出效果</li> 
+  <li> 滚入或转出</li> 
+  <li> 入页面或出页面</li> 
+  <li> 对象运动</li> 
+ </ul> 
+ <p> 本教程会给一个基本的了解如何使用JavaScript来创建一个动画。</p> 
+ <p> JavaScript可以按照某种模式，由一个逻辑等式或函数来确定移动至若干DOM元素(&lt;IMG/&gt;，&lt;DIV&gt;或任何其他HTML元素)页面各处。</p> 
+ <p> JavaScript提供以下要经常用于动画程序两种功能。</p> 
+ <ul> 
+  <li> <p> <strong>setTimeout( function, duration)</strong>&nbsp;- 从现在这个函数调用 duration&nbsp;毫秒后的 function</p> </li> 
+  <li> <p> <strong>setInterval(function, duration)&nbsp;</strong>- 每次持续duration 毫秒之后，此函数调用function。</p> </li> 
+  <li> <p> <strong>clearTimeout(setTimeout_variable)</strong>&nbsp;- 这个函数调用清除任何计时器由setTimeout()函数设置。</p> </li> 
+ </ul> 
+ <p> JavaScript还可以设置一个数字，包括它在屏幕上的位置DOM对象的属性。可以设置一个对象的顶部和左侧的属性在屏幕上的任何位置。下面是简单的语法：</p> 
+ <pre style="'Courier New', monospace; font-size: 12px; ">
+// Set distance from left edge of the screen.
+object.style.left = distance in pixels or points; 
+
+or
+// Set distance from top edge of the screen.
+object.style.top = distance in pixels or points; </pre> 
+ <h1> 手动动画：</h1> 
+ <p> 所以，让我们使用DOM对象的属性和JavaScript函数如下的实现一个简单的动画：</p> 
+ <pre style="'Courier New', monospace; font-size: 12px; ">
+&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;JavaScript Animation&lt;/title&gt;
+&lt;script type="text/javascript"&gt;
+&lt;!--
+var imgObj = null;
+function init(){
+   imgObj = document.getElementById('myImage');
+   imgObj.style.position= 'relative'; 
+   imgObj.style.left = '0px'; 
+}
+function moveRight(){
+   imgObj.style.left = parseInt(imgObj.style.left) + 10 + 'px';
+}
+window.onload =init;
+//--&gt;
+&lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;form&gt;
+&lt;img id="myImage" src="/images/html.gif" /&gt;
+&lt;p&gt;Click button below to move the image to right&lt;/p&gt;
+&lt;input type="button" value="Click Me" onclick="moveRight();" /&gt;
+&lt;/form&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre> 
+ <p> 下面是上面的例子的说明：</p> 
+ <ul> 
+  <li> <p> 我们使用的是JavaScript函数的getElementById()来获取一个DOM对象，然后将其分配给一个全局变量&nbsp;imgObj.</p> </li> 
+  <li> <p> 我们定义了一个初始化函数的init()来初始化imgObj，我们已经设置它的位置和左属性。</p> </li> 
+  <li> <p> 我们调用初始化函数在窗口加载时。</p> </li> 
+  <li> <p> 最后，我们调用并将MoveRight()函数由10个像素来增加左边的距离。你也可以将其设置为一个负数值，以将其移动到左侧。</p> </li> 
+ </ul> 
+ <h1> 自动动画：</h1> 
+ <p> 在上面的例子中，如我们所看到的，如何将图像移动到右每点击。可以通过使用JavaScript函数的setTimeout()如下自动完成这一过程：</p> 
+ <pre style="'Courier New', monospace; font-size: 12px; ">
+&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;JavaScript Animation&lt;/title&gt;
+&lt;script type="text/javascript"&gt;
+&lt;!--
+var imgObj = null;
+var animate ;
+function init(){
+   imgObj = document.getElementById('myImage');
+   imgObj.style.position= 'relative'; 
+   imgObj.style.left = '0px'; 
+}
+function moveRight(){
+   imgObj.style.left = parseInt(imgObj.style.left) + 10 + 'px';
+   animate = setTimeout(moveRight,20); // call moveRight in 20msec
+}
+function stop(){
+   clearTimeout(animate);
+   imgObj.style.left = '0px'; 
+}
+window.onload =init;
+//--&gt;
+&lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;form&gt;
+&lt;img id="myImage" src="/images/html.gif" /&gt;
+&lt;p&gt;Click the buttons below to handle animation&lt;/p&gt;
+&lt;input type="button" value="Start" onclick="moveRight();" /&gt;
+&lt;input type="button" value="Stop" onclick="stop();" /&gt;
+&lt;/form&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre> 
+ <p> 在这里，我们增加更多的情趣。因此，让我们看看新的功能：</p> 
+ <ul> 
+  <li> <p> 并将 MoveRight()函数调用&nbsp;setTimeout()函数来设置 imgObj&nbsp;位置。</p> </li> 
+  <li> <p> 我们增加了一个新的函数stop()来清除由定时器设定的setTimeout()函数来设置对象在其初始位置。</p> </li> 
+ </ul> 
+ <h1> 翻转用鼠标事件：</h1> 
+ <p> 下面是一个简单的例子，显示图像翻转用鼠标事件：</p>   
+ <pre style="'Courier New', monospace; font-size: 12px; ">
+&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;Rollover with a Mouse Events&lt;/title&gt;
+&lt;script type="text/javascript"&gt;
+&lt;!--
+if(document.images){
+    var image1 = new Image();      // Preload an image
+    image1.src = "/images/html.gif";
+    var image2 = new Image();      // Preload second image
+    image2.src = "/images/http.gif";
+}
+//--&gt;
+&lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;p&gt;Move your mouse over the image to see the result&lt;/p&gt;
+&lt;a href="#" onMouseOver="document.myImage.src=image2.src;"
+            onMouseOut="document.myImage.src=image1.src;"&gt;
+&lt;img name="myImage" src="/images/html.gif" /&gt;
+&lt;/a&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre> 
+ <p> 让我们来看看有什么不同的位置：</p> 
+ <ul> 
+  <li> <p> 在加载这个页面，if语句检查图像对象存在的时间。如果图像对象是不可用的，该块将不被执行</p> </li> 
+  <li> <p> Image()构造函数创建并预装名为image1的一个新的图像对象</p> </li> 
+  <li> <p> src属性指定的外部图像文件的名称叫 /images/html.gif</p> </li> 
+  <li> <p> 我们已经创建IMAGE2对象，并在这个对象分配/images/http.gif类似的方式</p> </li> 
+  <li> <p> 在＃（井号）禁用链接，浏览器不会尝试去一个URL点击时。此链接的图像</p> </li> 
+  <li> <p> 当用户的鼠标移动到链路，而onmouseout事件处理程序，当用户的鼠标移动远离链路（图像）被触发onMouseOver事件处理程序被触发</p> </li> 
+  <li> <p> 当鼠标移动时在图像上，从第一图像到第二个在HTTP图像的变化。当鼠标被从图像移离，则显示原来的图象</p> </li> 
+  <li> <p> 当鼠标离开该链接时，初始图像html.gif将重新出现在屏幕上</p> </li> 
+ </ul> 
+ <p style="text-align: justify; verdana, helvetica, arial,  color: rgb(0, 0, 0);"> &nbsp;</p> 
+ <br>      
+</div></body></html>

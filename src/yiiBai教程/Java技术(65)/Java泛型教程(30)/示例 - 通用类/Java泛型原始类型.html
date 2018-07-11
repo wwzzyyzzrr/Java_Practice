@@ -1,0 +1,49 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Java泛型原始类型</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>原始类型是泛型类或接口的对象，如果其类型参数在创建过程中传递。以下示例将展示上述概念。</p> 
+ <h2 id="h2-u793Au4F8B"><a name="示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例</h2>
+ <p>使用您喜欢的编辑器创建以下java程序，并保存到文件：<em>RawTypes.java</em> 中，代码如下所示 -</p> 
+ <pre><code class="lang-java">package com.yiibai;
+
+public class RawTypes {
+    public static void main(String[] args) {
+        Box5&lt;Integer&gt; box = new Box5&lt;Integer&gt;();
+
+        box.set(Integer.valueOf(105));
+        System.out.printf("Integer Value :%d\n", box.getData());
+
+        Box5 rawBox = new Box5();
+
+        // No warning
+        rawBox = box;
+        System.out.printf("Integer Value :%d\n", rawBox.getData());
+
+        // Warning for unchecked invocation to set(T)
+        rawBox.set(Integer.valueOf(106));
+        System.out.printf("Integer Value :%d\n", rawBox.getData());
+
+        // Warning for unchecked conversion
+        box = rawBox;
+        System.out.printf("Integer Value :%d\n", box.getData());
+    }
+}
+
+class Box5&lt;T&gt; {
+    private T t;
+
+    public void set(T t) {
+        this.t = t;
+    }
+
+    public T getData() {
+        return t;
+    }
+}
+</code></pre> 
+ <p>执行上面代码，得到以下结果 - </p>   
+ <pre><code class="lang-shell">Integer Value :105
+Integer Value :105
+Integer Value :10
+Integer Value :10
+</code></pre>
+ <br>      
+</div></body></html>

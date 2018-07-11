@@ -1,0 +1,148 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">ADO.Net SqlCommand类</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>ADO.Net的<code>SqlCommand</code>类用于存储和执行SQL Server数据库的SQL语句。这是一个封闭的类，所以不能被继承。</p> 
+ <p><strong>SqlCommand类的签名</strong></p> 
+ <pre><code class="lang-csharp">public sealed class SqlCommand : System.Data.Common.DbCommand, ICloneable, IDisposable
+</code></pre> 
+ <h2 id="h2-u6784u9020u51FDu6570"><a name="构造函数" class="reference-link"></a><span class="header-link octicon octicon-link"></span>构造函数</h2>
+ <p>这个类提供了下面的构造函数。</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>编号</th> 
+    <th>构造函数</th> 
+    <th>描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>1</td> 
+    <td><code>SqlCommand()</code></td> 
+    <td>它用于初始化<code>SqlCommand</code>类的新实例。</td> 
+   </tr> 
+   <tr> 
+    <td>2</td> 
+    <td><code>SqlCommand(String)</code></td> 
+    <td>它用于使用字符串参数初始化<code>SqlCommand</code>类的新实例。</td> 
+   </tr> 
+   <tr> 
+    <td>3</td> 
+    <td><code>SqlCommand(String, SqlConnection, SqlTransaction)</code></td> 
+    <td>它用于初始化<code>SqlCommand</code>类的新实例。它分别使用三个参数查询，连接和事务字符串。</td> 
+   </tr> 
+   <tr> 
+    <td>4</td> 
+    <td><code>SqlCommand(String, SqlConnection, SqlTransaction, SqlCommandColumnEncryptionSetting)</code></td> 
+    <td>它使用指定的命令文本，连接，事务和加密设置来初始化<code>SqlCommand</code>类的新实例。</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h2 id="h2-u6784u9020u65B9u6CD5"><a name="构造方法" class="reference-link"></a><span class="header-link octicon octicon-link"></span>构造方法</h2>
+ <p>这个类提供了下面的方法。</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>编号</th> 
+    <th>方法</th> 
+    <th>描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>1</td> 
+    <td><code>BeginExecuteNonQuery()</code></td> 
+    <td>它用于启动由此<code>SqlCommand</code>描述的SQL语句的异步执行。</td> 
+   </tr> 
+   <tr> 
+    <td>2</td> 
+    <td><code>Cancel()</code></td> 
+    <td>它试图取消一个<code>SqlCommand</code>的执行。</td> 
+   </tr> 
+   <tr> 
+    <td>3</td> 
+    <td><code>Clone()</code></td> 
+    <td>它创建一个新的<code>SqlCommand</code>对象，它是当前实例的一个副本。</td> 
+   </tr> 
+   <tr> 
+    <td>4</td> 
+    <td><code>CreateParameter()</code></td> 
+    <td>它创建一个<code>SqlParameter</code>对象的新实例。</td> 
+   </tr> 
+   <tr> 
+    <td>5</td> 
+    <td><code>ExecuteReader()</code></td> 
+    <td>它用于将<code>CommandText</code>发送给<code>Connection</code>并构建一个<code>SqlDataReader</code>。</td> 
+   </tr> 
+   <tr> 
+    <td>6</td> 
+    <td><code>ExecuteXmlReader()</code></td> 
+    <td>它用于将<code>CommandText</code>发送给<code>Connection</code>并构建一个<code>XmlReader</code>对象。</td> 
+   </tr> 
+   <tr> 
+    <td>7</td> 
+    <td><code>ExecuteScalar()</code></td> 
+    <td>它执行查询并返回结果集中第一行的第一列，其他列或行将被忽略。</td> 
+   </tr> 
+   <tr> 
+    <td>8</td> 
+    <td><code>Prepare()</code></td> 
+    <td>它用于通过使用SQL Server的实例来创建准备好的命令版本。</td> 
+   </tr> 
+   <tr> 
+    <td>9</td> 
+    <td><code>ResetCommandTimeout()</code></td> 
+    <td>它用于将<code>CommandTimeout</code>属性重置为默认值。</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h2 id="h2-sqlcommand-"><a name="SqlCommand类的使用示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>SqlCommand类的使用示例</h2>
+ <p>在这个例子中，创建一个<code>SqlCommand</code>实例并执行一条SQL语句。首先创建一个名称为：<em>AdoNetSqlCommand</em> 的C#控制台应用项目，如下所示 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201711/2011/254151156_48640.png" alt=""></p> 
+ <p>参考以下实现代码(<em>Program.cs</em>) -</p>   
+ <pre><code class="lang-csharp">using System;
+using System.Data.SqlClient;
+
+namespace AdoNetSqlCommand
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            new Program().CreateTable();
+        }
+        public void CreateTable()
+        {
+            SqlConnection con = null;
+            try
+            {
+                // Creating Connection  
+                con = new SqlConnection("data source=.; database=student; integrated security=SSPI");
+                // writing sql query  
+                SqlCommand cm = new SqlCommand("select * from student_info", con);
+                // Opening Connection  
+                con.Open();
+                Console.WriteLine("当前 student_info 表中的记录信息如下 - ");
+                // Executing the SQL query  
+                SqlDataReader sdr = cm.ExecuteReader();
+                while (sdr.Read())
+                {
+                    Console.WriteLine("学生编号："+ sdr["id"] + "，姓名： "+sdr["name"] + "，电子邮箱： " + sdr["email"]);
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("OOPs, something went wrong." + e);
+            }
+            // Closing the connection  
+            finally
+            {
+                con.Close();
+            }
+        }
+    }
+}
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201711/2011/553161104_55996.png" alt=""></p> 
+ <p>| | <code>| | | |</code> | |<br>| | `` | |</p>
+ <br>      
+</div></body></html>

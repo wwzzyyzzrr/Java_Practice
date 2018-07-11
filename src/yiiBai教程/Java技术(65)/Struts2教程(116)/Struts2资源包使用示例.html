@@ -1,0 +1,100 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Struts2资源包使用示例</h1><div style="width:100%;float:left;" class="article-content">   
+ <div>
+   要使用资源包从属性文件检索消息，必须了解Struts2的资源包搜索顺序： 
+ </div> 
+ <p> <br> </p> 
+ <h2> 
+  <div>
+    资源包搜索顺序 
+  </div> </h2> 
+ <div>
+   资源包中搜索按以下顺序： 
+ </div> 
+ <ol> 
+  <li> ActionClass.properties </li> 
+  <li> Interface.properties </li> 
+  <li> BaseClass.properties </li> 
+  <li> ModelDriven’s model </li> 
+  <li> package.properties </li> 
+  <li> 
+   <div>
+     搜索国际化消息键的层次结构本身 
+   </div> </li> 
+  <li> 
+   <div>
+     全局资源属性 
+   </div> </li> 
+ </ol> 
+ <div> 
+  <div>
+    请参阅
+   <a target="_blank" href="http://struts.apache.org/docs/localization.html">Struts2资源包</a>文档详细解释。 
+  </div> 
+ </div> 
+ <p> 在实践中，是不可能组织属性的文件的顺序。所以，只要了解几个常用的搜索顺序应该是足够了：&nbsp;package.properties&nbsp;和&nbsp;global resource properties。参见下图： </p> 
+ <p> <img src="/uploads/tutorial/20151123/1-15112321060QB.png" alt=""> </p> 
+ <div>
+   如果com.yiibai.user.action.LoginAction想通过资源包获得消息，它将搜索 
+ </div> 
+ <ol> 
+  <li> com.yiibai.user.action.LoginAction.properties (找到，退出，否则下一个) </li> 
+  <li> com.yiibai.user.action.package.properties (找到，退出，否则下一个) </li> 
+  <li> com.yiibai.user.package.properties (找到，退出，否则下一个)<br> …一路不断在每个父目录的根目录查找package.properties </li> 
+  <li> 查找<a target="_blank" href="http://www.yiibai.com/struts_2/how-to-configure-global-resource-bundle-in-struts-2.html">全局资源属性</a>，如果将其配置在应用程序中。 </li> 
+ </ol> 
+ <div> 
+  <div>
+    明白这搜索顺序可以给你更多的信心来决定正确的文件夹的属性文件。 
+  </div> 
+ </div> 
+ <h2> 
+  <div>
+    获取资源包 
+  </div> </h2> 
+ <div>
+   下面是访问该资源包的几个例子： 
+ </div> 
+ <p> P.S ‘username.required‘ &nbsp;和 ‘username‘&nbsp;在一个属性文件中的键。 </p> 
+ <h2> 1. 动作类 </h2> 
+ <div>
+   在Action类，可以扩展了ActionSupport和通过getText(‘key’)&nbsp;函数获取资源包。 
+ </div> 
+ <pre>...
+public class LoginAction extends ActionSupport{
+	...
+	public void validate(){
+		if("".equals(getUsername())){
+			addFieldError("username", getText("username.required"));
+		}
+	}
+}</pre> 
+ <h2> 2. &lt;s:property&gt;标签 </h2> 
+ <p> 在属性标记，使用&nbsp;getText(‘key’). </p>   
+ <pre>&lt;s:property value="getText('username')" /&gt;</pre> 
+ <h2> 3. &lt;s:text&gt;标签 </h2> 
+ <div>
+   在text标签，设置“name”属性的键。 
+ </div> 
+ <pre>&lt;s:text name="username" /&gt;</pre> 
+ <h2> 4. Key属性 </h2> 
+ <p> UI组件的主要属性有特殊的功能，查看这个<a target="_blank" href="http://www.yiibai.com/struts_2/struts-2-key-attribute-example.html">key属性例子详细信息</a>。 </p> 
+ <pre>&lt;s:textfield key="username" /&gt;</pre> 
+ <h2> 5. I18n标签 </h2> 
+ <p> 国际化i18n&nbsp;标签可以从“name”属性声明指定资源包得到消息。在这个例子中，它要求从com/yiibai/user/package.properties文件中以获得&nbsp;“username”&nbsp;的消息。 </p> 
+ <pre>&lt;s:i18n name="com.yiibai.user.package" &gt;
+     &lt;s:text name="username" /&gt;
+&lt;/s:i18n&gt;&nbsp;</pre> 
+ <div> 
+  <div>
+    访问 URL&nbsp;
+   <a target="_blank" href="http://localhost:8080/struts2resourcebundle/user/login.action">http://localhost:8080/struts2resourcebundle/user/login.action</a>，输出以下结果： 
+  </div> 
+ </div> 
+ <div> 
+  <img src="/uploads/tutorial/20151123/1-151123210629361.png" alt="">
+  <br> 
+ </div> 
+ <p> <br> </p> 
+ <p> 下载完整的项目实践(struts2resourcebundle)&nbsp;–&nbsp;<a target="_blank" href="http://pan.baidu.com/s/1dD2UQ2l">http://pan.baidu.com/s/1dD2UQ2l</a> </p>
+ <br>      
+</div></body></html>

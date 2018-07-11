@@ -1,0 +1,54 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">.NET Core垃圾收集</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>在本章中，我们将介绍垃圾收集的概念，垃圾收集是.NET托管代码平台最重要的特性之一。 垃圾收集器(GC)管理内存的分配和释放。 垃圾收集器用作自动内存管理器。</p> 
+ <ul> 
+  <li>我们不需要知道如何分配和释放内存或管理使用该内存的对象的生命周期</li>
+  <li>每当使用<code>new</code>关键字声明对象或将值类型装箱时，都会进行分配。分配通常非常快。</li>
+  <li>当没有足够的内存分配一个对象时，GC必须收集和处理垃圾内存以使内存可用于新的分配。</li>
+ </ul> 
+ <p>这个过程被称为垃圾收集。</p> 
+ <h2 id="h2-u5783u573Eu6536u96C6u7684u4F18u52BF"><a name="垃圾收集的优势" class="reference-link"></a><span class="header-link octicon octicon-link"></span>垃圾收集的优势</h2>
+ <p>垃圾收集提供以下好处(优势) -</p> 
+ <ul> 
+  <li>在开发应用程序时，不需要手动释放内存。</li>
+  <li>它还有效地在托管堆上分配对象。</li>
+  <li>当对象不再使用时，它将通过清除内存来回收这些对象，并将内存保留为将来的分配。</li>
+  <li>托管对象自动获得干净的内容，所以它们的构造函数不必初始化每个数据字段。</li>
+  <li>它还通过确保对象不能使用其他对象的内容来提供内存安全性。</li>
+ </ul> 
+ <h2 id="h2-u5783u573Eu6536u96C6u7684u6761u4EF6"><a name="垃圾收集的条件" class="reference-link"></a><span class="header-link octicon octicon-link"></span>垃圾收集的条件</h2>
+ <p>垃圾收集在下列条件之一时发生：</p> 
+ <ul> 
+  <li>当系统的物理内存较低时。</li>
+  <li>托管堆上分配的对象使用的内存超过了可接受的阈值。该阈值在流程运行时不断调整。</li>
+  <li><code>GC.Collect</code>方法被调用，在几乎所有情况下，不必调用此方法，因为垃圾收集器连续运行。这种方法主要用于独特的情况和测试。</li>
+ </ul> 
+ <h2 id="h2-u9636u6BB5u8FC7u7A0B"><a name="阶段过程" class="reference-link"></a><span class="header-link octicon octicon-link"></span>阶段过程</h2>
+ <p>.NET垃圾收集器有<code>3</code>代，每一代都有自己的堆，用于存储分配的对象。有一个基本的原则，判定大多数对象是短暂的还是长期的。</p> 
+ <h4 id="h4-1-0-"><a name="1. 第一代(0)" class="reference-link"></a><span class="header-link octicon octicon-link"></span>1. 第一代(0)</h4>
+ <ul> 
+  <li>在第<code>0</code>代中，首先分配对象。</li>
+  <li>在这一代，对象通常不会超越第一代，因为在下一次垃圾收集时，它们不再被使用(超出范围)。</li>
+  <li><code>0</code>代很快收集，因为它相关的堆很小。</li>
+ </ul> 
+ <h4 id="h4-2-1-"><a name="2. 第二代(1)" class="reference-link"></a><span class="header-link octicon octicon-link"></span>2. 第二代(1)</h4>
+ <ul> 
+  <li>在第一代，对象有第二个机会空间。</li>
+  <li>在第<code>0</code>代收集(通常是基于巧合的时机)下寿命很短的对象会转到第<code>1</code>代。</li>
+  <li>第一代集合也很快，因为它的关联堆也很小。</li>
+  <li>前两堆仍然很小，因为对象被收集或提升到下一代堆。</li>
+ </ul> 
+ <h4 id="h4-3-2-"><a name="3. 第三代(2)" class="reference-link"></a><span class="header-link octicon octicon-link"></span>3. 第三代(2)</h4>
+ <ul> 
+  <li>在第二代，所有的长对象都是活动的，它的堆可以长得很大。</li>
+  <li>这一代的对象可以长期存活下去，没有下一代堆积对象可以进一步推广。</li>
+  <li>垃圾收集器有一个额外的堆，用于称为大对象堆(LOH)的大型对象。</li>
+  <li>它保留<code>85,000字</code>节或更大的对象。</li>
+  <li>大对象并没有分配到代代堆，而是直接分配给了LOH</li>
+  <li>第二代和LOH收集可能会花费很长时间运行的程序或运行大量数据的程序。</li>
+  <li>已知大型服务器程序在十几个GB中堆积如山。</li>
+  <li>GC采用各种技术来减少阻止程序执行的时间。</li>
+  <li>主要方法是在后台线程上尽可能多地执行垃圾回收工作，而不会干扰程序执行。</li>
+  <li>GC还为开发人员提供了一些方法来影响其行为，这对提高性能非常有用。</li>
+ </ul>
+ <br>      
+</div></body></html>

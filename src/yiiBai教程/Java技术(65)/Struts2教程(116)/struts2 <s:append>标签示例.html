@@ -1,0 +1,216 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">struts2 &lt;s:append&gt;标签示例</h1><div style="width:100%;float:left;" class="article-content">   
+ <p> Struts2 的&nbsp;append(追加)标签被用来组合几个迭代器(以列表或映射创建)成一个单一的迭代器。这里创建一个Web工程：struts2appendtag，来演示在多个复选框如何设置的默认值，整个项目的结构如下图所示： </p> 
+ <p> <img src="/uploads/tutorial/20151116/1-15111620300D34.png" alt=""> </p> 
+ <p> <br> </p> 
+ <p> <img src="file://E:/data/youdao/qq24B39E2329F08D9F4C3146A571A415EF/421952157bcb4a20b2f868ceaa61b182/clipboard.png"> </p> 
+ <p> 在本教程中，将使用Struts2 &lt;s:append&gt;标签执行以下任务： </p> 
+ <ol> 
+  <li> 
+   <div>
+     组合三个ArrayList 到一个迭代器。 
+   </div> </li> 
+  <li> 
+   <div>
+     组合三个HashMap到一个迭代器。 
+   </div> </li> 
+  <li> 
+   <div>
+     合并ArrayList和HashMap到一个迭代器。 
+   </div> </li> 
+ </ol> 
+ <div>
+   假设2个迭代器，每个都有两个项，用后追加标签结合成一个迭代器，这些条目的顺序将类似于以下内容： 
+  <ol> 
+   <li> 
+    <div>
+      第一迭代器的第一项 
+    </div> </li> 
+   <li> 
+    <div>
+      第一个迭代器的第二项 
+    </div> </li> 
+   <li> 
+    <div>
+      第二个迭代器的第一项 
+    </div> </li> 
+   <li> 
+    <div>
+      第二个迭代器的第二项 
+    </div> </li> 
+  </ol> 
+  <div>
+    这仅适用于列表迭代器;映射迭代器，顺序是随机的。 
+  </div> 
+ </div> 
+ <h2> 1. 动作 </h2> 
+ <div>
+   Action类有3个&nbsp;ArrayList&nbsp;和&nbsp;3&nbsp;个&nbsp;HashMap属性。 
+ </div> 
+ <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:16px;"> <strong>AppendTagAction</strong> </p> 
+ <pre>package com.yiibai.common.action;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import com.opensymphony.xwork2.ActionSupport;
+ 
+public class AppendTagAction extends ActionSupport{
+ 
+	private List&lt;String&gt; list1 = new ArrayList&lt;String&gt;();
+	private List&lt;String&gt; list2 = new ArrayList&lt;String&gt;();
+	private List&lt;String&gt; list3 = new ArrayList&lt;String&gt;();
+
+	private Map&lt;String,String&gt; map1 = new HashMap&lt;String,String&gt;();
+	private Map&lt;String,String&gt; map2 = new HashMap&lt;String,String&gt;();
+	private Map&lt;String,String&gt; map3 = new HashMap&lt;String,String&gt;();
+	
+	public String execute() {
+		
+		list1.add("List1 - 1");
+		list1.add("List1 - 2");
+		list1.add("List1 - 3");
+		
+		list2.add("List2 - 1");
+		list2.add("List2 - 2");
+		list2.add("List2 - 3");
+		
+		list3.add("List3 - 1");
+		list3.add("List3 - 2");
+		list3.add("List3 - 3");
+		
+		map1.put("map1-key1", "map1-value1");
+		map1.put("map1-key2", "map1-value2");
+		map1.put("map1-key3", "map1-value3");
+		
+		map2.put("map2-key1", "map2-value1");
+		map2.put("map2-key2", "map2-value2");
+		map2.put("map2-key3", "map2-value3");
+		
+		map3.put("map3-key1", "map3-value1");
+		map3.put("map3-key2", "map3-value2");
+		map3.put("map3-key3", "map3-value3");
+		
+		return SUCCESS;
+	}
+
+	//getter methods...
+}</pre> 
+ <h2> 2. Append 标签文档 </h2> 
+ <div>
+   JSP页面使用&lt;s:append&gt;标签将3个ArrayList/3个HashMap/1个ArrayList+1个HashMap合并成一个迭代器，并遍历它的值，并打印出来。 
+ </div> 
+ <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:16px;"> <strong>appendIterator.jsp</strong> </p> 
+ <pre>&lt;%@ taglib prefix="s" uri="/struts-tags" %&gt;
+ &lt;html&gt;
+&lt;head&gt;&lt;title&gt;Struts2 append 标签示例 - by www.yiibai.com&lt;/title&gt;
+&lt;/head&gt;
+ 
+&lt;body&gt;
+&lt;h1&gt;Struts2 Append 标签示例&lt;/h1&gt;
+
+1. Combine 3 ArrayList into a single iterator.
+&lt;s:append var="customListIterator"&gt;
+     &lt;s:param value="%{list1}" /&gt;
+     &lt;s:param value="%{list2}" /&gt;
+     &lt;s:param value="%{list3}" /&gt;
+&lt;/s:append&gt;
+&lt;ol&gt;
+&lt;s:iterator value="%{#customListIterator}"&gt;
+     &lt;li&gt;&lt;s:property /&gt;&lt;/li&gt;
+&lt;/s:iterator&gt;
+&lt;/ol&gt;
+
+2. Combine 3 HashMap into a single iterator.
+&lt;s:append var="customMapIterator"&gt;
+     &lt;s:param value="%{map1}" /&gt;
+     &lt;s:param value="%{map2}" /&gt;
+     &lt;s:param value="%{map3}" /&gt;
+&lt;/s:append&gt;
+&lt;ol&gt;
+&lt;s:iterator value="%{#customMapIterator}"&gt;
+     &lt;li&gt;&lt;s:property /&gt;&lt;/li&gt;
+&lt;/s:iterator&gt;
+&lt;/ol&gt;
+
+3. Combine ArrayList and HashMap into a single iterator.
+&lt;s:append var="customMixedIterator"&gt;
+     &lt;s:param value="%{list1}" /&gt;
+     &lt;s:param value="%{map1}" /&gt;
+&lt;/s:append&gt;
+&lt;ol&gt;
+&lt;s:iterator value="%{#customMixedIterator}"&gt;
+     &lt;li&gt;&lt;s:property /&gt;&lt;/li&gt;
+&lt;/s:iterator&gt;
+&lt;/ol&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;</pre> 
+ <h2 style="color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:24px;font-weight:500;"> 3. struts.xml </h2>   
+ <pre>&lt;?xml version="1.0" encoding="UTF-8" ?&gt;
+&lt;!DOCTYPE struts PUBLIC
+"-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+"http://struts.apache.org/dtds/struts-2.0.dtd"&gt;
+ 
+&lt;struts&gt;
+
+ 	&lt;constant name="struts.devMode" value="true" /&gt;
+	
+	&lt;package name="default" namespace="/" extends="struts-default"&gt;
+	
+		&lt;action name="appendTagAction" 
+			class="com.yiibai.common.action.AppendTagAction" &gt;
+			&lt;result name="success"&gt;/pages/appendIterator.jsp&lt;/result&gt;
+		&lt;/action&gt;
+		
+	&lt;/package&gt;
+		
+&lt;/struts&gt;</pre> 
+ <h2> 4. 示例 </h2> 
+ <p> <a target="_blank" href="http://localhost:8080/struts2appendtag/appendTagAction.action">http://localhost:8080/struts2appendtag/appendTagAction.action</a> </p> 
+ <p> <img src="/uploads/tutorial/20151116/1-1511162032234b.png" alt=""> </p> 
+ <p> <img src="file://E:/data/youdao/qq24B39E2329F08D9F4C3146A571A415EF/4df4a6a2dacd4a27af74a973bc719625/clipboard.png"> </p> 
+ <p> 在浏览器中打开，显示结果如下： </p> 
+ <pre>Struts 2 Append tag example
+
+1. Combine 3 ArrayList into a single iterator.
+
+  1. List1 - 1
+  2. List1 - 2
+  3. List1 - 3
+  4. List2 - 1
+  5. List2 - 2
+  6. List2 - 3
+  7. List3 - 1
+  8. List3 - 2
+  9. List3 - 3
+
+2. Combine 3 HashMap into a single iterator.
+
+  1. map1-key3=map1-value3
+  2. map1-key1=map1-value1
+  3. map1-key2=map1-value2
+  4. map2-key2=map2-value2
+  5. map2-key3=map2-value3
+  6. map2-key1=map2-value1
+  7. map3-key3=map3-value3
+  8. map3-key1=map3-value1
+  9. map3-key2=map3-value2
+
+3. Combine ArrayList and HashMap into a single iterator.
+
+  1. List1 - 1
+  2. List1 - 2
+  3. List1 - 3
+  4. map1-key3=map1-value3
+  5. map1-key1=map1-value1
+  6. map1-key2=map1-value2</pre> 
+ <h2 style="color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:24px;font-weight:500;"> 参考 </h2> 
+ <ol style="color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:16px;"> 
+  <li style="background-color:inherit;"> <a target="_blank" href="http://struts.apache.org/2.1.8/docs/append.html">Struts 2 Append 标签文档</a> </li> 
+ </ol> 
+ <p> <br> </p> 下载代码 - 
+ <a target="_blank" href="http://pan.baidu.com/s/1ntOs9Zj">http://pan.baidu.com/s/1ntOs9Zj</a>
+ <br>      
+</div></body></html>

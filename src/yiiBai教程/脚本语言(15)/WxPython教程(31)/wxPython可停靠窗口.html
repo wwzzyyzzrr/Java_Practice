@@ -1,0 +1,90 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">wxPython可停靠窗口</h1><div style="width:100%;float:left;" class="article-content">   
+ <div> 
+  <div>
+    wxAui是wxWidgets&nbsp;API引入作为的高级用户界面库。&nbsp;Wx.aui.AuiManager在AUI框架的核心类。 
+  </div> 
+ </div> 
+ <div> 
+  <p style="text-align:justify;"> AuiManager管理及使用wx.aui.AuiPanelInfo对象，每个面板信息的特定帧相关的窗格。让我们了解PanelInfo对象控件对接和浮动行为的各种属性。 </p> 
+  <div>
+    在顶层框架投入浮动窗口包括以下步骤&nbsp;-&nbsp; 
+  </div> 
+  <div>
+    首先，创建一个AuiManager对象。 
+  </div> 
+  <pre>self.mgr = wx.aui.AuiManager(self)</pre> 
+  <div>
+    然后，面板及所需的控件设计。 
+  </div> 
+  <pre>pnl = wx.Panel(self) 
+pbox = wx.BoxSizer(wx.HORIZONTAL) 
+text1 = wx.TextCtrl(pnl, -1, "Dockable", style = wx.NO_BORDER | wx.TE_MULTILINE) 
+pbox.Add(text1, 1, flag = wx.EXPAND) 
+pnl.SetSizer(pbox)</pre> 
+  <div>
+    AuiPanelInfo需要设置以下参数。 
+  </div> 
+  <ul> 
+   <li> <p style="text-align:justify;"> 方向&nbsp;− Top, Bottom, Left, Right, 或 Center </p> </li> 
+   <li> <p style="text-align:justify;"> 位置&nbsp;−&nbsp;多个窗格中可以放置一个可停靠的区域内。每个被赋予位置编号。 </p> </li> 
+   <li> <p style="text-align:justify;"> 行&nbsp;−&nbsp;多个窗格中显示在一排。就像一个以上的工具栏出现在同一行中。 </p> </li> 
+   <li> <p style="text-align:justify;"> 层&nbsp;−&nbsp;窗格可以放置在层中 </p> </li> 
+  </ul> 
+  <div>
+    使用这种PanelInfo，所设计的面板添加到管理器对象。 
+  </div> 
+  <pre>info1 = wx.aui.AuiPaneInfo().Bottom() 
+self.mgr.AddPane(pnl,info1)</pre> 
+  <div>
+    顶层窗口的其余部分可能有其他控件。 
+  </div> 
+  <div>
+    Dock.py 完整的代码如下&nbsp;- 
+  </div> 
+  <pre>import wx 
+import wx.aui
+  
+class Mywin(wx.Frame):
+  
+   def __init__(self, parent, title): 
+      super(Mywin, self).__init__(parent, title = title, size = (300,300)) 
+		
+      self.mgr = wx.aui.AuiManager(self)
+		
+      pnl = wx.Panel(self) 
+      pbox = wx.BoxSizer(wx.HORIZONTAL)
+      text1 = wx.TextCtrl(pnl, -1, "Dockable", style = wx.NO_BORDER | wx.TE_MULTILINE) 
+      pbox.Add(text1, 1, flag = wx.EXPAND) 
+      pnl.SetSizer(pbox) 
+         
+      info1 = wx.aui.AuiPaneInfo().Bottom() 
+      self.mgr.AddPane(pnl, info1) 
+      panel = wx.Panel(self) 
+      text2 = wx.TextCtrl(panel, size = (300,200), style =  wx.NO_BORDER | wx.TE_MULTILINE) 
+      box = wx.BoxSizer(wx.HORIZONTAL) 
+      box.Add(text2, 1, flag = wx.EXPAND) 
+         
+      panel.SetSizerAndFit(box) 
+      self.mgr.Update() 
+		
+      self.Bind(wx.EVT_CLOSE, self.OnClose) 
+      self.Centre() 
+      self.Show(True) 
+		
+   def OnClose(self, event): 
+      self.mgr.UnInit() 
+      self.Destroy() 
+		
+app = wx.App()
+Mywin(None,"Dock Demo - www.yiibai.com")  
+app.MainLoop()</pre> 
+  <div>
+    上面的代码产生下面的输出&nbsp;-
+   <br> 
+   <img src="/uploads/tutorial/20151208/1-15120R00500644.png" alt="">
+   <br> 
+  </div> 
+  <img src="file://E:/data/youdao/qq24B39E2329F08D9F4C3146A571A415EF/c7dd598d930844d29f4290a992a6df91/clipboard.png"> 
+ </div>
+ <br>      
+</div></body></html>

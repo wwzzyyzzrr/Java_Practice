@@ -1,0 +1,133 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">使用NetBeans创建Servlet</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>在本节中，我们来学习如何使用NetBeans来创建Servlet。</p> 
+ <p>NetBeans IDE可让您快速轻松地开发Java桌面，移动和Web应用程序，以及使用HTML，JavaScript和CSS的HTML5应用程序。它还为PHP和C/C++开发人员提供了一整套工具。它是免费的和开源的，拥有世界各地的大量用户和开发者社区。</p> 
+ <p>在使用NetBeans IDE之前，需要从官方网站上下载最新版本： <a target="_blank" href="http://netbeans.org/downloads/index.html">http://netbeans.org/downloads/index.html</a> ，这里要下载的是 NetBeans Java EE 下载包，如下图所示 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/1010/590211046_83801.png" alt=""></p> 
+ <p>下载完成后，安装即可。</p> 
+ <p>要使用NetBeans IDE来创建Servlet，可参考以下几个步骤：</p> 
+ <ol> 
+  <li>创建一个Web项目</li>
+  <li>创建Servlet类以及静态页面</li>
+  <li>在web.xml文件配置Servlet信息</li>
+  <li>部署和运行Web项目</li>
+  <li>访问并测试应用的运行结果</li>
+ </ol> 
+ <h2 id="h2-1-web-"><a name="1.创建一个Web项目" class="reference-link"></a><span class="header-link octicon octicon-link"></span>1.创建一个Web项目</h2>
+ <p>打开 NetBeans IDE，创建一个Web应用程序。点击左上方的菜单：<em>文件</em> -&gt; <em>新建项目</em>，弹出的向导对话框选择项目类别为：<em>Java Web</em> -&gt; <em>Web应用程序</em>，如下所示 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/1010/219211057_98427.png" alt=""></p> 
+ <p>下一步，填写项目名称：<em>NetbeanServlet</em>，并选择项目文件夹为：<em>F:\worksp\servlet\NetbeanServlet</em> ，如下图所示 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/1010/633081040_59857.png" alt=""></p> 
+ <p>下一步，配置服务器和J2EE版本，上下文路径等，如下图所示 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/1010/626081042_91461.png" alt=""></p> 
+ <p>下一步，点击完成，如下图所示 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/1010/707081043_60087.png" alt=""></p> 
+ <p>项目创建完成后，生成的项目结构如下图所示 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/1010/614081044_55491.png" alt=""></p> 
+ <h2 id="h2-2-servlet-"><a name="2.创建Servlet类以及静态页面" class="reference-link"></a><span class="header-link octicon octicon-link"></span>2.创建Servlet类以及静态页面</h2>
+ <p>要创建一个Servlet，找到项目目录结构的<em>源包</em>，并右键点击，在弹出的菜单项中，选择：<em>新建</em>-&gt;<em>Servlet…</em>，如下图所示 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/1010/389081050_96769.png" alt="创建Servlet" title="创建Servlet"></p> 
+ <p>下一步，填写类的名称：<em>NewServlet</em>，以及这个类所在的包：<em>com.yiibai</em>，如下图所示 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/1010/968081052_69219.png" alt=""></p> 
+ <p>下一步，配置Servlet类和部署，填写Servlet名称以及URL模式，并勾选：<em>将信息添加到部署描述符(web.xml)</em>，如下图中所示 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/1010/722081055_52006.png" alt=""></p> 
+ <p>最后点击<em>完成</em> 。</p> 
+ <p>完整的<em>NewServlet.java</em>代码，如下所示 - </p> 
+ <pre><code class="lang-java">package com.yiibai;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+/**
+ *
+ * @author hemasu
+ */
+public class NewServlet extends HttpServlet {
+
+    /**
+     * Handles the HTTP &lt;code&gt;POST&lt;/code&gt; method.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+                PrintWriter out = response.getWriter();
+        String name = null;
+        // 获取表单Post过来的数据
+        name = request.getParameter("name");
+        if(name==null){
+                name = "";
+        }
+        out.println("&lt;!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\"&gt;");
+        out.println("&lt;HTML&gt;");
+        out.println("  &lt;HEAD&gt;&lt;TITLE&gt;SayHello Servlet&lt;/TITLE&gt;&lt;/HEAD&gt;");
+        out.println("  &lt;BODY&gt;");
+        out.print("    This is "+this.getClass()+", using the POST method");
+        out.println("&lt;hr/&gt;");
+        out.println("Hello, "+name);
+        out.println("  &lt;/BODY&gt;");
+        out.println("&lt;/HTML&gt;");
+        out.flush();
+        out.close();
+    }
+}
+</code></pre> 
+ <p><strong>创建静态页面(HTML)</strong></p> 
+ <p>在项目的<em>Web页</em>上点击右键，然后在弹出的菜单选择：<em>新建</em>-&gt;<em>其它</em>，弹出一个<em>选择文件类型</em>的对话框，选择类别为：<em>HTML5/Javascript</em>-&gt;<em>HTML文件</em>，如下图所示 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/1010/304091002_65354.png" alt=""></p> 
+ <p>下一步，填写文件的名称和所在的位置，如下图所示 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/1010/876091005_73331.png" alt=""></p> 
+ <p>至此，已经成功地创建一个<em>index.html</em>文件，我们对这个文件做一点简单的修改，添加一个表单，表单中有一个文本输入框和一个提交的按钮，修改后的代码如下所示 - </p>   
+ <pre><code class="lang-html">&lt;html&gt;
+    &lt;head&gt;
+        &lt;title&gt;SayHello, NewServlet&lt;/title&gt;
+        &lt;meta charset="UTF-8"&gt;
+        &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+    &lt;/head&gt;
+    &lt;body&gt;
+        &lt;div style="text-align: center;"&gt;
+            &lt;form action="/NetbeanServlet/NewServlet" method="post"&gt;
+                名字：&lt;input type="text" name="name"&gt;&lt;input type="submit" value="提交"/&gt;
+            &lt;/form&gt;            
+        &lt;/div&gt;
+    &lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <h2 id="h2-3-web-xml-servlet-"><a name="3.在web.xml文件配置Servlet信息" class="reference-link"></a><span class="header-link octicon octicon-link"></span>3.在web.xml文件配置Servlet信息</h2>
+ <p>打开<em>WEB-INF/web.xml</em>文件，修改部署信息如下 - </p> 
+ <pre><code class="lang-xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;web-app version="3.1" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"&gt;
+    &lt;servlet&gt;
+        &lt;servlet-name&gt;NewServlet&lt;/servlet-name&gt;
+        &lt;servlet-class&gt;com.yiibai.NewServlet&lt;/servlet-class&gt;
+    &lt;/servlet&gt;
+    &lt;servlet-mapping&gt;
+        &lt;servlet-name&gt;NewServlet&lt;/servlet-name&gt;
+        &lt;url-pattern&gt;/NewServlet&lt;/url-pattern&gt;
+    &lt;/servlet-mapping&gt;
+    &lt;session-config&gt;
+        &lt;session-timeout&gt;
+            30
+        &lt;/session-timeout&gt;
+    &lt;/session-config&gt;
+&lt;/web-app&gt;
+</code></pre> 
+ <h2 id="h2-4-web-"><a name="4.部署和运行Web项目" class="reference-link"></a><span class="header-link octicon octicon-link"></span>4.部署和运行Web项目</h2>
+ <p>在Netbeans IDE中部署和运行项目很简单，右键点击项目名称，在弹出的菜单选项中择选：<em>运行</em>，在下方的<em>输出</em>选项卡中，可以看到如下输出 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/1010/866091024_77115.png" alt=""></p> 
+ <p>在部署和启动完成后，Netbeans IDE也自动启浏览器访问这个Web应用程序。</p> 
+ <h2 id="h2-5-"><a name="5.访问并测试应用的运行结果" class="reference-link"></a><span class="header-link octicon octicon-link"></span>5.访问并测试应用的运行结果</h2>
+ <p>在Netbeans IDE中，Apache Tomcat的默认启动端口是：<em>8084</em>，因此访问本示例的Web应用程序对应的URL应该是： <a target="_blank" href="http://localhost:8084/NetbeanServlet/">http://localhost:8084/NetbeanServlet/</a> ，如下图所示 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/1010/967091027_45950.png" alt=""></p> 
+ <p>在上面文本输入框中输入一个名字：<em>Maxsu</em>，然后点击提交，应该会看到以下结果 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/1010/955091030_19329.png" alt=""></p> 
+ <p>至此，如何使用NetBeans创建Servlet的示例讲解完成了。</p>
+ <br>      
+</div></body></html>

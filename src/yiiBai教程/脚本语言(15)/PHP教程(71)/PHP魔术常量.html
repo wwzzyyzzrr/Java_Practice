@@ -1,0 +1,142 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">PHP魔术常量</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>魔术常数是PHP中的预定义常量，根据它们的使用而改变。 它们以双下划线(<code>__</code>)开头，以双下划线结尾。</p> 
+ <p>它们类似于其他预定义的常量，但是它们随着上下文的改变而改变它们的值，它们被称为魔术常量。</p> 
+ <p>下表中定义了八个魔法常量。 它们<strong>不区分大小写</strong>。</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>常量名称</th> 
+    <th>描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td><code>__LINE__</code></td> 
+    <td>表示使用当前行号。</td> 
+   </tr> 
+   <tr> 
+    <td><code>__FILE__</code></td> 
+    <td>表示文件的完整路径和文件名。 如果它在<code>include</code>中使用，则返回包含文件的名称。</td> 
+   </tr> 
+   <tr> 
+    <td><code>__DIR__</code></td> 
+    <td>表示文件的完整目录路径。 等同于<code>dirname(__file__)</code>。 除非它是根目录，否则它没有尾部斜杠。 它还解析符号链接。</td> 
+   </tr> 
+   <tr> 
+    <td><code>__FUNCTION__</code></td> 
+    <td>表示使用它的函数名称。如果它在任何函数之外使用，则它将返回空白。</td> 
+   </tr> 
+   <tr> 
+    <td><code>__CLASS__</code></td> 
+    <td>表示使用它的函数名称。如果它在任何函数之外使用，则它将返回空白。</td> 
+   </tr> 
+   <tr> 
+    <td><code>__TRAIT__</code></td> 
+    <td>表示使用它的特征名称。 如果它在任何函数之外使用，则它将返回空白。 它包括它被声明的命名空间。</td> 
+   </tr> 
+   <tr> 
+    <td><code>__METHOD__</code></td> 
+    <td>表示使用它的类方法的名称。方法名称在有声明时返回。</td> 
+   </tr> 
+   <tr> 
+    <td><code>__NAMESPACE__</code></td> 
+    <td>表示当前命名空间的名称。</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h2 id="h2-u5B9Eu4F8B"><a name="实例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实例</h2>
+ <p>下面来看看一个上面的每个魔法常量的例子。</p> 
+ <p>文件名：<em>magic.php</em></p> 
+ <pre><code class="lang-php">&lt;?php
+
+    echo "&lt;h3&gt;Example for __LINE__&lt;/h3&gt;";  
+    echo "You are at line number " . __LINE__ . "&lt;br&gt;&lt;br&gt;";// print Your current line number i.e;3  
+    echo "&lt;h3&gt;Example for __FILE__&lt;/h3&gt;";  
+    echo __FILE__ . "&lt;br&gt;&lt;br&gt;";//print full path of file with .php extension  
+    echo "&lt;h3&gt;Example for __DIR__&lt;/h3&gt;";  
+    echo __DIR__ . "&lt;br&gt;&lt;br&gt;";//print full path of directory where script will be placed  
+    echo dirname(__FILE__) . "&lt;br&gt;&lt;br&gt;"; //its output is equivalent to above one.  
+    echo "&lt;h3&gt;Example for __FUNCTION__&lt;/h3&gt;";  
+    //Using magic constant inside function.  
+    function cash(){  
+        echo 'the function name is '. __FUNCTION__ . "&lt;br&gt;&lt;br&gt;";//the function name is cash.  
+    }  
+
+    cash();  
+
+    //Using magic constant outside function gives the blank output.  
+    function test_function(){  
+        echo 'HYIIII';  
+    }  
+
+    test_function();  
+    echo  __FUNCTION__ . "&lt;br&gt;&lt;br&gt;";//gives the blank output.  
+
+    echo "&lt;h3&gt;Example for __CLASS__&lt;/h3&gt;";  
+    class abc  
+    {  
+        public function __construct() {  
+            ;  
+        }  
+
+        function abc_method(){  
+        echo __CLASS__ . "&lt;br&gt;&lt;br&gt;";//print name of the class abc.  
+        }  
+    }  
+    $t = new abc;  
+    $t-&gt;abc_method(); 
+
+    class first{  
+        function test_first(){  
+            echo __CLASS__;//will always print parent class which is first here.  
+        }  
+    }  
+
+    class second extends first  
+    {  
+        public function __construct() {  
+            ;  
+        }  
+    }  
+    $t = new second;  
+    $t-&gt;test_first();  
+
+    echo "&lt;h3&gt;Example for __TRAIT__&lt;/h3&gt;";  
+    trait created_trait{  
+        function abc(){  
+            echo __TRAIT__;//will print name of the trait created_trait  
+        }  
+    }  
+
+    class anew{  
+        use created_trait;  
+    }  
+    $a = new anew;  
+    $a-&gt;abc();  
+    echo "&lt;h3&gt;Example for __METHOD__&lt;/h3&gt;";  
+
+    class meth{  
+        public function __construct() {  
+            echo __METHOD__ . "&lt;br&gt;&lt;br&gt;";//print meth::__construct  
+        }  
+        public function meth_fun(){  
+            echo __METHOD__;//print meth::meth_fun  
+        }  
+    }  
+    $a = new meth;  
+    $a-&gt;meth_fun();  
+
+    echo "&lt;h3&gt;Example for __NAMESPACE__&lt;/h3&gt;";  
+    class name{  
+        public function __construct() {  
+            echo 'This line will be printed on calling namespace';  
+        }  
+    }  
+    $clas_name= __NAMESPACE__ .'\name';  
+    $a = new $clas_name;  
+
+?&gt;
+</code></pre> 
+ <p>执行上面代码得到以下结果 -<br><img src="http://www.yiibai.com/uploads/images/201703/1603/123170347_25451.png" alt=""></p>
+ <br>      
+</div></body></html>

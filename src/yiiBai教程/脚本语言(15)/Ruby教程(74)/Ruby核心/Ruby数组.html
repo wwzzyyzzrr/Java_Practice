@@ -1,0 +1,333 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Ruby数组</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>Ruby数组是对象的有序集合。 它们可以保存像整数，数字，散列，字符串，符号或任何其他数组的对象。</p> 
+ <p>其索引开始于<code>0</code>。负数索引是从数组末尾的<code>-1</code>位置开始。 例如，<code>-1</code>表示数组的最后一个元素，<code>0</code>表示数组的第一个元素。</p> 
+ <h2 id="h2--ruby-"><a name="创建Ruby数组" class="reference-link"></a><span class="header-link octicon octicon-link"></span>创建Ruby数组</h2>
+ <p>Ruby数组以许多方式创建。</p> 
+ <ul> 
+  <li>使用文字构造函数 <code>[]</code></li>
+  <li>使用类的<code>new</code>方法</li>
+ </ul> 
+ <h3 id="h3--"><a name="使用文字构造[]" class="reference-link"></a><span class="header-link octicon octicon-link"></span>使用文字构造[]</h3>
+ <p>使用文字构造函数<code>[]</code>构建Ruby数组。 单个数组可以包含不同类型的对象。</p> 
+ <p>例如，以下数组包含一个整数，浮点数和一个字符串。</p> 
+ <pre><code class="lang-ruby">#!/usr/bin/ruby   
+
+arr = [4, 4.0, "maxsu", ]   
+puts arr
+</code></pre> 
+ <p>执行上面代码，得到以下输出结果 - </p> 
+ <pre><code class="lang-ruby">F:\worksp\ruby&gt;ruby array-contruct.rb
+4
+4.0
+maxsu
+
+F:\worksp\ruby&gt;
+</code></pre> 
+ <h3 id="h3--new-"><a name="使用类的new方法" class="reference-link"></a><span class="header-link octicon octicon-link"></span>使用类的new方法</h3>
+ <p>通过使用零个，一个或多个参数调用<code>::new</code>方法来构造一个Ruby数组。</p> 
+ <p><strong>语法：</strong></p> 
+ <pre><code class="lang-ruby">arrayName = Array.new
+</code></pre> 
+ <p>设置数组的大小，如下语法 - </p> 
+ <p><strong>语法：</strong></p> 
+ <pre><code class="lang-ruby">arrayName = Array.new(10)
+</code></pre> 
+ <p>在这里，要创建的数组大小是<code>10</code>个元素。</p> 
+ <p>要知道数组的大小，使用 <code>size</code> 或 <code>length</code> 方法。</p> 
+ <p><strong>示例：</strong></p> 
+ <pre><code class="lang-ruby">#!/usr/bin/ruby   
+
+exm = Array.new(10)   
+puts exm.size    
+puts exm.length
+</code></pre> 
+ <p>执行上面代码，输出结果如下 - </p> 
+ <pre><code class="lang-shell">F:\worksp\ruby&gt;ruby array-size.rb
+10
+10
+
+F:\worksp\ruby&gt;
+</code></pre> 
+ <p><strong>示例2</strong></p> 
+ <pre><code class="lang-ruby">#!/usr/bin/ruby   
+exm = Array("a"..."z")   
+puts "#{exm}"
+</code></pre> 
+ <p>执行上面代码得到以下结果 -</p> 
+ <pre><code class="lang-shell">F:\worksp\ruby&gt;ruby array-a2z.rb
+["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y"]
+
+F:\worksp\ruby&gt;
+</code></pre> 
+ <h2 id="h2-u8BBFu95EEu6570u7EC4u5143u7D20"><a name="访问数组元素" class="reference-link"></a><span class="header-link octicon octicon-link"></span>访问数组元素</h2>
+ <p>可以使用<code>#[]</code>方法访问Ruby数组中的元素。也可以传递一个或多个参数，甚至传递一系列参数。</p> 
+ <pre><code class="lang-ruby">#[] method
+</code></pre> 
+ <p><strong>示例</strong></p> 
+ <pre><code class="lang-ruby">#!/usr/bin/ruby   
+days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]   
+puts days[0]      
+puts days[10]   
+puts days[-2]     
+puts days[2, 3]   
+puts days[1..7]
+</code></pre> 
+ <p>执行上面代码，得到输出结果如下 -</p> 
+ <pre><code class="lang-shell">F:\worksp\ruby&gt;ruby array-elements.rb
+Mon
+
+Sat
+Wed
+Thu
+Fri
+Tue
+Wed
+Thu
+Fri
+Sat
+Sun
+
+F:\worksp\ruby&gt;
+</code></pre> 
+ <p><strong>at方法</strong></p> 
+ <p>要访问特定的元素，也可以使用<code>at</code>方法。</p> 
+ <p><strong>示例：</strong></p> 
+ <pre><code class="lang-ruby">#!/usr/bin/ruby   
+days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]   
+puts days.at(0)   
+puts days.at(-1)   
+puts days.at(5)
+</code></pre> 
+ <p>执行上面代码，得到输出结果如下 -</p> 
+ <pre><code class="lang-shell">F:\worksp\ruby&gt;ruby array-at.rb
+Mon
+Sun
+Sat
+
+F:\worksp\ruby&gt;
+</code></pre> 
+ <p><strong>slice方法</strong></p> 
+ <p>slice方法类似于<code>#[]</code>方法。</p> 
+ <p><strong>fetch方法</strong></p> 
+ <p>fetch方法用于为数组范围索引提供默认的错误值。</p> 
+ <p>示例：</p> 
+ <pre><code class="lang-ruby">#!/usr/bin/ruby 
+# file : array-fetch.rb
+days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]   
+puts days.fetch(10)
+</code></pre> 
+ <p>执行上面代码，得到以下结果 - </p> 
+ <pre><code class="lang-shell">F:\worksp\ruby&gt;ruby array-fetch.rb
+array-fetch.rb:4:in `fetch': index 10 outside of array bounds: -7...7 (IndexError)
+        from array-fetch.rb:4:in `&lt;main&gt;'
+
+F:\worksp\ruby&gt;
+</code></pre> 
+ <p>修改上面示例代码，在未找到元素时返回一个默认的值 - </p> 
+ <pre><code class="lang-ruby">#!/usr/bin/ruby 
+# file : array-fetch-df.rb
+days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]   
+puts days.fetch(10, 'NotFound')
+</code></pre> 
+ <p>执行上面代码，得到以下结果 -</p> 
+ <pre><code class="lang-ruby">F:\worksp\ruby&gt;ruby array-fetch-df.rb
+NotFound
+
+F:\worksp\ruby&gt;
+</code></pre> 
+ <p><strong>first 和 last 方法</strong></p> 
+ <p><code>first</code> 和 <code>last</code> 方法方法将分别返回数组的第一个和最后一个元素。</p> 
+ <p>示例：</p> 
+ <pre><code class="lang-ruby">#!/usr/bin/ruby 
+# file : array-first-last.rb
+days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]   
+puts days.first   
+puts days.last
+</code></pre> 
+ <p>执行上面代码，得到以下结果 -</p> 
+ <pre><code class="lang-ruby">F:\worksp\ruby&gt;ruby array-first-last.rb
+Mon
+Sun
+
+F:\worksp\ruby&gt;
+</code></pre> 
+ <p><strong>take 方法</strong></p> 
+ <p><code>take</code>方法返回数组的前<code>n</code>个元素。</p> 
+ <p>示例：</p> 
+ <pre><code class="lang-ruby">#!/usr/bin/ruby 
+# file : array-take.rb
+days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]   
+puts days.take(1)   
+puts days.take(2)   
+puts days.take(3)
+</code></pre> 
+ <p>执行上面代码，得到以下结果 -</p> 
+ <pre><code class="lang-ruby">F:\worksp\ruby&gt;ruby array-take.rb
+Mon
+Mon
+Tue
+Mon
+Tue
+Wed
+
+F:\worksp\ruby&gt;
+</code></pre> 
+ <p><strong>drop方法</strong></p> 
+ <p><code>drop</code>方法与<code>take</code>方法相反。 它返回在第<code>n</code>个元素之后的所有元素。</p> 
+ <p>示例：</p> 
+ <pre><code class="lang-ruby">#!/usr/bin/ruby 
+# file : array-drop.rb
+days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]   
+puts days.drop(5)   
+puts days.drop(6)
+</code></pre> 
+ <p>执行上面代码，得到以下结果 -</p>   
+ <pre><code class="lang-ruby">F:\worksp\ruby&gt;ruby array-drop.rb
+Sat
+Sun
+Sun
+
+F:\worksp\ruby&gt;
+</code></pre> 
+ <h2 id="h2-u5C06u5143u7D20u9879u6DFBu52A0u5230u6570u7EC4"><a name="将元素项添加到数组" class="reference-link"></a><span class="header-link octicon octicon-link"></span>将元素项添加到数组</h2>
+ <p>可以以不同的方式向Ruby数组添加元素。</p> 
+ <ul> 
+  <li><code>push</code> 或 <code>&lt;&lt;</code></li>
+  <li><code>unshift</code></li>
+  <li><code>insert</code></li>
+ </ul> 
+ <p><strong> push 或 &lt;&lt;</strong></p> 
+ <p>使用<code>push</code>或<code>&lt;&lt;</code>，可以在数组的末尾添加项目/元素。</p> 
+ <p>示例：</p> 
+ <pre><code class="lang-ruby">#!/usr/bin/ruby 
+# file : array-push.rb
+days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]  
+puts days.push("Today")   
+puts '-------------------------------'
+puts days &lt;&lt; ("Tomorrow")
+</code></pre> 
+ <p>执行上面代码，得到以下结果 -</p> 
+ <pre><code class="lang-shell">F:\worksp\ruby&gt;ruby array-push.rb
+Mon
+Tue
+Wed
+Thu
+Fri
+Sat
+Sun
+Today
+-------------------------------
+Mon
+Tue
+Wed
+Thu
+Fri
+Sat
+Sun
+Today
+Tomorrow
+
+F:\worksp\ruby&gt;
+</code></pre> 
+ <p><strong>unshift方法</strong></p> 
+ <p>使用<code>unshift</code>，可以在数组的开头添加一个新元素。</p> 
+ <p>示例：</p> 
+ <pre><code class="lang-ruby">#!/usr/bin/ruby 
+# file : array-unshift.rb
+days = ["Fri", "Sat", "Sun"]   
+puts days.unshift("Today")
+</code></pre> 
+ <p>执行上面代码，得到以下结果 -</p> 
+ <pre><code class="lang-shell">F:\worksp\ruby&gt;ruby array-unshift.rb
+Today
+Fri
+Sat
+Sun
+
+F:\worksp\ruby&gt;
+</code></pre> 
+ <p><strong>insert方法</strong></p> 
+ <p>使用<code>insert</code>，可以在数组中的任何位置添加一个新元素。 在这里，首先需要要定位元素的索引位置。</p> 
+ <p>示例：</p> 
+ <pre><code class="lang-ruby">#!/usr/bin/ruby 
+# file : array-insert.rb
+days = ["Fri", "Sat", "Sun"]   
+puts days.insert(2, "Thursday")
+</code></pre> 
+ <p>执行上面代码，得到以下结果 -</p> 
+ <pre><code class="lang-shell">F:\worksp\ruby&gt;ruby array-insert.rb
+Fri
+Sat
+Thursday
+Sun
+
+F:\worksp\ruby&gt;
+</code></pre> 
+ <h2 id="h2--"><a name="从数组中删除项/元素" class="reference-link"></a><span class="header-link octicon octicon-link"></span>从数组中删除项/元素</h2>
+ <p>可以使用以下几种方式来删除Ruby数组元素。</p> 
+ <ul> 
+  <li>pop</li>
+  <li>shift</li>
+  <li>delete</li>
+  <li>uniq</li>
+ </ul> 
+ <p><strong>pop方法</strong></p> 
+ <p>使用<code>pop</code>方法，可以从数组的末尾删除项/元素。它返回删除的数据项/元素。</p> 
+ <p><strong>示例：</strong></p> 
+ <pre><code class="lang-ruby">#!/usr/bin/ruby 
+# file : array-pop.rb
+days = ["Fri", "Sat", "Sun"]   
+puts days.pop
+</code></pre> 
+ <p>执行上面代码，得到以下结果 -</p> 
+ <pre><code class="lang-shell">F:\worksp\ruby&gt;ruby array-pop.rb
+Sun
+
+F:\worksp\ruby&gt;
+</code></pre> 
+ <p><strong>shift方法</strong></p> 
+ <p>使用<code>shift</code>，可以从数组的起始处删除项/元素。 它返回删除的项目/元素。</p> 
+ <p><strong>示例：</strong></p> 
+ <pre><code class="lang-ruby">#!/usr/bin/ruby 
+# file : array-shift.rb
+days = ["Fri", "Sat", "Sun"]   
+puts days.shift
+</code></pre> 
+ <p>执行上面代码，得到以下结果 -</p> 
+ <pre><code class="lang-shell">F:\worksp\ruby&gt;ruby array-shift.rb
+Fri
+
+F:\worksp\ruby&gt;
+</code></pre> 
+ <p><strong>delete方法</strong></p> 
+ <p>使用<code>delete</code>方法，可以从数组中的任意位置删除项(元素)。 它返回删除的项目(元素)。</p> 
+ <p><strong>示例：</strong></p> 
+ <pre><code class="lang-ruby">#!/usr/bin/ruby 
+# file : array-delete.rb
+days = ["Fri", "Sat", "Sun"]   
+puts days.delete("Sat")
+</code></pre> 
+ <p>执行上面代码，得到以下结果 -</p> 
+ <pre><code class="lang-shell">F:\worksp\ruby&gt;ruby array-delete.rb
+Sat
+
+F:\worksp\ruby&gt;
+</code></pre> 
+ <p><strong>uniq方法</strong></p> 
+ <p>使用<code>uniq</code>方法，可以从数组中删除重复的元素。它返回删除重复元素后剩余的数组。</p> 
+ <p><strong>示例：</strong></p> 
+ <pre><code class="lang-ruby">#!/usr/bin/ruby 
+# file : array-uniq.rb
+days = ["Fri", "Sat", "Sun", "Sat"]   
+puts days.uniq
+</code></pre> 
+ <p>执行上面代码，得到以下结果 -</p> 
+ <pre><code class="lang-shell">F:\worksp\ruby&gt;ruby array-uniq.rb
+Fri
+Sat
+Sun
+
+F:\worksp\ruby&gt;
+</code></pre>
+ <br>      
+</div></body></html>

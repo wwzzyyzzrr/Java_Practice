@@ -1,0 +1,158 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Nginx安装</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>根据操作系统的不同，nginx可以安装也不太相同，安装nginx有以下几种不同的方式。</p> 
+ <p><strong>在Linux上安装</strong></p> 
+ <p>对于Linux，可以使用来自nginx.org的<a target="_blank" href="http://nginx.org/en/linux_packages.html" title="nginx软件包">nginx软件包</a>。参考网址：</p> 
+ <p><strong>在FreeBSD上安装</strong></p> 
+ <p>在FreeBSD上，可以从包或通过ports系统安装nginx。 端口系统提供更大的灵活性，允许在各种选项之间进行选择。 端口将使用指定的选项编译nginx并进行安装。</p> 
+ <p><strong>在Window上安装</strong><br>先省略了，不要问为什么！</p> 
+ <p><strong>从源代码构建[推荐]</strong></p> 
+ <p>如果需要一些特殊的功能，在包和端口不可用的情况下，也可以从源代码编译来安装nginx。虽然源代码编译安装更灵活，但这种方法对于初学者来说可能很复杂(建议初学者自己使用源代码编译安装来安装nginx)。有关更多信息，请参阅从<a target="_blank" href="http://www.yiibai.com/nginx/configure.html" title="源构建nginx">源构建nginx</a>。</p> 
+ <p>在本文中，主要介绍从源代码安装nginx，这篇教程是基于<code>CentOS7 64bit</code>系统来安装的，非Centos系统不适用。现在我们就开始吧！</p> 
+ <h3 id="h3-nginx-"><a name="Nginx编译安装" class="reference-link"></a><span class="header-link octicon octicon-link"></span>Nginx编译安装</h3>
+ <h3 id="h3-1-"><a name="1. 安装前工作" class="reference-link"></a><span class="header-link octicon octicon-link"></span>1. 安装前工作</h3>
+ <p>首先更新系统软件源，使用以下命令更新系统 -</p> 
+ <pre><code class="lang-shell">[root@localhost ~]# yum update
+</code></pre> 
+ <blockquote> 
+  <p>有关两个命令的一点解释：<br><code>yum -y update</code> - 升级所有包，改变软件设置和系统设置,系统版本内核都升级<br><code>yum -y upgrade</code> - 升级所有包，不改变软件设置和系统设置，系统版本升级，内核不改变</p> 
+ </blockquote> 
+ <p><strong>依赖包安装</strong></p> 
+ <pre><code class="lang-shell">[root@localhost src]# yum -y install gcc gcc-c++ autoconf automake libtool make cmake
+[root@localhost src]# yum -y install zlib zlib-devel openssl openssl-devel pcre-devel
+</code></pre> 
+ <h3 id="h3-2-nginx-"><a name="2. 下载Nginx安装源文件" class="reference-link"></a><span class="header-link octicon octicon-link"></span>2. 下载Nginx安装源文件</h3>
+ <p>源码下载，可官网下载地址：<a target="_blank" href="http://nginx.org/en/download.html">http://nginx.org/en/download.html</a> 下载并上传到服务器(这里选择最新稳定版本：<code>nginx-1.10.3</code>)，如下图所示 -<br><img src="http://www.yiibai.com/uploads/images/201703/3103/132170351_65053.png" alt=""><br>或直接在服务上执行以下命令下载 -</p> 
+ <pre><code class="lang-shell">[root@localhost ~]# cd /usr/local/src
+[root@localhost src]# wget -c http://nginx.org/download/nginx-1.10.3.tar.gz
+</code></pre> 
+ <p>解压上面下载的文件 -</p> 
+ <pre><code class="lang-shell">[root@localhost src]# tar zxvf nginx-1.10.3.tar.gz
+</code></pre> 
+ <p>在编译之前还要做一些前期的准备工作，如：依懒包安装，Nginx用户和用户组等。</p> 
+ <h3 id="h3-3-nginx-"><a name="3. 新建nginx用户及用户组" class="reference-link"></a><span class="header-link octicon octicon-link"></span>3. 新建nginx用户及用户组</h3>
+ <p>使用 root 用户身份登录系统，执行以下命令创建新的用户。</p> 
+ <pre><code class="lang-shell">[root@localhost src]# groupadd nginx
+[root@localhost src]# useradd -g nginx -M nginx
+</code></pre> 
+ <p><code>useradd</code>命令的<code>-M</code>参数用于不为<code>nginx</code>建立<code>home</code>目录<br>修改<code>/etc/passwd</code>，使得<code>nginx</code>用户无法bash登陆(nginx用户后面由<code>/bin/bash</code>改为<code>/sbin/nologin</code>)，</p> 
+ <pre><code class="lang-shell">[root@localhost src]# vi /etc/passwd
+</code></pre> 
+ <p>然后找到有 nginx 那一行，把它修改为(后面由<code>/bin/bash</code>改为<code>/sbin/nologin</code>)：</p> 
+ <pre><code>nginx:x:1002:1003::/home/nginx:/sbin/nologin
+</code></pre>
+ <h3 id="h3-4-"><a name="4. 编译配置、编译、安装" class="reference-link"></a><span class="header-link octicon octicon-link"></span>4. 编译配置、编译、安装</h3>
+ <p>下面我们进入解压的nginx源码目录：<code>/usr/local/src/</code> 执行以下命令 -</p> 
+ <pre><code>[root@localhost ~]# cd /usr/local/src/nginx*
+[root@localhost nginx-1.10.3]# pwd
+/usr/local/src/nginx-1.10.3
+[root@localhost nginx-1.10.3]#
+[root@localhost nginx-1.10.3]# ./configure --prefix=/usr/local/nginx \
+--pid-path=/usr/local/nginx/run/nginx.pid \
+--with-http_ssl_module \
+--user=nginx \
+ --group=nginx \
+--with-pcre \
+--without-mail_pop3_module \
+--without-mail_imap_module \
+--without-mail_smtp_module
+</code></pre>
+ <blockquote> 
+  <p>注意：上面的反斜杠<code>\</code> 表示换行继续。</p> 
+ </blockquote> 
+ <p><code>--prefix=/usr/local/nginx</code> 指定安装到 <code>/usr/local/nginx</code> 目录下。</p> 
+ <p>上面配置完成后，接下来执行编译 -</p> 
+ <pre><code class="lang-shell">[root@localhost nginx-1.10.3]# make
+[root@localhost nginx-1.10.3]# make install
+... ...
+cp conf/nginx.conf '/usr/local/nginx/conf/nginx.conf.default'
+test -d '/usr/local/nginx/run' \
+        || mkdir -p '/usr/local/nginx/run'
+test -d '/usr/local/nginx/logs' \
+        || mkdir -p '/usr/local/nginx/logs'
+test -d '/usr/local/nginx/html' \
+        || cp -R html '/usr/local/nginx'
+test -d '/usr/local/nginx/logs' \
+        || mkdir -p '/usr/local/nginx/logs'
+make[1]: Leaving directory `/usr/local/src/nginx-1.10.3'
+[root@localhost nginx-1.10.3]#
+</code></pre> 
+ <p>上面编译时间跟你的电脑配置相关，所以可能需要一些等待时间。</p> 
+ <p><strong>查看安装后的程序版本：</strong></p>   
+ <pre><code class="lang-shell">[root@localhost nginx-1.10.3]# /usr/local/nginx/sbin/nginx -v
+nginx version: nginx/1.10.3
+</code></pre> 
+ <p><strong>修改Nginx默认端口(可选)：</strong></p> 
+ <pre><code>[root@localhost nginx-1.10.3]# vi /usr/local/nginx/conf/nginx.conf
+</code></pre>
+ <p>找到 - </p> 
+ <pre><code class="lang-shell">... ...
+    #gzip  on;
+
+    server {
+        listen       80;
+        server_name  localhost;
+
+        #charset koi8-r;
+... ...
+</code></pre> 
+ <p>把上面的 <code>80</code> 修改为你想要的端口，如：<code>8080</code> 。<br>修改配置后验证配置是否合法：</p> 
+ <pre><code class="lang-shell">[root@localhost nginx-1.10.3]# /usr/local/nginx/sbin/nginx -t
+nginx: the configuration file /usr/local/nginx/conf/nginx.conf syntax is ok
+nginx: configuration file /usr/local/nginx/conf/nginx.conf test is successful
+</code></pre> 
+ <p><strong>启动Nginx程序、查看进程 </strong>- </p> 
+ <pre><code class="lang-shell">[root@localhost nginx-1.10.3]# /usr/local/nginx/sbin/nginx
+[root@localhost nginx-1.10.3]# ps -ef | grep nginx
+root      29151      1  0 22:01 ?        00:00:00 nginx: master process /usr/local/nginx/sbin/nginx
+nginx     29152  29151  0 22:01 ?        00:00:00 nginx: worker process
+root      29154   2302  0 22:01 pts/0    00:00:00 grep --color=auto nginx
+[root@localhost nginx-1.10.3]#
+</code></pre> 
+ <p><strong>nginx停止、重启</strong><br>未添加nginx服务前对nginx的管理只能通过一下方式管理：</p> 
+ <pre><code>#  nginx 管理的几种方式 -
+# 启动Nginx 
+/usr/local/nginx/sbin/nginx 
+# 从容停止Nginx：
+kill -QUIT 主进程号 # 如上一步中的 ps 命令输出的 29151，就是 Nginx的主进程号
+# 快速停止Nginx：
+kill -TERM 主进程号
+# 强制停止Nginx：
+pkill -9 nginx
+# 平滑重启nginx
+/usr/nginx/sbin/nginx -s reload
+</code></pre>
+ <p>现在我们来看看安装的Nginx的运行结果，可以简单地使用<code>curl</code>命令访问localhost测试，结果如下 - </p> 
+ <pre><code>[root@localhost nginx-1.10.3]# curl localhost
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;Welcome to nginx!&lt;/title&gt;
+&lt;style&gt;
+    body {
+        width: 35em;
+        margin: 0 auto;
+        font-family: Tahoma, Verdana, Arial, sans-serif;
+    }
+&lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;h1&gt;Welcome to nginx!&lt;/h1&gt;
+&lt;p&gt;If you see this page, the nginx web server is successfully installed and
+working. Further configuration is required.&lt;/p&gt;
+
+&lt;p&gt;For online documentation and support please refer to
+&lt;a href="http://nginx.org/"&gt;nginx.org&lt;/a&gt;.&lt;br/&gt;
+Commercial support is available at
+&lt;a href="http://nginx.com/"&gt;nginx.com&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;Thank you for using nginx.&lt;/em&gt;&lt;/p&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+[root@localhost nginx-1.10.3]#
+</code></pre>
+ <p>或者也可以打开浏览访问目标服务器的IP，在本示例中，服务器的IP地址是：192.168.0.195，所以打开浏览器访问如下结果 -<br><img src="http://www.yiibai.com/uploads/images/201703/3103/224100413_47223.png" alt=""></p> 
+ <blockquote> 
+  <p>提示： 如果没有看到以上界面，在确保Nginx启动的前提下，检查SeLinux和防火墙是否已关闭。关闭防火墙命令：<code>systemctl stop firewalld.service</code>。</p> 
+ </blockquote>
+ <br>      
+</div></body></html>

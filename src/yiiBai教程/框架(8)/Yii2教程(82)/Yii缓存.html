@@ -1,0 +1,293 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Yii缓存</h1><div style="width:100%;float:left;" class="article-content">   
+ <div>
+   缓存是提高应用程序性能的一个有效途径。 
+ </div> 
+ <div> 
+  <div>
+    缓存机制存储静态数据在缓存中，需要时就会从缓存读取得到它。在服务器端可以使用缓存来存储基本数据，如最近的新闻列表。 
+  </div> 
+  <div>
+    还可以将页面片段或整个网页缓存。 
+  </div> 
+  <div>
+    在客户端，可以使用HTTP缓存保存最近访问过的网页在浏览器缓存。
+   <br> 
+   <h2> 
+    <div>
+      准备数据库 
+    </div> </h2> 
+   <div>
+     第1步&nbsp;-&nbsp;创建一个新的数据库。数据库可以通过以下两种方式进行。 
+   </div> 
+   <ul> 
+    <li> <p style="text-align:justify;"> 在终端运行&nbsp;mysql -u root –p </p> </li> 
+    <li> <p style="text-align:justify;"> 登录数据后，通过执行&nbsp;CREATE DATABASE mystudy CHARACTER SET utf8 COLLATE utf8_general_ci;&nbsp;创建一个新的数据库; </p> </li> 
+   </ul> 
+   <div>
+     第2步&nbsp;-&nbsp;在&nbsp;config/db.php&nbsp;文件中配置数据库连接。下面的配置可根据自己的实际情况配置。 
+   </div> 
+   <pre>&lt;?php
+   return [
+      'class' =&gt; 'yii\db\Connection',
+      'dsn' =&gt; 'mysql:host = localhost;dbname = mystudy',
+      'username' =&gt; 'root',
+      'password' =&gt; '',
+      'charset' =&gt; 'utf8',
+   ];
+?&gt;</pre> 
+   <p> 第3步&nbsp;-&nbsp;在项目根文件夹执行：yii migrate/create test_table 。此命令将用于创建管理数据库数据库迁移。&nbsp;migrations文件会出现在项目的根的&nbsp;migrations&nbsp;文件夹中。<br> <img src="http://www.yiibai.com/uploads/tutorial/20160602/1-160602230AQ34.png" alt="Yii数据Widgets"> </p> 
+   <div>
+     第4步&nbsp;-&nbsp;修改迁移文件(在本示例中生成的是：m160529_014611_test_table.php)，并使用以下这些代码。 
+   </div> 
+   <pre>&lt;?php
+   use yii\db\Schema;
+   use yii\db\Migration;
+   class m160529_014611_test_table extends Migration {
+      public function up() {
+         $this-&gt;createTable("user", [
+            "id" =&gt; Schema::TYPE_PK,
+            "name" =&gt; Schema::TYPE_STRING,
+            "email" =&gt; Schema::TYPE_STRING,
+         ]);
+         $this-&gt;batchInsert("user", ["name", "email"], [
+            ["User1", "user11@gmail.com"],
+            ["User2", "user22@gmail.com"],
+            ["User3", "user33@gmail.com"],
+            ["User4", "user44@gmail.com"],
+            ["User5", "user55@gmail.com"],
+            ["User6", "user66@gmail.com"],
+            ["User7", "user77@gmail.com"],
+            ["User8", "user88@gmail.com"],
+            ["User9", "user99@gmail.com"],
+            ["User10", "user1010@gmail.com"],
+            ["User11", "user1111@gmail.com"],
+         ]);
+      }
+      public function down() {
+         //$this-&gt;dropTable('user');
+      }
+   }
+?&gt;</pre> 
+   <div>
+     上述迁移创建用户表，它包含了以下这些字段：id,&nbsp;name,&nbsp;和&nbsp;email。它还增加了一些演示用户帐号。 
+   </div> 
+   <div>
+     第5步&nbsp;-&nbsp;在项目的根目录内运行：&nbsp;yii&nbsp;migrate&nbsp; 来迁移应用到数据库。执行结果如下图所示：
+    <br> 
+   </div> 
+   <img src="http://www.yiibai.com/uploads/tutorial/20160602/1-160602230J42A.png" alt="">
+   <br> 
+   <p> 第6步-现在，我们需要为user表创建模型。为了简便起见，我们将使用GII代码生成工具。在浏览器中打开&nbsp;url:&nbsp;<a target="_blank" href="http://localhost:8080/index.php?r=gii">http://localhost:8080/index.php?r=gii</a>&nbsp;。<br> 然后，点击&nbsp;“Model&nbsp;generator”&nbsp;下的&nbsp;“Start”按钮。&nbsp;填写表名(“user”)和模型类(“MyUser”)，单击“Preview”按钮，最后点击&nbsp;“Generate”&nbsp;按钮。 </p> 
+   <img src="http://www.yiibai.com/uploads/tutorial/20160602/1-160602230R6155.png" alt="">
+   <br> 
+   <div> 
+    <img src="http://www.yiibai.com/uploads/tutorial/20160602/1-160602230T3554.png" alt="">
+    <br> MyUser 文件忆经生成在&nbsp;models&nbsp;目录。 
+   </div> 
+  </div> 
+  <h2> 数据缓存 </h2> 
+  <div>
+    数据缓存可在缓存中存储&nbsp;PHP&nbsp;变量方便以后检索。 
+  </div> 
+  <div>
+    数据缓存依赖于高速缓存部件，其通常注册为应用程序组件。 
+  </div> 
+  <div>
+    要访问应用程序组件，可以调用&nbsp;Yii::$app-&gt;cache。 
+  </div> 
+  <div>
+    可以注册多个缓存应用程序组件。 
+  </div> 
+  <div>
+    Yii 支持以下高速缓存存储器&nbsp;- 
+  </div> 
+  <ul> 
+   <li> <p style="text-align:justify;"> yii\caching\DbCache&nbsp;−&nbsp;使用一个数据库表来存储缓存数据 </p> 
+    <div>
+      在yii\caching\DbCache::$cacheTable&nbsp;必须指定创建一个表 
+    </div> </li> 
+   <li> <p style="text-align:justify;"> yii\caching\ApcCache&nbsp;− 使用 PHP APC 扩展 </p> </li> 
+   <li> <p style="text-align:justify;"> yii\caching\FileCache&nbsp;−&nbsp;使用文件来存储缓存数据 </p> </li> 
+   <li> <p style="text-align:justify;"> yii\caching\DummyCache&nbsp;−&nbsp;作为高速缓存占位其中确实没有真正的缓存 </p> 
+    <div>
+      这个组件的目的是为了简化检查高速缓冲存储器的可用性的代码。 
+    </div> </li> 
+   <li> <p style="text-align:justify;"> yii\caching\MemCache&nbsp;− 使用 PHP memcache 扩展 </p> </li> 
+   <li> <p style="text-align:justify;"> yii\caching\WinCache&nbsp;−&nbsp;使用PHP WinCache 扩展 </p> </li> 
+   <li> <p style="text-align:justify;"> yii\redis\Cache&nbsp;−&nbsp;实现了基于Redis的数据库缓存组件 </p> </li> 
+   <li> <p style="text-align:justify;"> yii\caching\XCache&nbsp;−使用 PHP XCache 扩展 </p> </li> 
+  </ul> 
+  <div>
+    所有缓存组件支持下列API&nbsp;- 
+  </div> 
+  <ul> 
+   <li> <p style="text-align:justify;"> get()&nbsp;−&nbsp;从缓存中检索指定键对应的数据值。如果数据值已过期/无效或者没有找到值，则将返回&nbsp;false </p> </li> 
+   <li> <p style="text-align:justify;"> add()&nbsp;−&nbsp;如果该键没有在高速缓存中找到，则保存到缓存该键和对应的数据值 </p> </li> 
+   <li> <p style="text-align:justify;"> set()&nbsp;−&nbsp;保存到缓存的键识别对应数据值 </p> </li> 
+   <li> <p style="text-align:justify;"> multiGet()&nbsp;−&nbsp;从缓存中使用指定多个键检索对应多个数据值 </p> </li> 
+   <li> <p style="text-align:justify;"> multiAdd()&nbsp;−&nbsp;在高速缓存中存储多个数据值。每个项由一个键标识。如果一个键在缓存中已经存在，则数据值将会被跳过。 </p> </li> 
+   <li> <p style="text-align:justify;"> multiSet()&nbsp;−&nbsp;在高速缓存中存储多个数据值。每个项目由一个键来标识 </p> </li> 
+   <li> <p style="text-align:justify;"> exists()&nbsp;−&nbsp;返回在缓存指定键是否找到对应值 </p> </li> 
+   <li> <p style="text-align:justify;"> flush()&nbsp;−&nbsp;从缓存中删除所有的数据值 </p> </li> 
+   <li> <p style="text-align:justify;"> delete()&nbsp;−&nbsp;通过从缓存中的关键识别移除对应数据值 </p> </li> 
+  </ul> 
+  <div>
+    除非存储在缓存中的数据值被删除，否则它将永远存在。可以调用&nbsp;set()方法在存储数据值时，设置过期参数。 
+  </div> 
+  <div>
+    缓存的数据值也可以因高速缓存相关性的变化而变成无效&nbsp;- 
+  </div> 
+  <ul> 
+   <li> <p style="text-align:justify;"> yii\caching\DbDependency&nbsp;−&nbsp;如果指定SQL语句的查询结果发生改变，依赖也会发生改变。 </p> </li> 
+   <li> <p style="text-align:justify;"> yii\caching\ChainedDependency&nbsp;−&nbsp;如果链上的依赖关系发生改变，依赖也会改变。 </p> </li> 
+   <li> <p style="text-align:justify;"> yii\caching\FileDependency&nbsp;−&nbsp;如果文件的最后修改时间发生改变，依赖也会改变。 </p> </li> 
+   <li> <p style="text-align:justify;"> yii\caching\ExpressionDependency&nbsp;−&nbsp;如果指定PHP表达式的结果发生改变，依赖也会改变。 </p> </li> 
+  </ul> 
+  <div>
+    现在，添加&nbsp;cache&nbsp;缓存应用组件到应用程序。 
+  </div> 
+  <div>
+    第1步&nbsp;-&nbsp;修改&nbsp;conf/web.php&nbsp;文件如下： 
+  </div>   
+  <pre>&lt;?php
+   $params = require(__DIR__ . '/params.php');
+   $config = [
+      'id' =&gt; 'basic',
+      'basePath' =&gt; dirname(__DIR__),
+      'bootstrap' =&gt; ['log'],
+      'components' =&gt; [
+         'request' =&gt; [
+            // !!! insert a secret key in the following (if it is empty) - this
+               //is required by cookie validation
+            'cookieValidationKey' =&gt; 'yiibai.com',
+         ],
+         'cache' =&gt; [
+            'class' =&gt; 'yii\caching\FileCache',
+         ],
+         'user' =&gt; [
+            'identityClass' =&gt; 'app\models\User',
+            'enableAutoLogin' =&gt; true,
+         ],
+         'errorHandler' =&gt; [
+            'errorAction' =&gt; 'site/error',
+         ],
+         'mailer' =&gt; [
+            'class' =&gt; 'yii\swiftmailer\Mailer',
+            // send all mails to a file by default. You have to set
+            // 'useFileTransport' to false and configure a transport
+            // for the mailer to send real emails.
+            'useFileTransport' =&gt; true,
+         ],
+         'log' =&gt; [
+            'traceLevel' =&gt; YII_DEBUG ? 3 : 0,
+            'targets' =&gt; [
+               [
+                  'class' =&gt; 'yii\log\FileTarget',
+                  'levels' =&gt; ['error', 'warning'],
+               ],
+            ],
+         ],
+         'db' =&gt; require(__DIR__ . '/db.php'),
+      ],
+      'modules' =&gt; [
+         'admin' =&gt; [
+            'class' =&gt; 'app\modules\admin\Admin',
+         ],
+      ],
+      'params' =&gt; $params,
+   ];
+   if (YII_ENV_DEV) {
+      // configuration adjustments for 'dev' environment
+      $config['bootstrap'][] = 'debug';
+      $config['modules']['debug'] = [
+         'class' =&gt; 'yii\debug\Module',
+      ];
+      $config['bootstrap'][] = 'gii';
+      $config['modules']['gii'] = [
+         'class' =&gt; 'yii\gii\Module',
+      ];
+   }
+   return $config;
+?&gt;</pre> 
+  <div>
+    第2步&nbsp;-&nbsp;在控制器&nbsp;SiteController&nbsp;中添加一个新的 actionTestCache() 方法。 
+  </div> 
+  <pre>public function actionTestCache() {
+   $cache = Yii::$app-&gt;cache;
+   // try retrieving $data from cache
+   $data = $cache-&gt;get("my_cached_data");
+   if ($data === false) {
+      // $data is not found in cache, calculate it from scratch
+      $data = date("Y-m-d H:i:s");
+      // store $data in cache so that it can be retrieved next time
+      $cache-&gt;set("my_cached_data", $data, 30);
+   }
+   // $data is available here
+   var_dump($data);
+}</pre> 
+  <div>
+    第3步&nbsp;-&nbsp;在Web浏览器的地址栏访问：
+   <a target="_blank" href="http://localhost:8080/index.php?r=site/test-cache">http://localhost:8080/index.php?r=site/test-cache</a>&nbsp;，将会看到以下内容。
+   <br> 
+   <img src="/uploads/tutorial/20160604/1-1606042132211H.png" alt="">
+   <br> 
+  </div> 
+  <div>
+    第4步&nbsp;-&nbsp;如果重新载入页面，应该注意到的日期没有改变。日期值缓存将在30秒内过期。&nbsp;30秒后刷新页面。
+   <br> 
+   <img src="/uploads/tutorial/20160604/1-160604213244139.png" alt="Yii缓存">
+   <br> 
+  </div> 
+  <h2> 查询缓存 </h2> 
+  <div>
+    查询缓存为您提供缓存数据库查询的结果。查询缓存需要一个数据库连接和缓存应用组件。 
+  </div> 
+  <div>
+    第1步&nbsp;-&nbsp;添加一个新的&nbsp;actionQueryCaching()方法到&nbsp;SiteController&nbsp;控制器中。 
+  </div> 
+  <pre>public function actionQueryCaching() {
+   $duration = 10;
+   $result = MyUser::getDb()-&gt;cache(function ($db) {
+      return MyUser::find()-&gt;count();
+   }, $duration);
+   var_dump($result);
+   $user = new MyUser();
+   $user-&gt;name = "cached user name";
+   $user-&gt;email = "cacheduseremail@gmail.com";
+   $user-&gt;save();
+   echo "==========";
+   var_dump(MyUser::find()-&gt;count());
+}</pre> 
+  <div>
+    在上面的代码，我们缓存数据库查询，添加新的用户并显示用户数。 
+  </div> 
+  <div>
+    第2步&nbsp;-&nbsp;打开URL：
+   <a target="_blank" href="http://localhost:8080/index.php?r=site/query-caching">http://localhost:8080/index.php?r=site/query-caching</a>&nbsp;，并重新加载页面。
+   <br> 
+   <img src="/uploads/tutorial/20160604/1-16060421330S12.png" alt="">
+   <br> 
+  </div> 
+  <div>
+    当我们第一次打开该页面，数据库查询会缓存并显示给所有用户数。 
+  </div> 
+  <div>
+    当我们刷新页面，缓存数据库查询的结果是相同的，这是因为数据库查询被缓存过了。 
+  </div> 
+  <div>
+    也可以使用以下命令从控制台刷新缓存&nbsp;- 
+  </div> 
+  <ul> 
+   <li> <p style="text-align:justify;"> yii cache&nbsp;−&nbsp;显示可用缓存组件 </p> </li> 
+   <li> <p style="text-align:justify;"> yii cache/flush cache1 cache2 cache3&nbsp;−刷新缓存组件：cache1，cache2&nbsp;和&nbsp;cache3&nbsp; </p> </li> 
+   <li> <p style="text-align:justify;"> yii cache/flush-all&nbsp;−&nbsp;刷新所有缓存组件 </p> </li> 
+  </ul> 
+  <div>
+    第3步&nbsp;-&nbsp;在应用程序的根目录运行： yii&nbsp;cache/flush-all
+   <br> 
+   <img src="/uploads/tutorial/20160604/1-16060421332SO.png" alt="">
+   <br> 
+  </div> 
+ </div>
+ <br>      
+</div></body></html>

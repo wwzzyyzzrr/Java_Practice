@@ -1,0 +1,75 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">R语言随机森林</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>在随机森林方法中，创建了大量的决策树。每个观察结果都被送入每个决策树。 每个观察结果最常用作最终输出。对所有决策树进行新的观察，并对每个分类模型进行多数投票。</p> 
+ <p>对于在构建树时未使用的情况进行错误估计。 这被称为<em>OOB(Out-of-bag)</em>错误估计，以百分比表示。</p> 
+ <p>R中的软件包<code>“randomForest”</code>用于创建随机林。</p> 
+ <h2 id="h2--r-randomforest"><a name="安装R包 - randomForest" class="reference-link"></a><span class="header-link octicon octicon-link"></span>安装R包 - randomForest</h2>
+ <p>在R控制台中使用以下命令安装软件包，还必须安装其它依赖软件包(如果有的话)。</p> 
+ <pre><code class="lang-r">install.packages("randomForest")
+</code></pre> 
+ <p>软件包<code>“randomForest”</code>具有用于创建和分析随机林的<code>randomForest()</code>函数。</p> 
+ <h2 id="h2-u8BEDu6CD5"><a name="语法" class="reference-link"></a><span class="header-link octicon octicon-link"></span>语法</h2>
+ <p>在R中创建随机林的基本语法是 -</p> 
+ <pre><code class="lang-r">randomForest(formula, data)
+</code></pre> 
+ <p>以下是使用的参数的描述 - </p> 
+ <ul> 
+  <li><em>formula</em> - 是描述预测变量和响应变量的公式。</li>
+  <li><em>data</em> - 是使用的数据集的名称。</li>
+ </ul> 
+ <h3 id="h3-u8F93u5165u6570u636E"><a name="输入数据" class="reference-link"></a><span class="header-link octicon octicon-link"></span>输入数据</h3>
+ <p>我们将使用名为<code>readingSkills</code>的R内置数据集来创建一个决策树。 如果我们知道变量：<code>"age"</code>,<code>"shoesize"</code>,<code>"score"</code>以及<code>"nativeSpeaker"</code>表示该人员是否为讲母语的人，那么它描述某个人员的阅读技能的得分。</p> 
+ <p>以下是样本数据 - </p> 
+ <pre><code class="lang-r"># Load the party package. It will automatically load other required packages.
+library(party)
+
+# Print some records from data set readingSkills.
+print(head(readingSkills))
+</code></pre> 
+ <p>当我们执行上面的代码，它产生以下结果 -</p> 
+ <pre><code class="lang-shell">  nativeSpeaker age shoeSize    score
+1           yes   5 24.83189 32.29385
+2           yes   6 25.95238 36.63105
+3            no  11 30.42170 49.60593
+4           yes   7 28.66450 40.28456
+5           yes  11 31.88207 55.46085
+6           yes  10 30.07843 52.83124
+</code></pre> 
+ <h2 id="h2-u793Au4F8B"><a name="示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例</h2>
+ <p>我们将使用<code>randomForest()</code>函数来创建决策树并查看它生成的图形。参考以下代码 - </p>   
+ <pre><code class="lang-r">setwd("F:/worksp/R")
+# Load the party package. It will automatically load other required packages.
+library("party")
+library("randomForest")
+
+# Create the forest.
+output.forest &lt;- randomForest(nativeSpeaker ~ age + shoeSize + score, 
+           data = readingSkills)
+
+# View the forest results.
+print(output.forest) 
+
+# Importance of each predictor.
+print(importance(output.forest,type = 2))
+</code></pre> 
+ <p>当我们执行上面的代码，它产生以下结果 -</p> 
+ <pre><code class="lang-shell">Call:
+ randomForest(formula = nativeSpeaker ~ age + shoeSize + score,      data = readingSkills) 
+               Type of random forest: classification
+                     Number of trees: 500
+No. of variables tried at each split: 1
+
+        OOB estimate of  error rate: 1.5%
+Confusion matrix:
+    no yes class.error
+no  99   1        0.01
+yes  2  98        0.02
+
+         MeanDecreaseGini
+age              14.09296
+shoeSize         17.88001
+score            57.55174
+</code></pre> 
+ <p><strong>结论</strong></p> 
+ <p>从上面所示的随机森林可以得出结论，鞋子大小和得分是决定某人是否是母语者的重要因素。 此外，该模型只有<code>1％</code>的误差，这意味着我们可以以<code>99％</code>的准确度预测。</p>
+ <br>      
+</div></body></html>

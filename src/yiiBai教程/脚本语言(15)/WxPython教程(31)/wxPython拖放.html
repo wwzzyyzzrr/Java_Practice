@@ -1,0 +1,141 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">wxPython拖放</h1><div style="width:100%;float:left;" class="article-content">   
+ <div> 
+  <div>
+    拖放对用户是非常直观。它在许多桌面应用程序，用户可以复制或只需用鼠标拖动和删除另一个窗口中移动对象从一个窗口到另一个中。 
+  </div> 
+ </div> 
+ <div> 
+  <div>
+    拖放操作包括以下步骤&nbsp;- 
+  </div> 
+  <ul> 
+   <li> 
+    <div>
+      声明拖放目标 
+    </div> </li> 
+   <li> 
+    <div>
+      创建数据对象 
+    </div> </li> 
+   <li> 创建&nbsp;wx.DropSource </li> 
+   <li> 
+    <div>
+      执行拖放操作 
+    </div> </li> 
+   <li> 
+    <div>
+      取消或接受拖放 
+    </div> </li> 
+  </ul> 
+  <div>
+    在wxPython中，有两个预定义拖放目标&nbsp;- 
+  </div> 
+  <ul> 
+   <li> wx.TextDropTarget </li> 
+   <li> wx.FileDropTarget </li> 
+  </ul> 
+  <div>
+    许多wxPython的小部件支持拖放活动。源代码控制必须启用拖动，而目标控制必须在一个位置接受(或拒绝)拖放。 
+  </div> 
+  <div>
+    用户拖动源数据放置在目标对象上。目标对象的OnDropText()会消耗数据。如果需要的话，从源对象的数据可以被删除。 
+  </div> 
+  <h2> 实例 </h2> 
+  <div>
+    在下面的例子中，两个ListCrl对象在Box&nbsp;Sizer水平放置。在左边列表填充了一个&nbsp;languages[]&nbsp;的数据。它被指定为拖动源。在右边是目标。 
+  </div> 
+  <pre>languages = ['C', 'C++', 'Java', 'Python', 'Perl', 'JavaScript', 'PHP', 'VB.NET','C#'] 
+self.lst1 = wx.ListCtrl(panel, -1, style = wx.LC_LIST) 
+self.lst2 = wx.ListCtrl(panel, -1, style = wx.LC_LIST) 
+
+   for lang in languages: 
+      self.lst1.InsertStringItem(0,lang)</pre> 
+  <div>
+    第二个列表控件是空的，它是TextDropTarget类对象的参数。 
+  </div> 
+  <pre>class MyTextDropTarget(wx.TextDropTarget):
+   def __init__(self, object): 
+      wx.TextDropTarget.__init__(self) 
+      self.object = object
+		
+   def OnDropText(self, x, y, data): 
+      self.object.InsertStringItem(0, data)</pre> 
+  <div>
+    OnDropText()方法添加源数据在目标列表控件。 
+  </div> 
+  <div>
+    拖拽操作是由事件绑定器初始化。 
+  </div> 
+  <pre>wx.EVT_LIST_BEGIN_DRAG(self, self.lst1.GetId(), self.OnDragInit)</pre> 
+  <div>
+    OnDragInit()函数将在目标上拖拽数据并从源中删除。 
+  </div> 
+  <pre>def OnDragInit(self, event): 
+   text = self.lst1.GetItemText(event.GetIndex()) 
+   tobj = wx.PyTextDataObject(text) 
+   src = wx.DropSource(self.lst1) 
+   src.SetData(tobj) 
+   src.DoDragDrop(True) 
+   self.lst1.DeleteItem(event.GetIndex())</pre> 
+  <div>
+    完整的代码如下&nbsp;- 
+  </div> 
+  <pre>import wx
+  
+class MyTarget(wx.TextDropTarget): 
+   def __init__(self, object): 
+      wx.TextDropTarget.__init__(self) 
+      self.object = object  
+		
+   def OnDropText(self, x, y, data): 
+      self.object.InsertStringItem(0, data)  
+		
+class Mywin(wx.Frame): 
+            
+   def __init__(self, parent, title): 
+      super(Mywin, self).__init__(parent, title = title,size = (-1,300))   
+      panel = wx.Panel(self) 
+      box = wx.BoxSizer(wx.HORIZONTAL)  
+      languages = ['C', 'C++', 'Java', 'Python', 'Perl', 'JavaScript',
+         'PHP', 'VB.NET','C#']
+			
+      self.lst1 = wx.ListCtrl(panel, -1, style = wx.LC_LIST) 
+      self.lst2 = wx.ListCtrl(panel, -1, style = wx.LC_LIST) 
+      for lang in languages: 
+      self.lst1.InsertStringItem(0,lang) 
+             
+      dt = MyTarget(self.lst2) 
+      self.lst2.SetDropTarget(dt) 
+      wx.EVT_LIST_BEGIN_DRAG(self, self.lst1.GetId(), self.OnDragInit)
+		
+      box.Add(self.lst1,0,wx.EXPAND) 
+      box.Add(self.lst2, 1, wx.EXPAND) 
+		
+      panel.SetSizer(box) 
+      panel.Fit() 
+      self.Centre() 
+      self.Show(True)  
+     
+   def OnDragInit(self, event): 
+      text = self.lst1.GetItemText(event.GetIndex()) 
+      tobj = wx.PyTextDataObject(text) 
+      src = wx.DropSource(self.lst1) 
+      src.SetData(tobj) 
+      src.DoDragDrop(True) 
+      self.lst1.DeleteItem(event.GetIndex()) 
+		
+ex = wx.App() 
+Mywin(None,'Drag&amp;Drop Demo - www.yiibai.com') 
+ex.MainLoop()</pre> 
+  <div>
+    上面的代码产生下面的输出&nbsp;-
+   <br> 
+   <img src="/uploads/tutorial/20151208/1-15120R01039558.png" alt="">
+   <br> 
+  </div> 
+ </div> 
+ <div style="font-family:微软雅黑;font-size:14px;background-color:#FFFFFF;"> 
+  <img src="file://E:/data/youdao/qq24B39E2329F08D9F4C3146A571A415EF/446160f73eb54ffcb65c9313c8dc00d9/clipboard.png"> 
+ </div>
+ <br>      
+</div></body></html>

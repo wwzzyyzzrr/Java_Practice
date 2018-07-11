@@ -1,0 +1,111 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">CouchDB HTTP API</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>HTTP请求用于与CouchDB进行通信。</p> 
+ <p>通过使用这些请求，可以 - </p> 
+ <ul> 
+  <li>从数据库检索数据</li>
+  <li>将数据以文件的形式存储到数据库中</li>
+  <li>查看并格式化存储在数据库中的文档。</li>
+ </ul> 
+ <h2 id="h2-http-"><a name="HTTP请求格式" class="reference-link"></a><span class="header-link octicon octicon-link"></span>HTTP请求格式</h2>
+ <p>在通信时，数据库使用不同的请求格式。 这些请求格式有：<code>get</code>，<code>head</code>，<code>post</code>，<code>put</code>，<code>delete</code>和<code>copy</code>。</p> 
+ <p>在CouchDB中，输入数据和输出数据结构将以所有操作的JavaScript对象符号(JSON)对象的形式。</p> 
+ <p>请参阅用于与CouchDB通信的HTTP协议的不同请求格式，如下所列 - </p> 
+ <p><strong>GET</strong>：GET请求格式用于获取特定项目。 要获取不同的项目，必须发送特定的网址模式。 在CouchDB中使用此GET请求，以JSON文档的形式获取静态项，数据库文档和配置以及统计信息。<br><strong>HEAD</strong>：HEAD方法用于获取GET请求的HTTP头，而不需要响应的正文。<br><strong>POST</strong>：Post请求用于上传数据。 在CouchDB中，POST请求主要用于设置值，上传文档，设置文档值，还可以启动某些管理命令。<br><strong>PUT</strong>：PUT请求用于创建新对象，数据库，文档，视图和设计文档。<br><strong>DELETE</strong>：DELETE请求用于删除文档，视图和设计文档。<br><strong>COPY</strong>：COPY方法用于复制文档和对象。</p> 
+ <h2 id="h2-http-"><a name="HTTP请求标头" class="reference-link"></a><span class="header-link octicon octicon-link"></span>HTTP请求标头</h2>
+ <p>提供HTTP标头以获得正确的格式和编码。 HTTP请求头与请求一起发送，同时将请求发送到CouchDB服务器。 下面将解释不同的Http请求标头。</p> 
+ <p><strong>Content-type</strong>：内容类型(Content-type)标头用于指定提供给服务器的数据的内容类型以及请求。大多数情况下，发送的内容类型将是MIME类型或JSON(application/JSON)。 强烈建议在请求上使用<code>Content-type</code>。</p> 
+ <p><strong>Accept</strong>：Accept标头用于指定服务器，客户端可以理解的数据类型列表，以便服务器将使用这些数据类型发送其响应。 一般来说，可以发送客户端接受的MIME数据类型列表，数据项之前以冒号分隔。</p> 
+ <p>在CouchDB中，不需要在查询中使用<code>Accept</code>，但强烈建议确保返回的数据可以由客户端处理。</p> 
+ <h2 id="h2-http-"><a name="HTTP响应头" class="reference-link"></a><span class="header-link octicon octicon-link"></span>HTTP响应头</h2>
+ <p>HTTP响应头是服务器发送的一种响应类型。 这些标头提供了有关服务器作为响应发送的内容的信息。</p> 
+ <p>有<code>4</code>种类型的响应头：</p> 
+ <p><strong>Content-type </strong>： 内容类型(Content-type)响应头指定服务器返回的数据的MIME类型。对于大多数请求，返回的MIME类型是<code>text/plain</code>。</p> 
+ <p><strong>Cache-control</strong>：缓存控制(<code>Cache-control</code>)响应头用于建议客户端处理服务器发送的信息。 CouchDB主要返回<code>must-revalidate</code>，这表示如果可能的话，该信息应该被重新验证。</p> 
+ <p><strong>Content-length</strong> : 内容长度(<code>Content-length</code>)响应头用于获取服务器发送的内容的长度(以字节为单位)。</p> 
+ <p><strong>Etag </strong> : Etag标头用于显示文档或视图的修订版本。</p> 
+ <h2 id="h2-http-"><a name="HTTP头的状态码" class="reference-link"></a><span class="header-link octicon octicon-link"></span>HTTP头的状态码</h2>  
+ <p>下表指定了HTTP头发送的状态代码及其工作情况：</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>状态码</th> 
+    <th>描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>200 - OK</td> 
+    <td>当请求成功完成时，会生成此状态。</td> 
+   </tr> 
+   <tr> 
+    <td>201 - Created</td> 
+    <td>创建文档时会生成此状态。</td> 
+   </tr> 
+   <tr> 
+    <td>202 - Accepted</td> 
+    <td>当接受请求时，会生成此状态。</td> 
+   </tr> 
+   <tr> 
+    <td>404 - Not Found</td> 
+    <td>当服务器无法找到请求的内容时，会发出此状态。</td> 
+   </tr> 
+   <tr> 
+    <td>405 - Resource Not Allowed</td> 
+    <td>当所使用的http请求类型无效时，会发出此状态。</td> 
+   </tr> 
+   <tr> 
+    <td>409 - Conflict</td> 
+    <td>每当有任何更新冲突时，都会发出此状态。</td> 
+   </tr> 
+   <tr> 
+    <td>415 - Bad Content Type</td> 
+    <td>此状态指定服务器不支持请求的内容类型。</td> 
+   </tr> 
+   <tr> 
+    <td>500 - Internal Server Error</td> 
+    <td>无论何时请求发送无效数据，都会发出此状态。</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h2 id="h2--http-url-"><a name="与数据库交互的HTTP URL路径" class="reference-link"></a><span class="header-link octicon octicon-link"></span>与数据库交互的HTTP URL路径</h2>
+ <p>以下是用于直接与数据库交互的一些URL路径列表。</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>URL</th> 
+    <th>操作说明</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>PUT <code>/db</code></td> 
+    <td>PUT url用于创建一个新的数据库。</td> 
+   </tr> 
+   <tr> 
+    <td>GET <code>/db</code></td> 
+    <td>GET url用于获取有关现有数据库的信息。</td> 
+   </tr> 
+   <tr> 
+    <td>PUT <code>/db/document</code></td> 
+    <td>PUT url用于创建文档/更新现有文档。</td> 
+   </tr> 
+   <tr> 
+    <td>GET <code>/db/document</code></td> 
+    <td>GET url用于获取文档。</td> 
+   </tr> 
+   <tr> 
+    <td>DELETE <code>/db/document</code></td> 
+    <td>DELETE url用于从指定的数据库中删除指定的文档。</td> 
+   </tr> 
+   <tr> 
+    <td>GET <code>/db/_design/design-doc</code></td> 
+    <td>此URL用于获取设计文档的定义。</td> 
+   </tr> 
+   <tr> 
+    <td>GET <code>/db/_design/designdoc/_view/view-name</code></td> 
+    <td>此URL用于从指定的数据库访问设计文档中的视图 - <code>view-name</code>。</td> 
+   </tr> 
+  </tbody> 
+ </table>
+ <br>      
+</div></body></html>

@@ -1,0 +1,143 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Java instanceof运算符</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>java <code>instanceof</code>运算符用于测试指定对象是否是指定类型(类或子类或接口)的实例。</p> 
+ <p>java中的<code>instanceof</code>也称为类型比较运算符，因为它将类型与实例进行比较。 它返回<code>true</code>或<code>false</code>。 如果对任何具有<code>null</code>值的变量应用<code>instanceof</code>运算符，则返回false。</p> 
+ <p><strong>java instanceof的简单示例</strong></p> 
+ <p>下面来看看实例运算符的简单示例，它测试当前类。</p> 
+ <pre><code class="lang-java">class Simple1 {
+    public static void main(String args[]) {
+        Simple1 s = new Simple1();
+        System.out.println(s instanceof Simple1);// true
+    }
+}
+</code></pre> 
+ <p>执行上面试代码，得到以下结果 -</p> 
+ <pre><code class="lang-shell">true
+</code></pre> 
+ <p>子类类型的对象也是父类的类型。 例如，如果<code>Dog</code>扩展了<code>Animal</code>，那么<code>Dog</code>的对象可以通过<code>Dog</code>或<code>Animal</code>类来引用。</p> 
+ <p><strong>java instanceof运算符的另一个例子</strong></p> 
+ <pre><code class="lang-java">class Animal {
+}
+
+class Dog1 extends Animal {// Dog inherits Animal
+
+    public static void main(String args[]) {
+        Dog1 d = new Dog1();
+        System.out.println(d instanceof Animal);// true
+    }
+}
+</code></pre> 
+ <p>执行上面代码，得到以下结果 - </p> 
+ <pre><code class="lang-java">true
+</code></pre> 
+ <p><strong>instanceof测试null值的变量示例</strong></p> 
+ <p>如果我们对具有<code>null</code>值的变量应用<code>instanceof</code>运算符，则返回<code>false</code>。来看看下面给出的例子，将<code>instanceof</code>运算符应用于具有<code>null</code>值的变量。</p> 
+ <pre><code class="lang-java">class Dog2 {
+    public static void main(String args[]) {
+        Dog2 d = null;
+        System.out.println(d instanceof Dog2);// false
+    }
+}
+</code></pre> 
+ <p>执行上面代码，得到以下结果 - </p> 
+ <pre><code class="lang-java">false
+</code></pre> 
+ <p><strong>使用java instanceof运算符的向下转换</strong></p> 
+ <p>当子类型引用父类的对象时，它被称为向下转换(downcasting)。 如果直接执行它，编译器会出现编译错误。 如果通过类型转换来执行，在运行时会抛出：<code>ClassCastException</code> 。 但是如果使用<code>instanceof</code>运算符，可以进行向下转换。</p> 
+ <pre><code class="lang-java">Dog d=new Animal();//Compilation error
+</code></pre> 
+ <p>如果通过类型转换执行向下转换，则在运行时抛出：<code>ClassCastException</code>。</p> 
+ <pre><code class="lang-java">Dog d=(Dog)new Animal();  
+//Compiles successfully but ClassCastException is thrown at runtime
+</code></pre> 
+ <p><strong>使用instanceof进行向下转换</strong></p> 
+ <p>现在看看下面这个例子，通过<code>instanceof</code>运算符进行向下转换。</p> 
+ <pre><code class="lang-java">class Animal {
+}
+
+class Dog3 extends Animal {
+    static void method(Animal a) {
+        if (a instanceof Dog3) {
+            Dog3 d = (Dog3) a;// downcasting
+            System.out.println("ok downcasting performed");
+        }
+    }
+
+    public static void main(String[] args) {
+        Animal a = new Dog3();
+        Dog3.method(a);
+    }
+
+}
+</code></pre> 
+ <p>执行上面代码，得到以下结果 - </p>   
+ <pre><code class="lang-java">ok downcasting performed
+</code></pre> 
+ <p><strong>向下转换不使用instanceof</strong></p> 
+ <p>也可以在不使用<code>instanceof</code>运算符的情况下执行下转换，如以下示例代码所示：</p> 
+ <pre><code class="lang-java">class Animal {
+}
+
+class Dog4 extends Animal {
+    static void method(Animal a) {
+        Dog4 d = (Dog4) a;// downcasting
+        System.out.println("ok downcasting performed");
+    }
+
+    public static void main(String[] args) {
+        Animal a = new Dog4();
+        Dog4.method(a);
+    }
+}
+</code></pre> 
+ <p>执行上面代码，得到以下结果 - </p> 
+ <pre><code class="lang-java">ok downcasting performed
+</code></pre> 
+ <p>仔细看看，被引用的实际对象是<code>Dog</code>类的对象。 所以如果向下转换它，它是没有问题的。 但是，如果也可以这样写：</p> 
+ <pre><code class="lang-java">Animal a=new Animal();  
+Dog.method(a);  
+//Now ClassCastException but not in case of instanceof operator
+</code></pre> 
+ <h2 id="h2--java-instanceof-"><a name="理解在java中使用instanceof的实例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>理解在java中使用instanceof的实例</h2>
+ <p>这是一个instanceof的终极示例，通过下面的例子中的代码看看<code>instanceof</code>关键字的真正用法。</p> 
+ <pre><code class="lang-java">interface Printable {
+}
+
+class A implements Printable {
+    public void a() {
+        System.out.println("a method");
+    }
+}
+
+class B implements Printable {
+    public void b() {
+        System.out.println("b method");
+    }
+}
+
+class Call {
+    void invoke(Printable p) {// upcasting
+        if (p instanceof A) {
+            A a = (A) p;// Downcasting
+            a.a();
+        }
+        if (p instanceof B) {
+            B b = (B) p;// Downcasting
+            b.b();
+        }
+
+    }
+}// end of Call class
+
+class Test4 {
+    public static void main(String args[]) {
+        Printable p = new B();
+        Call c = new Call();
+        c.invoke(p);
+    }
+}
+</code></pre> 
+ <p>执行上面代码，得到以下结果 - </p> 
+ <pre><code class="lang-java">b method
+</code></pre>
+ <br>      
+</div></body></html>

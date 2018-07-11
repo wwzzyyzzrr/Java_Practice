@@ -1,0 +1,121 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Java并发ReadWriteLock接口</h1><div style="width:100%;float:left;" class="article-content">   
+ <p><code>java.util.concurrent.locks.ReadWriteLock</code>接口允许一次读取多个线程，但一次只能写入一个线程。</p> 
+ <ul> 
+  <li><strong>读锁</strong> - 如果没有线程锁定<code>ReadWriteLock</code>进行写入，则多线程可以访问读锁。</li>
+  <li><strong>写锁</strong> - 如果没有线程正在读或写，那么一个线程可以访问写锁。</li>
+ </ul> 
+ <h2 id="h2-u9501u65B9u6CD5"><a name="锁方法" class="reference-link"></a><span class="header-link octicon octicon-link"></span>锁方法</h2>
+ <p>以下是<code>Lock</code>类中可用的重要方法的列表。</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>编号</th> 
+    <th>方法</th> 
+    <th>描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>1</td> 
+    <td><code>public Lock readLock()</code></td> 
+    <td>返回用于读的锁。</td> 
+   </tr> 
+   <tr> 
+    <td>2</td> 
+    <td><code>public Lock writeLock()</code></td> 
+    <td>返回用于写的锁。</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h2 id="h2-u793Au4F8B"><a name="示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例</h2>
+ <p>以下<code>TestThread</code>程序演示了<code>ReadWriteLock</code>接口的这些方法。这里我们使用<code>readlock()</code>获取读锁定和<code>writeLock()</code>来获取写锁定。</p> 
+ <pre><code class="lang-java">import java.util.concurrent.locks.ReentrantReadWriteLock;
+
+public class TestThread {
+
+   private static final ReentrantReadWriteLock lock = new ReentrantReadWriteLock(true);
+
+   private static String message = "a";
+
+   public static void main(String[] args) throws InterruptedException{
+      Thread t1 = new Thread(new WriterA());
+      t1.setName("Writer A");
+      Thread t2 = new Thread(new WriterB());
+      t2.setName("Writer B");
+      Thread t3 = new Thread(new Reader());
+      t3.setName("Reader");
+      t1.start();
+      t2.start();
+      t3.start();
+      t1.join();
+      t2.join();
+      t3.join();
+   }
+
+   static class Reader implements Runnable {
+
+      public void run() {
+         if(lock.isWriteLocked()) {
+            System.out.println("Write Lock Present.");
+         }   
+         lock.readLock().lock();
+         try {
+            Long duration = (long) (Math.random() * 10000);
+            System.out.println(Thread.currentThread().getName() 
+               + "  Time Taken " + (duration / 1000) + " seconds.");
+            Thread.sleep(duration);
+         } catch (InterruptedException e) {
+            e.printStackTrace();
+         } finally {
+            System.out.println(Thread.currentThread().getName() +": "+ message );
+            lock.readLock().unlock();
+         }
+      }
+   }
+
+   static class WriterA implements Runnable {
+
+      public void run() {
+         lock.writeLock().lock();
+         try {
+            Long duration = (long) (Math.random() * 10000);
+            System.out.println(Thread.currentThread().getName() 
+               + "  Time Taken " + (duration / 1000) + " seconds.");
+            Thread.sleep(duration);
+         } catch (InterruptedException e) {
+            e.printStackTrace();
+         } finally {
+            message = message.concat("a");
+            lock.writeLock().unlock();
+         }
+      }
+   }
+
+   static class WriterB implements Runnable {
+
+      public void run() {
+         lock.writeLock().lock();
+         try {
+            Long duration = (long) (Math.random() * 10000);
+            System.out.println(Thread.currentThread().getName() 
+               + "  Time Taken " + (duration / 1000) + " seconds.");
+            Thread.sleep(duration);
+         } catch (InterruptedException e) {
+            e.printStackTrace();
+         } finally {
+            message = message.concat("b");
+            lock.writeLock().unlock();
+         }
+      }
+   }
+}
+</code></pre> 
+ <p>这将产生以下结果,如下所示 -</p>   
+ <pre><code class="lang-shell">Writer A  Time Taken 6 seconds.
+Write Lock Present.
+Writer B  Time Taken 2 seconds.
+Reader  Time Taken 0 seconds.
+Reader: aab
+</code></pre>
+ <br>      
+</div></body></html>

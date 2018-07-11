@@ -1,0 +1,131 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Kotlin反射</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>反射是这样的一组语言和库功能，它允许在运行时自省你的程序的结构。<br>Kotlin 让语言中的函数和属性做为一等公民、并对其自省(即在运行时获悉<br>一个名称或者一个属性或函数的类型)与简单地使用函数式或响应式风格紧密相关。</p> 
+ <blockquote> 
+  <p>在 Java 平台上，使用反射功能所需的运行时组件作为单独的<br>JAR 文件(<code>kotlin-reflect.jar</code>)分发。这样做是为了减少不使用反射功能的应用程序所需的<br>运行时库的大小。如果你需要使用反射，请确保该 .jar文件添加到项目的<br>classpath 中。</p> 
+ </blockquote> 
+ <h2 id="h2-u7C7Bu5F15u7528"><a name="类引用" class="reference-link"></a><span class="header-link octicon octicon-link"></span>类引用</h2>
+ <p>最基本的反射功能是获取 Kotlin 类的运行时引用。要获取对<br>静态已知的 Kotlin 类的引用，可以使用 <em>类字面值</em> 语法：</p> 
+ <pre><code class="lang-kotlin">val c = MyClass::class
+</code></pre> 
+ <p>该引用是 <a target="_blank" href="http://kotlinlang.org/api/latest/jvm/stdlib/kotlin.reflect/-k-class/index.html">KClass</a> 类型的值。</p> 
+ <p>请注意，Kotlin 类引用与 Java 类引用不同。要获得 Java 类引用，<br>请在 <code>KClass</code> 实例上使用 <code>.java</code> 属性。</p> 
+ <h2 id="h2--1-1-"><a name="绑定的类引用(自 1.1 起)" class="reference-link"></a><span class="header-link octicon octicon-link"></span>绑定的类引用(自 1.1 起)</h2>
+ <p>通过使用对象作为接收者，可以用相同的 <code>::class</code> 语法获取指定对象的类的引用：</p> 
+ <pre><code class="lang-kotlin">val widget: Widget = ……
+assert(widget is GoodWidget) { "Bad widget: ${widget::class.qualifiedName}" }
+</code></pre> 
+ <p>你可以获取对象的精确类的引用，例如 <code>GoodWidget</code> 或 <code>BadWidget</code>，尽管接收者表达式的类型是 <code>Widget</code>。</p> 
+ <h2 id="h2-u51FDu6570u5F15u7528"><a name="函数引用" class="reference-link"></a><span class="header-link octicon octicon-link"></span>函数引用</h2>
+ <p>当我们有一个命名函数声明如下：</p> 
+ <pre><code class="lang-kotlin">fun isOdd(x: Int) = x % 2 != 0
+</code></pre> 
+ <p>我们可以很容易地直接调用它(<code>isOdd(5)</code>)，但是我们也可以把它作为一个值传递。例如传给另一个函数。<br>为此，我们使用 <code>::</code> 操作符：</p> 
+ <pre><code class="lang-kotlin">val numbers = listOf(1, 2, 3)
+println(numbers.filter(::isOdd)) // 输出 [1, 3]
+</code></pre> 
+ <p>这里 <code>::isOdd</code> 是函数类型 <code>(Int) -&gt; Boolean</code> 的一个值。</p> 
+ <p>当上下文中已知函数期望的类型时，<code>::</code> 可以用于重载函数。<br>例如：</p> 
+ <pre><code class="lang-kotlin">fun isOdd(x: Int) = x % 2 != 0
+fun isOdd(s: String) = s == "brillig" || s == "slithy" || s == "tove"
+
+val numbers = listOf(1, 2, 3)
+println(numbers.filter(::isOdd)) // 引用到 isOdd(x: Int)
+</code></pre> 
+ <p>或者，你可以通过将方法引用存储在具有显式指定类型的变量中来提供必要的上下文：</p> 
+ <pre><code class="lang-kotlin">val predicate: (String) -&gt; Boolean = ::isOdd   // 引用到 isOdd(x: String)
+</code></pre> 
+ <p>如果我们需要使用类的成员函数或扩展函数，它需要是限定的。<br>例如 <code>String::toCharArray</code> 为类型 <code>String</code> 提供了一个扩展函数：<code>String.() -&gt; CharArray</code>。</p> 
+ <h3 id="h3--"><a name="示例：函数组合" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例：函数组合</h3>
+ <p>考虑以下函数：</p> 
+ <pre><code class="lang-kotlin">fun &lt;A, B, C&gt; compose(f: (B) -&gt; C, g: (A) -&gt; B): (A) -&gt; C {
+    return { x -&gt; f(g(x)) }
+}
+</code></pre> 
+ <p>它返回一个传给它的两个函数的组合：<code>compose(f, g) = f(g(*))</code>。<br>现在，你可以将其应用于可调用引用：</p> 
+ <pre><code class="lang-kotlin">fun length(s: String) = s.length
+
+val oddLength = compose(::isOdd, ::length)
+val strings = listOf("a", "ab", "abc")
+
+println(strings.filter(oddLength)) // 输出 "[a, abc]"
+</code></pre> 
+ <h2 id="h2-u5C5Eu6027u5F15u7528"><a name="属性引用" class="reference-link"></a><span class="header-link octicon octicon-link"></span>属性引用</h2>
+ <p>要把属性作为 Kotlin中 的一等对象来访问，我们也可以使用 <code>::</code> 运算符：</p> 
+ <pre><code class="lang-kotlin">var x = 1
+
+fun main(args: Array&lt;String&gt;) {
+    println(::x.get()) // 输出 "1"
+    ::x.set(2)
+    println(x)         // 输出 "2"
+}
+</code></pre> 
+ <p>表达式 <code>::x</code> 求值为 <code>KProperty&lt;Int&gt;</code> 类型的属性对象，它允许我们使用<br><code>get()</code> 读取它的值，或者使用 <code>name</code> 属性来获取属性名。更多信息请参见<br><a target="_blank" href="http://kotlinlang.org/api/latest/jvm/stdlib/kotlin.reflect/-k-property/index.html">关于 <code>KProperty</code> 类的文档</a>。</p> 
+ <p>对于可变属性，例如 <code>var y = 1</code>，<code>::y</code> 返回 <a target="_blank" href="http://kotlinlang.org/api/latest/jvm/stdlib/kotlin.reflect/-k-mutable-property/index.html"><code>KMutableProperty&lt;Int&gt;</code></a> 类型的一个值，<br>该类型有一个 <code>set()</code> 方法。</p> 
+ <p>属性引用可以用在不需要参数的函数处：</p> 
+ <pre><code class="lang-kotlin">val strs = listOf("a", "bc", "def")
+println(strs.map(String::length)) // 输出 [1, 2, 3]
+</code></pre> 
+ <p>要访问属于类的成员的属性，我们这样限定它：</p>   
+ <pre><code class="lang-kotlin">class A(val p: Int)
+
+fun main(args: Array&lt;String&gt;) {
+    val prop = A::p
+    println(prop.get(A(1))) // 输出 "1"
+}
+</code></pre> 
+ <p>对于扩展属性：</p> 
+ <pre><code class="lang-kotlin">val String.lastChar: Char
+    get() = this[length - 1]
+
+fun main(args: Array&lt;String&gt;) {
+    println(String::lastChar.get("abc")) // 输出 "c"
+}
+</code></pre> 
+ <h3 id="h3--java-"><a name="与 Java 反射的互操作性" class="reference-link"></a><span class="header-link octicon octicon-link"></span>与 Java 反射的互操作性</h3>
+ <p>在Java平台上，标准库包含反射类的扩展，它提供了与 Java<br>反射对象之间映射(参见 <code>kotlin.reflect.jvm</code> 包)。<br>例如，要查找一个用作 Kotlin 属性 getter 的 幕后字段或 Java方法，可以这样写：</p> 
+ <pre><code class="lang-kotlin">import kotlin.reflect.jvm.*
+
+class A(val p: Int)
+
+fun main(args: Array&lt;String&gt;) {
+    println(A::p.javaGetter) // 输出 "public final int A.getP()"
+    println(A::p.javaField)  // 输出 "private final int A.p"
+}
+</code></pre> 
+ <p>要获得对应于 Java 类的 Kotlin 类，请使用 <code>.kotlin</code> 扩展属性：</p> 
+ <pre><code class="lang-kotlin">fun getKClass(o: Any): KClass&lt;Any&gt; = o.javaClass.kotlin
+</code></pre> 
+ <h2 id="h2-u6784u9020u51FDu6570u5F15u7528"><a name="构造函数引用" class="reference-link"></a><span class="header-link octicon octicon-link"></span>构造函数引用</h2>
+ <p>构造函数可以像方法和属性那样引用。他们可以用于期待这样的函数类型对象的任何<br>地方：它与该构造函数接受相同参数并且返回相应类型的对象。<br>通过使用 <code>::</code> 操作符并添加类名来引用构造函数。考虑下面的函数，<br>它期待一个无参并返回 <code>Foo</code> 类型的函数参数：</p> 
+ <pre><code class="lang-kotlin">class Foo
+
+fun function(factory: () -&gt; Foo) {
+    val x: Foo = factory()
+}
+</code></pre> 
+ <p>使用 <code>::Foo</code>，类 Foo 的零参数构造函数，我们可以这样简单地调用它：</p> 
+ <pre><code class="lang-kotlin">function(::Foo)
+</code></pre> 
+ <h2 id="h2--1-1-"><a name="绑定的函数与属性引用(自 1.1 起)" class="reference-link"></a><span class="header-link octicon octicon-link"></span>绑定的函数与属性引用(自 1.1 起)</h2>
+ <p>你可以引用特定对象的实例方法。</p> 
+ <pre><code class="lang-kotlin">val numberRegex = "\\d+".toRegex()
+println(numberRegex.matches("29")) // 输出“true”
+
+val isNumber = numberRegex::matches
+println(isNumber("29")) // 输出“true”
+</code></pre> 
+ <p>取代直接调用方法 <code>matches</code> 的是我们存储其引用。<br>这样的引用会绑定到其接收者上。<br>它可以直接调用(如上例所示)或者用于任何期待一个函数类型表达式的时候：</p> 
+ <pre><code class="lang-kotlin">val strings = listOf("abc", "124", "a70")
+println(strings.filter(numberRegex::matches)) // 输出“[124]”
+</code></pre> 
+ <p>比较绑定的类型和相应的未绑定类型的引用。<br>绑定的可调用引用有其接收者“附加”到其上，因此接收者的类型不再是参数：</p> 
+ <pre><code class="lang-kotlin">val isNumber: (CharSequence) -&gt; Boolean = numberRegex::matches
+
+val matches: (Regex, CharSequence) -&gt; Boolean = Regex::matches
+</code></pre> 
+ <p>属性引用也可以绑定：</p> 
+ <pre><code class="lang-kotlin">val prop = "abc"::length
+println(prop.get())   // 输出“3”
+</code></pre>
+ <br>      
+</div></body></html>

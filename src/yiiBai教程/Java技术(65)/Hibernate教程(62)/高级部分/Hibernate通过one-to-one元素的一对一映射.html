@@ -1,0 +1,322 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Hibernate通过one-to-one元素的一对一映射</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>正如我们在前面的例子中讨论过的，在hibernate中执行一对一映射有两种方法：</p> 
+ <ul> 
+  <li>通过<code>many-to-one</code>元素</li>
+  <li>通过<code>one-to-one</code>元素</li>
+ </ul> 
+ <p>这里，我们将通过<code>one-to-one</code>元素进行一对一的映射。 在这种情况下，不会在主表中创建外键。</p> 
+ <p>在这个例子中，一个员工只能有一个地址，一个地址只能属于一个员工。 在这里使用双向关联。我们来看看持久化类。</p> 
+ <h2 id="h2-1-"><a name="1)一对一映射的持久类" class="reference-link"></a><span class="header-link octicon octicon-link"></span>1)一对一映射的持久类</h2>
+ <p>有两个持久化类<code>Employee.java</code>和<code>Address.java</code>。 <code>Employee</code>类包含<code>Address</code>类引用，反之亦然。</p> 
+ <p>创建一个名称为：<code>onetooneprimary</code> 的java项目，其项目文件目录结构如下 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201703/2803/629210331_81238.png" alt=""></p> 
+ <p><em>文件：Employee.java</em></p> 
+ <pre><code class="lang-java">package com.yiibai;
+
+public class Employee {
+    private int employeeId;
+    private String name, email;
+
+    private Address address;
+
+    public int getEmployeeId() {
+        return employeeId;
+    }
+
+    public void setEmployeeId(int employeeId) {
+        this.employeeId = employeeId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public Address getAddress() {
+        return address;
+    }
+
+    public void setAddress(Address address) {
+        this.address = address;
+    }
+
+}
+</code></pre> 
+ <p><em>文件：Address.java</em></p> 
+ <pre><code class="lang-java">package com.yiibai;
+
+public class Address {
+    private int addressId;
+    private String addressLine1, city, state, country;
+    private int pincode;
+    private Employee employee;
+
+    public int getAddressId() {
+        return addressId;
+    }
+
+    public void setAddressId(int addressId) {
+        this.addressId = addressId;
+    }
+
+    public String getAddressLine1() {
+        return addressLine1;
+    }
+
+    public void setAddressLine1(String addressLine1) {
+        this.addressLine1 = addressLine1;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
+    }
+
+    public int getPincode() {
+        return pincode;
+    }
+
+    public void setPincode(int pincode) {
+        this.pincode = pincode;
+    }
+
+    public Employee getEmployee() {
+        return employee;
+    }
+
+    public void setEmployee(Employee employee) {
+        this.employee = employee;
+    }
+
+}
+</code></pre> 
+ <h2 id="h2-2-"><a name="2)持久化类映射文件" class="reference-link"></a><span class="header-link octicon octicon-link"></span>2)持久化类映射文件</h2>
+ <p>两个映射文件分别是：<code>employee.hbm.xml</code>和<code>address.hbm.xml</code>。</p> 
+ <p><em>文件：employee.hbm.xml</em> </p> 
+ <p>在这个映射文件中，我们在映射文件中使用<code>one-to-one</code>元素进行一对一映射。</p> 
+ <pre><code class="lang-xml">&lt;?xml version='1.0' encoding='UTF-8'?&gt;
+&lt;!DOCTYPE hibernate-mapping PUBLIC
+          "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+          "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd"&gt;
+
+&lt;hibernate-mapping&gt;
+    &lt;class name="com.yiibai.Employee" table="emp_2120"&gt;
+        &lt;id name="employeeId"&gt;
+            &lt;generator class="increment"&gt;&lt;/generator&gt;
+        &lt;/id&gt;
+        &lt;property name="name"&gt;&lt;/property&gt;
+        &lt;property name="email"&gt;&lt;/property&gt;
+
+        &lt;one-to-one name="address" cascade="all"&gt;&lt;/one-to-one&gt;
+    &lt;/class&gt;
+
+&lt;/hibernate-mapping&gt;
+</code></pre> 
+ <p><em>文件：address.hbm.xml</em></p> 
+ <p>这是<code>Address</code>类的简单映射文件。 但重要的是生成器(<code>generator</code>)类。 在这里，我们正在使用依赖于<code>Employee</code>类主键的外部<code>generator</code>类。</p> 
+ <pre><code class="lang-xml">&lt;?xml version='1.0' encoding='UTF-8'?&gt;
+&lt;!DOCTYPE hibernate-mapping PUBLIC
+          "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+          "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd"&gt;
+
+&lt;hibernate-mapping&gt;
+    &lt;class name="com.yiibai.Address" table="address_2120"&gt;
+        &lt;id name="addressId"&gt;
+            &lt;generator class="foreign"&gt;
+                &lt;param name="property"&gt;employee&lt;/param&gt;
+            &lt;/generator&gt;
+        &lt;/id&gt;
+        &lt;property name="addressLine1"&gt;&lt;/property&gt;
+        &lt;property name="city"&gt;&lt;/property&gt;
+        &lt;property name="state"&gt;&lt;/property&gt;
+        &lt;property name="country"&gt;&lt;/property&gt;
+
+        &lt;one-to-one name="employee" cascade="all"&gt;&lt;/one-to-one&gt;
+    &lt;/class&gt;
+
+&lt;/hibernate-mapping&gt;
+</code></pre> 
+ <h2 id="h2-3-"><a name="3)配置文件" class="reference-link"></a><span class="header-link octicon octicon-link"></span>3)配置文件</h2>
+ <p>此文件包含有关数据库和映射文件的信息。<br><em>文件：hibernate.cfg.xml</em></p> 
+ <pre><code class="lang-xml">&lt;?xml version='1.0' encoding='UTF-8'?&gt;
+&lt;!DOCTYPE hibernate-configuration PUBLIC
+          "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+          "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd"&gt;
+
+&lt;!-- Generated by MyEclipse Hibernate Tools. --&gt;
+&lt;hibernate-configuration&gt;
+
+    &lt;session-factory&gt;
+        &lt;property name="hbm2ddl.auto"&gt;update&lt;/property&gt;
+
+        &lt;property name="connection.driver_class"&gt;com.mysql.jdbc.Driver&lt;/property&gt;
+        &lt;property name="connection.url"&gt;jdbc:mysql://localhost:3306/test&lt;/property&gt;
+        &lt;property name="connection.username"&gt;root&lt;/property&gt;
+        &lt;property name="connection.password"&gt;123456&lt;/property&gt;
+        &lt;property name="dialect"&gt;org.hibernate.dialect.MySQL5InnoDBDialect&lt;/property&gt;
+        &lt;property name="show_sql"&gt;true&lt;/property&gt;
+
+        &lt;mapping resource="employee.hbm.xml" /&gt;
+        &lt;mapping resource="address.hbm.xml" /&gt;
+    &lt;/session-factory&gt;
+
+&lt;/hibernate-configuration&gt;
+</code></pre> 
+ <h2 id="h2-4-"><a name="4)存储和获取数据的用户类" class="reference-link"></a><span class="header-link octicon octicon-link"></span>4)存储和获取数据的用户类</h2>
+ <p><em>文件：MainTest.java</em></p> 
+ <pre><code class="lang-java">package com.yiibai;
+
+import org.hibernate.boot.MetadataSources;
+import org.hibernate.boot.registry.StandardServiceRegistry;
+import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
+import org.hibernate.cfg.*;
+import org.hibernate.*;
+
+public class MainTest {
+    public static void main(String[] args) {
+        // 在5.1.0版本汇总，hibernate则采用如下新方式获取：
+        // 1. 配置类型安全的准服务注册类，这是当前应用的单例对象，不作修改，所以声明为final
+        // 在configure("cfg/hibernate.cfg.xml")方法中，如果不指定资源路径，默认在类路径下寻找名为hibernate.cfg.xml的文件
+        final StandardServiceRegistry registry = new StandardServiceRegistryBuilder()
+                .configure("hibernate.cfg.xml").build();
+        // 2. 根据服务注册类创建一个元数据资源集，同时构建元数据并生成应用一般唯一的的session工厂
+        SessionFactory sessionFactory = new MetadataSources(registry)
+                .buildMetadata().buildSessionFactory();
+
+        /**** 上面是配置准备，下面开始我们的数据库操作 ******/
+        Session session = sessionFactory.openSession();// 从会话工厂获取一个session
+        // creating transaction object
+        Transaction t = session.beginTransaction();
+
+        Employee e1 = new Employee();
+        e1.setName("苏小明");
+        e1.setEmail("xima.su@gmail.com");
+
+        Address address1 = new Address();
+        address1.setAddressLine1("G-1621, Renmin Road");
+        address1.setCity("海口");
+        address1.setState("海南");
+        address1.setCountry("中国");
+        address1.setPincode(572201);
+
+        e1.setAddress(address1);
+        address1.setEmployee(e1);
+
+        session.persist(e1);
+        t.commit();
+
+        session.close();
+        System.out.println("success");
+    }
+}
+</code></pre> 
+ <p><em>文件：FetchTest.java</em></p>   
+ <pre><code class="lang-java">package com.yiibai;
+
+import java.util.Iterator;
+import java.util.List;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
+import org.hibernate.boot.MetadataSources;
+import org.hibernate.boot.registry.StandardServiceRegistry;
+import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
+import org.hibernate.cfg.Configuration;
+
+public class FetchTest {
+    public static void main(String[] args) {
+        // 在5.1.0版本汇总，hibernate则采用如下新方式获取：
+        // 1. 配置类型安全的准服务注册类，这是当前应用的单例对象，不作修改，所以声明为final
+        // 在configure("cfg/hibernate.cfg.xml")方法中，如果不指定资源路径，默认在类路径下寻找名为hibernate.cfg.xml的文件
+        final StandardServiceRegistry registry = new StandardServiceRegistryBuilder()
+                .configure("hibernate.cfg.xml").build();
+        // 2. 根据服务注册类创建一个元数据资源集，同时构建元数据并生成应用一般唯一的的session工厂
+        SessionFactory sessionFactory = new MetadataSources(registry)
+                .buildMetadata().buildSessionFactory();
+
+        /**** 上面是配置准备，下面开始我们的数据库操作 ******/
+        Session session = sessionFactory.openSession();// 从会话工厂获取一个session
+        // creating transaction object
+        Transaction t = session.beginTransaction();
+
+        Query query = session.createQuery("from Employee e");
+        List&lt;Employee&gt; list = query.list();
+
+        Iterator&lt;Employee&gt; itr = list.iterator();
+        while (itr.hasNext()) {
+            Employee emp = itr.next();
+            System.out.println(emp.getEmployeeId() + " " + emp.getName() + " "
+                    + emp.getEmail());
+            Address address = emp.getAddress();
+            System.out.println(address.getAddressLine1() + " "
+                    + address.getCity() + " " + address.getState() + " "
+                    + address.getCountry());
+        }
+
+        session.close();
+        System.out.println("success");
+    }
+}
+</code></pre> 
+ <h2 id="h2-5-"><a name="5) 运行示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>5) 运行示例</h2>
+ <p>首先运行 <code>MainTest.java</code> 来创建表并向表中插入一些数据，然后运行<code>FetchTest.java</code>来读取上面插入的数据信息。</p> 
+ <p>运行 <code>MainTest.java</code> 得到的结果如下- </p> 
+ <pre><code>log4j:WARN No appenders could be found for logger (org.jboss.logging).
+log4j:WARN Please initialize the log4j system properly.
+log4j:WARN See http://logging.apache.org/log4j/1.2/faq.html#noconfig for more info.
+Tue Mar 28 21:07:32 CST 2017 WARN: Establishing SSL connection without server's identity verification is not recommended. According to MySQL 5.5.45+, 5.6.26+ and 5.7.6+ requirements SSL connection must be established by default if explicit option isn't set. For compliance with existing applications not using SSL the verifyServerCertificate property is set to 'false'. You need either to explicitly disable SSL by setting useSSL=false, or set useSSL=true and provide truststore for server certificate verification.
+Hibernate: select max(employeeId) from emp_2120
+Hibernate: insert into emp_2120 (name, email, employeeId) values (?, ?, ?)
+Hibernate: insert into address_2120 (addressLine1, city, state, country, addressId) values (?, ?, ?, ?, ?)
+success
+</code></pre>
+ <p>运行 <code>FetchTest.java</code> 得到的结果如下- </p> 
+ <pre><code>log4j:WARN No appenders could be found for logger (org.jboss.logging).
+log4j:WARN Please initialize the log4j system properly.
+log4j:WARN See http://logging.apache.org/log4j/1.2/faq.html#noconfig for more info.
+Tue Mar 28 21:07:57 CST 2017 WARN: Establishing SSL connection without server's identity verification is not recommended. According to MySQL 5.5.45+, 5.6.26+ and 5.7.6+ requirements SSL connection must be established by default if explicit option isn't set. For compliance with existing applications not using SSL the verifyServerCertificate property is set to 'false'. You need either to explicitly disable SSL by setting useSSL=false, or set useSSL=true and provide truststore for server certificate verification.
+Hibernate: select employee0_.employeeId as employee1_1_, employee0_.name as name2_1_, employee0_.email as email3_1_ from emp_2120 employee0_
+Hibernate: select address0_.addressId as addressI1_0_0_, address0_.addressLine1 as addressL2_0_0_, address0_.city as city3_0_0_, address0_.state as state4_0_0_, address0_.country as country5_0_0_, employee1_.employeeId as employee1_1_1_, employee1_.name as name2_1_1_, employee1_.email as email3_1_1_ from address_2120 address0_ left outer join emp_2120 employee1_ on address0_.addressId=employee1_.employeeId where address0_.addressId=?
+Hibernate: select address0_.addressId as addressI1_0_0_, address0_.addressLine1 as addressL2_0_0_, address0_.city as city3_0_0_, address0_.state as state4_0_0_, address0_.country as country5_0_0_, employee1_.employeeId as employee1_1_1_, employee1_.name as name2_1_1_, employee1_.email as email3_1_1_ from address_2120 address0_ left outer join emp_2120 employee1_ on address0_.addressId=employee1_.employeeId where address0_.addressId=?
+Hibernate: select address0_.addressId as addressI1_0_0_, address0_.addressLine1 as addressL2_0_0_, address0_.city as city3_0_0_, address0_.state as state4_0_0_, address0_.country as country5_0_0_, employee1_.employeeId as employee1_1_1_, employee1_.name as name2_1_1_, employee1_.email as email3_1_1_ from address_2120 address0_ left outer join emp_2120 employee1_ on address0_.addressId=employee1_.employeeId where address0_.addressId=?
+1 Yiibai Su yiibai.su@gmail.com
+G-1621, Renmin Road Haikou Hainan China
+2 苏小明 xima.su@gmail.com
+G-1621, Renmin Road 海口 海南 中国
+3 苏小明 xima.su@gmail.com
+G-1621, Renmin Road 海口 海南 中国
+success
+</code></pre>
+ <br>      
+</div></body></html>

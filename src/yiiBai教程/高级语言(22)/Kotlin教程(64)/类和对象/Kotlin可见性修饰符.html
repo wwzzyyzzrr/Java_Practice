@@ -1,0 +1,81 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Kotlin可见性修饰符</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>类，对象，接口，构造函数，函数，属性及其设置器可以具有可见性修饰符。 (Getter总是具有与属性相同的可见性。)Kotlin中有四个可见性修饰符：</p> 
+ <p><code>private</code>, <code>protected</code>, <code>internal</code> 和 <code>public</code>。如果没有显式修饰符，则使用的默认可见性是<code>public</code>。</p> 
+ <p>下面请查看不同类型声明范围的说明。</p> 
+ <h2 id="h2-u5305"><a name="包" class="reference-link"></a><span class="header-link octicon octicon-link"></span>包</h2>
+ <p>函数，属性和类，对象和接口可以在“顶层”上声明，即直接在包中：</p> 
+ <pre><code class="lang-kotlin">// file name: example.kt
+package foo
+
+fun baz() {}
+class Bar {}
+</code></pre> 
+ <ul> 
+  <li>如果没有指定任何可见性修饰符，则默认使用<code>public</code>，这意味着声明将在任何位置都可见;</li>
+  <li>如果将一个声明标记为<code>private</code>，那么它只会在包含声明的文件中可见;</li>
+  <li>如果将其标记为<code>internal</code>，则在同一模块中的任何地方可见;</li>
+  <li>如果将其标记为<code>protected</code>，则不可用于顶层声明。</li>
+ </ul> 
+ <p><strong>示例</strong></p> 
+ <pre><code class="lang-kotlin">// file name: example.kt
+package foo
+
+private fun foo() {} // visible inside example.kt
+
+public var bar: Int = 5 // property is visible everywhere
+    private set         // setter is visible only in example.kt
+
+internal val baz = 6    // visible inside the same module
+</code></pre> 
+ <h2 id="h2-u7C7Bu548Cu63A5u53E3"><a name="类和接口" class="reference-link"></a><span class="header-link octicon octicon-link"></span>类和接口</h2>
+ <p>对于在类中声明的成员：</p> 
+ <ul> 
+  <li><code>private</code>只有在这个类才能看到(包括其所有成员);</li>
+  <li><code>protected</code> - 相同于<code>private</code> + 在子类中可见;</li>
+  <li><code>internal</code> - 模块中的任何看到声明类的客户端都看到其内部成员;</li>
+  <li><code>public</code> - 声明类的任何客户看到它的公共成员。</li>
+ </ul> 
+ <p>注意Java用户：外部类不会在Kotlin中看到其内部类的私有成员。</p> 
+ <p>如果覆盖<code>protected</code>的成员，并且不明确指定可见性，则覆盖成员也将具有<code>protected</code>的可见性。</p> 
+ <p><strong>例子</strong></p> 
+ <pre><code class="lang-kotlin">open class Outer {
+    private val a = 1
+    protected open val b = 2
+    internal val c = 3
+    val d = 4  // public by default
+
+    protected class Nested {
+        public val e: Int = 5
+    }
+}
+
+class Subclass : Outer() {
+    // a is not visible
+    // b, c and d are visible
+    // Nested and e are visible
+
+    override val b = 5   // 'b' is protected
+}
+
+class Unrelated(o: Outer) {
+    // o.a, o.b are not visible
+    // o.c and o.d are visible (same module)
+    // Outer.Nested is not visible, and Nested::e is not visible either 
+}
+</code></pre> 
+ <h3 id="h3-u6784u9020u51FDu6570"><a name="构造函数" class="reference-link"></a><span class="header-link octicon octicon-link"></span>构造函数</h3>
+ <p>要指定类的主构造函数的可见性，请使用以下语法(请注意，需要添加一个显式<code>constructor</code>关键字)：</p>   
+ <pre><code class="lang-kotlin">class C private constructor(a: Int) { ... }
+</code></pre> 
+ <p>这里的构造函数是:<code>private</code>。 默认情况下，所有构造函数都是<code>public</code>，它们有效地相当于在类可见的地方可见(即<code>internal</code>类的构造函数只能在同一模块中可见)。</p> 
+ <h3 id="h3-u5C40u90E8u58F0u660E"><a name="局部声明" class="reference-link"></a><span class="header-link octicon octicon-link"></span>局部声明</h3>
+ <p>局部的变量，函数和类不能有可见性修饰符。</p> 
+ <h2 id="h2-u6A21u5757"><a name="模块" class="reference-link"></a><span class="header-link octicon octicon-link"></span>模块</h2>
+ <p>内部可见性修饰符意味着该成员可以使用相同的模块。 更具体地说，一个模块是一组编译的Kotlin文件：</p> 
+ <ul> 
+  <li>IntelliJ IDEA模块;</li>
+  <li>Maven或Gradle项目;</li>
+  <li>通过一次调用Ant任务编译的一组文件。</li>
+ </ul>
+ <br>      
+</div></body></html>

@@ -1,0 +1,132 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">C语言联合体</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>像结构体一样，联合体(<code>Union</code>)在C语言中是一个用户定义的数据类型，用于保存不同类型的元素。</p> 
+ <p>但它并不占所有成员的内存总和。它只占最大成员的内存，它分享最大成员的内存。</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201708/1608/181110820_73046.png" alt=""></p> 
+ <p><strong>联合体优点</strong></p> 
+ <p>它占用较少的内存，因为它只占最大的成员的内存量。</p> 
+ <p><strong>联合体缺点</strong></p> 
+ <p>它将数据存储在一个成员中。</p> 
+ <h2 id="h2-u5B9Au4E49u8054u5408u4F53"><a name="定义联合体" class="reference-link"></a><span class="header-link octicon octicon-link"></span>定义联合体</h2>
+ <p><code>union</code>关键字用于定义联合体。下面我们来看看如何在C语言中定义联合体的语法 - </p> 
+ <pre><code class="lang-c">union union_name   
+{  
+    data_type member1;  
+    data_type member2;  
+    .  
+    .  
+    data_type memeberN;  
+};
+</code></pre> 
+ <p>我们来看看在C语言中定义员工联合体的例子。如下代码 - </p> 
+ <pre><code class="lang-c">union employee  
+{   int id;  
+    char name[50];  
+    float salary;  
+};
+</code></pre> 
+ <blockquote> 
+  <p>注：除了<code>union</code>关键字，其它均与结构体一样。</p> 
+ </blockquote> 
+ <h2 id="h2-u8054u5408u4F53u7684u4F8Bu5B50"><a name="联合体的例子" class="reference-link"></a><span class="header-link octicon octicon-link"></span>联合体的例子</h2>
+ <p>我们来看看一个简单的C语言联合示例。创建一个源文件：<em>union-example.c</em>，其代码实现如下 - </p> 
+ <pre><code class="lang-c">#include &lt;stdio.h&gt;  
+#include &lt;string.h&gt;  
+union employee
+{
+    int id;
+    char name[150];
+}e1;  //declaring e1 variable for union  
+
+int main()
+{
+    //store first employee information  
+    e1.id = 1010;
+    strcpy(e1.name, "Maxsu");//copying string into char array  
+                                     //printing first employee information  
+    printf("employee 1 id : %d, address: %u\n", e1.id, &amp;e1.id);
+    printf("employee 1 name : %s, address: %u\n", e1.name, &amp;e1.name);
+    e1.id = 1010;
+    printf("employee 1 id : %d, address: %u\n", e1.id, &amp;e1.id);
+    printf("employee 1 name : %s, address: %u\n", e1.name, &amp;e1.name);
+    return 0;
+}
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 -</p> 
+ <pre><code class="lang-shell">employee 1 id : 1937269069, address: 16819328
+employee 1 name : Maxsu, address: 16819328
+employee 1 id : 1010, address: 16819328
+employee 1 name : ?, address: 16819328
+</code></pre> 
+ <p>如上输出结果中可以看到，<code>id</code>字段的值是一个垃圾值，因为<code>name</code>具有大的内存大小。所以只有<code>name</code>才具有实际值。</p> 
+ <p>联合体完全就是共用一个内存首地址，并且各种变量名都可以同时使用，操作也是共同生效。如此多的访问内存手段，确实好用，不过这些“手段”之间却没法互相屏蔽——就好像数组+下标和指针+偏移一样。</p> 
+ <p>由于联合体中的所有成员是共享一段内存的，因此每个成员的存放首地址相对于于联合体变量的基地址的偏移量为0，即所有成员的首地址都是一样的。为了使得所有成员能够共享一段内存，因此该空间必须足够容纳这些成员中最宽的成员。对于这句“对齐方式要适合其中所有的成员”是指其必须符合所有成员的自身对齐方式。</p> 
+ <p>下面举例说明：</p>   
+ <pre><code class="lang-c">union U
+{
+    char s[9];
+    int n;
+    double d;
+};
+</code></pre> 
+ <p>s占9字节，n占4字节，d占8字节，因此其至少需9字节的空间。然而其实际大小并不是9，用运算符sizeof测试其大小为16.这是因为这里存在字节对齐的问题，9既不能被4整除，也不能被8整除。因此补充字节到16，这样就符合所有成员的自身对齐了。从这里可以看出联合体所占的空间不仅取决于最宽成员，还跟所有成员有关系，即其大小必须满足两个条件：1)大小足够容纳最宽的成员；2)大小能被其包含的所有基本数据类型的大小所整除。</p> 
+ <p>测试程序，创建一个源文件：<em>union-test.c</em>，其代码实现如下 - </p> 
+ <pre><code class="lang-c">#include &lt;stdio.h&gt;  
+#include &lt;string.h&gt;  
+
+union U1
+{
+    char s[9];
+    int n;
+    double d;
+}u1;
+
+union U2
+{
+    char s[5];
+    int n;
+    double d;
+}u2;
+
+int main()
+{
+    printf("%d\n", sizeof(u1));
+    printf("%d\n", sizeof(u2));
+    printf("0x%x\n", &amp;u1);
+    printf("0x%x\n", &amp;u1.s);
+    printf("0x%x\n", &amp;u1.n);
+    printf("0x%x\n", &amp;u1.d);
+    u1.n = 1;
+    printf("%d\n", u1.s[0]);
+    printf("%lf\n", u1.d);
+    unsigned char *p = (unsigned char *)&amp;u1;
+    printf("%d\n", *p);
+    printf("%d\n", *(p + 1));
+    printf("%d\n", *(p + 2));
+    printf("%d\n", *(p + 3));
+    printf("%d\n", *(p + 4));
+    printf("%d\n", *(p + 5));
+    printf("%d\n", *(p + 6));
+    printf("%d\n", *(p + 7));
+    return 0;
+}
+</code></pre> 
+ <p>执行上面测试代码，得到以下结果 - </p> 
+ <pre><code class="lang-c">16
+8
+0xeca5a0
+0xeca5a0
+0xeca5a0
+0xeca5a0
+1
+0.000000
+1
+0
+0
+0
+0
+0
+0
+0
+</code></pre>
+ <br>      
+</div></body></html>

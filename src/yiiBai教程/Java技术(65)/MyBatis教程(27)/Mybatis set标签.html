@@ -1,0 +1,43 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Mybatis set标签</h1><div style="width:100%;float:left;" class="article-content">   
+ <h2> set - 更新语句 </h2> 
+ <p class="MsoNormal"> 当 update 语句中没有使用 if 标签时，如果有一个参数为 null，都会导致错误。 </p> 
+ <p class="MsoNormal"> 当在 update 语句中使用if标签时，如果前面的if没有执行，则或导致逗号多余错误。使用set标签可以将动态的配置 SET&nbsp;关键字，并剔除追加到条件末尾的任何不相关的逗号。<span style="line-height:1.5;">使用 if+set 标签修改后，如果某项为 null 则不进行更新，而是保持数据库原值。如下示例：</span> </p> 
+ <p class="MsoNormal"> <span style="line-height:1.5;"> </span> </p> 
+ <pre class="prettyprint lang-xml">&lt;!--  if/set(判断参数) - 将实体 User类不为空的属性更新 --&gt;  
+&lt;update id="updateUser_if_set" parameterType="com.pojo.User"&gt;  
+    UPDATE user  
+    &lt;set&gt;  
+        &lt;if test="username!= null and username != '' "&gt;  
+            username = #{username},  
+        &lt;/if&gt;  
+        &lt;if test="sex!= null and sex!= '' "&gt;  
+           sex = #{sex},  
+        &lt;/if&gt;  
+        &lt;if test="birthday != null "&gt;  
+            birthday = #{birthday},  
+        &lt;/if&gt;  
+    &lt;/set&gt;  
+    WHERE user_id = #{userid};      
+&lt;/update&gt;  </pre> 
+ <p> 再看看下面的一个示例： </p> 
+ <pre class="prettyprint lang-xml">&lt;update id="dynamicSetTest" parameterType="Blog"&gt;
+        update t_blog
+        &lt;set&gt;
+            &lt;if test="title != null"&gt;
+                title = #{title},
+            &lt;/if&gt;
+            &lt;if test="content != null"&gt;
+                content = #{content},
+            &lt;/if&gt;
+            &lt;if test="owner != null"&gt;
+                owner = #{owner}
+            &lt;/if&gt;
+        &lt;/set&gt;
+        where id = #{id}
+    &lt;/update&gt;</pre> set 标签元素主要是用在更新操作的时候，它的主要功能和 where 标签元素其实是差不多的，主要是在包含的语句前输出一个 set，然后如果包含的语句是以逗号结束的话将会把该逗号忽略，如果 set 包含的内容为空的话则会出错。有了 set 元素就可以动态的更新那些修改了的字段。 
+ <p> <br> </p> 
+ <p> <br> </p> 
+ <p class="MsoNormal"> <br> </p> 
+ <p class="MsoNormal"> <br> </p>
+ <br>      
+</div></body></html>

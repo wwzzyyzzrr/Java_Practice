@@ -1,0 +1,35 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">JDBC驱动程序类型</h1><div style="width:100%;float:left;" class="article-content">   
+ <h2 id="h2--strong-jdbc-strong-"><a name="<strong>JDBC驱动程序是什么？</strong>" class="reference-link"></a><span class="header-link octicon octicon-link"></span><strong>JDBC驱动程序是什么？</strong></h2>
+ <p>JDBC驱动程序在JDBC API中实现定义的接口，用于与数据库服务器进行交互。</p> 
+ <p>例如，使用JDBC驱动程序，可以通过发送SQL或数据库命令，然后使用Java接收结果来打开数据库连接并与数据库进行交互。</p> 
+ <p>JDK附带的<code>Java.sql</code>包包含各种类，其类的行为被定义，实现在第三方驱动程序中完成。 第三方供应商在其数据库驱动程序中实现<code>java.sql.Driver</code>接口。</p> 
+ <h2 id="h2-jdbc-"><a name="JDBC驱动程序类型" class="reference-link"></a><span class="header-link octicon octicon-link"></span>JDBC驱动程序类型</h2>
+ <p>JDBC驱动程序实现因Java运行的各种操作系统和硬件平台而异。 Sun将实现类型分为四种类型，分别为<code>1</code>,<code>2</code>,<code>3</code>和<code>4</code>类型，如下所述：</p> 
+ <h3 id="h3--1-jdbc-odbc-"><a name="类型1：JDBC-ODBC桥驱动程序" class="reference-link"></a><span class="header-link octicon octicon-link"></span>类型1：JDBC-ODBC桥驱动程序</h3>
+ <p>在<strong>类型1</strong>驱动程序中，JDBC桥接器用于访问安装在每台客户机上的ODBC驱动程序。 使用ODBC需要在系统上配置表示目标数据库的数据源名称(DSN)。</p> 
+ <p>当Java第一次出现时，这是一个驱动程序，因为大多数数据库仅支持ODBC访问，但现在这种类型的驱动程序仅推荐用于实验性使用或没有其他替代方案时使用。</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201705/3005/696110505_18575.jpg" alt=""></p> 
+ <p><strong>JDK 1.2</strong>附带的JDBC-ODBC桥接是这种驱动程序的一个很好的例子。</p> 
+ <h3 id="h3--2-jdbc-api"><a name="类型2：JDBC本地API" class="reference-link"></a><span class="header-link octicon octicon-link"></span>类型2：JDBC本地API</h3>
+ <p>在<strong>类型2</strong>驱动程序中，JDBC API调用将转换为本地C/C++ API调用，这是数据库唯一的。 这些驱动程序通常由数据库供应商提供，并以与JDBC-ODBC桥接相同的方式使用。 必须在每个客户机上安装供应商特定的驱动程序。</p> 
+ <p>如果要更改数据库，则必须更改原生API，因为它特定于数据库，并且现在大部分已经过时，但是使用<strong>类型2</strong>驱动程序实现了一些扩展功能的开发，它消除了ODBC的开销。</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201705/3005/881110514_49239.jpg" alt=""></p> 
+ <p>Oracle调用接口(OCI)驱动程序是<strong>类型2</strong>驱动程序的示例。</p> 
+ <h3 id="h3--3-jdbc-net-java"><a name="类型3：JDBC-Net纯Java" class="reference-link"></a><span class="header-link octicon octicon-link"></span>类型3：JDBC-Net纯Java</h3>
+ <p>在<strong>类型3</strong>驱动程序中，使用三层方法访问数据库。 JDBC客户端使用标准网络套接字与中间件应用程序服务器进行通信。 套接字信息随后由中间件应用服务器转换成DBMS所需的调用格式，并转发到数据库服务器。</p> 
+ <p>这种驱动程序是非常灵活的，因为它不需要在客户端上安装代码，一个驱动程序实际上可以提供多个数据库的访问。</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201705/3005/700110516_88885.jpg" alt=""></p> 
+ <p>可以将应用程序服务器视为JDBC“代理”，它会调用客户端应用程序。 因此，我们需要了解应用程序服务器的配置，才能有效地使用此驱动程序类型。</p> 
+ <p>应用程序服务器可能会使用类型1,2或4驱动程序与数据库通信，了解细微差别对理解JDBC是有帮助的。</p> 
+ <h3 id="h3--4-100-java"><a name="类型4：100％纯Java" class="reference-link"></a><span class="header-link octicon octicon-link"></span>类型4：100％纯Java</h3>
+ <p>在<strong>类型4</strong>驱动程序中，基于纯Java的驱动程序通过套接字连接与供应商的数据库直接通信。 这是数据库可用的最高性能驱动程序，通常由供应商自己提供。</p> 
+ <p>这种驱动是非常灵活的，不需要在客户端或服务器上安装特殊的软件。 此外，这些驱动程序可以动态下载。</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201705/3005/770110529_65984.jpg" alt=""></p> 
+ <p>MySQL <code>Connector/J</code>驱动程序是<strong>类型4</strong>驱动程序。 由于其网络协议的专有性质，数据库供应商通常提供<strong>类型4</strong>驱动程序。</p> 
+ <h2 id="h2--"><a name="应该使用哪个驱动程序？" class="reference-link"></a><span class="header-link octicon octicon-link"></span>应该使用哪个驱动程序？</h2>  
+ <p>如果您正在访问一种类型的数据库，例如Oracle，Sybase或IBM DB2，则首选驱动程序类型为<strong>类型4</strong>。</p> 
+ <p>如果Java应用程序同时访问多种类型的数据库，则<strong>类型3</strong>是首选驱动程序。</p> 
+ <p><strong>类型2</strong>驱动程序在数据库不可用的<strong>类型3</strong>或<strong>类型4</strong>驱动程序的情况下使用。</p> 
+ <p><strong>类型1</strong>驱动程序不被视为部署级驱动程序，通常仅用于开发和测试目的。</p>
+ <br>      
+</div></body></html>

@@ -1,0 +1,50 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">get_robust_list()函数 Unix/Linux</h1><div style="width:100%;float:left;" class="article-content">   get_robust_list, set_robust_list -&nbsp;获取/设置强健futexes的清单 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> 内容简介</h1> 
+ <table cellpadding="5" cellspacing="5" class="src" style="font-family: verdana, helvetica, arial, sans-serif;  border-color: rgb(170, 170, 170); width: 552px; background-color: rgb(241, 241, 241); border-collapse: collapse; padding-left: 5px; vertical-align: top; color: rgb(0, 0, 0);"> 
+  <tbody> 
+   <tr> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse;  border-color: rgb(170, 170, 170);"> <pre style="font-family: 'Courier New', monospace; font-size: 12px; margin-bottom: 0px;">
+<b>#include &lt;linux/futex.h&gt;</b> 
+<b>#include &lt;syscall.h&gt;</b> 
+</pre> <p style="text-align: justify;"> <b>long get_robust_list(int </b><i>pid</i><b>, struct robust_list_head **</b><i>head_ptr</i><b>,</b> <b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; size_t *</b> <b>long set_robust_list(struct robust_list_head *</b><i>head</i><b>, size_t </b><i>len</i><b>);</b></p> </td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> 描述</h1> 
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">The robust futex implementation needs to maintain per-thread lists of robust futexes which are unlocked when the thread exits. These lists are managed in user space, the kernel is only notified about the location of the head of the list.</span> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> <b>get_robust_list</b>&nbsp;returns the head of the robust futex list of the thread with TID defined by the&nbsp;<i>pid</i>&nbsp;argument. If&nbsp;<i>pid</i>&nbsp;is 0, the returned head belongs to the current thread.<i>head_ptr</i>&nbsp;is the pointer to the head of the list of robust futexes. The&nbsp;<b>get_robust_list</b>function stores the address of the head of the list here.&nbsp;<i>len_ptr</i>&nbsp;is the pointer to the length variable.&nbsp;<b>get_robust_list</b>&nbsp;stores&nbsp;<b>sizeof(**</b><i>head_ptr</i><b>)</b>&nbsp;here.</p> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> <b>set_robust_list</b>&nbsp;sets the head of the list of robust futexes owned by the current thread to&nbsp;<i>head</i>.&nbsp;<i>len</i>&nbsp;is the size of&nbsp;<b>*</b><i>head</i>.</p> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> &nbsp;</p> 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> 返回值</h1> 
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">The&nbsp;</span>
+ <b style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">set_robust_list</b>
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">&nbsp;and&nbsp;</span>
+ <b style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">get_robust_list</b>
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">&nbsp;functions return zero when the operation is successful, an error code otherwise.</span> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> &nbsp;</p> 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> 错误</h1> 
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">The&nbsp;</span>
+ <b style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">set_robust_list</b>
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">&nbsp;function fails with&nbsp;</span>
+ <b style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">EINVAL</b>
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">&nbsp;if the&nbsp;</span>
+ <i style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">len</i>
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">&nbsp;value does not match the size of structure&nbsp;</span>
+ <b style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">struct robust_list_head</b>
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">&nbsp;expected by kernel.</span> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> The&nbsp;<b>get_robust_list</b>&nbsp;function fails with&nbsp;<b>EPERM</b>&nbsp;if the current process does not have permission to see the robust futex list of the thread with the TID&nbsp;<i>pid</i>,&nbsp;<b>ESRCH</b>&nbsp;if a thread with the TID&nbsp;<i>pid</i>&nbsp;does not exist, or&nbsp;<b>EFAULT</b>&nbsp;if the head of the robust futex list can’t be stored in the space specified by the&nbsp;<i>head</i>&nbsp;argument.</p> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> &nbsp;</p> 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> 实际应用信息</h1> 一个线程只能有一个强大的 futex 清单，因此希望使用该功能的应用程序应该使用的glibc提供强大的互斥体。
+ <br> 
+ <p> 系统调用是唯一可用于调试目的，不正常操作所需的。</p> 
+ <p> 这两个系统调用是不提供给应用程序的功能，他们可以使用&nbsp;syscall(3)函数被调用。</p> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> &nbsp;</p> 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> 另请参阅</h1> 
+ <ul style="font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> 
+  <li> <p style="text-align: justify;"> <a target="_blank" href="http://www.yiibai.com/unix_system_calls/futex.html" style="color: rgb(144, 11, 9); background-color: transparent;">futex (2)</a></p> 
+   <div>
+     &nbsp;
+   </div> </li> 
+ </ul> 
+ <br>      
+</div></body></html>

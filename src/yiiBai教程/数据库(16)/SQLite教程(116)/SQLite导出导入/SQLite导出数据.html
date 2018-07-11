@@ -1,0 +1,46 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">SQLite导出数据</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>SQLite可以将数据从SQLite数据库导出到CSV文件。也可以根据查询导出整个表或表中符合条件的数据。</p> 
+ <p><code>.once</code>命令用于将数据导出到CSV文件，后跟要编写文件的文件路径/名称。</p> 
+ <h2 id="h2-sqlite-csv-"><a name="SQLite将表导到CSV文件" class="reference-link"></a><span class="header-link octicon octicon-link"></span>SQLite将表导到CSV文件</h2>
+ <p>下面来看看一个例子，将<code>STUDENT</code>表的所有内容导出为CSV文件：</p> 
+ <p><code>STUDENT</code>表具有以下数据：</p> 
+ <pre><code class="lang-sql">sqlite&gt; select * from student;
+1,Maxsu,27,Shengzhen,20000.0
+2,Minsu,25,Beijing,15000.0
+3,Avgsu,23,Shanghai,2000.0
+4,Linsu,25,Guangzhou,65000.0
+5,Sqlsu,26,Haikou,25000.0
+6,Javasu,21,Shengzhen,18000.0
+7,Linsu,27,Haikou,10000.0
+8,Minsu,23,Guangzhou,5000.0
+9,Maxsu,23,Shenzhen,9000.0
+sqlite&gt;
+</code></pre> 
+ <p>执行导出操作，如下所示 - </p> 
+ <pre><code class="lang-shell">.header on  
+.mode csv  
+.once D:/software/sqlite/student.csv  
+SELECT * FROM student;
+</code></pre> 
+ <p><strong>代码说明：</strong></p> 
+ <ul> 
+  <li><strong>.header on: </strong> - 它指定头(标题)已启用。 这是可选的。 如果禁用标题，CSV文件将不会包含任何数据。</li>
+  <li><strong>.mode csv: </strong> - 它指定启用CSV模式。</li>
+  <li><strong>.once: </strong> - 它指定要输出写入到CSV文件的确切位置。</li>
+ </ul> 
+ <p>在执行上面语句后，找开文件：<code>D:/software/sqlite/student.csv</code>，应该可以看到导出的表的内容如下所示 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201705/2605/864140539_69744.png" alt=""></p> 
+ <h3 id="h3--csv-"><a name="如何自动打开CSV文件：" class="reference-link"></a><span class="header-link octicon octicon-link"></span>如何自动打开CSV文件：</h3>
+ <p><strong>.system</strong> 命令用于自动打开CSV文件。</p> 
+ <p><strong>例如：</strong></p> 
+ <p>以下命令在Windows中自动打开CSV文件：</p>   
+ <pre><code class="lang-shell">sqlite&gt; .system D:/software/sqlite/student.csv
+</code></pre> 
+ <p>上面代码可能要根据操作系统的不同而进行更改：</p> 
+ <ul> 
+  <li>在Windows上，使用<code>.system</code>命令后跟文件名。</li>
+  <li>在Mac上，使用<code>.system open</code>后跟文件名。</li>
+  <li>在Linux和Unix系统上，使用<code>.system</code>后跟程序的名称打开文件，后跟文件名。 例如，<code>.system libreoffice /home/yiibai/file.csv</code></li>
+ </ul>
+ <br>      
+</div></body></html>

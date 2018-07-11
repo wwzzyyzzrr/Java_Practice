@@ -1,0 +1,152 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">free命令</h1><div style="width:100%;float:left;" class="article-content">   
+ <p><code>free</code>命令可以显示Linux系统中空闲的、已用的物理内存及<code>swap</code>内存,及被内核使用的<code>buffer</code>。在Linux系统监控的工具中，<code>free</code>命令是最经常使用的命令之一。</p> 
+ <h2 id="h2-1-"><a name="1．命令格式" class="reference-link"></a><span class="header-link octicon octicon-link"></span>1．命令格式</h2>
+ <pre><code class="lang-shell">free [参数]
+</code></pre> 
+ <h2 id="h2-2-"><a name="2．命令功能" class="reference-link"></a><span class="header-link octicon octicon-link"></span>2．命令功能</h2>
+ <p><code>free</code> 命令显示系统使用和空闲的内存情况，包括物理内存、交互区内存(swap)和内核缓冲区内存。共享内存将被忽略</p> 
+ <h2 id="h2-3-"><a name="3．命令参数" class="reference-link"></a><span class="header-link octicon octicon-link"></span>3．命令参数</h2>
+ <ul> 
+  <li><code>-b</code> 　以<code>Byte</code>为单位显示内存使用情况。 </li>
+  <li><code>-k</code> 　以<code>KB</code>为单位显示内存使用情况。 </li>
+  <li><code>-m</code> 　以<code>MB</code>为单位显示内存使用情况。</li>
+  <li><code>-g</code> 以<code>GB</code>为单位显示内存使用情况。 </li>
+  <li><code>-o</code> 　不显示缓冲区调节列。 </li>
+  <li><code>-s</code>&lt;间隔秒数&gt; 　持续观察内存使用状况。 </li>
+  <li><code>-t</code> 　显示内存总和列。 </li>
+  <li><code>-V</code> 　显示版本信息。 </li>
+ </ul> 
+ <h2 id="h2-4-"><a name="4．使用实例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>4．使用实例</h2>
+ <h3 id="h3--1-"><a name="实例1：显示内存使用情况" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实例1：显示内存使用情况</h3>
+ <p>命令：</p> 
+ <pre><code class="lang-sql">free
+free -g
+free -m
+</code></pre> 
+ <p>输出：</p> 
+ <pre><code class="lang-shell">[yiibai@localhost ~]$ free
+              total        used        free      shared  buff/cache   available
+Mem:         999936      130180       62484        6892      807272      673076
+Swap:       2097148           0     2097148
+[yiibai@localhost ~]$ free -g
+              total        used        free      shared  buff/cache   available
+Mem:              0           0           0           0           0           0
+Swap:             1           0           1
+[yiibai@localhost ~]$ free -m
+              total        used        free      shared  buff/cache   available
+Mem:            976         127          60           6         788         657
+Swap:          2047           0        2047
+[yiibai@localhost ~]$
+</code></pre> 
+ <p><strong>下面是对这些数值的解释：</strong></p> 
+ <ul> 
+  <li><code>total</code>:总计物理内存的大小。</li>
+  <li><code>used</code>:已使用多大。</li>
+  <li><code>free</code>:可用有多少。</li>
+  <li><code>Shared</code>:多个进程共享的内存总额。</li>
+  <li><code>Buffers/cached</code>:磁盘缓存的大小。</li>
+ </ul> 
+ <p>第三行(-/+ buffers/cached):</p> 
+ <ul> 
+  <li><code>used</code>:已使用多大。</li>
+  <li><code>free</code>:可用有多少。</li>
+ </ul> 
+ <p>第四行是交换分区SWAP的，也就是通常所说的虚拟内存。<br>区别：第二行(mem)的<code>used/free</code>与第三行(-/+ <code>buffers/cache</code>) <code>used/free</code>的区别。 这两个的区别在于使用的角度来看，第一行是从OS的角度来看，因为对于OS，<code>buffers/cached</code> 都是属于被使用，所以他的可用内存是2098428KB,已用内存是30841684KB,其中包括，内核(OS)使用+Application(X, oracle,etc)使用的<code>+buffers+cached</code>.<br>第三行所指的是从应用程序角度来看，对于应用程序来说，<code>buffers/cached</code> 是等于可用的，因为<code>buffer/cached</code>是为了提高文件读取的性能，当应用程序需在用到内存的时候，<code>buffer/cached</code>会很快地被回收。</p> 
+ <p>所以从应用程序的角度来说，可用内存=系统free memory+buffers+cached。<br>如本机情况的可用内存为：</p> 
+ <pre><code class="lang-shell">999936=130180KB+62484KB+807272KB
+</code></pre> 
+ <p>接下来解释什么时候内存会被交换，以及按什么方交换。<br>当可用内存少于额定值的时候，就会开会进行交换.如何看额定值：</p> 
+ <p>命令：</p> 
+ <pre><code class="lang-sql">cat /proc/meminfo
+</code></pre> 
+ <p>输出：</p> 
+ <pre><code class="lang-sql">[yiibai@localhost ~]$ cat /proc/meminfo
+MemTotal:         999936 kB
+MemFree:           74056 kB
+MemAvailable:     673076 kB
+Buffers:              76 kB
+Cached:           708196 kB
+SwapCached:            0 kB
+Active:            94760 kB
+Inactive:         693360 kB
+Active(anon):      42896 kB
+Inactive(anon):    43884 kB
+Active(file):      51864 kB
+Inactive(file):   649476 kB
+Unevictable:           0 kB
+Mlocked:               0 kB
+SwapTotal:       2097148 kB
+SwapFree:        2097148 kB
+Dirty:             19448 kB
+Writeback:             0 kB
+AnonPages:         79928 kB
+Mapped:            25792 kB
+Shmem:              6920 kB
+Slab:              87456 kB
+SReclaimable:      50804 kB
+SUnreclaim:        36652 kB
+KernelStack:        4112 kB
+PageTables:         4536 kB
+NFS_Unstable:          0 kB
+Bounce:                0 kB
+WritebackTmp:          0 kB
+CommitLimit:     2597116 kB
+Committed_AS:     320824 kB
+VmallocTotal:   34359738367 kB
+VmallocUsed:      181632 kB
+VmallocChunk:   34359310332 kB
+HardwareCorrupted:     0 kB
+AnonHugePages:      6144 kB
+HugePages_Total:       0
+HugePages_Free:        0
+HugePages_Rsvd:        0
+HugePages_Surp:        0
+Hugepagesize:       2048 kB
+DirectMap4k:       63360 kB
+DirectMap2M:      985088 kB
+[yiibai@localhost ~]$
+</code></pre> 
+ <p>交换将通过三个途径来减少系统中使用的物理页面的个数：　 </p> 
+ <ol> 
+  <li>减少缓冲与页面cache的大小， </li>
+  <li>将系统V类型的内存页面交换出去，　 </li>
+  <li>换出或者丢弃页面。(应用程序占用的内存页，也就是物理内存不足)。 </li>
+ </ol> 
+ <p>事实上，少量地使用swap是不是影响到系统性能的。</p> 
+ <p><code>buffers</code>和<code>cached</code>都是缓存，两者有什么区别呢？<br>为了提高磁盘存取效率, Linux做了一些精心的设计, 除了对dentry进行缓存(用于VFS,加速文件路径名到inode的转换), 还采取了两种主要Cache方式：Buffer Cache和Page Cache。前者针对磁盘块的读写，后者针对文件inode的读写。这些Cache有效缩短了 I/O系统调用(比如read,write,getdents)的时间。<br>磁盘的操作有逻辑级(文件系统)和物理级(磁盘块)，这两种Cache就是分别缓存逻辑和物理级数据的。<br>Page cache实际上是针对文件系统的，是文件的缓存，在文件层面上的数据会缓存到page cache。文件的逻辑层需要映射到实际的物理磁盘，这种映射关系由文件系统来完成。当page cache的数据需要刷新时，page cache中的数据交给buffer cache，因为Buffer Cache就是缓存磁盘块的。但是这种处理在2.6版本的内核之后就变的很简单了，没有真正意义上的cache操作。<br>Buffer cache是针对磁盘块的缓存，也就是在没有文件系统的情况下，直接对磁盘进行操作的数据会缓存到buffer cache中，例如，文件系统的元数据都会缓存到buffer cache中。<br>简单说来，page cache用来缓存文件数据，buffer cache用来缓存磁盘数据。在有文件系统的情况下，对文件操作，那么数据会缓存到page cache，如果直接采用dd等工具对磁盘进行读写，那么数据会缓存到buffer cache。<br>所以我们看linux,只要不用swap的交换空间,就不用担心自己的内存太少.如果常常swap用很多,可能你就要考虑加物理内存了。这也是linux看内存是否够用的标准.<br>如果是应用服务器的话，一般只看第二行，+buffers/cache,即对应用程序来说<code>free</code>的内存太少了，也是该考虑优化程序或加内存了。</p> 
+ <h3 id="h3--2-"><a name="实例2：以总和的形式显示内存的使用信息" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实例2：以总和的形式显示内存的使用信息</h3>
+ <p>命令：</p>   
+ <pre><code class="lang-sql">free -t
+</code></pre> 
+ <p>输出：</p> 
+ <pre><code class="lang-shell">[yiibai@localhost ~]$ free -t
+              total        used        free      shared  buff/cache   available
+Mem:         999936      130760       69356        6920      799820      672436
+Swap:       2097148           0     2097148
+Total:      3097084      130760     2166504
+[yiibai@localhost ~]$
+</code></pre> 
+ <h3 id="h3--3-"><a name="实例3：周期性的查询内存使用信息" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实例3：周期性的查询内存使用信息</h3>
+ <p>命令：</p> 
+ <pre><code class="lang-shell">free -s 5
+</code></pre> 
+ <p>上面的命令是每 <code>10s</code> 执行一次命令，输出结果如下：</p> 
+ <pre><code class="lang-shell">[yiibai@localhost ~]$ free -s 5
+              total        used        free      shared  buff/cache   available
+Mem:         999936      130720       71080        6920      798136      672468
+Swap:       2097148           0     2097148
+
+              total        used        free      shared  buff/cache   available
+Mem:         999936      130696       67980        6920      801260      672436
+Swap:       2097148           0     2097148
+
+              total        used        free      shared  buff/cache   available
+Mem:         999936      130560       80104        6920      789272      672640
+Swap:       2097148           0     2097148
+
+              total        used        free      shared  buff/cache   available
+Mem:         999936      130620       75304        6920      794012      672560
+Swap:       2097148           0     2097148
+</code></pre>
+ <br>      
+</div></body></html>

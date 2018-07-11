@@ -1,0 +1,105 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Gson数据流</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>Streaming API用于通过令牌读取JSON令牌。 它读取和写入JSON内容作为离散事件。 <code>JsonReader</code>和<code>JsonWriter</code>将数据读取/写入令牌，称为<code>JsonToken</code>。</p> 
+ <p>这是处理JSON的三种方法中最强大的方法。 它具有最低的开销，并且在读/写操作中速度非常快。 它类似于用于XML的Stax解析器。</p> 
+ <p>在本章中，我们将展示使用GSON streaming API来读取JSON数据。 Streaming API与令牌的概念一起工作，Json的每个细节都要仔细处理。</p> 
+ <pre><code class="lang-java">//create JsonReader object and pass it the json source or json text. 
+JsonReader reader = new JsonReader(new StringReader(jsonString));  
+
+//start reading json   
+reader.beginObject(); 
+
+//get the next token 
+JsonToken token = reader.peek(); 
+
+//check the type of the token 
+if (token.equals(JsonToken.NAME)) {     
+   //get the current token 
+   fieldname = reader.nextName(); 
+}
+</code></pre> 
+ <p><strong>示例</strong></p> 
+ <p>让我们看看<code>JsonReader</code>的作用。 创建一个名为<code>GsonTester</code>的Java类文件:<em>GsonTester.java</em> - </p> 
+ <pre><code class="lang-java">import java.io.IOException; 
+import java.io.StringReader;  
+
+import com.google.gson.stream.JsonReader; 
+import com.google.gson.stream.JsonToken;  
+
+public class GsonTester { 
+   public static void main(String args[]) { 
+      String jsonString = 
+         "{\"name\":\"Maxsu\", \"age\":26,\"verified\":false,\"marks\": [100,90,85]}";  
+      JsonReader reader = new JsonReader(new StringReader(jsonString));    
+      try { 
+         handleJsonObject(reader); 
+      } 
+      catch (IOException e) { 
+         e.printStackTrace(); 
+      } 
+   }    
+   private static void handleJsonObject(JsonReader reader) throws IOException { 
+      reader.beginObject(); 
+      String fieldname = null; 
+
+      while (reader.hasNext()) { 
+         JsonToken token = reader.peek(); 
+
+         if (token.equals(JsonToken.BEGIN_ARRAY)) { 
+            System.out.print("Marks [ "); 
+            handleJsonArray(reader); 
+            System.out.print("]"); 
+         } else if (token.equals(JsonToken.END_OBJECT)) { 
+            reader.endObject(); 
+            return; 
+         } else {            
+            if (token.equals(JsonToken.NAME)) {     
+               //get the current token 
+               fieldname = reader.nextName(); 
+            } 
+            if ("name".equals(fieldname)) {       
+               //move to next token 
+               token = reader.peek(); 
+               System.out.println("Name: "+reader.nextString());           
+            } 
+            if("age".equals(fieldname)) { 
+               //move to next token 
+               token = reader.peek(); 
+               System.out.println("Age:" + reader.nextInt());       
+            } 
+            if("verified".equals(fieldname)) { 
+               //move to next token 
+               token = reader.peek(); 
+               System.out.println("Verified:" + reader.nextBoolean());           
+            }             
+         } 
+      } 
+   }  
+   private static void handleJsonArray(JsonReader reader) throws IOException { 
+      reader.beginArray(); 
+      String fieldname = null; 
+
+      while (true) { 
+         JsonToken token = reader.peek(); 
+
+         if (token.equals(JsonToken.END_ARRAY)) { 
+            reader.endArray(); 
+            break; 
+         } else if (token.equals(JsonToken.BEGIN_OBJECT)) { 
+            handleJsonObject(reader); 
+         } else if (token.equals(JsonToken.END_OBJECT)) { 
+            reader.endObject(); 
+         } else {            
+            System.out.print(reader.nextInt() + " ");            
+         } 
+      } 
+   } 
+}
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 - </p>   
+ <pre><code class="lang-shell">Name: Maxsu
+Age:26 
+Verified:false 
+Marks [ 100 90 85 ]
+</code></pre>
+ <br>      
+</div></body></html>

@@ -1,0 +1,88 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Apache通用集合安全空检查</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>Apache Commons Collections库的<code>CollectionUtils</code>类提供各种实用方法，用于覆盖广泛用例的常见操作。 它有助于避免编写样板代码。 这个库在jdk 8之前是非常有用的，但是现在Java 8的Stream API提供了类似的功能。</p> 
+ <h2 id="h2-u68C0u67E5u975Eu7A7Au5217u8868"><a name="检查非空列表" class="reference-link"></a><span class="header-link octicon octicon-link"></span>　检查非空列表</h2>
+ <p>CollectionUtils的｀isNotEmpty()｀方法可用于检查列表是否为<code>null</code>而不用担心<code>null</code>列表。 因此，在检查列表大小之前，不需要将无效检查放在任何地方。</p> 
+ <p><strong>声明</strong><br>以下是<code>org.apache.commons.collections4.CollectionUtils.isNotEmpty()</code>方法的声明 - </p> 
+ <pre><code class="lang-java">public static boolean isNotEmpty(Collection&lt;?&gt; coll)
+</code></pre> 
+ <p><strong>参数</strong></p> 
+ <ul> 
+  <li><code>coll</code> - 要检查的集合，可能为<code>null</code>。</li>
+ </ul> 
+ <p><strong>返回值</strong></p> 
+ <ul> 
+  <li>如果非空且非<code>null</code>，则返回为:<code>true</code>。</li>
+ </ul> 
+ <p><strong>示例</strong><br>以下示例显示<code>org.apache.commons.collections4.CollectionUtils.isNotEmpty()</code>方法的用法。 在这示例中将检查一个列表是否为空。</p> 
+ <pre><code class="lang-java">import java.util.List;
+
+import org.apache.commons.collections4.CollectionUtils;
+
+public class CollectionUtilsTester {
+   public static void main(String[] args) {
+      List&lt;String&gt; list = getList();
+      System.out.println("Non-Empty List Check: " + checkNotEmpty1(list));
+      System.out.println("Non-Empty List Check: " + checkNotEmpty1(list));
+   }
+
+   static List&lt;String&gt; getList() {
+      return null;
+   } 
+
+   static boolean checkNotEmpty1(List&lt;String&gt; list) {
+      return !(list == null || list.isEmpty());
+   }
+
+   static boolean checkNotEmpty2(List&lt;String&gt; list) {
+      return CollectionUtils.isNotEmpty(list);
+   } 
+}
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 - </p> 
+ <pre><code class="lang-shell">Non-Empty List Check: false
+Non-Empty List Check: false
+</code></pre> 
+ <h2 id="h2-u68C0u67E5u7A7Au7684u5217u8868"><a name="检查空的列表" class="reference-link"></a><span class="header-link octicon octicon-link"></span>检查空的列表</h2>
+ <p>CollectionUtils的<code>isEmpty()</code>方法可用于检查列表是否为空。 因此，在检查列表大小之前，不需要将无效检查放在任何地方。</p> 
+ <p><strong>声明</strong></p> 
+ <p>以下是<code>org.apache.commons.collections4.CollectionUtils.isEmpty()</code>方法的声明 -</p>   
+ <pre><code class="lang-java">public static boolean isEmpty(Collection&lt;?&gt; coll)
+</code></pre> 
+ <p><strong>参数</strong></p> 
+ <ul> 
+  <li><em>coll</em> - 要检查的集合，可能为<code>null</code>。</li>
+ </ul> 
+ <p><strong>返回值</strong></p> 
+ <p>如果为空或为<code>null</code>，则返回为<code>true</code>。</p> 
+ <p><strong>示例</strong></p> 
+ <p>以下示例显示<code>org.apache.commons.collections4.CollectionUtils.isEmpty()</code>方法的用法。在这个示例中将检查一个列表是否为空。</p> 
+ <pre><code class="lang-java">import java.util.List;
+
+import org.apache.commons.collections4.CollectionUtils;
+
+public class CollectionUtilsTester {
+   public static void main(String[] args) {
+      List&lt;String&gt; list = getList();
+      System.out.println("Empty List Check: " + checkEmpty1(list));
+      System.out.println("Empty List Check: " + checkEmpty1(list));
+   }
+
+   static List&lt;String&gt; getList() {
+      return null;
+   } 
+
+   static boolean checkEmpty1(List&lt;String&gt; list) {
+      return (list == null || list.isEmpty());
+   }
+
+   static boolean checkEmpty2(List&lt;String&gt; list) {
+      return CollectionUtils.isEmpty(list);
+   } 
+}
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 - </p> 
+ <pre><code class="lang-shell">Empty List Check: true
+Empty List Check: true
+</code></pre>
+ <br>      
+</div></body></html>

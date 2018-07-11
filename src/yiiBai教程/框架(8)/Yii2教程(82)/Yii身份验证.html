@@ -1,0 +1,233 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Yii身份验证</h1><div style="width:100%;float:left;" class="article-content">   
+ <div>
+   验证用户的身份的过程称为验证。它通常使用的用户名和密码来判断该用户请求。 
+ </div> 
+ <div> 
+  <div>
+    要使用&nbsp;Yii&nbsp;的认证框架，需要&nbsp;- 
+  </div> 
+  <ul> 
+   <li> 
+    <div>
+      配置用户应用程序组件 
+    </div> </li> 
+   <li> 实现 yii\web\IdentityInterface 接口 </li> 
+  </ul> 
+  <div>
+    basic&nbsp;应用程序模板带有一个内置的身份验证系统。 
+  </div> 
+  <div>
+    它使用 user 应用程序组件如下面的代码所示&nbsp;- 
+  </div> 
+  <pre>&lt;?php
+   $params = require(__DIR__ . '/params.php');
+   $config = [
+      'id' =&gt; 'basic',
+      'basePath' =&gt; dirname(__DIR__),
+      'bootstrap' =&gt; ['log'],
+      'components' =&gt; [
+         'request' =&gt; [
+            // !!! insert a secret key in the following (if it is empty) - this
+               //is required by cookie validation
+            'cookieValidationKey' =&gt; 'yiibai.com',
+         ],
+         'cache' =&gt; [
+            'class' =&gt; 'yii\caching\FileCache',
+         ],
+         'user' =&gt; [
+            'identityClass' =&gt; 'app\models\User',
+            'enableAutoLogin' =&gt; true,
+         ],
+         //other components...
+         'db' =&gt; require(__DIR__ . '/db.php'),
+      ],
+      'modules' =&gt; [
+         'admin' =&gt; [
+            'class' =&gt; 'app\modules\admin\Admin',
+         ],
+      ],
+      'params' =&gt; $params,
+   ];
+   if (YII_ENV_DEV) {
+      // configuration adjustments for 'dev' environment
+      $config['bootstrap'][] = 'debug';
+      $config['modules']['debug'] = [
+         'class' =&gt; 'yii\debug\Module',
+      ];
+      $config['bootstrap'][] = 'gii';
+      $config['modules']['gii'] = [
+         'class' =&gt; 'yii\gii\Module',
+      ];
+   }
+   return $config;
+?&gt;</pre> 
+  <div>
+    在上述结构中，用户的标识类配置是&nbsp;app\models\User。 
+  </div> 
+  <div>
+    identity&nbsp;类必须实现&nbsp;yii\web\IdentityInterface&nbsp;接口中方法如下&nbsp;- 
+  </div> 
+  <ul> 
+   <li> <p style="text-align:justify;"> <strong><em>findIdentity()</em>&nbsp;</strong>−&nbsp;查找使用指定的用户ID的身份(identity)类的实例 </p> </li> 
+   <li> <p style="text-align:justify;"> <strong><em>findIdentityByAccessToken()</em></strong><em>&nbsp;</em>−&nbsp;查找使用指定的访问令牌的身份(identity)类的实例 </p> </li> 
+   <li> <p style="text-align:justify;"> <strong><em>getId()</em></strong><em>&nbsp;</em>−返回用户ID </p> </li> 
+   <li> <p style="text-align:justify;"> <em>getAuthKey()</em>&nbsp;−&nbsp;返回用于验证基于cookie登录的键 </p> </li> 
+   <li> <p style="text-align:justify;"> <em>validateAuthKey()</em>&nbsp;−&nbsp;实现了验证基于&nbsp;cookie&nbsp;登录键的逻辑 </p> </li> 
+  </ul> 
+  <div>
+    从&nbsp;basic&nbsp;应用程序模板的&nbsp;User&nbsp;模型实现了所有上述功能(models/User.php)。 
+  </div> 
+  <div>
+    用户数据被存储在&nbsp;&nbsp;$users&nbsp;属性&nbsp;- 
+  </div> 
+  <pre>&lt;?php
+   namespace app\models;
+   class User extends \yii\base\Object implements \yii\web\IdentityInterface {
+      public $id;
+      public $username;
+      public $password;
+      public $authKey;
+      public $accessToken;
+      private static $users = [
+         '100' =&gt; [
+            'id' =&gt; '100',
+            'username' =&gt; 'admin',
+            'password' =&gt; 'admin',
+            'authKey' =&gt; 'testuserid100key',
+            'accessToken' =&gt; 'user100-token',
+         ],
+         '101' =&gt; [
+            'id' =&gt; '101',
+            'username' =&gt; 'demo',
+            'password' =&gt; 'demo',
+            'authKey' =&gt; 'testuserid-101key',
+            'accessToken' =&gt; '101-userid-token',
+         ],
+      ];
+      /**
+      * @inheritdoc
+      */
+      public static function findIdentity($id) {
+         return isset(self::$users[$id]) ? new static(self::$users[$id]) : null;
+      }
+      /**
+      * @inheritdoc
+      */
+      public static function findIdentityByAccessToken($token, $type = null) {
+         foreach (self::$users as $user) {
+            if ($user['accessToken'] === $token) {
+               return new static($user);
+            }
+         }
+         return null;
+      }
+      /**
+      * Finds user by username
+      *
+      * @param string $username
+      * @return static|null
+      */
+      public static function findByUsername($username) {
+         foreach (self::$users as $user) {
+            if (strcasecmp($user['username'], $username) === 0) {
+               return new static($user);
+            }
+         }
+         return null;
+      }
+      /**
+      * @inheritdoc
+      */
+      public function getId() {
+         return $this-&gt;id;
+      }
+      /**
+      * @inheritdoc
+      */
+      public function getAuthKey() {
+         return $this-&gt;authKey;
+      }
+      /**
+      * @inheritdoc
+      */
+      public function validateAuthKey($authKey) {
+         return $this-&gt;authKey === $authKey;
+      }
+      /**
+      * Validates password 
+      *
+      * @param string $password password to validate
+      * @return boolean if password provided is valid for current user
+      */
+      public function validatePassword($password) {
+         return $this-&gt;password === $password;
+      }
+   }
+?&gt;</pre> 
+  <div>
+    第1步&nbsp;-&nbsp;打开URL=&gt;&nbsp;
+   <a target="_blank" href="http://localhost:8080/index.php?r=site/login">http://localhost:8080/index.php?r=site/login</a>&nbsp;并使用admin的登录名和密码登录到的网站，如下图所示：
+   <br> 
+   <img src="/uploads/tutorial/20160606/1-160606202913Y8.png" width="734" height="606" title="Yii身份验证" alt="Yii身份验证">
+   <br> 
+  </div> 
+  <div>
+    第2步&nbsp;-&nbsp;然后，在&nbsp;SiteController&nbsp;控制器中添加&nbsp;actionAuth()&nbsp;方法，如下图所示。 
+  </div>   
+  <pre>public function actionAuth(){
+   // the current user identity. Null if the user is not authenticated.
+   $identity = Yii::$app-&gt;user-&gt;identity;
+   var_dump($identity);
+   // the ID of the current user. Null if the user not authenticated.
+   $id = Yii::$app-&gt;user-&gt;id;
+   var_dump($id);
+   // whether the current user is a guest (not authenticated)
+   $isGuest = Yii::$app-&gt;user-&gt;isGuest;
+   var_dump($isGuest);
+}</pre> 
+  <div>
+    第3步&nbsp;-&nbsp;访问URL地址：
+   <a target="_blank" href="http://localhost:8080/index.php?r=site/auth">http://localhost:8080/index.php?r=site/auth</a>&nbsp;，将看到有关&nbsp;admin&nbsp;用户的详细资料：
+   <br> 
+   <img src="/uploads/tutorial/20160606/1-16060620293L17.png" alt="">
+   <br> 
+  </div> 
+  <div>
+    第4步&nbsp;-&nbsp;要登录和注销用户，可参考使用下面的代码。 
+  </div> 
+  <pre>public function actionAuth() {
+   // whether the current user is a guest (not authenticated)
+   var_dump(Yii::$app-&gt;user-&gt;isGuest);echo '&lt;br/&gt;';
+   // find a user identity with the specified username.
+   // note that you may want to check the password if needed
+   $identity = User::findByUsername("admin");
+   // logs in the user
+   Yii::$app-&gt;user-&gt;login($identity);
+   // whether the current user is a guest (not authenticated)
+   var_dump(Yii::$app-&gt;user-&gt;isGuest);echo '&lt;br/&gt;';
+   Yii::$app-&gt;user-&gt;logout();
+   // whether the current user is a guest (not authenticated)
+   var_dump(Yii::$app-&gt;user-&gt;isGuest);
+}</pre> 
+  <div>
+    首先，如要检查用户是否登录。如果该值返回false，那么我们通过调用Yii::$app-&gt;user-&gt;login()登录用户，并可使用&nbsp;Yii::$app-&gt;user-&gt;logout()&nbsp;方法来注销他。 
+  </div> 
+  <div>
+    第5步&nbsp;-&nbsp;访问URL：
+   <a target="_blank" href="http://localhost:8080/index.php?r=site/auth">http://localhost:8080/index.php?r=site/auth</a>&nbsp;，会看到下面的输出信息：
+   <br> 
+   <img src="/uploads/tutorial/20160606/1-160606202953227.png" alt="">
+   <br> 
+  </div> 
+  <div>
+    yii\web\User&nbsp;类会触发以下事件&nbsp;- 
+  </div> 
+  <ul> 
+   <li> <p style="text-align:justify;"> EVENT_BEFORE_LOGIN&nbsp;−&nbsp;在&nbsp;&nbsp;yii\web\User::login()&nbsp;方法的开始时触发 </p> </li> 
+   <li> <p style="text-align:justify;"> EVENT_AFTER_LOGIN&nbsp;−&nbsp;成功登录后触发 </p> </li> 
+   <li> <p style="text-align:justify;"> EVENT_BEFORE_LOGOUT&nbsp;− 在&nbsp;yii\web\User::logout() 方法的开始时触发 </p> </li> 
+   <li> <p style="text-align:justify;"> EVENT_AFTER_LOGOUT&nbsp;−&nbsp;成功注销后触发 </p> </li> 
+  </ul> 
+ </div>
+ <br>      
+</div></body></html>

@@ -1,0 +1,106 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Java数组复制</h1><div style="width:100%;float:left;" class="article-content">   
+ <h2 id="h2-java-"><a name="Java数组复制" class="reference-link"></a><span class="header-link octicon octicon-link"></span>Java数组复制</h2>
+ <p>以下代码显示了如何使用<code>for</code> 循环复制数组 - </p> 
+ <pre><code class="lang-java">import java.util.Arrays;
+
+//from  w  w  w  .j  a va  2  s .com
+public class Main {
+    public static void main(String[] args) {
+        int[] data = { 1, 2, 3, 4, 5 };
+
+        // Expand the data array to 7 elements
+        int[] eData = expandArray(data, 7);
+
+        // Truncate the data array to 3 elements
+        int[] tData = expandArray(data, 3);
+
+        System.out.println("Original  Array: " + Arrays.toString(data));
+        System.out.println("Expanded Array: " + Arrays.toString(eData));
+        System.out.println("Truncated  Array: " + Arrays.toString(tData));
+
+    }
+
+    // Uses a for-loop to copy an array
+    public static int[] expandArray(int[] oldArray, int newlength) {
+        int originallength = oldArray.length;
+        int[] newArray = new int[newlength];
+        int elementsToCopy = 0;
+
+        if (originallength &gt; newlength) {
+            elementsToCopy = newlength;
+        } else {
+
+            elementsToCopy = originallength;
+        }
+        for (int i = 0; i &lt; elementsToCopy; i++) {
+            newArray[i] = oldArray[i];
+        }
+        return newArray;
+    }
+}
+</code></pre> 
+ <p>上面的代码生成以下结果。</p> 
+ <pre><code class="lang-java">Original  Array: [1, 2, 3, 4, 5]
+Expanded Array: [1, 2, 3, 4, 5, 0, 0]
+Truncated  Array: [1, 2, 3]
+</code></pre> 
+ <h2 id="h2-system-arraycopy"><a name="System.arraycopy" class="reference-link"></a><span class="header-link octicon octicon-link"></span>System.arraycopy</h2>
+ <p>还可以使用<code>System</code>类的<code>arraycopy()</code>方法将数组的元素复制到另一个数组中。<code>arraycopy()</code>方法的签名如下：</p> 
+ <pre><code class="lang-java">public static  void  arraycopy(Object sourceArray, 
+                               int  sourceStartPosition, 
+                               Object destinationArray,
+                               int destinationStartPosition, 
+                               int  lengthToBeCopied)
+</code></pre> 
+ <p>在上面方法,</p> 
+ <ul> 
+  <li><code>sourceArray</code> 是源数组。</li>
+  <li><code>sourceStartPosition</code> 是源数组中要复制元素的起始索引。</li>
+  <li><code>destinationArray</code> 是目标数组。</li>
+  <li><code>destinationStartPosition</code> 是目标数组中要从源数组中复制新元素的起始索引。</li>
+  <li><code>lengthToBeCopied</code> 是要复制的元素的数量。</li>
+ </ul> 
+ <p>可以用下面的代码替换前面的<code>for</code>循环来实现数组复制：</p> 
+ <pre><code class="lang-java">System.arraycopy (ids,  0, tmyIDs, 0, elementsToCopy);
+</code></pre> 
+ <p>以下代码显示如何使用<code>System.arraycopy</code>复制数组。</p>   
+ <pre><code class="lang-java">import java.util.Arrays;
+
+public class Main {
+  public static void main(String[] args) {
+    int[] data = { 1, 2, 3, 4, 5 };
+
+    // Copy data array to new arrays 
+    int[] eData = new int[9];
+    int[] tData = new int[2];
+    System.arraycopy(data, 0, eData, 0, 5);
+    System.arraycopy(data, 0, tData, 0, 2);
+
+    System.out.println("Original  Array: " + Arrays.toString(data));
+    System.out.println("Expanded Array: " + Arrays.toString(eData));
+    System.out.println("Truncated  Array: " + Arrays.toString(tData));
+  }
+}
+</code></pre> 
+ <p>上面的代码生成以下结果。</p> 
+ <pre><code class="lang-java">Original  Array: [1, 2, 3, 4, 5]
+Expanded Array: [1, 2, 3, 4, 5, 0, 0, 0, 0]
+Truncated  Array: [1, 2]
+</code></pre> 
+ <h2 id="h2-u6570u7EC4u514Bu9686"><a name="数组克隆" class="reference-link"></a><span class="header-link octicon octicon-link"></span>数组克隆</h2>
+ <p>可以使用数组的<code>clone()</code>方法创建数组的副本。对于原始类型，克隆的数组将具有原始数组的真实副本。<br>但是，对于引用类型，存储在数组中的每个元素的对象引用将复制到克隆的数组。这被称为浅拷贝。在浅拷贝中，两个数组的元素(原始和克隆)指向内存中的同一个对象。</p> 
+ <p>下面的代码演示了一个<code>int</code>数组和一个<code>String</code>数组的克隆。</p> 
+ <pre><code class="lang-java">public class Main {
+  public static void main(String[] args) {
+    // Create an array of 3 integers 1,2,3
+    int[] ids = { 1, 2, 3 };
+    int[] clonedIds = (int[]) ids.clone();
+
+    // Create an array of 3 strings.
+    String[] names = { "A", "B", "C" };
+    String[] clonedNames = (String[]) names.clone();
+  }
+}
+</code></pre>
+ <br>      
+</div></body></html>

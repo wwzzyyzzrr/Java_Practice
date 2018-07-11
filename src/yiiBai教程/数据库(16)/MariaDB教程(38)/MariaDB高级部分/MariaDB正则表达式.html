@@ -1,0 +1,189 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">MariaDB正则表达式</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>MariaDB通过<code>REGEXP</code>运算符提供基于正则表达式的匹配。</p> 
+ <p><strong>语法：</strong></p> 
+ <pre><code class="lang-sql">expression REGEXP pattern
+</code></pre> 
+ <p><strong>参数说明：</strong></p> 
+ <ul> 
+  <li><em>expression</em>：字符表达式，如列或字段。</li>
+  <li><em>pattern</em>：正则表达式匹配信息。模式可以是以下的组合：</li>
+ </ul> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>编号</th> 
+    <th><code>pattern</code>值</th> 
+    <th>描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>1</td> 
+    <td><code>^</code></td> 
+    <td>匹配一个字符串的开始。如果与<code>“m”</code>的匹配参数一起使用，则匹配表达式中任何位置的行的开头。</td> 
+   </tr> 
+   <tr> 
+    <td>2</td> 
+    <td><code>$</code></td> 
+    <td>匹配字符串的结尾。 如果与<code>“m”</code>的匹配参数一起使用，则匹配表达式中任何位置的行的末尾。</td> 
+   </tr> 
+   <tr> 
+    <td>3</td> 
+    <td><code>*</code></td> 
+    <td>匹配零次或多次发生。</td> 
+   </tr> 
+   <tr> 
+    <td>4</td> 
+    <td><code>+</code></td> 
+    <td>匹配一个或多个事件。</td> 
+   </tr> 
+   <tr> 
+    <td>5</td> 
+    <td><code>?</code></td> 
+    <td>匹配零个或一个发生。</td> 
+   </tr> 
+   <tr> 
+    <td>6</td> 
+    <td><code>.</code></td> 
+    <td>匹配除<code>null</code>之外的任何字符。</td> 
+   </tr> 
+   <tr> 
+    <td>7</td> 
+    <td><code>/</code></td> 
+    <td>用作<em>“或”</em>来指定多个选项。</td> 
+   </tr> 
+   <tr> 
+    <td>8</td> 
+    <td><code>[ ]</code></td> 
+    <td>用于指定一个匹配列表，尝试匹配列表中的任何一个字符。</td> 
+   </tr> 
+   <tr> 
+    <td>9</td> 
+    <td><code>[^ ]</code></td> 
+    <td>用于指定一个不匹配的列表，尝试匹配除列表中的字符以外的任何字符。</td> 
+   </tr> 
+   <tr> 
+    <td>10</td> 
+    <td><code>( )</code></td> 
+    <td>用于将表达式分组为一个子表达式。</td> 
+   </tr> 
+   <tr> 
+    <td>11</td> 
+    <td><code>{m}</code></td> 
+    <td>匹配<code>m</code>次。</td> 
+   </tr> 
+   <tr> 
+    <td>12</td> 
+    <td><code>{m,}</code></td> 
+    <td>至少匹配<code>m</code>次。</td> 
+   </tr> 
+   <tr> 
+    <td>13</td> 
+    <td><code>{m,n}</code></td> 
+    <td>至少匹配<code>m</code>次，但不多于<code>n</code>次。</td> 
+   </tr> 
+   <tr> 
+    <td>14</td> 
+    <td><code>\n</code></td> 
+    <td><code>n</code>是<code>1</code>到<code>9</code>之间的数字。匹配在遇到<code>\n</code>之前在<code>()</code>内找到的第<code>n</code>个子表达式。</td> 
+   </tr> 
+   <tr> 
+    <td>15</td> 
+    <td><code>[..]</code></td> 
+    <td>匹配一个可以多于一个字符的整理元素。</td> 
+   </tr> 
+   <tr> 
+    <td>16</td> 
+    <td><code>[::]</code></td> 
+    <td>匹配字符类。</td> 
+   </tr> 
+   <tr> 
+    <td>17</td> 
+    <td><code>[==]</code></td> 
+    <td>匹配等价类。</td> 
+   </tr> 
+   <tr> 
+    <td>18</td> 
+    <td><code>\d</code></td> 
+    <td>匹配一个数字字符。</td> 
+   </tr> 
+   <tr> 
+    <td>19</td> 
+    <td><code>\w</code></td> 
+    <td>匹配一个字符。</td> 
+   </tr> 
+   <tr> 
+    <td>20</td> 
+    <td><code>\s</code></td> 
+    <td>匹配一个空白字符。</td> 
+   </tr> 
+   <tr> 
+    <td>21</td> 
+    <td><code>*?</code></td> 
+    <td>匹配前面的模式零次或多次发生。</td> 
+   </tr> 
+   <tr> 
+    <td>22</td> 
+    <td><code>+?</code></td> 
+    <td>匹配前面的模式一个或多个事件。</td> 
+   </tr> 
+   <tr> 
+    <td>23</td> 
+    <td><code>??</code></td> 
+    <td>匹配前面的模式零次或一次出现。</td> 
+   </tr> 
+   <tr> 
+    <td>24</td> 
+    <td><code>{n}?</code></td> 
+    <td>匹配前面的模式<code>n</code>次。</td> 
+   </tr> 
+   <tr> 
+    <td>25</td> 
+    <td><code>{n,}?</code></td> 
+    <td>匹配前面的模式至少<code>n</code>次。</td> 
+   </tr> 
+   <tr> 
+    <td>26</td> 
+    <td><code>{n,m}?</code></td> 
+    <td>匹配前面的模式至少<code>n</code>次，但不超过<code>m</code>次。</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h4 id="h4-u793Au4F8B"><a name="示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例</h4>  
+ <pre><code class="lang-sql">SELECT 'Monty!' REGEXP 'm%y%%';
++-------------------------+
+| 'Monty!' REGEXP 'm%y%%' |
++-------------------------+
+|                       0 |
++-------------------------+
+
+SELECT 'Monty!' REGEXP '.*';
++----------------------+
+| 'Monty!' REGEXP '.*' |
++----------------------+
+|                    1 |
++----------------------+
+
+SELECT 'new*\n*line' REGEXP 'new\\*.\\*line';
++---------------------------------------+
+| 'new*\n*line' REGEXP 'new\\*.\\*line' |
++---------------------------------------+
+|                                     1 |
++---------------------------------------+
+
+SELECT 'a' REGEXP 'A', 'a' REGEXP BINARY 'A';
++----------------+-----------------------+
+| 'a' REGEXP 'A' | 'a' REGEXP BINARY 'A' |
++----------------+-----------------------+
+|              1 |                     0 |
++----------------+-----------------------+
+
+SELECT 'a' REGEXP '^[a-d]';
++---------------------+
+| 'a' REGEXP '^[a-d]' |
++---------------------+
+|                   1 |
++---------------------+
+</code></pre>
+ <br>      
+</div></body></html>

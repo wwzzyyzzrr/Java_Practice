@@ -1,0 +1,85 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Struts2设置多个复选框缺省值</h1><div style="width:100%;float:left;" class="article-content">   
+ <p> 在Struts2，可以通过&lt;s:checkboxlist&gt;标签创建多个复选框具有相同名称。棘手的问题是如何设置的默认值在多个复选框。例如，复选框以“红色”，“黄色”，“蓝色”，“绿色”选项的列表，并且要同时设置“红色”和“绿色”为默认选中的值。这里创建一个Web工程：struts2setcheckboxes，来演示<span>在多个复选框</span><span>如何设置的默认值，整个项目的结构如下图所示：</span> </p> 
+ <p> <span><img src="/uploads/tutorial/20151115/1-15111509200L92.png" alt=""><br> </span> </p> 
+ <div class="download" style="padding:40px 85px;border:1px solid #CEEBCE;color:#333333;font-family:'Helvetica Neue', Helvetica,  background:url(http://www.yiibai.com/wp-content/themes/yiibai/images/download.png) 25px 25px no-repeat #DFF7DF;">
+   下载代码 –&nbsp;
+  <a target="_blank" href="http://pan.baidu.com/s/1bnfrCUr">http://pan.baidu.com/s/1bnfrCUr</a> 
+ </div> 
+ <h2> 1. &lt;s:checkboxlist&gt; 实例 </h2> 
+ <p> 一个&nbsp;&lt;s:checkboxlist&gt;&nbsp;示例 </p> 
+ <pre>&lt;s:checkboxlist label="What's your favor color" list="colors" name="yourColor" /&gt;</pre> 
+ <p> 产生下面的HTML代码 </p> 
+ <pre>&lt;td class="tdLabel"&gt;&lt;label for="resultAction_yourColor" class="label"&gt;
+What's your favor color:&lt;/label&gt;
+&lt;/td&gt; 
+&lt;td &gt; 
+&lt;input type="checkbox" name="yourColor" value="red" id="yourColor-1" /&gt; 
+&lt;label for="yourColor-1" class="checkboxLabel"&gt;red&lt;/label&gt; 
+&lt;input type="checkbox" name="yourColor" value="yellow" id="yourColor-2" /&gt; 
+&lt;label for="yourColor-2" class="checkboxLabel"&gt;yellow&lt;/label&gt; 
+&lt;input type="checkbox" name="yourColor" value="blue" id="yourColor-3" /&gt; 
+&lt;label for="yourColor-3" class="checkboxLabel"&gt;blue&lt;/label&gt; 
+&lt;input type="checkbox" name="yourColor" value="green" id="yourColor-4" /&gt; 
+&lt;label for="yourColor-4" class="checkboxLabel"&gt;green&lt;/label&gt; 
+&lt;input type="hidden" id="__multiselect_resultAction_yourColor" 
+ name="__multiselect_yourColor" value="" /&gt;     
+&lt;/td&gt;</pre> 
+ <p> Action类提供颜色选项的复选框的列表。 </p> 
+ <pre>//...
+public class CheckBoxListAction extends ActionSupport{
+
+	private List&lt;String&gt; colors;
+	private String yourColor;
+
+	public CheckBoxListAction(){
+		
+		colors = new ArrayList&lt;String&gt;();
+		colors.add("red");
+		colors.add("yellow");
+		colors.add("blue");
+		colors.add("green");
+	}
+	
+	public List&lt;String&gt; getColors() {
+		return colors;
+	}
+	//...
+}</pre> 
+ <h2> 2. 单个默认选中值 </h2> 
+ <p> 要作为默认选中的值设为“红”选项，只是在行动类中添加一个方法，并返回一个“red”的值。 </p> 
+ <pre>//...
+public class CheckBoxListAction extends ActionSupport{
+
+	//add a new method
+	public String getDefaultColor(){
+		return "red";
+	}
+}</pre> 
+ <p> 在&lt;s:checkboxlist&gt;标签中，添加一个value属性并指向 getDefaultColor()方法。 </p> 
+ <pre>&lt;s:checkboxlist label="What's your favor color" list="colors" 
+     name="yourColor" value="defaultColor" /&gt;</pre> 
+ <div class="note" style="border:1px solid #D1D1E8;padding:20px;margin:20px 0px;color:#333333;font-family:'Helvetica Neue', Helvetica,  background-color:#E6E6FC;">
+   Struts 2将“defaultColor”值匹配到对应Java属性getDefaultColor()。 
+ </div> 
+ <p> 再次运行它，“红”选项将被默认选中。 </p> 
+ <h2> 2. 多个默认选中的值 </h2> 
+ <p> 要设置多个值“红色”和“绿色”作为默认选中的值，就返回一个“String []”，而不是“String&nbsp;”，在Struts 2将相应匹配。 </p>   
+ <pre>//...
+public class CheckBoxListAction extends ActionSupport{
+
+	//now return a String[]
+	public String[] getDefaultColor(){
+		return new String [] {"red", "green"};
+	}
+}</pre> 
+ <pre>&lt;s:checkboxlist label="What's your favor color" list="colors" 
+     name="yourColor" value="defaultColor" /&gt;</pre> 
+ <p> 再次运行它，“红色”和“绿色”的选项将被默认选中。 </p> 
+ <p> <br> </p> 
+ <p style="font-family:Arial, 'Hiragino Sans GB', 'Microsoft YaHei', 微软雅黑, STHeiti, 'WenQuanYi Micro Hei', SimSun, sans-serif, sans-serif;color:#535B60;"> <a target="_blank" href="http://localhost:8080/struts2setcheckboxes/checkBoxListAction.action">http://localhost:8080/struts2setcheckboxes/checkBoxListAction.action</a> </p> 
+ <p style="font-family:Arial, 'Hiragino Sans GB', 'Microsoft YaHei', 微软雅黑, STHeiti, 'WenQuanYi Micro Hei', SimSun, sans-serif, sans-serif;color:#535B60;"> <img src="/uploads/tutorial/20151115/1-151115091T0350.png" alt=""> </p> 
+ <p style="font-family:Arial, 'Hiragino Sans GB', 'Microsoft YaHei', 微软雅黑, STHeiti, 'WenQuanYi Micro Hei', SimSun, sans-serif, sans-serif;color:#535B60;"> 点击提交后，显示结果如下图所示： </p> 
+ <p style="font-family:Arial, 'Hiragino Sans GB', 'Microsoft YaHei', 微软雅黑, STHeiti, 'WenQuanYi Micro Hei', SimSun, sans-serif, sans-serif;color:#535B60;"> <img src="/uploads/tutorial/20151115/1-151115091942N6.png" alt=""> </p> 
+ <p> <br> </p>
+ <br>      
+</div></body></html>

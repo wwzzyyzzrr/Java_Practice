@@ -1,0 +1,594 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">AngularJS+Spring Security使用基本身份验证</h1><div style="width:100%;float:left;" class="article-content">   
+ <div>
+   这篇文章演示AngularJS应用程序如何消耗REST&nbsp;API，它使用Spring&nbsp;Security的基本身份验证。 
+ </div> 
+ <div> 
+  <p> <a target="_blank" href="http://yiibai.com/spring-security/secure-spring-rest-api-using-basic-authentication.html">Secure&nbsp;Spring&nbsp;REST&nbsp;API使用基本身份验证</a>这篇文章中演示了如何使用Spring&nbsp;Security基本身份验证细节。&nbsp;这个应用程序将作为这个例子的后端。虽然我们只在这里接触到一些主要概念，对于后端完整的代码不会在这里再重复。所以您可以自行下载，安装并在本地启动，以便测试这个AngularJS应用程序。 </p> 
+  <div>
+    这里我们将主要集中在前端功能，这是一个纯粹的AngularJS应用程序，它能与REST&nbsp;API有很好地通信。现在访问：
+   <a target="_blank" href="http://localhost:8080/AngularClientWithBasicAuth/">http://localhost:8080/AngularClientWithBasicAuth/</a>&nbsp; 
+  </div> 
+  <p> <img src="/uploads/tutorial/20160829/160r9213503_1_9a.png" alt=""> </p> 
+  <hr> 
+  <h3> </h3> 
+  <h3> 
+   <div>
+     什么是基本身份验证？ 
+   </div> </h3> 
+  <p> 如基于Web的客户端的登录页面或会话身份验证的传统方法与人类有良好的互动效果，但并不能完全适合很好地应用，[REST]客户端它不止只一个Web应用程序进行通信时。考虑它是一个完全不同于服务器上的其他API，它随时都会与服务器的API通信，无需任何人为干预。 </p> 
+  <p> 基本身份验证它提供了一个方法来解决这个问题，虽然不是很安全。基本身份验证，客户端的每个请求发送Base64编码凭据，使用HTTP[授权]头。这意味着每个请求独立于其他请求和服务器可能/不维护客户端，这对可扩展性是非常好的。 </p> 
+  <h3> 前端部分 </h3> 
+  <h4> 
+   <div>
+     1.每个请求使用AngularJS发送Authorization头 
+   </div> </h4> 
+  <div>
+    由于认证头需要在每个请求时发送，拦截器是一个不错的选择用来处理这些请求，而不用手动指定所有&nbsp;$HTTP头的方法。 
+  </div> 
+  <p> authInterceptor.js </p> 
+  <pre>angular.module('myApp')
+.factory('AuthInterceptor', [function() {  
+    return {
+	// Send the Authorization header with each request
+        'request': function(config) {
+			config.headers = config.headers || {};
+			var encodedString = btoa("bill:abc123");
+			config.headers.Authorization = 'Basic '+encodedString;
+           return config;
+        }
+    };
+}]);</pre> 
+  <div>
+    请注意：我们如何使用&nbsp;btoa()&nbsp;函数来获得用户的Base64编码字符串的凭据。这就是我们需要启用基本身份验证。应用程序的其余部分是典型的与服务器REST&nbsp;API通信的AngularJS应用程序。现在，这个拦截器需要使用AngularJS注册，如下图所示。 
+  </div> 
+  <h4> 2. 应用程序 </h4> 
+  <p> app.js </p> 
+  <pre>'use strict';
+
+var App = angular.module('myApp',[]);
+
+App.config(['$httpProvider', function($httpProvider) {
+  $httpProvider.interceptors.push('AuthInterceptor');
+}]);</pre> 
+  <h4> 3.&nbsp;服务与服务器上的REST&nbsp;API通信 </h4> 
+  <div>
+    由于拦截器，服务被单独管理，以下服务不涉及任何安全相关的东西。 
+  </div> 
+  <p> UserService.js </p> 
+  <pre>'use strict';
+
+angular.module('myApp').factory('UserService', ['$http', '$q', function($http, $q){
+
+    var REST_SERVICE_URI = 'http://localhost:8080/SecureRESTApiWithBasicAuthentication/user/';
+
+    var factory = {
+        fetchAllUsers: fetchAllUsers,
+        createUser: createUser,
+        updateUser:updateUser,
+        deleteUser:deleteUser
+    };
+
+    return factory;
+
+    function fetchAllUsers() {
+        var deferred = $q.defer();
+        $http.get(REST_SERVICE_URI)
+            .then(
+            function (response) {
+                deferred.resolve(response.data);
+            },
+            function(errResponse){
+                console.error('Error while fetching Users');
+                deferred.reject(errResponse);
+            }
+        );
+        return deferred.promise;
+    }
+
+    function createUser(user) {
+        var deferred = $q.defer();
+        $http.post(REST_SERVICE_URI, user)
+            .then(
+            function (response) {
+                deferred.resolve(response.data);
+            },
+            function(errResponse){
+                console.error('Error while creating User');
+                deferred.reject(errResponse);
+            }
+        );
+        return deferred.promise;
+    }
+
+
+    function updateUser(user, id) {
+        var deferred = $q.defer();
+        $http.put(REST_SERVICE_URI+id, user)
+            .then(
+            function (response) {
+                deferred.resolve(response.data);
+            },
+            function(errResponse){
+                console.error('Error while updating User');
+                deferred.reject(errResponse);
+            }
+        );
+        return deferred.promise;
+    }
+
+    function deleteUser(id) {
+        var deferred = $q.defer();
+        $http.delete(REST_SERVICE_URI+id)
+            .then(
+            function (response) {
+                deferred.resolve(response.data);
+            },
+            function(errResponse){
+                console.error('Error while deleting User');
+                deferred.reject(errResponse);
+            }
+        );
+        return deferred.promise;
+    }
+
+}]);</pre> 
+  <h4> 4. 控制器 </h4> 
+  <p> user_controller.js </p> 
+  <pre>'use strict';
+
+angular.module('myApp').controller('UserController', ['$scope', 'UserService', function($scope, UserService) {
+    var self = this;
+    self.user={id:null,username:'',address:'',email:''};
+    self.users=[];
+
+    self.submit = submit;
+    self.edit = edit;
+    self.remove = remove;
+    self.reset = reset;
+
+
+    fetchAllUsers();
+
+    function fetchAllUsers(){
+        UserService.fetchAllUsers()
+            .then(
+            function(d) {
+                self.users = d;
+            },
+            function(errResponse){
+                console.error('Error while fetching Users');
+            }
+        );
+    }
+
+    function createUser(user){
+        UserService.createUser(user)
+            .then(
+            fetchAllUsers,
+            function(errResponse){
+                console.error('Error while creating User');
+            }
+        );
+    }
+
+    function updateUser(user, id){
+        UserService.updateUser(user, id)
+            .then(
+            fetchAllUsers,
+            function(errResponse){
+                console.error('Error while updating User');
+            }
+        );
+    }
+
+    function deleteUser(id){
+        UserService.deleteUser(id)
+            .then(
+            fetchAllUsers,
+            function(errResponse){
+                console.error('Error while deleting User');
+            }
+        );
+    }
+
+    function submit() {
+        if(self.user.id===null){
+            console.log('Saving New User', self.user);
+            createUser(self.user);
+        }else{
+            updateUser(self.user, self.user.id);
+            console.log('User updated with id ', self.user.id);
+        }
+        reset();
+    }
+
+    function edit(id){
+        console.log('id to be edited', id);
+        for(var i = 0; i &lt; self.users.length; i++){
+            if(self.users[i].id === id) {
+                self.user = angular.copy(self.users[i]);
+                break;
+            }
+        }
+    }
+
+    function remove(id){
+        console.log('id to be deleted', id);
+        if(self.user.id === id) {//clean form if the user to be deleted is shown there.
+            reset();
+        }
+        deleteUser(id);
+    }
+
+
+    function reset(){
+        self.user={id:null,username:'',address:'',email:''};
+        $scope.myForm.$setPristine(); //reset Form
+    }
+
+}]);</pre> 
+  <h4> 5. 视图 </h4> 
+  <p> index.html </p> 
+  <pre>&lt;html&gt;
+  &lt;head&gt;  
+    &lt;title&gt;Form Demo&lt;/title&gt;  
+    &lt;style&gt;
+      .username.ng-valid {
+          background-color: lightgreen;
+      }
+      .username.ng-dirty.ng-invalid-required {
+          background-color: red;
+      }
+      .username.ng-dirty.ng-invalid-minlength {
+          background-color: yellow;
+      }
+
+      .email.ng-valid {
+          background-color: lightgreen;
+      }
+      .email.ng-dirty.ng-invalid-required {
+          background-color: red;
+      }
+      .email.ng-dirty.ng-invalid-email {
+          background-color: yellow;
+      }
+
+    &lt;/style&gt;
+     &lt;link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css"&gt;
+     &lt;link rel="stylesheet" href="./css/app.css"&gt;
+  &lt;/head&gt;
+  &lt;body ng-app="myApp"&gt;
+      &lt;div class="generic-container" ng-controller="UserController as ctrl"&gt;
+          &lt;div class="panel panel-default"&gt;
+              &lt;div class="panel-heading"&gt;&lt;span class="lead"&gt;User Registration Form &lt;/span&gt;&lt;/div&gt;
+              &lt;div class="formcontainer"&gt;
+                  &lt;form ng-submit="ctrl.submit()" name="myForm" class="form-horizontal"&gt;
+                      &lt;input type="hidden" ng-model="ctrl.user.id" /&gt;
+                      &lt;div class="row"&gt;
+                          &lt;div class="form-group col-md-12"&gt;
+                              &lt;label class="col-md-2 control-lable" for="uname"&gt;Name&lt;/label&gt;
+                              &lt;div class="col-md-7"&gt;
+                                  &lt;input type="text" ng-model="ctrl.user.name" id="uname" class="username form-control input-sm" placeholder="Enter your name" required ng-minlength="3"/&gt;
+                                  &lt;div class="has-error" ng-show="myForm.$dirty"&gt;
+                                      &lt;span ng-show="myForm.uname.$error.required"&gt;This is a required field&lt;/span&gt;
+                                      &lt;span ng-show="myForm.uname.$error.minlength"&gt;Minimum length required is 3&lt;/span&gt;
+                                      &lt;span ng-show="myForm.uname.$invalid"&gt;This field is invalid &lt;/span&gt;
+                                  &lt;/div&gt;
+                              &lt;/div&gt;
+                          &lt;/div&gt;
+                      &lt;/div&gt;
+                        
+                      
+                      &lt;div class="row"&gt;
+                          &lt;div class="form-group col-md-12"&gt;
+                              &lt;label class="col-md-2 control-lable" for="age"&gt;Age&lt;/label&gt;
+                              &lt;div class="col-md-7"&gt;
+                                  &lt;input type="number" ng-model="ctrl.user.age" id="age" class="form-control input-sm" placeholder="Enter your Age"/&gt;
+                              &lt;/div&gt;
+                          &lt;/div&gt;
+                      &lt;/div&gt;
+
+                      &lt;div class="row"&gt;
+                          &lt;div class="form-group col-md-12"&gt;
+                              &lt;label class="col-md-2 control-lable" for="salary"&gt;Salary&lt;/label&gt;
+                              &lt;div class="col-md-7"&gt;
+                                  &lt;input type="number" ng-model="ctrl.user.salary" id="salary" class="form-control input-sm" placeholder="Enter your Salary" ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/" step="0.01" required/&gt;
+                                  &lt;div class="has-error" ng-show="myForm.$dirty"&gt;
+                                      &lt;span ng-show="myForm.salary.$error.required"&gt;This is a required field&lt;/span&gt;
+                                      &lt;span ng-show="myForm.salary.$invalid"&gt;This field is invalid &lt;/span&gt;
+                                  &lt;/div&gt;
+                              &lt;/div&gt;
+                          &lt;/div&gt;
+                      &lt;/div&gt;
+
+                      &lt;div class="row"&gt;
+                          &lt;div class="form-actions floatRight"&gt;
+                              &lt;input type="submit"  value="{{!ctrl.user.id ? 'Add' : 'Update'}}" class="btn btn-primary btn-sm" ng-disabled="myForm.$invalid"&gt;
+                              &lt;button type="button" ng-click="ctrl.reset()" class="btn btn-warning btn-sm" ng-disabled="myForm.$pristine"&gt;Reset Form&lt;/button&gt;
+                          &lt;/div&gt;
+                      &lt;/div&gt;
+                  &lt;/form&gt;
+              &lt;/div&gt;
+          &lt;/div&gt;
+          &lt;div class="panel panel-default"&gt;
+                &lt;!-- Default panel contents --&gt;
+              &lt;div class="panel-heading"&gt;&lt;span class="lead"&gt;List of Users &lt;/span&gt;&lt;/div&gt;
+              &lt;div class="tablecontainer"&gt;
+                  &lt;table class="table table-hover"&gt;
+                      &lt;thead&gt;
+                          &lt;tr&gt;
+                              &lt;th&gt;ID.&lt;/th&gt;
+                              &lt;th&gt;Name&lt;/th&gt;
+                              &lt;th&gt;Age&lt;/th&gt;
+                              &lt;th&gt;Salary&lt;/th&gt;
+                              &lt;th width="100"&gt;
+                          &lt;/tr&gt;
+                      &lt;/thead&gt;
+                      &lt;tbody&gt;
+                          &lt;tr ng-repeat="u in ctrl.users"&gt;
+                              &lt;td&gt;&lt;span ng-bind="u.id"&gt;&lt;/span&gt;&lt;/td&gt;
+                              &lt;td&gt;&lt;span ng-bind="u.name"&gt;&lt;/span&gt;&lt;/td&gt;
+                              &lt;td&gt;&lt;span ng-bind="u.age"&gt;&lt;/span&gt;&lt;/td&gt;
+                              &lt;td&gt;&lt;span ng-bind="u.salary"&gt;&lt;/span&gt;&lt;/td&gt;
+                              &lt;td&gt;
+                              &lt;button type="button" ng-click="ctrl.edit(u.id)" class="btn btn-success custom-width"&gt;Edit&lt;/button&gt;  &lt;button type="button" ng-click="ctrl.remove(u.id)" class="btn btn-danger custom-width"&gt;Remove&lt;/button&gt;
+                          &lt;/tr&gt;
+                      &lt;/tbody&gt;
+                  &lt;/table&gt;
+              &lt;/div&gt;
+          &lt;/div&gt;
+      &lt;/div&gt;
+      &lt;script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.4/angular.js"&gt;&lt;/script&gt;  
+      &lt;script src="./js/app.js"&gt;&lt;/script&gt;
+      &lt;script src="./js/authInterceptor.js"&gt;&lt;/script&gt;
+      &lt;script src="./js/user_service.js"&gt;&lt;/script&gt;
+      &lt;script src="./js/user_controller.js"&gt;&lt;/script&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</pre> 
+  <h3> 后端程序 </h3> 
+  <h4> 1. REST API </h4> 
+  <div>
+    下面显示的是&nbsp;Angular&nbsp;应用程序，它将用于和REST&nbsp;API通信。 
+  </div> 
+  <pre>package com.yiibai.springmvc.controller;
+ 
+import java.util.List;
+ 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.util.UriComponentsBuilder;
+ 
+import com.yiibai.springmvc.model.User;
+import com.yiibai.springmvc.service.UserService;
+ 
+@RestController
+public class HelloWorldRestController {
+ 
+    @Autowired
+    UserService userService;  //Service which will do all data retrieval/manipulation work
+ 
+     
+    //-------------------Retrieve All Users--------------------------------------------------------
+     
+    @RequestMapping(value = "/user/", method = RequestMethod.GET)
+    public ResponseEntity&lt;List&lt;User&gt;&gt; listAllUsers() {
+        List&lt;User&gt; users = userService.findAllUsers();
+        if(users.isEmpty()){
+            return new ResponseEntity&lt;List&lt;User&gt;&gt;(HttpStatus.NO_CONTENT);//You many decide to return HttpStatus.NOT_FOUND
+        }
+        return new ResponseEntity&lt;List&lt;User&gt;&gt;(users, HttpStatus.OK);
+    }
+ 
+ 
+    //-------------------Retrieve Single User--------------------------------------------------------
+     
+    @RequestMapping(value = "/user/{id}", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_VALUE,MediaType.APPLICATION_XML_VALUE})
+    public ResponseEntity&lt;User&gt; getUser(@PathVariable("id") long id) {
+        System.out.println("Fetching User with id " + id);
+        User user = userService.findById(id);
+        if (user == null) {
+            System.out.println("User with id " + id + " not found");
+            return new ResponseEntity&lt;User&gt;(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity&lt;User&gt;(user, HttpStatus.OK);
+    }
+ 
+     
+     
+    //-------------------Create a User--------------------------------------------------------
+     
+    @RequestMapping(value = "/user/", method = RequestMethod.POST)
+    public ResponseEntity&lt;Void&gt; createUser(@RequestBody User user, UriComponentsBuilder ucBuilder) {
+        System.out.println("Creating User " + user.getName());
+ 
+        if (userService.isUserExist(user)) {
+            System.out.println("A User with name " + user.getName() + " already exist");
+            return new ResponseEntity&lt;Void&gt;(HttpStatus.CONFLICT);
+        }
+ 
+        userService.saveUser(user);
+ 
+        HttpHeaders headers = new HttpHeaders();
+        headers.setLocation(ucBuilder.path("/user/{id}").buildAndExpand(user.getId()).toUri());
+        return new ResponseEntity&lt;Void&gt;(headers, HttpStatus.CREATED);
+    }
+ 
+     
+    //------------------- Update a User --------------------------------------------------------
+     
+    @RequestMapping(value = "/user/{id}", method = RequestMethod.PUT)
+    public ResponseEntity&lt;User&gt; updateUser(@PathVariable("id") long id, @RequestBody User user) {
+        System.out.println("Updating User " + id);
+         
+        User currentUser = userService.findById(id);
+         
+        if (currentUser==null) {
+            System.out.println("User with id " + id + " not found");
+            return new ResponseEntity&lt;User&gt;(HttpStatus.NOT_FOUND);
+        }
+ 
+        currentUser.setName(user.getName());
+        currentUser.setAge(user.getAge());
+        currentUser.setSalary(user.getSalary());
+         
+        userService.updateUser(currentUser);
+        return new ResponseEntity&lt;User&gt;(currentUser, HttpStatus.OK);
+    }
+ 
+    //------------------- Delete a User --------------------------------------------------------
+     
+    @RequestMapping(value = "/user/{id}", method = RequestMethod.DELETE)
+    public ResponseEntity&lt;User&gt; deleteUser(@PathVariable("id") long id) {
+        System.out.println("Fetching &amp; Deleting User with id " + id);
+ 
+        User user = userService.findById(id);
+        if (user == null) {
+            System.out.println("Unable to delete. User with id " + id + " not found");
+            return new ResponseEntity&lt;User&gt;(HttpStatus.NOT_FOUND);
+        }
+ 
+        userService.deleteUserById(id);
+        return new ResponseEntity&lt;User&gt;(HttpStatus.NO_CONTENT);
+    }
+ 
+     
+    //------------------- Delete All Users --------------------------------------------------------
+     
+    @RequestMapping(value = "/user/", method = RequestMethod.DELETE)
+    public ResponseEntity&lt;User&gt; deleteAllUsers() {
+        System.out.println("Deleting All Users");
+ 
+        userService.deleteAllUsers();
+        return new ResponseEntity&lt;User&gt;(HttpStatus.NO_CONTENT);
+    }
+ 
+}</pre> 
+  <h4> 
+   <div>
+     2.在Spring&nbsp;Security中启用基本验证 
+   </div> </h4> 
+  <div> 
+  </div> 
+  <div>
+    有两个步骤，就可以启用基本身份验证在Spring&nbsp;Security配置中。 
+  </div> 
+  <p> 1.&nbsp;配置httpBasic&nbsp;:&nbsp;配置HTTP基本身份验证。&nbsp;[基于HTTP的XML] </p> 
+  <p> 2.&nbsp;配置有BasicAuthenticationEntryYiibai认证入口点&nbsp;:&nbsp;如果验证失败[无效/缺少凭据]，这个切入点将被触发。&nbsp;这是非常重要的，因为我们不想重定向到身份验证失败的登录页面[Spring&nbsp;Security的默认行为] ，因为这里我们没有一个登录页面。 </p> 
+  <p> 下面显示的是基于HTTP和切入点建立完整的&nbsp;Spring Security&nbsp;&nbsp;配置。 </p>   
+  <pre>package com.yiibai.springmvc.security;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
+
+@Configuration
+@EnableWebSecurity
+public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
+
+	private static String REALM="MY_TEST_REALM";
+	
+	@Autowired
+	public void configureGlobalSecurity(AuthenticationManagerBuilder auth) throws Exception {
+		auth.inMemoryAuthentication().withUser("bill").password("abc123").roles("ADMIN");
+		auth.inMemoryAuthentication().withUser("tom").password("abc123").roles("USER");
+	}
+	
+	@Override
+	protected void configure(HttpSecurity http) throws Exception {
+ 
+	  http.csrf().disable()
+	  	.authorizeRequests()
+	  	.antMatchers("/user/**").hasRole("ADMIN")
+		.and().httpBasic().realmName(REALM).authenticationEntryYiibai(getBasicAuthEntryYiibai())
+		.and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);//We don't need session.
+ 	}
+	
+	@Bean
+	public CustomBasicAuthenticationEntryYiibai getBasicAuthEntryYiibai(){
+		return new CustomBasicAuthenticationEntryYiibai();
+	}
+	
+    /* To allow Pre-flight [OPTIONS] request from browser */
+    @Override
+    public void configure(WebSecurity web) throws Exception {
+        web.ignoring().antMatchers(HttpMethod.OPTIONS, "/**");
+    }
+}</pre> 
+  <pre>package com.yiibai.springmvc.security;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.web.authentication.www.BasicAuthenticationEntryYiibai;
+
+public class CustomBasicAuthenticationEntryYiibai extends BasicAuthenticationEntryYiibai {
+
+    @Override
+    public void commence(final HttpServletRequest request, 
+    		final HttpServletResponse response, 
+    		final AuthenticationException authException) throws IOException, ServletException {
+    	
+    	response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+    	response.addHeader("WWW-Authenticate", "Basic realm=" + getRealmName() + "");
+        
+        PrintWriter writer = response.getWriter();
+        writer.println("HTTP Status 401 : " + authException.getMessage());
+    }
+    
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        setRealmName("MY_TEST_REALM");
+        super.afterPropertiesSet();
+    }
+}</pre> 
+  <h3> 运行应用程序 </h3> 
+  <p> 后端&nbsp;:&nbsp;构建和部署后端，从&nbsp;<a target="_blank" href="http://yiibai.com/spring-security/secure-spring-rest-api-using-basic-authentication.html">Spring Security REST&nbsp;API使用基本身份验证</a>文章中了解。 </p> 
+  <p> 前端&nbsp;:&nbsp;从这个篇文章的结尾部分下载AngularJS应用，并部署[把它放在Apache服务器中，例如：htdocs 文件夹，并启动Apache]。 </p> 
+  <p> 在浏览器中打开：http://localhost:8080/AngularClientWithBasicAuth/ </p> 
+  <p> <img src="/uploads/tutorial/20160829/160r9213630_1_5y.png" alt=""> </p> 
+  <div>
+    打开开发工具并验证请求，发送基本认证在头中。 
+  </div> 
+  <p> <img src="/uploads/tutorial/20160829/160r9213646_1_2e.png" alt=""> </p> 
+  <div>
+    需要注意的是：在执行实际GET之前服务器可能会多个请求，它是由浏览器本身触发的一个OPTION请求，这并不属于应用控制。 
+  </div> 
+  <p> <img src="/uploads/tutorial/20160829/160r9213f5_1_421.png" alt=""> </p> 
+  <p> 为了预检这个请求，我们采用了安全配置&nbsp;web.ignoring().antMatchers(HttpMethod.OPTIONS, "/**");. </p> 
+  <h4> 下载源代源 </h4> 
+  <p> 后端应用 -&nbsp;<a target="_blank" href="http://pan.baidu.com/s/1c27Lqvu">15-back-SecureRESTApiWithBasicAuthentication.zip&nbsp;</a> &nbsp;<span id="__kindeditor_bookmark_end_13__"></span> </p> 
+  <div> 
+   <br> 
+  </div> 
+  <div>
+    前端代码下载后直接解压到 Tomcat 容器应用发布的(wtpwebaaps)根目录下，如下图所示 -&nbsp;
+   <br> 
+  </div> 
+  <h4> 参考 </h4> 
+  <ul> 
+   <li> <a target="_blank" href="http://projects.spring.io/spring-security/">Spring Security 4 主页面</a> </li> 
+   <li> <a target="_blank" href="http://docs.spring.io/spring-security/site/docs/4.0.1.RELEASE/reference/htmlsingle/">Spring Security 4 参考手册</a> </li> 
+  </ul> 
+ </div>
+ <br>      
+</div></body></html>

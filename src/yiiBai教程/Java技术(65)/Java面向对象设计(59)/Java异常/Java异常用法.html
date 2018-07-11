@@ -1,0 +1,122 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Java异常用法</h1><div style="width:100%;float:left;" class="article-content">   
+ <h2 id="h2-u8BBFu95EEu7EBFu7A0Bu7684u5806u6808"><a name="访问线程的堆栈" class="reference-link"></a><span class="header-link octicon octicon-link"></span>访问线程的堆栈</h2>
+ <p>以下代码显示了如何获取线程的堆栈帧。<code>Throwable</code>对象在创建线程的点处捕获线程的堆栈。参考以下代码 - </p> 
+ <pre><code class="lang-java">public class Main {
+  public static void main(String[] args) {
+    m1();
+  }
+
+  public static void m1() {
+    m2();
+  }
+
+  public static void m2() {
+    m3();
+  }
+  public static void m3() {
+    Throwable t = new Throwable();
+    StackTraceElement[] frames = t.getStackTrace();
+    printStackDetails(frames);
+  }
+  public static void printStackDetails(StackTraceElement[] frames) {
+    System.out.println("Frame count: " + frames.length);
+    for (int i = 0; i &lt; frames.length; i++) {
+      int frameIndex = i; // i = 0 means top frame
+      System.out.println("Frame Index: " + frameIndex);
+      System.out.println("File Name: " + frames[i].getFileName());
+      System.out.println("Class Name: " + frames[i].getClassName());
+      System.out.println("Method Name: " + frames[i].getMethodName());
+      System.out.println("Line Number: " + frames[i].getLineNumber());
+    }
+  }
+}
+</code></pre> 
+ <p>上面的代码生成以下结果。</p> 
+ <pre><code class="lang-java">Frame count: 4
+Frame Index: 0
+File Name: Main.java
+Class Name: Main
+Method Name: m3
+Line Number: 12
+Frame Index: 1
+File Name: Main.java
+Class Name: Main
+Method Name: m2
+Line Number: 9
+Frame Index: 2
+File Name: Main.java
+Class Name: Main
+Method Name: m1
+Line Number: 6
+Frame Index: 3
+File Name: Main.java
+Class Name: Main
+Method Name: main
+Line Number: 3
+</code></pre> 
+ <h2 id="h2-try-with-resources-"><a name="try-with-resources块" class="reference-link"></a><span class="header-link octicon octicon-link"></span>try-with-resources块</h2>
+ <p>Java 7添加了一个名为<code>try-with-resources</code>的新结构。使用Java 7中的新的<code>try-with-resources</code>构造，上面的代码可以写成 - </p> 
+ <pre><code class="lang-java">try (AnyResource aRes = create the resource...) {
+    // Work with the resource here. 
+    // The resource will be  closed automatically.
+}
+</code></pre> 
+ <p>当程序退出构造时，<code>try-with-resources</code>构造自动关闭资源。资源尝试构造可以具有一个或多个<code>catch</code>块和/或<code>finally</code>块。可以在<code>try-with-resources</code>块中指定多个资源。两个资源必须用分号分隔。<br>最后一个资源不能后跟分号。以下代码显示了<code>try-with-resources</code>使用一个和多个资源的一些用法(语法)：</p> 
+ <pre><code class="lang-java">try (AnyResource  aRes1  = getResource1())  {
+    // Use aRes1  here
+}
+
+try (AnyResource  aRes1  = getResource1(); AnyResource  aRes2  = getResource2())  {
+    // Use aRes1  and  aRes2  here
+}
+</code></pre> 
+ <p>在<code>try-with-resources</code>中指定的资源是隐式最终的。在<code>try-with-resources</code>中的资源必须是<code>java.lang.AutoCloseable</code>类型。Java7添加了<code>AutoCloseable</code>接口，它有一个<code>close()</code>方法。当程序退出<code>try-with-resources</code>块时，将自动调用所有资源的<code>close()</code>方法。</p> 
+ <p>在多个资源的情况下，按照指定资源的相反顺序调用<code>close()</code>方法。</p>   
+ <pre><code class="lang-java">class MyResource implements AutoCloseable {
+
+
+  public MyResource() {
+    System.out.println("Creating MyResource.");
+  }
+  @Override
+  public void close() {
+
+    System.out.println("Closing  MyResource...");
+  }
+}
+
+public class Main {
+  public static void main(String[] args) {
+    try (MyResource mr = new MyResource();
+        MyResource mr2 = new MyResource()) {
+
+    }
+  }
+}
+</code></pre> 
+ <p>上面的代码生成以下结果。</p> 
+ <pre><code class="lang-java">Creating MyResource.
+Creating MyResource.
+Closing  MyResource...
+Closing  MyResource...
+</code></pre> 
+ <h2 id="h2--catch-"><a name="多catch块" class="reference-link"></a><span class="header-link octicon octicon-link"></span>多catch块</h2>
+ <p>Java 7增加了对多<code>catch</code>块的支持，以便在<code>catch</code>块中处理多种类型的异常。可以在<code>multi-catch</code>块中指定多个异常类型。每个异常之间使用竖线(<code>|</code>)分隔。</p> 
+ <p>捕获三个异常：<code>Exception1</code>，<code>Exception2</code>和<code>Exception3</code>。</p> 
+ <pre><code class="lang-java">try  {
+    // May  throw  Exception1, Exception2, or  Exception3
+}
+catch (Exception1 | Exception2 | Exception3  e)  {
+    // Handle  Exception1, Exception2, and  Exception3
+}
+</code></pre> 
+ <p>在多<code>catch</code>块中，不允许有通过子类化相关的替代异常。<br>例如，不允许以下多<code>catch</code>块，因为<code>Exception1</code>和<code>Exception2</code>是<code>Throwable</code>的子类：</p> 
+ <pre><code class="lang-java">try  {
+    // May  throw  Exception1, Exception2, or  Exception3
+}
+catch (Exception1 | Exception2 | Throwable    e)  {
+    // Handle  Exceptions here
+}
+</code></pre>
+ <br>      
+</div></body></html>

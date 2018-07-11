@@ -1,0 +1,136 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Cordova联系人</h1><div style="width:100%;float:left;" class="article-content">   
+ <div> 
+  <div>
+    这个插件是用于访问设备的联系人数据库。&nbsp;在本教程中，我们学习如何创建，查询和删除联系人。 
+  </div> 
+ </div> 
+ <div> 
+  <h2> 
+   <div>
+     第1步&nbsp;-&nbsp;安装插件联系人 
+   </div> </h2> 
+  <pre>D:\worksp\cordova\CordovaProject&gt;cordova plugin add cordova-plugin-contacts</pre> 
+  <h2> 
+   <div>
+     第2步&nbsp;-&nbsp;添加按钮 
+   </div> </h2> 
+  <div>
+    该按钮将用于调用建立联系函数。我们将下面的代码放置在 index.html 文件的&nbsp;div&nbsp;class&nbsp;=&nbsp;"app"中。 
+  </div> 
+  <pre>&lt;button id = "createContact"&gt;ADD CONTACT&lt;/button&gt;
+&lt;button id = "findContact"&gt;FIND CONTACT&lt;/button&gt;
+&lt;button id = "deleteContact"&gt;DELETE CONTACT&lt;/button&gt;</pre> 
+  <h2> 
+   <div>
+     第2步&nbsp;-&nbsp;添加事件监听器 
+   </div> </h2> 
+  <div>
+    打开 index.js 并下面的代码片段复制到 onDeviceReady 函数中。 
+  </div> 
+  <pre>document.getElementById("createContact").addEventListener("click", createContact);
+document.getElementById("findContact").addEventListener("click", findContact);
+document.getElementById("deleteContact").addEventListener("click", deleteContact);</pre> 
+  <h2> 步骤3A&nbsp;-&nbsp;回调函数(navigator.contacts.create) </h2> 
+  <div>
+    目前，我们没有在设备上存储联系人。
+   <br> 
+   <img src="/uploads/tutorial/20160217/1-16021GP2003H.png" alt="">
+   <br> 
+  </div> 
+  <img src="file://E:/data/youdao/qq24B39E2329F08D9F4C3146A571A415EF/f23a997c9bb14659919893b62964b9a6/clipboard.png">
+  <br> 
+  <p> 第一个回调函数将调用navigator.contacts.create方法，在这里我们可以指定新的联系人数据。这将创建联系人并将其分配给&nbsp;myContact&nbsp;变量，但它不会存储在设备上。要保存它，我们需要调用保存方法，并创建成功和错误的回调函数。 </p> 
+  <pre>function createContact() {
+   var myContact = navigator.contacts.create({"displayName": "Test User"});
+   myContact.save(contactSuccess, contactError);
+    
+   function contactSuccess() {
+      alert("Contact is saved!")
+   }
+	
+   function contactError(message) {
+      alert('Failed because: ' + message);
+   }
+	
+}</pre> 
+  <div>
+    当我们单击ADD&nbsp;CONTACT 按钮，新联系人将被存储到设备的联系人列表。
+   <br> 
+   <img src="/uploads/tutorial/20160217/1-16021GP233A3.png" alt="">
+   <br> 
+  </div> 
+  <img src="file://E:/data/youdao/qq24B39E2329F08D9F4C3146A571A415EF/5ca0c09586014a27909fd2dd44b56fa2/clipboard.png">
+  <br> 
+  <h2> 
+   <div>
+     步骤3B&nbsp;-&nbsp;回调函数(navigator.contacts.find) 
+   </div> </h2> 
+  <p> 第二个回调函数将查询所有联系人。我们将使用navigator.contacts.find方法。options对象具有用于指定搜索过滤器过滤参数。multiple&nbsp;=&nbsp;true&nbsp;是因为我们想从设备返回所有联系人。我们还使用通过displayName字段作为键，在保存联系人后，用它来搜索联系人。 </p> 
+  <p> 该选项设置后，使用 find 方法来查询联系人。在找到联系人时提醒消息将触发。 </p> 
+  <pre>function findContacts() {
+   var options = new ContactFindOptions();
+   options.filter = "";
+   options.multiple = true;
+
+   fields = ["displayName"];
+   navigator.contacts.find(fields, contactfindSuccess, contactfindError, options);
+    
+   function contactfindSuccess(contacts) {
+      for (var i = 0; i &lt; contacts.length; i++) {
+         alert("Display Name = " + contacts[i].displayName);
+      }
+   }
+	
+   function contactfindError(message) {
+      alert('Failed because: ' + message);
+   }
+	
+}</pre> 
+  <div>
+    当按下FIND&nbsp;CONTACT按钮提示弹出框将被触发，因为我们只有一个联系人储存。
+   <br> 
+   <img src="/uploads/tutorial/20160217/1-16021GP311V2.jpg" alt="">
+   <br> 
+  </div> 
+  <img src="file://E:/data/youdao/qq24B39E2329F08D9F4C3146A571A415EF/1f7002ac8d11498898cc55ed3588a1cb/ntacts-find.jpeg" alt="Cordova Contacts Find"> 
+  <h2> 
+   <div>
+     步骤3C&nbsp;-&nbsp;回调函数(删除) 
+   </div> </h2> 
+  <p> 在这一步中，我们再次使用find方法，但这一次我们会设置不同的选项。options.filter被设置为自动搜索测试用户，因为我们想删除它。找到成功之后回调&nbsp;contactfindSuccess&nbsp;已经回到我们想要的联系人，&nbsp;我们通过使用删除方法需要在成功和错误回调。 </p>   
+  <pre>function deleteContact() {
+
+   var options = new ContactFindOptions();
+   options.filter = "Test User";
+   options.multiple = false;
+   fields = ["displayName"];
+
+   navigator.contacts.find(fields, contactfindSuccess, contactfindError, options);
+
+   function contactfindSuccess(contacts) {
+
+      var contact = contacts[0];
+      contact.remove(contactRemoveSuccess, contactRemoveError);
+
+      function contactRemoveSuccess(contact) {
+         alert("Contact Deleted");
+      }
+
+      function contactRemoveError(message) {
+         alert('Failed because: ' + message);
+      }
+   }
+
+   function contactfindError(message) {
+      alert('Failed because: ' + message);
+   }
+	
+}&nbsp;</pre> 
+  <p> 目前，我们只需要在设备上存储一个联系人。这里将手动添加一个联系人用来演示删除处理。<br> <img src="/uploads/tutorial/20160217/1-16021GP4055T.jpg" alt=""> </p> 
+  <img src="file://E:/data/youdao/qq24B39E2329F08D9F4C3146A571A415EF/fe3b7e64e477445e968eb07c76952960/ts-multiple.jpeg" alt="Cordova Contacts Multiple"> 
+  <p> 现在，可以点击&nbsp;DELETE&nbsp;CONTACT&nbsp;按钮删除测试用户(est&nbsp;User)。如果再次检查联系人列表，我们会看到，已经没有测试用户(&nbsp;Test&nbsp;User)了。<br> <img src="/uploads/tutorial/20160217/1-16021GP43Q47.jpg" alt=""> </p> 
+  <img src="file://E:/data/youdao/qq24B39E2329F08D9F4C3146A571A415EF/b70786bec7984a70bfe526e97ddf0f30/cts-deleted.jpeg" alt="Cordova Contact Deleted">
+  <br> 
+ </div>
+ <br>      
+</div></body></html>

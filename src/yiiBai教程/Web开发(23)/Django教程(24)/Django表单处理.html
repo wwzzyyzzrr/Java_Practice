@@ -1,0 +1,129 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Django表单处理</h1><div style="width:100%;float:left;" class="article-content">   
+ <div> 
+  <div>
+    在Django创建表单，类似于创建一个模型。&nbsp;在这里，我们只需要从Django的类并继承此类属性表单字段。让我们在myapp文件夹中添加forms.py文件包含我们的应用程序的表单。我们将创建一个登录表单。 
+  </div> 
+ </div> 
+ <div> 
+  <p style="text-align:justify;"> <strong>myapp/forms.py</strong> </p> 
+  <pre>#-*- coding: utf-8 -*-
+from django import forms
+
+class LoginForm(forms.Form):
+   user = forms.CharField(max_length = 100)
+   password = forms.CharField(widget = forms.PasswordInput())&nbsp;</pre> 
+  <p style="text-align:justify;"> 由上可见，字段类型可以利用“widget”的参数到HTML渲染;&nbsp;在我们的例子中，我们要隐藏密码，不会显示。在我们的例子中，想要隐藏密码而不用显示。&nbsp;日期输入是DateInput，CheckboxInput是复选框等等。 </p> 
+  <h2> 
+   <div>
+     在视图中使用表单 
+   </div> </h2> 
+  <p style="text-align:justify;"> 有两种HTTP请求，它们分别是GET和POST。在Django，作为参数传递到视图请求对象有一个属性叫作“方法”，其中请求的类型被设置，并通过POST传递的所有数据可以经由request.POST字典进行访问。 </p> 
+  <p style="text-align:justify;"> 让我们在&nbsp;myapp/views.py&nbsp;创建一个登录视图&nbsp;− </p> 
+  <pre>#-*- coding: utf-8 -*-
+from myapp.forms import LoginForm
+
+def login(request):
+   username = "not logged in"
+   
+   if request.method == "POST":
+      #Get the posted form
+      MyLoginForm = LoginForm(request.POST)
+      
+      if MyLoginForm.is_valid():
+         username = MyLoginForm.cleaned_data['username']
+   else:
+      MyLoginForm = Loginform()
+		
+   return render(request, 'loggedin.html', {"username" : username})&nbsp;</pre> 
+  <p style="text-align:justify;"> 该视图将通过&nbsp;loggedin.html&nbsp;登录显示表单结果。&nbsp;为了测试它，我们首先需要登录表单模板。让我们把它命名为：login.html。 </p> 
+  <pre>&lt;html&gt;
+   &lt;body&gt;
+      
+      &lt;form name = "form" action = "{% url "myapp.views.login" %}" 
+         method = "POST" &gt;{% csrf_token %}
+         
+         &lt;div style = "max-width:470px;"&gt;
+            &lt;center&gt; 
+               &lt;input type = "text" style = "margin-left:20%;" 
+                  placeholder = "Identifiant" name = "username" /&gt;
+            &lt;/center&gt;
+         &lt;/div&gt;
+			
+         &lt;br&gt;
+         
+         &lt;div style = "max-width:470px;"&gt;
+            &lt;center&gt;
+               &lt;input type = "password" style = "margin-left:20%;" 
+                  placeholder = "password" name = "password" /&gt;
+            &lt;/center&gt;
+         &lt;/div&gt;
+			
+         &lt;br&gt;
+         
+         &lt;div style = "max-width:470px;"&gt;
+            &lt;center&gt; 
+            
+               &lt;button style = "border:0px; background-color:#4285F4; margin-top:8%;
+                  height:35px; width:80%;margin-left:19%;" type = "submit" 
+                  value = "Login" &gt;
+                  &lt;strong&gt;Login&lt;/strong&gt;
+               &lt;/button&gt;
+               
+            &lt;/center&gt;
+         &lt;/div&gt;
+         
+      &lt;/form&gt;
+      
+   &lt;/body&gt;
+&lt;/html&gt;&nbsp;</pre> 
+  <p style="text-align:justify;"> 模板将显示一个登录表单，并发布结果我们上面登录查看。您可能已经注意到模板，这只是为了防止您网站上的跨站请求伪造(CSRF)攻击的标签。 </p> 
+  <pre>{% csrf_token %}</pre> 
+  <div>
+    当拥有了登录模板后，我们需要将表格处理后呈现 loggedin.html 模板。 
+  </div> 
+  <pre>&lt;html&gt;
+   
+   &lt;body&gt;
+      You are : &lt;strong&gt;{{username}}&lt;/strong&gt;
+   &lt;/body&gt;
+   
+&lt;/html&gt;&nbsp;</pre> 
+  <p style="text-align:justify;"> 现在，我们只需要URLs对来开始：&nbsp;myapp/urls.py </p>   
+  <pre>from django.conf.urls import patterns, url
+from django.views.generic import TemplateView
+
+urlpatterns = patterns('myapp.views',
+   url(r'^connection/',TemplateView.as_view(template_name = 'login.html')),
+   url(r'^login/', 'login', name = 'login'))&nbsp;</pre> 
+  <p style="text-align:justify;"> 当访问"/myapp/connection"，我们会得到 login.html 模板显示如下−<br> <img src="/uploads/tutorial/20160130/1-160130212359153.jpg" alt=""> </p> 
+  <p style="text-align:justify;"> 上面的表格提交后，格式是有效的。在我们的例子中一定要填写两个字段，得到以下结果&nbsp;−<br> <img src="/uploads/tutorial/20160130/1-16013021243XF.jpg" alt=""> </p> 
+  <p style="text-align:justify;"> 如果您的用户名是polo，并且如果忘记了密码。会收到以下消息&nbsp;−<br> <img src="/uploads/tutorial/20160130/1-160130212501N8.jpg" alt=""> </p> 
+  <h3> 
+   <div>
+     用我们自己的表单验证 
+   </div> </h3> 
+  <p style="text-align:justify;"> 在上面的例子中，验证表单为&nbsp;− </p> 
+  <pre>MyLoginForm.is_valid()&nbsp;</pre> 
+  <p style="text-align:justify;"> 我们只用Django的自我形式验证引擎，在例子中只是确保这个字段是必需的。现在让我们尝试以确保尝试登录的用户是存在于我们的数据库作为Dreamreal项。&nbsp;对于这一点，改变 myapp/forms.py 为&nbsp;− </p> 
+  <pre>#-*- coding: utf-8 -*-
+from django import forms
+from myapp.models import Dreamreal
+
+class LoginForm(forms.Form):
+   user = forms.CharField(max_length = 100)
+   password = forms.CharField(widget = forms.PasswordInput())
+
+   def clean_message(self):
+      username = self.cleaned_data.get("username")
+      dbuser = Dreamreal.objects.filter(name = username)
+      
+      if not dbuser:
+         raise forms.ValidationError("User does not exist in our db!")
+      return username&nbsp;</pre> 
+  <p style="text-align:justify;"> 现在，调用“is_valid”方法之后，我们将获得正确的输出，仅当用户是在我们的数据库。如果想查询表单字段，仅仅通过添加一个以“clean_”开头方法，字段名称对应到表单类字段。&nbsp;引发一个&nbsp;forms.ValidationError&nbsp;错误是很重要的。 </p> 
+  <div> 
+   <span style="background-color:inherit;font-family:微软雅黑;font-size:14px;line-height:1.5;"><br> </span> 
+  </div> 
+ </div>
+ <br>      
+</div></body></html>

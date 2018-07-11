@@ -1,0 +1,240 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Java文件内容和读写</h1><div style="width:100%;float:left;" class="article-content">   
+ <h2 id="h2-u6587u4EF6u7684u5185u5BB9u7C7Bu578B"><a name="文件的内容类型" class="reference-link"></a><span class="header-link octicon octicon-link"></span>文件的内容类型</h2>
+ <p><code>Files.probeContentType(Path path)</code>方法探测文件的内容类型。该方法以多用途互联网邮件扩展(MIME)内容类型的值的字符串形式返回内容类型。如果无法确定文件的内容类型，则返回<code>null</code>。<br>以下代码显示如何探测文件的内容类型。</p> 
+ <pre><code class="lang-java">import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.io.IOException;
+
+public class Main {
+  public static void main(String[] args) {
+    Path p = Paths.get("C:\\Java_Dev\\test1.txt");
+
+    try {
+      String contentType = Files.probeContentType(p);
+      System.out.format("Content type   of  %s  is %s%n", p, contentType);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
+}
+</code></pre> 
+ <p>上面的代码生成以下结果。</p> 
+ <pre><code class="lang-java">Content type   of  C:\Java_Dev\test1.txt  is text/plain
+</code></pre> 
+ <h2 id="h2-u8BFBu53D6u6587u4EF6u7684u5185u5BB9"><a name="读取文件的内容" class="reference-link"></a><span class="header-link octicon octicon-link"></span>读取文件的内容</h2>
+ <p><code>Files</code>类包含以下方法来读取文件的内容作为字节和文本行：</p> 
+ <ul> 
+  <li>static byte[] readAllBytes(Path path) - reads all bytes from a file.</li>
+  <li>static List readAllLines(Path path) - reads the entire contents of a file lines of text.</li>
+  <li>static List readAllLines(Path path, Charset cs)</li>
+ </ul> 
+ <p><code>Files</code>类可以从<code>Path</code>对象获取<code>InputStream</code>和<code>BufferedReader</code>对象。<code>newInputStream(Path path，OpenOption ... options)</code>方法返回指定路径的<code>InputStream</code>对象。它假定文件的内容是<code>UTF-8</code>字符集。</p> 
+ <p><code>newBufferedReader(Path path)</code>和<code>newBufferedReader(Path path，Charset cs)</code>方法返回一个<code>BufferedReader</code>。我们可以指定字符集。<code>Files</code>类提供了使用其<code>newByteChannel(Path path，OpenOption ... options)</code>方法从<code>Path</code>对象中获取<code>SeekableByteChannel</code>对象的方法。</p> 
+ <p><code>OpenOption</code>类型配置正在打开的文件。下表列出了<code>OpenOption</code>类型的值及其描述。<code>OpenOption</code>是<code>java.nio.file</code>包中的一个接口。<code>java.nio.file</code>包中的<code>StandardOpenOption</code>枚举实现了<code>OpenOption</code>接口。</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>标准打开选项</th> 
+    <th>描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>APPEND</td> 
+    <td>将写入的数据附加到现有文件，如果文件被打开写入。</td> 
+   </tr> 
+   <tr> 
+    <td>CREATE</td> 
+    <td>创建一个新文件，如果它不存在。</td> 
+   </tr> 
+   <tr> 
+    <td>CREATE_NEW</td> 
+    <td>如果文件不存在，则创建一个新文件。 如果文件已存在，则操作失败。</td> 
+   </tr> 
+   <tr> 
+    <td>DELETE_ON_CLOSE</td> 
+    <td>关闭流时删除文件。在与临时文件一起使用时非常有用。</td> 
+   </tr> 
+   <tr> 
+    <td>DSYNC</td> 
+    <td>保持文件的内容与底层存储同步。</td> 
+   </tr> 
+   <tr> 
+    <td>READ</td> 
+    <td>打开具有读访问权限的文件。</td> 
+   </tr> 
+   <tr> 
+    <td>SPARSE</td> 
+    <td>如果它与<code>CREATE_NEW</code>选项一起使用，它对文件系统提示新文件应该是稀疏文件。</td> 
+   </tr> 
+   <tr> 
+    <td>SYNC</td> 
+    <td>保持文件的内容和元数据与底层存储同步。</td> 
+   </tr> 
+   <tr> 
+    <td>TRUNCATE_EXISTING</td> 
+    <td>如果打开文件以进行写访问，则将现有文件的长度截断为零。</td> 
+   </tr> 
+   <tr> 
+    <td>WRITE</td> 
+    <td>打开文件以进行写访问。</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p>以下代码实现在默认目录中为<code>test2.txt</code>文件获取一个<code>SeekableByteChannel</code>对象。它打开文件以进行读取和写入访问。它使用<code>CREATE</code>选项，因此如果文件不存在，则创建该文件。</p> 
+ <pre><code class="lang-java">import static java.nio.file.StandardOpenOption.CREATE;
+import static java.nio.file.StandardOpenOption.READ;
+import static java.nio.file.StandardOpenOption.WRITE;
+
+import java.nio.channels.SeekableByteChannel;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+public class Main {
+  public static void main(String[] args) throws Exception {
+    Path src = Paths.get("test2.txt");
+    SeekableByteChannel sbc = Files.newByteChannel(src, READ, WRITE, CREATE);
+  }
+}
+</code></pre> 
+ <p>以下代码演示了如何读取和显示默认目录中<code>test1.txt</code>文件的内容。 如果文件不存在，程序将显示一条错误消息。</p> 
+ <pre><code class="lang-java">import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
+
+public class Main {
+  public static void main(String[] args) throws Exception{
+    Charset cs = Charset.forName("US-ASCII");
+    Path source = Paths.get("test1.txt");
+
+    List&lt;String&gt; lines = Files.readAllLines(source, cs);
+    for (String line : lines) {
+        System.out.println(line);
+    }
+  }
+}
+</code></pre> 
+ <h2 id="h2-u5199u5165u6587u4EF6"><a name="写入文件" class="reference-link"></a><span class="header-link octicon octicon-link"></span>写入文件</h2>
+ <p>使用<code>Files</code>类的以下<code>write()</code>方法将内容写入文件。</p> 
+ <pre><code class="lang-java">static Path  write(Path path, byte[]  bytes,  OpenOption... options)
+static Path  write(Path path, Iterable lines, OpenOption... options)
+static Path  write(Path path, Iterable lines, Charset cs, OpenOption... options)
+</code></pre> 
+ <p><code>write()</code>方法打开文件，将传递的内容写入文件，并关闭它。如果没有打开选项，它将使用<code>CREATE</code>，<code>TRUNCATE_EXISTING</code>和<code>WRITE</code>选项打开文件。<br>如果正在向文件写入文本，它会写一个平台相关的行分隔符。如果在写入文本行时未指定字符集，则默认使用<code>UTF-8</code>字符集。<br>以下代码演示了如何使用<code>write()</code>方法将文本行写入文件。</p> 
+ <pre><code class="lang-java">import static java.nio.file.StandardOpenOption.CREATE;
+import static java.nio.file.StandardOpenOption.WRITE;
+
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+
+public class Main {
+    public static void main(String[] args) {
+        List&lt;String&gt; texts = new ArrayList&lt;&gt;();
+        texts.add("test line - 1");
+        texts.add("test line - 2");
+        Path dest = Paths.get("C:\\Java_Dev\\twinkle.txt");
+        Charset cs = Charset.forName("US-ASCII");
+        try {
+            Path p = Files.write(dest, texts, cs, WRITE, CREATE);
+            System.out.println("Text was written to " + p.toAbsolutePath());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
+</code></pre> 
+ <p><code>Files.newOutputStream(Path path，OpenOption ... options)</code>返回指定路径的<code>OutputStream</code>。<br><code>Files.newBufferedWriter(Path path, Charset cs, OpenOption... options)</code> 方法为指定的路径返回<code>BufferedWriter</code>。</p> 
+ <p>执行上面代码，得到以下结果 - </p>   
+ <pre><code class="lang-java">Text was written to C:\Java_Dev\twinkle.txt
+</code></pre> 
+ <h2 id="h2-u968Fu673Au8BBFu95EEu6587u4EF6"><a name="随机访问文件" class="reference-link"></a><span class="header-link octicon octicon-link"></span>随机访问文件</h2>
+ <p><code>SeekableByteChannel</code>对象提供对文件的随机访问。使用<code>Files</code>类的<code>newByteChannel()</code>方法为<code>Path</code>获取一个<code>SeekableByteChannel</code>对象，如下所示：</p> 
+ <pre><code class="lang-java">Path  src = Paths.get("test.txt"); 
+SeekableByteChannel seekableChannel  = Files.newByteChannel(src, READ,  WRITE,  CREATE,  TRUNCATE_EXISTING);
+</code></pre> 
+ <p>使用<code>size()</code>方法以字节为单位获取<code>SeekableByteChannel</code>实体的大小。由于数据被截断或写入通道，因此更新了大小。</p> 
+ <pre><code class="lang-java">import static java.nio.file.StandardOpenOption.CREATE;
+import static java.nio.file.StandardOpenOption.READ;
+import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
+import static java.nio.file.StandardOpenOption.WRITE;
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
+import java.nio.channels.SeekableByteChannel;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+public class Main {
+    public static void main(String[] args) {
+        Path src = Paths.get("test.txt");
+        String encoding = System.getProperty("file.encoding");
+        Charset cs = Charset.forName(encoding);
+        try (SeekableByteChannel seekableChannel = Files.newByteChannel(src, READ, WRITE, CREATE, TRUNCATE_EXISTING)) {
+            printDetails(seekableChannel, "Before writing data");
+            writeData(seekableChannel, cs);
+            printDetails(seekableChannel, "After writing data");
+            seekableChannel.position(0);
+            printDetails(seekableChannel, "After resetting position to 0");
+            readData(seekableChannel, cs);
+            printDetails(seekableChannel, "After reading data");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void writeData(SeekableByteChannel seekableChannel, Charset cs) throws IOException {
+        String separator = System.getProperty("line.separator");
+        StringBuilder sb = new StringBuilder();
+        sb.append("test");
+        sb.append(separator);
+        sb.append("test2");
+        sb.append(separator);
+
+        CharBuffer charBuffer = CharBuffer.wrap(sb);
+        ByteBuffer byteBuffer = cs.encode(charBuffer);
+        seekableChannel.write(byteBuffer);
+    }
+
+    public static void readData(SeekableByteChannel seekableChannel, Charset cs) throws IOException {
+        ByteBuffer byteBuffer = ByteBuffer.allocate(128);
+        String encoding = System.getProperty("file.encoding");
+        while (seekableChannel.read(byteBuffer) &gt; 0) {
+            byteBuffer.rewind();
+            CharBuffer charBuffer = cs.decode(byteBuffer);
+            System.out.print(charBuffer);
+            byteBuffer.flip();
+        }
+    }
+
+    public static void printDetails(SeekableByteChannel seekableChannel, String msg) {
+        try {
+            System.out.println(
+                    msg + ": Size   = " + seekableChannel.size() + ", Position = " + seekableChannel.position());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
+</code></pre> 
+ <p>上面的代码生成以下结果。</p> 
+ <pre><code class="lang-java">Before writing data: Size   = 0, Position = 0
+After writing data: Size   = 13, Position = 13
+After resetting position to 0: Size   = 13, Position = 0
+test
+test2
+</code></pre>
+ <br>      
+</div></body></html>

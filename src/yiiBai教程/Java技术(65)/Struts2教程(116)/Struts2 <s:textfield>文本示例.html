@@ -1,0 +1,148 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Struts2 &lt;s:textfield&gt;文本示例</h1><div style="width:100%;float:left;" class="article-content">   
+ <p> 为了比较直观的学习，这里创建一个web工程为：struts2textfield。整个工程的目录结构如下： </p> 
+ <p> <img src="/uploads/tutorial/20151114/1-15111416241M44.png" alt=""> </p> 
+ <p> 在Struts2中，&lt;s:textfield&gt;文本范例，&nbsp;例如，可以声明“s:textfield”键属性或标签和名称属性。 </p> 
+ <pre>&lt;s:textfield key="username" /&gt;
+// 或
+&lt;s:textfield label="Username" name="username" /&gt;</pre> 
+ <div>
+   两者都产生相同的HTML输出(默认的XHTML主题)。类似如下的结果： 
+ </div> 
+ <pre>&lt;td class="tdLabel"&gt;
+  &lt;label for="registerUser_username" class="label"&gt;Username:&lt;/label&gt;
+&lt;/td&gt;
+&lt;td&gt;
+  &lt;input type="text" name="username" value="" id="registerUser_username"/&gt;
+&lt;/td&gt;&nbsp;</pre> 
+ <div>
+   在Struts2中，“name”将自动映射到JavaBean属性。&nbsp;在这种情况下，表格提交时，文本框的值使用“name=’username'”将调用对应动作的setUsername(String&nbsp;xx)来设置值。 
+ </div> 
+ <h2> Struts2 &lt;s:textfield&gt; 示例 </h2> 
+ <div>
+   在Struts2中创建一个文本框输入字段示例教程。 
+ </div> 
+ <h2> 1. 属性文件 </h2> 
+ <div>
+   两个属性文件用来存储信息。 
+ </div> 
+ <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:16px;"> <strong>global.properties</strong> </p> 
+ <pre>#Global messages
+username = 用户名
+submit = 提交</pre> 
+ <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:16px;"> <strong>RegisterAction.properties</strong> </p> 
+ <pre>#error message
+username.required = 用户名不可以为空</pre> 
+ <h2> 2. Action </h2> 
+ <div>
+   使用一个简单的动作类验证以确保用户名不为空，否则返回错误信息。 
+ </div> 
+ <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:16px;"> <strong>RegisterAction.java</strong> </p> 
+ <pre>package com.yiibai.user.action;
+
+import com.opensymphony.xwork2.ActionSupport;
+
+public class RegisterAction extends ActionSupport{
+
+	private String username;
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	//business logic
+	public String execute() {
+
+		return "SUCCESS";
+
+	}
+
+	//simple validation
+	public void validate(){
+		if("".equals(getUsername())){
+			addFieldError("username", getText("username.required"));
+		}
+	}
+}</pre> 
+ <h2> 3. 视图文件 </h2> 
+ <div>
+   结果页面使用Struts2&nbsp;“s:textfield”来创建一个HTML文本框输入字段。 
+ </div> 
+ <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:16px;"> <strong>register.jsp</strong> </p> 
+ <pre>&lt;%@ taglib prefix="s" uri="/struts-tags" %&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;/head&gt;
+
+&lt;body&gt;
+&lt;h1&gt;Struts 2 - textbox 示例&lt;/h1&gt;
+
+&lt;s:form action="registerUser" namespace="/user"&gt;
+
+	&lt;s:textfield key="username" /&gt;
+	&lt;s:submit key="submit" name="submit" /&gt;
+	
+&lt;/s:form&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;</pre> 
+ <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:16px;"> <strong>welcome.jsp</strong> </p> 
+ <pre>&lt;%@ page contentType="text/html;charset=UTF-8" %&gt;
+&lt;%@ taglib prefix="s" uri="/struts-tags" %&gt;
+&lt;html&gt;
+
+&lt;body&gt;
+&lt;h1&gt;Struts 2 - textbox 示例&lt;/h1&gt;
+
+&lt;h2&gt;&lt;s:property value="username"/&gt;&lt;/h2&gt;
+or
+&lt;h2&gt;&lt;s:property value="%{username}"/&gt;&lt;/h2&gt; 
+
+&lt;/body&gt;
+&lt;/html&gt;</pre> 
+ <h2 style="color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:24px;font-weight:500;"> 4. struts.xml </h2>   
+ <pre>&lt;?xml version="1.0" encoding="UTF-8" ?&gt;
+&lt;!DOCTYPE struts PUBLIC
+"-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+"http://struts.apache.org/dtds/struts-2.0.dtd"&gt;
+ 
+&lt;struts&gt;
+
+   &lt;constant name="struts.custom.i18n.resources" value="global" /&gt;
+   &lt;constant name="struts.devMode" value="true" /&gt;
+ 	
+   &lt;package name="user" namespace="/user" extends="struts-default"&gt;
+	&lt;action name="register"&gt;
+		&lt;result&gt;/pages/register.jsp&lt;/result&gt;
+	&lt;/action&gt;
+	&lt;action name="registerUser" 
+                class="com.yiibai.user.action.RegisterAction"&gt;
+		&lt;result name="SUCCESS"&gt;/pages/welcome.jsp&lt;/result&gt;
+		&lt;result name="input"&gt;/pages/register.jsp&lt;/result&gt;
+	&lt;/action&gt;
+   &lt;/package&gt;
+	
+&lt;/struts&gt;</pre> 
+ <h2> 5. 示例显示 </h2> 
+ <p> http://localhost:8080/struts2textfield/user/register.action </p> 
+ <p> <img src="/uploads/tutorial/20151114/1-1511141619403Y.png" alt=""> </p> 
+ <p> <img src="/uploads/tutorial/20151114/1-15111416211V16.png" alt=""> </p> 
+ <div style="text-align:center;"> 
+  <img title="struts2-textbox-example" src="file://E:/data/youdao/qq24B39E2329F08D9F4C3146A571A415EF/8e5457075ee040a28884756658cd99fa/box-example.jpeg" alt="Struts 2 textbox example" style="height:auto;"> 
+ </div> 
+ <div style="text-align:center;"> 
+  <img title="struts2-textbox-example2" src="file://E:/data/youdao/qq24B39E2329F08D9F4C3146A571A415EF/275c2e8a6e074befa15c59c0e4a5b131/ox-example2.jpeg" alt="Struts 2 textbox example" style="height:auto;"> 
+ </div> 
+ <h2> 参考 </h2> 
+ <ol> 
+  <li> <a target="_blank" href="http://struts.apache.org/2.x/docs/textfield.html">Struts2文本文档</a> </li> 
+ </ol> 
+ <div> 
+  <br> 
+ </div> 
+ <p> <br> </p>
+ <br>      
+</div></body></html>

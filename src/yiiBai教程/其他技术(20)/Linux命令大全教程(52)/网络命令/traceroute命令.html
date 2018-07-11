@@ -1,0 +1,213 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">traceroute命令</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>通过<code>traceroute</code>可以知道信息从计算机到互联网另一端的主机数据经过什么路径。当然每次数据包由某一同样的出发点(source)到达某一同样的目的地(destination)走的路径可能会不一样，但基本上来说大部分时候所走的路由是相同的。linux系统中，我们称之为<code>traceroute</code>,在MS Windows中为<code>tracert</code>。 <code>traceroute</code>通过发送小的数据包到目的设备直到其返回，来测量其需要多长时间。一条路径上的每个设备<code>traceroute</code>要测<code>3</code>次。输出结果中包括每次测试的时间(ms)和设备的名称(如有的话)及其IP地址。<br>在大多数情况下，在linux主机系统可直接执行命令行：</p> 
+ <pre><code class="lang-shell">traceroute hostname
+</code></pre> 
+ <p>而在Windows系统下是执行<code>tracert</code>的命令：</p> 
+ <pre><code class="lang-shell">tracert hostname
+</code></pre> 
+ <h2 id="h2-1-"><a name="1.命令格式" class="reference-link"></a><span class="header-link octicon octicon-link"></span>1.命令格式</h2>
+ <p>traceroute[参数][主机]</p> 
+ <h2 id="h2-2-"><a name="2.命令功能" class="reference-link"></a><span class="header-link octicon octicon-link"></span>2.命令功能</h2>
+ <p><code>traceroute</code>指令可追踪网络数据包的路由途径，预设数据包大小是<code>40Bytes</code>，用户可另行设置。<br>具体参数格式：traceroute [-dFlnrvx][-f&lt;存活数值&gt;][-g&lt;网关&gt;…][-i&lt;网络界面&gt;][-m&lt;存活数值&gt;][-p&lt;通信端口&gt;][-s&lt;来源地址&gt;][-t&lt;服务类型&gt;][-w&lt;超时秒数&gt;][主机名称或IP地址][数据包大小]</p> 
+ <h2 id="h2-3-"><a name="3.命令参数" class="reference-link"></a><span class="header-link octicon octicon-link"></span>3.命令参数</h2>
+ <ul> 
+  <li><code>-d</code> 使用Socket层级的排错功能。</li>
+  <li><code>-f</code> 设置第一个检测数据包的存活数值TTL的大小。</li>
+  <li><code>-F</code> 设置勿离断位。</li>
+  <li><code>-g</code> 设置来源路由网关，最多可设置8个。</li>
+  <li><code>-i</code> 使用指定的网络界面送出数据包。</li>
+  <li><code>-I</code> 使用ICMP回应取代UDP资料信息。</li>
+  <li><code>-m</code> 设置检测数据包的最大存活数值TTL的大小。</li>
+  <li><code>-n</code>直接使用IP地址而非主机名称。</li>
+  <li><code>-p</code> 设置UDP传输协议的通信端口。</li>
+  <li><code>-r</code> 忽略普通的Routing Table，直接将数据包送到远端主机上。</li>
+  <li><code>-s</code> 设置本地主机送出数据包的IP地址。</li>
+  <li><code>-t</code> 设置检测数据包的TOS数值。</li>
+  <li><code>-v</code> 详细显示指令的执行过程。</li>
+  <li><code>-w</code> 设置等待远端主机回报的时间。</li>
+  <li><code>-x</code> 开启或关闭数据包的正确性检验。</li>
+ </ul> 
+ <blockquote> 
+  <p>注意：有的系统(如：Centos7)上默认不安装 <code>traceroute</code> 命令工具，那么就要使用 root 用户先安装好了再使用。使用 <code>yum install traceroute</code> 命令来安装即可。</p> 
+ </blockquote> 
+ <h2 id="h2-4-"><a name="4.使用实例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>4.使用实例</h2>
+ <h3 id="h3--1-code-traceroute-code-"><a name="实例1：<code>traceroute</code> 用法简单、最常用的用法" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实例1：<code>traceroute</code> 用法简单、最常用的用法</h3>
+ <p>命令：</p> 
+ <pre><code class="lang-shell">traceroute www.yiibai.com
+</code></pre> 
+ <p>输出：</p> 
+ <pre><code class="lang-shell">[yiibai@localhost ~]$ traceroute www.yiibai.com
+traceroute to www.yiibai.com (112.124.103.85), 30 hops max, 60 byte packets
+ 1  112.66.64.1 (112.66.64.1)  3.789 ms  5.548 ms  2.798 ms
+ 2  218.77.139.177 (218.77.139.177)  6.378 ms  4.787 ms  4.786 ms
+ 3  218.77.137.73 (218.77.137.73)  30.638 ms  29.539 ms  31.520 ms
+ 4  202.97.85.94 (202.97.85.94)  46.474 ms * *
+ 5  * * *
+ 6  * 115.236.101.209 (115.236.101.209)  48.751 ms 115.236.101.217 (115.236.101.217)  47.206 ms
+ 7  42.120.247.73 (42.120.247.73)  47.765 ms 42.120.247.109 (42.120.247.109)  47.337 ms  47.383 ms
+ 8  106.11.144.18 (106.11.144.18)  46.717 ms 106.11.37.9 (106.11.37.9)  47.143 ms 106.11.144.30 (106.11.144.30)  54.233 ms
+ 9  * * *
+10  112.124.103.85 (112.124.103.85)  45.906 ms  45.463 ms  46.325 ms
+[yiibai@localhost ~]$
+</code></pre> 
+ <p><strong>说明：</strong><br>记录按序列号从<code>1</code>开始，每个纪录就是一跳 ，每跳表示一个网关，看到每行有三个时间，单位是 ms，其实就是<code>-q</code>的默认参数。探测数据包向每个网关发送三个数据包后，网关响应后返回的时间；如果使用 <code>traceroute -q 4 www.yiibai.com</code> ，表示向每个网关发送4个数据包。<br>有时我们<code>traceroute</code> 一台主机时，会看到有一些行是以星号表示的。出现这样的情况，可能是防火墙封掉了ICMP的返回信息，所以我们得不到什么相关的数据包返回数据。<br>有时在某一网关处延时比较长，有可能是某台网关比较阻塞，也可能是物理设备本身的原因。当然如果某台DNS出现问题时，不能解析主机名、域名时，也会 有延时长的现象；您可以加<code>-n</code> 参数来避免DNS解析，以IP格式输出数据。<br>如果在局域网中的不同网段之间，可以通过<code>traceroute</code> 来排查问题所在，是主机的问题还是网关的问题。如果通过远程来访问某台服务器遇到问题时，我们用到 <code>traceroute</code> 追踪数据包所经过的网关，提交IDC服务商，也有助于解决问题；但目前看来在国内解决这样的问题是比较困难的，就是发现问题所在，IDC服务商也不可能帮助我们解决。</p> 
+ <h2 id="h2--2-"><a name="实例2：跳数设置" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实例2：跳数设置</h2>
+ <p>命令：</p> 
+ <pre><code class="lang-shell">traceroute -m 10 www.yiibai.com
+</code></pre> 
+ <p>输出：</p> 
+ <pre><code class="lang-shell">[yiibai@localhost ~]$ traceroute -m 10 www.baidu.com
+traceroute to www.baidu.com (14.215.177.37), 10 hops max, 60 byte packets
+ 1  112.66.64.1 (112.66.64.1)  24.111 ms  24.168 ms  23.892 ms
+ 2  218.77.141.13 (218.77.141.13)  2.862 ms  2.613 ms  3.113 ms
+ 3  218.77.150.13 (218.77.150.13)  13.543 ms 218.77.150.169 (218.77.150.169)  15.057 ms 218.77.139.37 (218.77.139.37)  11.389 ms
+ 4  113.108.208.26 (113.108.208.26)  14.364 ms  14.109 ms  13.855 ms
+ 5  * * *
+ 6  14.29.121.194 (14.29.121.194)  13.087 ms 14.29.117.246 (14.29.117.246)  13.361 ms  13.780 ms
+ 7  * * *
+ 8  * * *
+ 9  * * *
+10  * * *
+[yiibai@localhost ~]$
+</code></pre> 
+ <h3 id="h3--3-ip-"><a name="实例3：显示IP地址，不查主机名" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实例3：显示IP地址，不查主机名</h3>
+ <p>命令：</p> 
+ <pre><code class="lang-shell">traceroute -n www.yiibai.com
+</code></pre> 
+ <p>输出：</p> 
+ <pre><code class="lang-shell">[yiibai@localhost ~]$ traceroute -n www.yiibai.com
+traceroute to www.yiibai.com (112.124.103.85), 30 hops max, 60 byte packets
+ 1  112.66.64.1  5.303 ms  5.710 ms  4.159 ms
+ 2  218.77.139.177  12.319 ms  4.822 ms  4.063 ms
+ 3  218.77.137.73  28.319 ms  31.587 ms  30.583 ms
+ 4  202.97.85.94  46.240 ms *  46.832 ms
+ 5  * 220.191.200.22  48.562 ms 220.191.200.14  47.844 ms
+ 6  115.236.101.213  48.804 ms 115.236.101.217  47.830 ms  47.916 ms
+ 7  42.120.247.105  49.330 ms 42.120.247.73  47.251 ms 42.120.247.57  49.740 ms
+ 8  106.11.144.26  46.769 ms 106.11.37.9  47.537 ms 106.11.144.30  46.512 ms
+ 9  * * *
+10  112.124.103.85  46.267 ms  46.497 ms  45.589 ms
+[yiibai@localhost ~]$
+[yiibai@localhost ~]$ traceroute  www.yiibai.com
+traceroute to www.yiibai.com (112.124.103.85), 30 hops max, 60 byte packets
+ 1  112.66.64.1 (112.66.64.1)  136.730 ms  137.479 ms  137.031 ms
+ 2  218.77.139.177 (218.77.139.177)  5.759 ms  5.458 ms  5.009 ms
+ 3  218.77.137.73 (218.77.137.73)  33.451 ms  33.259 ms  32.826 ms
+ 4  202.97.85.94 (202.97.85.94)  46.738 ms  46.541 ms *
+ 5  220.191.200.22 (220.191.200.22)  47.521 ms  49.346 ms  48.927 ms
+ 6  115.236.101.217 (115.236.101.217)  48.678 ms  48.109 ms 115.236.101.213 (115.236.101.213)  50.423 ms
+ 7  42.120.247.73 (42.120.247.73)  47.478 ms 42.120.247.89 (42.120.247.89)  51.216 ms 42.120.247.73 (42.120.247.73)  49.460 ms
+ 8  106.11.37.9 (106.11.37.9)  48.543 ms 106.11.144.18 (106.11.144.18)  46.301 ms 106.11.37.9 (106.11.37.9)  47.242 ms
+ 9  * * *
+10  112.124.103.85 (112.124.103.85)  45.647 ms  46.231 ms  45.803 ms
+[yiibai@localhost ~]$
+</code></pre> 
+ <h3 id="h3--4-udp-1688"><a name="实例4：探测包使用的基本UDP端口设置1688" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实例4：探测包使用的基本UDP端口设置1688</h3>
+ <p>命令：</p> 
+ <pre><code class="lang-shell">traceroute -p 1688 www.baidu.com
+</code></pre> 
+ <p>输出：</p> 
+ <pre><code class="lang-shell">[yiibai@localhost ~]$ traceroute -p 1688 www.baidu.com
+traceroute to www.baidu.com (14.215.177.38), 30 hops max, 60 byte packets
+ 1  112.66.64.1 (112.66.64.1)  5.181 ms  6.403 ms  6.980 ms
+ 2  218.77.152.5 (218.77.152.5)  2.537 ms  4.478 ms  4.229 ms
+ 3  218.77.150.13 (218.77.150.13)  14.014 ms 218.77.150.177 (218.77.150.177)  14.449 ms 218.77.139.37 (218.77.139.37)  12.531 ms
+ 4  113.96.0.117 (113.96.0.117)  19.652 ms  19.407 ms  18.873 ms
+ 5  * * *
+ 6  14.29.121.194 (14.29.121.194)  13.897 ms 14.29.117.242 (14.29.117.242)  13.578 ms 14.29.121.198 (14.29.121.198)  12.940 ms
+ 7  * * *
+</code></pre> 
+ <h3 id="h3--5-5"><a name="实例5：把探测包的个数设置为值5" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实例5：把探测包的个数设置为值5</h3>
+ <p>命令：</p> 
+ <pre><code class="lang-shell">traceroute -q 5 www.yiibai.com
+</code></pre> 
+ <p>输出：</p> 
+ <pre><code class="lang-shell">[yiibai@localhost ~]$ traceroute -q 5 www.yiibai.com
+traceroute to www.yiibai.com (112.124.103.85), 30 hops max, 60 byte packets
+ 1  112.66.64.1 (112.66.64.1)  3.569 ms  3.822 ms  4.244 ms  3.931 ms  4.283 ms
+ 2  218.77.139.177 (218.77.139.177)  4.032 ms  3.743 ms  3.255 ms  2.997 ms  3.193 ms
+ 3  218.77.137.73 (218.77.137.73)  32.480 ms  31.949 ms  31.635 ms  30.837 ms  30.040 ms
+ 4  202.97.85.94 (202.97.85.94)  47.288 ms * *  46.340 ms *
+ 5  * * * * *
+ 6  * 115.236.101.209 (115.236.101.209)  47.419 ms * * *
+ 7  42.120.247.105 (42.120.247.105)  49.506 ms 42.120.247.73 (42.120.247.73)  46.319 ms  47.250 ms 42.120.247.105 (42.120.247.105)  47.711 ms 42.120.247.89 (42.120.247.89)  48.121 ms
+ 8  106.11.144.22 (106.11.144.22)  45.250 ms  45.780 ms 106.11.144.30 (106.11.144.30)  46.084 ms  46.115 ms 140.205.19.61 (140.205.19.61)  47.716 ms
+ 9  * * * * *
+10  112.124.103.85 (112.124.103.85)  45.264 ms  45.793 ms  46.360 ms  45.483 ms  45.505 ms
+[yiibai@localhost ~]$
+</code></pre> 
+ <h3 id="h3--6-"><a name="实例6：绕过正常的路由表，直接发送到网络相连的主机" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实例6：绕过正常的路由表，直接发送到网络相连的主机</h3>
+ <p>命令：</p>   
+ <pre><code class="lang-shell">traceroute -r www.baidu.com
+</code></pre> 
+ <p>输出：</p> 
+ <pre><code class="lang-shell">[yiibai@localhost ~]$ traceroute -r www.baidu.com
+traceroute to www.baidu.com (14.215.177.37), 30 hops max, 60 byte packets
+connect: Network is unreachable
+[yiibai@localhost ~]$ ping www.baidu.com
+PING www.baidu.com (14.215.177.37) 56(84) bytes of data.
+64 bytes from 14.215.177.37 (14.215.177.37): icmp_seq=1 ttl=57 time=12.3 ms
+64 bytes from 14.215.177.37 (14.215.177.37): icmp_seq=2 ttl=57 time=12.0 ms
+^C
+--- www.baidu.com ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 1002ms
+rtt min/avg/max/mdev = 12.071/12.206/12.342/0.174 ms
+[yiibai@localhost ~]$ traceroute -r www.yiibai.com
+traceroute to www.yiibai.com (112.124.103.85), 30 hops max, 60 byte packets
+connect: Network is unreachable
+[yiibai@localhost ~]$
+</code></pre> 
+ <h3 id="h3--7-3-"><a name="实例7：把对外发探测包的等待响应时间设置为3秒" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实例7：把对外发探测包的等待响应时间设置为3秒</h3>
+ <p>命令：</p> 
+ <pre><code class="lang-shell">traceroute -w 3 www.baidu.com
+</code></pre> 
+ <p>输出：</p> 
+ <pre><code class="lang-shell">[yiibai@localhost ~]$ traceroute -w 3 www.baidu.com
+traceroute to www.baidu.com (14.215.177.38), 30 hops max, 60 byte packets
+ 1  112.66.64.1 (112.66.64.1)  6.215 ms  5.765 ms  5.534 ms
+ 2  218.77.152.5 (218.77.152.5)  2.448 ms  4.708 ms  4.322 ms
+ 3  218.77.139.37 (218.77.139.37)  13.081 ms 218.77.150.177 (218.77.150.177)  12.037 ms 218.77.139.37 (218.77.139.37)  12.508 ms
+ 4  113.96.0.117 (113.96.0.117)  22.515 ms  22.018 ms  21.789 ms
+ 5  * * *
+ 6  14.29.121.198 (14.29.121.198)  12.725 ms 14.29.117.242 (14.29.117.242)  15.920 ms 14.29.121.206 (14.29.121.206)  12.866 ms
+ 7  * * *
+</code></pre> 
+ <p><strong>Traceroute的工作原理：</strong><br>Traceroute最简单的基本用法是：traceroute hostname<br>Traceroute程序的设计是利用ICMP及IP header的TTL(Time To Live)栏位(field)。首先，traceroute送出一个TTL是1的IP datagram(其实，每次送出的为3个40字节的包，包括源地址，目的地址和包发出的时间标签)到目的地，当路径上的第一个路由器(router)收到这个datagram时，它将TTL减1。此时，TTL变为0了，所以该路由器会将此datagram丢掉，并送回一个「ICMP time exceeded」消息(包括发IP包的源地址，IP包的所有内容及路由器的IP地址)，traceroute 收到这个消息后，便知道这个路由器存在于这个路径上，接着traceroute 再送出另一个TTL是 2 的datagram，发现第 2 个路由器…… traceroute 每次将送出的datagram的TTL 加1来发现另一个路由器，这个重复的动作一直持续到某个datagram 抵达目的地。当datagram到达目的地后，该主机并不会送回ICMP time exceeded消息，因为它已是目的地了，那么traceroute如何得知目的地到达了呢？<br>Traceroute在送出UDP datagrams到目的地时，它所选择送达的port number 是一个一般应用程序都不会用的号码(30000 以上)，所以当此UDP datagram 到达目的地后该主机会送回一个「ICMP port unreachable」的消息，而当traceroute 收到这个消息时，便知道目的地已经到达了。所以traceroute 在Server端也是没有所谓的Daemon 程式。<br>Traceroute提取发 ICMP TTL到期消息设备的IP地址并作域名解析。每次 ，Traceroute都打印出一系列数据,包括所经过的路由设备的域名及 IP地址,三个包每次来回所花时间。</p> 
+ <h2 id="h2-windows-tracert-"><a name="Windows系统上的tracert命令用法" class="reference-link"></a><span class="header-link octicon octicon-link"></span>Windows系统上的tracert命令用法</h2>
+ <p><strong>格式：</strong></p> 
+ <pre><code class="lang-shell">tracert [-d] [-h maximum_hops] [-j host-list] [-w timeout] target_name
+</code></pre> 
+ <p><strong>参数说明：</strong><br>tracert [-d] [-h maximum_hops] [-j computer-list] [-w timeout] target_name<br>该诊断实用程序通过向目的地发送具有不同生存时间 (TL) 的 Internet 控制信息协议 (CMP) 回应报文，以确定至目的地的路由。路径上的每个路由器都要在转发该 ICMP 回应报文之前将其 TTL 值至少减 1，因此 TTL 是有效的跳转计数。当报文的 TTL 值减少到 0 时，路由器向源系统发回 ICMP 超时信息。通过发送 TTL 为 1 的第一个回应报文并且在随后的发送中每次将 TTL 值加 1，直到目标响应或达到最大 TTL 值，Tracert 可以确定路由。通过检查中间路由器发发回的 ICMP 超时 (ime Exceeded) 信息，可以确定路由器。注意，有些路由器“安静”地丢弃生存时间 (TLS) 过期的报文并且对 tracert 无效。</p> 
+ <p><strong>参数：</strong></p> 
+ <ul> 
+  <li><code>-d</code> 指定不对计算机名解析地址。</li>
+  <li><code>-h maximum_hops</code> 指定查找目标的跳转的最大数目。</li>
+  <li><code>-jcomputer-list</code> 指定在 computer-list 中松散源路由。</li>
+  <li><code>-w timeout</code> 等待由 timeout 对每个应答指定的毫秒数。</li>
+  <li><code>target_name</code> 目标计算机的名称。<br><strong>实例：</strong></li>
+ </ul> 
+ <pre><code class="lang-shell">Microsoft Windows [版本 10.0.10586]
+(c) 2015 Microsoft Corporation。保留所有权利。
+
+C:\Users\Administrator&gt;tracert www.yiibai.com
+
+通过最多 30 个跃点跟踪
+到 www.yiibai.com [112.124.103.85] 的路由:
+
+  1     2 ms     2 ms     3 ms  112.66.64.1
+  2     2 ms     3 ms     3 ms  218.77.139.177
+  3    27 ms    30 ms    27 ms  218.77.137.73
+  4     *        *       45 ms  202.97.85.94
+  5    46 ms     *       45 ms  220.191.200.14
+  6    46 ms    46 ms    46 ms  115.236.101.213
+  7    47 ms    46 ms    46 ms  42.120.247.73
+  8    46 ms    45 ms    46 ms  106.11.37.13
+  9     *        *        *     请求超时。
+ 10    45 ms    45 ms    45 ms  112.124.103.85
+
+跟踪完成。
+
+C:\Users\Administrator&gt;
+</code></pre>
+ <br>      
+</div></body></html>

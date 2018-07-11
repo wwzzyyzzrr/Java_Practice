@@ -1,0 +1,652 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Python正则表达式</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>正则表达式是一个特殊的字符序列，可以帮助您使用模式中保留的专门语法来匹配或查找其他字符串或字符串集。 正则表达式在UNIX世界中被广泛使用。</p> 
+ <blockquote> 
+  <p>注：很多开发人员觉得正则表达式比较难以理解，主要原因是缺少使用或不愿意在这上面花时间。</p> 
+ </blockquote> 
+ <p><code>re</code>模块在Python中提供对Perl类正则表达式的完全支持。如果在编译或使用正则表达式时发生错误，则<code>re</code>模块会引发异常<code>re.error</code>。</p> 
+ <p>在这篇文章中，将介绍两个重要的功能，用来处理正则表达式。 然而，首先是一件小事：有各种各样的字符，这些字符在正则表达式中使用时会有特殊的意义。 为了在处理正则表达式时避免混淆，我们将使用：<code>r'expression'</code>原始字符串。</p> 
+ <p><strong>匹配单个字符的基本模式</strong></p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>编号</th> 
+    <th>表达式</th> 
+    <th>描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>1</td> 
+    <td><code>a, X, 9, &lt;</code></td> 
+    <td>普通字符完全匹配。</td> 
+   </tr> 
+   <tr> 
+    <td>2</td> 
+    <td><code>.</code></td> 
+    <td>匹配任何单个字符，除了换行符’<code>\n</code>‘</td> 
+   </tr> 
+   <tr> 
+    <td>3</td> 
+    <td><code>\w</code></td> 
+    <td>匹配“单词”字符：字母或数字或下划线<code>[a-zA-Z0-9_]</code>。</td> 
+   </tr> 
+   <tr> 
+    <td>4</td> 
+    <td><code>\W</code></td> 
+    <td>匹配任何非字词。</td> 
+   </tr> 
+   <tr> 
+    <td>5</td> 
+    <td><code>\b</code></td> 
+    <td>字词与非字词之间的界限</td> 
+   </tr> 
+   <tr> 
+    <td>6</td> 
+    <td><code>\s</code></td> 
+    <td>匹配单个空格字符 - 空格，换行符，返回，制表符</td> 
+   </tr> 
+   <tr> 
+    <td>7</td> 
+    <td><code>\S</code></td> 
+    <td>匹配任何非空格字符。</td> 
+   </tr> 
+   <tr> 
+    <td>8</td> 
+    <td><code>\t</code>, <code>\n</code>, <code>\r</code></td> 
+    <td>制表符，换行符，退格符</td> 
+   </tr> 
+   <tr> 
+    <td>9</td> 
+    <td><code>\d</code></td> 
+    <td>十进制数<code>[0-9]</code></td> 
+   </tr> 
+   <tr> 
+    <td>10</td> 
+    <td><code>^</code></td> 
+    <td>匹配字符串的开头</td> 
+   </tr> 
+   <tr> 
+    <td>11</td> 
+    <td><code>$</code></td> 
+    <td>匹配字符串的末尾</td> 
+   </tr> 
+   <tr> 
+    <td>12</td> 
+    <td><code>\</code></td> 
+    <td>抑制字符的“特殊性”，也叫转义字符。</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p><strong>编译标志</strong></p> 
+ <p>编译标志可以修改正则表达式的某些方面。标志在<code>re</code>模块中有两个名称：一个很长的名称，如<code>IGNORECASE</code>，和一个简短的单字母形式，如<code>I</code>。</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>编号</th> 
+    <th>标志</th> 
+    <th>含义</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>1</td> 
+    <td>ASCII, A</td> 
+    <td>像<code>\w</code>，<code>\b</code>，<code>\s</code>和<code>\d</code>之间的几个转义只匹配ASCII字符与相应的属性。</td> 
+   </tr> 
+   <tr> 
+    <td>2</td> 
+    <td>DOTALL, S</td> 
+    <td>匹配任何字符，包括换行符</td> 
+   </tr> 
+   <tr> 
+    <td>3</td> 
+    <td>IGNORECASE, I</td> 
+    <td>不区分大小写匹配</td> 
+   </tr> 
+   <tr> 
+    <td>4</td> 
+    <td>LOCALE, L</td> 
+    <td>做一个区域感知的匹配</td> 
+   </tr> 
+   <tr> 
+    <td>5</td> 
+    <td>MULTILINE, M</td> 
+    <td>多行匹配，影响<code>^</code>和<code>$</code></td> 
+   </tr> 
+   <tr> 
+    <td>6</td> 
+    <td>VERBOSE, X (for ‘extended’)</td> 
+    <td>启用详细的<code>RE</code>，可以更干净，更容易理解</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h2 id="h2-1-match-"><a name="1.match函数" class="reference-link"></a><span class="header-link octicon octicon-link"></span>1.match函数</h2>
+ <p>此函数尝试将<code>RE</code>模式与可选标志的字符串进行匹配。</p> 
+ <p>下面是函数的语法 -</p> 
+ <pre><code class="lang-python">re.match(pattern, string, flags = 0)
+</code></pre> 
+ <p>这里是参数的描述 -</p> 
+ <ul> 
+  <li><code>pattern</code> - 这是要匹配的正则表达式。 </li>
+  <li><code>string</code> - 这是字符串，它将被搜索用于匹配字符串开头的模式。 |</li>
+  <li><code>flags</code> - 可以使用按位OR(<code>|</code>)指定不同的标志。 这些是修饰符，如下表所列。</li>
+ </ul> 
+ <p><code>re.match</code>函数在成功时返回匹配对象，失败时返回<code>None</code>。使用<code>match(num)</code>或<code>groups()</code>函数匹配对象来获取匹配的表达式。</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>编号</th> 
+    <th>匹配对象</th> 
+    <th>描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>1</td> 
+    <td><code>group(num = 0)</code></td> 
+    <td>此方法返回整个匹配(或特定子组<code>num</code>)</td> 
+   </tr> 
+   <tr> 
+    <td>2</td> 
+    <td><code>groups()</code></td> 
+    <td>此方法返回一个元组中的所有匹配子组(如果没有，则返回为<code>None</code>)</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p><strong>示例</strong></p> 
+ <pre><code class="lang-python">#!/usr/bin/python3
+import re
+
+line = "Cats are smarter than dogs"
+
+matchObj = re.match( r'(.*) are (.*?) .*', line, re.M|re.I)
+
+if matchObj:
+   print ("matchObj.group() : ", matchObj.group())
+   print ("matchObj.group(1) : ", matchObj.group(1))
+   print ("matchObj.group(2) : ", matchObj.group(2))
+else:
+   print ("No match!!")
+</code></pre> 
+ <p>当执行上述代码时，会产生以下结果 -</p> 
+ <pre><code class="lang-shell">matchObj.group() :  Cats are smarter than dogs
+matchObj.group(1) :  Cats
+matchObj.group(2) :  smarter
+</code></pre> 
+ <h2 id="h2-2-search-"><a name="2.search函数" class="reference-link"></a><span class="header-link octicon octicon-link"></span>2.search函数</h2>
+ <p>此函数尝试将<code>RE</code>模式与可选标志的字符串进行匹配。</p> 
+ <p>下面是这个函数的语法 -</p> 
+ <pre><code class="lang-python">re.match(pattern, string, flags = 0)
+</code></pre> 
+ <p>这里是参数的描述 -</p> 
+ <ul> 
+  <li><code>pattern</code> - 这是要匹配的正则表达式。 </li>
+  <li><code>string</code> - 这是字符串，它将被搜索用于匹配字符串开头的模式。 |</li>
+  <li><code>flags</code> - 可以使用按位OR(<code>|</code>)指定不同的标志。 这些是修饰符，如下表所列。</li>
+ </ul> 
+ <p><code>re.search</code>函数在成功时返回匹配对象，否则返回<code>None</code>。使用<code>match</code>对象的<code>group(num)</code>或<code>groups()</code>函数来获取匹配的表达式。</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>编号</th> 
+    <th>匹配对象</th> 
+    <th>描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>1</td> 
+    <td><code>group(num = 0)</code></td> 
+    <td>此方法返回整个匹配(或特定子组<code>num</code>)</td> 
+   </tr> 
+   <tr> 
+    <td>2</td> 
+    <td><code>groups()</code></td> 
+    <td>此方法返回一个元组中的所有匹配子组(如果没有，则返回为<code>None</code>)</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p><strong>示例</strong></p> 
+ <pre><code class="lang-python">#!/usr/bin/python3
+import re
+
+line = "Cats are smarter than dogs";
+
+searchObj = re.search( r'(.*) are (.*?) .*', line, re.M|re.I)
+
+if searchObj:
+   print ("searchObj.group() : ", searchObj.group())
+   print ("searchObj.group(1) : ", searchObj.group(1))
+   print ("searchObj.group(2) : ", searchObj.group(2))
+else:
+   print ("Nothing found!!")
+</code></pre> 
+ <p>当执行上述代码时，会产生以下结果 -</p> 
+ <pre><code class="lang-python">matchObj.group() :  Cats are smarter than dogs
+matchObj.group(1) :  Cats
+matchObj.group(2) :  smarter
+</code></pre> 
+ <h2 id="h2-3-"><a name="3.匹配与搜索" class="reference-link"></a><span class="header-link octicon octicon-link"></span>3.匹配与搜索</h2>
+ <p>Python提供基于正则表达式的两种不同的原始操作：<code>match</code>检查仅匹配字符串的开头，而<code>search</code>检查字符串中任何位置的匹配(这是Perl默认情况下的匹配)。</p> 
+ <p><strong>示例</strong></p> 
+ <pre><code class="lang-python">#!/usr/bin/python3
+import re
+
+line = "Cats are smarter than dogs";
+
+matchObj = re.match( r'dogs', line, re.M|re.I)
+if matchObj:
+   print ("match --&gt; matchObj.group() : ", matchObj.group())
+else:
+   print ("No match!!")
+
+searchObj = re.search( r'dogs', line, re.M|re.I)
+if searchObj:
+   print ("search --&gt; searchObj.group() : ", searchObj.group())
+else:
+   print ("Nothing found!!")
+</code></pre> 
+ <p>当执行上述代码时，会产生以下结果 -</p> 
+ <pre><code class="lang-shell">No match!!
+search --&gt; matchObj.group() :  dogs
+</code></pre> 
+ <h2 id="h2-4-"><a name="4.搜索和替换" class="reference-link"></a><span class="header-link octicon octicon-link"></span>4.搜索和替换</h2>
+ <p>使用正则表达式<code>re</code>模块中的最重要的之一是<code>sub</code>。</p> 
+ <p><strong>模块</strong></p> 
+ <pre><code class="lang-python">re.sub(pattern, repl, string, max=0)
+</code></pre> 
+ <p>此方法使用<code>repl</code>替换所有出现在<code>RE</code>模式的字符串，替换所有出现，除非提供<code>max</code>。此方法返回修改的字符串。</p> 
+ <p><strong>示例</strong></p> 
+ <pre><code class="lang-python">#!/usr/bin/python3
+import re
+
+phone = "2018-959-559 # This is Phone Number"
+
+# Delete Python-style comments
+num = re.sub(r'#.*$', "", phone)
+print ("Phone Num : ", num)
+
+# Remove anything other than digits
+num = re.sub(r'\D', "", phone)    
+print ("Phone Num : ", num)
+</code></pre> 
+ <p>当执行上述代码时，会产生以下结果 -</p> 
+ <pre><code class="lang-shell">Phone Num :  2018-959-559
+Phone Num :  2018959559
+</code></pre> 
+ <h2 id="h2-5-"><a name="5.正则表达式修饰符：选项标志" class="reference-link"></a><span class="header-link octicon octicon-link"></span>5.正则表达式修饰符：选项标志</h2>
+ <p>正则表达式文字可能包含一个可选修饰符，用于控制匹配的各个方面。 修饰符被指定为可选标志。可以使用异或(<code>|</code>)提供多个修饰符，如前所示，可以由以下之一表示 -</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>编号</th> 
+    <th>修辞符</th> 
+    <th>描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>1</td> 
+    <td><code>re.I</code></td> 
+    <td>执行不区分大小写的匹配。</td> 
+   </tr> 
+   <tr> 
+    <td>2</td> 
+    <td><code>re.L</code></td> 
+    <td>根据当前语言环境解释单词。这种解释影响字母组(<code>\w</code>和<code>\W</code>)以及字边界行为(<code>\b</code>和<code>\B</code>)。</td> 
+   </tr> 
+   <tr> 
+    <td>3</td> 
+    <td><code>re.M</code></td> 
+    <td>使<code>$</code>匹配一行的结尾(而不仅仅是字符串的结尾)，并使<code>^</code>匹配任何行的开始(而不仅仅是字符串的开头)。</td> 
+   </tr> 
+   <tr> 
+    <td>4</td> 
+    <td><code>re.S</code></td> 
+    <td>使一个句点(<code>.</code>)匹配任何字符，包括换行符。</td> 
+   </tr> 
+   <tr> 
+    <td>5</td> 
+    <td><code>re.U</code></td> 
+    <td>根据Unicode字符集解释字母。 此标志影响<code>\w</code>，<code>\W</code>，<code>\b</code>，<code>\B</code>的行为。</td> 
+   </tr> 
+   <tr> 
+    <td>6</td> 
+    <td><code>re.X</code></td> 
+    <td>允许“cuter”正则表达式语法。 它忽略空格(除了一个集合<code>[]</code>内部，或者用反斜杠转义)，并将未转义的<code>#</code>作为注释标记。</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h2 id="h2-6-"><a name="6.正则表达模式" class="reference-link"></a><span class="header-link octicon octicon-link"></span>6.正则表达模式</h2>
+ <p>除了控制字符<code>(+ ? . * ^ $ ( ) [ ] { } | \)</code>，所有字符都与其自身匹配。 可以通过使用反斜杠将其转换为控制字符。</p> 
+ <h2 id="h2-7-"><a name="7.正则表达式示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>7.正则表达式示例</h2>
+ <p><strong>字符常量</strong></p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>编号</th> 
+    <th>示例</th> 
+    <th>说明</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>1</td> 
+    <td>python</td> 
+    <td>匹配“python”。</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p><strong>字符类</strong></p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>编号</th> 
+    <th>示例</th> 
+    <th>说明</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>1</td> 
+    <td><code>[Pp]ython</code></td> 
+    <td>匹配“Python”或“python”</td> 
+   </tr> 
+   <tr> 
+    <td>2</td> 
+    <td><code>rub[ye]</code></td> 
+    <td>匹配“ruby”或“rube”</td> 
+   </tr> 
+   <tr> 
+    <td>3</td> 
+    <td><code>[aeiou]</code></td> 
+    <td>匹配任何一个小写元音</td> 
+   </tr> 
+   <tr> 
+    <td>4</td> 
+    <td><code>[0-9]</code></td> 
+    <td>匹配任何数字; 如[0123456789]</td> 
+   </tr> 
+   <tr> 
+    <td>5</td> 
+    <td><code>[a-z]</code></td> 
+    <td>匹配任何小写ASCII字母</td> 
+   </tr> 
+   <tr> 
+    <td>6</td> 
+    <td><code>[A-Z]</code></td> 
+    <td>匹配任何大写的ASCII字母</td> 
+   </tr> 
+   <tr> 
+    <td>7</td> 
+    <td><code>[a-zA-Z0-9]</code></td> 
+    <td>匹配上述任何一个</td> 
+   </tr> 
+   <tr> 
+    <td>8</td> 
+    <td><code>[^aeiou]</code></td> 
+    <td>匹配除小写元音之外的任何东西</td> 
+   </tr> 
+   <tr> 
+    <td>9</td> 
+    <td><code>[^0-9]</code></td> 
+    <td>匹配数字以外的任何东西</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p><strong>特殊字符类</strong></p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>编号</th> 
+    <th>示例</th> 
+    <th>说明</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>1</td> 
+    <td><code>.</code></td> 
+    <td>匹配除换行符以外的任何字符</td> 
+   </tr> 
+   <tr> 
+    <td>2</td> 
+    <td><code>\d</code></td> 
+    <td>匹配数字：<code>[0-9]</code></td> 
+   </tr> 
+   <tr> 
+    <td>3</td> 
+    <td><code>\D</code></td> 
+    <td>匹配非数字：<code>[^0-9]</code></td> 
+   </tr> 
+   <tr> 
+    <td>4</td> 
+    <td><code>\s</code></td> 
+    <td>匹配空格字符：<code>[\t\r\n\f]</code></td> 
+   </tr> 
+   <tr> 
+    <td>5</td> 
+    <td><code>\S</code></td> 
+    <td>匹配非空格：<code>[^\t\r\n\f]</code></td> 
+   </tr> 
+   <tr> 
+    <td>6</td> 
+    <td><code>\w</code></td> 
+    <td>匹配单字字符： <code>[A-Za-z0-9_]</code></td> 
+   </tr> 
+   <tr> 
+    <td>7</td> 
+    <td><code>\W</code></td> 
+    <td>匹配非单字字符： <code>[A-Za-z0-9_]</code></td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p><strong>重复匹配</strong></p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>编号</th> 
+    <th>示例</th> 
+    <th>说明</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>1</td> 
+    <td><code>ruby?</code></td> 
+    <td>匹配“rub”或“ruby”：<code>y</code>是可选的</td> 
+   </tr> 
+   <tr> 
+    <td>2</td> 
+    <td><code>ruby*</code></td> 
+    <td>匹配“rub”加上<code>0</code>个以上的<code>y</code></td> 
+   </tr> 
+   <tr> 
+    <td>3</td> 
+    <td><code>ruby+</code></td> 
+    <td>匹配“rub”加上<code>1</code>个或更多的<code>y</code></td> 
+   </tr> 
+   <tr> 
+    <td>4</td> 
+    <td><code>\d{3}</code></td> 
+    <td>完全匹配<code>3</code>位数</td> 
+   </tr> 
+   <tr> 
+    <td>5</td> 
+    <td><code>\d{3,}</code></td> 
+    <td>匹配<code>3</code>位或更多位数字</td> 
+   </tr> 
+   <tr> 
+    <td>6</td> 
+    <td><code>\d{3,5}</code></td> 
+    <td>匹配3，4或5位数</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p><strong>非贪婪重复</strong></p> 
+ <p>这匹配最小的重复次数 -</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>编号</th> 
+    <th>示例</th> 
+    <th>说明</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>1</td> 
+    <td><code>&lt;.*&gt;</code></td> 
+    <td>贪婪重复：匹配“<code>&lt;python&gt; perl&gt;</code>”</td> 
+   </tr> 
+   <tr> 
+    <td>2</td> 
+    <td><code>&lt;.*?&gt;</code></td> 
+    <td>非贪婪重复：在“<code>&lt;python&gt; perl</code>”中匹配“<code>&lt;python&gt;</code>”</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p><strong>用圆括号分组</strong></p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>编号</th> 
+    <th>示例</th> 
+    <th>说明</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>1</td> 
+    <td><code>\D\d+</code></td> 
+    <td>没有分组：<code>+</code>重复<code>\d</code></td> 
+   </tr> 
+   <tr> 
+    <td>2</td> 
+    <td><code>(\D\d)+</code></td> 
+    <td>分组：<code>+</code>重复<code>\D\d</code>对</td> 
+   </tr> 
+   <tr> 
+    <td>3</td> 
+    <td><code>([Pp]ython(,)?)+</code></td> 
+    <td>匹配“Python”，“Python，python，python”等</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p><strong>反向引用</strong></p> 
+ <p>这与以前匹配的组再次匹配 -</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>编号</th> 
+    <th>示例</th> 
+    <th>说明</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>1</td> 
+    <td><code>([Pp])ython&amp;\1ails</code></td> 
+    <td>匹配python和pails或Python和Pails</td> 
+   </tr> 
+   <tr> 
+    <td>2</td> 
+    <td><code>(['"])[^\1]*\1</code></td> 
+    <td>单引号或双引号字符串。<code>\1</code>匹配第一个分组匹配。 <code>\2</code>匹配任何第二个分组匹配等</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p><strong>备择方案</strong></p> 
+ <ul> 
+  <li><code>python|perl</code> - 匹配“python”或“perl”</li>
+  <li><code>rub(y|le)</code> - 匹配 “ruby” 或 “ruble”</li>
+  <li><code>Python(!+|\?)</code> - “Python”后跟一个或多个！ 还是一个？</li>
+ </ul> 
+ <p><strong>锚点</strong></p> 
+ <p>这需要指定匹配位置。</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>编号</th> 
+    <th>示例</th> 
+    <th>说明</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>1</td> 
+    <td><code>^Python</code></td> 
+    <td>在字符串或内部行的开头匹配“Python”</td> 
+   </tr> 
+   <tr> 
+    <td>2</td> 
+    <td><code>Python$</code></td> 
+    <td>在字符串或内部行的结尾匹配“Python”</td> 
+   </tr> 
+   <tr> 
+    <td>3</td> 
+    <td><code>\APython</code></td> 
+    <td>在字符串的开头匹配“Python”</td> 
+   </tr> 
+   <tr> 
+    <td>4</td> 
+    <td><code>Python\Z</code></td> 
+    <td>在字符串的末尾匹配“Python”</td> 
+   </tr> 
+   <tr> 
+    <td>5</td> 
+    <td><code>\bPython\b</code></td> 
+    <td>在字词的边界匹配“Python”</td> 
+   </tr> 
+   <tr> 
+    <td>6</td> 
+    <td><code>\brub\B</code></td> 
+    <td><code>\B</code>是非字词边界：在“rube”和“ruby”中匹配“rub”，而不是单独匹配</td> 
+   </tr> 
+   <tr> 
+    <td>7</td> 
+    <td><code>Python(?=!)</code></td> 
+    <td>匹配“Python”，如果跟着感叹号。</td> 
+   </tr> 
+   <tr> 
+    <td>8</td> 
+    <td><code>Python(?!!)</code></td> 
+    <td>匹配“Python”，如果没有感叹号后面。</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p><strong>带括号的特殊语法</strong></p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>编号</th> 
+    <th>示例</th> 
+    <th>说明</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>1</td> 
+    <td><code>R(?#comment)</code></td> 
+    <td>匹配“R”。其余的都是注释</td> 
+   </tr> 
+   <tr> 
+    <td>2</td> 
+    <td><code>R(?i)uby</code></td> 
+    <td>匹配“uby”时不区分大小写</td> 
+   </tr> 
+   <tr> 
+    <td>3</td> 
+    <td><code>R(?i:uby)</code></td> 
+    <td>同上</td> 
+   </tr> 
+   <tr> 
+    <td>4</td> 
+    <td>`rub(?:y</td> 
+    <td>le))`</td> 
+    <td>仅组合而不创建<code>\1</code>反向引用</td> 
+   </tr> 
+  </tbody> 
+ </table>
+ <br>      
+</div></body></html>

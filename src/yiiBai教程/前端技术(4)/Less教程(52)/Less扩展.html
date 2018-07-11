@@ -1,0 +1,284 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Less扩展</h1><div style="width:100%;float:left;" class="article-content">   
+ <div> 
+  <div>
+    扩展是一个&nbsp;LESS&nbsp;伪类，它通过扩展其他选择器样式在一个选择器使用&nbsp;:extend&nbsp;选择器。 
+  </div> 
+ </div> 
+ <div> 
+  <h2> 示例 </h2> 
+  <div>
+    下面的例子演示了在LESS文件使用扩展： 
+  </div> 
+  <h3> extend_syntax.html </h3> 
+  <pre>&lt;!doctype html&gt;
+&lt;head&gt;
+   &lt;link rel="stylesheet" href="style.css" type="text/css" /&gt;
+&lt;/head&gt;
+&lt;body&gt;
+   &lt;div class="style"&gt;
+     &lt;h2&gt;Welcome to Yiibai Yiibai&lt;/h2&gt;
+     &lt;p&gt;Hello, You guys!&lt;/p&gt;
+   &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre> 
+  <div>
+    接下来，创建文件 style.less 
+  </div> 
+  <h3> style.less </h3> 
+  <pre>h2 {
+  &amp;:extend(.style);
+  font-style: italic;
+}
+.style {
+  background: green;
+}</pre> 
+  <div>
+    你可以编译extend.less文件使用以下命令来生成extend.css： 
+  </div> 
+  <pre>lessc extend.less extend.css</pre> 
+  <div>
+    接着执行上面的命令，它会自动创建&nbsp;style.css文件，下面的代码： 
+  </div> 
+  <h3> style.css </h3> 
+  <pre>h2 {
+  font-style: italic;
+}
+.style,
+h2 {
+  background: blue;
+}</pre> 
+  <h2> 输出结果 </h2> 
+  <div>
+    让我们来执行以下步骤，看看上面的代码工作： 
+  </div> 
+  <ul> 
+   <li> 
+    <div>
+      保存上面的HTML代码在&nbsp;extend_syntax.html文件。 
+    </div> </li> 
+   <li> 
+    <div>
+      在浏览器中打开该HTML文件，得到如下输出显示。 
+    </div> </li> 
+  </ul> 
+  <img src="/uploads/tutorial/20160113/1-160113153Pb05.png" alt="">
+  <br> 
+  <h2> 
+   <div>
+     扩展语法 
+   </div> </h2> 
+  <p> 扩展放入规则集或连接到一个选择器。它类似于包含一个或多个类，它们是由逗号分隔的伪类。使用可选的关键字all，每个选择器可以这样遵循。 </p> 
+  <h2> 示例 </h2> 
+  <div>
+    下面的例子演示了使用 LESS&nbsp;文件的扩展语法： 
+  </div> 
+  <h3> extend_syntax.html </h3> 
+  <pre>&lt;!doctype html&gt;
+&lt;head&gt;
+   &lt;link rel="stylesheet" href="style.css" type="text/css" /&gt;
+&lt;/head&gt;
+&lt;body&gt;
+   &lt;div class="style"&gt;
+    &lt;h2&gt;Welcome to Yiibai Yiibai&lt;/h2&gt;
+    &lt;div class="container"&gt;
+      &lt;p&gt;Hello, You guys!&lt;/p&gt;
+    &lt;/div&gt;
+   &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre> 
+  <div>
+    接下来，创建文件 style.less 
+  </div> 
+  <h3> style.less </h3> 
+  <pre>.style:extend(.container, .img)
+{
+  background: #BF70A5;
+}
+.container {
+  font-style: italic;
+}
+.img{
+   font-size: 30px;
+ }</pre> 
+  <div>
+    你可以编译&nbsp;style.less&nbsp;文件使用以下命令来生成&nbsp;style.css&nbsp;文件： 
+  </div> 
+  <pre>lessc style.less style.css</pre> 
+  <div>
+    接着执行上面的命令，它会自动创建&nbsp;style.css文件，下面的代码： 
+  </div> 
+  <h3> style.css </h3> 
+  <pre>.style {
+  background: #BF70A5;
+}
+.container,
+.style {
+  font-style: italic;
+}
+.img,
+.style {
+  font-size: 30px;
+}</pre> 
+  <h2> 输出结果 </h2> 
+  <div> 
+   <div>
+     让我们来执行以下步骤，看看上面的代码工作： 
+   </div> 
+   <ul> 
+    <li> 
+     <div>
+       保存上面的HTML代码在&nbsp;extend_syntax.html文件。 
+     </div> </li> 
+    <li> 
+     <div>
+       在浏览器中打开该HTML文件，得到如下输出显示。 
+     </div> </li> 
+   </ul> 
+  </div> 
+  <img src="/uploads/tutorial/20160113/1-160113153RMP.png" alt="">
+  <br> 
+  <div>
+    下表列出了扩展语法，您可以在LESS 使用它的所有类型： 
+  </div> 
+  <table border="1" cellpadding="2" cellspacing="0" style="font-size:14px;color:#313131;font-family:Verdana, Geneva, Tahoma,  Helvetica, background-color:#F7F7F7;"> 
+   <tbody> 
+    <tr> 
+     <th style="border:1px solid #999999;background-color:#EEEEEE;"> S.N. </th> 
+     <th style="border:1px solid #999999;background-color:#EEEEEE;"> 
+      <div style="background-color:inherit;">
+        类型和说明 
+      </div> </th> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;"> 1 </td> 
+     <td style="border:1px solid #999999;"> 
+      <div> 
+       <a target="_blank" href="http://www.yiibai.com/less/extend_attached_to_selector.html">扩展附加到选择</a>器 
+      </div> <a target="_blank" href="http://www.yiibai.com/less/extend_attached_to_selector.html"><br> </a> 
+      <div>
+        扩展连接到一个选择器，类似于具有选择器作为参数的伪类。 
+      </div> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;"> 2 </td> 
+     <td style="border:1px solid #999999;"> <a target="_blank" href="http://www.yiibai.com/less/extend_inside_ruleset.html"></a><a target="_blank" href="http://www.yiibai.com/less/extend_inside_ruleset.html"> 
+       <div>
+         扩展内部规则集 
+       </div> </a><br> 
+      <div>
+        &amp;:extend延长(选择器)语法可以在规则集主体里面放。 
+      </div> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;"> 3 </td> 
+     <td style="border:1px solid #999999;"> <a target="_blank" href="http://www.yiibai.com/less/extending_nested_selectors.html"></a><a target="_blank" href="http://www.yiibai.com/less/extending_nested_selectors.html"> 
+       <div>
+         扩展嵌套选择器 
+       </div> </a><br> 
+      <div>
+        嵌套选择器使用扩展选择器匹配。 
+      </div> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;"> 4 </td> 
+     <td style="border:1px solid #999999;"> <a target="_blank" href="http://www.yiibai.com/less/exact_matching_with_extend.html"></a><a target="_blank" href="http://www.yiibai.com/less/exact_matching_with_extend.html"> 
+       <div>
+         使用扩展精确匹配 
+       </div> </a><br> 
+      <div>
+        默认情况下扩展外观选择器之间的精确匹配。 
+      </div> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;"> 5 </td> 
+     <td style="border:1px solid #999999;"> <a target="_blank" href="http://www.yiibai.com/less/nth_expression.html">nth表达式</a><br> 
+      <div>
+        第n个表达式的形式在某种程度上很重要，否则，它对待选择器将不同。 
+      </div> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;"> 6 </td> 
+     <td style="border:1px solid #999999;"> <a target="_blank" href="http://www.yiibai.com/less/extend_all.html">扩展"all"</a><br> 
+      <div>
+        当关键字 all 被最后确定在扩展参数，那么LESS匹配选择器作为另一个选择器部分。 
+      </div> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;"> 7 </td> 
+     <td style="border:1px solid #999999;"> <a target="_blank" href="http://www.yiibai.com/less/selector_interpolation_with_extend.html"></a><a target="_blank" href="http://www.yiibai.com/less/selector_interpolation_with_extend.html"> 
+       <div>
+         选择器插值扩展 
+       </div> </a><br> 
+      <div>
+        在多大程度上可以被连接到内插选择器。 
+      </div> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;"> 8 </td> 
+     <td style="border:1px solid #999999;"> <a target="_blank" href="http://www.yiibai.com/less/scoping_extend_inside_media.html"></a><a target="_blank" href="http://www.yiibai.com/less/scoping_extend_inside_media.html"> 
+       <div>
+         作用域及扩展@media 
+       </div> </a><br> 
+      <div>
+        扩展匹配选择器只存在相同的媒体声明中。 
+      </div> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;"> 9 </td> 
+     <td style="border:1px solid #999999;"> <a target="_blank" href="http://www.yiibai.com/less/duplication_detection.html"></a><a target="_blank" href="http://www.yiibai.com/less/duplication_detection.html"> 
+       <div>
+         重复检测 
+       </div> </a><br> 
+      <div>
+        它不能检测选择器的重复。 
+      </div> </td> 
+    </tr> 
+   </tbody> 
+  </table> 
+  <div>
+    下面是扩展类型的用例： 
+  </div> 
+  <table border="1" cellpadding="2" cellspacing="0" style="font-size:14px;color:#313131;font-family:Verdana, Geneva, Tahoma,  Helvetica, background-color:#F7F7F7;"> 
+   <tbody> 
+    <tr> 
+     <th style="border:1px solid #999999;background-color:#EEEEEE;"> S.N. </th> 
+     <th style="border:1px solid #999999;background-color:#EEEEEE;"> 
+      <div style="background-color:inherit;">
+        类型和说明 
+      </div> </th> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;"> 1 </td> 
+     <td style="border:1px solid #999999;"> <a target="_blank" href="http://www.yiibai.com/less/classic_use_case.html"></a><a target="_blank" href="http://www.yiibai.com/less/classic_use_case.html"> 
+       <div>
+         经典用例 
+       </div> </a><br> 
+      <div>
+        在Less中经典的用例是用来避开添加基类。 
+      </div> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;"> 2 </td> 
+     <td style="border:1px solid #999999;"> <a target="_blank" href="http://www.yiibai.com/less/reducing_css_size.html"></a><a target="_blank" href="http://www.yiibai.com/less/reducing_css_size.html"> 
+       <div>
+         减小CSS大小 
+       </div> </a><br> 
+      <div>
+        扩展用于移动选择器尽量要使用属性，这有助于降低CSS生成代码。 
+      </div> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;"> 3 </td> 
+     <td style="border:1px solid #999999;"> <a target="_blank" href="http://www.yiibai.com/less/combining_styles_more_advanced_mixin.html"></a><a target="_blank" href="http://www.yiibai.com/less/combining_styles_more_advanced_mixin.html"> 
+       <div>
+         合并风格/更高级的混入 
+       </div> </a>&nbsp;<br> 
+      <div>
+        使用扩展我们可以结合特定选择器相同的风格到其他选择器。 
+      </div> </td> 
+    </tr> 
+   </tbody> 
+  </table> 
+ </div>
+ <br>      
+</div></body></html>

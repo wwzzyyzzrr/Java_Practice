@@ -1,0 +1,115 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Java访问者模式</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>在访问者模式中，使用访问者类来改变元素类的执行算法。 通过这种方式，元素的执行算法可以随访问者变化而变化。 此模式属于行为模式类别。 根据每个模式，元素对象必须接受访问者对象，以便访问者对象处理对元素对象的操作。</p> 
+ <h2 id="h2-u5B9Eu73B0u5B9Eu4F8B"><a name="实现实例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实现实例</h2>
+ <p>在这个实现的示例中，将创建一个叫作<code>ComputerPart</code>的接口，并定义接受操作。<code>Keyboard</code>, <code>Mouse</code>, <code>Monitor</code> 和 <code>Computer</code> 是实现<code>ComputerPart</code>接口的具体类。还将定义另一个接口<code>ComputerPartVisitor</code>，它将定义一个访问类操作。 <code>Computer</code> 使用具体的访客做相应的动作。</p> 
+ <p><code>VisitorPatternDem</code>这是一个演示类，将使用<code>Computer</code>和<code>ComputerPartVisitor类</code>来演示访问者模式的使用。</p> 
+ <p>访问者模式示例的结构如下图所示 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201612/09/835101209_42792.jpg" alt=""></p> 
+ <h3 id="h3--1-"><a name="第1步" class="reference-link"></a><span class="header-link octicon octicon-link"></span>第1步</h3>
+ <p>定义一个接口来表示元素,其代码如下 - </p> 
+ <p><em>ComputerPart.java</em></p> 
+ <pre><code class="lang-java">public interface ComputerPart {
+   public void accept(ComputerPartVisitor computerPartVisitor);
+}
+</code></pre> 
+ <h3 id="h3--2-"><a name="第2步" class="reference-link"></a><span class="header-link octicon octicon-link"></span>第2步</h3>
+ <p>创建扩展上述类的具体类，其代码如下 - </p> 
+ <p><em>Keyboard.java</em></p> 
+ <pre><code class="lang-java">public class Keyboard implements ComputerPart {
+
+   @Override
+   public void accept(ComputerPartVisitor computerPartVisitor) {
+      computerPartVisitor.visit(this);
+   }
+}
+</code></pre> 
+ <p><em>Monitor.java</em></p> 
+ <pre><code class="lang-java">public class Monitor implements ComputerPart {
+
+   @Override
+   public void accept(ComputerPartVisitor computerPartVisitor) {
+      computerPartVisitor.visit(this);
+   }
+}
+</code></pre> 
+ <p><em>Mouse.java</em></p> 
+ <pre><code class="lang-java">public class Mouse implements ComputerPart {
+
+   @Override
+   public void accept(ComputerPartVisitor computerPartVisitor) {
+      computerPartVisitor.visit(this);
+   }
+}
+</code></pre> 
+ <p><em>Computer.java</em></p> 
+ <pre><code class="lang-java">public class Computer implements ComputerPart {
+
+   ComputerPart[] parts;
+
+   public Computer(){
+      parts = new ComputerPart[] {new Mouse(), new Keyboard(), new Monitor()};        
+   } 
+
+
+   @Override
+   public void accept(ComputerPartVisitor computerPartVisitor) {
+      for (int i = 0; i &lt; parts.length; i++) {
+         parts[i].accept(computerPartVisitor);
+      }
+      computerPartVisitor.visit(this);
+   }
+}
+</code></pre> 
+ <h3 id="h3--3-"><a name="第3步" class="reference-link"></a><span class="header-link octicon octicon-link"></span>第3步</h3>
+ <p>定义一个接口来代表访问者,其代码如下 -<br><em>ComputerPartVisitor.java</em></p>   
+ <pre><code class="lang-java">public interface ComputerPartVisitor {
+    public void visit(Computer computer);
+    public void visit(Mouse mouse);
+    public void visit(Keyboard keyboard);
+    public void visit(Monitor monitor);
+}
+</code></pre> 
+ <h3 id="h3--4-"><a name="第4步" class="reference-link"></a><span class="header-link octicon octicon-link"></span>第4步</h3>
+ <p>创建实现上述类的具体访问者,其代码如下 -<br><em>ComputerPartDisplayVisitor.java</em></p> 
+ <pre><code class="lang-java">public class ComputerPartDisplayVisitor implements ComputerPartVisitor {
+
+   @Override
+   public void visit(Computer computer) {
+      System.out.println("Displaying Computer.");
+   }
+
+   @Override
+   public void visit(Mouse mouse) {
+      System.out.println("Displaying Mouse.");
+   }
+
+   @Override
+   public void visit(Keyboard keyboard) {
+      System.out.println("Displaying Keyboard.");
+   }
+
+   @Override
+   public void visit(Monitor monitor) {
+      System.out.println("Displaying Monitor.");
+   }
+}
+</code></pre> 
+ <h3 id="h3--5-"><a name="第5步" class="reference-link"></a><span class="header-link octicon octicon-link"></span>第5步</h3>
+ <p>使用<code>ComputerPartDisplayVisitor</code>显示计算机的部件。<br><em>VisitorPatternDemo.java</em></p> 
+ <pre><code class="lang-java">public class VisitorPatternDemo {
+   public static void main(String[] args) {
+
+      ComputerPart computer = new Computer();
+      computer.accept(new ComputerPartDisplayVisitor());
+   }
+}
+</code></pre> 
+ <h3 id="h3--6-"><a name="第6步" class="reference-link"></a><span class="header-link octicon octicon-link"></span>第6步</h3>
+ <p>验证输出，执行上面的代码得到以下结果 -</p> 
+ <pre><code class="lang-java">Displaying Mouse.
+Displaying Keyboard.
+Displaying Monitor.
+Displaying Computer.
+</code></pre>
+ <br>      
+</div></body></html>

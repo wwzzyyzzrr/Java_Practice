@@ -1,0 +1,55 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">watch命令</h1><div style="width:100%;float:left;" class="article-content">   
+ <p><code>watch</code>是一个非常实用的命令，基本所有的Linux发行版都带有这个小工具，如同名字一样，<code>watch</code>可以帮你监测一个命令的运行结果，省得你一遍遍的手动运行。在Linux下，<code>watch</code>是周期性的执行下个程序，并全屏显示执行结果。你可以拿他来监测你想要的一切命令的结果变化，比如 <code>tail</code> 一个 <code>log</code> 文件，<code>ls</code> 监测某个文件的大小变化，看你的想象力了！</p> 
+ <h2 id="h2-1-"><a name="1．命令格式" class="reference-link"></a><span class="header-link octicon octicon-link"></span>1．命令格式</h2>
+ <p>watch[参数][命令]</p> 
+ <h2 id="h2-2-"><a name="2．命令功能" class="reference-link"></a><span class="header-link octicon octicon-link"></span>2．命令功能</h2>
+ <p>可以将命令的输出结果输出到标准输出设备，多用于周期性执行命令/定时执行命令</p> 
+ <h2 id="h2-3-"><a name="3．命令参数" class="reference-link"></a><span class="header-link octicon octicon-link"></span>3．命令参数</h2>
+ <ul> 
+  <li><code>-n</code>或<code>--interval</code> watch缺省每2秒运行一下程序，可以用-n或-interval来指定间隔的时间。</li>
+  <li><code>-d</code>或—differences 用-d或—differences 选项watch 会高亮显示变化的区域。 而-d=cumulative选项会把变动过的地方(不管最近的那次有没有变动)都高亮显示出来。</li>
+  <li><code>-t</code> 或-no-title 会关闭watch命令在顶部的时间间隔,命令，当前时间的输出。</li>
+  <li><code>-h</code>, —help 查看帮助文档</li>
+ </ul> 
+ <h2 id="h2-4-"><a name="4．使用实例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>4．使用实例</h2>
+ <h3 id="h3--1-"><a name="实例1：" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实例1：</h3>
+ <p>命令：每隔一秒高亮显示网络链接数的变化情况</p> 
+ <pre><code class="lang-shell">watch -n 1 -d netstat -ant
+</code></pre> 
+ <p>输出结果：</p> 
+ <pre><code class="lang-shell">Every 1.0s: netstat -ant                                Mon Feb 27 20:49:38 2017
+
+Active Internet connections (servers and established)
+Proto Recv-Q Send-Q Local Address           Foreign Address         State
+tcp        0      0 0.0.0.0:22              0.0.0.0:*               LISTEN
+tcp        0      0 127.0.0.1:25            0.0.0.0:*               LISTEN
+tcp        0      0 192.168.0.210:22        192.168.0.5:51577       ESTABLISHED
+tcp6       0      0 :::80                   :::*                    LISTEN
+tcp6       0      0 :::22                   :::*                    LISTEN
+tcp6       0      0 ::1:25                  :::*                    LISTEN
+</code></pre> 
+ <p><strong>说明：</strong>其它操作：<br>切换终端： <code>Ctrl+x</code><br>退出<code>watch</code>：<code>Ctrl+g</code></p> 
+ <h3 id="h3--2-http-"><a name="实例2：每隔一秒高亮显示http链接数的变化情况" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实例2：每隔一秒高亮显示http链接数的变化情况</h3>
+ <p>命令：</p>   
+ <pre><code class="lang-shell">watch -n 1 -d 'pstree|grep http'
+</code></pre> 
+ <p><strong>说明：</strong><br>每隔一秒高亮显示http链接数的变化情况。 后面接的命令若带有管道符，需要加’’将命令区域归整。</p> 
+ <h3 id="h3--3-"><a name="实例3：实时查看模拟攻击客户机建立起来的连接数" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实例3：实时查看模拟攻击客户机建立起来的连接数</h3>
+ <p>命令：</p> 
+ <pre><code class="lang-shell">watch 'netstat -an | grep:21 | \ grep&lt;客户机的IP&gt;| wc -l'
+</code></pre> 
+ <h3 id="h3--4-scf-"><a name="实例4：监测当前目录中 scf’ 的文件的变化" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实例4：监测当前目录中 scf’ 的文件的变化</h3>
+ <p>命令：</p> 
+ <pre><code class="lang-shell">watch -d 'ls -l|grep scf'
+</code></pre> 
+ <h3 id="h3--5-10-"><a name="实例5：10秒一次输出系统的平均负载" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实例5：10秒一次输出系统的平均负载</h3>
+ <p>命令：</p> 
+ <pre><code class="lang-shell">watch -n 10 'cat /proc/loadavg'
+</code></pre> 
+ <p>输出结果如下：</p> 
+ <pre><code class="lang-shell">Every 10.0s: cat /proc/loadavg                          Mon Feb 27 20:54:45 2017
+
+0.01 0.04 0.05 1/132 6335
+</code></pre>
+ <br>      
+</div></body></html>

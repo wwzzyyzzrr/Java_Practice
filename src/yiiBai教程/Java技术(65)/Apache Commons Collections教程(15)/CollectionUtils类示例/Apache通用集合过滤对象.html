@@ -1,0 +1,100 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Apache通用集合过滤对象</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>Apache Commons Collections库的<code>CollectionUtils</code>类提供各种实用方法，用于覆盖广泛用例的常见操作。 它有助于避免编写样板代码。 这个库在jdk 8之前是非常有用的，但现在Java 8的Stream API提供了类似的功能。</p> 
+ <h2 id="h2--filter-"><a name="使用filter()方法过滤列表" class="reference-link"></a><span class="header-link octicon octicon-link"></span>使用filter()方法过滤列表</h2>
+ <p>CollectionUtils的<code>filter()</code>方法可用于过滤列表以移除不满足由谓词传递提供的条件的对象。</p> 
+ <p><strong>声明</strong></p> 
+ <p>以下是<code>org.apache.commons.collections4.CollectionUtils.filter()</code>方法的声明 -</p> 
+ <pre><code class="lang-java">public static &lt;T&gt; boolean filter(Iterable&lt;T&gt; collection,
+   Predicate&lt;? super T&gt; predicate)
+</code></pre> 
+ <ul> 
+  <li><em>collection</em> - 从中获取输入的集合可能不为<code>null</code>。</li>
+  <li><em>predicate</em> - 用作过滤器的<code>predicate</code>可能为<code>null</code>。</li>
+ </ul> 
+ <p><strong>返回值</strong></p> 
+ <p>如果通过此调用修改了集合，则返回<code>true</code>，否则返回<code>false</code>。</p> 
+ <p><strong>示例</strong></p> 
+ <p>以下示例显示<code>org.apache.commons.collections4.CollectionUtils.filter()</code>方法的用法。 这个示例中将过滤一个整数列表来获得偶数。</p> 
+ <pre><code class="lang-java">import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.Predicate;
+
+public class CollectionUtilsTester {
+   public static void main(String[] args) {
+
+      List&lt;Integer&gt; integerList = new ArrayList&lt;Integer&gt;();
+      integerList.addAll(Arrays.asList(1,2,3,4,5,6,7,8));
+
+      System.out.println("Original List: " + integerList);
+      CollectionUtils.filter(integerList, new Predicate&lt;Integer&gt;() {
+
+         @Override
+         public boolean evaluate(Integer input) {
+            if(input.intValue() % 2 == 0) {
+               return true;
+            }
+            return false;
+         }
+      });
+
+      System.out.println("Filtered List (Even numbers): " + integerList);
+   }
+}
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 - </p> 
+ <pre><code class="lang-shell">Original List: [1, 2, 3, 4, 5, 6, 7, 8]
+Filtered List (Even numbers): [2, 4, 6, 8]
+</code></pre> 
+ <h2 id="h2--filterinverse-"><a name="使用filterInverse()方法过滤列表" class="reference-link"></a><span class="header-link octicon octicon-link"></span>使用filterInverse()方法过滤列表</h2>
+ <p>CollectionUtils的<code>filterInverse()</code>方法可用于过滤列表以移除满足谓词传递提供的条件的对象。</p> 
+ <p><strong>声明</strong><br>以下是<code>org.apache.commons.collections4.CollectionUtils.filterInverse()</code>方法的声明 - </p>   
+ <pre><code class="lang-java">public static &lt;T&gt; boolean filterInverse(Iterable&lt;T&gt; collection,
+   Predicate&lt;? super T&gt; predicate)
+</code></pre> 
+ <p><strong>参数</strong></p> 
+ <ul> 
+  <li><code>collection</code> - 从中获取输入的集合，可能不为<code>null</code>。</li>
+  <li><code>predicate</code> - 用作过滤器的<code>predicate</code>可能为<code>null</code>。</li>
+ </ul> 
+ <p><strong>返回值</strong></p> 
+ <p>如果通过此调用修改了集合，则返回<code>true</code>，否则返回<code>false</code>。</p> 
+ <p><strong>示例</strong></p> 
+ <p>以下示例显示<code>org.apache.commons.collections4.CollectionUtils.filterInverse()</code>方法的用法。 这个示例中将过滤一个整数列表来获得奇数。</p> 
+ <pre><code class="lang-java">import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.Predicate;
+
+public class CollectionUtilsTester {
+   public static void main(String[] args) {
+
+      List&lt;Integer&gt; integerList = new ArrayList&lt;Integer&gt;();
+      integerList.addAll(Arrays.asList(1,2,3,4,5,6,7,8));
+
+      System.out.println("Original List: " + integerList);
+      CollectionUtils.filterInverse(integerList, new Predicate&lt;Integer&gt;() {
+
+         @Override
+         public boolean evaluate(Integer input) {
+            if(input.intValue() % 2 == 0) {
+               return true;
+            }
+            return false;
+         }
+      });
+
+      System.out.println("Filtered List (Odd numbers): " + integerList);
+   }
+}
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 - </p> 
+ <pre><code class="lang-shell">Original List: [1, 2, 3, 4, 5, 6, 7, 8]
+Filtered List (Odd numbers): [1, 3, 5, 7]
+</code></pre>
+ <br>      
+</div></body></html>

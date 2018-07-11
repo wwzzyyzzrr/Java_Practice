@@ -1,0 +1,154 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Ruby块</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>Ruby代码块在其他编程语言中被称为闭包。 它由一组代码组成，它们始终用大括号括起来，或者在<code>do..end</code>之间书写。 大括号语法总是具有比<code>do..end</code>语法更高的优先级。也就是说大括号优先级高，<code>do..end</code>优先级低。</p> 
+ <p>Ruby块可用两种方式来编写 -</p> 
+ <ul> 
+  <li><code>do</code>和<code>end</code>之间的多行(多行块不是内联的)</li>
+  <li>大括号<code>{}</code>之间的内嵌</li>
+ </ul> 
+ <p>两者都是相同的，都具有相同的功能。要调用块，您需要使用具有与块相同名称的函数。块总是与调用函数一起。 块可以有自己的参数。</p> 
+ <p><strong>语法：</strong></p> 
+ <pre><code class="lang-ruby">block_name{  
+   statement1  
+   statement2  
+   ..........  
+}
+</code></pre> 
+ <p><strong>示例：</strong></p> 
+ <p>下面的例子显示了多行程序段。</p> 
+ <pre><code class="lang-ruby">[10, 20, 30].each do |n|   
+ puts n   
+end
+</code></pre> 
+ <p>下面的示例显示了内联块。</p> 
+ <pre><code class="lang-ruby">[10, 20, 30].each {|n| puts n}
+</code></pre> 
+ <h3 id="h3-yield-"><a name="yield语句" class="reference-link"></a><span class="header-link octicon octicon-link"></span>yield语句</h3>
+ <p><code>yield</code>语句用于调用具有值的方法中的块。</p> 
+ <p><strong>示例：</strong></p> 
+ <pre><code class="lang-ruby">#!/usr/bin/ruby   
+
+def met   
+   puts "This is method"   
+   yield   
+   puts "You will be back to method"   
+   yield   
+end   
+met {puts "This is block"}
+</code></pre> 
+ <p>将上面代码保存到文件：<em>yield-statment.rb</em> , 执行上面代码得到以下结果 - </p> 
+ <pre><code class="lang-shell">F:\worksp\ruby&gt;ruby yield-statment.rb
+This is method
+This is block
+You will be back to method
+This is block
+
+F:\worksp\ruby&gt;
+</code></pre> 
+ <p>执行<code>met</code>方法到达<code>yield</code>语句行时，块内的代码被执行。 当块执行完成时，<code>met</code>方法的代码继续。</p> 
+ <p><strong>用yield语句传递参数</strong></p> 
+ <p>可以使用<code>yield</code>语句传递一个或多个参数。</p> 
+ <p><strong>示例：</strong></p> 
+ <pre><code class="lang-ruby">#!/usr/bin/ruby   
+
+def met   
+   yield 1   
+   puts "This is method"   
+   yield 2   
+end   
+met {|i| puts "This is block #{i}"}
+</code></pre> 
+ <p>将上面代码保存到文件：<em>yield-statment-pass-parm.rb</em> , 执行上面代码得到以下结果 - </p> 
+ <pre><code class="lang-ruby">F:\worksp\ruby&gt;ruby yield-statment-pass-parm.rb
+This is block 1
+This is method
+This is block 2
+
+F:\worksp\ruby&gt;
+</code></pre> 
+ <h2 id="h2-u5757u53D8u91CF"><a name="块变量" class="reference-link"></a><span class="header-link octicon octicon-link"></span>块变量</h2>
+ <p>可以在块参数外部和内部使用相同的变量，看看下面的例子。</p> 
+ <p><strong>示例：</strong></p> 
+ <pre><code class="lang-ruby">#!/usr/bin/ruby   
+
+x = "Outer variable"    
+3.times do |x|    
+puts "Inside the block: #{x}"    
+end    
+puts "Outside the block: #{x}"
+</code></pre> 
+ <p>将上面代码保存到文件：<em>block-variables.rb</em> , 执行上面代码得到以下结果 - </p> 
+ <pre><code class="lang-shell">F:\worksp\ruby&gt;ruby block-variables.rb
+Inside the block: 0
+Inside the block: 1
+Inside the block: 2
+Outside the block: Outer variable
+
+F:\worksp\ruby&gt;
+</code></pre> 
+ <h2 id="h2-begin-end-"><a name="BEGIN和END块" class="reference-link"></a><span class="header-link octicon octicon-link"></span>BEGIN和END块</h2>
+ <p>Ruby <code>BEGIN</code>和<code>END</code>块用于声明该文件正在加载，文件已分别加载。</p> 
+ <p><strong>示例：</strong></p> 
+ <pre><code class="lang-ruby">#!/usr/bin/ruby   
+
+BEGIN {   
+  puts "code block is being loaded"   
+}   
+
+END {   
+  puts "code block has been loaded"   
+}   
+puts "This is the code block"
+</code></pre> 
+ <p>将上面代码保存到文件：<em>block-begin-end.rb</em> , 执行上面代码得到以下结果 - </p>   
+ <pre><code class="lang-shell">F:\worksp\ruby&gt;ruby block-begin-end.rb
+code block is being loaded
+This is the code block
+code block has been loaded
+
+F:\worksp\ruby&gt;
+</code></pre> 
+ <h2 id="h2--amp-"><a name="符号参数(&amp;块)" class="reference-link"></a><span class="header-link octicon octicon-link"></span>符号参数(&amp;块)</h2>
+ <p><code>&amp;</code>块是一种将参考(而不是局部变量)传递给块的方法。这里，块之后的<code>&amp;</code>只是一个引用的名字，任何其他的名字都可以用它来代替<code>this</code>。</p> 
+ <p><strong>示例：</strong></p> 
+ <pre><code class="lang-ruby">#!/usr/bin/ruby   
+
+def met(&amp;block)   
+  puts "This is method"   
+  block.call   
+end   
+met { puts "This is &amp;block example" }
+</code></pre> 
+ <p>将上面代码保存到文件：<em>block-and-amperand.rb</em> , 执行上面代码得到以下结果 - </p> 
+ <pre><code class="lang-shell">F:\worksp\ruby&gt;ruby block-and-amperand.rb
+This is method
+This is &amp;block example
+
+F:\worksp\ruby&gt;
+</code></pre> 
+ <p>这里，<code>met</code>方法中的块变量是对块的引用，它使用<code>call</code>来执行。 调用方法与<code>yield</code>方法相同。</p> 
+ <h2 id="h2-u4F7Fu7528u9ED8u8BA4u503Cu521Du59CBu5316u5BF9u8C61"><a name="使用默认值初始化对象" class="reference-link"></a><span class="header-link octicon octicon-link"></span>使用默认值初始化对象</h2>
+ <p>Ruby有一个初始化器，称为<code>yield(self)</code>。 在这里，<code>self</code>是被初始化的对象。</p> 
+ <p><strong>示例：</strong></p> 
+ <pre><code class="lang-ruby">class Novel   
+  attr_accessor :pages, :category   
+
+  def initialize   
+    yield(self)   
+  end   
+end   
+
+novel = Novel.new do |n|   
+  n.pages = 564   
+  n.category = "thriller"   
+end   
+
+puts "I am reading a #{novel.category} novel which has #{novel.pages} pages."
+</code></pre> 
+ <p>将上面代码保存到文件：<em>yield-self.rb</em> , 执行上面代码得到以下结果 - </p> 
+ <pre><code class="lang-shell">F:\worksp\ruby&gt;ruby yield-self.rb
+I am reading a thriller novel which has 564 pages.
+
+F:\worksp\ruby&gt;
+</code></pre>
+ <br>      
+</div></body></html>

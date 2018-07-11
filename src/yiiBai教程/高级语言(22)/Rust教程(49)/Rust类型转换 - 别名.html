@@ -1,0 +1,32 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Rust类型转换 - 别名</h1><div style="width:100%;float:left;" class="article-content">   
+ <h2 id="53-alias" style="box-sizing: border-box; -webkit-tap-highlight-color: transparent; -webkit-font-smoothing: antialiased; margin-bottom: 16px; line-height: 1.225; font-size: 1.75em; position: relative; padding-bottom: 0.3em; border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: rgb(238, 238, 238); color: rgb(51, 51, 51);  'Clear Sans', 'Helvetica Neue', Helvetica,   margin-top: 0px !important;"> Rust类型转换 - 别名</h2> 
+ <p style="box-sizing: border-box; -webkit-tap-highlight-color: transparent; -webkit-font-smoothing: antialiased; margin-top: 0px; margin-bottom: 16px; color: rgb(51, 51, 51);  'Clear Sans', 'Helvetica Neue', Helvetica,   font-size: 16px; line-height: 25.6000003814697px;"> <span style="font-size:16px;"><span style="color: rgb(34, 34, 34);  Verdana, ">type语句声明可以以现有类型被用来给一个新的名字。</span>类型必须有&nbsp;<code style="box-sizing: border-box; -webkit-tap-highlight-color: transparent; -webkit-font-smoothing: antialiased; Consolas, 'Liberation Mono', Menlo, Courier, monospace; font-size: 13.6000003814697px; padding: 0.2em 0px; margin: 0px; border-radius: 3px; background-color: rgb(247, 247, 247);">CamelCase&nbsp;</code>名称, 或者编译器会提出警告。例外(异常)是原始类型：&nbsp;<code style="box-sizing: border-box; -webkit-tap-highlight-color: transparent; -webkit-font-smoothing: antialiased; Consolas, 'Liberation Mono', Menlo, Courier, monospace; font-size: 13.6000003814697px; padding: 0.2em 0px; margin: 0px; border-radius: 3px; background-color: rgb(247, 247, 247);">usize</code>,<code style="box-sizing: border-box; -webkit-tap-highlight-color: transparent; -webkit-font-smoothing: antialiased; Consolas, 'Liberation Mono', Menlo, Courier, monospace; font-size: 13.6000003814697px; padding: 0.2em 0px; margin: 0px; border-radius: 3px; background-color: rgb(247, 247, 247);">f32</code>, 等.</span></p> 
+ <pre>
+// `NanoSecond` is a new name for `u64`.
+type NanoSecond = u64;
+type Inch = u64;
+
+// Use an attribute to silence warning.
+#[allow(non_camel_case_types)]
+type u64_t = u64;
+// TODO ^ Try removing the attribute
+
+// Use an attribute to silence warnings
+#[allow(trivial_numeric_casts)]
+fn main() {
+    // `NanoSecond` = `Inch` = `u64_t` = `u64`.
+    let nanoseconds: NanoSecond = 5 as u64_t;
+    let inches: Inch = 2 as u64_t;
+
+    // Note that type aliases *don't* provide any extra type safety, because
+    // aliases are *not* new types
+    println!("{} nanoseconds + {} inches = {} unit?",
+             nanoseconds,
+             inches,
+             nanoseconds + inches);
+}</pre> 
+ <p> <span style="font-size:16px;">使用别名主要是减少输入;例如&nbsp;IoResult&lt;T&gt;&nbsp;是类型Result&lt;T, IoError&gt;&nbsp;的别名.</span></p> 
+ <h3 id="see-also"> 另请参见：</h3> 
+ <p> <span style="font-size:16px;"><a target="_blank" href="http://yiibai.com/rust/attribute.html">属性</a></span></p> 
+ <br>      
+</div></body></html>

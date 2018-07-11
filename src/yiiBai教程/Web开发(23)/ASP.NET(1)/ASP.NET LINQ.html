@@ -1,0 +1,239 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">ASP.NET LINQ</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>大多数应用程序是以数据为中心的，但大多数数据存储库都是关系数据库。多年来，设计人员和开发人员基于对象模型设计了应用程序。</p> 
+ <p>这些对象负责连接到数据访问组件(称为数据访问层(DAL))。这里我们有三点需要考虑：</p> 
+ <ul> 
+  <li>应用程序中所需的所有数据不会存储在同一个源中。源可以是关系数据库，某个业务对象，XML文件或Web服务。</li>
+  <li>访问内存中的对象比从数据库或XML文件访问数据更简单，也更便宜。</li>
+  <li>所访问的数据不是直接使用，而是需要进行排序，排序，分组，更改等。</li>
+ </ul> 
+ <p>因此，如果有一种工具可以使得所有类型的数据访问变得容易，从而允许来自不同数据源的数据加入并执行标准的数据处理操作，那么只需几行代码就可以获得很大的帮助。</p> 
+ <p><em>LINQ</em> 或语言集成查询就是这样一个工具。 <em>LINQ</em> 是对.Net Framework 3.5及其管理语言的扩展集，它将查询设置为对象。并定义了一个通用语法和一个编程模型，用一种通用的语言来查询不同类型的数据。</p> 
+ <p>如：Select，Project，Join，Group，Partition，Set操作等关系运算符在LINQ中实现，而<code>.Net framework 3.5+</code>中的 C# 和VB编译器支持LINQ语法，可以使用配置的数据存储而不依靠使用ADO.NET。</p> 
+ <p>例如，在<code>Northwind</code>数据库中查询<code>Customers</code>表，使用C#中的LINQ查询，代码将是：</p> 
+ <pre><code class="lang-csharp">var data = from c in dataContext.Customers
+where c.Country == "Spain"
+select c;
+</code></pre> 
+ <p>其中，</p> 
+ <ul> 
+  <li><code>from</code>关键字在逻辑上循环了集合的内容。</li>
+  <li>针对集合中的每个对象评估计算带有<code>where</code>关键字的表达式。</li>
+  <li><code>select</code>语句选择评估对象添加到正在返回的列表中。</li>
+  <li><code>var</code>关键字用于变量声明。由于返回的对象的确切类型是未知的，这表明信息将被动态推断。</li>
+ </ul> 
+ <p>LINQ查询可以应用于从<code>IEnumerable &lt;T&gt;</code>继承的任何数据承载类，这里<code>T</code>是任何数据类型，例如：<code>List &lt;Book&gt;</code>。</p> 
+ <p>下面来看看一个例子来理解这个概念。打开<em>Visual Studio</em> 创建一个ASP.NET空网站项目：<em>LinqDemo</em> ，添加一个<em>Web窗体</em>页面文件：<em>Default.aspx</em> -</p> 
+ <pre><code class="lang-aspnet">&lt;%@ Page Language="C#" AutoEventWireup="true" CodeFile="Default.aspx.cs" Inherits="_Default" %&gt;
+
+&lt;!DOCTYPE html&gt;
+
+&lt;html xmlns="http://www.w3.org/1999/xhtml"&gt;
+&lt;head runat="server"&gt;
+&lt;meta http-equiv="Content-Type" content="text/html; charset=utf-8"/&gt;
+    &lt;title&gt;LinQ示例&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;form id="form1" runat="server"&gt;
+        &lt;div&gt;
+            &lt;h4&gt;图书列表示例&lt;/h4&gt;
+            &lt;asp:Label ID="lblbooks" runat="server"&gt;&lt;/asp:Label&gt;
+        &lt;/div&gt;
+    &lt;/form&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>该示例使用以下类：<em>Books.cs</em> - </p> 
+ <pre><code class="lang-csharp">using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+
+/// &lt;summary&gt;
+/// Books 的摘要说明
+/// &lt;/summary&gt;
+public class Books
+{
+    public string ID { get; set; }
+    public string Title { get; set; }
+    public decimal Price { get; set; }
+    public DateTime DateOfRelease { get; set; }
+
+    public static List&lt;Books&gt; GetBooks()
+    {
+        List&lt;Books&gt; list = new List&lt;Books&gt;();
+        list.Add(new Books
+        {
+            ID = "001",
+            Title = "Programming in C#",
+            Price = 634.76m,
+            DateOfRelease = Convert.ToDateTime("2010-02-05")
+        });
+
+        list.Add(new Books
+        {
+            ID = "002",
+            Title = "Learn Java in 30 days",
+            Price = 250.76m,
+            DateOfRelease = Convert.ToDateTime("2011-08-15")
+        });
+
+        list.Add(new Books
+        {
+            ID = "003",
+            Title = "Programming in ASP.Net 4.0",
+            Price = 700.00m,
+            DateOfRelease = Convert.ToDateTime("2011-02-05")
+        });
+
+        list.Add(new Books
+        {
+            ID = "004",
+            Title = "VB.Net Made Easy",
+            Price = 500.99m,
+            DateOfRelease = Convert.ToDateTime("2011-12-31")
+        });
+
+        list.Add(new Books
+        {
+            ID = "005",
+            Title = "Programming in C",
+            Price = 314.76m,
+            DateOfRelease = Convert.ToDateTime("2010-02-05")
+        });
+
+        list.Add(new Books
+        {
+            ID = "006",
+            Title = "Programming in C++",
+            Price = 456.76m,
+            DateOfRelease = Convert.ToDateTime("2010-02-05")
+        });
+
+        list.Add(new Books
+        {
+            ID = "007",
+            Title = "Datebase Developement",
+            Price = 1000.76m,
+            DateOfRelease = Convert.ToDateTime("2010-02-05")
+        });
+
+        return list;
+    }
+}
+</code></pre> 
+ <p>使用这个类的网页有一个简单的标签控件，显示书的标题。<code>Page_Load</code>事件创建书籍列表并通过使用LINQ查询返回标题：</p> 
+ <pre><code class="lang-csharp">using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+
+public partial class _Default : System.Web.UI.Page
+{
+    protected void Page_Load(object sender, EventArgs e)
+    {
+        List&lt;Books&gt; books = Books.GetBooks();
+        var booktitles = from b in books select b.Title;
+
+        foreach (var title in booktitles)
+            lblbooks.Text += String.Format("{0} &lt;br /&gt;", title);
+    }
+}
+</code></pre> 
+ <p>当页面执行时，标签显示查询的结果：</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201712/0812/667151231_30064.png" alt=""></p> 
+ <p>上面的LINQ表达式：</p> 
+ <pre><code class="lang-csharp">var booktitles = 
+from b in books 
+select b.Title;
+</code></pre> 
+ <p>它相当于下面的SQL查询：</p> 
+ <pre><code class="lang-sql">SELECT Title from Books
+</code></pre> 
+ <h2 id="h2-linq-"><a name="LINQ运算符" class="reference-link"></a><span class="header-link octicon octicon-link"></span>LINQ运算符</h2>
+ <p>除了迄今使用的操作符外，还有其他几个操作符，它们实现了所有的查询语句。下面来看看一些运算符和子句。</p> 
+ <p><strong>Join子句</strong></p> 
+ <p>SQL中的<em>“Join子句”</em> 用于连接两个数据表，并显示包含两个表的列的数据集。LINQ也有这个能力。要理解这个用法，现在添加另一个名为 <code>Saledetails.cs</code> 的类：</p>   
+ <pre><code class="lang-csharp">using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+
+public class Salesdetails
+{
+    public int sales { get; set; }
+    public int pages { get; set; }
+    public string ID { get; set; }
+
+    public static IEnumerable&lt;Salesdetails&gt; getsalesdetails()
+    {
+        Salesdetails[] sd =
+        {
+         new Salesdetails { ID = "001", pages=678, sales = 110000},
+         new Salesdetails { ID = "002", pages=789, sales = 60000},
+         new Salesdetails { ID = "003", pages=456, sales = 40000},
+         new Salesdetails { ID = "004", pages=900, sales = 80000},
+         new Salesdetails { ID = "005", pages=456, sales = 90000},
+         new Salesdetails { ID = "006", pages=870, sales = 50000},
+         new Salesdetails { ID = "007", pages=675, sales = 40000},
+      };
+
+        return sd.OfType&lt;Salesdetails&gt;();
+    }
+}
+</code></pre> 
+ <p>在<code>Page_Load</code>事件处理程序中添加代码，以使用<code>join</code>子句在两个表上进行查询：</p> 
+ <pre><code class="lang-csharp">using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+
+public partial class Sales : System.Web.UI.Page
+{
+    protected void Page_Load(object sender, EventArgs e)
+    {
+        IEnumerable&lt;Books&gt; books = Books.GetBooks();
+        IEnumerable&lt;Salesdetails&gt; sales = Salesdetails.getsalesdetails();
+
+        var booktitles = from b in books
+                         join s in sales on b.ID equals s.ID
+                         select new { Name = b.Title, Pages = s.pages };
+
+        foreach (var title in booktitles)
+            lblbooks.Text += String.Format("{0} &lt;br /&gt;", title);
+    }
+}
+</code></pre> 
+ <p>结果页面如图所示：</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201712/0812/275151239_17533.png" alt=""></p> 
+ <p><strong>Where子句</strong></p> 
+ <p><code>where</code>子句允许向查询添加一些条件过滤器。例如，如果要查看页数超过<code>500</code>的图书，请将<code>Page_Load</code>事件处理程序更改为：</p> 
+ <pre><code class="lang-csharp">var booktitles = from b in books join s in sales on b.ID equals s.ID
+   where s.pages &gt; 500 select new { Name = b.Title, Pages = s.pages };
+</code></pre> 
+ <p>该查询仅返回页数超过<code>500</code>的那些行：</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201712/0812/919151242_25364.png" alt=""></p> 
+ <p><strong>Orderby和Orderbydescending子句</strong></p> 
+ <p>这些子句允许对查询结果进行排序。要按照价格查询书籍的标题，页数和价格，请在<code>Page_Load</code>事件处理程序中编写以下代码：</p> 
+ <pre><code class="lang-csharp">var booktitles = from b in books join s in sales on b.ID equals s.ID
+   orderby b.Price select new { Name = b.Title,  Pages = s.pages, Price = b.Price};
+</code></pre> 
+ <p>返回的元组是：</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201712/0812/608151245_13999.png" alt=""></p> 
+ <p><strong>Let子句</strong></p> 
+ <p><code>let</code>子句允许定义一个变量并为其分配一个从数据值计算出的值。例如，要计算上述两个销售额中的总销售额，需要计算：</p> 
+ <pre><code class="lang-csharp">TotalSale = Price of the Book * Sales
+</code></pre> 
+ <p>要实现这一点，请在<code>Page_Load</code>事件处理程序中添加以下代码片段：</p> 
+ <pre><code class="lang-csharp">var booktitles = from b in books
+                         join s in sales on b.ID equals s.ID
+                         let totalprofit = (b.Price * s.sales)
+                         select new { Name = b.Title, TotalSale = totalprofit };
+</code></pre> 
+ <p>结果查询页面如下所示：</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201712/0812/837151248_46057.png" alt=""></p>
+ <br>      
+</div></body></html>

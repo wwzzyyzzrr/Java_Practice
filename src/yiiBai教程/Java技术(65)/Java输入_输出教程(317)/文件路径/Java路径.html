@@ -1,0 +1,126 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Java路径</h1><div style="width:100%;float:left;" class="article-content">   
+ <p><code>Path</code>对象表示文件系统中文件，目录和符号链接的路径。<code>Path</code>是<code>java.nio.file</code>包中的一个接口。<br>当创建一个Path对象时，路径不一定存在。路径可以使用旧的<code>java.io.File</code> API。可以使用<code>File</code>类的方法<code>toPath()</code>从<code>File</code>对象中获取<code>Path</code>对象。可以使用<code>Path</code>对象的<code>toFile()</code>方法从<code>Path</code>对象中获取<code>File</code>对象。可以对<code>Path</code>对象执行两种操作：</p> 
+ <ul> 
+  <li>路径操作</li>
+  <li>文件操作</li>
+ </ul> 
+ <p>可以使用<code>Path</code>来访问路径的组件，例如文件名，根名等。<br>可以比较和检查路径。 例如，检查路径以<code>.txt</code>结尾，比较两个路径是否相同，检查路径是绝对路径还是相对路径等。还可以组合和解析路径。</p> 
+ <p>需要使用<code>Files</code>类在<code>Path</code>对象上执行文件<code>I/O</code>操作。</p> 
+ <h2 id="h2--path-"><a name="创建路径(Path)对象" class="reference-link"></a><span class="header-link octicon octicon-link"></span>创建路径(Path)对象</h2>
+ <p><code>FileSystem</code>对象充当工厂来创建<code>Path</code>对象。<code>FilePath</code>中的<code>getPath()</code>方法创建一个<code>Path</code>对象。<br>以下代码在Windows上为文件路径<code>F:\website\yiibai\worksp\test1.txt</code>创建一个<code>Path</code>对象：</p> 
+ <pre><code class="lang-java">Path  p1  = FileSystems.getDefault().getPath("F:\\website\\yiibai\\worksp\\test1.txt");
+</code></pre> 
+ <p>可以在构造<code>Path</code>对象时将路径的组件单独传递给<code>getPath()</code>方法。以下语句创建一个<code>Path</code>对象以表示Windows上的 <code>F:\website\yiibai\worksp\test1.txt</code> 路径：</p> 
+ <pre><code class="lang-java">Path  p2  = FileSystems.getDefault().getPath("F:", "website", "yiibai","worksp","test1.txt");
+</code></pre> 
+ <p><code>Paths</code>类可以从路径字符串或URI的组件创建一个<code>Path</code>对象。<code>Paths.get()</code>静态方法创建一个<code>Path</code>对象。<br>以下创建<code>Path</code>对象以表示相同的路径: <code>F:\website\yiibai\worksp\test1.txt</code>：</p> 
+ <pre><code class="lang-java">Path  p3  = Paths.get("F:\\website\\yiibai\\worksp\\test1.txt");
+Path  p4  = Paths.get("F:", "website", "yiibai","worksp","test1.txt");
+</code></pre> 
+ <p>我们可以从一个空路径创建一个<code>Path</code>对象，例如:<code>Paths.get("")</code>。具有空路径的<code>Path</code>对象是指与当前工作目录相同的默认目录。</p> 
+ <h2 id="h2-u8DEFu5F84u7684u7EC4u4EF6"><a name="路径的组件" class="reference-link"></a><span class="header-link octicon octicon-link"></span>路径的组件</h2>
+ <p>文件系统中的路径由一个或多个组件组成。<code>getNameCount()</code>方法返回除了根之外的<code>Path</code>对象中的组件数。<br>例如，路径<code>C:\Java_Dev\test1.txt</code>由三个组件组成：<code>C:</code>的根,目录名为<code>Java_Dev</code>和<code>test1.txt</code>文件的两个组件。 在这种情况下，<code>getNameCount()</code>方法将返回<code>2</code>。<code>getName(int index)</code>方法返回指定索引处的组件名称。最靠近根的组件的索引为<code>0</code>。</p> 
+ <p>离根最远的组件的索引为<code>count - 1</code>。在路径：<code>C:\Java_Dev\test1.txt</code>中，<code>Java_Dev</code>组件的索引为<code>0</code>，<code>test1.txt</code>组件的索引为<code>1</code>。<code>getParent()</code>方法返回路径的父级。 如果路径没有父级，则返回<code>null</code>。<br>路径 <code>C:\Java_Dev\test.txt</code> 的父目录是 <code>C:\Java_Dev</code> 。相对路径<code>test.txt</code>没有父级。</p> 
+ <p><code>getRoot()</code>方法返回路径的根。 如果路径没有根，它返回<code>null</code>。</p> 
+ <p>例如，Windows上的路径<code>C:\Java_Dev\test1.txt</code>，则 <code>C:\</code> 就是这个路径的根。</p> 
+ <p><code>getFileName()</code>方法返回由路径表示的文件名。如果路径没有文件名，则返回<code>null</code>。 文件名是根的最远组件。 例如，在路径<code>C:\Java_Dev\test1.txt</code>中，<code>test1.txt</code>就是文件名。</p> 
+ <p>可以通过使用<code>isAbsolute()</code>方法来检查路径是否代表绝对路径。路径不必存在以获取有关其组件的信息。<br>以下代码显示了如何访问<code>Path</code>对象的组件。</p> 
+ <pre><code class="lang-java">import java.nio.file.Path;
+import java.nio.file.Paths;
+
+public class Main {
+    public static void main(String[] args) {
+        Path p1 = Paths.get("F:\\website\\yiibai\\worksp\\test1.txt");
+        printDetails(p1);
+
+        Path p2 = Paths.get("test1.txt");
+        printDetails(p2);
+    }
+
+    public static void printDetails(Path p) {
+        System.out.println("Details for path: " + p);
+
+        int count = p.getNameCount();
+        System.out.println("Name count: " + count);
+
+        for (int i = 0; i &lt; count; i++) {
+            Path name = p.getName(i);
+            System.out.println("Name at  index   " + i + "  is " + name);
+        }
+
+        Path parent = p.getParent();
+        Path root = p.getRoot();
+        Path fileName = p.getFileName();
+        System.out.println("Parent: " + parent + ", Root:   " + root + ", File Name: " + fileName);
+        System.out.println("Absolute Path: " + p.isAbsolute());
+    }
+}
+</code></pre> 
+ <p>上面的代码生成以下结果。</p>   
+ <pre><code class="lang-java">Details for path: F:\website\yiibai\worksp\test1.txt
+Name count: 4
+Name at  index   0  is website
+Name at  index   1  is yiibai
+Name at  index   2  is worksp
+Name at  index   3  is test1.txt
+Parent: F:\website\yiibai\worksp, Root:   F:\, File Name: test1.txt
+Absolute Path: true
+Details for path: test1.txt
+Name count: 1
+Name at  index   0  is test1.txt
+Parent: null, Root:   null, File Name: test1.txt
+Absolute Path: false
+</code></pre> 
+ <h2 id="h2-u4E0Du540Cu5F62u5F0Fu7684u8DEFu5F84"><a name="不同形式的路径" class="reference-link"></a><span class="header-link octicon octicon-link"></span>不同形式的路径</h2>
+ <p>我们可以使用不同的类型来表示同一个路径。 假设创建一个<code>Path</code>对象，如下所示：</p> 
+ <pre><code class="lang-java">Path  p1  = Paths.get("test.txt");
+</code></pre> 
+ <p>这里，<code>p1</code>是相对路径。可以使用其<code>toAbsolutePath()</code>方法获得由<code>p1</code>表示的绝对路径，如下所示：</p> 
+ <pre><code class="lang-java">Path  p1AbsPath  = p1.toAbsolutePath();
+</code></pre> 
+ <p>现在<code>p1AbsPat</code>h是<code>p1</code>的绝对路径。 例如，在Windows上，<code>p1AbsPath</code>就类似路径的全名<code>C:\testapp\test.txt</code>。</p> 
+ <p>如果路径不是绝对路径，<code>toAbsolutePath()</code>方法使用默认目录来解析路径。</p> 
+ <p>如果路径是绝对路径，<code>toAbsolutePath()</code>方法返回相同的路径。</p> 
+ <p>我们可以使用<code>toRealPath()</code>方法来获取现有文件的真实路径。它返回一个现有文件的规范路径。如果路径表示符号链接，则它返回目标文件的实际路径。</p> 
+ <p>我们可以传递一个链接选项到这个方法，指示是否要跟踪到它的目标的符号链接。如果路径表示的文件不存在，<code>toRealPath()</code>会抛出一个<code>IOException</code>异常。</p> 
+ <p>以下代码显示了如何从<code>Path</code>对象获取实际路径：</p> 
+ <pre><code class="lang-java">import java.nio.file.LinkOption;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+public class Main {
+  public static void main(String[] args) throws Exception {
+
+    Path p2 = Paths.get("test2.txt");
+    // Follow link for p2, if it is a symbolic link
+    Path p2RealPath = p2.toRealPath();
+    System.out.println("p2RealPath:" + p2RealPath);
+    Path p3 = Paths.get("test3.txt");
+    // Do not follow link for p3, if it is a symbolic link
+    Path p3RealPath = p3.toRealPath(LinkOption.NOFOLLOW_LINKS);
+    System.out.println("p3RealPath:" + p3RealPath);
+
+  }
+}
+</code></pre> 
+ <h2 id="h2--uri"><a name="路径URI" class="reference-link"></a><span class="header-link octicon octicon-link"></span>路径URI</h2>
+ <p>使用<code>Path</code>对象的<code>toUri()</code>方法来获取其<code>URI</code>表示。以下代码显示了如何获取路径的URI形式。</p> 
+ <pre><code class="lang-java">import java.nio.file.Path;
+import java.nio.file.Paths;
+
+public class Main {
+  public static void main(String[] args) throws Exception {
+    Path p2 = Paths.get("test2.txt");
+    java.net.URI p2UriPath = p2.toUri();
+    System.out.println("Absolute Path: " + p2.toAbsolutePath());
+    System.out.println("URI Path: " + p2UriPath);
+
+  }
+}
+</code></pre> 
+ <p>上面的代码生成以下结果。</p> 
+ <pre><code class="lang-java">Absolute Path: F:\website\yiibai\worksp\test2.txt
+URI Path: file:///F:/website/yiibai/worksp/test2.txt
+</code></pre>
+ <br>      
+</div></body></html>

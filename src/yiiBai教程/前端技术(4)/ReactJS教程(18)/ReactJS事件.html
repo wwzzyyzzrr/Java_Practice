@@ -1,0 +1,86 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">ReactJS事件</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>在本章中，我们将学习如何使用事件。</p> 
+ <h2 id="h2-u7B80u5355u7684u4F8Bu5B50"><a name="简单的例子" class="reference-link"></a><span class="header-link octicon octicon-link"></span>简单的例子</h2>
+ <p>这是一个简单的事件例子，只使用一个组件。 我们只是添加<code>onClick</code>事件，当按钮被点击，将触发<code>updateState</code>函数。</p> 
+ <p>文件：<em>App.jsx</em> - </p> 
+ <pre><code class="lang-js">import React from 'react';
+
+class App extends React.Component {
+   constructor(props) {
+      super(props);
+
+      this.state = {
+         data: 'Initial data...'
+      }
+      this.updateState = this.updateState.bind(this);
+   };
+   updateState() {
+      this.setState({data: 'Data updated...'})
+   }
+   render() {
+      return (
+         &lt;div&gt;
+            &lt;button onClick = {this.updateState}&gt;CLICK&lt;/button&gt;
+            &lt;h4&gt;{this.state.data}&lt;/h4&gt;
+         &lt;/div&gt;
+      );
+   }
+}
+export default App;
+</code></pre> 
+ <p>文件：<em>main.js</em> - </p> 
+ <pre><code class="lang-js">import React from 'react';
+import ReactDOM from 'react-dom';
+import App from './App.jsx';
+
+ReactDOM.render(&lt;App/&gt;, document.getElementById('app'));
+</code></pre> 
+ <p>这将产生以下结果 -<br><img src="http://www.yiibai.com/uploads/images/201801/0201/200110107_43253.png" alt=""></p> 
+ <h2 id="h2-u5B50u4E8Bu4EF6"><a name="子事件" class="reference-link"></a><span class="header-link octicon octicon-link"></span>子事件</h2>
+ <p>当需要从其子组件中更新父组件的状态时，我们可以在父组件中创建一个事件处理程序(<code>updateState</code>)，并将其作为prop(<code>updateStateProp</code>)传递给子组件，在那里可以调用它。</p> 
+ <p>文件：<em>App.jsx</em> - </p> 
+ <pre><code class="lang-js">import React from 'react';
+
+class App extends React.Component {
+   constructor(props) {
+      super(props);
+
+      this.state = {
+         data: 'Initial data...'
+      }
+      this.updateState = this.updateState.bind(this);
+   };
+   updateState() {
+      this.setState({data: 'Data updated from the child component...'})
+   }
+   render() {
+      return (
+         &lt;div&gt;
+            &lt;Content myDataProp = {this.state.data} 
+               updateStateProp = {this.updateState}&gt;&lt;/Content&gt;
+         &lt;/div&gt;
+      );
+   }
+}
+class Content extends React.Component {
+   render() {
+      return (
+         &lt;div&gt;
+            &lt;button onClick = {this.props.updateStateProp}&gt;CLICK&lt;/button&gt;
+            &lt;h3&gt;{this.props.myDataProp}&lt;/h3&gt;
+         &lt;/div&gt;
+      );
+   }
+}
+export default App;
+</code></pre> 
+ <p>文件：<em>main.js</em> - </p>   
+ <pre><code class="lang-js">import React from 'react';
+import ReactDOM from 'react-dom';
+import App from './App.jsx';
+
+ReactDOM.render(&lt;App/&gt;, document.getElementById('app'));
+</code></pre> 
+ <p>这将产生以下结果 -<br><img src="http://www.yiibai.com/uploads/images/201801/0201/425110111_67970.png" alt=""></p>
+ <br>      
+</div></body></html>

@@ -1,0 +1,43 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">如何从Maven远程存储库下载？</h1><div style="width:100%;float:left;" class="article-content">   
+ <p> 根据 Apache Maven 的说明: </p> 
+ <blockquote style="color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:17.5px;background-color:#FFFFFF;"> 
+  <p style="background-color:inherit;"> Downloading in Maven is triggered by a project declaring a dependency that is not present in the local repository (or for a SNAPSHOT, when the remote repository contains one that is newer). By default, Maven will download from the central repository. </p> 
+ </blockquote> 
+ <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  background-color:#FFFFFF;"> 在Maven中，当你声明的库不存在于本地存储库中，也没有不存在于Maven中心储存库，该过程将停止并将错误消息输出到 Maven 控制台。 </p> 
+ <h2> 1. 示例 </h2> 
+ <p> &nbsp;org.jvnet.localizer&nbsp;只适用于&nbsp;<a target="_blank" href="https://maven.java.net/content/repositories/public/">Java.net资源库</a> </p> 
+ <div style="color:#333333;font-family:Consolas, Monaco, 'Andale Mono', monospace;background-color:#E6E6FC;">
+   pom.xml 
+ </div> 
+ <p> <br> </p> 
+ <pre class="prettyprint lang-xml">&lt;dependency&gt;
+        &lt;groupId&gt;org.jvnet.localizer&lt;/groupId&gt;
+        &lt;artifactId&gt;localizer&lt;/artifactId&gt;
+        &lt;version&gt;1.8&lt;/version&gt;
+&lt;/dependency&gt;</pre> 
+ <p> <br> </p> 
+ <p> 当你建立这个 Maven 项目，它将依赖找不到失败并输出错误消息。 </p> 
+ <h2> 2. 声明Java.net储存库 </h2> 
+ <p> 告诉 Maven 来获得 Java.net 的依赖，你需要声明远程仓库在 pom.xml 文件这样： </p> 
+ <div style="color:#333333;font-family:Consolas, Monaco, 'Andale Mono', monospace;background-color:#E6E6FC;">
+   pom.xml 
+ </div> 
+ <p> <br> </p>   
+ <pre class="prettyprint lang-xml"> &lt;repositories&gt;
+	&lt;repository&gt;
+	    &lt;id&gt;java.net&lt;/id&gt;
+	    &lt;url&gt;https://maven.java.net/content/repositories/public/&lt;/url&gt;
+	&lt;/repository&gt;
+    &lt;/repositories&gt;</pre> 
+ <p> <br> </p> 
+ <p> 现在，Maven的依赖库查询顺序更改为： </p> 
+ <ol> 
+  <li> 在 Maven 本地资源库中搜索，如果没有找到，进入第 2 步，否则退出。 </li> 
+  <li> 在 Maven 中央存储库搜索，如果没有找到，进入第 3 步，否则退出。 </li> 
+  <li> 在java.net Maven的远程存储库搜索，如果没有找到，提示错误信息，否则退出。 </li> 
+ </ol> 
+ <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  background-color:#FFFFFF;"> <br> </p> 
+ <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  background-color:#FFFFFF;"> <br> </p> 
+ <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  background-color:#FFFFFF;"> <br> </p>
+ <br>      
+</div></body></html>

@@ -1,0 +1,132 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">TestNG Hello World入门示例</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>作为一个经典的入门例子，这里展示如何开始使用<code>TestNG</code>单元测试框架。</p> 
+ <p>使用的工具 ：</p> 
+ <ul> 
+  <li>TestNG 6.8.7</li>
+  <li>Maven 3</li>
+  <li>Eclipse IDE</li>
+ </ul> 
+ <h2 id="h2-testng-"><a name="TestNG下载并安装" class="reference-link"></a><span class="header-link octicon octicon-link"></span>TestNG下载并安装</h2>
+ <p>从这里 <a target="_blank" href="http://testng.org/doc/download.html">http://testng.org/doc/download.html</a> 下载当前版本的TestNG，打开zip分发来获取TestNG解压缩文件，其中包含以下子文件：</p> 
+ <ul> 
+  <li><code>Testng-6.jar</code>(请直接添加到您的项目中，也可能无法仅使用此jar来成功构建代码，因为TestNG官方版本不包括所有外部jar文件，以减少包的大小)</li>
+  <li>文档(TestNG教程资料)</li>
+  <li>示例代码</li>
+  <li>Testng 源代码</li>
+  <li>Readme文档</li>
+ </ul> 
+ <p>对于初学者，强烈建议您从示例代码和文档开始和编写TestNG。</p> 
+ <p>如果您使用Eclipse IDE，建议按照以下方法插件，建议使用更新站点：</p> 
+ <p>对于<strong>Eclipse 3.4</strong>及更高版本，请输入 <a target="_blank" href="http://beust.com/eclipse">http://beust.com/eclipse</a><br>对于<strong>Eclipse 3.3</strong>及更低版本，请输入 <a target="_blank" href="http://beust.com/eclipse1">http://beust.com/eclipse1</a> </p> 
+ <p>在Eclipse插件中安装如下 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201705/0105/235080517_64490.png" alt=""></p> 
+ <h2 id="h2-u5B9Eu4F8B"><a name="实例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实例</h2>
+ <p>打开 <strong>Eclipse</strong>创建一个 Maven 项目，其项目结构如下所示 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201705/0105/958110504_54844.png" alt=""></p> 
+ <h3 id="h3-1-testng-"><a name="1. TestNG依赖关系" class="reference-link"></a><span class="header-link octicon octicon-link"></span>1. TestNG依赖关系</h3>
+ <p>在<code>pom.xml</code>中添加TestNG库，如下代码所示 - </p> 
+ <pre><code class="lang-xml">&lt;project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"&gt;
+    &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
+
+    &lt;groupId&gt;com.yiibai&lt;/groupId&gt;
+    &lt;artifactId&gt;TestHelloWorld&lt;/artifactId&gt;
+    &lt;version&gt;0.0.1-SNAPSHOT&lt;/version&gt;
+    &lt;packaging&gt;jar&lt;/packaging&gt;
+
+    &lt;name&gt;TestHelloWorld&lt;/name&gt;
+    &lt;url&gt;http://maven.apache.org&lt;/url&gt;
+
+    &lt;properties&gt;
+        &lt;project.build.sourceEncoding&gt;UTF-8&lt;/project.build.sourceEncoding&gt;
+    &lt;/properties&gt;
+
+    &lt;dependencies&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.testng&lt;/groupId&gt;
+            &lt;artifactId&gt;testng&lt;/artifactId&gt;
+            &lt;version&gt;6.8.7&lt;/version&gt;
+            &lt;scope&gt;test&lt;/scope&gt;
+        &lt;/dependency&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;junit&lt;/groupId&gt;
+            &lt;artifactId&gt;junit&lt;/artifactId&gt;
+            &lt;version&gt;3.8.1&lt;/version&gt;
+            &lt;scope&gt;test&lt;/scope&gt;
+        &lt;/dependency&gt;
+    &lt;/dependencies&gt;
+&lt;/project&gt;
+</code></pre> 
+ <h3 id="h3-2-testng-"><a name="2. TestNG示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>2. TestNG示例</h3>
+ <p>在<code>com.yiibai</code>包上创建一个 TestNg 类，如下图所示 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201705/0105/269110518_18378.png" alt=""></p> 
+ <p>选择 <strong>TestNG class</strong>如下图所示 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201705/0105/558110500_69691.png" alt=""></p> 
+ <p>写入类的名称：<strong>TestHelloWorld</strong>，如下所示 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201705/0105/821110502_89185.png" alt=""></p> 
+ <p>文件：<code>TestHelloWorld.java</code> 代码如下 - </p>   
+ <pre><code class="lang-java">package com.yiibai;
+
+import org.testng.Assert;
+import org.testng.annotations.Test;
+
+
+public class TestHelloWorld {
+
+    @Test()
+    public void testEmailGenerator() {
+
+        RandomEmailGenerator obj = new RandomEmailGenerator();
+        String email = obj.generate();
+
+        Assert.assertNotNull(email);
+        Assert.assertEquals(email, "feedback@yiibai.com");
+
+    }
+
+}
+</code></pre> 
+ <p>再创建一个简单的Java类，它在方法中返回一个固定电子邮件： “<code><a target="_blank" href="mailto:feedback@yiibai.com">feedback@yiibai.com</a></code>”.<br>文件：<code>RandomEmailGenerator.java</code> 代码如下 - </p> 
+ <pre><code class="lang-java">package com.yiibai;
+
+//import org.springframework.stereotype.Service;
+
+public class RandomEmailGenerator {
+
+    public String generate() {
+        return "feedback@yiibai.com";
+    }
+
+}
+</code></pre> 
+ <p>完成后，创建一个简单的TestNG测试用例，此测试确保<code>RandomEmailGenerator.generate()</code>始终返回“<code><a target="_blank" href="mailto:feedback@yiibai.com">feedback@yiibai.com</a></code>”。</p> 
+ <h2 id="h2-3-testng-eclipse-"><a name="3. TestNG Eclipse插件" class="reference-link"></a><span class="header-link octicon octicon-link"></span>3. TestNG Eclipse插件</h2>
+ <p>要在Eclipse IDE中运行以上测试，您需要安装TestNG Eclipse插件。 按照官方的TestNG Eclipse插件指南进行安装。</p> 
+ <p>要运行TestNG测试，请右键单击测试类(<code>TestHelloWorld.java</code>)并运行“<strong>TestNG Test</strong>”。</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201705/0105/713110524_60600.png" alt=""></p> 
+ <p>输出结果如下 - </p> 
+ <pre><code class="lang-shell">[TestNG] Running:
+  C:\Users\Administrator\AppData\Local\Temp\testng-eclipse-1570064410\testng-customsuite.xml
+
+PASSED: testEmailGenerator
+
+===============================================
+    Default test
+    Tests run: 1, Failures: 0, Skips: 0
+===============================================
+
+
+===============================================
+Default suite
+Total tests run: 1, Failures: 0, Skips: 0
+===============================================
+
+[TestNG] Time taken by org.testng.reporters.XMLReporter@1b40d5f0: 13 ms
+[TestNG] Time taken by org.testng.reporters.SuiteHTMLReporter@6ea6d14e: 99 ms
+[TestNG] Time taken by org.testng.reporters.EmailableReporter2@4563e9ab: 6 ms
+[TestNG] Time taken by [FailedReporter passed=0 failed=0 skipped=0]: 0 ms
+[TestNG] Time taken by org.testng.reporters.jq.Main@2aaf7cc2: 55 ms
+[TestNG] Time taken by org.testng.reporters.JUnitReportReporter@45c8e616: 4 ms
+</code></pre>
+ <br>      
+</div></body></html>

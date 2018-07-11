@@ -1,0 +1,132 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Gradle构建JAVA项目</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>本章介绍如何使用Gradle构建文件来构建一个Java项目。 首先，我们必须向构建脚本中添加Java插件，因为它提供了编译Java源代码，运行单元测试，创建Javadoc和创建JAR文件的任务。 在<code>build.gradle</code>文件中使用以下代码行。</p> 
+ <pre><code class="lang-groovy">apply plugin: 'java'
+</code></pre> 
+ <p>怎么样，是不是很简单？</p> 
+ <h2 id="h2-java-"><a name="Java默认的项目布局" class="reference-link"></a><span class="header-link octicon octicon-link"></span>Java默认的项目布局</h2>
+ <p>每当添加一个插件到构建中，它会假设一个特定的Java项目设置（类似于Maven）。看看下面的目录结构。</p> 
+ <ul> 
+  <li><code>src/main/java</code> 目录包含Java源代码；</li>
+  <li><code>src/test/java</code> 目录包含测试用的源代码；</li>
+ </ul> 
+ <p>如果遵循上面设置，以下构建文件足以编译，测试并捆绑Java项目。<br>要启动构建，请在命令行上键入以下命令。</p> 
+ <pre><code class="lang-groovy">D:/worksp/gradle&gt; gradle build
+</code></pre> 
+ <p>SourceSets可用于指定不同的项目结构。例如，指定源代码存储在<code>src</code>文件夹中，而不是在<code>src/main/java</code>中。 看看下面的目录结构。</p> 
+ <pre><code class="lang-groovy">apply plugin: 'java'
+sourceSets {
+   main {
+      java {
+         srcDir 'src'
+      }
+   }
+
+   test {
+      java {
+         srcDir 'test'
+      }
+   }
+}
+</code></pre> 
+ <h2 id="h2-u521Du59CBu5316u4EFBu52A1u6267u884C"><a name="初始化任务执行" class="reference-link"></a><span class="header-link octicon octicon-link"></span>初始化任务执行</h2>
+ <p>Gradle还不支持多个项目模板。但它提供了一个init来初始化任务来创建一个新的Gradle项目的结构。如果没有指定其他参数，任务将创建一个Gradle项目，其中包含gradle包装器文件，<code>build.gradle</code>和<code>settings.gradle</code>文件。</p> 
+ <p>当使用<code>java-library</code>作为值并添加<code>--type</code>参数时，将创建一个java项目结构，<code>build.gradle</code>文件包含带有<a target="_blank" href="http://www.yiibai.com/junit/" title="Junit">Junit</a>的某个Java模板。 看看下面<code>build.gradle</code>文件的代码。</p> 
+ <pre><code class="lang-groovy">apply plugin: 'java'
+
+repositories {
+   jcenter()
+}
+
+dependencies {
+   compile 'org.slf4j:slf4j-api:1.7.12'
+   testCompile 'junit:junit:4.12'
+}
+</code></pre> 
+ <p>在仓库(<code>repositories</code>)这部分中，它定义了要从哪里找到依赖。Jcenter是为了解决依赖问题。 依赖关系（<code>dependencies</code>）部分用于提供有关外部依赖关系的信息。</p> 
+ <h2 id="h2--java-"><a name="指定Java版本" class="reference-link"></a><span class="header-link octicon octicon-link"></span>指定Java版本</h2>
+ <p>通常，Java项目要有一个版本和一个目标JRE，在其上编译它。<code>version</code>和<code>sourceCompatibility</code>属性可以在<code>build.gradle</code>文件中设置。</p> 
+ <pre><code class="lang-groovy">version = 0.1.1
+sourceCompatibility = 1.8
+</code></pre> 
+ <p>如果这是一个可执行的Java应用程序，<code>MANIFEST.MF</code>文件必须要指定具有<code>main方</code>法的类。</p>   
+ <pre><code class="lang-groovy">apply plugin: 'java'
+
+jar {
+   manifest {
+      attributes 'Main-Class': 'com.yiibai.main.Application'
+   }
+}
+</code></pre> 
+ <p>让我们考虑一个例子。创建一个目录结构，如下面的屏幕截图所示。</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201610/24/24171053_96415.png" alt=""></p> 
+ <p>将以下Java代码复制到<code>App.java</code>文件中，并将其存储到 <code>D:/worksp/gradle/src/main/java/com/yiibai</code> 目录中。</p> 
+ <pre><code class="lang-java">package com.yiibai;
+
+/**
+* Hello world!
+*
+*/
+
+public class App {
+   public static void main( String[] args ){
+      System.out.println( "Hello World, Gradle Build Work! " );
+   }
+}
+</code></pre> 
+ <p>将以下Java代码复制到<code>AppTset.java</code>文件中，并存储到<code>D:/worksp/gradle/src/test/java/com/yiibai</code>目录中。</p> 
+ <pre><code class="lang-java">package com.yiibai;
+
+/**
+* Hello world!
+*
+*/
+
+public class App{
+   public static void main( String[] args ){
+      System.out.println( "Hello World!" );
+   }
+}
+</code></pre> 
+ <p>将以下代码复制到<code>build.gradle</code>文件中，并放入 <code>D:/worksp/gradle</code> 目录。</p> 
+ <pre><code class="lang-sql">apply plugin: 'java'
+
+repositories {
+   jcenter()
+}
+
+dependencies {
+   compile 'org.slf4j:slf4j-api:1.7.12'
+   testCompile 'junit:junit:4.12'
+}
+
+jar {
+   manifest {
+      attributes 'Main-Class': 'com.yiibai.main.App'
+   }
+}
+</code></pre> 
+ <p>要编译和执行上述脚本，请使用以下命令。</p> 
+ <pre><code class="lang-groovy">D:/worksp/gradle&gt; gradle tasks
+....
+D:/worksp/gradle&gt; gradle assemble
+....
+D:/worksp/gradle&gt; gradle build
+:compileJava UP-TO-DATE
+:processResources UP-TO-DATE
+:classes UP-TO-DATE
+:jar UP-TO-DATE
+:assemble UP-TO-DATE
+:compileTestJava
+:processTestResources UP-TO-DATE
+:testClasses
+:test
+:check
+:build
+
+BUILD SUCCESSFUL
+
+Total time: 1.638 secs
+</code></pre> 
+ <p>查看相应目录中的所有类文件，并检查 <code>D:/worksp/gradle/build/libs</code>文件夹中，应该会有一个 <code>gradle.jar</code>文件。</p>
+ <br>      
+</div></body></html>

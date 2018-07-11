@@ -1,0 +1,57 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Go延迟(defer)实例</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>Defer用于确保稍后在程序执行中执行函数调用，通常用于清理目的。延迟(<code>defer</code>)常用于例如,<code>ensure</code>和<code>finally</code>常见于其他编程语言中。</p> 
+ <p>假设要创建一个文件，写入内容，然后在完成之后关闭。这里可以这样使用延迟(<code>defer</code>)处理。</p> 
+ <p>在使用<code>createFile</code>获取文件对象后，立即使用<code>closeFile</code>推迟该文件的关闭。这将在<code>writeFile()</code>完成后封装函数(<code>main</code>)结束时执行。</p> 
+ <p>运行程序确认文件在写入后关闭。</p> 
+ <blockquote> 
+  <p>所有的示例代码，都放在 <code>F:\worksp\golang</code> 目录下。安装Go编程环境请参考：<a target="_blank" href="http://www.yiibai.com/go/go_environment.html">http://www.yiibai.com/go/go_environment.html</a> </p> 
+ </blockquote> 
+ <p><code>panic.go</code>的完整代码如下所示 -</p> 
+ <pre><code class="lang-go">package main
+
+import "fmt"
+import "os"
+
+// Suppose we wanted to create a file, write to it,
+// and then close when we're done. Here's how we could
+// do that with `defer`.
+func main() {
+
+    // Immediately after getting a file object with
+    // `createFile`, we defer the closing of that file
+    // with `closeFile`. This will be executed at the end
+    // of the enclosing function (`main`), after
+    // `writeFile` has finished.
+    f := createFile("defer-test.txt")
+    defer closeFile(f)
+    writeFile(f)
+}
+
+func createFile(p string) *os.File {
+    fmt.Println("creating")
+    f, err := os.Create(p)
+    if err != nil {
+        panic(err)
+    }
+    return f
+}
+
+func writeFile(f *os.File) {
+    fmt.Println("writing")
+    fmt.Fprintln(f, "data")
+
+}
+
+func closeFile(f *os.File) {
+    fmt.Println("closing")
+    f.Close()
+}
+</code></pre> 
+ <p>执行上面代码，将得到以下输出结果 - </p>   
+ <pre><code class="lang-go">F:\worksp\golang&gt;go run defer.go
+creating
+writing
+closing
+</code></pre>
+ <br>      
+</div></body></html>

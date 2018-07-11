@@ -1,0 +1,335 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Python文件读写</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>在本章中将介绍<em>Python 3</em>中可用的所有基本文件读取<em>I/O</em>功能。有关更多功能，请参考标准Python文档。</p> 
+ <h2 id="h2-u6253u5370u5230u5C4Fu5E55"><a name="打印到屏幕" class="reference-link"></a><span class="header-link octicon octicon-link"></span>打印到屏幕</h2>
+ <p>产生输出的最简单方法是使用<code>print</code>语句，可以传递零个或多个由逗号分隔的表达式。此函数将传递的表达式转换为字符串，并将结果写入标准输出，如下所示：</p> 
+ <pre><code class="lang-python">#!/usr/bin/python3
+
+print ("Python是世界上最牛逼的语言,", "难道不是吗?")
+</code></pre> 
+ <p>执行上面代码后，将在标准屏幕上产生以下结果 -</p> 
+ <pre><code class="lang-shell">Python是世界上最牛逼的语言, 难道不是吗?
+</code></pre> 
+ <h2 id="h2-u4ECEu952Eu76D8u8BFBu53D6u8F93u5165"><a name="从键盘读取输入" class="reference-link"></a><span class="header-link octicon octicon-link"></span>从键盘读取输入</h2>
+ <p><em>Python 2</em>有两个内置的函数用于从标准输入读取数据，默认情况下来自键盘。这两个函数分别是：<code>input()</code>和<code>raw_input()</code>。</p> 
+ <p>在<em>Python 3</em>中，不建议使用<code>raw_input()</code>函数。 <code>input()</code>函数可以从键盘读取数并作为字符串类型，而不管它是否用引号括起来(“或”“)。</p> 
+ <pre><code class="lang-python">&gt;&gt;&gt; x = input("input something:")
+input something:yes,input some string
+&gt;&gt;&gt; x
+'yes,input some string'
+&gt;&gt;&gt; x = input("input something:")
+input something:1239900
+&gt;&gt;&gt; x
+'1239900'
+&gt;&gt;&gt;
+</code></pre> 
+ <h2 id="h2-u6253u5F00u548Cu5173u95EDu6587u4EF6"><a name="打开和关闭文件" class="reference-link"></a><span class="header-link octicon octicon-link"></span>打开和关闭文件</h2>
+ <p>在前面我们学习读取和写入标准的输入和输出。 现在，来看看如何使用实际的数据文件。Python提供了默认操作文件所必需的基本功能和方法。可以使用文件对象执行大部分文件操作。</p> 
+ <h3 id="h3-u6253u5F00u6587u4EF6"><a name="打开文件" class="reference-link"></a><span class="header-link octicon octicon-link"></span>打开文件</h3>
+ <p>在读取或写入文件之前，必须使用Python的内置<code>open()</code>函数打开文件。此函数创建一个文件对象，该对象将用于调用与其相关联的其他支持方法。</p> 
+ <p><strong>语法</strong></p> 
+ <pre><code class="lang-python">file object = open(file_name [, access_mode][, buffering])
+</code></pre> 
+ <p>这里是参数详细信息 -</p> 
+ <ul> 
+  <li><em>file_name</em> - <code>file_name</code>参数是一个字符串值，指定要访问的文件的名称。</li>
+  <li><em>access_mode</em> - <code>access_mode</code>确定文件打开的模式，即读取，写入，追加等。可能的值的完整列表如下表所示。 这是一个可选参数，默认文件访问模式为(<code>r</code> - 也就是只读)。</li>
+  <li><em>buffering</em> - 如果<code>buffering</code>值设置为<code>0</code>，则不会发生缓冲。 如果缓冲值<code>buffering</code>为<code>1</code>，则在访问文件时执行行缓冲。如果将缓冲值<code>buffering</code>指定为大于<code>1</code>的整数，则使用指定的缓冲区大小执行缓冲操作。如果为负，则缓冲区大小为系统默认值(默认行为)。</li>
+ </ul> 
+ <p>以下是打开文件使用的模式的列表 -</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>编号</th> 
+    <th>模式</th> 
+    <th>描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>1</td> 
+    <td><code>r</code></td> 
+    <td>打开的文件为只读模式。文件指针位于文件的开头，这是默认模式。</td> 
+   </tr> 
+   <tr> 
+    <td>2</td> 
+    <td><code>rb</code></td> 
+    <td>打开仅用二进制格式读取的文件。文件指针位于文件的开头，这是默认模式。</td> 
+   </tr> 
+   <tr> 
+    <td>3</td> 
+    <td><code>r+</code></td> 
+    <td>打开读写文件。文件指针放在文件的开头。</td> 
+   </tr> 
+   <tr> 
+    <td>4</td> 
+    <td><code>rb+</code></td> 
+    <td>以二进制格式打开一个用于读写文件。文件指针放在文件的开头。</td> 
+   </tr> 
+   <tr> 
+    <td>5</td> 
+    <td><code>w</code></td> 
+    <td>打开仅供写入的文件。 如果文件存在，则覆盖该文件。 如果文件不存在，则创建一个新文件进行写入。</td> 
+   </tr> 
+   <tr> 
+    <td>6</td> 
+    <td><code>wb</code></td> 
+    <td>打开仅用二进制格式写入的文件。如果文件存在，则覆盖该文件。 如果文件不存在，则创建一个新文件进行写入。</td> 
+   </tr> 
+   <tr> 
+    <td>7</td> 
+    <td><code>w+</code></td> 
+    <td>打开写入和取读的文件。如果文件存在，则覆盖现有文件。 如果文件不存在，创建一个新文件进行阅读和写入。</td> 
+   </tr> 
+   <tr> 
+    <td>8</td> 
+    <td><code>wb+</code></td> 
+    <td>打开一个二进制格式的写入和读取文件。 如果文件存在，则覆盖现有文件。 如果文件不存在，创建一个新文件进行阅读和写入。</td> 
+   </tr> 
+   <tr> 
+    <td>9</td> 
+    <td><code>a</code></td> 
+    <td>打开一个文件进行追加。 如果文件存在，则文件指针位于文件末尾。也就是说，文件处于追加模式。如果文件不存在，它将创建一个新文件进行写入。</td> 
+   </tr> 
+   <tr> 
+    <td>10</td> 
+    <td><code>ab</code></td> 
+    <td>打开一个二进制格式的文件。如果文件存在，则文件指针位于文件末尾。 也就是说，文件处于追加模式。如果文件不存在，它将创建一个新文件进行写入。</td> 
+   </tr> 
+   <tr> 
+    <td>11</td> 
+    <td><code>a+</code></td> 
+    <td>打开一个文件，用于追加和阅读。 如果文件存在，则文件指针位于文件末尾。 文件以附加模式打开。 如果文件不存在，它将创建一个新文件进行阅读和写入。</td> 
+   </tr> 
+   <tr> 
+    <td>12</td> 
+    <td><code>ab+</code></td> 
+    <td>打开一个二进制格式的附加和读取文件。 如果文件存在，则文件指针位于文件末尾。文件以附加模式打开。如果文件不存在，它将创建一个新文件进行读取和写入。</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h2 id="h2-u6587u4EF6u5BF9u8C61u5C5Eu6027"><a name="文件对象属性" class="reference-link"></a><span class="header-link octicon octicon-link"></span>文件对象属性</h2>
+ <p>打开一个文件并且有一个文件对象后，可以获得与该文件相关的各种信息。</p> 
+ <p>以下是与文件对象相关的所有属性的列表 -</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>编号</th> 
+    <th>属性</th> 
+    <th>描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>1</td> 
+    <td><code>file.closed</code></td> 
+    <td>如果文件关闭则返回<code>true</code>，否则返回<code>false</code>。</td> 
+   </tr> 
+   <tr> 
+    <td>2</td> 
+    <td><code>file.mode</code></td> 
+    <td>返回打开文件的访问模式。</td> 
+   </tr> 
+   <tr> 
+    <td>3</td> 
+    <td><code>file.name</code></td> 
+    <td>返回文件的名称。</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <blockquote> 
+  <p>注意 - <em>Python 3.x</em>中不支持<code>softspace</code>属性</p> 
+ </blockquote> 
+ <p><strong>示例</strong></p> 
+ <pre><code class="lang-python">#!/usr/bin/python3
+
+# Open a file
+fo = open("foo.txt", "wb")
+print ("Name of the file: ", fo.name)
+print ("Closed or not : ", fo.closed)
+print ("Opening mode : ", fo.mode)
+fo.close()
+</code></pre> 
+ <p>执行上面代码，这产生以下结果 -</p> 
+ <pre><code class="lang-shell">Name of the file:  foo.txt
+Closed or not :  False
+Opening mode :  wb
+</code></pre> 
+ <h3 id="h3-close-"><a name="close()方法" class="reference-link"></a><span class="header-link octicon octicon-link"></span>close()方法</h3>
+ <p>文件对象的<code>close()</code>方法刷新任何未写入的信息并关闭文件对象，之后不能再进行写入操作。<br>当文件的引用对象重新分配给另一个文件时，Python也会自动关闭一个文件。但使用<code>close()</code>方法关闭文件是个好习惯。</p> 
+ <p><strong>语法</strong></p> 
+ <pre><code class="lang-python">fileObject.close();
+</code></pre> 
+ <p><strong>示例</strong></p> 
+ <pre><code class="lang-python">#!/usr/bin/python3
+
+# Open a file
+fo = open("foo.txt", "wb")
+print ("Name of the file: ", fo.name)
+
+# Close opened file
+fo.close()
+</code></pre> 
+ <p>执行上面代码，这产生以下结果 -</p> 
+ <pre><code class="lang-shell">Name of the file:  foo.txt
+</code></pre> 
+ <h2 id="h2-u8BFBu53D6u548Cu5199u5165u6587u4EF6"><a name="读取和写入文件" class="reference-link"></a><span class="header-link octicon octicon-link"></span>读取和写入文件</h2>
+ <p>文件对象提供了一组访问方法，使代码编写更方便。下面将演示如何使用<code>read()</code>和<code>write()</code>方法来读取和写入文件。</p> 
+ <h3 id="h3-write-"><a name="write()方法" class="reference-link"></a><span class="header-link octicon octicon-link"></span>write()方法</h3>
+ <p><code>write()</code>方法将任何字符串写入打开的文件。 重要的是要注意，Python字符串可以是二进制数据，而不仅仅是文本。</p> 
+ <p><code>write()</code>方法不会在字符串的末尾添加换行符(‘<code>\n</code>‘)</p> 
+ <p><strong>语法</strong></p> 
+ <pre><code class="lang-python">fileObject.write(string);
+</code></pre> 
+ <p>这里，传递参数 - <code>string</code> 是要写入打开文件的内容。</p> 
+ <p><strong>示例</strong></p> 
+ <pre><code>#!/usr/bin/python3
+
+# Open a file
+fo = open("foo.txt", "w")
+fo.write( "Python is a great language.\nYeah its great!!\n")
+
+# Close opend file
+fo.close()
+</code></pre>
+ <p>上述示例将创建一个<code>foo.txt</code>文件，并将给定的内容写入到该文件中，最后将关闭文件。 在执行上面语句后，如果打开文件(<code>foo.txt</code>)，它将应该以下内容 -</p> 
+ <pre><code class="lang-shell">Python is a great language.
+Yeah its great!!
+</code></pre> 
+ <h3 id="h3-read-"><a name="read()方法" class="reference-link"></a><span class="header-link octicon octicon-link"></span>read()方法</h3>
+ <p><code>read()</code>方法用于从打开的文件读取一个字符串。 重要的是要注意Python字符串除文本数据外可以是二进制数据。。</p> 
+ <p><strong>语法</strong></p> 
+ <pre><code class="lang-python">fileObject.read([count]);
+</code></pre> 
+ <p>这里，传递参数 - <code>count</code>是从打开的文件读取的字节数。 该方法从文件的开始位置开始读取，如果<code>count</code>不指定值或丢失，则尽可能地尝试读取文件，直到文件结束。</p> 
+ <p><strong>示例</strong></p> 
+ <p>下面来一个文件<code>foo.txt</code>，这是上面示例中创建的。</p>   
+ <pre><code class="lang-python">#!/usr/bin/python3
+
+# Open a file
+fo = open("foo.txt", "r+")
+str = fo.read(10)
+print ("Read String is : ", str)
+
+# Close opened file
+fo.close()
+</code></pre> 
+ <p>执行上面代码，这产生以下结果 -</p> 
+ <pre><code class="lang-python">Read String is :  Python is
+</code></pre> 
+ <h2 id="h2-u6587u4EF6u4F4Du7F6E"><a name="文件位置" class="reference-link"></a><span class="header-link octicon octicon-link"></span>文件位置</h2>
+ <p><code>tell()</code>方法用于获取文件中的当前位置; 换句话说，下一次读取或写入将发生在从文件开始处之后的多个字节数的位置。</p> 
+ <p><code>seek(offset [，from])</code>方法更改当前文件位置。 <code>offset</code>参数表示要移动的字节数。 <code>from</code>参数指定要移动字节的引用位置。</p> 
+ <p>如果<code>from</code>设置为<code>0</code>，则将文件的开头作为参考位置。 如果设置为<code>1</code>，则将当前位置用作参考位置。 如果设置为<code>2</code>，则文件的末尾将被作为参考位置。</p> 
+ <p><strong>示例</strong></p> 
+ <p>下面来一个文件<code>foo.txt</code>，这是上面示例中创建的。</p> 
+ <pre><code class="lang-python">#!/usr/bin/python3
+
+# Open a file
+fo = open("foo.txt", "r+")
+str = fo.read(10)
+print ("Read String is : ", str)
+
+# Check current position
+position = fo.tell()
+print ("Current file position : ", position)
+
+# Reposition pointer at the beginning once again
+position = fo.seek(0, 0)
+str = fo.read(10)
+print ("Again read String is : ", str)
+
+# Close opened file
+fo.close()
+</code></pre> 
+ <p>执行上面代码，这产生以下结果 -</p> 
+ <pre><code class="lang-python">Read String is :  Python is
+Current file position :  10
+Again read String is :  Python is
+</code></pre> 
+ <h2 id="h2-u91CDu547Du540Du548Cu5220u9664u6587u4EF6"><a name="重命名和删除文件" class="reference-link"></a><span class="header-link octicon octicon-link"></span>重命名和删除文件</h2>
+ <p>Python os模块提供用于执行文件处理操作(如重命名和删除文件)的方法。要使用此模块，需要先将它导入，然后可以调用任何相关的函数。</p> 
+ <h3 id="h3-rename-"><a name="rename()方法" class="reference-link"></a><span class="header-link octicon octicon-link"></span>rename()方法</h3>
+ <p><code>rename()</code>方法有两个参数，即当前的文件名和新的文件名。</p> 
+ <p><strong>语法</strong></p> 
+ <pre><code class="lang-python">os.rename(current_file_name, new_file_name)
+</code></pre> 
+ <p><strong>示例</strong></p> 
+ <p>以下是一个将现有文件<code>test1.txt</code>重命名为<code>test2.txt</code>的示例 -</p> 
+ <pre><code class="lang-python">#!/usr/bin/python3
+import os
+
+# Rename a file from test1.txt to test2.txt
+os.rename( "test1.txt", "test2.txt" )
+</code></pre> 
+ <h3 id="h3-remove-"><a name="remove()方法" class="reference-link"></a><span class="header-link octicon octicon-link"></span>remove()方法</h3>
+ <p>使用<code>remove()</code>方法并通过提供要删除的文件的名称作为参数来删除文件。</p> 
+ <p><strong>语法</strong></p> 
+ <pre><code class="lang-python">os.remove(file_name)
+</code></pre> 
+ <p><strong>示例</strong></p> 
+ <p>以下是删除现有文件<code>test2.txt</code>的示例 -</p> 
+ <pre><code class="lang-python">#!/usr/bin/python3
+import os
+
+# Delete file test2.txt
+os.remove("text2.txt")
+</code></pre> 
+ <h2 id="h2-python-"><a name="Python中的目录" class="reference-link"></a><span class="header-link octicon octicon-link"></span>Python中的目录</h2>
+ <p>所有文件都包含在各种目录中，Python处理目录问题也很容易。 <code>os</code>模块有几种方法可以用来创建，删除和更改目录。</p> 
+ <h3 id="h3-mkdir-"><a name="mkdir()方法" class="reference-link"></a><span class="header-link octicon octicon-link"></span>mkdir()方法</h3>
+ <p>使用<code>os</code>模块的<code>mkdir()</code>方法在当前目录中创建目录。需要为此方法提供一个参数，指定要创建的目录的名称。</p> 
+ <p><strong>语法</strong></p> 
+ <pre><code class="lang-python">os.mkdir("newdir")
+</code></pre> 
+ <p><strong>示例</strong></p> 
+ <p>以下是在当前目录中创建一个目录：<code>test</code> 的示例 -</p> 
+ <pre><code class="lang-python">#!/usr/bin/python3
+import os
+
+# Create a directory "test"
+os.mkdir("test")
+</code></pre> 
+ <p>使用<code>chdir()</code>方法来更改当前目录。 <code>chdir()</code>方法接受一个参数，它是要选择作为当前目录的目录的名称。</p> 
+ <p><strong>语法</strong></p> 
+ <pre><code class="lang-python">os.chdir("newdir")
+</code></pre> 
+ <p><strong>示例</strong></p> 
+ <p>以下是进入“<code>/home/newdir</code>”目录的示例 -</p> 
+ <pre><code class="lang-python">#!/usr/bin/python3
+import os
+
+# Changing a directory to "/home/newdir"
+os.chdir("/home/newdir")
+</code></pre> 
+ <h3 id="h3-getcwd-"><a name="getcwd()方法" class="reference-link"></a><span class="header-link octicon octicon-link"></span>getcwd()方法</h3>
+ <p><code>getcwd()</code>方法用于显示当前工作目录。</p> 
+ <pre><code class="lang-python">os.getcwd()
+</code></pre> 
+ <p><strong>示例</strong></p> 
+ <p>以下是给出当前目录的一个例子 -</p> 
+ <pre><code class="lang-python">#!/usr/bin/python3
+import os
+
+# This would give location of the current directory
+os.getcwd()
+</code></pre> 
+ <h3 id="h3-rmdir-"><a name="rmdir()方法" class="reference-link"></a><span class="header-link octicon octicon-link"></span>rmdir()方法</h3>
+ <p><code>rmdir()</code>方法删除该方法中作为参数传递的目录。删除目录之前，应删除其中的所有内容。</p> 
+ <pre><code class="lang-python">os.rmdir('dirname')
+</code></pre> 
+ <p><strong>示例</strong></p> 
+ <p>以下是删除“<code>/tmp/test</code>”目录的示例。需要给出目录的完全限定名称，否则将在当前目录中搜索该目录。</p> 
+ <pre><code class="lang-python">#!/usr/bin/python3
+import os
+
+# This would  remove "/tmp/test"  directory.
+os.rmdir( "/tmp/test"  )
+</code></pre> 
+ <h2 id="h2-u6587u4EF6u548Cu76EEu5F55u76F8u5173u65B9u6CD5"><a name="文件和目录相关方法" class="reference-link"></a><span class="header-link octicon octicon-link"></span>文件和目录相关方法</h2>
+ <p>有三个重要的来源，它们提供了广泛的实用方法来处理和操作Windows和Unix操作系统上的文件和目录。它们如下 -</p> 
+ <ul> 
+  <li><a target="_blank" href="http://www.yiibai.com/python/file_methods.html" title="文件对象和方法">文件对象和方法</a> - 文件对象提供了操作文件的功能。</li>
+  <li><a target="_blank" href="http://www.yiibai.com/python/os_file_methods.html" title="OS对象和方法">OS对象和方法</a> - 这提供了处理文件和目录的方法。</li>
+ </ul>
+ <br>      
+</div></body></html>

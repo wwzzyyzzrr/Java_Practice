@@ -1,0 +1,213 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">ASP.Net MVC安全</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>在本章中，我们将讨论如何在应用程序中实现安全功能。还将看到ASP.NET中包含的新成员特性，并可从ASP.NET MVC中使用。在ASP.NET的最新版本中，可以通过以下方式管理用户身份 -</p> 
+ <ul> 
+  <li>云</li>
+  <li>SQL数据库</li>
+  <li>本地Windows活动目录</li>
+ </ul> 
+ <p>在本章中，我们将介绍作为ASP.NET一部分的新身份组件，并了解如何自定义用户和角色的成员资格。</p> 
+ <h2 id="h2-u8BA4u8BC1"><a name="认证" class="reference-link"></a><span class="header-link octicon octicon-link"></span>认证</h2>
+ <p>用户的认证意味着验证用户的身份，这真的很重要。可能需要将您的应用程序仅显示给经过身份验证的用户，原因很明显。<br>我们来创建一个新的ASP.Net MVC应用程序项目：<em>MVCSecurity</em> 。点击<em>确定</em> 继续。<br><img src="http://www.yiibai.com/uploads/images/201712/1712/463101257_42885.png" alt=""></p> 
+ <p>当启动一个新的ASP.NET应用程序时，这个过程中的一个步骤就是为应用程序需要配置身份验证服务。选择<em>MVC模板</em>，将看到现在启用了<em>更改认证</em>按钮。<br><img src="http://www.yiibai.com/uploads/images/201712/1712/284111206_74171.png" alt=""></p> 
+ <p>这是通过出现在“新建项目”对话框中的“更改认证”按钮完成的。默认身份验证是个人用户帐户。</p> 
+ <h2 id="h2-u8BA4u8BC1u9009u9879"><a name="认证选项" class="reference-link"></a><span class="header-link octicon octicon-link"></span>认证选项</h2>
+ <p>当单击更改按钮时，您将看到一个对话框，其中包含四个选项，如下所示。</p> 
+ <h4 id="h4-1-"><a name="1. 不进行身份验证" class="reference-link"></a><span class="header-link octicon octicon-link"></span>1. 不进行身份验证</h4>
+ <p>第一个选项是不验证，当想建立一个不关心访问者是谁的网站时使用这个选项。</p> 
+ <p>它是开放给任何人和每个人连接为每一个页面。以后可以随时更改，但<em>“不进行身份验证”</em> 选项意味着不会有任何功能来识别访问该网站的用户。<br><img src="http://www.yiibai.com/uploads/images/201712/1712/154101259_45936.png" alt=""></p> 
+ <h4 id="h4-2-"><a name="2. 个人用户帐户" class="reference-link"></a><span class="header-link octicon octicon-link"></span>2. 个人用户帐户</h4>
+ <p>第二个选项是个人用户帐户，这是用户可以访问网站的传统的基于表单的身份验证。 他们可以注册，创建一个登录名，默认情况下，用户名是使用一些新的ASP.NET身份特性存储在SQL Server数据库中。<br><img src="http://www.yiibai.com/uploads/images/201712/1712/934111200_83055.png" alt=""></p> 
+ <p>密码也存储在数据库中，但首先被散列。由于密码是散列的，因此不必担心在数据库中的纯文本密码而被别人知道。</p> 
+ <p>此选项通常用于要建立用户身份的Internet站点。 除了允许用户使用网站的密码创建本地登录外，还可以启用来自Microsoft，Google，Facebook和Twitter等第三方的登录。</p> 
+ <p>这允许用户使用他们的真实帐户或他们的Twitter帐户登录到您的网站，但是您不需要存储任何密码。</p> 
+ <p>这将在这个模块中花费一些时间的选项。<em>个人用户帐户</em> 选项。</p> 
+ <h4 id="h4-3-"><a name="3. 工作和学校帐户" class="reference-link"></a><span class="header-link octicon octicon-link"></span>3. 工作和学校帐户</h4>
+ <p>第三个选择是使用组织帐户，这通常用于使用活动目录联合服务的业务应用程序。<br><img src="http://www.yiibai.com/uploads/images/201712/1712/541111202_68644.png" alt=""><br>将设置<em>Office 365</em>或使用<em>Azure Active Directory</em>服务，并且您有内部应用程序和云应用程序的单一登录。</p> 
+ <p>您还需要提供应用程序ID，以便应用程序需要在Windows Azure管理门户(如果这是基于Azure的)上进行注册，并且应用程序ID将在所有可能注册的应用程序中唯一标识此应用程序。</p> 
+ <h4 id="h4-4-windows-"><a name="4. Windows身份验证" class="reference-link"></a><span class="header-link octicon octicon-link"></span>4. Windows身份验证</h4>
+ <p>第四个选项是<em>Windows身份验证</em> ，适用于Intranet应用程序。<br><img src="http://www.yiibai.com/uploads/images/201712/1712/639111202_71592.png" alt=""><br>用户登录到Windows桌面，并可以将浏览器启动到位于同一防火墙内的应用程序。 ASP.NET可以自动获取用户的身份，即由活动目录建立的身份。 该选项不允许任何匿名访问该站点，但这也是一个可以更改的配置设置。</p> 
+ <p>下面我们来看看<em>基于表单的身份验证</em> ，即名称为个人用户帐户的身份验证。 此应用程序将用户名和密码，旧密码存储在本地SQL Server数据库中，创建此项目时，Visual Studio也将添加NuGet包。</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201712/1712/289111209_92532.png" alt=""></p> 
+ <p>现在运行这个应用程序，当您第一次访问这个应用程序，那么是以一个匿名用户来访问的。<br><img src="http://www.yiibai.com/uploads/images/201712/1712/272111216_40517.png" alt=""></p> 
+ <p>因为您还没有登录的账户，所以需要在这个网站上先注册一个用户。</p> 
+ <p>点击<em>注册</em> 链接，会看到下面的视图。<br><img src="http://www.yiibai.com/uploads/images/201712/1712/676111217_73248.png" alt=""></p> 
+ <p>输入您的电子邮件ID和密码，例如：<code><a target="_blank" href="mailto:maxsu@yiibai.com">maxsu@yiibai.com</a></code>和<code>Abc<a target="_blank" href="https://github.com/123" title="@123" class="at-link">@123</a></code>。</p> 
+ <p>点击<em>注册</em>。 现在，应用程序将使用此账户信息识别您。</p> 
+ <p>它将能够显示用户的名字。 在下面的截图中，可以看到：<em>“你好，<a target="_blank" href="mailto:maxsu@yiibai.com">maxsu@yiibai.com</a>！”</em> 。 可以点击它链接到一个页面，可以在这个页面中更改密码。<br><img src="http://www.yiibai.com/uploads/images/201712/1712/357111221_88926.png" alt=""></p> 
+ <p>也可以注销，关闭，重新启动，一个星期后回来，应该可以使用之前使用的凭据登录。现在点击<em>注销</em> 按钮，它将显示以下页面。再次点击登录链接进入下一页。可以使用相同的凭据重新登录。</p> 
+ <p>很多工作都在幕后进行到现在。 但是，我们想要做的是检查每个功能，看看这个UI是如何构建的。 什么是管理注销和登录过程？ 这些信息在数据库中排序？</p> 
+ <p>让我们从一些简单的基础开始。 首先，我们将看到这个用户名是如何显示的。 从解决方案资源管理器中的<em>View/Shared</em>文件夹中打开<code>_Layout.cshtml</code>。</p> 
+ <pre><code class="lang-html">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;meta http-equiv="Content-Type" content="text/html; charset=utf-8"/&gt;
+    &lt;meta charset="utf-8" /&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+    &lt;title&gt;@ViewBag.Title - 我的 ASP.NET 应用程序&lt;/title&gt;
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div class="navbar navbar-inverse navbar-fixed-top"&gt;
+        &lt;div class="container"&gt;
+            &lt;div class="navbar-header"&gt;
+                &lt;button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse"&gt;
+                    &lt;span class="icon-bar"&gt;&lt;/span&gt;
+                    &lt;span class="icon-bar"&gt;&lt;/span&gt;
+                    &lt;span class="icon-bar"&gt;&lt;/span&gt;
+                &lt;/button&gt;
+                @Html.ActionLink("应用程序名称", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+            &lt;/div&gt;
+            &lt;div class="navbar-collapse collapse"&gt;
+                &lt;ul class="nav navbar-nav"&gt;
+                    &lt;li&gt;@Html.ActionLink("主页", "Index", "Home")&lt;/li&gt;
+                    &lt;li&gt;@Html.ActionLink("关于", "About", "Home")&lt;/li&gt;
+                    &lt;li&gt;@Html.ActionLink("联系方式", "Contact", "Home")&lt;/li&gt;
+                &lt;/ul&gt;
+                @Html.Partial("_LoginPartial")
+            &lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div class="container body-content"&gt;
+        @RenderBody()
+        &lt;hr /&gt;
+        &lt;footer&gt;
+            &lt;p&gt;© @DateTime.Now.Year - 我的 ASP.NET 应用程序&lt;/p&gt;
+        &lt;/footer&gt;
+    &lt;/div&gt;
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>有一个共同的导航栏，应用程序名称，菜单，并有一个局部视图呈现为<code>_loginpartial</code>。 这实际上是显示用户名或注册和登录名的视图。 所以<code>_loginpartial.cshtml</code>也在<em>shared</em>文件夹中。其代码如下所示 - </p> 
+ <pre><code class="lang-html">@using Microsoft.AspNet.Identity
+@if (Request.IsAuthenticated)
+{
+    using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
+    {
+    @Html.AntiForgeryToken()
+
+    &lt;ul class="nav navbar-nav navbar-right"&gt;
+        &lt;li&gt;
+            @Html.ActionLink("你好，" + User.Identity.GetUserName() + "!", "Index", "Manage", routeValues: null, htmlAttributes: new { title = "Manage" })
+        &lt;/li&gt;
+        &lt;li&gt;&lt;a href="javascript:document.getElementById('logoutForm').submit()"&gt;注销&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+    }
+}
+else
+{
+    &lt;ul class="nav navbar-nav navbar-right"&gt;
+        &lt;li&gt;@Html.ActionLink("注册", "Register", "Account", routeValues: null, htmlAttributes: new { id = "registerLink" })&lt;/li&gt;
+        &lt;li&gt;@Html.ActionLink("登录", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink" })&lt;/li&gt;
+    &lt;/ul&gt;
+}
+</code></pre> 
+ <p>正如可以看到上面，有<code>if/else</code>语句。 如果请求没有被认证，这个视图将显示注册和登录链接。用户可以点击链接<em>登录</em>或<em>注册</em>。所有这些都是由帐户控制器完成的。</p> 
+ <p>现在，我们想看看如何获取用户名，这是在<code>Request.IsAuthenticated</code>。 可以看到对<code>User.Identity.GetUserName</code>的调用。这将检索用户名，在这种情况下是<code>"<a target="_blank" href="mailto:maxsu@yiibai.com">maxsu@yiibai.com</a>"</code></p> 
+ <h2 id="h2-u6388u6743"><a name="授权" class="reference-link"></a><span class="header-link octicon octicon-link"></span>授权</h2>
+ <p>假设想要防止未经验证的用户的信息。 因此，让我们创建一个新的控制器来显示这些信息，但只有当用户登录时才能操作。</p> 
+ <p>右键单击<em>Controllers</em> 文件夹，然后选择：<em>添加</em> -&gt; <em>控制器</em> 。选择一个<em>MVC 5控制器 - 空</em> 控制器，然后点击“添加”。输入名称<em>SecretController</em>，然后单击<em>“添加”</em> 按钮。</p> 
+ <p>它将会有两个动作，如下面的代码所示。参考以下代码 - </p>   
+ <pre><code class="lang-csharp">using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+
+namespace MVCSecurity.Controllers
+{
+    public class SecretController : Controller
+    {
+        // GET: Secret
+        public ActionResult Index()
+        {
+            return View();
+        }
+        // GET: Secret
+        public ContentResult Secret()
+        {
+            return Content("Secret informations here");
+        }
+
+        public ContentResult PublicInfo()
+        {
+            return Content("Public informations here");
+        }
+    }
+}
+</code></pre> 
+ <p>当运行这个应用程序时，可以在没有任何验证的情况下访问这个信息(URL:<code>http://localhost:57742/Secret/Secret</code>)，如下面的截图所示。</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201712/1712/519111229_37492.png" alt=""></p> 
+ <p>假设只有经过身份验证的用户才能够使用<code>Secret</code>动作方法，并且任何人都可以使用<code>PublicInfo</code>，而不需要任何身份验证。</p> 
+ <p>为了保护这个特定的操作并保证未经身份验证的用户到达此处，可以使用<code>Authorize</code>属性。 没有任何其他参数的授权属性将确保用户的身份是已知的，他们不是一个匿名用户。</p> 
+ <pre><code class="lang-csharp">// GET: Secret
+[Authorize]
+public ContentResult Secret(){
+   return Content("Secret informations here");
+}
+</code></pre> 
+ <p>现在再次运行这个应用程序，并指定相同的URL：<code>http://localhost:57742/Secret/Secret</code>。 MVC应用程序将检测到您无权访问应用程序的特定区域，并且会自动重定向到登录页面，在那里登录并尝试返回访问受限的应用程序的URL。</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201712/1712/697111244_79795.png" alt=""></p> 
+ <p>可以看到它在返回URL中指定，它告诉此页面，如果用户成功登录，则将其重定向到<code>/secret/secret</code>。</p> 
+ <p>输入您的用户名和密码，然后点击<em>“登录”</em>按钮。会看到它直接进入该页面。</p> 
+ <p>当不想在每一个动作上进行授权的时候，当想要在一个控制器里，几乎所有的事情都需要授权。 在这种情况下，总是可以将此过滤器应用于控制器本身，现在，此控制器内部的每个操作都将要求用户进行身份验证。</p> 
+ <pre><code class="lang-csharp">using System.Web.Mvc;
+
+namespace MVCSecurityDemo.Controllers{
+   [Authorize]
+   public class SecretController : Controller{
+      // GET: Secret
+      public ContentResult Secret(){
+         return Content("Secret informations here");
+      }
+
+      public ContentResult PublicInfo(){
+         return Content("Public informations here");
+      }
+   }
+}
+</code></pre> 
+ <p>但是，如果想要任何人都可以打开某一个操作，则可以使用另一个属性(即<code>AllowAnonymous</code>)覆盖此授权规则。参考以下代码 - </p> 
+ <pre><code class="lang-csharp">using System.Web.Mvc;
+
+namespace MVCSecurityDemo.Controllers{
+   [Authorize]
+   public class SecretController : Controller{
+      // GET: Secret
+      public ContentResult Secret(){
+         return Content("Secret informations here");
+      }
+
+      [AllowAnonymous]
+      public ContentResult PublicInfo(){
+         return Content("Public informations here");
+      }
+   }
+}
+</code></pre> 
+ <p>使用<code>Authorize</code>属性，也可以指定一些参数，比如允许一些特定的用户进入这个动作。</p> 
+ <pre><code class="lang-csharp">using System.Web.Mvc;
+
+namespace MVCSecurityDemo.Controllers{
+   [Authorize(Users = "maxsu@yiibai.com")]
+   public class SecretController : Controller{
+      // GET: Secret
+      public ContentResult Secret(){
+         return Content("Secret informations here");
+      }
+
+      [AllowAnonymous]
+      public ContentResult PublicInfo(){
+         return Content("Public informations here");
+      }
+   }
+}
+</code></pre> 
+ <p>当运行此应用程序并转到URL:<code>/secret/secret</code>时，如果它不是此控制器要求的用户(<code><a target="_blank" href="mailto:maxsu@yiibai.com">maxsu@yiibai.com</a></code>)，它会要求您登录。</p>
+ <br>      
+</div></body></html>

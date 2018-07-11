@@ -1,0 +1,160 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Struts 2 hello world (XML版本)</h1><div style="width:100%;float:left;" class="article-content">   
+ <p> 在这个例子中，我们将学习如何在Struts 2中创建一个Hello World例子。 </p> 
+ <p> 使用以下库或工具： </p> 
+ <ul> 
+  <li> MyEclipse 10 </li> 
+  <li> Struts 2.1 </li> 
+ </ul> 
+ <p> 整个工程结构如下图所示： </p> 
+ <p> <img src="/uploads/tutorial/20151110/1-151110210421325.png" alt=""> </p> 
+ <h2> 1. 创建一个Web项目工程 </h2> 
+ <p> 启动打开 MyEclipse，创建一个Web工程名称为：struts2-xml-demo，选择 File -&gt; New -&gt; Web Project ，如下图所示： </p> 
+ <p> <img src="/uploads/tutorial/20151110/1-15111020302E08.png" alt=""> </p> 
+ <p> <img src="file://E:/data/youdao/qq24B39E2329F08D9F4C3146A571A415EF/21cfef8f583d48b4ab4e20037276f57d/clipboard.png"> </p> 
+ <p> 在这个项目上添加 struts2 的支持，右键点击&nbsp;struts2-xml-demo 工程，选择 MyEclipse -&gt; Add Struts Capabilities，在弹出的对话框中选择 Strut 2.1，如下图所示： </p> 
+ <p> <img src="/uploads/tutorial/20151110/1-15111020305CR.png" alt=""> </p> 
+ <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  background-color:#FFFFFF;"> <img src="file://E:/data/youdao/qq24B39E2329F08D9F4C3146A571A415EF/b34cc1de25284d30bb84b921021e763e/clipboard.png"> </p> 
+ <h2> 2. JSP视图文件 </h2> 
+ <p> 这是一个JSP登录页面，它使用Struts2标签来显示用户名，密码输入框和提交按钮。 </p> 
+ <p> Fie : login.jsp </p> 
+ <pre class="prettyprint lang-html">&lt;%@ page contentType="text/html; charset=UTF-8"%&gt;
+&lt;%@ taglib prefix="s" uri="/struts-tags"%&gt;
+&lt;html&gt;
+&lt;head&gt;&lt;/head&gt;
+&lt;body&gt;
+	&lt;h1&gt;Struts 2 Hello World Example&lt;/h1&gt;
+
+	&lt;s:form action="Welcome"&gt;
+		&lt;s:textfield name="username" label="Username" /&gt;
+		&lt;s:password name="password" label="Password" /&gt;
+		&lt;s:submit /&gt;
+	&lt;/s:form&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;</pre> 
+ <p> <br> </p> 
+ <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  background-color:#FFFFFF;"> <em>文件: welcome_user.jsp</em>&nbsp;– 一个JSP视图用来页面显示欢迎信息给用户。 </p> 
+ <pre class="prettyprint lang-html">&lt;%@ page contentType="text/html; charset=UTF-8"%&gt;
+&lt;%@ taglib prefix="s" uri="/struts-tags"%&gt;
+&lt;html&gt;
+&lt;head&gt;&lt;/head&gt;
+&lt;body&gt;
+	&lt;h1&gt;Struts 2 Hello World 示例&lt;/h1&gt;
+
+	&lt;h2&gt;
+		Hello
+		&lt;s:property value="username" /&gt;
+	&lt;/h2&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;</pre> 
+ <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  background-color:#FFFFFF;"> 对 Struts1 和 Struts2 有非常相似的UI标签语法，只是在命名HTML元素，例如，术语有一点不同： </p> 
+ <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  background-color:#FFFFFF;"> <strong>Struts 1</strong> </p> 
+ <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  background-color:#FFFFFF;"> <strong> </strong> </p> 
+ <pre class="prettyprint lang-html">&lt;%@taglib uri="http://struts.apache.org/tags-html" prefix="html"%&gt;
+&lt;html:form action="Welcome"&gt;
+   &lt;html:text property="username"/&gt;
+&lt;/html:form&gt;</pre> 
+ <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  background-color:#FFFFFF;"> <strong>Struts 2</strong> </p> 
+ <pre class="prettyprint lang-html">&lt;%@ taglib prefix="s" uri="/struts-tags" %&gt;
+&lt;s:form action="Welcome"&gt;
+	&lt;s:textfield name="username" label="Username"/&gt;
+&lt;/s:form&gt;</pre> 
+ <h2> 5. 动作，所有的业务逻辑放在这里 </h2> 
+ <p> 一个简单的 Struts2 的 Action 类，它里面声明的所有业务逻辑。 </p> 
+ <p> File : WelcomeUserAction.java </p> 
+ <pre class="prettyprint lang-java">package com.yiibai.user.action;
+
+/**
+ * 
+ * @author yiibai.com
+ *
+ */
+public class WelcomeUserAction {
+	
+	private String username;
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	// all struts logic here
+	public String execute() {
+
+		return "SUCCESS";
+
+	}
+}</pre> 
+ <p> 在Struts2中，Action类实现任何接口或扩展任何类不是必需的，但它需要创建一个execute()方法来实现所有的业务逻辑，并返回一个字符串值，告诉用户重定向到哪里。 </p> 
+ <div>
+   注意
+  <br> 您可能会看到一些用户实现 com.opensymphony.xwork2.Action 类， 但它是完全可选的(不是必须的)，因为com.opensymphony.xwork2.Action只是提供一些方便的常量。 
+ </div> 
+ <div>
+   Struts1中的Action类需要扩展org.apache.struts.action.Action。 但是，Struts 2的Action类是可选的，但是仍然允许执行com.opensymphony.xwork2.Action的一些方便的常量，或者扩展com.opensymphony.xwork2.ActionSupport 对于一些常见的默认动作执行的功能。 
+ </div> 
+ <h2> 5. Struts配置文件 </h2> 
+ <p> Strut配置文件是用来连接所有的东西在一起。 XML文件名必须是&nbsp;“struts.xml”。在这个实例中，它位于&nbsp; </p> 
+ <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  background-color:#FFFFFF;"> <em>File : struts.xml</em> </p> 
+ <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  background-color:#FFFFFF;"> <em> </em> </p>   
+ <pre class="prettyprint lang-xml"><em>&lt;?xml version="1.0" encoding="UTF-8" ?&gt;
+&lt;!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.1//EN" "http://struts.apache.org/dtds/struts-2.1.dtd"&gt;
+&lt;struts&gt;
+	&lt;package name="user" namespace="/User" extends="struts-default"&gt;
+		&lt;action name="Login"&gt;
+			&lt;result&gt;/login.jsp&lt;/result&gt;
+		&lt;/action&gt;
+		&lt;action name="Welcome" class="com.yiibai.user.action.WelcomeUserAction"&gt;
+			&lt;result name="SUCCESS"&gt;/welcome_user.jsp&lt;/result&gt;
+		&lt;/action&gt;
+	&lt;/package&gt;
+&lt;/struts&gt; </em></pre> 
+ <em> </em> 
+ <p> <br> </p> 
+ <p> 声明包和包含动作类，动作类是不言自明的，但你仍可能会感兴趣下面的新标签： </p> 
+ <p> <strong>1. package name=”user”</strong><br> 就在包名，并不真正去关心它。 </p> 
+ <p> <strong>2. namespace=”/User”</strong><br> 它用于匹配“/User”URL模式。 </p> 
+ <div>
+   注意
+  <br> 实际上，Struts2的命名空间相当于Struts的1多个功能模块 
+ </div> 
+ <p> <strong>3. extends=”struts-default”</strong><br> 这意味着该包是扩展了struts-default 包组件和拦截器，这是在struts-default.xml中文件中声明的，位于struts2-core.jar 文件的根目录。 </p> 
+ <h2> 6. web.xml </h2> 
+ <p> 配置Web应用程序部署描述符(web.xml)文件Struts2的集成到Web项目。 </p> 
+ <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  background-color:#FFFFFF;"> <em>File web.xml</em> </p> 
+ <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  background-color:#FFFFFF;"> <em> </em> </p> 
+ <pre class="prettyprint lang-xml"><em>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;web-app version="3.0" 
+	xmlns="http://java.sun.com/xml/ns/javaee" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee 
+	http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"&gt;
+  &lt;display-name&gt;&lt;/display-name&gt;	
+  &lt;welcome-file-list&gt;
+    &lt;welcome-file&gt;index.jsp&lt;/welcome-file&gt;
+  &lt;/welcome-file-list&gt;
+  &lt;filter&gt;
+  	&lt;filter-name&gt;struts2&lt;/filter-name&gt;
+  	&lt;filter-class&gt;
+  		org.apache.struts2.dispatcher.ng.filter.StrutsPrepareAndExecuteFilter
+  	&lt;/filter-class&gt;
+  &lt;/filter&gt;
+  &lt;filter-mapping&gt;
+  	&lt;filter-name&gt;struts2&lt;/filter-name&gt;
+  	&lt;url-pattern&gt;*.action&lt;/url-pattern&gt;
+  &lt;/filter-mapping&gt;&lt;/web-app&gt;</em></pre> 
+ <h2> 7. 运行测试结果 </h2> 
+ <p> 在Struts2中，可以直接使用.action后缀访问操作类。如下URL： </p> 
+ <p> http://localhost:8080/struts2-xml-demo/User/Login.action </p> 
+ <p> <img src="/uploads/tutorial/20151110/1-15111020455Jb.png" alt=""> </p> 
+ <p> 提交后到 http://localhost:8080/Struts2Example/User/Welcome.action 显示如下： </p> 
+ <p> <img src="/uploads/tutorial/20151110/1-151110204F2J8.png" alt=""> </p> 
+ <div style="color:#333333;font-family:'Helvetica Neue', Helvetica,  text-align:center;background-color:#F9F9F9;"> 
+  <img src="file://E:/data/youdao/qq24B39E2329F08D9F4C3146A571A415EF/27bb1489b30e41da8d809f41f7706846/clipboard.png"> 
+ </div>
+ <br>      
+</div></body></html>

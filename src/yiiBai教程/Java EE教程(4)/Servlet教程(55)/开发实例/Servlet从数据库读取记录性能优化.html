@@ -1,0 +1,304 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Servlet从数据库读取记录性能优化</h1><div style="width:100%;float:left;" class="article-content">   
+ <p><strong>提高Servlet从数据库中读取记录的性能</strong></p> 
+ <p>在这个例子中，我们将学习如何提高Web应用程序从数据库中读取数据记录的性能。要实现这个工作，我们将<em>employess</em>表的数据预先从数据库中读取出来并存储在一个集合中，以在servlet中重用这个集合。因此，当使用到这个<em>employess</em>表的数据时，只需要从<code>ServletContext</code>获取即可，而不需要连接数据库中查询表的数据记录。这样就能提高数据的读取性能。</p> 
+ <p>要运行此应用程序，需要创建具有一些记录的表。完整的SQL语句如下 - </p> 
+ <pre><code class="lang-sql">DROP TABLE IF EXISTS `employees`;
+CREATE TABLE `employees` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(64) NOT NULL DEFAULT '',
+  `age` int(3) unsigned NOT NULL DEFAULT '0',
+  `address` varchar(254) DEFAULT NULL,
+  `salary` float(8,2) unsigned DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of employees
+-- ----------------------------
+INSERT INTO `employees` VALUES ('1', '李小春', '23', '海口市人民大道1800号', '8900.00');
+INSERT INTO `employees` VALUES ('2', '张辉', '28', '广州天河区珠村市场', '15800.00');
+INSERT INTO `employees` VALUES ('3', '林贤弟', '25', '广州白云区龙塘村120号', '18990.00');
+</code></pre> 
+ <h2 id="h2--servlet-"><a name="提高servlet从数据库中获取记录的性能的示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>提高servlet从数据库中获取记录的性能的示例</h2>
+ <p>在这个例子中，我们创建了<code>6</code>个代码文件。它们分别如下 - </p> 
+ <ol> 
+  <li><em>index.html </em> - 项目首页</li>
+  <li><em>Employees.java</em> - 这是一个简单的<code>bean</code>类，包含几个属性及其<code>getter</code>和<code>setter</code>方法，此类用于表示数据库表：<code>employees</code>。</li>
+  <li><em>MyListener.java</em> - 监听器</li>
+  <li><em>MyServlet1.java</em> </li>
+  <li><em>MyServlet2.java</em></li>
+  <li><em>web.xml</em> - 项目部署类</li>
+ </ol> 
+ <p>打开Eclipse，创建一个动态Web项目：<em>ImprovingFetchRecords</em>，其完整的目录结构如下所示 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/1210/247111038_80799.png" alt=""></p> 
+ <p>以下是这个项目中的几个主要的代码文件。</p> 
+ <p>文件：<em>index.html</em> - </p> 
+ <pre><code class="lang-html">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;meta charset="UTF-8"&gt;
+&lt;title&gt;Servlet从数据库读取记录性能优化&lt;/title&gt;
+&lt;/head&gt;
+&lt;body style="text-algin: center;"&gt;
+    &lt;a href="servlet1"&gt;从数据库读取数据&lt;/a&gt;|
+    &lt;a href="servlet2"&gt;读取存储的数据&lt;/a&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>员工信息Bean类：<em>Employees.java</em> - </p> 
+ <pre><code class="lang-java">package com.yiibai;
+
+public class Employees {
+    private int id;
+    private String name;
+    private String address;
+    private int age;
+    private float salary;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+    public float getSalary() {
+        return salary;
+    }
+
+    public void setSalary(float salary) {
+        this.salary = salary;
+    }
+
+}
+</code></pre> 
+ <p>文件：<em>MyListener.java</em> - </p> 
+ <p>这是是一个监听类。当部署项目时，默认情况下会调用<code>ServletContextListener</code>的<code>contextInitialized</code>方法。 在这里，将查询获取<code>employees</code>表的记录，并将数据记录在添加存储到<code>ArrayList</code>类对象中。 最后，表的所有记录将存储在<code>ArrayList</code>类对象(集合)。 最后，将<code>ServletConext</code>对象中的<code>ArrayList</code>对象作为属性存储，以便可以在Servlet中获取并使用它。</p> 
+ <pre><code class="lang-java">package com.yiibai.listener;
+
+import javax.servlet.ServletContext;
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
+
+import com.yiibai.Employees;
+
+import java.sql.*;
+import java.util.ArrayList;
+
+public class MyListener implements ServletContextListener {
+
+    public void contextInitialized(ServletContextEvent e) {
+        String jdbcDriver = "com.mysql.jdbc.Driver";
+        String dbURL = "jdbc:mysql://localhost/testdb";
+
+        // Database credentials
+        String dbUser = "root";
+        final String passwd = "123456";
+        Connection con = null;
+        ArrayList list = new ArrayList();
+        try {
+            Class.forName(jdbcDriver);
+            con = DriverManager.getConnection(dbURL, dbUser, passwd);
+            PreparedStatement ps = con.prepareStatement("SELECT * FROM `employees`");
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Employees emp = new Employees();
+                emp.setId(rs.getInt("id"));
+                emp.setName(rs.getString("name"));
+                emp.setAddress(rs.getString("address"));
+                emp.setAge(rs.getInt("age"));
+                emp.setSalary(rs.getFloat("salary"));
+                list.add(emp);
+            }
+            rs.close();
+            ps.close();
+            //con.close();
+
+        } catch (Exception ex) {
+            System.out.print(ex);
+        }
+
+        // storing the ArrayList object in ServletContext
+        ServletContext context = e.getServletContext();
+        context.setAttribute("con", con);
+        context.setAttribute("datalist", list);
+
+    }
+
+    public void contextDestroyed(ServletContextEvent arg0) {
+        System.out.println("project undeployed...");
+    }
+
+}
+</code></pre> 
+ <p>文件：<em>MyServlet1.java</em> - </p> 
+ <p><code>MyServlet1</code>从servlet上下文对象获取信息并打印它。</p> 
+ <pre><code class="lang-java">package com.yiibai;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Iterator;
+import java.util.List;
+
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+public class MyServlet1 extends HttpServlet {
+    public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("text/html;charset=UTF-8");
+        request.setCharacterEncoding("UTF-8");
+        PrintWriter out = response.getWriter();
+
+        long before = System.currentTimeMillis();
+        ServletContext context = getServletContext();
+        try {
+            Connection con = (Connection) context.getAttribute("con");
+            PreparedStatement ps;
+            ps = con.prepareStatement("SELECT * FROM `employees`");
+            ResultSet rs = ps.executeQuery();
+            out.print("员工数据信息如下所示：&lt;hr/&gt;");
+            while (rs.next()) {
+                out.print("" + rs.getInt("id") + ", " + rs.getString("name") + ", " + rs.getString("address"));
+                out.println("&lt;br/&gt;");
+            }
+            //con.close();
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        long after = System.currentTimeMillis();
+        out.print("&lt;br&gt;总用时 :" + (after - before));
+        out.close();
+    }
+
+}
+</code></pre> 
+ <p>文件：<em>MyServlet2.java</em> - </p> 
+ <p>它与<code>MyServlet1</code>相同，从servlet上下文对象获取信息并打印它。</p>   
+ <pre><code class="lang-java">package com.yiibai;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.Iterator;
+import java.util.List;
+
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+public class MyServlet2 extends HttpServlet {
+    public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("text/html;charset=UTF-8");
+        request.setCharacterEncoding("UTF-8");
+        PrintWriter out = response.getWriter();
+
+        long before = System.currentTimeMillis();
+
+        ServletContext context = getServletContext();
+        List list = (List) context.getAttribute("datalist");
+        out.print("员工数据信息(从ServletContext中预存储读取)如下所示：&lt;hr/&gt;");
+        Iterator itr = list.iterator();
+        while (itr.hasNext()) {
+            Employees e = (Employees) itr.next();
+            out.print("" + e.getId() + ", " + e.getName() + ", " + e.getAddress());
+            out.println("&lt;br/&gt;");
+        }
+
+        long after = System.currentTimeMillis();
+        out.print("&lt;br&gt;总用时:" + (after - before));
+
+        out.close();
+    }
+
+}
+</code></pre> 
+ <p>文件：<code>web.xml</code> - </p> 
+ <p>这个文件中配置包含有关servlet和监听器的信息。</p> 
+ <pre><code class="lang-xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+    xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
+    id="WebApp_ID" version="3.1"&gt;
+    &lt;display-name&gt;ImprovingFetchRecords&lt;/display-name&gt;
+    &lt;welcome-file-list&gt;
+        &lt;welcome-file&gt;index.html&lt;/welcome-file&gt;
+        &lt;welcome-file&gt;index.jsp&lt;/welcome-file&gt;
+    &lt;/welcome-file-list&gt;
+    &lt;listener&gt;
+        &lt;listener-class&gt;com.yiibai.listener.MyListener&lt;/listener-class&gt;
+    &lt;/listener&gt;
+
+    &lt;servlet&gt;
+        &lt;servlet-name&gt;MyServlet1&lt;/servlet-name&gt;
+        &lt;servlet-class&gt;com.yiibai.MyServlet1&lt;/servlet-class&gt;
+
+    &lt;/servlet&gt;
+    &lt;servlet&gt;
+        &lt;servlet-name&gt;MyServlet2&lt;/servlet-name&gt;
+        &lt;servlet-class&gt;com.yiibai.MyServlet2&lt;/servlet-class&gt;
+
+    &lt;/servlet&gt;
+
+    &lt;servlet-mapping&gt;
+        &lt;servlet-name&gt;MyServlet1&lt;/servlet-name&gt;
+        &lt;url-pattern&gt;/servlet1&lt;/url-pattern&gt;
+    &lt;/servlet-mapping&gt;
+    &lt;servlet-mapping&gt;
+        &lt;servlet-name&gt;MyServlet2&lt;/servlet-name&gt;
+        &lt;url-pattern&gt;/servlet2&lt;/url-pattern&gt;
+    &lt;/servlet-mapping&gt;
+&lt;/web-app&gt;
+</code></pre> 
+ <p>在编写上面代码后，部署此Web应用程序(在项目名称上点击右键-&gt;”Run On Server…”)，打开浏览器访问URL： <a target="_blank" href="http://localhost:8080/ImprovingFetchRecords/">http://localhost:8080/ImprovingFetchRecords/</a> ，如果没有错误，应该会看到以下结果 -</p> 
+ <blockquote> 
+  <p>注意：将需要将MySQL驱动程序库加到<em>WEB-INFO/lib</em>目录下。</p> 
+ </blockquote> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/1210/895111028_52928.png" alt=""></p> 
+ <p>点击“从数据库读取数据”链接，应该会看到以下结果 -<br><img src="http://www.yiibai.com/uploads/images/201710/1210/864111034_51363.png" alt=""></p> 
+ <p>点击“读取存储的数据”链接，应该会看到以下结果 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/1210/314111034_25350.png" alt=""></p>
+ <br>      
+</div></body></html>

@@ -1,0 +1,143 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Java原型模式</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>原型模式指在创建重复对象的同时保持性能。 这种类型的设计模式属于创建模式，因为此模式提供了创建对象的最佳方法之一。</p> 
+ <p>这个模式涉及实现一个原型接口，它只创建当前对象的克隆。有时直接创建对象时使用这种模式是昂贵的。例如，在昂贵的数据库操作之后创建对象。因此我们可以缓存对象，在下一个请求时返回其克隆，并在需要时更新数据库，从而减少数据库调用。</p> 
+ <h2 id="h2-u5B9Eu73B0u5B9Eu4F8B"><a name="实现实例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实现实例</h2>
+ <p>我们将创建一个抽象类<code>Shape</code>和扩展<code>Shape</code>类的具体类。 在下一步中定义<code>ShapeCache</code>类，在<code>Hashtable</code>中存储形状（<code>Shape</code>）对象，并在请求时返回其克隆。</p> 
+ <p><code>PrototypPatternDemo</code>这是一个演示类，将使用<code>ShapeCache</code>类来获取一个<code>Shape</code>对象。实现结构图如下所示 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201612/08/846101239_39173.jpg" alt=""></p> 
+ <h3 id="h3--1-"><a name="第1步" class="reference-link"></a><span class="header-link octicon octicon-link"></span>第1步</h3>
+ <p>创建一个实现<code>Clonable</code>接口的抽象类。</p> 
+ <p><em>Shape.java</em></p> 
+ <pre><code class="lang-java">public abstract class Shape implements Cloneable {
+
+   private String id;
+   protected String type;
+
+   abstract void draw();
+
+   public String getType(){
+      return type;
+   }
+
+   public String getId() {
+      return id;
+   }
+
+   public void setId(String id) {
+      this.id = id;
+   }
+
+   public Object clone() {
+      Object clone = null;
+
+      try {
+         clone = super.clone();
+
+      } catch (CloneNotSupportedException e) {
+         e.printStackTrace();
+      }
+
+      return clone;
+   }
+}
+</code></pre> 
+ <h3 id="h3--2-"><a name="第2步" class="reference-link"></a><span class="header-link octicon octicon-link"></span>第2步</h3>
+ <p>创建扩展上述类的具体类。</p> 
+ <p><em>Rectangle.java</em></p> 
+ <pre><code class="lang-java">public class Rectangle extends Shape {
+
+   public Rectangle(){
+     type = "Rectangle";
+   }
+
+   @Override
+   public void draw() {
+      System.out.println("Inside Rectangle::draw() method.");
+   }
+}
+</code></pre> 
+ <p><em>Square.java</em></p> 
+ <pre><code class="lang-java">public class Square extends Shape {
+
+   public Square(){
+     type = "Square";
+   }
+
+   @Override
+   public void draw() {
+      System.out.println("Inside Square::draw() method.");
+   }
+}
+</code></pre> 
+ <p><em>Circle.java</em></p> 
+ <pre><code class="lang-java">public class Circle extends Shape {
+
+   public Circle(){
+     type = "Circle";
+   }
+
+   @Override
+   public void draw() {
+      System.out.println("Inside Circle::draw() method.");
+   }
+}
+</code></pre> 
+ <h3 id="h3--3-"><a name="第3步" class="reference-link"></a><span class="header-link octicon octicon-link"></span>第3步</h3>
+ <p>创建一个类来获取具体的类，并将它们存储在<code>Hashtable</code>中。</p> 
+ <p><em>ShapeCache.java</em></p>   
+ <pre><code class="lang-java">import java.util.Hashtable;
+
+public class ShapeCache {
+
+   private static Hashtable&lt;String, Shape&gt; shapeMap  = new Hashtable&lt;String, Shape&gt;();
+
+   public static Shape getShape(String shapeId) {
+      Shape cachedShape = shapeMap.get(shapeId);
+      return (Shape) cachedShape.clone();
+   }
+
+   // for each shape run database query and create shape
+   // shapeMap.put(shapeKey, shape);
+   // for example, we are adding three shapes
+
+   public static void loadCache() {
+      Circle circle = new Circle();
+      circle.setId("1");
+      shapeMap.put(circle.getId(),circle);
+
+      Square square = new Square();
+      square.setId("2");
+      shapeMap.put(square.getId(),square);
+
+      Rectangle rectangle = new Rectangle();
+      rectangle.setId("3");
+      shapeMap.put(rectangle.getId(), rectangle);
+   }
+}
+</code></pre> 
+ <h3 id="h3--4-"><a name="第4步" class="reference-link"></a><span class="header-link octicon octicon-link"></span>第4步</h3>
+ <p><code>PrototypePatternDemo</code>使用<code>ShapeCache</code>类来获取存储在<code>Hashtable</code>中的形状（<code>shape</code>）的克隆。</p> 
+ <p><em>PrototypePatternDemo.java</em></p> 
+ <pre><code class="lang-java">public class PrototypePatternDemo {
+   public static void main(String[] args) {
+      ShapeCache.loadCache();
+
+      Shape clonedShape = (Shape) ShapeCache.getShape("1");
+      System.out.println("Shape : " + clonedShape.getType());        
+
+      Shape clonedShape2 = (Shape) ShapeCache.getShape("2");
+      System.out.println("Shape : " + clonedShape2.getType());        
+
+      Shape clonedShape3 = (Shape) ShapeCache.getShape("3");
+      System.out.println("Shape : " + clonedShape3.getType());        
+   }
+}
+</code></pre> 
+ <h3 id="h3--5-"><a name="第5步" class="reference-link"></a><span class="header-link octicon octicon-link"></span>第5步</h3>
+ <p>验证输出，执行上面的代码得到以下结果 - </p> 
+ <pre><code class="lang-java">Shape : Circle
+Shape : Square
+Shape : Rectangle
+</code></pre>
+ <br>      
+</div></body></html>

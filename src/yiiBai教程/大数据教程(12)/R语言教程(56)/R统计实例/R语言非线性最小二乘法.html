@@ -1,0 +1,59 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">R语言非线性最小二乘法</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>当对真实世界数据建模进行回归分析时，我们观察到模型的方程很少是给出线性图的线性方程。 大多数情况下，现实世界数据模型的方程式涉及更高程度的数学函数，如<code>3</code>或<code>sin</code>函数的指数。 在这种情况下，模型的曲线给出了曲线而不是线性。线性和非线性回归的目标是调整模型参数的值以找到最接近您的数据的线或曲线。当找到这些值时，我们才能够准确估计响应变量。</p> 
+ <p>在最小二乘回归中，我们建立了一个回归模型，不同点与回归曲线的垂直距离的平方和之和最小化。 我们通常从定义的模型开始，并假设系数的一些值。 然后应用R中的<code>nls()</code>函数来获得更准确的值以及置信区间。</p> 
+ <h2 id="h2-u8BEDu6CD5"><a name="语法" class="reference-link"></a><span class="header-link octicon octicon-link"></span>语法</h2>
+ <p>在R中创建非线性最小二乘检验的基本语法是 -</p> 
+ <pre><code class="lang-r">nls(formula, data, start)
+</code></pre> 
+ <p>以下是使用的参数的描述 - </p> 
+ <ul> 
+  <li><em>formula</em> - 是包含变量和参数的非线性模型公式。</li>
+  <li><em>data</em> - 是用于评估(计算)公式中的变量的数据帧。</li>
+  <li><em>start</em> - 是起始估计的命名列表或命名数字向量。</li>
+ </ul> 
+ <h2 id="h2-u793Au4F8B"><a name="示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例</h2>
+ <p>我们将考虑一个假设其系数的初始值的非线性模型。 接下来，我们将看到这些假设值的置信区间是多少，以便可以判断这些值是如何进入模型的。</p> 
+ <p>所以考虑下面这个方程式 -</p> 
+ <pre><code class="lang-r">a = b1*x^2+b2
+</code></pre> 
+ <p>我们假设初始系数为<code>1</code>和<code>3</code>，并将这些值拟合成<code>nls()</code>函数。</p> 
+ <pre><code class="lang-r">setwd("F:/worksp/R")
+xvalues &lt;- c(1.6,2.1,2,2.23,3.71,3.25,3.4,3.86,1.19,2.21)
+yvalues &lt;- c(5.19,7.43,6.94,8.11,18.75,14.88,16.06,19.12,3.21,7.58)
+
+# Give the chart file a name.
+png(file = "nls.png")
+
+
+# Plot these values.
+plot(xvalues,yvalues)
+
+
+# Take the assumed values and fit into the model.
+model &lt;- nls(yvalues ~ b1*xvalues^2+b2,start = list(b1 = 1,b2 = 3))
+
+# Plot the chart with new data by fitting it to a prediction from 100 data points.
+new.data &lt;- data.frame(xvalues = seq(min(xvalues),max(xvalues),len = 100))
+lines(new.data$xvalues,predict(model,newdata = new.data))
+
+# Save the file.
+dev.off()
+
+# Get the sum of the squared residuals.
+print(sum(resid(model)^2))
+
+# Get the confidence intervals on the chosen values of the coefficients.
+print(confint(model))
+</code></pre> 
+ <p>当我们执行上述代码时，会产生以下结果 -</p>   
+ <pre><code class="lang-r">[1] 1.081935
+Waiting for profiling to be done...
+       2.5%    97.5%
+b1 1.137708 1.253135
+b2 1.497364 2.496484
+</code></pre> 
+ <p>输出的图形如下所示 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201708/2508/390150848_10945.png" alt=""></p> 
+ <p>我们可以得出结论，<code>b1</code>的值更接近于<code>1</code>，而b2的值更接近于<code>2</code>而不是<code>3</code>。</p>
+ <br>      
+</div></body></html>

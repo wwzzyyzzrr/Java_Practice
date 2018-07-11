@@ -1,0 +1,55 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Go按自定义函数排序实例</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>有时候，我们希望通过除了自然顺序以外的其他方式对集合进行排序。例如，假设我们想按字符串的长度而不是字母顺序对字符串进行排序。下面是Go语言中自定义排序的示例。</p> 
+ <p>为了使用Go语言中的自定义函数进行排序，我们需要一个相应的类型。这里创建了一个<code>ByLength</code>类型，它只是内置 <code>[]string</code>类型的别名。</p> 
+ <p>需要实现<code>sort.Interface - Len</code>，<code>Less</code>和<code>Swap -</code> 在这个类型上，所以可以使用 <code>sort</code> 包中的一般<code>Sort</code>函数。<code>Len</code>和<code>Swap</code>通常在类型之间是相似的，<code>Less</code>保存实际的自定义排序逻辑。在这个例子中，要按照字符串长度的增加顺序排序，因此在这里使用<code>len(s [i])</code>和<code>len(s [j])</code>。</p> 
+ <p>所有这些都到位后，现在可以通过将原始 <code>fruits</code> 切片转换为<code>ByLength</code>来实现自定义排序，然后对该类型切片使用<code>sort.Sort()</code>方法。</p> 
+ <p>运行程序根据需要显示按字符串长度排序的列表。</p> 
+ <p>通过遵循创建自定义类型的模式，在该类型上实现三个<code>Interface</code>方法，然后在自定义类型的集合上调用<code>sort.Sort</code>，可以通过任意函数对Go切片进行排序。</p> 
+ <blockquote> 
+  <p>所有的示例代码，都放在 <code>F:\worksp\golang</code> 目录下。安装Go编程环境请参考：<a target="_blank" href="http://www.yiibai.com/go/go_environment.html">http://www.yiibai.com/go/go_environment.html</a> </p> 
+ </blockquote> 
+ <p><code>sorting-by-functions.go</code>的完整代码如下所示 -</p> 
+ <pre><code class="lang-go">package main
+
+import "sort"
+import "fmt"
+
+// In order to sort by a custom function in Go, we need a
+// corresponding type. Here we've created a `ByLength`
+// type that is just an alias for the builtin `[]string`
+// type.
+type ByLength []string
+
+// We implement `sort.Interface` - `Len`, `Less`, and
+// `Swap` - on our type so we can use the `sort` package's
+// generic `Sort` function. `Len` and `Swap`
+// will usually be similar across types and `Less` will
+// hold the actual custom sorting logic. In our case we
+// want to sort in order of increasing string length, so
+// we use `len(s[i])` and `len(s[j])` here.
+func (s ByLength) Len() int {
+    return len(s)
+}
+func (s ByLength) Swap(i, j int) {
+    s[i], s[j] = s[j], s[i]
+}
+func (s ByLength) Less(i, j int) bool {
+    return len(s[i]) &lt; len(s[j])
+}
+
+// With all of this in place, we can now implement our
+// custom sort by casting the original `fruits` slice to
+// `ByLength`, and then use `sort.Sort` on that typed
+// slice.
+func main() {
+    fruits := []string{"peach", "banana", "kiwi"}
+    sort.Sort(ByLength(fruits))
+    fmt.Println(fruits)
+}
+</code></pre> 
+ <p>执行上面代码，将得到以下输出结果 - </p>   
+ <pre><code class="lang-go">F:\worksp\golang&gt;go run sorting-by-functions.go
+[kiwi peach banana]
+</code></pre>
+ <br>      
+</div></body></html>

@@ -1,0 +1,169 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Pandas日期功能</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>日期功能扩展了时间序列，在财务数据分析中起主要作用。在处理日期数据的同时，我们经常会遇到以下情况 -</p> 
+ <ul> 
+  <li>生成日期序列</li>
+  <li>将日期序列转换为不同的频率</li>
+ </ul> 
+ <h2 id="h2-u521Bu5EFAu4E00u4E2Au65E5u671Fu8303u56F4"><a name="创建一个日期范围" class="reference-link"></a><span class="header-link octicon octicon-link"></span>创建一个日期范围</h2>
+ <p>通过指定周期和频率，使用<code>date.range()</code>函数就可以创建日期序列。 默认情况下，范围的频率是天。参考以下示例代码 - </p> 
+ <pre><code class="lang-python">import pandas as pd
+datelist = pd.date_range('2020/11/21', periods=5)
+print(datelist)
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 - </p> 
+ <pre><code class="lang-shell">DatetimeIndex(['2020-11-21', '2020-11-22', '2020-11-23', '2020-11-24',
+               '2020-11-25'],
+              dtype='datetime64[ns]', freq='D')
+</code></pre> 
+ <h4 id="h4-u66F4u6539u65E5u671Fu9891u7387"><a name="更改日期频率" class="reference-link"></a><span class="header-link octicon octicon-link"></span>更改日期频率</h4>
+ <pre><code class="lang-python">import pandas as pd
+datelist = pd.date_range('2020/11/21', periods=5,freq='M')
+print(datelist)
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 - </p> 
+ <pre><code class="lang-shell">DatetimeIndex(['2020-11-30', '2020-12-31', '2021-01-31', '2021-02-28',
+               '2021-03-31'],
+              dtype='datetime64[ns]', freq='M')
+</code></pre> 
+ <h2 id="h2-bdate_range-"><a name="bdate_range()函数" class="reference-link"></a><span class="header-link octicon octicon-link"></span>bdate_range()函数</h2>
+ <p><code>bdate_range()</code>用来表示商业日期范围，不同于<code>date_range()</code>，它不包括星期六和星期天。</p> 
+ <pre><code class="lang-python">import pandas as pd
+datelist = pd.date_range('2011/11/03', periods=5)
+print(datelist)
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 - </p> 
+ <pre><code class="lang-shell">DatetimeIndex(['2017-11-03', '2017-11-06', '2017-11-07', '2017-11-08',
+               '2017-11-09'],
+              dtype='datetime64[ns]', freq='B')
+</code></pre> 
+ <p>观察到11月3日以后，日期跳至11月6日，不包括4日和5日(因为它们是周六和周日)。</p> 
+ <p>像<code>date_range</code>和<code>bdate_range</code>这样的便利函数利用了各种频率别名。<code>date_range</code>的默认频率是日历中的自然日，而<code>bdate_range</code>的默认频率是工作日。参考以下示例代码 - </p> 
+ <pre><code class="lang-python">import pandas as pd
+start = pd.datetime(2017, 11, 1)
+end = pd.datetime(2017, 11, 5)
+dates = pd.date_range(start, end)
+print(dates)
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 - </p> 
+ <pre><code class="lang-shell">DatetimeIndex(['2017-11-01', '2017-11-02', '2017-11-03', '2017-11-04',
+               '2017-11-05'],
+              dtype='datetime64[ns]', freq='D')
+</code></pre> 
+ <h2 id="h2-u504Fu79FBu522Bu540D"><a name="偏移别名" class="reference-link"></a><span class="header-link octicon octicon-link"></span>偏移别名</h2>
+ <p>大量的字符串别名被赋予常用的时间序列频率。我们把这些别名称为偏移别名。</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>别名</th> 
+    <th>描述说明</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td><code>B</code></td> 
+    <td>工作日频率</td> 
+   </tr> 
+   <tr> 
+    <td><code>BQS</code></td> 
+    <td>商务季度开始频率</td> 
+   </tr> 
+   <tr> 
+    <td><code>D</code></td> 
+    <td>日历/自然日频率</td> 
+   </tr> 
+   <tr> 
+    <td><code>A</code></td> 
+    <td>年度(年)结束频率</td> 
+   </tr> 
+   <tr> 
+    <td><code>W</code></td> 
+    <td>每周频率</td> 
+   </tr> 
+   <tr> 
+    <td><code>BA</code></td> 
+    <td>商务年底结束</td> 
+   </tr> 
+   <tr> 
+    <td><code>M</code></td> 
+    <td>月结束频率</td> 
+   </tr> 
+   <tr> 
+    <td><code>BAS</code></td> 
+    <td>商务年度开始频率</td> 
+   </tr> 
+   <tr> 
+    <td><code>SM</code></td> 
+    <td>半月结束频率</td> 
+   </tr> 
+   <tr> 
+    <td><code>BH</code></td> 
+    <td>商务时间频率</td> 
+   </tr> 
+   <tr> 
+    <td><code>SM</code></td> 
+    <td>半月结束频率</td> 
+   </tr> 
+   <tr> 
+    <td><code>BH</code></td> 
+    <td>商务时间频率</td> 
+   </tr> 
+   <tr> 
+    <td><code>BM</code></td> 
+    <td>商务月结束频率</td> 
+   </tr> 
+   <tr> 
+    <td><code>H</code></td> 
+    <td>小时频率</td> 
+   </tr> 
+   <tr> 
+    <td><code>MS</code></td> 
+    <td>月起始频率</td> 
+   </tr> 
+   <tr> 
+    <td><code>T, min</code></td> 
+    <td>分钟的频率</td> 
+   </tr> 
+   <tr> 
+    <td><code>SMS</code></td> 
+    <td>SMS半开始频率</td> 
+   </tr> 
+   <tr> 
+    <td><code>S</code></td> 
+    <td>秒频率</td> 
+   </tr> 
+   <tr> 
+    <td><code>BMS</code></td> 
+    <td>商务月开始频率</td> 
+   </tr> 
+   <tr> 
+    <td><code>L, ms</code></td> 
+    <td>毫秒</td> 
+   </tr> 
+   <tr> 
+    <td><code>Q</code></td> 
+    <td>季度结束频率</td> 
+   </tr> 
+   <tr> 
+    <td><code>U, us</code></td> 
+    <td>微秒</td> 
+   </tr> 
+   <tr> 
+    <td><code>BQ</code></td> 
+    <td>商务季度结束频率</td> 
+   </tr> 
+   <tr> 
+    <td><code>N</code></td> 
+    <td>纳秒</td> 
+   </tr> 
+   <tr> 
+    <td><code>BQ</code></td> 
+    <td>商务季度结束频率</td> 
+   </tr> 
+   <tr> 
+    <td><code>QS</code></td> 
+    <td>季度开始频率</td> 
+   </tr> 
+  </tbody> 
+ </table>
+ <br>      
+</div></body></html>

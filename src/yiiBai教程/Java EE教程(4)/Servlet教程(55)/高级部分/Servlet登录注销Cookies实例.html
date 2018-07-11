@@ -1,0 +1,205 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Servlet登录注销Cookies实例</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>Cookie是存储在客户端的一种信息技术。</p> 
+ <p>在上一页中，我们学到了很多关于cookie的内容 如何创建cookie，如何删除cookie，如何获取cookie等</p> 
+ <p>在这里，我们将使用servlet cookie创建一个登录和注销示例。</p> 
+ <p>在这个例子中，我们创建了<code>3</code>个链接：登录，注销和用户资料。用户在未登录之前不能进入个人资料页面。如果用户已经注销，则需要再次登录才能访问个人资料。</p> 
+ <p>在这个应用程序中，创建了以下文件。</p> 
+ <ul> 
+  <li><em>index.html</em> - Web应用程序首页。</li>
+  <li><em>link.html</em> - 链接页面。</li>
+  <li><em>login.html</em> - 登录页面。</li>
+  <li><em>LoginServlet.java</em> - 登录Servlet处理。</li>
+  <li><em>LogoutServlet.java</em> - 注销Servlet处理。</li>
+  <li><em>ProfileServlet.java</em> - 用户个人资料Servlet。</li>
+  <li><em>web.xml</em> - Servlet配置文件。</li>
+ </ul> 
+ <p>打开Eclipse，创建一个动态Web项目：<em>LoginWithCookies</em>，其完整的项目结构如下图所示 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/1110/447111008_69543.png" alt=""></p> 
+ <p>按以下顺序，分别编写每个文件的源代码。</p> 
+ <p>文件：<em>index.html</em> - </p> 
+ <pre><code class="lang-html">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;meta charset="UTF-8"&gt;
+&lt;title&gt;使用Cookie登录应用程序&lt;/title&gt;
+&lt;/head&gt;
+&lt;body style="text-algin: center;"&gt;
+    &lt;h2&gt;欢迎使用Cookie登录应用程序&lt;/h2&gt;
+    &lt;a href="login.html"&gt;登录&lt;/a&gt;|
+    &lt;a href="logout"&gt;注销&lt;/a&gt;|
+    &lt;a href="profile"&gt;个人信息&lt;/a&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>文件：<em>link.html</em> - </p> 
+ <pre><code class="lang-html">&lt;a href="login.html"&gt;登录&lt;/a&gt;|
+&lt;a href="logout"&gt;注销&lt;/a&gt;|
+&lt;a href="profile"&gt;个人信息&lt;/a&gt;
+&lt;hr&gt;
+</code></pre> 
+ <p>文件：<em>login.html</em> - </p> 
+ <pre><code class="lang-html">    &lt;div style="text-algin: center; padding-top:12px;"&gt;
+        &lt;form action="login" method="post"&gt;
+            用户名：&lt;input type="text" name="name"&gt;  密码：&lt;input type="password"
+                name="password"&gt;&lt;input type="submit" value="登录"&gt;
+        &lt;/form&gt;
+    &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>文件：<em>LoginServlet.java</em> - </p> 
+ <pre><code class="lang-java">package com.yiibai;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+public class LoginServlet extends HttpServlet {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        response.setCharacterEncoding("UTF-8");  
+        response.setContentType("text/html;charset=UTF-8"); 
+        request.setCharacterEncoding("UTF-8");  
+        PrintWriter out = response.getWriter();
+        request.getRequestDispatcher("link.html").include(request, response);
+
+        String name = request.getParameter("name");
+        String password = request.getParameter("password");
+
+        // 用户名和密码分别为：admin , 123456
+        if (name.equals("admin") &amp;&amp; password.equals("123456")) {
+            out.print("您已成功登录系统!");
+            out.print("&lt;br&gt;欢迎您, " + name);
+            Cookie ck = new Cookie("name", name);
+            response.addCookie(ck);
+        } else {
+            out.print("&lt;font style='color:red;'&gt;用户名或密码错误!&lt;/font&gt;");
+            request.getRequestDispatcher("login.html").include(request, response);
+        }
+        out.close();
+    }
+
+}
+</code></pre> 
+ <p>文件：<em>LogoutServlet.java</em> - </p> 
+ <pre><code class="lang-java">package com.yiibai;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+public class LogoutServlet extends HttpServlet {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        response.setCharacterEncoding("UTF-8");  
+        response.setContentType("text/html;charset=UTF-8"); 
+        request.setCharacterEncoding("UTF-8");  
+        PrintWriter out = response.getWriter();
+
+        request.getRequestDispatcher("link.html").include(request, response);
+
+        Cookie ck = new Cookie("name", "");
+        ck.setMaxAge(0);
+        response.addCookie(ck);
+
+        out.print("您已成功注销!");
+    }
+}
+</code></pre> 
+ <p>文件：<em>ProfileServlet.java</em> - </p> 
+ <pre><code class="lang-java">package com.yiibai;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+public class ProfileServlet extends HttpServlet {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("text/html;charset=UTF-8");
+        request.setCharacterEncoding("UTF-8");
+        PrintWriter out = response.getWriter();
+
+        request.getRequestDispatcher("link.html").include(request, response);
+
+        Cookie ck[] = request.getCookies();
+        if (ck != null) {
+            String name = ck[0].getValue();
+            if (!name.equals("") || name != null) {
+                out.print("&lt;b&gt;欢迎您来到个人信息中心&lt;/b&gt;");
+                out.print("&lt;br&gt;您好, " + name);
+            }
+        } else {
+            out.print("&lt;font style='color:red;'&gt;请先登录!&lt;/font&gt;");
+            request.getRequestDispatcher("login.html").include(request, response);
+        }
+        out.close();
+    }
+}
+</code></pre> 
+ <p>文件：<em>web.xml</em> - </p>   
+ <pre><code class="lang-xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+    xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
+    id="WebApp_ID" version="3.1"&gt;
+    &lt;display-name&gt;LoginWithCookies&lt;/display-name&gt;
+    &lt;welcome-file-list&gt;
+        &lt;welcome-file&gt;index.html&lt;/welcome-file&gt;
+    &lt;/welcome-file-list&gt;
+
+    &lt;!-- 登录Servlet --&gt;
+    &lt;servlet&gt;
+        &lt;servlet-name&gt;LoginServlet&lt;/servlet-name&gt;
+        &lt;servlet-class&gt;com.yiibai.LoginServlet&lt;/servlet-class&gt;
+    &lt;/servlet&gt;
+    &lt;servlet-mapping&gt;
+        &lt;servlet-name&gt;LoginServlet&lt;/servlet-name&gt;
+        &lt;url-pattern&gt;/login&lt;/url-pattern&gt;
+    &lt;/servlet-mapping&gt;
+
+    &lt;!-- 注销Servlet --&gt;
+    &lt;servlet&gt;
+        &lt;servlet-name&gt;LogoutServlet&lt;/servlet-name&gt;
+        &lt;servlet-class&gt;com.yiibai.LogoutServlet&lt;/servlet-class&gt;
+    &lt;/servlet&gt;
+    &lt;servlet-mapping&gt;
+        &lt;servlet-name&gt;LogoutServlet&lt;/servlet-name&gt;
+        &lt;url-pattern&gt;/logout&lt;/url-pattern&gt;
+    &lt;/servlet-mapping&gt;
+
+    &lt;!-- 用户资料Servlet --&gt;
+    &lt;servlet&gt;
+        &lt;servlet-name&gt;ProfileServlet&lt;/servlet-name&gt;
+        &lt;servlet-class&gt;com.yiibai.ProfileServlet&lt;/servlet-class&gt;
+    &lt;/servlet&gt;
+    &lt;servlet-mapping&gt;
+        &lt;servlet-name&gt;ProfileServlet&lt;/servlet-name&gt;
+        &lt;url-pattern&gt;/profile&lt;/url-pattern&gt;
+    &lt;/servlet-mapping&gt;
+&lt;/web-app&gt;
+</code></pre> 
+ <p>在编写所有上面文件代码之后，部署这个Web应用程序，打开浏览器访问URL： <a target="_blank" href="http://localhost:8080/LoginWithCookies/">http://localhost:8080/LoginWithCookies/</a> ，如果代码没有错误，应该会看到以下结果 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/1110/994101040_42186.png" alt=""></p> 
+ <p>点击“登录”链接，输入用户名和密码：<em>admin</em> 和 <em>123456</em> ，应该会看到以下结果 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/1110/363101047_86775.png" alt=""></p> 
+ <p>提交登录成功后，看到以下结果 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/1110/206111018_59932.png" alt=""></p> 
+ <p>查看个人信息 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/1110/577111020_39838.png" alt=""></p> 
+ <p>其它如注销，登录密码错误请自己尝试一下。</p>
+ <br>      
+</div></body></html>

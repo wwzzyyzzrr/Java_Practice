@@ -1,0 +1,220 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Yii日志记录</h1><div style="width:100%;float:left;" class="article-content">   
+ <div> 
+  <div>
+    Yii提供一个高度可定制，可扩展的框架。 
+  </div> 
+ </div> 
+ <div> 
+  <div>
+    有了这个框架的帮助，就可以轻松地记录各种类型的消息。 
+  </div> 
+  <div>
+    要日志记录信息/消息，应该调用下面的方法&nbsp;- 
+  </div> 
+  <ul> 
+   <li> <p style="text-align:justify;"> Yii::error()&nbsp;−&nbsp;记录一个致命错误消息 </p> </li> 
+   <li> <p style="text-align:justify;"> Yii::warning()&nbsp;−&nbsp;记录一个警告消息 </p> </li> 
+   <li> <p style="text-align:justify;"> Yii::info()&nbsp;−&nbsp;记录一些有用信息的消息 </p> </li> 
+   <li> <p style="text-align:justify;"> Yii::trace()&nbsp;−&nbsp;记录消息跟踪一段代码如何运行 </p> </li> 
+  </ul> 
+  <div>
+    在上述不同类别方法记录日志信息。都具有以下函数签名&nbsp;- 
+  </div> 
+  <pre>function ($message, $category = 'application')</pre> 
+  <p style="text-align:justify;"> 在这里 − </p> 
+  <ul> 
+   <li> <p style="text-align:justify;"> $message&nbsp;−&nbsp;要记录的日志消息 </p> </li> 
+   <li> <p style="text-align:justify;"> $category&nbsp;−&nbsp;日志消息类别 </p> </li> 
+  </ul> 
+  <div>
+    简单和方便的命名方式是使用&nbsp;PHP&nbsp;的&nbsp;__METHOD__&nbsp;魔术常量。例如&nbsp;- 
+  </div> 
+  <pre>Yii::info('this is a log message', __METHOD__);</pre> 
+  <div>
+    日志目标是&nbsp;yii\log\Target&nbsp;class&nbsp;类的一个实例。它通过类别过滤所有日志信息并导出文件、数据库和/或电子邮件。 
+  </div> 
+  <div>
+    第1步&nbsp;-&nbsp;也可以注册多个日志目标，如下： 
+  </div> 
+  <pre>return [
+   // the "log" component is loaded during bootstrapping time
+   'bootstrap' =&gt; ['log'],
+   'components' =&gt; [
+      'log' =&gt; [
+         'targets' =&gt; [
+            [
+               'class' =&gt; 'yii\log\DbTarget',
+               'levels' =&gt; ['error', 'warning', 'trace', 'info'],
+            ],
+            [
+               'class' =&gt; 'yii\log\EmailTarget',
+               'levels' =&gt; ['error', 'warning'],
+               'categories' =&gt; ['yii\db\*'],
+               'message' =&gt; [
+                  'from' =&gt; ['log@mydomain.com'],
+                  'to' =&gt; ['admin@mydomain.com', 'developer@mydomain.com'],
+                  'subject' =&gt; 'Application errors at mydomain.com',
+               ],
+            ],
+         ],
+      ],
+   ],
+];</pre> 
+  <div>
+    在上面的代码，有两个目标被注册。第一个目标选择了所有的错误，警告，跟踪和信息消息，并在数据库中保存它们。第二个目标将发送所有错误和警告消息到管理员的电子邮件。 
+  </div> 
+  <div>
+    Yii提供以下内置日志的目标&nbsp;- 
+  </div> 
+  <ul> 
+   <li> <p style="text-align:justify;"> yii\log\DbTarget&nbsp;−&nbsp;在数据库中存储日志消息 </p> </li> 
+   <li> <p style="text-align:justify;"> yii\log\FileTarget&nbsp;−&nbsp;在文件中保存记录消息 </p> </li> 
+   <li> <p style="text-align:justify;"> yii\log\EmailTarget&nbsp;−&nbsp;发送长消息到预先定义的电子邮件地址 </p> </li> 
+   <li> <p style="text-align:justify;"> yii\log\SyslogTarget&nbsp;−&nbsp;通过调用 PHP&nbsp;syslog()函数将日志信息保存到系统日志 </p> </li> 
+  </ul> 
+  <div>
+    默认情况下，日志消息的格式如下&nbsp;- 
+  </div> 
+  <pre>Timestamp [IP address][User ID][Session ID][Severity Level][Category] Message Text</pre> 
+  <div>
+    第2步&nbsp;-&nbsp;要自定义格式则配置&nbsp;yii\log\Target::$prefix&nbsp;属性。&nbsp;例如。 
+  </div> 
+  <pre>[
+   'class' =&gt; 'yii\log\FileTarget',
+   'prefix' =&gt; function ($message) {
+      $user = Yii::$app-&gt;has('user', true) ? Yii::$app-&gt;get('user') :
+      'undefined user';
+      $userID = $user ? $user-&gt;getId(false) : 'anonym';
+      return "[$userID]";
+   }
+]</pre> 
+  <div>
+    上面的代码片段配置日志目标，使用当前用户ID为前缀的日志消息。 
+  </div> 
+  <div>
+    默认情况下，日志消息包含这些全局PHP变量的值：$_GET，$_POST，$_SESSION，$_COOKIE，$_FILES&nbsp;和&nbsp;$_SERVER。 
+  </div> 
+  <div>
+    若要修改此行为，则可以配置&nbsp;yii\log\Target::$logVars&nbsp;配置，需要包括变量名。 
+  </div> 
+  <div>
+    所有日志信息都保存在由记录对象的数组。&nbsp;Logger对象每次刷新记录的消息到日志目标，数组积累了一定数量消息(默认为1000)。 
+  </div> 
+  <div>
+    第3步&nbsp;-&nbsp;要自定义这个数字，则可以调用&nbsp;flushInterval&nbsp;属性。 
+  </div> 
+  <pre>return [
+   'bootstrap' =&gt; ['log'],
+   'components' =&gt; [
+      'log' =&gt; [
+         'flushInterval' =&gt; 50, // default is 1000
+         'targets' =&gt; [...],
+      ],
+   ],
+];</pre> 
+  <div>
+    即使在Logger对象刷新日志信息记录的目标，它们也不会立即导出。当日志目标积累了一定数量的消息(默认为1000)时就会导出。 
+  </div> 
+  <div>
+    第4步&nbsp;-&nbsp;要自定义这个数字，可以配置&nbsp;exportInterval&nbsp;属性的值。 
+  </div> 
+  <pre>[
+   'class' =&gt; 'yii\log\FileTarget',
+   'exportInterval' =&gt; 50, // default is 1000
+]</pre> 
+  <div>
+    第5步&nbsp;-&nbsp;现在，修改&nbsp;config/web.php&nbsp;文件，如下所示代码。 
+  </div>   
+  <pre>&lt;?php
+   $params = require(__DIR__ . '/params.php');
+   $config = [
+      'id' =&gt; 'basic',
+      'basePath' =&gt; dirname(__DIR__),
+      'bootstrap' =&gt; ['log'],
+      'components' =&gt; [
+         'request' =&gt; [
+            // !!! insert a secret key in the following (if it is empty) - this
+               //is required by cookie validation
+            'cookieValidationKey' =&gt; 'ymoaYrebZHa8gURuolioHGlK8fLXCKjO',
+         ],
+         'cache' =&gt; [
+            'class' =&gt; 'yii\caching\FileCache',
+         ],
+         'user' =&gt; [
+            'identityClass' =&gt; 'app\models\User',
+            'enableAutoLogin' =&gt; true,
+         ],
+         'errorHandler' =&gt; [
+            'errorAction' =&gt; 'site/error',
+         ],
+         'mailer' =&gt; [
+            'class' =&gt; 'yii\swiftmailer\Mailer',
+            // send all mails to a file by default. You have to set
+            // 'useFileTransport' to false and configure a transport
+            // for the mailer to send real emails.
+            'useFileTransport' =&gt; true,
+         ],
+         'log' =&gt; [
+            'flushInterval' =&gt; 1,
+            'traceLevel' =&gt; YII_DEBUG ? 3 : 0,
+            'targets' =&gt; [
+               [
+                  'class' =&gt; 'yii\log\FileTarget',
+                  'exportInterval' =&gt; 1,
+                  'logVars' =&gt; []
+               ],
+            ],
+         ],
+         'db' =&gt; require(__DIR__ . '/db.php'),
+      ],
+      'modules' =&gt; [
+         'admin' =&gt; [
+            'class' =&gt; 'app\modules\admin\Admin',
+         ],
+      ],
+      'params' =&gt; $params,
+   ];
+   if (YII_ENV_DEV) {
+      // configuration adjustments for 'dev' environment
+      $config['bootstrap'][] = 'debug';
+      $config['modules']['debug'] = [
+         'class' =&gt; 'yii\debug\Module',
+      ];
+      $config['bootstrap'][] = 'gii';
+      $config['modules']['gii'] = [
+         'class' =&gt; 'yii\gii\Module',
+      ];
+   }
+   return $config;
+?&gt;</pre> 
+  <div>
+    在上面的代码中，我们定义日志应用程序组件，并设置&nbsp;flushInterval&nbsp;和&nbsp;exportInteval&nbsp;属性的值为&nbsp;1&nbsp;，以便所有日志消息立即导出在日志文件中。 
+  </div> 
+  <div>
+    这里还忽略了日志目标级别(levels&nbsp;)属性。这意味着，所有类别的日志消息(错误，警告，信息，跟踪)将会记录在日志文件中。 
+  </div> 
+  <div>
+    第6步&nbsp;-&nbsp;然后，在&nbsp;SiteController&nbsp;中调用&nbsp;actionLog()&nbsp;函数。 
+  </div> 
+  <pre>public function actionLog() {
+   Yii::trace('trace log message');
+   Yii::info('info log message');
+   Yii::warning('warning log message');
+   Yii::error('error log message');
+}</pre> 
+  <div>
+    在上面的代码中，只写4个不同类型的日志消息到日志文件。 
+  </div> 
+  <div>
+    第7步&nbsp;-&nbsp;在Web浏览器的地址栏打开&nbsp;URL&nbsp;
+   <a target="_blank" href="http://localhost:8080/index.php?r=site/log">http://localhost:8080/index.php?r=site/log</a>&nbsp; 
+  </div> 
+  <div>
+    日志消息出现在&nbsp;app/runtime/logs&nbsp;目录下的&nbsp;app.log&nbsp;文件中。
+   <br> 
+   <img src="/uploads/tutorial/20160606/1-16060620215K54.png" alt="Yii日志记录">
+   <br> 
+  </div> 
+ </div>
+ <br>      
+</div></body></html>

@@ -1,0 +1,89 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Java标准输入/输出/错误流</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>只要使用<code>OutputStream</code>对象就可使用<code>System.out</code>和<code>System.err</code>对象引用。只要可以使用<code>InputStream</code>对象就可以使用<code>System.in</code>对象。</p> 
+ <p><code>System</code>类提供了三个静态设置器方法<code>setOut()</code>，<code>setIn()</code>和<code>stdErr()</code>，以用自己的设备替换这三个标准设备。</p> 
+ <p>要将所有标准输出重定向到一个文件，需要通过传递一个代表文件的<code>PrintStream</code>对象来调用<code>setOut()</code>方法。</p> 
+ <pre><code class="lang-java">import java.io.PrintStream;
+import java.io.FileOutputStream;
+import java.io.File;
+
+public class Main {
+  public static void main(String[] args) throws Exception {
+    File outFile = new File("stdout.txt");
+    PrintStream ps = new PrintStream(new FileOutputStream(outFile));
+
+    System.out.println(outFile.getAbsolutePath());
+
+    System.setOut(ps);
+
+    System.out.println("Hello world!");
+    System.out.println("Java I/O  is cool!");
+  }
+}
+</code></pre> 
+ <p>上面的代码生成以下结果。</p> 
+ <pre><code class="lang-java">F:\website\yiibai\worksp\stdout.txt
+</code></pre> 
+ <h2 id="h2-u6807u51C6u8F93u5165u6D41"><a name="标准输入流" class="reference-link"></a><span class="header-link octicon octicon-link"></span>标准输入流</h2>
+ <p>可以使用<code>System.in</code>对象从标准输入设备(通常是键盘)读取数据。<br>当用户输入数据并按<code>Enter</code>键时，输入的数据用<code>read()</code>方法每次返回一个字节的数据。<br>以下代码说明如何读取使用键盘输入的数据。<code>\n</code>是Windows上的换行字符。</p> 
+ <pre><code class="lang-java">import java.io.IOException;
+public class Main {
+  public static void main(String[] args) throws IOException {
+    System.out.print("Please type   a  message  and  press enter: ");
+
+    int c = '\n';
+    while ((c = System.in.read()) != '\n') {
+      System.out.print((char) c);
+    }
+  }
+}
+</code></pre> 
+ <p>由于<code>System.in</code>是<code>InputStream</code>的一个实例，可以使用任何具体的装饰器从键盘读取数据; 例如，可以创建一个<code>BufferedReader</code>对象，并从键盘读取数据一行一次作为字符串。</p> 
+ <p>上面的代码生成以下结果。</p> 
+ <pre><code class="lang-java">Please type   a  message  and  press enter: System.in.read demo...
+System.in.read demo...
+</code></pre> 
+ <h2 id="h2-u793Au4F8B"><a name="示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例</h2>
+ <p>以下代码说明如何将<code>System.in</code>对象与<code>BufferedReader</code>一起使用。程序不断提示用户输入一些文本，直到用户输入<code>Q</code>或<code>q</code>来退出程序。</p> 
+ <pre><code class="lang-java">import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.IOException;
+
+public class Main {
+  public static void main(String[] args) throws IOException {
+    BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+
+    String text = "q";
+    while (true) {
+      System.out.print("Please type a message (Q/q to quit) and press enter:");
+      text = br.readLine();
+      if (text.equalsIgnoreCase("q")) {
+        System.out.println("We have  decided to exit  the   program");
+        break;
+      } else {
+        System.out.println("We typed: " + text);
+      }
+    }
+  }
+}
+</code></pre> 
+ <p>如果想要标准输入来自一个文件，必须创建一个输入流对象来表示该文件，并使用<code>System.setIn()</code>方法设置该对象，如下所示。</p>   
+ <pre><code class="lang-java">FileInputStream fis  = new FileInputStream("stdin.txt"); 
+System.setIn(fis); 
+// Now  System.in.read() will read   from  stdin.txt file
+</code></pre> 
+ <p>上面的代码生成以下结果。</p> 
+ <pre><code class="lang-java">Please type a message (Q/q to quit) and press enter:abc
+We typed: abc
+Please type a message (Q/q to quit) and press enter:yes or no?
+We typed: yes or no?
+Please type a message (Q/q to quit) and press enter:yes
+We typed: yes
+Please type a message (Q/q to quit) and press enter:q
+We have  decided to exit  the   program
+</code></pre> 
+ <h2 id="h2-u6807u51C6u9519u8BEFu8BBEu5907"><a name="标准错误设备" class="reference-link"></a><span class="header-link octicon octicon-link"></span>标准错误设备</h2>
+ <p>标准错误设备用于显示任何错误消息。Java提供了一个名为<code>System.err</code>的<code>PrintStream</code>对象。使用它如下：</p> 
+ <pre><code class="lang-java">System.err.println("This is  an  error message.");
+</code></pre>
+ <br>      
+</div></body></html>

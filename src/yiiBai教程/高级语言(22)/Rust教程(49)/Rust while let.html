@@ -1,0 +1,63 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Rust while let</h1><div style="width:100%;float:left;" class="article-content">   
+ <h2 id="77-while-let" style="box-sizing: border-box; -webkit-tap-highlight-color: transparent; -webkit-font-smoothing: antialiased; margin-bottom: 16px; line-height: 1.225; font-size: 1.75em; position: relative; padding-bottom: 0.3em; border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: rgb(238, 238, 238); color: rgb(51, 51, 51);  'Clear Sans', 'Helvetica Neue', Helvetica,   margin-top: 0px !important;"> while let</h2> 
+ <p> 类似于if let，while let 可以使劲匹配更多序列。例如考虑以下序列：</p> 
+ <pre>
+// Make `optional` of type `Option
+  <i32>
+   `
+let mut optional = Some(0);
+
+// Repeatedly try this test.
+loop {
+    match optional {
+        // If `optional` destructures, evaluate the block.
+        Some(i) =&gt; {
+            if i &gt; 9 {
+                println!("Greater than 9, quit!");
+                optional = None;
+            } else {
+                println!("`i` is `{:?}`. Try again.", i);
+                optional = Some(i + 1);
+            }
+            // ^ Requires 3 indentations!
+        },
+        // Quit when the destructure fails, meaning `break`.
+        _ =&gt; { break; }
+        // ^ Why should this be required? Seems superfluous.
+    }
+}
+
+  </i32></pre> 
+ <code style="box-sizing: border-box; -webkit-tap-highlight-color: transparent; -webkit-font-smoothing: antialiased; Consolas, 'Liberation Mono', Menlo, Courier, monospace; font-size: 13.6000003814697px; padding: 0.2em 0px; margin: 0px; border-radius: 3px; color: rgb(51, 51, 51); background-color: rgb(247, 247, 247);">while let</code>
+ <span style="color: rgb(51, 51, 51);  'Clear Sans', 'Helvetica Neue', Helvetica,   font-size: 16px; line-height: 25.6000003814697px;">&nbsp;</span>使该序列好得更多：
+ <br> 
+ <br> 
+ <pre>
+fn main() {
+    // Make `optional` of type `Option
+  <i32>
+   `
+    let mut optional = Some(0);
+
+    // This reads: "while `let` destructures `optional` into
+    // `Some(i)`, evaluate the block (`{}`). Else `break`.
+    while let Some(i) = optional {
+        if i &gt; 9 {
+            println!("Greater than 9, quit!");
+            optional = None;
+        } else {
+            println!("`i` is `{:?}`. Try again.", i);
+            optional = Some(i + 1);
+        }
+        // ^ Less rightward drift and doesn't require
+        // explicitly handling the failing case.
+    }
+    // ^ `if let` had additional optional `else`/`else if`
+    // clauses. `while let` does not have these.
+}
+
+  </i32></pre> 
+ <h3 id="see-also" style="box-sizing: border-box; -webkit-tap-highlight-color: transparent; -webkit-font-smoothing: antialiased; margin-top: 1em; margin-bottom: 16px; line-height: 1.43; font-size: 1.5em; position: relative; color: rgb(51, 51, 51);  'Clear Sans', 'Helvetica Neue', Helvetica,  "> 也可以参考:</h3> 
+ <p style="box-sizing: border-box; -webkit-tap-highlight-color: transparent; -webkit-font-smoothing: antialiased; margin-top: 0px; color: rgb(51, 51, 51);  'Clear Sans', 'Helvetica Neue', Helvetica,   font-size: 16px; line-height: 25.6000003814697px; margin-bottom: 0px !important;"> <a target="_blank" href="http://www.yiibai.com/rust/custom_types_enum.html" style="box-sizing: border-box; -webkit-tap-highlight-color: transparent; -webkit-font-smoothing: antialiased; text-decoration: none; color: rgb(65, 131, 196); background: transparent;"><code style="box-sizing: border-box; -webkit-tap-highlight-color: transparent; -webkit-font-smoothing: antialiased; Consolas, 'Liberation Mono', Menlo, Courier, monospace; font-size: 13.6000003814697px; padding: 0.2em 0px; margin: 0px; border-radius: 3px; background-color: rgb(247, 247, 247);">enum</code></a>,&nbsp;<a target="_blank" href="http://www.yiibai.com/rust/std_option.html" style="box-sizing: border-box; -webkit-tap-highlight-color: transparent; -webkit-font-smoothing: antialiased; text-decoration: none; color: rgb(65, 131, 196); background: transparent;"><code style="box-sizing: border-box; -webkit-tap-highlight-color: transparent; -webkit-font-smoothing: antialiased; Consolas, 'Liberation Mono', Menlo, Courier, monospace; font-size: 13.6000003814697px; padding: 0.2em 0px; margin: 0px; border-radius: 3px; background-color: rgb(247, 247, 247);">Option</code></a>, 和&nbsp;<a target="_blank" href="https://github.com/rust-lang/rfcs/pull/214" style="box-sizing: border-box; -webkit-tap-highlight-color: transparent; -webkit-font-smoothing: antialiased; text-decoration: none; color: rgb(65, 131, 196); background: transparent;">RFC</a></p> 
+ <br>      
+</div></body></html>

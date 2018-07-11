@@ -1,0 +1,137 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">使用MyEclipse创建Servlet</h1><div style="width:100%;float:left;" class="article-content">   
+ <p><strong>如何在myeclipse IDE中创建Servlet？</strong></p> 
+ <p>要在myeclipse IDE中创建Servlet，可参考以下几个步骤 - </p> 
+ <ul> 
+  <li>创建一个Web项目</li>
+  <li>创建一个html文件</li>
+  <li>创建一个servlet</li>
+  <li>启动MyEclipse tomcat服务器并部署项目</li>
+ </ul> 
+ <p>请依次按照以下步骤在MyEclipse IDE中创建servlet。步骤如下：</p> 
+ <h2 id="h2-1-web-"><a name="1.创建Web项目：" class="reference-link"></a><span class="header-link octicon octicon-link"></span>1.创建Web项目：</h2>
+ <p>要创建一个Web项目，首先打开<em>MyEclipse</em>，单击文件菜单 -&gt; 新建 - &gt; Web项目 -&gt;填写项目名称，例如，要创建一个项目的名称为：<em>MyeclipseServlet</em> 。</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/1010/851151043_84212.png" alt=""></p> 
+ <p>在打开的对话框中，填写相关项目的信息，如下图所示 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/1010/432151051_80624.png" alt=""></p> 
+ <p>点击完成(<em>Finish</em>)，完整的项目结构如下图所示 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/1010/471151053_77219.png" alt=""></p> 
+ <h2 id="h2-2-html-"><a name="2.创建html文件" class="reference-link"></a><span class="header-link octicon octicon-link"></span>2.创建html文件</h2>
+ <p>可以看到有一个名称为：<em>MyeclipseServlet</em>项目被创建成功了，现在来浏览这个项目。</p> 
+ <p>要创建一个html文件，请右键单击<em>WebRoot</em> -&gt; <em>New</em> - &gt; <em>HTML(Advanceed Templates)</em> -&gt; 填写html文件名，例如：index.html -&gt; 完成。</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/1010/289161000_15018.png" alt=""></p> 
+ <p>在弹出对话框中，填写HTML文件的名称：index.html，如下所示 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/1010/776161003_69479.png" alt=""></p> 
+ <p>下面对这个<code>index.html</code>文件中的代码进行简单的修改，修改的结果如下所示 -</p> 
+ <pre><code class="lang-html">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+  &lt;head&gt;
+    &lt;title&gt;index.html&lt;/title&gt;
+    &lt;meta http-equiv="keywords" content="keyword1,keyword2,keyword3"&gt;
+    &lt;meta http-equiv="description" content="this is my page"&gt;
+    &lt;meta http-equiv="content-type" content="text/html; charset=UTF-8"&gt;
+    &lt;!--&lt;link rel="stylesheet" type="text/css" href="./styles.css"&gt;--&gt;
+  &lt;/head&gt;
+
+  &lt;body&gt;
+    &lt;div style="text-align:center;"&gt;
+        &lt;form action="/MyeclipseServlet/SayHello" method="POST"&gt;
+            输入名字：&lt;input type="text" name="name"/&gt;
+            &lt;input type="submit" value="提交"&gt;
+        &lt;/form&gt;
+    &lt;/div&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <h2 id="h2-3-servlet"><a name="3.创建servlet" class="reference-link"></a><span class="header-link octicon octicon-link"></span>3.创建servlet</h2>
+ <p>要创建Servlet，请单击菜单文件(<em>File</em>) -&gt; 新建(<em>New</em>) -&gt; Servlet -&gt; 填写servlet名称，例如： <code>SayHello</code> -&gt; 选中<code>doGet()</code>方法复选框 -&gt; 下一步(<em>Next&gt;</em>) -&gt; 完成。</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/1010/932161029_75336.png" alt=""></p> 
+ <p>填写要创建Servlet的信息，这里要在<code>com.yiibai</code>包中，创建一个名称为<code>SayHello</code>的Servlet，如下所示 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/1010/186161033_51921.png" alt=""></p> 
+ <p>Servlet配置的相关信息 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/1010/394161034_59392.png" alt=""></p> 
+ <p>可以看到一个名为<code>SayHello.java</code>的servlet文件被创建。接下来将在这个文件里编写servlet代码。删除<code>SayHello.java</code>类中其它的方法，只保留<code>doPost()</code>并重写此方法的功能，如下所示 - </p> 
+ <pre><code class="lang-java">package com.yiibai;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+public class SayHello extends HttpServlet {
+    /**
+     * The doPost method of the servlet. &lt;br&gt;
+     *
+     * This method is called when a form has its tag value method equals to post.
+     * 
+     * @param request the request send by the client to the server
+     * @param response the response send by the server to the client
+     * @throws ServletException if an error occurred
+     * @throws IOException if an error occurred
+     */
+    public void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        response.setContentType("text/html");
+        PrintWriter out = response.getWriter();
+        String name = null;
+        // 获取表单Post过来的数据
+        name = request.getParameter("name");
+        if(name==null){
+            name = "";
+        }
+        out.println("&lt;!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\"&gt;");
+        out.println("&lt;HTML&gt;");
+        out.println("  &lt;HEAD&gt;&lt;TITLE&gt;SayHello Servlet&lt;/TITLE&gt;&lt;/HEAD&gt;");
+        out.println("  &lt;BODY&gt;");
+        out.print("    This is "+this.getClass()+", using the POST method");
+        out.println("&lt;hr/&gt;");
+        out.println("Hello, "+name);
+        out.println("  &lt;/BODY&gt;");
+        out.println("&lt;/HTML&gt;");
+        out.flush();
+        out.close();
+    }
+}
+</code></pre> 
+ <p>现在删除项目中的<code>index.jsp</code>文件，并将<code>index.html</code>文件设置为项目的默认页面。打开<code>web.xml</code>文件，并将欢迎文件(<code>&lt;welcome-file&gt;</code>标签)名称更改为<code>index.html</code>。同时修改<code>SayHello</code>的映射url为<code>/SayHello</code>，现在完整的<em>web.xml</em>配置代码如下 -</p>   
+ <pre><code class="lang-xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;web-app version="3.0" xmlns="http://java.sun.com/xml/ns/javaee"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/javaee 
+    http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"&gt;
+    &lt;display-name&gt;SayHello Servlet&lt;/display-name&gt;
+    &lt;servlet&gt;
+        &lt;description&gt;This is the description of my J2EE component&lt;/description&gt;
+        &lt;display-name&gt;This is the display name of my J2EE component&lt;/display-name&gt;
+        &lt;servlet-name&gt;SayHello&lt;/servlet-name&gt;
+        &lt;servlet-class&gt;com.yiibai.SayHello&lt;/servlet-class&gt;
+    &lt;/servlet&gt;
+
+    &lt;servlet-mapping&gt;
+        &lt;servlet-name&gt;SayHello&lt;/servlet-name&gt;
+        &lt;url-pattern&gt;/SayHello&lt;/url-pattern&gt;
+    &lt;/servlet-mapping&gt;
+    &lt;welcome-file-list&gt;
+        &lt;welcome-file&gt;index.html&lt;/welcome-file&gt;
+    &lt;/welcome-file-list&gt;
+&lt;/web-app&gt;
+</code></pre> 
+ <p>到这里，项目的创建和配置就完成了，接下来来看看如何部署和运行项目。</p> 
+ <h2 id="h2-4-"><a name="4.启动服务器并部署项目" class="reference-link"></a><span class="header-link octicon octicon-link"></span>4.启动服务器并部署项目</h2>
+ <p>要启动服务器并部署项目。右键单击项目 -&gt; 运行方式(<em>Run As…</em>) - &gt; MyEclipse服务器应用程序。</p> 
+ <p>MyEclipse Tomcat的默认端口是<code>8080</code>，如果您在系统上安装了Oracle，则端口号可能会冲突而无法正常启动，可以先改变MyEclipse Tomcat服务器的端口号。要更改端口号，请单击浏览器图标左侧的启动服务器图标 -&gt; myeclipse tomcat -&gt; 配置服务器连接器 -&gt; 将端口号更改为您想要的端口号，如：<code>8088</code> -&gt; 应用(<em>Apply</em>) -&gt; 完成。</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/1010/921171025_55428.png" alt=""></p> 
+ <p>在弹出的对话框中，填写新的端口号，然后点击应用(<em>Apply</em>)-&gt; <em>OK</em> ， 如下图所示 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/1010/627171028_72580.png" alt=""></p> 
+ <p>现在端口号已更改了。启动服务器右键单击项目 -&gt; <em>Run As</em> -&gt; MyEclipse Server Application。</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/1010/852171034_70402.png" alt=""></p> 
+ <p>可以看到项目的默认页面是打开的，填写一个名字，然后提交。如果程序没有问题，打开浏览器，访问这个项目的URL：<a target="_blank" href="http://localhost:8088/MyeclipseServlet/">http://localhost:8088/MyeclipseServlet/</a> ，应该会看到下面界面 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/1010/233171037_69621.png" alt=""></p> 
+ <p>在上面输入框中，输入一个字符串(名字)：<code>Maxsu</code> ，然后提交，则应该会看到以下结果 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/1010/252171039_69924.png" alt=""></p> 
+ <p>到此，使用MyEclipse创建Servlet的介绍就结束了。</p>
+ <br>      
+</div></body></html>

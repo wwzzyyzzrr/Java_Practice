@@ -1,0 +1,150 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">JMeter JMS主题测试计划</h1><div style="width:100%;float:left;" class="article-content">   
+ <h2> 构建JMS主题测试计划</h2> 
+ <p> 现在，让我们写一个 <a target="_blank" href="http://www.yiibai.com/jmeter">JMeter </a>测试计划，测试JMS提供商。我们将创建一个用户和一个出版商。创建一个线程组，并设置每次一到两个迭代。</p> 
+ <p> 首先，让我们启动JMeter&nbsp;&nbsp;/home/manisha/apache-jmeter-2.9/bin/jmeter.sh.</p> 
+ <h3> 添加用户</h3> 
+ <p> 现在，创建一个线程组，右键点击&nbsp;Test Plan &gt; Add&gt; Threads(Users)&gt; Thread Group.&nbsp;根据测试计划节点将添加线程组。命名此主题组作为JMS&nbsp;pub-sub用户。</p> 
+ <img alt="Thread Group Added" src="/uploads/allimg/130930/1U3035163-0.jpg" style="margin: auto; padding: 0px 0px 10px; border: 0px; max-width: 560px; height: auto; display: block; color: rgb(0, 0, 0); font-family: Helvetica, Arial, sans-serif;"> 
+ <p style="margin: 0.8em 0px 1em; padding: 0px; text-align: justify; color: rgb(0, 0, 0); font-family: Helvetica, Arial, sans-serif;"> 我们将改变循环次数为2。其余的线程组的默认属性将被保留。这意味着一个线程组使用一个线程或用户发送两条消息分别通过一个请求队列。</p> 
+ <h3 style="margin: 0.2em 0.2em 0.2em 0px; padding: 0px; font-size: 1.2em; line-height: 1.5em; text-transform: uppercase; font-weight: normal; text-shadow: rgb(204, 204, 204) 1px 1px 2px; color: rgb(0, 0, 0); font-family: Helvetica, Arial, sans-serif;"> 加入JMS用户和发布</h3> 
+ <b style="margin: 0px; padding: 0px; color: rgb(0, 0, 0); font-family: Helvetica, Arial, sans-serif;">添加发布</b> 
+ <p style="margin: 0.8em 0px 1em; padding: 0px; text-align: justify; color: rgb(0, 0, 0); font-family: Helvetica, Arial, sans-serif;"> 接下来，添加采样JMS发布到发布元素 (<b style="margin: 0px; padding: 0px;">Add &gt; Sampler &gt; JMS Publisher</b>). 然后，选择JMS发布元素在树中编辑以下属性：</p> 
+ <table class="src" style="margin: 8px 0px; padding: 0px; border-style: solid; border-color: rgb(214, 214, 214); width: 560px; border-collapse: collapse; vertical-align: top; background-color: rgb(247, 247, 247); color: rgb(0, 0, 0); font-family: Helvetica, Arial, sans-serif;"> 
+  <tbody style="margin: 0px; padding: 0px;"> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <th style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214); background-color: rgb(238, 238, 238);"> 属性</th> 
+    <th style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214); background-color: rgb(238, 238, 238);"> 值</th> 
+    <th style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214); background-color: rgb(238, 238, 238);"> 描述</th> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> Name</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> Sample Publisher</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> 树中显示该元素的描述性名称。</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> If the JMS provider uses the jndi.properties file</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> check the box</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> 使用jndi.properties。请注意该文件必须在classpath&nbsp;- 例如通过更新user.classpath JMeter的属性。如果这个选项没有被选中，JMeter使用“JNDI初始上下文工厂”和“提供URL”字段创建连接。</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> InitialContextFactory</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> org.apache.activemq.jndi.ActiveMQInitialContextFactory</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> Name of the context factory.</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> Provider URL</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> tcp://localhost:61616</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> JMS提供者的URL。</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> Connection Factory</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> ConnectionFactory</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> JMS提供者的URL。</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> Destination</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> dynamicTopics/MyStaticTopic1</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> 消息主题的名称。对于ActiveMQ的动态主题（动态创建主题）。</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> Number of samples to aggregate</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> 2</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> 聚集的样品数量。</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> Message source</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> Textarea</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> 
+     <div>
+       在哪里获得消息：
+     </div> 
+     <div>
+       从文件：表示引用的文件，将所有样品读取和重用
+     </div> 
+     <div>
+       随机文件从指定的文件夹如下：指从指定的文件夹下面，将选择一个随机文件，这个文件夹必须包含两种副档名为.dat字节的消息，或带扩展名的文件.txt或.obj对象或文本消息。
+     </div> 
+     <div>
+       文本区域使用文本或对象消息：消息
+     </div> </td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> Message type</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> Text</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> 文字，地图，对象消息或字节消息</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p> 其余的属性均保留默认值。下面的屏幕截图显示，上述配置：</p> 
+ <img alt="JMS publisher sampler" src="/uploads/allimg/130930/1U3032622-1.jpg" style="margin: auto; padding: 0px 0px 10px; border: 0px; max-width: 560px; height: auto; display: block; color: rgb(0, 0, 0); font-family: Helvetica, Arial, sans-serif;">添加订阅服务 
+ <p> 现在，我们已经定义了我们的用户，它是时间来定义，他们将要执行的任务。开始通过增加采样JMS订阅服务器上认购元素(Add &gt; Sampler &gt; JMS Subscriber). 然后，选择树中的JMS订阅服务器元素的编辑以下属性：</p> 
+ <table class="src" style="margin: 8px 0px; padding: 0px; border-style: solid; border-color: rgb(214, 214, 214); width: 560px; border-collapse: collapse; vertical-align: top; background-color: rgb(247, 247, 247); color: rgb(0, 0, 0); font-family: Helvetica, Arial, sans-serif;"> 
+  <tbody style="margin: 0px; padding: 0px;"> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <th style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214); background-color: rgb(238, 238, 238);"> 属性</th> 
+    <th style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214); background-color: rgb(238, 238, 238);"> 值</th> 
+    <th style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214); background-color: rgb(238, 238, 238);"> 描述</th> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> Name</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> Sample Subscriber</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> 树中显示该元素的描述性名称。</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> If the JMS provider uses the jndi.properties file</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> check the box</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> 使用jndi.properties。请注意该文件必须在classpath&nbsp;- 例如通过更新&nbsp;user.classpath JMeter&nbsp;属性。如果这个选项没有被选中，JMeter的使用“JNDI初始上下文工厂”和“提供URL”字段创建连接。</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> InitialContextFactory</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> org.apache.activemq.jndi.ActiveMQInitialContextFactory</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> 名称的上下文厂。</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> Provider URL</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> tcp://localhost:61616</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> JMS提供者的URL。</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> Connection Factory</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> ConnectionFactory</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> JMS提供者的URL。</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> Destination</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> dynamicTopics/MyStaticTopic1</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> 消息主题的名称。对于ActiveMQ的动态主题（动态创建主题）。</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> Read response</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> Check Box</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> 采样器读取响应。如果没有，只有响应的长度将被返回。</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> Timeout</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> 2000</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> 指定的超时时间，以毫秒为单位。 0=null。这是整体的总超时，而不是每个样品。</td> 
+   </tr> 
+  </tbody> 
+ </table>   
+ <p> 其余属性均保留默认值。下面的屏幕截图显示，上述配置：</p> 
+ <img alt="JMS subscriber sampler" src="/uploads/allimg/130930/1U3034K2-2.jpg" style="margin: auto; padding: 0px 0px 10px; border: 0px; max-width: 560px; height: auto; display: block; color: rgb(0, 0, 0); font-family: Helvetica, Arial, sans-serif;"> 
+ <h3> 创建侦听器</h3> 
+ <p> 现在添加Listener元素。此元素是负责为您的JMS请求的结果存储在一个文件中，并呈现出可视化的数据模型。</p> 
+ <p> 选择线程组元件和添加查看结果树监听器 (Add &gt; Listener &gt; View Results Tree).</p> 
+ <img alt="JMS Pub Sub Test Listener" src="/uploads/allimg/130930/1U30312X-3.jpg" style="margin: auto; padding: 0px 0px 10px; border: 0px; max-width: 560px; height: auto; display: block; color: rgb(0, 0, 0); font-family: Helvetica, Arial, sans-serif;"> 
+ <h3> 保存并执行测试计划</h3> 
+ <p> 现在保存的以上测试计划 jms_pub_sub.jmx。执行本测试计划使用&nbsp;Run &gt; Start选项。&nbsp;option.</p> 
+ <h3> 校验输出</h3> 输出发布者
+ <img alt="JMS Publish Sub Test Output" src="/uploads/allimg/130930/1U3034059-4.jpg" style="margin: auto; padding: 0px 0px 10px; border: 0px; max-width: 560px; height: auto; display: block; color: rgb(0, 0, 0); font-family: Helvetica, Arial, sans-serif;">
+ <img alt="JMS Publish Sub Test Output" src="/uploads/allimg/130930/1U3031F0-5.jpg" style="margin: auto; padding: 0px 0px 10px; border: 0px; max-width: 560px; height: auto; display: block; color: rgb(0, 0, 0); font-family: Helvetica, Arial, sans-serif;">订阅服务器输出
+ <img alt="JMS Publish Sub Test Output" src="/uploads/allimg/130930/1U303M64-6.jpg" style="margin: auto; padding: 0px 0px 10px; border: 0px; max-width: 560px; height: auto; display: block; color: rgb(0, 0, 0); font-family: Helvetica, Arial, sans-serif;">
+ <img alt="JMS Publish Sub Test Output" src="/uploads/allimg/130930/1U3032206-7.jpg" style="margin: auto; padding: 0px 0px 10px; border: 0px; max-width: 560px; height: auto; display: block; color: rgb(0, 0, 0); font-family: Helvetica, Arial, sans-serif;">
+ <img alt="JMS Publish Sub Test Output" src="/uploads/allimg/130930/1U303LG-8.jpg" style="margin: auto; padding: 0px 0px 10px; border: 0px; max-width: 560px; height: auto; display: block; color: rgb(0, 0, 0); font-family: Helvetica, Arial, sans-serif;"> 
+ <p style="margin: 0.8em 0px 1em; padding: 0px; text-align: justify; color: rgb(0, 0, 0); font-family: Helvetica, Arial, sans-serif;"> 返回到管理控制台 ActiveMQ，从这个我们可以看到消息状态下的主题。</p> 
+ <img alt="JMS Publish Sub Admin Console" src="/uploads/allimg/130930/1U303EE-9.jpg" style="margin: auto; padding: 0px 0px 10px; border: 0px; max-width: 560px; height: auto; display: block; color: rgb(0, 0, 0); font-family: Helvetica, Arial, sans-serif;"> 
+ <div>
+   &nbsp;
+ </div> 
+ <br>      
+</div></body></html>

@@ -1,0 +1,87 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Java NIO缓冲区</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>缓冲区(<code>Buffers</code>)在<code>java.nio</code>包中定义。 它定义了所有缓冲区通用的核心功能：限制，容量和当前位置。</p> 
+ <p>Java NIO缓冲区用于与NIO通道进行交互。这是写入数据的内存块，以便在稍后再次进行读取。 内存块用NIO缓冲对象包装，这样可以提供更简单的方法来处理内存块。</p> 
+ <h2 id="h2-u7F13u51B2u533Au7C7Bu578B"><a name="缓冲区类型" class="reference-link"></a><span class="header-link octicon octicon-link"></span>缓冲区类型</h2>
+ <p>对于每个原始类型，都有一个缓冲区类型，所有缓冲区都可以实现缓冲区接口。 大多数使用的缓冲区类型是<code>ByteBuffer</code>。</p> 
+ <p>在Java NIO中使用的核心缓冲区如下：</p> 
+ <ul> 
+  <li><code>CharBuffer</code></li>
+  <li><code>DoubleBuffer</code></li>
+  <li><code>IntBuffer</code></li>
+  <li><code>LongBuffer</code></li>
+  <li><code>ByteBuffer</code></li>
+  <li><code>ShortBuffer</code></li>
+  <li><code>FloatBuffer</code></li>
+ </ul> 
+ <p>上述缓冲区覆盖了我们可以通过I/O发送的基本数据类型：<code>characters</code>，<code>double</code>，<code>int</code>，<code>long</code>，<code>byte</code>，<code>short</code>和<code>float</code>。</p> 
+ <p>在NIO中，使用<code>java.nio.Buffer</code>类中实现的缓冲区进行数据传输。它与数组相似，具有固定的容量大小。</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201709/2809/124090952_19645.png" alt=""></p> 
+ <h2 id="h2-u5206u914Du7F13u51B2u533A"><a name="分配缓冲区" class="reference-link"></a><span class="header-link octicon octicon-link"></span>分配缓冲区</h2>
+ <p>为了获得缓冲区对象，我们必须首先分配一个缓冲区。在每个<code>Buffer</code>类中，<code>allocate()</code>方法用于分配缓冲区。</p> 
+ <p>下面来看看<code>ByteBuffer</code>分配容量为<code>28</code>字节的例子：</p> 
+ <pre><code class="lang-java">ByteBuffer buf = ByteBuffer.allocate(28);
+</code></pre> 
+ <p>下面来看看另一个示例：<code>CharBuffer</code>分配空间大小为<code>2048</code>个字符。</p> 
+ <pre><code class="lang-java">CharBuffer buf = CharBuffer.allocate(2048);
+</code></pre> 
+ <h2 id="h2-u4ECEu7F13u51B2u533Au8BFBu53D6u6570u636E"><a name="从缓冲区读取数据" class="reference-link"></a><span class="header-link octicon octicon-link"></span>从缓冲区读取数据</h2>
+ <p>从缓冲区读取数据有两种方法：</p> 
+ <ul> 
+  <li>通过使用<code>get()</code>方法之一读取<code>Buffer</code>中的数据。</li>
+  <li>将数据从缓冲区读入通道。</li>
+ </ul> 
+ <p>下面来看看使用<code>get()</code>方法从<code>Buffer</code>读取数据的例子：</p> 
+ <pre><code class="lang-java">byte aByte = buf.get();
+</code></pre> 
+ <p>下面来看看如何将<code>Buffer</code>中的数据读入通道的例子：</p> 
+ <pre><code class="lang-java">int bytesWritten = inChannel.write(buf);
+</code></pre> 
+ <h2 id="h2-u5C06u6570u636Eu5199u5165u7F13u51B2u533A"><a name="将数据写入缓冲区" class="reference-link"></a><span class="header-link octicon octicon-link"></span>将数据写入缓冲区</h2>
+ <p>将数据写入缓冲区有两种方法：</p> 
+ <ul> 
+  <li>使用<code>put()</code>方法将数据写入缓冲区。</li>
+  <li>将数据从<code>Channel</code>写入缓冲区。</li>
+ </ul> 
+ <h2 id="h2-u57FAu672Cu7F13u51B2u533Au793Au4F8B"><a name="基本缓冲区示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>基本缓冲区示例</h2>
+ <p>下面来看看使用<code>BufferedReader</code>从<code>testout.txt</code>文件中读取行的简单示例：</p>   
+ <pre><code class="lang-java">package com.yiibai;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+public class BufferedReaderDemo {
+    public static void main(String[] args) {
+        Path file = null;
+        BufferedReader bufferedReader = null;
+        String relativelyPath = System.getProperty("user.dir");
+        try {
+            file = Paths.get(relativelyPath + "/testout.txt");
+            InputStream inputStream = Files.newInputStream(file);
+
+            bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+            System.out.println("Reading the Line of testout.txt file: \n" + bufferedReader.readLine());
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                bufferedReader.close();
+            } catch (IOException ioe) {
+                ioe.printStackTrace();
+            }
+        }
+    }
+}
+</code></pre> 
+ <p>执行上面示例代码，得到以下输出结果：</p> 
+ <pre><code class="lang-shell">Reading the Line of testout.txt file: 
+易百教程定位为IT技术入门学习实例教程网站
+</code></pre> 
+ <p>上述程序读取<code>testout.txt</code>文件的第一行，然后在控制台上打印文件的第一行。</p>
+ <br>      
+</div></body></html>

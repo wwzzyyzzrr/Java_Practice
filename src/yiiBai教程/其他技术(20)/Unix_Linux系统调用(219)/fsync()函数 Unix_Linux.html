@@ -1,0 +1,57 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">fsync()函数 Unix/Linux</h1><div style="width:100%;float:left;" class="article-content">   
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> fsync, fdatasync - 同步文件在内核态与存储设备</p> 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> 内容简介</h1> 
+ <pre style="font-family: 'Courier New', monospace; font-size: 12px; margin-bottom: 0px;">
+<b>#include &lt;unistd.h&gt;
+</b><b>int fsync(int </b><i>fd</i><b>);
+</b><b>int fdatasync(int </b><i>fd</i><b>);</b></pre> 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> 描述</h1> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> <b>fsync</b>() transfers ("flushes") all modified in-core data of (i.e., modified buffer cache pages for) the file referred to by the file descriptor&nbsp;<i>fd</i>&nbsp;to the disk device (or other permanent storage device) where that file resides. The call blocks until the device reports that the transfer has completed. It also flushes metadata information associated with the file (see&nbsp;<b>stat</b>(2)).</p> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> Calling&nbsp;<b>fsync</b>() does not necessarily ensure that the entry in the directory containing the file has also reached disk. For that an explicit&nbsp;<b>fsync</b>() on a file descriptor for the directory is also needed.</p> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> <b>fdatasync</b>() is similar to&nbsp;<b>fsync</b>(), but does not flush modified metadata unless that metadata is needed in order to allow a subsequent data retrieval to be correctly handled. For example, changes to&nbsp;<i>st_atime</i>&nbsp;or&nbsp;<i>st_mtime</i>&nbsp;(respectively, time of last access and time of last modification; see&nbsp;<b>stat</b>(2)) do not not require flushing because they are not necessary for a subsequent data read to be handled correctly. On the other hand, a change to the file size (<i>st_size</i>, as made by say&nbsp;<b>ftruncate</b>(2)), would require a metadata flush.</p> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> The aim of&nbsp;<b>fdatasync</b>(2) is to reduce disk activity for applications that do not require all metadata to be synchronised with the disk.</p> 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> 返回值</h1> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> On success, zero is returned. On error, -1 is returned, and&nbsp;<i>errno</i>&nbsp;is set appropriately.</p> 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> 错误</h1> 
+ <table border="1" cellpadding="5" cellspacing="0" class="src" style="font-family: verdana, helvetica, arial, sans-serif; border: 1px solid rgb(170, 170, 170); width: 552px; background-color: rgb(241, 241, 241); border-collapse: collapse; padding-left: 5px; vertical-align: top; color: rgb(0, 0, 0);"> 
+  <tbody> 
+   <tr> 
+    <th style="background-color: rgb(205, 205, 205); border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" width="25%"> 标签</th> 
+    <th style="background-color: rgb(205, 205, 205); border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> 描述</th> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>EBADF</b></td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" valign="bottom"> <i>fd</i>&nbsp;is not a valid file descriptor open for writing.</td> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>EIO</b></td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" valign="bottom"> An error occurred during synchronization.</td> 
+   </tr> 
+   <tr> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>EROFS</b>,&nbsp;<b>EINVAL</b></td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <i>fd</i>&nbsp;is bound to a special file which does not support synchronization.</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> 注意</h1> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> If the underlying hard disk has write caching enabled, then the data may not really be on permanent storage when&nbsp;<b>fsync</b>() /&nbsp;<b>fdatasync</b>() return.</p> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> When an ext2 file system is mounted with the&nbsp;<i>sync</i>&nbsp;option, directory entries are also implicitly synced by&nbsp;<b>fsync</b>().</p> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> On kernels before 2.4,&nbsp;<b>fsync</b>() on big files can be inefficient. An alternative might be to use the&nbsp;<i>O_SYNC</i>&nbsp;flag to&nbsp;<b>open</b>(2).</p> 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> 遵循于</h1> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> POSIX.1-2001</p> 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> 另请参阅</h1> 
+ <ul style="font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> 
+  <li> <p style="text-align: justify;"> <a target="_blank" href="http://www.yiibai.com/unix_system_calls/bdflush.html" style="color: rgb(144, 11, 9); background-color: transparent;">bdflush (2)</a></p> </li> 
+  <li> <p style="text-align: justify;"> <a target="_blank" href="http://www.yiibai.com/unix_system_calls/open.html" style="color: rgb(144, 11, 9); background-color: transparent;">open (2)</a></p> </li> 
+  <li> <p style="text-align: justify;"> <a target="_blank" href="http://www.yiibai.com/unix_system_calls/sync.html" style="color: rgb(144, 11, 9); background-color: transparent;">sync (2)</a></p> </li> 
+  <li> <p style="text-align: justify;"> <a target="_blank" href="http://www.yiibai.com/unix_system_calls/sync_file_range.html" style="color: rgb(144, 11, 9); background-color: transparent;">sync_file_range (2)</a></p> </li> 
+  <li> <p style="text-align: justify;"> <a target="_blank" href="http://www.yiibai.com/unix_commands/hdparm.html" style="color: rgb(144, 11, 9); background-color: transparent;">hdparm (8)</a></p> </li> 
+  <li> <p style="text-align: justify;"> <a target="_blank" href="http://www.yiibai.com/unix_commands/mount.html" style="color: rgb(144, 11, 9); background-color: transparent;">mount (8)</a></p> </li> 
+  <li> <p style="text-align: justify;"> <a target="_blank" href="http://www.yiibai.com/unix_commands/sync.html" style="color: rgb(144, 11, 9); background-color: transparent;">sync (8)</a></p> </li> 
+  <li> <p style="text-align: justify;"> <a target="_blank" href="http://www.yiibai.com/unix_commands/update.html" style="color: rgb(144, 11, 9); background-color: transparent;">update (8)</a></p> 
+   <div>
+     &nbsp;
+   </div> </li> 
+ </ul> 
+ <br>      
+</div></body></html>

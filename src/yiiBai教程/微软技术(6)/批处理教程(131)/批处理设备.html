@@ -1,0 +1,98 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">批处理设备</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>Windows现在有一个改进的库，可以在批处理脚本中使用，以处理连接到系统的设备。 这就是所谓的设备控制台 - <code>DevCon.exe</code>。</p> 
+ <p>Windows驱动程序开发人员和测试人员可以使用<code>DevCon</code>来验证是否正确安装并配置了驱动程序，包括正确的INF文件，驱动程序堆栈，驱动程序文件和驱动程序包。 也可以在脚本中使用DevCon命令(启用，禁用，安装，启动，停止和继续)来测试驱动程序。 DevCon是一个在本地计算机和远程计算机上执行设备管理功能的命令行工具。</p> 
+ <p>显示驱动程序和设备信息DevCon可以显示本地计算机和远程计算机(运行Windows XP及更早版本)上的驱动程序和设备的以下属性 -</p> 
+ <ul> 
+  <li>硬件ID，兼容的ID和设备实例ID。 这些标识符在设备标识字符串中有详细的描述。</li>
+  <li>设备设置类。</li>
+  <li>设备设置类中的设备。</li>
+  <li>INF文件和设备驱动程序文件。</li>
+  <li>驱动程序包的细节。</li>
+  <li>硬件资源。</li>
+  <li>设备状态。</li>
+  <li>预期的驱动程序堆栈。</li>
+  <li>驱动程序商店中的第三方驱动程序包。</li>
+  <li>搜索设备DevCon可以通过硬件ID，设备实例ID或设备设置类在本地或远程计算机上搜索已安装和未安装的设备。</li>
+  <li>更改设备设置DevCon可以通过以下方式更改本地计算机上即插即用(PnP)设备的状态或配置 -
+   <ul> 
+    <li>启用设备。</li>
+    <li>禁用设备。</li>
+    <li>更新驱动程序(交互式和非交互式)。</li>
+    <li>安装一个设备(创建一个devnode并安装软件)。</li>
+    <li>从设备树中删除设备并删除设备堆栈。</li>
+    <li>重新扫描即插即用设备。</li>
+    <li>添加，删除和重新排序根枚举设备的硬件ID。</li>
+    <li>更改设备设置类的上部和下部过滤器驱动程序。</li>
+    <li>从驱动程序存储添加和删除第三方驱动程序包。</li>
+   </ul> </li>
+ </ul> 
+ <p>DevCon(DevCon.exe)包含在为桌面应用程序安装WDK，Visual Studio和Windows SDK时。 <code>DevCon.exe</code>工具包在安装时位于以下位置。</p> 
+ <pre><code class="lang-bat">%WindowsSdkDir%\tools\x64\devcon.exe
+%WindowsSdkDir%\tools\x86\devcon.exe
+%WindowsSdkDir%\tools\arm\devcon.exe
+</code></pre> 
+ <p><strong>语法</strong></p> 
+ <pre><code class="lang-bat">devcon [/m:\\computer] [/r] command [arguments]
+</code></pre> 
+ <p>其中，</p> 
+ <ul> 
+  <li><code>/m:\\computer</code> - 在指定的远程计算机上运行该命令。 反斜杠是必需的。</li>
+  <li><code>/r</code> - 有条件的重启。 只有在需要重新启动以使更改生效时，才能在完成操作后重新启动系统。</li>
+  <li><code>command</code> - 指定一个DevCon命令。</li>
+  <li>要列出并显示计算机上的设备信息，请使用以下命令 -
+   <ul> 
+    <li><em>DevCon HwIDs</em></li>
+    <li><em>DevCon Classes</em></li>
+    <li><em>DevCon ListClass</em></li>
+    <li><em>DevCon DriverFiles</em></li>
+    <li><em>DevCon DriverNodes</em></li>
+    <li><em>DevCon Resources</em></li>
+    <li><em>DevCon Stack</em></li>
+    <li><em>DevCon Status</em></li>
+    <li><em>DevCon Dp_enum</em></li>
+   </ul> </li>
+  <li>要搜索有关计算机上设备的信息，请使用以下命令 -
+   <ul> 
+    <li><em>DevCon Find</em></li>
+    <li><em>DevCon FindAll</em></li>
+   </ul> </li>
+  <li>要操纵设备或更改其配置，请使用以下命令 -
+   <ul> 
+    <li>DevCon Enable</li>
+    <li>DevCon Disable</li>
+    <li>DevCon Update</li>
+    <li>DevCon UpdateNI</li>
+    <li>DevCon Install</li>
+    <li>DevCon Remove</li>
+    <li>DevCon Rescan</li>
+    <li>DevCon Restart</li>
+    <li>DevCon Reboot</li>
+    <li>DevCon SetHwID</li>
+    <li>DevCon ClassFilter</li>
+    <li>DevCon Dp_add</li>
+    <li>DevCon Dp_delete</li>
+   </ul> </li>
+ </ul> 
+ <p><strong>例子</strong><br>以下是关于如何使用DevCon命令的一些示例。 </p>   
+ <pre><code class="lang-bat">List all driver files
+</code></pre> 
+ <p>以下命令使用DevCon DriverFiles操作来列出系统上的设备使用的驱动程序的文件名。 该命令使用通配符(<code>*</code>)来指示系统中的所有设备。 由于输出很广泛，因此该命令使用重定向字符(<code>&gt;</code>)将输出重定向到参考文件<code>driverfiles.txt</code>。</p> 
+ <pre><code class="lang-bat">devcon driverfiles * &gt; driverfiles.txt
+</code></pre> 
+ <p>以下命令使用DevCon状态操作来查找本地计算机上所有设备的状态。 然后将状态保存在<code>status.txt</code>文件中以供日志记录或以后查看。 该命令使用通配符(<code>*</code>)表示所有设备，并使用重定向字符(<code>&gt;</code>)将输出重定向到<code>status.txt</code>文件。</p> 
+ <pre><code class="lang-bat">devcon status * &gt; status.txt
+</code></pre> 
+ <p>以下命令通过在<code>DevCon Enable</code>命令中指定<code>Printer Setup</code>类来启用计算机上的所有打印机设备。 该命令包含<code>/r</code>参数，如果需要使系统有效，则重新引导系统。</p> 
+ <pre><code class="lang-bat">devcon /r enable=Printer
+</code></pre> 
+ <p>以下命令使用DevCon安装操作在本地计算机上安装键盘设备。 该命令包含设备的INF文件(<code>keyboard.inf</code>)和硬件ID(<code>* PNP030b</code>)的完整路径。</p> 
+ <pre><code class="lang-bat">devcon /r install c:\windows\inf\keyboard.inf *PNP030b
+</code></pre> 
+ <p>以下命令将扫描计算机中的新设备。</p> 
+ <pre><code class="lang-bat">devcon scan
+</code></pre> 
+ <p>以下命令将重新扫描新设备的计算机。</p> 
+ <pre><code class="lang-bat">devcon rescan
+</code></pre>
+ <br>      
+</div></body></html>

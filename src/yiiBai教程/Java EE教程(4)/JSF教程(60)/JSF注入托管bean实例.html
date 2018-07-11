@@ -1,0 +1,122 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">JSF注入托管bean实例</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>以下代码显示了如何进行bean注入。<br>我们先定义一个消息bean，它有一个字符串属性来存储消息。</p> 
+ <pre><code class="lang-java">@ManagedBean(name="message")
+@SessionScoped
+public class MessageBean implements Serializable {
+
+  private static final long serialVersionUID = 1L;
+
+  private String sayWelcome = "Welcome to JSF 2.0";
+</code></pre> 
+ <p>然后我们再定义另一个托管bean，并使用<code><a target="_blank" href="https://github.com/ManagedProperty" title="@ManagedProperty" class="at-link">@ManagedProperty</a></code>注解注入<code>MessageBean</code>。</p> 
+ <pre><code class="lang-java">@ManagedBean
+@SessionScoped
+public class UserBean implements Serializable {
+
+  private static final long serialVersionUID = 1L;
+
+  @ManagedProperty(value="#{message}")
+  private MessageBean messageBean;
+
+  public void setMessageBean(MessageBean messageBean) {
+    this.messageBean = messageBean;
+  }
+</code></pre> 
+ <h2 id="h2-u5B9Eu4F8B"><a name="实例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实例</h2>
+ <p>打开 NetBean8.2，创建一个名为： <strong>InjectManagedBeans</strong> 的工程，并加入以下文件代码。<br>以下是文件：<em>UserBean.java</em> 中的代码 - </p> 
+ <pre><code class="lang-java">package com.yiibai;
+
+import java.io.Serializable;
+
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
+import javax.faces.bean.SessionScoped;
+
+@ManagedBean
+@SessionScoped
+public class UserBean implements Serializable {
+
+  private static final long serialVersionUID = 1L;
+
+  @ManagedProperty(value="#{message}")
+  private MessageBean messageBean;
+
+  public void setMessageBean(MessageBean messageBean) {
+    this.messageBean = messageBean;
+  }
+
+  private String name;
+
+  public String getName() {
+    return name;
+  }
+
+  public void setName(String name) {
+    this.name = name;
+  }
+
+  public String getSayWelcome(){
+    //check if null?
+    if("".equals(name) || name ==null){
+      return "";
+    }else{
+      return messageBean.getSayWelcome() + name;
+    }
+  }
+
+}
+</code></pre> 
+ <p>以下是是文件：<em>index.xhtml</em> 中的代码 -</p> 
+ <pre><code class="lang-html">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"&gt;
+&lt;html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:f="http://java.sun.com/jsf/core"      
+      xmlns:h="http://java.sun.com/jsf/html"&gt;
+
+    &lt;h:body&gt;
+
+      &lt;h:form&gt;
+         &lt;h:inputText id="name" value="#{userBean.name}"&gt;&lt;/h:inputText&gt;
+         &lt;h:commandButton value="Welcome Me"&gt;
+         &lt;f:ajax execute="name" render="output" /&gt;
+         &lt;/h:commandButton&gt;
+
+         &lt;h2&gt;&lt;h:outputText id="output" value="#{userBean.sayWelcome}" /&gt;&lt;/h2&gt;  
+      &lt;/h:form&gt;
+
+    &lt;/h:body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>以下是文件：<em>MessageBean.java</em> 中的代码 - </p>   
+ <pre><code class="lang-java">package com.yiibai;
+import java.io.Serializable;
+
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.SessionScoped;
+
+@ManagedBean(name="message")
+@SessionScoped
+public class MessageBean implements Serializable {
+
+  private static final long serialVersionUID = 1L;
+
+  private String sayWelcome = "Welcome to JSF 2.0";
+
+  public String getSayWelcome() {
+    return sayWelcome;
+  }
+
+  public void setSayWelcome(String sayWelcome) {
+    this.sayWelcome = sayWelcome;
+  }
+
+}
+</code></pre> 
+ <h2 id="h2-u8FD0u884Cu6D4Bu8BD5u7ED3u679C"><a name="运行测试结果" class="reference-link"></a><span class="header-link octicon octicon-link"></span>运行测试结果</h2>
+ <p>Tomcat启动完成后，在浏览器地址栏中输入以下URL。</p> 
+ <pre><code>http://localhost:8084/InjectManagedBeans/
+</code></pre>
+ <p>运行结果如下所示 -<br><img src="http://www.yiibai.com/uploads/images/201704/2404/290140430_77462.png" alt=""></p>
+ <br>      
+</div></body></html>

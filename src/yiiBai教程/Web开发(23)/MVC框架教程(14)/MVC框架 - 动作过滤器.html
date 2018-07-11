@@ -1,0 +1,77 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">MVC框架 - 动作过滤器</h1><div style="width:100%;float:left;" class="article-content">   
+ <p> 在ASP.NET MVC中，控制器确定行作方法和动作，这些方法一般是一到一对应于UI控件，例如单击按钮或链接等，例如，在前面的例子，UserController类包含方法：UserAdd，UserDelete等。</p> 
+ <p> 但很多时候，我们希望在特定操作之前或之后执行一些动作。为了实现这个功能，ASP.NET MVC提供一个在控制器的action方法添加前置和后置的动作行为的功能。</p> 
+ <h2> 过滤器的类型</h2> 
+ <p> ASP.NET MVC框架支持下列动作过滤器：</p> 
+ <ul> 
+  <li> <strong>动作过滤器：</strong>动作过滤器用来实现获取前一个控制器动作执行后执行的逻辑。在本章我们将着眼于动作过滤器细节。</li> 
+  <li> <strong>授权过滤器：</strong>授权过滤器用于实现对控制器动作的验证和授权。</li> 
+  <li> <strong>结果过滤器：</strong>结果过滤器包含之前和视图结果被执行后，执行逻辑。例如，可能要修改视图结果前右视图呈现给浏览器。</li> 
+  <li> <strong>异常过滤器：</strong>异常过滤器是最后运行的一个类型。可以使用一个异常过滤器来处理由任何控制器的动作或控制器操作的结果出现的错误。 也可以使用异常过滤器来记录错误。</li> 
+ </ul> 
+ <p> 动作过滤器是最常用的过滤器，一个来执行额外的数据处理，或操纵的返回值或取消操作，执行或在运行时修改视图的结构。</p> 
+ <h2> 操作过滤器</h2> 
+ <p> 动作过滤器附加属性是可以应用到控制器部分或整个控制器修改，以执行动作。这些属性是特殊的，从System.Attribute派生，.NET类可以附加到类，方法，属性和字段。</p> 
+ <p> ASP.NET MVC提供了以下行动过滤器：</p> 
+ <ul> 
+  <li> <strong>输出缓存：</strong>&nbsp;这个动作过滤器缓存控制器的动作在指定的时间量的输出。</li> 
+  <li> <strong>处理错误：</strong>这个动作过滤器处理的控制器操作执行时出现的错误。</li> 
+  <li> <strong>授权：</strong>这个行为过滤器，可以限制访问特定用户或角色。</li> 
+ </ul> 
+ <p> 现在，我们将看到的代码示例，这个例子控制器ActionFilterDemoController应用这些过滤器。（ActionFilterDemoController只是作为一个例子，可以在任何控制器使用这些过滤器。）</p> 
+ <h2> 输出缓存</h2> 
+ <p> 例如：指定的返回值被缓存10秒。</p> 
+ <pre class="prettyprint" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+public class ActionFilterDemoController : Controller
+{
+    [HttpGet]
+    OutputCache(Duration = 10)]
+    public string Index()
+        {
+            return DateTime.Now.ToString("T");
+
+        }
+}</pre> 
+ <h2> 处理错误</h2> 
+ <p> 例如：应用重定向到一个自定义错误页时，被控制器触发错误</p>   
+ <pre class="prettyprint" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+[HandleError]
+public class ActionFilterDemoController : Controller
+{
+   public ActionResult Index()
+     {
+        throw new NullReferenceException();
+     }
+
+   public ActionResult About()
+     {
+        return View();
+     }
+}</pre> 
+ <p> 使用上面的代码，如果操作执行过程中的任何错误发生，它会找到一个在浏览文件夹命名为错误视图并渲染页面给用户。</p> 
+ <h2> 授权</h2> 
+ <p> 例如：只允许授权用户登录应用</p> 
+ <pre class="prettyprint" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+public class ActionFilterDemoController: Controller
+    {
+        [Authorize]
+        public ActionResult Index()
+        {
+            ViewBag.Message = "This can be viewed only by authenticated users only";
+            return View();
+        }
+
+        [Authorize(Roles="admin")]
+        public ActionResult AdminIndex()
+        {
+            ViewBag.Message = "This can be viewed only by users in Admin role only";
+            return View();
+        }
+    }</pre> 
+ <p> 使用上面的代码，如果想尝试不登录就访问应用程序，它会抛出类似这样的错误：</p> 
+ <img alt="mvc_authorize_filter" src="/uploads/allimg/150531/11232U923-0.jpg" style="box-sizing: border-box; vertical-align: middle; max-width: 100%; display: block; margin-left: auto; margin-right: auto; padding-bottom: 4px; color: rgb(49, 49, 49);  font-size: 14px; line-height: 22px;"> 
+ <div>
+   &nbsp;
+ </div> 
+ <br>      
+</div></body></html>

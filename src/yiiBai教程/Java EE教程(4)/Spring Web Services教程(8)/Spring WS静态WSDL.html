@@ -1,0 +1,82 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Spring WS静态WSDL</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>在前一章Spring-WS入门程序中，我们使用Spring WS Configuration自动生成了WSDL。 在这篇教程文章中，我们将演示如何使用Spring WS公开一个WSDL。</p> 
+ <p>本教程是在<a target="_blank" href="https://www.yiibai.com/springws/springws_first_application.html" title="Spring-WS入门程序教程">Spring-WS入门程序教程</a>的基础上修改编写的。</p> 
+ <p>请参考以下步骤:</p> 
+ <p><strong>第1步:</strong> 按照Spring-WS入门程序章节的介绍，在<code>leaveService</code>项目下创建一个名称为:<code>com.yiibai</code>的包。</p> 
+ <p><strong>第2步:</strong> 在<code>/WEB-INF/wsdl</code> 子文件夹下创建一个WSDL文件，名称为： <code>leave.wsdl</code> 。</p> 
+ <p><strong>第3步:</strong> 更新<code>/WEB-INF</code>子文件夹下的文件:<code>spring-ws-servlet.xml</code>。 在这里使用<code>static-wsdl</code>标签(而不是<code>dynamic-wsdl</code>)。</p> 
+ <p><strong>第4步:</strong> 最后一步是创建所有源文件和配置文件的内容并导出应用程序，如下所述。</p> 
+ <p><strong>文件:</strong> <em>/WEB-INF/wsdl/leave.wsdl</em> - </p> 
+ <pre><code class="lang-xml">&lt;wsdl:definitions
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:schema="http://www.yiibai.com/hr/schemas"
+    xmlns:tns="http://www.yiibai.com/hr/definitions"
+    targetNamespace="http://www.yiibai.com/hr/definitions"&gt;
+
+    &lt;wsdl:types&gt;
+        &lt;xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
+            &lt;xsd:import namespace="http://www.yiibai.com/hr/schemas"
+                schemaLocation="hr.xsd" /&gt;
+        &lt;/xsd:schema&gt;
+    &lt;/wsdl:types&gt;
+
+    &lt;wsdl:message name="LeaveRequest"&gt;
+        &lt;wsdl:part element="schema:LeaveRequest" name="LeaveRequest" /&gt;
+    &lt;/wsdl:message&gt;
+
+    &lt;wsdl:portType name="HumanResource"&gt;
+        &lt;wsdl:operation name="Leave"&gt;
+            &lt;wsdl:input message="tns:LeaveRequest" name="LeaveRequest" /&gt;
+        &lt;/wsdl:operation&gt;
+    &lt;/wsdl:portType&gt;
+
+    &lt;wsdl:binding name="HumanResourceBinding"
+        type="tns:HumanResource"&gt;
+        &lt;soap:binding style="document"
+            transport="http://schemas.xmlsoap.org/soap/http" /&gt;
+        &lt;wsdl:operation name="Leave"&gt;
+            &lt;soap:operation
+                soapAction="http://www.yiibai.com/RequestLeave" /&gt;
+            &lt;wsdl:input name="LeaveRequest"&gt;
+                &lt;soap:body use="literal" /&gt;
+            &lt;/wsdl:input&gt;
+        &lt;/wsdl:operation&gt;
+    &lt;/wsdl:binding&gt;
+
+    &lt;wsdl:service name="HumanResourceService"&gt;
+        &lt;wsdl:port binding="tns:HumanResourceBinding"
+            name="HumanResourcePort"&gt;
+            &lt;soap:address
+                location="http://localhost:8080/leaveService/" /&gt;
+        &lt;/wsdl:port&gt;
+    &lt;/wsdl:service&gt;
+&lt;/wsdl:definitions&gt;
+</code></pre> 
+ <p><strong>文件:</strong> <em>/WEB-INF/spring-ws-servlet.xml</em> - </p>   
+ <pre><code class="lang-xml">&lt;beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:sws="http://www.springframework.org/schema/web-services"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+
+   http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+   http://www.springframework.org/schema/web-services
+   http://www.springframework.org/schema/web-services/web-services-2.0.xsd
+   http://www.springframework.org/schema/context 
+   http://www.springframework.org/schema/context/spring-context-3.0.xsd"&gt;
+
+    &lt;context:component-scan
+        base-package="com.yiibai.hr" /&gt;
+    &lt;sws:annotation-driven /&gt;
+    &lt;sws:static-wsdl id="leave"
+        location="/WEB-INF/wsdl/leave.wsdl" /&gt;
+&lt;/beans&gt;
+</code></pre> 
+ <h2 id="h2-u8FD0u884Cu9879u76EE"><a name="运行项目" class="reference-link"></a><span class="header-link octicon octicon-link"></span>运行项目</h2>
+ <p>当完成创建源文件和配置文件，使用Maven构建应用程序。 右键单击应用程序项目名称，在弹出的菜单中选择:Run As -&gt; Maven Build… ，如下所示 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201805/2805/698110502_40531.png" alt=""></p> 
+ <p>Eclipse启动Tomcat服务器后， 尝试访问URL =&gt; <a target="_blank" href="http://localhost:8080/leaveService/leave.wsdl">http://localhost:8080/leaveService/leave.wsdl</a> ，如果Spring Web应用程序一切正常，应该看到以下输出结果 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201805/2905/458140514_22575.png" alt=""></p>
+ <br>      
+</div></body></html>

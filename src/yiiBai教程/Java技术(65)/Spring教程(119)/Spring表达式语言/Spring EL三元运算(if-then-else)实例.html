@@ -1,0 +1,95 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Spring EL三元运算(if-then-else)实例</h1><div style="width:100%;float:left;" class="article-content">   
+ <div> 
+  <div>
+    Spring&nbsp;EL支持三元运算符，执行“if&nbsp;then&nbsp;else”条件检查。&nbsp;例如， 
+  </div> 
+ </div> 
+ <div> 
+  <pre>condition ? true : false</pre> 
+  <h2> Spring EL以注解形式 </h2> 
+  <div>
+    Spring&nbsp;EL三元运算符可使用@Value注解。在这个例子中，如果“itemBean.qtyOnHand”小于100，则设置“customerBean.warning”为true，否则将其设置为false。 
+  </div> 
+  <pre>package com.yiibai.core;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+@Component("customerBean")
+public class Customer {
+
+	@Value("#{itemBean.qtyOnHand &lt; 100 ? true : false}")
+	private boolean warning;
+
+	public boolean isWarning() {
+		return warning;
+	}
+
+	public void setWarning(boolean warning) {
+		this.warning = warning;
+	}
+
+	@Override
+	public String toString() {
+		return "Customer [warning=" + warning + "]";
+	}
+
+}</pre> 
+  <pre>package com.yiibai.core;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+@Component("itemBean")
+public class Item {
+
+	@Value("99")
+	private int qtyOnHand;
+	
+	public int getQtyOnHand() {
+		return qtyOnHand;
+	}
+
+	public void setQtyOnHand(int qtyOnHand) {
+		this.qtyOnHand = qtyOnHand;
+	}
+
+}</pre> 
+  <p> 输出 </p> 
+  <pre>Customer [warning=true]</pre> 
+  <h2> Spring EL以XML形式 </h2> 
+  <div> 
+   <div>
+     请参阅在XML文件定义bean的等效版本。 
+   </div> 
+  </div>   
+  <pre>&lt;beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd"&gt;
+ 
+	&lt;bean id="customerBean" class="com.yiibai.core.Customer"&gt;
+		&lt;property name="warning" 
+                          value="#{itemBean.qtyOnHand &lt; 100 ? true : false}" /&gt;
+	&lt;/bean&gt;
+ 
+	&lt;bean id="itemBean" class="com.yiibai.core.Item"&gt;
+		&lt;property name="qtyOnHand" value="99" /&gt;
+	&lt;/bean&gt;
+	
+&lt;/beans&gt;</pre> 
+  <p> 输出结果 </p> 
+  <pre>Customer [warning=true]</pre> 
+  <div>
+    在XML中，需要小于运算符使用"&amp;lt;"替换“&lt;”。 
+  </div> 
+  <div> 
+   <br> 
+  </div> 
+  <div>
+    下载代码 -&nbsp;
+   <a target="_blank" href="http://pan.baidu.com/s/1qXjtJru">http://pan.baidu.com/s/1qXjtJru</a> 
+  </div> 
+ </div>
+ <br>      
+</div></body></html>

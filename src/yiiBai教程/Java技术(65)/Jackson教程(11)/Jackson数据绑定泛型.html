@@ -1,0 +1,713 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Jackson数据绑定泛型</h1><div style="width:100%;float:left;" class="article-content">   
+ <p> 在简单的数据绑定中，我们使用String作为关键对象，并作为一个值对象映射类。相反，我们可以使用具体的Java对象和类型强制转换到JSON使用。</p> 
+ <p> 考虑下面的例子使用一个类的UserData来保存用户专用数据。</p> 
+ <p> 创建一个名为JacksonTester在Java类文件目录&nbsp;C:\&gt;Jackson_WORKSPACE.</p> 
+ <p style="box-sizing: border-box; color: rgb(0, 0, 0); line-height: 24px; margin: 0em 0.2em 1em; padding: 0px; text-align: justify;  font-size: 14px;"> <i style="box-sizing: border-box;">文件名: JacksonTester.java</i></p> 
+ <pre class="prettyprint tryit prettyprinted" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 496.1875px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); cursor: default; background-image: url(http://www.yiibai.com/jackson/images/try-it.jpg) !important; background-attachment: initial !important; background-size: initial !important; background-origin: initial !important; background-clip: initial !important; background-position: 100% 0%; background-repeat: no-repeat !important;">
+<span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">import</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> java</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">io</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">File</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">;</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+</span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">import</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> java</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">io</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">IOException</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">;</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+</span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">import</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> java</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">util</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">Arrays</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">;</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+</span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">import</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> java</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">util</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">HashMap</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">;</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+</span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">import</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> java</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">util</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">List</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">;</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+</span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">import</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> java</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">util</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">Map</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">;</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+
+</span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">import</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> org</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">codehaus</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">jackson</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">JsonGenerationException</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">;</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+</span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">import</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> org</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">codehaus</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">jackson</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">JsonParseException</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">;</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+</span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">import</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> org</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">codehaus</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">jackson</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">map</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">JsonMappingException</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">;</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+</span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">import</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> org</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">codehaus</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">jackson</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">map</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">ObjectMapper</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">;</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+</span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">import</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> org</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">codehaus</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">jackson</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">type</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">TypeReference</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">;</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+
+</span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">public</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">class</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">JacksonTester</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">{</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+   </span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">public</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">static</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">void</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> main</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span><span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">String</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> args</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[]){</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+      </span><span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">JacksonTester</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> tester </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">=</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">new</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">JacksonTester</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">();</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+         </span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">try</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">{</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+            </span><span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">ObjectMapper</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> mapper </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">=</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">new</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">ObjectMapper</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">();</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+
+            </span><span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">Map</span>
+  <string, style="box-sizing: border-box;" userdata="">
+   <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> userDataMap </span>
+   <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">=</span>
+   <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+   <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">new</span>
+   <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+   <span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">HashMap</span>
+   <string, style="box-sizing: border-box;" userdata="">
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">();</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+            </span>
+    <span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">UserData</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> studentData </span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">=</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+    <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">new</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+    <span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">UserData</span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">();</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> 
+            </span>
+    <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">int</span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[]</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> marks </span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">=</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">{</span>
+    <span class="lit" style="box-sizing: border-box; color: rgb(0, 102, 102);">1</span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">,</span>
+    <span class="lit" style="box-sizing: border-box; color: rgb(0, 102, 102);">2</span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">,</span>
+    <span class="lit" style="box-sizing: border-box; color: rgb(0, 102, 102);">3</span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">};</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+
+            </span>
+    <span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">Student</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> student </span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">=</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+    <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">new</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+    <span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">Student</span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">();</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+            student</span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">setAge</span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span>
+    <span class="lit" style="box-sizing: border-box; color: rgb(0, 102, 102);">10</span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">);</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+            student</span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">setName</span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span>
+    <span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"Mahesh"</span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">);</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+            </span>
+    <span class="com" style="box-sizing: border-box; color: rgb(136, 0, 0);">// JAVA Object</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+            studentData</span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">setStudent</span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">student</span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">);</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+            </span>
+    <span class="com" style="box-sizing: border-box; color: rgb(136, 0, 0);">// JAVA String</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+            studentData</span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">setName</span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span>
+    <span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"Mahesh Kumar"</span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">);</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+            </span>
+    <span class="com" style="box-sizing: border-box; color: rgb(136, 0, 0);">// JAVA Boolean</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+            studentData</span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">setVerified</span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span>
+    <span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">Boolean</span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">FALSE</span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">);</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+            </span>
+    <span class="com" style="box-sizing: border-box; color: rgb(136, 0, 0);">// Array</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+            studentData</span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">setMarks</span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">marks</span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">);</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+            </span>
+    <span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">TypeReference</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+    <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">ref</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">=</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+    <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">new</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+    <span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">TypeReference</span>
+    <map<string,userdata style="box-sizing: border-box;">
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">&gt;()</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">{</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">};</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+            userDataMap</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">put</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span>
+     <span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"studentData1"</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">,</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> studentData</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">);</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+            mapper</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">writeValue</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span>
+     <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">new</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+     <span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">File</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span>
+     <span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"student.json"</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">),</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> userDataMap</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">);</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+            </span>
+     <span class="com" style="box-sizing: border-box; color: rgb(136, 0, 0);">//{</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+            </span>
+     <span class="com" style="box-sizing: border-box; color: rgb(136, 0, 0);">//   "studentData1":</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+            </span>
+     <span class="com" style="box-sizing: border-box; color: rgb(136, 0, 0);">//	 {</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+            </span>
+     <span class="com" style="box-sizing: border-box; color: rgb(136, 0, 0);">//		"student":</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+            </span>
+     <span class="com" style="box-sizing: border-box; color: rgb(136, 0, 0);">//		{</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+            </span>
+     <span class="com" style="box-sizing: border-box; color: rgb(136, 0, 0);">//			"name":"Mahesh",</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+            </span>
+     <span class="com" style="box-sizing: border-box; color: rgb(136, 0, 0);">//			"age":10</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+            </span>
+     <span class="com" style="box-sizing: border-box; color: rgb(136, 0, 0);">//      },</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+            </span>
+     <span class="com" style="box-sizing: border-box; color: rgb(136, 0, 0);">//      "name":"Mahesh Kumar",</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+            </span>
+     <span class="com" style="box-sizing: border-box; color: rgb(136, 0, 0);">//      "verified":false,</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+            </span>
+     <span class="com" style="box-sizing: border-box; color: rgb(136, 0, 0);">//      "marks":[1,2,3]</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+            </span>
+     <span class="com" style="box-sizing: border-box; color: rgb(136, 0, 0);">//   }</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+            </span>
+     <span class="com" style="box-sizing: border-box; color: rgb(136, 0, 0);">//}</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+            userDataMap </span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">=</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> mapper</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">readValue</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span>
+     <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">new</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+     <span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">File</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span>
+     <span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"student.json"</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">),</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+     <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">ref</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">);</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+
+            </span>
+     <span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">System</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span>
+     <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">out</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">println</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">userDataMap</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span>
+     <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">get</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span>
+     <span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"studentData1"</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">).</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">getStudent</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">());</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+            </span>
+     <span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">System</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span>
+     <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">out</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">println</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">userDataMap</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span>
+     <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">get</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span>
+     <span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"studentData1"</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">).</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">getName</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">());</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+            </span>
+     <span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">System</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span>
+     <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">out</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">println</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">userDataMap</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span>
+     <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">get</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span>
+     <span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"studentData1"</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">).</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">getVerified</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">());</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+            </span>
+     <span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">System</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span>
+     <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">out</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">println</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span>
+     <span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">Arrays</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">toString</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">userDataMap</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span>
+     <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">get</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span>
+     <span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"studentData1"</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">).</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">getMarks</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">()));</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+      </span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">}</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+     <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">catch</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span>
+     <span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">JsonParseException</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> e</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">)</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">{</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+         e</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">printStackTrace</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">();</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+      </span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">}</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+     <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">catch</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span>
+     <span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">JsonMappingException</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> e</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">)</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">{</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+         e</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">printStackTrace</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">();</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+      </span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">}</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+     <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">catch</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span>
+     <span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">IOException</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> e</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">)</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">{</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+            e</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">printStackTrace</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">();</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+      </span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">}</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+   </span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">}</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">}</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+
+</span>
+     <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">class</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+     <span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">Student</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">{</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+   </span>
+     <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">private</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+     <span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">String</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> name</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">;</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+   </span>
+     <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">private</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+     <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">int</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> age</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">;</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+   </span>
+     <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">public</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+     <span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">Student</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(){}</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+   </span>
+     <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">public</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+     <span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">String</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> getName</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">()</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">{</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+      </span>
+     <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">return</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> name</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">;</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+   </span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">}</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+   </span>
+     <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">public</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+     <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">void</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> setName</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span>
+     <span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">String</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> name</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">)</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">{</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+      </span>
+     <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">this</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">name </span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">=</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> name</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">;</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+   </span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">}</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+   </span>
+     <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">public</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+     <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">int</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> getAge</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">()</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">{</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+      </span>
+     <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">return</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> age</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">;</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+   </span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">}</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+   </span>
+     <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">public</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+     <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">void</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> setAge</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span>
+     <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">int</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> age</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">)</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">{</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+      </span>
+     <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">this</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">age </span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">=</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> age</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">;</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+   </span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">}</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+   </span>
+     <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">public</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+     <span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">String</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> toString</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(){</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+      </span>
+     <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">return</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+     <span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"Student [ name: "</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">+</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">name</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">+</span>
+     <span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">", age: "</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">+</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> age</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">+</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+     <span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">" ]"</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">;</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+   </span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">}</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">	
+</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">}</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+
+</span>
+     <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">class</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+     <span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">UserData</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">{</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+   </span>
+     <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">private</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+     <span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">Student</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> student</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">;</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+   </span>
+     <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">private</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+     <span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">String</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> name</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">;</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+   </span>
+     <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">private</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+     <span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">Boolean</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> verified</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">;</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+   </span>
+     <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">private</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+     <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">int</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[]</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> marks</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">;</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+
+   </span>
+     <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">public</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+     <span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">UserData</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(){}</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+
+   </span>
+     <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">public</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+     <span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">Student</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> getStudent</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">()</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">{</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+      </span>
+     <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">return</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> student</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">;</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+   </span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">}</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+   </span>
+     <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">public</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+     <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">void</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> setStudent</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span>
+     <span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">Student</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> student</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">)</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">{</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+      </span>
+     <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">this</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">student </span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">=</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> student</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">;</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+   </span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">}</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+   </span>
+     <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">public</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+     <span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">String</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> getName</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">()</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">{</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+      </span>
+     <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">return</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> name</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">;</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+   </span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">}</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+   </span>
+     <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">public</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+     <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">void</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> setName</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span>
+     <span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">String</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> name</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">)</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">{</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+      </span>
+     <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">this</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">name </span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">=</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> name</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">;</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+   </span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">}</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+   </span>
+     <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">public</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+     <span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">Boolean</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> getVerified</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">()</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">{</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+      </span>
+     <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">return</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> verified</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">;</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+   </span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">}</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+   </span>
+     <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">public</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+     <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">void</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> setVerified</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span>
+     <span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">Boolean</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> verified</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">)</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">{</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+      </span>
+     <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">this</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">verified </span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">=</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> verified</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">;</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+   </span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">}</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+   </span>
+     <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">public</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+     <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">int</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[]</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> getMarks</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">()</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">{</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+      </span>
+     <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">return</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> marks</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">;</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+   </span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">}</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+   </span>
+     <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">public</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+     <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">void</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> setMarks</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span>
+     <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">int</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[]</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> marks</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">)</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">{</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+      </span>
+     <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">this</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">marks </span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">=</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> marks</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">;</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+   </span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">}</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">		
+</span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">}</span>
+    </map<string,userdata>
+   </string,>
+  </string,></pre> 
+ <p> 验证输出</p> 
+ <p> 使用javac编译如下类：</p>   
+ <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 496.1875px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+<span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">C</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">:</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">\Jackson_WORKSPACE</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">&gt;</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">javac </span><span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">JacksonTester</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">java</span></pre> 
+ <p> 现在运行jacksonTester看到的结果：</p> 
+ <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 496.1875px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+<span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">C</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">:</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">\Jackson_WORKSPACE</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">&gt;</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">java </span><span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">JacksonTester</span></pre> 
+ <p> 验证输出</p> 
+ <pre class="result notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 496.1875px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+Student [ name: Mahesh, age: 10 ]
+Mahesh Kumar
+false
+[1, 2, 3]</pre> 
+ <br>      
+</div></body></html>

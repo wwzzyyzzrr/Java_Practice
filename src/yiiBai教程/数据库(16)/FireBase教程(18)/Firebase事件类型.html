@@ -1,0 +1,65 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Firebase事件类型</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>Firebase提供了几种不同的事件类型来读取数据。 下图显示了想要读取的数据 -<br><img src="http://www.yiibai.com/uploads/images/201802/0402/477090229_97841.png" alt=""></p> 
+ <p>下面介绍一些最常用的方法。</p> 
+ <h2 id="h2-u503C"><a name="值" class="reference-link"></a><span class="header-link octicon octicon-link"></span>值</h2>
+ <p>第一个事件类型是值。 我们在上一章已经演示了如何使用值。 每次数据更改时都会触发此事件类型，并且将检索包括子项在内的所有数据。</p> 
+ <h2 id="h2-child_added"><a name="child_added" class="reference-link"></a><span class="header-link octicon octicon-link"></span>child_added</h2>
+ <p>这个事件类型将被每个运动员触发一次，每次新运动员被添加到数据中。 读取列表数据非常有用，因为我们可以从列表中获得添加的运动员和前一个运动员的访问权限。</p> 
+ <p><strong>示例</strong><br>现在来看看下面的一个例子 - </p> 
+ <pre><code class="lang-html">&lt;!DOCTYPE html&gt;
+&lt;html lang="zh"&gt;
+    &lt;head&gt;
+        &lt;meta charset="utf-8" /&gt;
+        &lt;title&gt;FireBase Example&lt;/title&gt;
+        &lt;script src="https://www.gstatic.com/firebasejs/4.9.1/firebase.js"&gt;&lt;/script&gt;
+        &lt;script&gt;
+          // Initialize Firebase
+          var config = {
+            apiKey: "AIzaSyAOSPYpgn7T_bKa6VbCaSeQlsw-3p3zqDs",
+            authDomain: "yiibai-firebase.firebaseapp.com",
+            databaseURL: "https://yiibai-firebase.firebaseio.com/",
+            projectId: "yiibai-firebase",
+            storageBucket: "yiibai-firebase.appspot.com",
+            messagingSenderId: "334522625008"
+          };
+          firebase.initializeApp(config);
+          var playersRef = firebase.database().ref("players/");
+          playersRef.on("child_added", function(data, prevChildKey) {
+               var newPlayer = data.val();
+               //console.log("name: " + newPlayer.name);
+               console.log("age: " + newPlayer.age);
+               console.log("number: " + newPlayer.number);
+               console.log("Previous Player: " + prevChildKey);
+            });
+        &lt;/script&gt;
+    &lt;/head&gt;
+&lt;body&gt;
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果。<br><img src="http://www.yiibai.com/uploads/images/201802/0402/189090254_57509.png" alt=""></p> 
+ <h2 id="h2-child_changed"><a name="child_changed" class="reference-link"></a><span class="header-link octicon octicon-link"></span>child_changed</h2>
+ <p>这个事件类型在数据改变时被触发。</p> 
+ <p><strong>示例</strong></p> 
+ <p>考虑下面的例子。</p>   
+ <pre><code class="lang-js">var playersRef = firebase.database().ref("players/");
+
+playersRef.on("child_changed", function(data) {
+   var player = data.val();
+   console.log("The updated player age is " + player.age);
+});
+</code></pre> 
+ <p>可以在Firebase控制台中将<code>Amanda</code>的<code>age</code>字段的值由<code>21</code>更改为<code>28</code>以获取更新。</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201802/0402/340100202_18651.png" alt=""></p> 
+ <h2 id="h2-child_removed"><a name="child_removed" class="reference-link"></a><span class="header-link octicon octicon-link"></span>child_removed</h2>
+ <p>假设原始数据如下 -<br><img src="http://www.yiibai.com/uploads/images/201802/0402/678100219_37925.png" alt=""></p> 
+ <p>如果想获得已删除数据的访问权限，可以使用<code>child_removed</code>事件类型。</p> 
+ <p><strong>示例</strong></p> 
+ <pre><code class="lang-js">var playersRef = firebase.database().ref("players/");
+
+playersRef.on("child_removed", function(data) {
+   var deletedPlayer = data.val();
+   console.log(deletedPlayer.age + " has been deleted");
+});
+</code></pre> 
+ <p>上面示例中，假设我们删除索引号为:<code>100</code>，名字为:<code>Maxsu</code>的一行数据。则 -<br><img src="http://www.yiibai.com/uploads/images/201802/0402/151100219_49883.png" alt=""></p>
+ <br>      
+</div></body></html>

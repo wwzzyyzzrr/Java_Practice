@@ -1,0 +1,225 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">ASP.NET缓存</h1><div style="width:100%;float:left;" class="article-content">   
+ <p><strong>什么是缓存？</strong>缓存技术是将经常使用的数据/信息存储在内存中的技术，以便下次需要相同的数据/信息时，可以直接从内存中检索，而不是由应用程序生成。</p> 
+ <p>缓存对于提高ASP.NET性能非常重要，因为页面和控件是在这里动态生成的。这对于数据相关的事务尤其重要，因为这些事务在响应时间上是昂贵的。</p> 
+ <p>高速缓存将常用数据放置在快速访问的媒体中，例如计算机的随机存取存储器。 ASP.NET运行时包含称为缓存的CLR对象的键值映射。 这驻留在应用程序中，可通过<code>HttpContext</code>和<code>System.Web.UI.Page</code>获取。</p> 
+ <p>在某些方面，缓存类似于存储状态对象。 然而，在状态对象中存储信息是确定性的，即可以指望存储在那里的数据，并且数据的缓存是非确定性的。</p> 
+ <p>在以下情况下数据将不可用：</p> 
+ <ul> 
+  <li>如果缓存使用期限过期，</li>
+  <li>如果应用程序释放内存，</li>
+  <li>如果由于某种原因缓存不起作用。</li>
+ </ul> 
+ <p>可以使用索引器访问缓存中的项目，并可以控制缓存中对象的生存期并设置缓存对象与其物理源之间的链接。</p> 
+ <h2 id="h2-asp-net-"><a name="ASP.Net缓存" class="reference-link"></a><span class="header-link octicon octicon-link"></span>ASP.Net缓存</h2>
+ <p>ASP.NET提供了以下不同类型的缓存：</p> 
+ <ul> 
+  <li><p><strong>输出缓存</strong> - 输出缓存存储最终呈现的HTML页面的副本或发送到客户端的部分页面。 当下一个客户请求这个页面时，不用重新生成页面，而是发送页面的缓存副本，从而节省时间。</p> </li>
+  <li><p><strong>数据缓存</strong> - 数据缓存意味着缓存来自数据源的数据。只要缓存未过期，就会从缓存中满足对数据的请求。 当缓存过期时，数据源获取新的数据，并重新填充缓存。</p> </li>
+  <li><p><strong>对象缓存</strong> - 对象缓存缓存页面上的对象，如数据绑定控件。 缓存的数据存储在服务器内存中。</p> </li>
+  <li><p><strong>类缓存</strong> - Web页面或Web服务在第一次运行时会汇编到程序集中的页面类中。然后程序集被缓存在服务器中。下一次请求页面或服务时，会引用缓存的程序集。 当源代码改变时，CLR重新编译程序集。</p> </li>
+  <li><p><strong>配置缓存</strong> - 应用程序范围的配置信息存储在配置文件中。 配置缓存将配置信息存储在服务器内存中。</p> </li>
+ </ul> 
+ <p>在本教程中，我们将考虑输出缓存，数据缓存和对象缓存。</p> 
+ <h2 id="h2-u8F93u51FAu7F13u5B58"><a name="输出缓存" class="reference-link"></a><span class="header-link octicon octicon-link"></span>输出缓存</h2>
+ <p>渲染页面可能涉及一些复杂的过程，如数据库访问，渲染复杂的控件等。输出缓存允许通过缓存内存中的数据绕过服务器往返。即使整个页面也可以被缓存。</p> 
+ <p><code>OutputCache</code>指令负责输出缓存。它启用输出缓存并提供对其行为的一定控制。</p> 
+ <p><code>OutputCache</code>指令的语法：</p> 
+ <pre><code class="lang-aspnet">&lt;%@ OutputCache Duration="15" VaryByParam="None" %&gt;
+</code></pre> 
+ <p>把这个指令放在<code>page</code>指令下。这告诉环境缓存页面<code>15</code>秒。 以下用于页面加载的事件处理程序将有助于测试页面是否真正被缓存。</p> 
+ <pre><code class="lang-csharp">protected void Page_Load(object sender, EventArgs e)
+{
+   Thread.Sleep(10000);  
+   Response.Write("This page was generated and cache at:" +
+   DateTime.Now.ToString());
+}
+</code></pre> 
+ <p><code>Thread.Sleep()</code>方法在指定的时间内停止进程线程。 在这个例子中，线程停止了<code>10</code>秒，所以当第一次加载页面时，需要<code>10</code>秒。 但是，下次刷新页面时，不需要任何时间，因为页面是从缓存中检索的而不是重新加载的。</p> 
+ <p><code>OutputCache</code>指令具有以下属性，这有助于控制输出缓存的行为：</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>编号</th> 
+    <th>属性</th> 
+    <th>值</th> 
+    <th>描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>1</td> 
+    <td><code>DiskCacheable</code></td> 
+    <td><code>true/false</code></td> 
+    <td>指定可以将输出写入基于磁盘的缓存。</td> 
+   </tr> 
+   <tr> 
+    <td>2</td> 
+    <td><code>NoStore</code></td> 
+    <td><code>true/false</code></td> 
+    <td>指定是否发送“无存储”缓存控制标题。</td> 
+   </tr> 
+   <tr> 
+    <td>3</td> 
+    <td><code>CacheProfile</code></td> 
+    <td>字符串名称</td> 
+    <td>要存储在<code>web.config</code>中的缓存配置文件的名称。</td> 
+   </tr> 
+   <tr> 
+    <td>4</td> 
+    <td><code>VaryByParam</code></td> 
+    <td><code>None * Param-name</code></td> 
+    <td>以分号分隔的字符串列表指定<code>POST</code>请求中或<code>GET</code>请求变量中的查询字符串值。</td> 
+   </tr> 
+   <tr> 
+    <td>5</td> 
+    <td><code>VaryByHeader</code></td> 
+    <td><code>*Header names</code></td> 
+    <td>以分号分隔的字符串列表指定可能由客户端提交的标头。</td> 
+   </tr> 
+   <tr> 
+    <td>6</td> 
+    <td><code>VaryByCustom</code></td> 
+    <td>浏览器 自定义字符串</td> 
+    <td>告诉ASP.NET通过浏览器名称和版本或自定义字符串来改变输出缓存。</td> 
+   </tr> 
+   <tr> 
+    <td>7</td> 
+    <td><code>Location</code></td> 
+    <td>Any Client Downstream Server None</td> 
+    <td><code>Any</code>：页面可能被缓存在任何地方。<code>Client</code>：缓存的内容保留在浏览器中。<code>Downstream</code>：存储在下游和服务器中的缓存内容。<code>Server</code>：仅在服务器上保存的缓存内容。</td> 
+   </tr> 
+   <tr> 
+    <td>8</td> 
+    <td><code>Duration</code></td> 
+    <td>数字</td> 
+    <td>页面或控件被缓存的秒数。</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p>添加一个文本框和一个按钮到前面的例子，并添加这个按钮的事件处理程序。</p> 
+ <pre><code class="lang-csharp">protected void btnmagic_Click(object sender, EventArgs e)
+{
+   Response.Write("&lt;br&gt;&lt;br&gt;");
+   Response.Write("&lt;h2&gt; Hello, " + this.txtname.Text + "&lt;/h2&gt;");
+}
+</code></pre> 
+ <p>更改<code>OutputCache</code>指令：</p> 
+ <pre><code class="lang-aspnet">&lt;%@ OutputCache Duration="60" VaryByParam="txtname" %&gt;
+</code></pre> 
+ <p>程序执行时，ASP.NET会根据文本框中的名称来缓存页面。</p> 
+ <h2 id="h2-u6570u636Eu7F13u5B58"><a name="数据缓存" class="reference-link"></a><span class="header-link octicon octicon-link"></span>数据缓存</h2>
+ <p>数据缓存的主要方面是缓存数据源控件。 我们已经讨论过，数据源控件代表数据源中的数据，如数据库或XML文件。这些控件派生自抽象类<code>DataSourceControl</code>，并具有以下用于实现缓存的继承属性：</p> 
+ <ul> 
+  <li><em>CacheDuration</em> - 它设置数据源将缓存数据的秒数。</li>
+  <li><em>CacheExpirationPolicy</em> - 它定义缓存中的数据到期时的缓存行为。</li>
+  <li><em>CacheKeyDependency</em> - 它标识一个控件的关键字，用于在删除时自动使其缓存内容过期。</li>
+  <li><em>EnableCaching</em> - 指定是否缓存数据。</li>
+ </ul> 
+ <h4 id="h4-u793Au4F8B"><a name="示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例</h4>
+ <p>为了演示数据缓存，创建一个新的网站并在其上添加一个新的Web表单。 使用数据访问教程中已经使用的数据库连接添加一个<code>SqlDataSource</code>控件。</p> 
+ <p>对于这个例子，添加一个标签到页面，这将显示页面的响应时间。</p> 
+ <pre><code class="lang-aspnet">&lt;asp:Label ID="lbltime" runat="server"&gt;&lt;/asp:Label&gt;
+</code></pre> 
+ <p>内容页面除了标签之外，与数据访问教程中的内容页面相同。 为页面加载事件添加一个事件处理程序：</p>   
+ <pre><code class="lang-csharp">protected void Page_Load(object sender, EventArgs e)
+{
+   lbltime.Text = String.Format("Page posted at: {0}", DateTime.Now.ToLongTimeString());
+}
+</code></pre> 
+ <p>设计好的页面应该如下所示：</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201712/1012/507101237_85072.jpg" alt=""></p> 
+ <p>当您第一次执行页面时，没有什么不同，标签显示，每次刷新页面时，页面都会重新加载，并且标签上显示的时间会发生变化。</p> 
+ <p>接下来，将数据源控件的<code>EnableCaching</code>属性设置为<code>true</code>，并将<code>Cacheduration</code>属性设置为<code>60</code>。 它将实现缓存，缓存将每60秒过期。</p> 
+ <p>每次刷新都会更改时间戳，但如果在60秒内更改了表中的数据，则在缓存过期之前不会显示该数据。</p> 
+ <p>参考以下代码 - </p> 
+ <pre><code class="lang-aspnet">&lt;asp:SqlDataSource ID = "SqlDataSource1" runat = "server" 
+   ConnectionString = "&lt;%$ ConnectionStrings: ASPDotNetStepByStepConnectionString %&gt;" 
+   ProviderName = "&lt;%$ ConnectionStrings: ASPDotNetStepByStepConnectionString.ProviderName %&gt;" 
+   SelectCommand = "SELECT * FROM [DotNetReferences]"
+   EnableCaching = "true" CacheDuration = "60"&gt;         
+&lt;/asp:SqlDataSource&gt;
+</code></pre> 
+ <h2 id="h2-u5BF9u8C61u7F13u5B58"><a name="对象缓存" class="reference-link"></a><span class="header-link octicon octicon-link"></span>对象缓存</h2>
+ <p>对象缓存比其他缓存技术提供更多的灵活性。 可以使用对象缓存将任何对象放置在缓存中。 该对象可以是任何类型 - 数据类型，Web控件，类，数据集对象等。只需通过分配新的键名称即可将该项添加到缓存中，如下所示：</p> 
+ <pre><code class="lang-csharp">Cache["key"] = item;
+</code></pre> 
+ <p>ASP.NET还提供了将对象插入缓存的<code>Insert()</code>方法。 此方法有四个重载版本。如下所列 - </p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>编号</th> 
+    <th>方法</th> 
+    <th>描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>1</td> 
+    <td><code>Cache.Insert((key, value);</code></td> 
+    <td>使用键名称和值将项目插入高速缓存，默认优先级和到期。</td> 
+   </tr> 
+   <tr> 
+    <td>2</td> 
+    <td><code>Cache.Insert(key, value, dependencies);</code></td> 
+    <td>将项目插入高速缓存中，其中包含键值，默认优先级，到期时间以及链接到其他文件或项目的<code>CacheDependency</code>名称，以便在更改缓存项目时不再有效。</td> 
+   </tr> 
+   <tr> 
+    <td>3</td> 
+    <td><code>Cache.Insert(key, value, dependencies, absoluteExpiration, slidingExpiration);</code></td> 
+    <td>这表明与上述问题一起的到期策略。</td> 
+   </tr> 
+   <tr> 
+    <td>4</td> 
+    <td><code>Cache.Insert(key, value, dependencies, absoluteExpiration, slidingExpiration, priority, onRemoveCallback);</code></td> 
+    <td>这个参数和参数也允许设置缓存项目的优先级和一个委托，指向一个方法被调用时，该项目被删除。</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p>滑动到期用于在指定的时间间隔内未使用时从缓存中删除项目。 以下代码片段存储滑动过期时间为<code>10</code>分钟，不具有依赖性。</p> 
+ <pre><code class="lang-csharp">Cache.Insert("my_item", obj, null, DateTime.MaxValue, TimeSpan.FromMinutes(10));
+</code></pre> 
+ <h4 id="h4-u793Au4F8B"><a name="示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例</h4>
+ <p>用一个按钮和一个标签创建一个页面。 在页面加载事件中写入以下代码：</p> 
+ <pre><code class="lang-csharp">protected void Page_Load(object sender, EventArgs e)
+{
+   if (this.IsPostBack)
+   {
+      lblinfo.Text += "Page Posted Back.&lt;br/&gt;";
+   }
+   else
+   {
+      lblinfo.Text += "page Created.&lt;br/&gt;";
+   }
+
+   if (Cache["testitem"] == null)
+   {
+      lblinfo.Text += "Creating test item.&lt;br/&gt;";
+      DateTime testItem = DateTime.Now;
+      lblinfo.Text += "Storing test item in cache ";
+      lblinfo.Text += "for 30 seconds.&lt;br/&gt;";
+      Cache.Insert("testitem", testItem, null, 
+      DateTime.Now.AddSeconds(30), TimeSpan.Zero);
+   }
+   else
+   {
+      lblinfo.Text += "Retrieving test item.&lt;br/&gt;";
+      DateTime testItem = (DateTime)Cache["testitem"];
+      lblinfo.Text += "Test item is: " + testItem.ToString();
+      lblinfo.Text += "&lt;br/&gt;";
+   }
+
+   lblinfo.Text += "&lt;br/&gt;";
+}
+</code></pre> 
+ <p>当页面第一次被加载时，输出为：</p> 
+ <pre><code class="lang-shell">Page Created.
+Creating test item.
+Storing test item in cache for 30 seconds.
+</code></pre> 
+ <p>如果您在<code>30</code>秒内再次单击该按钮，页面将被回发，但标签控件从缓存中获取其信息，如下所示：</p> 
+ <pre><code class="lang-shell">Page Posted Back.
+Retrieving test item.
+Test item is: 14-07-2017 22:25:34
+</code></pre>
+ <br>      
+</div></body></html>

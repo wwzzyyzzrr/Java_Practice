@@ -1,0 +1,57 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">SQLite外连接（Outer Join）</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>在SQL标准中，有三种类型的外连接：</p> 
+ <ul> 
+  <li>左外连接</li>
+  <li>右外连接</li>
+  <li>全外连接</li>
+ </ul> 
+ <p>但是，SQLite仅支持<strong>左外连接</strong>。</p> 
+ <h2 id="h2-sqlite-"><a name="SQlite的左外连接" class="reference-link"></a><span class="header-link octicon octicon-link"></span>SQlite的左外连接</h2>
+ <p>SQLite左外连接用于从<code>ON</code>条件中指定的左侧表中获取所有行，并且仅右表中满足连接条件的那些行记录。</p> 
+ <p><strong>语法：</strong></p> 
+ <pre><code class="lang-sql">SELECT ... FROM table1 LEFT OUTER JOIN table2 ON conditional_expression
+</code></pre> 
+ <p>或者：</p> 
+ <pre><code>SELECT ... FROM table1 LEFT OUTER JOIN table2 USING ( column1 ,......
+</code></pre>
+ <p>左外连接如下图所表示，蓝色阴影部分为左外连接的交集 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201705/2405/231140534_74891.png" alt=""></p> 
+ <p><strong>示例</strong></p> 
+ <p>假设有两个表：<code>department</code>和<code>student</code>。</p> 
+ <p><code>student</code>表具有以下数据：</p> 
+ <pre><code class="lang-sql">sqlite&gt; select * from student;
+1|Maxsu|27|Shengzhen|20000.0
+2|Minsu|25|Beijing|15000.0
+3|Avgsu|23|Shanghai|2000.0
+4|Linsu|25|Guangzhou|65000.0
+5|Sqlsu|26|Haikou|25000.0
+6|Javasu|21|Shengzhen|18000.0
+7|Linsu|27|Haikou|10000.0
+8|Minsu|23|Guangzhou|5000.0
+9|Maxsu|23|Shenzhen|9000.0
+sqlite&gt;
+</code></pre> 
+ <p><code>department</code>表具有以下数据：</p> 
+ <pre><code class="lang-sql">sqlite&gt; select * from department;
+1|财务部|1
+2|技术部|2
+3|技术部|3
+4|市场部|4
+5|市场部|5
+sqlite&gt;
+</code></pre> 
+ <blockquote> 
+  <p>注：这些数据用于后续学习连接相关操作使用，如果您还没有没有创建或插入上面数据，可参考：<a target="_blank" href="http://www.yiibai.com/sqlite/insert-query.html">http://www.yiibai.com/sqlite/insert-query.html</a> ，自行完成操作。</p> 
+ </blockquote> 
+ <p><strong>示例：</strong></p> 
+ <p>查询每个学生所在的部门，并按照以下条件进行左外连接，如下查询语句 - </p>   
+ <pre><code class="lang-sql">SELECT EMP_ID, NAME, DEPT FROM STUDENT LEFT OUTER JOIN DEPARTMENT  
+ON STUDENT.ID = DEPARTMENT.EMP_ID;
+</code></pre> 
+ <p>执行上面查询，得到以下结果 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201705/2405/737140538_84141.png" alt=""></p> 
+ <blockquote> 
+  <p>注：没有指定部门的学生也会查询出来。因为左连接是基于左表，不管右表条件是否满足。</p> 
+ </blockquote>
+ <br>      
+</div></body></html>

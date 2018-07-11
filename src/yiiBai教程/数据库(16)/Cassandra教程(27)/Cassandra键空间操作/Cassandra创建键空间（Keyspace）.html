@@ -1,0 +1,66 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Cassandra创建键空间（Keyspace）</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>Cassandra查询语言(CQL)可帮助开发人员与Cassandra沟通交互。 Cassandra查询语言的语法与SQL非常相似。</p> 
+ <h2 id="h2--keyspace-"><a name="什么是键空间(Keyspace)？" class="reference-link"></a><span class="header-link octicon octicon-link"></span>什么是键空间(Keyspace)？</h2>
+ <p><strong>键空间</strong>(<code>Keyspace</code>)是用于保存列族，用户定义类型的对象。 键空间(Keyspace)就像RDBMS中的数据库，其中包含列族，索引，用户定义类型，数据中心意识，键空间(Keyspace)中使用的策略，复制因子等。</p> 
+ <p>在Cassandra中，“<code>Create Keyspace</code>”命令用于创建keyspace。</p> 
+ <p>语法：</p> 
+ <pre><code class="lang-sql">CREATE KEYSPACE &lt;identifier&gt; WITH &lt;properties&gt;
+</code></pre> 
+ <p>或者 - </p> 
+ <pre><code class="lang-sql">Create keyspace KeyspaceName with replicaton={'class':strategy name,   
+'replication_factor': No of replications on different nodes}
+</code></pre> 
+ <h2 id="h2-cassandra-keyspace-"><a name="Cassandra Keyspace的不同组件" class="reference-link"></a><span class="header-link octicon octicon-link"></span>Cassandra Keyspace的不同组件</h2>
+ <p><strong>策略：</strong>Cassandra语法中有两种类型的策略声明：</p> 
+ <ul> 
+  <li><strong>简单策略</strong>：在一个数据中心的情况下使用简单的策略。 在这个策略中，第一个副本被放置在所选择的节点上，剩下的节点被放置在环的顺时针方向，而不考虑机架或节点的位置。</li>
+  <li><strong>网络拓扑策略</strong>：该策略用于多个数据中心。 在此策略中，您必须分别为每个数据中心提供复制因子。</li>
+ </ul> 
+ <p><strong>复制因子</strong>：复制因子是放置在不同节点上的数据的副本数。 超过两个复制因子是很好的获得没有单点故障。 所以<code>3</code>个以上是很好的复制因子。</p> 
+ <h3 id="h3--"><a name="实例：" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实例：</h3>
+ <p>让我们举个例子来演示如何创建一个名为“<code>yiibai_ks</code>”的键空间。</p> 
+ <pre><code class="lang-sql">CREATE KEYSPACE yiibai_ks WITH replication = {'class':'SimpleStrategy', 'replication_factor' : 3};
+</code></pre> 
+ <p>执行结果如下所示 -</p> 
+ <pre><code class="lang-sql">cqlsh&gt; CREATE KEYSPACE yiibai_ks
+   ... WITH replication = {'class':'SimpleStrategy', 'replication_factor' : 3}; 
+cqlsh&gt;
+cqlsh&gt; CREATE KEYSPACE yiibai_ks WITH replication = {'class':'SimpleStrategy', 'replication_factor' : 3};
+AlreadyExists: Keyspace 'yiibai_ks' already exists
+cqlsh&gt;
+</code></pre> 
+ <p><strong>验证：</strong></p> 
+ <p>要检查键空间是否创建，请使用“<code>DESCRIBE</code>”命令。 通过使用此命令可以看到创建的所有键空间。</p>   
+ <pre><code class="lang-sql">cqlsh&gt; DESCRIBE yiibai_ks;
+
+CREATE KEYSPACE yiibai_ks WITH replication = {'class': 'SimpleStrategy', 'replication_factor': '3'}  AND durable_writes = true;
+
+cqlsh&gt;
+</code></pre> 
+ <p>查看所有的键空间，可使用以下命令 - </p> 
+ <pre><code class="lang-sql">cqlsh&gt; DESCRIBE keyspaces
+
+system_schema  system_auth  system  yiibai_ks  system_distributed  system_traces
+
+cqlsh&gt;
+</code></pre> 
+ <p><strong>Durable_writes属性</strong></p> 
+ <p>默认情况下，表的<code>durable_writes</code>属性设置为<code>true</code>，您也可以将此属性设置为<code>false</code>。 但是，这个属性不能设置为单机策略。</p> 
+ <p><strong>示例：</strong></p> 
+ <p>让我们举个例子来看看<code>durable_write</code>属性的用法。</p> 
+ <pre><code class="lang-sql">CREATE KEYSPACE yiibai_ks1  
+WITH REPLICATION = { 'class' : 'NetworkTopologyStrategy', 'datacenter1' : 3 }  
+ AND DURABLE_WRITES = false;
+</code></pre> 
+ <p>如下图中所示 -<br><img src="http://www.yiibai.com/uploads/images/201704/1704/508110409_15803.png" alt=""></p> 
+ <p><strong>验证：</strong></p> 
+ <p>要检查键空间是否创建，请使用“<code>DESCRIBE</code>”命令。 通过使用此命令可以看到创建的所有键空间。</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201704/1704/294110411_28697.png" alt=""></p> 
+ <h3 id="h3-u4F7Fu7528u952Eu7A7Au95F4"><a name="使用键空间" class="reference-link"></a><span class="header-link octicon octicon-link"></span>使用键空间</h3>
+ <p>要使用创建的键空间，可使用<code>USE</code>命令。</p> 
+ <p><strong>语法：</strong></p> 
+ <pre><code class="lang-sql">USE &lt;identifier&gt;
+</code></pre> 
+ <p>这里，我们使用的是名称为 <code>yiibai_ks</code> 的键空间(keyspace)。如下图所示 -<br><img src="http://www.yiibai.com/uploads/images/201704/1704/796110413_75202.png" alt=""></p>
+ <br>      
+</div></body></html>

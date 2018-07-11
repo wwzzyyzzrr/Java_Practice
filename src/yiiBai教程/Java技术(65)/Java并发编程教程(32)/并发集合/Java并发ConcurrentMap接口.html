@@ -1,0 +1,140 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Java并发ConcurrentMap接口</h1><div style="width:100%;float:left;" class="article-content">   
+ <p><code>java.util.concurrent.ConcurrentMap</code>接口是<code>Map</code>接口的子接口，支持底层<code>Map</code>变量上的原子操作。 它具有获取和设置方法，如在变量上的读取和写入。 也就是说，一个集合与同一变量上的任何后续读取相关联。 该接口确保线程安全性和原子性保证。</p> 
+ <h2 id="h2-concurrentmap-"><a name="ConcurrentMap接口中的方法" class="reference-link"></a><span class="header-link octicon octicon-link"></span>ConcurrentMap接口中的方法</h2>
+ <table> 
+  <thead> 
+   <tr> 
+    <th>序号</th> 
+    <th>方法</th> 
+    <th>描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>1</td> 
+    <td><code>default V compute(K key, BiFunction&lt;? super K,? super V,? extends V&gt; remappingFunction)</code></td> 
+    <td>尝试计算指定键及其当前映射值的映射(如果没有当前映射，则为<code>null</code>)。</td> 
+   </tr> 
+   <tr> 
+    <td>2</td> 
+    <td><code>default V computeIfAbsent(K key, Function&lt;? super K,? extends V&gt; mappingFunction)</code></td> 
+    <td>如果指定的键尚未与值相关联(或映射到<code>null</code>)，则尝试使用给定的映射函数计算其值，并将其输入到此映射中，除非为<code>null</code>。</td> 
+   </tr> 
+   <tr> 
+    <td>3</td> 
+    <td><code>default V computeIfPresent(K key, BiFunction&lt;? super K,? super V,? extends V&gt; remappingFunction)</code></td> 
+    <td>如果指定键的值存在且非空，则尝试计算给定键及其当前映射值的新映射。</td> 
+   </tr> 
+   <tr> 
+    <td>4</td> 
+    <td><code>default void forEach(BiConsumer&lt;? super K,? super V&gt; action)</code></td> 
+    <td>对此映射中的每个条目执行给定的操作，直到所有条目都被处理或操作引发异常。</td> 
+   </tr> 
+   <tr> 
+    <td>5</td> 
+    <td><code>default V getOrDefault(Object key, V defaultValue)</code></td> 
+    <td>返回指定键映射到的值，如果此映射不包含该键的映射，则返回<code>defaultValue</code>。</td> 
+   </tr> 
+   <tr> 
+    <td>6</td> 
+    <td><code>default V merge(K key, V value, BiFunction&lt;? super V,? super V,? extends V&gt; remappingFunction)</code></td> 
+    <td>如果指定的键尚未与值相关联或与<code>null</code>相关联，则将其与给定的非空值相关联。</td> 
+   </tr> 
+   <tr> 
+    <td>7</td> 
+    <td><code>V putIfAbsent(K key, V value)</code></td> 
+    <td>如果指定的键尚未与值相关联，请将其与给定值相关联。</td> 
+   </tr> 
+   <tr> 
+    <td>8</td> 
+    <td><code>boolean remove(Object key, Object value)</code></td> 
+    <td>仅当当前映射到给定值时才删除键的条目。</td> 
+   </tr> 
+   <tr> 
+    <td>9</td> 
+    <td><code>V replace(K key, V value)</code></td> 
+    <td>仅当当前映射到某个值时才替换该项的条目。</td> 
+   </tr> 
+   <tr> 
+    <td>10</td> 
+    <td><code>boolean replace(K key, V oldValue, V newValue)</code></td> 
+    <td>仅当当前映射到给定值时才替换键的条目。</td> 
+   </tr> 
+   <tr> 
+    <td>11</td> 
+    <td><code>default void replaceAll(BiFunction&lt;? super K,? super V,? extends V&gt; function)</code></td> 
+    <td>将每个条目的值替换为对该条目调用给定函数的结果，直到所有条目都被处理或该函数抛出异常。</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h2 id="h2-u5B9Eu4F8B"><a name="实例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实例</h2>
+ <p>以下<code>TestThread</code>程序显示了基于线程的环境中<code>ConcurrentMap</code>接口的使用。</p> 
+ <pre><code class="lang-java">import java.util.ConcurrentModificationException;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
+public class TestThread {
+
+   public static void main(final String[] arguments){
+
+      Map&lt;String,String&gt; map = new ConcurrentHashMap&lt;String, String&gt;();
+
+      map.put("1", "One");
+      map.put("2", "Two");
+      map.put("3", "Three");
+      map.put("5", "Five");
+      map.put("6", "Six");
+
+      System.out.println("Initial ConcurrentHashMap: "+map);
+      Iterator&lt;String&gt; iterator = map.keySet().iterator();
+
+      try{ 
+         while(iterator.hasNext()){
+            String key = iterator.next();
+            if(key.equals("3")) {
+               map.put("4", "Four");
+            }
+         }
+      }catch(ConcurrentModificationException cme){
+         cme.printStackTrace();
+      }
+      System.out.println("ConcurrentHashMap after modification: "+map);
+
+      map = new HashMap&lt;String, String&gt;();
+
+      map.put("1", "One");
+      map.put("2", "Two");
+      map.put("3", "Three");
+      map.put("5", "Five");
+      map.put("6", "Six");
+
+      System.out.println("Initial HashMap: "+map);
+      iterator = map.keySet().iterator();
+
+      try{
+         while(iterator.hasNext()){
+            String key = iterator.next();
+            if(key.equals("3")) { 
+               map.put("4", "Four");
+            }
+         }
+         System.out.println("HashMap after modification: "+map);
+      }catch(ConcurrentModificationException cme){
+         cme.printStackTrace();
+      }
+   }  
+}
+</code></pre> 
+ <p>这将产生以下结果 - </p>   
+ <pre><code class="lang-shell">Initial ConcurrentHashMap: {1=One, 2=Two, 3=Three, 5=Five, 6=Six}
+ConcurrentHashMap after modification: {1=One, 2=Two, 3=Three, 4=Four, 5=Five, 6=Six}
+Initial HashMap: {1=One, 2=Two, 3=Three, 5=Five, 6=Six}
+java.util.ConcurrentModificationException
+    at java.util.HashMap$HashIterator.nextNode(Unknown Source)
+    at java.util.HashMap$KeyIterator.next(Unknown Source)
+    at TestThread.main(TestThread.java:48)
+</code></pre>
+ <br>      
+</div></body></html>

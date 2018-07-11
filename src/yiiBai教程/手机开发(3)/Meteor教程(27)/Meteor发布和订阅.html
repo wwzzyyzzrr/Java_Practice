@@ -1,0 +1,85 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Meteor发布和订阅</h1><div style="width:100%;float:left;" class="article-content">   
+ <div> 
+  <div>
+    在我们的集合这章节中，你会发现所有的数据可在客户端上访问。这是个安全问题，可以使用发布和订阅方法进行处理。 
+  </div> 
+ </div> 
+ <div> 
+  <h2> 
+   <div>
+     删除自动发布 
+   </div> </h2> 
+  <p style="text-align:justify;"> 在这个例子中，我们将使用&nbsp;PlayersCollection&nbsp;集合有以下数据。如果不能确定Meteor中如何创建 MongoDB 集合，您可以查看我们的<a target="_blank" href="http://www.yiibai.com/meteor/meteor_collections.html">集合</a>这一章。<br> <img src="/uploads/tutorial/20160426/1-160426215556262.png" alt=""> </p> 
+  <div>
+    为了确保我们的数据，我们需要删除包自动发布，这是允许使用在客户端的数据。 
+  </div> 
+  <pre>C:\Users\Administrator\Desktop\meteorApp&gt;meteor remove autopublish&nbsp;</pre> 
+  <p style="text-align:justify;"> 在此步骤后，你会发现，无法从客户端获取数据库中的数据。只能在命令提示符窗口中的服务器端看到它。检出下面的代码&nbsp;- </p> 
+  <h3> meteorApp/client/app.js </h3> 
+  <pre>var PlayersCollection = new Mongo.Collection('playersCollection');
+var myLog = PlayersCollection.find().fetch();
+console.log(myLog);</pre> 
+  <div>
+    命令提示符窗口将显示整个集合有四个对象，而开发者控制台会显示一个空数组。现在，我们的应用程序更安全。
+   <br> 
+   <img src="/uploads/tutorial/20160426/1-16042621561b20.jpg" alt="">
+   <br> 
+  </div> 
+  <h2> 
+   <div>
+     使用发布和订阅 
+   </div> </h2> 
+  <p style="text-align:justify;"> 比方说，我们要允许客户端使用您的数据。要允许这一点，我们需要在服务器上创建 Meteor.publish()方法。该方法将数据发送到客户端。为了能够接收和使用在客户端的数据，我们将创建Meteor.subscribe()方法。在该示例的结尾，我们检索的数据库。这段代码可以在客户端和服务器上运行。 </p> 
+  <pre>var PlayersCollection = new Mongo.Collection('playersCollection');
+
+if(Meteor.isServer) {
+   Meteor.publish('allowedData', function() {
+      return PlayersCollection.find();
+   })
+}
+
+if (Meteor.isClient) {
+   Meteor.subscribe('allowedData');
+};
+
+Meteor.setTimeout(function() {
+   var myLog = PlayersCollection.find().fetch();
+   console.log(myLog);
+   }, 1000);</pre> 
+  <div>
+    我们可以看到，数据会记录在开发者控制台和命令提示符窗口。
+   <br> 
+   <img src="/uploads/tutorial/20160426/1-160426220019114.jpg" alt="">
+   <br> 
+  </div> 
+  <h2> 
+   <div>
+     过滤客户端数据 
+   </div> </h2> 
+  <div>
+    我们还可以发布数据的一部分。在这个例子中，我们只发布&nbsp;name="John"的数据。 
+  </div>   
+  <pre>var PlayersCollection = new Mongo.Collection('playersCollection');
+
+if(Meteor.isServer) {
+   Meteor.publish('allowedData', function() {
+      return PlayersCollection.find({name: "John"});
+   })
+}
+
+if (Meteor.isClient) {
+   Meteor.subscribe('allowedData');
+};
+
+Meteor.setTimeout(function() {
+   myLog = PlayersCollection.find().fetch();
+   console.log(myLog);}, 1000);</pre> 
+  <div>
+    当我们运行这段代码，命令提示符将记录所有的数据，而客户端控制台将只日志记录两个名称为&nbsp;John&nbsp;的对象。
+   <br> 
+   <img src="/uploads/tutorial/20160426/1-160426220044100.jpg" alt="">
+   <br> 
+  </div> 
+ </div>
+ <br>      
+</div></body></html>

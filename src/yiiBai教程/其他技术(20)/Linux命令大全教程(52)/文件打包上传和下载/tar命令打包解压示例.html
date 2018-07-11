@@ -1,0 +1,248 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">tar命令打包解压示例</h1><div style="width:100%;float:left;" class="article-content">   
+ <p> 在维护配置服务器时，难免会要用到压缩，解压缩，打包，解包等，这时候<code>tar</code>命令就是是必不可少的一个功能强大的工具。linux中最流行的<code>tar</code>是麻雀虽小，五脏俱全，功能强大。<br><code>tar</code>命令可以为linux的文件和目录创建档案。利用<code>tar</code>，可以为某一特定文件创建档案(备份文件)，也可以在档案中改变文件，或者向档案中加入新的文件。<code>tar</code>最初被用来在磁带上创建档案，现在，用户可以在任何设备上创建档案。利用<code>tar</code>命令，可以把一大堆的文件和目录全部打包成一个文件，这对于备份文件或将几个文件组合成为一个文件以便于网络传输是非常有用的。<br>首先要弄清两个概念：打包和压缩。打包是指将一大堆文件或目录变成一个总的文件；压缩则是将一个大的文件通过一些压缩算法变成一个小文件。</p> 
+ <p>为什么要区分这两个概念呢？这源于Linux中很多压缩程序只能针对一个文件进行压缩，这样当你想要压缩一大堆文件时，你得先将这一大堆文件先打成一个包(<code>tar</code>命令)，然后再用压缩程序进行压缩(<code>gzip</code>, <code>bzip2</code>命令)。</p> 
+ <p>linux下最常用的打包程序就是<code>tar</code>了，使用<code>tar</code>程序打出来的包我们常称为<code>tar</code>包，<code>tar</code>包文件的命令通常都是以<code>.tar</code>结尾的。生成<code>tar</code>包后，就可以用其它的程序来进行压缩。</p> 
+ <h2 id="h2-1-"><a name="1．命令格式" class="reference-link"></a><span class="header-link octicon octicon-link"></span>1．命令格式</h2>
+ <p><code>tar</code>[必要参数][选择参数][文件] </p> 
+ <h2 id="h2-2-"><a name="2．命令功能" class="reference-link"></a><span class="header-link octicon octicon-link"></span>2．命令功能</h2>
+ <p>用来压缩和解压文件。<code>tar</code>本身不具有压缩功能，它是调用压缩功能实现的。</p> 
+ <h2 id="h2-3-"><a name="3．命令参数" class="reference-link"></a><span class="header-link octicon octicon-link"></span>3．命令参数</h2>
+ <p>必要参数有如下：</p> 
+ <ul> 
+  <li><code>-A</code> 新增压缩文件到已存在的压缩</li>
+  <li><code>-B</code> 设置区块大小</li>
+  <li><code>-c</code> 建立新的压缩文件</li>
+  <li><code>-d</code> 记录文件的差别</li>
+  <li><code>-r</code> 添加文件到已经压缩的文件</li>
+  <li><code>-u</code> 添加改变了和现有的文件到已经存在的压缩文件</li>
+  <li><code>-x</code> 从压缩的文件中提取文件</li>
+  <li><code>-t</code> 显示压缩文件的内容</li>
+  <li><code>-z</code> 支持gzip解压文件</li>
+  <li><code>-j</code> 支持bzip2解压文件</li>
+  <li><code>-Z</code> 支持compress解压文件</li>
+  <li><code>-v</code> 显示操作过程</li>
+  <li><code>-l</code> 文件系统边界设置</li>
+  <li><code>-k</code> 保留原有文件不覆盖</li>
+  <li><code>-m</code> 保留文件不被覆盖</li>
+  <li><code>-W</code> 确认压缩文件的正确性</li>
+ </ul> 
+ <p><strong>可选参数如下：</strong></p> 
+ <ul> 
+  <li><code>-b</code> 设置区块数目</li>
+  <li><code>-C</code> 切换到指定目录</li>
+  <li><code>-f</code> 指定压缩文件</li>
+  <li><code>--help</code> 显示帮助信息</li>
+  <li><code>--version</code> 显示版本信息</li>
+ </ul> 
+ <h2 id="h2-4-"><a name="4．常见解压/压缩命令" class="reference-link"></a><span class="header-link octicon octicon-link"></span>4．常见解压/压缩命令</h2>
+ <ul> 
+  <li><p><strong>tar文件格式</strong><br>解包：<code>tar xvf FileName.tar</code><br>打包：<code>tar cvf FileName.tar DirName</code><br>(注：<code>tar</code>是打包，不是压缩！)</p> </li>
+  <li><p><strong>.gz文件格式</strong><br>解压1：<code>gunzip FileName.gz</code><br>解压2：<code>gzip -d FileName.gz</code><br>压缩：<code>gzip FileName</code></p> </li>
+  <li><p><strong>.tar.gz 和 .tgz</strong><br>解压：<code>tar zxvf FileName.tar.gz</code><br>压缩：<code>tar zcvf FileName.tar.gz DirName</code></p> </li>
+  <li><p><strong>.bz2文件格式</strong><br>解压1：<code>bzip2 -d FileName.bz2</code><br>解压2：<code>bunzip2 FileName.bz2</code><br>压缩： <code>bzip2 -z FileName</code></p> </li>
+  <li><p><strong>.tar.bz2文件格式</strong><br>解压：<code>tar jxvf FileName.tar.bz2</code><br>压缩：<code>tar jcvf FileName.tar.bz2 DirName</code></p> </li>
+  <li><p><strong>.bz文件格式</strong><br>解压1：<code>bzip2 -d FileName.bz</code><br>解压2：<code>bunzip2 FileName.bz</code><br>压缩：未知</p> </li>
+  <li><p><strong>.tar.bz文件格式</strong><br>解压：tar jxvf FileName.tar.bz<br>压缩：未知</p> </li>
+  <li><p><strong>.Z文件格式</strong><br>解压：uncompress FileName.Z<br>压缩：compress FileName</p> </li>
+  <li><p><strong>.tar.Z文件格式</strong><br>解压：tar Zxvf FileName.tar.Z<br>压缩：tar Zcvf FileName.tar.Z DirName</p> </li>
+  <li><p><strong>.zip文件格式</strong><br>解压：unzip FileName.zip<br>压缩：zip FileName.zip DirName</p> </li>
+  <li><p><strong>.rar</strong><br>解压：rar x FileName.rar<br>压缩：rar a FileName.rar DirName </p> </li>
+ </ul> 
+ <h2 id="h2-5-"><a name="5．使用实例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>5．使用实例</h2>
+ <h3 id="h3--1-tar-"><a name="实例1：将文件全部打包成tar包" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实例1：将文件全部打包成tar包</h3>
+ <p>命令：</p> 
+ <pre><code class="lang-shell">tar -cvf log1.tar log1.log
+tar -zcvf log2.tar.gz log2.log
+tar -jcvf log3.tar.bz2 log3.log
+</code></pre> 
+ <p>演示执行及输出：</p> 
+ <pre><code class="lang-shell">[yiibai@localhost ~]$ ll
+total 16
+-rwxr-xr-x. 1 yiibai yiibai 464 Feb 15 20:58 log1.log
+-rw-rw-r--. 1 yiibai yiibai   0 Feb 15 20:43 log2018.log
+-rw-rw-r--. 1 yiibai yiibai   0 Feb 15 20:43 log2019.log
+-rw-rw-r--. 1 yiibai yiibai   0 Feb 15 20:43 log2020.log
+-rwxrwxr-x. 1 yiibai yiibai   0 Feb 15 20:43 log2.log
+-rw-rw-r--. 1 yiibai yiibai 384 Feb 15 20:59 log3.log
+lrwxrwxrwx. 1 yiibai yiibai   7 Feb 15 22:46 log_link.log -&gt; log.log
+-rwxr-xr-x. 1 yiibai yiibai   0 Feb 15 22:46 log.log
+drwxrwxr-x. 3 yiibai yiibai  34 Feb 15 22:44 logs
+drwxrwxr-x. 7 yiibai yiibai  66 Feb 15 20:48 project
+drwxrwxr-x. 2 yiibai yiibai   6 Feb 15 21:12 test3
+-rw-rw-r--. 1 yiibai yiibai   0 Feb 15 21:10 test3.log
+drwxrwxr-x. 2 yiibai yiibai  39 Feb 15 21:31 test4
+-rw-rw-r--. 1 yiibai yiibai  19 Feb 15 21:08 text.txt
+-rw-rw-r--. 1 yiibai yiibai   1 Feb 15 20:46 tmpcore.log
+[yiibai@localhost ~]$ tar -cvf log1.tar log1.log
+log1.log
+[yiibai@localhost ~]$ tar -zcvf log2.tar.gz log2.log
+log2.log
+[yiibai@localhost ~]$ ll
+total 32
+-rwxr-xr-x. 1 yiibai yiibai   464 Feb 15 20:58 log1.log
+-rw-rw-r--. 1 yiibai yiibai 10240 Feb 16 20:47 log1.tar
+-rw-rw-r--. 1 yiibai yiibai     0 Feb 15 20:43 log2018.log
+-rw-rw-r--. 1 yiibai yiibai     0 Feb 15 20:43 log2019.log
+-rw-rw-r--. 1 yiibai yiibai     0 Feb 15 20:43 log2020.log
+-rwxrwxr-x. 1 yiibai yiibai     0 Feb 15 20:43 log2.log
+-rw-rw-r--. 1 yiibai yiibai   118 Feb 16 20:47 log2.tar.gz
+-rw-rw-r--. 1 yiibai yiibai   384 Feb 15 20:59 log3.log
+-rw-rw-r--. 1 yiibai yiibai     0 Feb 16 20:48 log3.tar
+-rw-rw-r--. 1 yiibai yiibai     0 Feb 16 20:47 log3.tar.bz
+-rw-rw-r--. 1 yiibai yiibai     0 Feb 16 20:47 log3.tar.bz2
+</code></pre> 
+ <p>说明：<br><code>tar -cvf log1.tar log1.log</code> 仅打包，不压缩！<br><code>tar -zcvf log2.tar.gz log2.log</code> 打包后，以 <code>gzip</code> 压缩<br><code>tar -zcvf log.tar.bz2 log3.log</code> 打包后，以 <code>bzip2</code> 压缩<br>在参数 <code>f</code> 之后的文件档名是自己取的，我们习惯上都用 <code>.tar</code> 来作为辨识。 如果加 <code>z</code> 参数，则以 <code>.tar.gz</code> 或 <code>.tgz</code> 来代表 <code>gzip</code> 压缩过的 <code>tar</code> 包； 如果加 <code>j</code> 参数，则以 <code>.tar.bz2</code> 来作为tar包名。</p> 
+ <h3 id="h3--2-tar-"><a name="实例2：查阅上述 tar包内有哪些文件" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实例2：查阅上述 tar包内有哪些文件</h3>
+ <p>命令：</p> 
+ <pre><code class="lang-shell">tar -ztvf log2.tar.gz
+</code></pre> 
+ <p>输出：</p> 
+ <pre><code class="lang-shell">[yiibai@localhost ~]$ tar -ztvf log2.tar.gz
+-rwxrwxr-x yiibai/yiibai     0 2017-02-15 20:43 log2.log
+[yiibai@localhost ~]$
+</code></pre> 
+ <blockquote> 
+  <p>说明：由于我们使用 gzip 压缩的log.tar.gz，所以要查阅log.tar.gz包内的文件时，就得要加上 z 这个参数了。</p> 
+ </blockquote> 
+ <h3 id="h3--3-tar-"><a name="实例3：将 tar 包解压缩" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实例3：将 tar 包解压缩</h3>
+ <p>命令：</p> 
+ <pre><code class="lang-shell">tar -zxvf /home/yiibai/log2.tar.gz
+</code></pre> 
+ <p>输出：</p> 
+ <pre><code class="lang-shell">[yiibai@localhost logs]$ tar -zxvf /home/yiibai/log2.tar.gz
+log2.log
+[yiibai@localhost logs]$ ll
+total 0
+-rwxrwxr-x. 1 yiibai yiibai  0 Feb 15 20:43 log2.log
+drwxrwxr-x. 2 yiibai yiibai 21 Feb 16 20:52 test3
+[yiibai@localhost logs]$
+</code></pre> 
+ <blockquote> 
+  <p>说明：在预设的情况下，我们可以将压缩档在任何地方解开的</p> 
+ </blockquote> 
+ <h3 id="h3--4-tar-"><a name="实例4：只将 /tar 内的 部分文件解压出来" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实例4：只将 /tar 内的 部分文件解压出来</h3>
+ <p>命令：</p>   
+ <pre><code class="lang-shell">tar -zxvf /home/yiibai/mylog.tar.gz log2020.log
+</code></pre> 
+ <p>输出：</p> 
+ <pre><code class="lang-shell">[yiibai@localhost test4]$ ll
+total 0
+[yiibai@localhost test4]$
+[yiibai@localhost test4]$ tar -zxvf /home/yiibai/mylog.tar.gz log2020.log
+log2020.log
+[yiibai@localhost test4]$ ll
+total 0
+-rw-rw-r--. 1 yiibai yiibai 0 Feb 15 20:43 log2020.log
+[yiibai@localhost test4]$
+</code></pre> 
+ <blockquote> 
+  <p>说明：可以通过 <code>tar -ztvf</code> 来查阅 <code>tar</code> 包内的文件名称，如果单只要一个文件，就可以透过这个方式来解压部分文件！</p> 
+ </blockquote> 
+ <h3 id="h3--5-"><a name="实例5：文件备份下来，并且保存其权限" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实例5：文件备份下来，并且保存其权限</h3>
+ <p>命令：</p> 
+ <pre><code class="lang-shell">tar -zcvf log20.tar.gz log2018.log log2019.log
+</code></pre> 
+ <p>输出：</p> 
+ <pre><code class="lang-shell">[yiibai@localhost ~]$ tar -zcvf log2.tar.gz log20
+log2018.log  log2019.log  log2020.log
+[yiibai@localhost ~]$ tar -zcvf log20.tar.gz log2018.log log2019.log log2020.log
+log2018.log
+log2019.log
+log2020.log
+[yiibai@localhost ~]$ mkdir test5
+[yiibai@localhost ~]$ cd test5
+[yiibai@localhost test5]$ tar -zxvpf /home/yiibai/log20.tar.gz
+log2018.log
+log2019.log
+log2020.log
+[yiibai@localhost test5]$ ll
+total 0
+-rw-rw-r--. 1 yiibai yiibai 0 Feb 15 20:43 log2018.log
+-rw-rw-r--. 1 yiibai yiibai 0 Feb 15 20:43 log2019.log
+-rw-rw-r--. 1 yiibai yiibai 0 Feb 15 20:43 log2020.log
+[yiibai@localhost test5]$
+</code></pre> 
+ <blockquote> 
+  <p>说明：这个 -p 的属性是很重要的，尤其是当您要保留原本文件的属性时</p> 
+ </blockquote> 
+ <h3 id="h3--6-"><a name="实例6：在文件夹当中，比某个日期新的文件才备份" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实例6：在文件夹当中，比某个日期新的文件才备份</h3>
+ <p>命令：</p> 
+ <pre><code class="lang-shell">tar -N "2017/11/13" -zcvf log17.tar.gz /home/yiibai
+</code></pre> 
+ <p>输出：</p> 
+ <pre><code class="lang-shell">[yiibai@localhost ~]$ tar -N "2017/11/13" -zcvf log17.tar.gz /home/yiibai
+tar: Option --after-date: Treating date `2017/11/13' as 2017-11-13 00:00:00
+tar: Removing leading `/' from member names
+/home/yiibai/
+tar: /home/yiibai/.bash_logout: file is unchanged; not dumped
+tar: /home/yiibai/.bash_profile: file is unchanged; not dumped
+tar: /home/yiibai/.bashrc: file is unchanged; not dumped
+tar: /home/yiibai/log.log: file is unchanged; not dumped
+tar: /home/yiibai/log1.log: file is unchanged; not dumped
+tar: /home/yiibai/log2.log: file is unchanged; not dumped
+tar: /home/yiibai/log3.log: file is unchanged; not dumped
+tar: /home/yiibai/log2018.log: file is unchanged; not dumped
+tar: /home/yiibai/log2019.log: file is unchanged; not dumped
+tar: /home/yiibai/log2020.log: file is unchanged; not dumped
+tar: /home/yiibai/tmpcore.log: file is unchanged; not dumped
+/home/yiibai/test3/
+/home/yiibai/test4/
+tar: /home/yiibai/test4/log2020.log: file is unchanged; not dumped
+/home/yiibai/project/
+/home/yiibai/project/lib/
+/home/yiibai/project/bin/
+/home/yiibai/project/doc/
+/home/yiibai/project/doc/info/
+/home/yiibai/project/doc/product/
+/home/yiibai/project/logs/
+/home/yiibai/project/logs/info/
+/home/yiibai/project/logs/product/
+tar: /home/yiibai/project/logs/readme.txt: file is unchanged; not dumped
+tar: /home/yiibai/project/logs/log201710.log: file is unchanged; not dumped
+/home/yiibai/project/service/
+/home/yiibai/project/service/deploy/
+/home/yiibai/project/service/deploy/info/
+/home/yiibai/project/service/deploy/product/
+tar: /home/yiibai/text.txt: file is unchanged; not dumped
+tar: /home/yiibai/test3.log: file is unchanged; not dumped
+/home/yiibai/logs/
+/home/yiibai/logs/test3/
+tar: /home/yiibai/logs/test3/log.log: file is unchanged; not dumped
+tar: /home/yiibai/logs/log2.log: file is unchanged; not dumped
+tar: /home/yiibai/log_link.log: file is unchanged; not dumped
+tar: /home/yiibai/.bash_history: file is unchanged; not dumped
+tar: /home/yiibai/mylog.tar.gz: file is unchanged; not dumped
+tar: /home/yiibai/log20.tar.gz: file is unchanged; not dumped
+/home/yiibai/test5/
+tar: /home/yiibai/test5/log2018.log: file is unchanged; not dumped
+tar: /home/yiibai/test5/log2019.log: file is unchanged; not dumped
+tar: /home/yiibai/test5/log2020.log: file is unchanged; not dumped
+[yiibai@localhost ~]$ ll
+total 28
+-rw-rw-r--. 1 yiibai yiibai 423 Feb 16 21:04 log17.tar.gz
+-rwxr-xr-x. 1 yiibai yiibai 464 Feb 15 20:58 log1.log
+-rw-rw-r--. 1 yiibai yiibai   0 Feb 15 20:43 log2018.log
+-rw-rw-r--. 1 yiibai yiibai   0 Feb 15 20:43 log2019.log
+-rw-rw-r--. 1 yiibai yiibai   0 Feb 15 20:43 log2020.log
+-rw-rw-r--. 1 yiibai yiibai 150 Feb 16 21:01 log20.tar.gz
+</code></pre> 
+ <h3 id="h3--7-"><a name="实例7：备份文件夹内容是排除部分文件" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实例7：备份文件夹内容是排除部分文件</h3>
+ <p>命令：</p> 
+ <pre><code class="lang-shell">tar --exclude project/service -zcvf project.tar.gz project/*
+</code></pre> 
+ <p>输出：</p> 
+ <pre><code class="lang-shell">[yiibai@localhost ~]$ tar --exclude project/service -zcvf project.tar.gz project/*
+project/bin/
+project/doc/
+project/doc/info/
+project/doc/product/
+project/lib/
+project/logs/
+project/logs/info/
+project/logs/product/
+project/logs/readme.txt
+project/logs/log201710.log
+[yiibai@localhost ~]$
+</code></pre>
+ <br>      
+</div></body></html>

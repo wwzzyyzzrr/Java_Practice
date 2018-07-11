@@ -1,0 +1,104 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Javascript多媒体</h1><div style="width:100%;float:left;" class="article-content">   
+ <p> JavaScript的navigator对象包括被称为插件的子对象。这个对象是一个数组，为每个插件安装在浏览器中的一个条目。该navigator.plugins对象仅Netscape，Firefox和Mozilla支持。</p> 
+ <p> 下面是一个例子，列出了使用浏览器安装的所有插件：</p> 
+ <pre style="'Courier New', monospace; font-size: 12px; ">
+&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;List of Plug-Ins&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;table border="1"&gt;
+&lt;tr&gt;
+    &lt;th&gt;Plug-in Name&lt;/th&gt;
+    &lt;th&gt;Filename&lt;/th&gt;
+    &lt;th&gt;Description&lt;/th&gt;
+&lt;/tr&gt;
+&lt;script language="JavaScript" type="text/javascript"&gt;
+for (i=0; i&lt;navigator.plugins.length; i++) {
+   document.write("&lt;tr&gt;&lt;td&gt;");
+   document.write(navigator.plugins[i].name);
+   document.write("&lt;/td&gt;&lt;td&gt;");
+   document.write(navigator.plugins[i].filename);
+   document.write("&lt;/td&gt;&lt;td&gt;");
+   document.write(navigator.plugins[i].description);
+   document.write("&lt;/td&gt;&lt;/tr&gt;");
+}
+&lt;/script&gt;
+&lt;/table&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre> 
+ <p style="text-align: justify; verdana, helvetica, arial,  color: rgb(0, 0, 0);"> &nbsp;</p> 
+ <h1> 检查插件：</h1> 
+ <p> 每个插件有数组中的一个条目。每个条目具有以下属性：</p> 
+ <ul> 
+  <li> <p> name&nbsp;-&nbsp;是插件的名称</p> </li> 
+  <li> <p> filename&nbsp;- 是被装载到安装在插件中的可执行文件</p> </li> 
+  <li> <p> description&nbsp;- 是插件的描述，通过开发人员提供</p> </li> 
+  <li> <p> mimeTypes&nbsp;- 是使用由插件支持的每个MIME类型一个条目的阵列</p> </li> 
+ </ul> 
+ <p> 可以在脚本中使用这些属性来了解安装的插件，然后使用JavaScript，你可以按如下起到相应的多媒体文件：</p> 
+ <pre style="'Courier New', monospace; font-size: 12px; ">
+&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;Using Plug-Ins&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;script language="JavaScript" type="text/javascript"&gt;
+media = navigator.mimeTypes["video/quicktime"];
+if (media){
+  document.write("&lt;embed src='quick.mov' height=100 width=100&gt;");
+}
+else{
+  document.write("&lt;img src='quick.gif' height=100 width=100&gt;");
+}
+&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre> 
+ <p> 注意：这里我们使用HTML &lt;embed&gt;标签嵌入多媒体文件。</p> 
+ <h1> 多媒体控制：</h1> 
+ <p> 我们需要一个真实的例子几乎可在所有的浏览器上工作：</p>   
+ <pre style="'Courier New', monospace; font-size: 12px; ">
+&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;Using Embeded Object&lt;/title&gt;
+&lt;script type="text/javascript"&gt;
+&lt;!--
+function play()
+{
+  if (!document.demo.IsPlaying()){
+    document.demo.Play();
+  }
+}
+function stop()
+{
+  if (document.demo.IsPlaying()){
+    document.demo.StopPlay();
+  }
+}
+function rewind()
+{
+  if (document.demo.IsPlaying()){
+    document.demo.StopPlay();
+  }
+  document.demo.Rewind();
+}
+//--&gt;
+&lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;embed id="demo" name="demo"
+    src="http://www.amrood.com/games/kumite.swf"
+    width="318" height="300" play="false" loop="false"
+    pluginspage="http://www.macromedia.com/go/getflashplayer"
+    swliveconnect="true"&gt;
+&lt;/embed&gt;
+&lt;form name="form" id="form" action="#" method="get"&gt;
+&lt;input type="button" value="Start" onclick="play();" /&gt;
+&lt;input type="button" value="Stop" onclick="stop();" /&gt;
+&lt;input type="button" value="Rewind" onclick="rewind();" /&gt;
+&lt;/form&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre> 
+ <p style="text-align: justify; verdana, helvetica, arial,  color: rgb(0, 0, 0);"> &nbsp;</p> 
+ <br>      
+</div></body></html>

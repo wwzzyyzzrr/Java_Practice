@@ -1,0 +1,223 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">理解 MapReducer</h1><div style="width:100%;float:left;" class="article-content">   
+ <p> 本教程中的代码分为 3 个部分：</p> 
+ <p> <a target="_blank" href="file:///C:/Users/Administrator/AppData/Local/Youdao/YNote/editor/web/editor.html#1">解释 SalesMapper 类</a></p> 
+ <p> <a target="_blank" href="file:///C:/Users/Administrator/AppData/Local/Youdao/YNote/editor/web/editor.html#2">解释 SalesCountryReducer 类</a></p> 
+ <p> <a target="_blank" href="file:///C:/Users/Administrator/AppData/Local/Youdao/YNote/editor/web/editor.html#3">解释 SalesCountryDriver 类</a></p> 
+ <h3> SalesMapper类的说明</h3> 
+ <p> 在本节中，我们将了解 SalesMapper 类的实现。</p> 
+ <p> 我们首先指定类的包名称。&nbsp;SalesCountry&nbsp;就是这个示例中使用的包名。请注意编译的输出，SalesMapper.class&nbsp;将进入目录并命名这个软件包名称：SalesCountry.</p> 
+ <p> 其次，我们导入库软件包。</p> 
+ <p> 以下快照显示实现 SalesMapper 类&nbsp;</p> 
+ <p> <a target="_blank" href="http://cdn.guru99.com/images/Big_Data/061114_0959_Understandi1.png"><img data-attr-org-img-file="file:///D:/Program%20Files/qq24B39E2329F08D9F4C3146A571A415EF/c23e5ccd356242e3b04e73956805267b/understandi1.png" data-attr-org-src-id="A8609AC7E66F4682BB6CA088DA014BEE" data-media-type="image" src="file:///D:/Program%20Files/qq24B39E2329F08D9F4C3146A571A415EF/c23e5ccd356242e3b04e73956805267b/understandi1.png"></a></p> 
+ <p> 代码解释:</p> 
+ <p> <strong>1. SalesMapper 类定义</strong></p> 
+ <p> public class SalesMapper extends MapReduceBase implements Mapper&lt;LongWritable, Text, Text, IntWritable&gt; {...}</p> 
+ <p> 每一个 mapper 类必须从 MapReduceBase 类进行扩展，它必须实现 Mapper 接口。</p> 
+ <p> 2. 定义 'map' 函数</p> 
+ <div style="widows: auto; color: rgb(52, 52, 52); 'Droid Sans'; font-size: 17px;"> 
+  <div style="font-size: 1em !important;"> 
+   <table border="1" cellpadding="2" cellspacing="0" style="border-collapse: collapse; margin-top: 10px; margin-bottom: 10px; font-size: 1em !important; Consolas, 'Bitstream Vera Sans Mono', 'Courier New', Courier, monospace !important; background-color: inherit;"> 
+    <tbody style="background-color: inherit; font-size: 1em !important;"> 
+     <tr style="background-color: inherit; font-size: 1em !important;"> 
+      <td style="word-break: break-all; border: 1px solid rgb(153, 153, 153); padding: 5px 16px 5px 14px; min-height: 25px; min-width: 25px; height: auto !important; background-color: inherit; color: rgb(175, 175, 175) !important; font-size: 1em !important; width: auto !important;"> 
+       <div style="min-width: 2px; background-color: inherit; font-size: 1em !important;">
+         1
+       </div> 
+       <div style="min-width: 2px; background-color: inherit; font-size: 1em !important;">
+         2
+       </div> 
+       <div style="min-width: 2px; background-color: inherit; font-size: 1em !important;">
+         3
+       </div> 
+       <div style="min-width: 2px; background-color: inherit; font-size: 1em !important;">
+         4
+       </div> </td> 
+      <td> 
+       <div> 
+        <div>
+          publicvoidmap(LongWritable key,
+        </div> 
+        <div>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Text value,
+        </div> 
+        <div>
+          OutputCollector&lt;Text, IntWritable&gt; output,
+        </div> 
+        <div>
+          Reporter reporter)&nbsp;throwsIOException
+        </div> 
+       </div> </td> 
+     </tr> 
+    </tbody> 
+   </table> 
+  </div> 
+ </div> 
+ <p> Mapper类的主要部分是接受四个参数的 “map()” 方法。</p> 
+ <p> 每次调用&nbsp;'map()'&nbsp;方法, 一个键值&nbsp;key-value&nbsp;对 ('key'&nbsp;和&nbsp;'value'&nbsp;在代码里) 被传递。</p> 
+ <p> 'map()'&nbsp;方法开始被接受拆分输入文本作为一个参数，并使用分词来拆分这些行成词。</p> 
+ <div style="widows: auto; color: rgb(52, 52, 52); 'Droid Sans'; font-size: 17px;"> 
+  <div style="font-size: 1em !important;"> 
+   <table border="1" cellpadding="2" cellspacing="0" style="border-collapse: collapse; margin-top: 10px; margin-bottom: 10px; font-size: 1em !important; Consolas, 'Bitstream Vera Sans Mono', 'Courier New', Courier, monospace !important; background-color: inherit;"> 
+    <tbody style="background-color: inherit; font-size: 1em !important;"> 
+     <tr style="background-color: inherit; font-size: 1em !important;"> 
+      <td style="word-break: break-all; border: 1px solid rgb(153, 153, 153); padding: 5px 16px 5px 14px; min-height: 25px; min-width: 25px; height: auto !important; background-color: inherit; color: rgb(175, 175, 175) !important; font-size: 1em !important; width: auto !important;"> 
+       <div style="min-width: 2px; background-color: inherit; font-size: 1em !important;">
+         1
+       </div> 
+       <div style="min-width: 2px; background-color: inherit; font-size: 1em !important;">
+         2
+       </div> </td> 
+      <td> 
+       <div> 
+        <div>
+          String valueString = value.toString();
+        </div> 
+        <div>
+          String[] SingleCountryData = valueString.split(",");
+        </div> 
+       </div> </td> 
+     </tr> 
+    </tbody> 
+   </table> 
+  </div> 
+ </div> 
+ <p> 这里，“,” 被用作分隔符。</p> 
+ <p> 在这之后，使用记录在数组&nbsp;&nbsp;'SingleCountryData'&nbsp;中的第七索引，其值为&nbsp;'1'.</p> 
+ <p> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;output.collect(new Text(SingleCountryData[7]), one);</p> 
+ <p> 我们在选择第7索引记录，因为我们需要的国家数据，它位于数组&nbsp;'SingleCountryData' 的第七索引。</p> 
+ <p> 请注意，我们输入的数据是下面的格式 (Country&nbsp;在索引的位置为：7, &nbsp;0 是开始的索引)-</p> 
+ <p> Transaction_date,Product,Price,Payment_Type,Name,City,State,Country,Account_Created,Last_Login,Latitude,Longitude</p> 
+ <p> mapper的输出使用的是&nbsp;'OutputCollector'&nbsp;的&nbsp;'collect()' 方法的键值对.</p> 
+ <h3> SalesCountryReducer 类的说明</h3> 
+ <p> 在本节中，我们将了解 SalesCountryReducer 类的实现。</p> 
+ <p> 1. 我们首先为类指定包的名称。SalesCountry 是包的名称。请注意编译的输出，&nbsp;SalesCountryReducer.class&nbsp;将进入命名这个软件包名称目录：&nbsp;SalesCountry.</p> 
+ <p> 其次，我们导入库软件包。</p> 
+ <p> 以下快照显示实现 SalesCountryReducer 类</p> 
+ <p> <a target="_blank" href="http://cdn.guru99.com/images/Big_Data/061114_0959_Understandi2.png"><img data-attr-org-img-file="file:///D:/Program%20Files/qq24B39E2329F08D9F4C3146A571A415EF/e81edcdb32b04421be837c402ee4dd1b/understandi2.png" data-attr-org-src-id="5C1B9C7B0AAF49219F70629915396060" data-media-type="image" src="file:///D:/Program%20Files/qq24B39E2329F08D9F4C3146A571A415EF/e81edcdb32b04421be837c402ee4dd1b/understandi2.png"></a></p> 
+ <p> 代码解释:</p> 
+ <p> 1. SalesCountryReducer 类定义 -</p> 
+ <p> public class SalesCountryReducer extends MapReduceBase implements Reducer&lt;Text, IntWritable, Text, IntWritable&gt; {</p> 
+ <p> 此处，前两个数据类型，&nbsp;'Text'&nbsp;和&nbsp;'IntWritable'&nbsp;是输入键值的数据类型到reducer。</p> 
+ <p> 映射器的输出的形式&lt;CountryName1, 1&gt;, &lt;CountryName2, 1&gt;.映射器的输出被输入到reducer。所以，以配合其数据类型，&nbsp;Text&nbsp;和&nbsp;IntWritable&nbsp;数据在这里输入被使用。</p> 
+ <p> 最后两个数据类型，'Text' 和 'IntWritable' 是由 reducer 的键 - 值对的形式生成的输出的数据类型。</p> 
+ <p> 每个 reducer 类必须从MapReduceBase类进行扩展，它必须实现 Reducer 接口。</p> 
+ <p> 2. Defining 'reduce' function-</p> 
+ <div style="widows: auto; color: rgb(52, 52, 52); 'Droid Sans'; font-size: 17px;"> 
+  <div style="font-size: 1em !important;"> 
+   <table border="1" cellpadding="2" cellspacing="0" style="border-collapse: collapse; margin-top: 10px; margin-bottom: 10px; font-size: 1em !important; Consolas, 'Bitstream Vera Sans Mono', 'Courier New', Courier, monospace !important; background-color: inherit;"> 
+    <tbody style="background-color: inherit; font-size: 1em !important;"> 
+     <tr style="background-color: inherit; font-size: 1em !important;"> 
+      <td style="word-break: break-all; border: 1px solid rgb(153, 153, 153); padding: 5px 16px 5px 14px; min-height: 25px; min-width: 25px; height: auto !important; background-color: inherit; color: rgb(175, 175, 175) !important; font-size: 1em !important; width: auto !important;"> 
+       <div style="min-width: 2px; background-color: inherit; font-size: 1em !important;">
+         1
+       </div> 
+       <div style="min-width: 2px; background-color: inherit; font-size: 1em !important;">
+         2
+       </div> 
+       <div style="min-width: 2px; background-color: inherit; font-size: 1em !important;">
+         3
+       </div> </td> 
+      <td> 
+       <div> 
+        <div>
+          publicvoidreduce( Text t_key,
+        </div> 
+        <div>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Iterator&lt;IntWritable&gt; values,&nbsp;&nbsp;OutputCollector&lt;Text,IntWritable&gt; output,
+        </div> 
+        <div>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Reporter reporter)&nbsp;throwsIOException {
+        </div> 
+       </div> </td> 
+     </tr> 
+    </tbody> 
+   </table> 
+  </div> 
+ </div> 
+ <p> 输入到 reduce() 方法是在具有多个值的列表中选择一个键。</p> 
+ <p> 例如，在我们的示例中，这将是 -</p> 
+ <p> &lt;United Arab Emirates, 1&gt;, &lt;United Arab Emirates, 1&gt;, &lt;United Arab Emirates, 1&gt;,&lt;United Arab Emirates, 1&gt;, &lt;United Arab Emirates, 1&gt;, &lt;United Arab Emirates, 1&gt;.</p> 
+ <p> 这赋予 reducer 作为&nbsp;&lt;United Arab Emirates, {1,1,1,1,1,1}&gt;</p> 
+ <p> 因此，接受这种形式参数，前两个数据类型的使用，即 Text 和&nbsp;Iterator&lt;IntWritable&gt;.&nbsp;Text是一个数据类型的键 和&nbsp;Iterator&lt;IntWritable&gt;为对于键的值的列表的数据类型。</p> 
+ <p> 接下来的参数的类型是&nbsp;OutputCollector&lt;Text,IntWritable&gt;&nbsp;它收集 reducer 阶段的输出。</p> 
+ <p> reduce()&nbsp;方法开始通过复制键值和初始化频率计数为0。</p> 
+ <p> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Text key = t_key;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int frequencyForCountry = 0;</p> 
+ <p> 然后，使用 “while” 循环，我们通过与键关联的值列表循环，并通过总结所有计算的值。</p> 
+ <div style="widows: auto; color: rgb(52, 52, 52); 'Droid Sans'; font-size: 17px;"> 
+  <div style="font-size: 1em !important;"> 
+   <table border="1" cellpadding="2" cellspacing="0" style="border-collapse: collapse; margin-top: 10px; margin-bottom: 10px; font-size: 1em !important; Consolas, 'Bitstream Vera Sans Mono', 'Courier New', Courier, monospace !important; background-color: inherit;"> 
+    <tbody style="background-color: inherit; font-size: 1em !important;"> 
+     <tr style="background-color: inherit; font-size: 1em !important;"> 
+      <td style="word-break: break-all; border: 1px solid rgb(153, 153, 153); padding: 5px 16px 5px 14px; min-height: 25px; min-width: 25px; height: auto !important; background-color: inherit; color: rgb(175, 175, 175) !important; font-size: 1em !important; width: auto !important;"> 
+       <div style="min-width: 2px; background-color: inherit; font-size: 1em !important;">
+         1
+       </div> 
+       <div style="min-width: 2px; background-color: inherit; font-size: 1em !important;">
+         2
+       </div> 
+       <div style="min-width: 2px; background-color: inherit; font-size: 1em !important;">
+         3
+       </div> 
+       <div style="min-width: 2px; background-color: inherit; font-size: 1em !important;">
+         4
+       </div> 
+       <div style="min-width: 2px; background-color: inherit; font-size: 1em !important;">
+         5
+       </div> 
+       <div style="min-width: 2px; background-color: inherit; font-size: 1em !important;">
+         6
+       </div> </td> 
+      <td> 
+       <div> 
+        <div>
+          while(values.hasNext()) {
+        </div> 
+        <div>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// replace type of value with the actual type of our value
+        </div> 
+        <div>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IntWritable value = (IntWritable) values.next();
+        </div> 
+        <div>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;frequencyForCountry += value.get();
+        </div> 
+        <div>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        </div> 
+        <div>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}
+        </div> 
+       </div> </td> 
+     </tr> 
+    </tbody> 
+   </table>   
+  </div> 
+ </div> 
+ <p> 现在，结果中的键得到的频率计数输出到收集器。</p> 
+ <p> 下面的代码执行这个 -</p> 
+ <p> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;output.collect(key, new IntWritable(frequencyForCountry));</p> 
+ <h3> SalesCountryDriver类的说明</h3> 
+ <p> 在本节中，我们将了解 SalesCountryDriver 类实现。</p> 
+ <p> 1. 我们首先为类指定包的名称。&nbsp;SalesCountry&nbsp;是这里使用的包名。请注意编译的输出，&nbsp;SalesCountryDriver.class&nbsp;将进入命名这个包名称的目录:&nbsp;SalesCountry.</p> 
+ <p> 这里一行指定是包名称后面的代码是导入库软件包。</p> 
+ <p> <a target="_blank" href="http://cdn.guru99.com/images/Big_Data/061114_0959_Understandi3.png"><img data-attr-org-img-file="file:///D:/Program%20Files/qq24B39E2329F08D9F4C3146A571A415EF/e34c6e32c5d84b85992c917926cd34c3/understandi3.png" data-attr-org-src-id="5E976933AD0F4A869FEF428E7CF726DB" data-media-type="image" src="file:///D:/Program%20Files/qq24B39E2329F08D9F4C3146A571A415EF/e34c6e32c5d84b85992c917926cd34c3/understandi3.png"></a></p> 
+ <p> 2. 定义一个用于创建一个新的客户端工作，配置 Mapper及Reducer 类对象驱动程序类。</p> 
+ <p> 该驱动程序类负责设置我们的 MapReduce 作业在 Hadoop 运行。 在这个类中，我们指定作业名称，输入/输出，mapper 和 reducer 类名称的数据类型。<a target="_blank" href="http://cdn.guru99.com/images/Big_Data/061114_0959_Understandi4.png"><img data-attr-org-img-file="file:///D:/Program%20Files/qq24B39E2329F08D9F4C3146A571A415EF/539b9fb5ad524253baf43d6c679c6481/understandi4.png" data-attr-org-src-id="847387FB1D2B41DF8ADEFF28D7E7FB3C" data-media-type="image" src="file:///D:/Program%20Files/qq24B39E2329F08D9F4C3146A571A415EF/539b9fb5ad524253baf43d6c679c6481/understandi4.png"></a></p> 
+ <p> 3. 在下面的代码片段中，我们设置这是用来输入数据集消费和生产输出，分别输入和输出目录。</p> 
+ <p> arg[0]&nbsp;和&nbsp;arg[1]&nbsp;是通过 MapReduce 的实际操作，也就是赋予在命令行参数执行命令，</p> 
+ <p> $HADOOP_HOME/bin/hadoop jar ProductSalePerCountry.jar /inputMapReduce /mapreduce_output_sales</p> 
+ <p> <a target="_blank" href="http://cdn.guru99.com/images/Big_Data/061114_0959_Understandi5.png"><img data-attr-org-img-file="file:///D:/Program%20Files/qq24B39E2329F08D9F4C3146A571A415EF/6c33f39dafab44468d3d7d0d89ffb764/understandi5.png" data-attr-org-src-id="94D1F693C9DC46EEBDCD1BC2742B6BBB" data-media-type="image" src="file:///D:/Program%20Files/qq24B39E2329F08D9F4C3146A571A415EF/6c33f39dafab44468d3d7d0d89ffb764/understandi5.png"></a></p> 
+ <p> <br> 4. 触发我们的作业</p> 
+ <p> 下面的代码开始执行 MapReduce 作业</p> 
+ <div style="widows: auto; color: rgb(52, 52, 52); 'Droid Sans'; font-size: 17px;"> 
+  <pre>
+try{
+           // Run the job
+           JobClient.runJob(job_conf);
+       } catch(Exception e) {
+           e.printStackTrace();
+       }</pre> 
+ </div> 
+ <br> 
+ <br>      
+</div></body></html>

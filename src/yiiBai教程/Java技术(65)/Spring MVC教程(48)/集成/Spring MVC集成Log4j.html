@@ -1,0 +1,96 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Spring MVC集成Log4j</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>以下示例显示如何使用<strong>Spring Web MVC</strong>框架集成<a target="_blank" href="http://www.yiibai.com/log4j/" title="LOG4J">LOG4J</a>。首先使用Eclipse IDE，并按照以下步骤使用<strong>Spring Web Framework</strong>开发基于动态表单的Web应用程序：</p> 
+ <ol> 
+  <li>创建一个名称为 <strong>IntegrateLog4j</strong> 的动态WEB项目。</li>
+  <li>在 <code>com.yiibai.springmvc</code> 包下创建一个Java类：<code>HelloController</code> 。</li>
+  <li>从<a target="_blank" href="http://www.yiibai.com/maven/" title="maven">maven</a>存储库页面下载Log4库： <a target="_blank" href="http://mvnrepository.com/artifact/log4j/log4j/1.2.17" title="log4j">log4j</a> 。 把它放在<code>CLASSPATH</code>中。</li>
+  <li>在<code>src</code>文件夹下创建一个 <code>log4j.properties</code> 文件。</li>
+  <li>最后一步是创建所有源和配置文件的内容并运行应用程序，详细如下所述。</li>
+ </ol> 
+ <p>完整的项目文件目录结构如下所示 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201701/2201/818180115_70791.png" alt=""></p> 
+ <p><strong>HelloController.java</strong> 的代码如下所示 -</p> 
+ <pre><code class="lang-java">package com.yiibai.springmvc;
+import org.apache.log4j.Logger;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.ui.ModelMap;
+
+@Controller
+@RequestMapping("/hello")
+public class HelloController{
+   private static final Logger LOGGER = Logger.getLogger(HelloController.class);
+   @RequestMapping(method = RequestMethod.GET)
+   public String printHello(ModelMap model) {
+      LOGGER.info("printHello started.");
+
+      //logs debug message
+      if(LOGGER.isDebugEnabled()){
+         LOGGER.debug("Inside:  printHello");
+      }
+      //logs exception
+      LOGGER.error("Logging a sample exception", new Exception("Testing"));
+
+      model.addAttribute("message", "Hello Spring MVC Framework!");
+      LOGGER.info("printHello ended.");
+      return "hello";
+   }
+}
+</code></pre> 
+ <p><strong>log4j.properties</strong> 的代码如下所示 -</p> 
+ <pre><code class="lang-shell"># Root logger option
+log4j.rootLogger=DEBUG, stdout, file
+
+# Redirect log messages to console
+log4j.appender.stdout=org.apache.log4j.ConsoleAppender
+log4j.appender.stdout.Target=System.out
+log4j.appender.stdout.layout=org.apache.log4j.PatternLayout
+log4j.appender.stdout.layout.ConversionPattern=%d{yyyy-MM-dd HH:mm:ss} %-5p %c{1}:%L - %m%n
+
+# Redirect log messages to a log file
+log4j.appender.file=org.apache.log4j.RollingFileAppender
+#outputs to Tomcat home
+log4j.appender.file.File=${catalina.home}/logs/myapp.log
+log4j.appender.file.MaxFileSize=5MB
+log4j.appender.file.MaxBackupIndex=10
+log4j.appender.file.layout=org.apache.log4j.PatternLayout
+log4j.appender.file.layout.ConversionPattern=%d{yyyy-MM-dd HH:mm:ss} %-5p %c{1}:%L - %m%n
+</code></pre> 
+ <p><strong>IntegrateLog4j-servlet.xml</strong> 配置如下所示 - </p>   
+ <pre><code class="lang-xml">&lt;beans xmlns="http://www.springframework.org/schema/beans"
+   xmlns:context="http://www.springframework.org/schema/context"   
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xmlns:mvc="http://www.springframework.org/schema/mvc"
+   xsi:schemaLocation="
+   http://www.springframework.org/schema/beans     
+   http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+   http://www.springframework.org/schema/context 
+   http://www.springframework.org/schema/context/spring-context-3.0.xsd
+   http://www.springframework.org/schema/mvc
+   http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd"&gt;
+   &lt;context:component-scan base-package="com.yiibai.springmvc" /&gt;
+
+   &lt;bean class="org.springframework.web.servlet.view.InternalResourceViewResolver"&gt;
+      &lt;property name="prefix" value="/WEB-INF/jsp/" /&gt;
+      &lt;property name="suffix" value=".jsp" /&gt;
+   &lt;/bean&gt;
+&lt;/beans&gt;
+</code></pre> 
+ <p><strong>hello.jsp</strong> 文件中的配置如下所示 - </p> 
+ <pre><code class="lang-jsp">&lt;%@ page contentType="text/html; charset=UTF-8" %&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;Hello World&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+   &lt;h2&gt;${message}&lt;/h2&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>在上面的代码中，已经在tomcat控制台中配置了<code>log4j</code>，用它来记录日志详细信息，并且在 tomcat 目录下将日志文件保存为：<code>myapp.log</code>。</p> 
+ <p>完成创建源和配置文件后，发布应用程序到Tomcat服务器。</p> 
+ <p>现在启动Tomcat服务器，当访问URL =&gt; <a target="_blank" href="http://localhost:8080/IntegrateLog4j/hello">http://localhost:8080/IntegrateLog4j/hello</a> ， 如果<strong>Spring Web</strong>应用程序没有问题，应该看到以下结果：</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201701/2201/374180114_81881.png" alt=""></p>
+ <br>      
+</div></body></html>

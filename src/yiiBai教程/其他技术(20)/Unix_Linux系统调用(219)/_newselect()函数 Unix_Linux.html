@@ -1,0 +1,177 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">_newselect()函数 Unix/Linux</h1><div style="width:100%;float:left;" class="article-content">   
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> select, pselect, FD_CLR, FD_ISSET, FD_SET, FD_ZERO - 同步I / O复用</p> 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> 内容简介</h1> 
+ <table cellpadding="5" cellspacing="5" class="src" style="font-family: verdana, helvetica, arial, sans-serif;  border-color: rgb(170, 170, 170); width: 552px; background-color: rgb(241, 241, 241); border-collapse: collapse; padding-left: 5px; vertical-align: top; color: rgb(0, 0, 0);"> 
+  <tbody> 
+   <tr> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse;  border-color: rgb(170, 170, 170);"> <pre style="font-family: 'Courier New', monospace; font-size: 12px; margin-bottom: 0px;">
+/* According to POSIX.1-2001 */
+<b>#include &lt;sys/select.h&gt;</b> 
+/* According to earlier standards */
+<b>#include &lt;sys/time.h&gt;</b> 
+<b>#include &lt;sys/types.h&gt;</b> 
+<b>#include &lt;unistd.h&gt;</b> 
+
+</pre> <p style="text-align: justify;"> <b>int select(int </b><i>nfds</i><b>, fd_set *</b><i>readfds</i><b>, fd_set *</b><i>writefds</i><b>, fd_set *</b><i>exceptfds</i><b>, struct timeval *</b><i>timeout</i>); <b>void FD_CLR(int </b><i>fd</i><b>, fd_set *</b><i>set</i><b>);</b> <b>int FD_ISSET(int </b><i>fd</i><b>, fd_set *</b><i>set</i><b>);</b> <b>void FD_SET(int </b><i>fd</i><b>, fd_set *</b><i>set</i><b>);</b> <b>void FD_ZERO(fd_set *</b><i>set</i><b>);</b></p> <b>#define _XOPEN_SOURCE 600</b> <b>#include &lt;sys/select.h&gt;</b> <p style="text-align: justify;"> <b>int pselect(int </b><i>nfds</i><b>, fd_set *</b><i>readfds</i><b>, fd_set *</b><i>writefds</i><b>, fd_set *</b><i>exceptfds</i><b>, const struct timespec *</b><i>timeout</i><b>, const sigset_t *</b><i>sigmask</i><b>); </b></p> </td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> 描述</h1> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> <b>select</b>() and&nbsp;<b>pselect</b>() allow a program to monitor multiple file descriptors, waiting until one or more of the file descriptors become "ready" for some class of I/O operation (e.g., input possible). A file descriptor is considered ready if it is possible to perform the corresponding I/O operation (e.g.,&nbsp;<b>read</b>(2)) without blocking.</p> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> The operation of&nbsp;<b>select</b>() and&nbsp;<b>pselect</b>() is identical, with three differences:</p> 
+ <table border="1" cellpadding="5" cellspacing="0" class="src" style="font-family: verdana, helvetica, arial, sans-serif; border: 1px solid rgb(170, 170, 170); width: 552px; background-color: rgb(241, 241, 241); border-collapse: collapse; padding-left: 5px; vertical-align: top; color: rgb(0, 0, 0);"> 
+  <tbody> 
+   <tr> 
+    <th style="background-color: rgb(205, 205, 205); border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" width="25%"> S.N.</th> 
+    <th style="background-color: rgb(205, 205, 205); border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> 描述</th> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> (i)</td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" valign="bottom"> <b>select</b>() uses a timeout that is a&nbsp;<i>struct timeval</i>&nbsp;(with seconds and microseconds), while&nbsp;<b>pselect</b>() uses a&nbsp;<i>struct timespec</i>&nbsp;(with seconds and nanoseconds).</td> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> (ii)</td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" valign="bottom"> <b>select</b>() may update the&nbsp;<i>timeout</i>&nbsp;argument to indicate how much time was left.&nbsp;<b>pselect</b>() does not change this argument.</td> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> (iii)</td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" valign="bottom"> <b>select</b>() has no&nbsp;<i>sigmask</i>&nbsp;argument, and behaves as&nbsp;<b>pselect</b>() called with NULL&nbsp;<i>sigmask</i>.</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> Three independent sets of file descriptors are watched. Those listed in&nbsp;<i>readfds</i>&nbsp;will be watched to see if characters become available for reading (more precisely, to see if a read will not block; in particular, a file descriptor is also ready on end-of-file),those in<i>writefds</i>&nbsp;will be watched to see if a write will not block, and those in&nbsp;<i>exceptfds</i>&nbsp;will be watched for exceptions. On exit, the sets are modified in place to indicate which file descriptors actually changed status. Each of the three file descriptor sets may be specified as NULL if no file descriptors are to be watched for the corresponding class of events.</p> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> Four macros are provided to manipulate the sets.</p> 
+ <ul style="font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> 
+  <li> <p style="text-align: justify;"> <b>FD_ZERO</b>() clears a set.</p> </li> 
+  <li> <p style="text-align: justify;"> <b>FD_SET</b>() and</p> </li> 
+  <li> <p style="text-align: justify;"> <b>FD_CLR</b>() respectively add and remove a given file descriptor from a set.</p> </li> 
+  <li> <p style="text-align: justify;"> <b>FD_ISSET</b>() tests to see if a file descriptor is part of the set;</p> </li> 
+ </ul> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> this is useful after&nbsp;<b>select</b>() returns.</p> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> <i>nfds</i>&nbsp;is the highest-numbered file descriptor in any of the three sets, plus 1.</p> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> <i>timeout</i>&nbsp;is an upper bound on the amount of time elapsed before&nbsp;<b>select</b>() returns. It may be zero, causing&nbsp;<b>select</b>() to return immediately. (This is useful for polling.) If<i>timeout</i>&nbsp;is NULL (no timeout),&nbsp;<b>select</b>() can block indefinitely.</p> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> <i>sigmask</i>&nbsp;is a pointer to a signal mask (see&nbsp;<b>sigprocmask</b>(2)); if it is not NULL, then<b>pselect</b>() first replaces the current signal mask by the one pointed to by&nbsp;<i>sigmask</i>, then does the ‘select’ function, and then restores the original signal mask.</p> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> Other than the difference in the precision of the&nbsp;<i>timeout</i>&nbsp;argument, the following<b>pselect</b>() call:</p> 
+ <table cellpadding="5" cellspacing="5" class="src" style="font-family: verdana, helvetica, arial, sans-serif;  border-color: rgb(170, 170, 170); width: 552px; background-color: rgb(241, 241, 241); border-collapse: collapse; padding-left: 5px; vertical-align: top; color: rgb(0, 0, 0);"> 
+  <tbody> 
+   <tr> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse;  border-color: rgb(170, 170, 170);"> <pre style="font-family: 'Courier New', monospace; font-size: 12px; margin-bottom: 0px;">
+ready = pselect(nfds, &amp;readfds, &amp;writefds, &amp;exceptfds,
+                    timeout, &amp;sigmask);
+</pre> </td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> is equivalent to&nbsp;<i>atomically</i>&nbsp;executing the following calls:</p> 
+ <table cellpadding="5" cellspacing="5" class="src" style="font-family: verdana, helvetica, arial, sans-serif;  border-color: rgb(170, 170, 170); width: 552px; background-color: rgb(241, 241, 241); border-collapse: collapse; padding-left: 5px; vertical-align: top; color: rgb(0, 0, 0);"> 
+  <tbody> 
+   <tr> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse;  border-color: rgb(170, 170, 170);"> <pre style="font-family: 'Courier New', monospace; font-size: 12px; margin-bottom: 0px;">
+sigset_t origmask;
+
+sigprocmask(SIG_SETMASK, &amp;sigmask, &amp;origmask);
+ready = select(nfds, &amp;readfds, &amp;writefds, &amp;exceptfds, timeout);
+sigprocmask(SIG_SETMASK, &amp;origmask, NULL);
+</pre> </td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> The reason that&nbsp;<b>pselect</b>() is needed is that if one wants to wait for either a signal or for a file descriptor to become ready, then an atomic test is needed to prevent race conditions. (Suppose the signal handler sets a global flag and returns. Then a test of this global flag followed by a call of&nbsp;<b>select</b>() could hang indefinitely if the signal arrived just after the test but just before the call. By contrast,&nbsp;<b>pselect</b>() allows one to first block signals, handle the signals that have come in, then call&nbsp;<b>pselect</b>() with the desired<i>sigmask</i>, avoiding the race.)</p> 
+ <h2 style="font-size: 16px; line-height: 1.5; font-family: Helvetica, Arial, 'Liberation Sans', FreeSans, sans-serif; margin-bottom: 10px; margin-top: 10px; color: rgb(0, 0, 0);"> <i>The timeout</i></h2> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> The time structures involved are defined in&nbsp;<i>&lt;sys/time.h&gt;</i>&nbsp;and look like</p> 
+ <table cellpadding="5" cellspacing="5" class="src" style="font-family: verdana, helvetica, arial, sans-serif;  border-color: rgb(170, 170, 170); width: 552px; background-color: rgb(241, 241, 241); border-collapse: collapse; padding-left: 5px; vertical-align: top; color: rgb(0, 0, 0);"> 
+  <tbody> 
+   <tr> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse;  border-color: rgb(170, 170, 170);">   <pre style="font-family: 'Courier New', monospace; font-size: 12px; margin-bottom: 0px;">
+struct timeval {
+    long    tv_sec;         /* seconds */
+    long    tv_usec;        /* microseconds */
+};
+</pre> </td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> and</p> 
+ <table cellpadding="5" cellspacing="5" class="src" style="font-family: verdana, helvetica, arial, sans-serif;  border-color: rgb(170, 170, 170); width: 552px; background-color: rgb(241, 241, 241); border-collapse: collapse; padding-left: 5px; vertical-align: top; color: rgb(0, 0, 0);"> 
+  <tbody> 
+   <tr> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse;  border-color: rgb(170, 170, 170);"> <pre style="font-family: 'Courier New', monospace; font-size: 12px; margin-bottom: 0px;">
+struct timespec {
+    long    tv_sec;         /* seconds */
+    long    tv_nsec;        /* nanoseconds */
+};
+</pre> </td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> (However, see below on the POSIX.1-2001 versions.). Some code calls&nbsp;<b>select</b>() with all three sets empty,&nbsp;<i>n</i>&nbsp;zero, and a non-NULL&nbsp;<i>timeout</i>&nbsp;as a fairly portable way to sleep with subsecond precision.</p> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> On Linux,&nbsp;<b>select</b>() modifies&nbsp;<i>timeout</i>&nbsp;to reflect the amount of time not slept; most other implementations do not do this. (POSIX.1-2001 permits either behaviour.) This causes problems both when Linux code which reads&nbsp;<i>timeout</i>&nbsp;is ported to other operating systems, and when code is ported to Linux that reuses a struct timeval for multiple<b>select</b>()s in a loop without reinitializing it. Consider&nbsp;<i>timeout</i>&nbsp;to be undefined after<b>select</b>() returns.</p> 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> 返回值</h1> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> On success,&nbsp;<b>select</b>() and&nbsp;<b>pselect</b>() return the number of file descriptors contained in the three returned descriptor sets (that is, the total number of bits that are set in&nbsp;<i>readfds</i>,<i>writefds</i>,&nbsp;<i>exceptfds</i>) which may be zero if the timeout expires before anything interesting happens. On error, -1 is returned, and&nbsp;<i>errno</i>&nbsp;is set appropriately; the sets and&nbsp;<i>timeout</i>become undefined, so do not rely on their contents after an error.</p> 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> 错误</h1> 
+ <table border="1" cellpadding="5" cellspacing="0" class="src" style="font-family: verdana, helvetica, arial, sans-serif; border: 1px solid rgb(170, 170, 170); width: 552px; background-color: rgb(241, 241, 241); border-collapse: collapse; padding-left: 5px; vertical-align: top; color: rgb(0, 0, 0);"> 
+  <tbody> 
+   <tr> 
+    <th style="background-color: rgb(205, 205, 205); border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" width="25%"> 标签</th> 
+    <th style="background-color: rgb(205, 205, 205); border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> 描述</th> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>EBADF</b></td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" valign="bottom"> An invalid file descriptor was given in one of the sets. (Perhaps a file descriptor that was already closed, or one on which an error has occurred.)</td> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>EINTR</b></td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" valign="bottom"> A signal was caught.</td> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>EINVAL</b></td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" valign="bottom"> <i>nfds</i>&nbsp;is negative or the value contained within<i>timeout</i>&nbsp;is invalid.</td> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>ENOMEM</b></td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" valign="bottom"> unable to allocate memory for internal tables.</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> EXAMPLE</h1> 
+ <table cellpadding="5" cellspacing="5" class="src" style="font-family: verdana, helvetica, arial, sans-serif;  border-color: rgb(170, 170, 170); width: 552px; background-color: rgb(241, 241, 241); border-collapse: collapse; padding-left: 5px; vertical-align: top; color: rgb(0, 0, 0);"> 
+  <tbody> 
+   <tr> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse;  border-color: rgb(170, 170, 170);"> <pre style="font-family: 'Courier New', monospace; font-size: 12px; margin-bottom: 0px;">
+#include &lt;stdio.h&gt;
+#include &lt;sys/time.h&gt;
+#include &lt;sys/types.h&gt;
+#include &lt;unistd.h&gt;
+
+int main(void) {
+    fd_set rfds;
+    struct timeval tv;
+    int retval;
+
+    /* Watch stdin (fd 0) to see when it has input. */
+    FD_ZERO(&amp;rfds);
+    FD_SET(0, &amp;rfds);
+    /* Wait up to five seconds. */
+    tv.tv_sec = 5;
+    tv.tv_usec = 0;
+    retval = select(1, &amp;rfds, NULL, NULL, &amp;tv);
+    /* Don’t rely on the value of tv now! */
+
+    if (retval == -1)
+        perror("select()");
+    else if (retval)
+        printf("Data is available now.\n");
+        /* FD_ISSET(0, &amp;rfds) will be true. */
+    else
+        printf("No data within five seconds.\n");
+    return 0;
+}
+</pre> </td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> 遵循于</h1> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> <b>select</b>() conforms to POSIX.1-2001 and 4.4BSD</p> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> <b>pselect</b>() is defined in POSIX.1g, and in POSIX.1-2001.</p> 
+ <br>      
+</div></body></html>

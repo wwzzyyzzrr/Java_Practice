@@ -1,0 +1,157 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">SVN解决冲突</h1><div style="width:100%;float:left;" class="article-content">   
+ <p> Tom 决定为他们的项目添加README文件。因此，他创造了README文件，并添加到该TODO列表。在加入这个文件库在修订版本6。</p> 
+ <pre class="result" style="margin-bottom: 0px; background-color: rgb(241, 241, 241); font-size: 12px;">
+[tom@CentOS trunk]$ cat README 
+/* TODO: Add contents in README file */
+
+[tom@CentOS trunk]$ svn status
+?       README
+
+[tom@CentOS trunk]$ svn add README 
+A         README
+
+[tom@CentOS trunk]$ svn commit -m "Added README file. Will update it's content in future."
+Adding         trunk/README
+Transmitting file data .
+Committed revision 6. 
+</pre> 
+ <p> Jerry&nbsp;检出最新的代码，这是修订版本6。他就立刻开始工作。经过几个小时的Tom更新README文件并提交了他的变化。修改README这个样子。</p> 
+ <pre class="result" style="margin-bottom: 0px; background-color: rgb(241, 241, 241); font-size: 12px;">
+[tom@CentOS trunk]$ cat README 
+* Supported operations:
+
+1) Accept input
+2) Display array elements
+
+[tom@CentOS trunk]$ svn status
+M       README
+
+[tom@CentOS trunk]$ svn commit -m "Added supported operation in README"
+Sending        trunk/README
+Transmitting file data .
+Committed revision 7.
+</pre> 
+ <p> 现在，库是修订版本7&nbsp;Jerry的工作拷贝是过时了。Jerry&nbsp;还更新README文件，并尝试提交他的变化。</p> 
+ <p> Jerry'&nbsp;的README文件看起来像这样。</p> 
+ <pre class="result" style="margin-bottom: 0px; background-color: rgb(241, 241, 241); font-size: 12px;">
+[jerry@CentOS trunk]$ cat README 
+* File list
+
+1) array.c	Implementation of array operation.
+2) README	Instructions for user.
+
+[jerry@CentOS trunk]$ svn status
+M       README
+
+[jerry@CentOS trunk]$ svn commit -m "Updated README"
+Sending        trunk/README
+svn: Commit failed (details follow):
+svn: File or directory 'README' is out of date; try updating
+svn: resource out of date; try updating</pre> 
+ <h2> Step 1: 查看冲突</h2> 
+ <p> 这是好事。Subversion的检测README文件已经改变，因为最后一次更新。因此，Jerry&nbsp;更新自己的工作副本。</p> 
+ <pre class="result" style="margin-bottom: 0px; background-color: rgb(241, 241, 241); font-size: 12px;">
+[jerry@CentOS trunk]$ svn up
+Conflict discovered in 'README'.
+Select: (p) postpone, (df) diff-full, (e) edit,
+        (mc) mine-conflict, (tc) theirs-conflict,
+        (s) show all options:
+</pre> 
+ <p> Subversion抱怨README文件有冲突，Subversion不知道如何解决这个问题。所以Jerry&nbsp;选择 df 查看冲突。</p> 
+ <pre class="result" style="margin-bottom: 0px; background-color: rgb(241, 241, 241); font-size: 12px;">
+[jerry@CentOS trunk]$ svn up
+Conflict discovered in 'README'.
+Select: (p) postpone, (df) diff-full, (e) edit,
+        (mc) mine-conflict, (tc) theirs-conflict,
+        (s) show all options: df
+--- .svn/text-base/README.svn-base	Sat Aug 24 18:07:13 2013
++++ .svn/tmp/README.tmp	Sat Aug 24 18:13:03 2013
+@@ -1 +1,11 @@
+-/* TODO: Add contents in README file */
++&lt;&lt;&lt;&lt;&lt;&lt;&lt; .mine
++* File list
++
++1) array.c	Implementation of array operation.
++2) README	Instructions for user.
++=======
++* Supported operations:
++
++1) Accept input
++2) Display array elements
++&gt;&gt;&gt;&gt;&gt;&gt;&gt; .r7
+Select: (p) postpone, (df) diff-full, (e) edit, (r) resolved,
+        (mc) mine-conflict, (tc) theirs-conflict,
+        (s) show all options:
+</pre> 
+ <br> 
+ <h2> Step 2: 延缓冲突</h2> 
+ <p> Jerry&nbsp;选择推迟（p）选项，这样他就可以解决冲突。</p> 
+ <pre class="result" style="margin-bottom: 0px; background-color: rgb(241, 241, 241); font-size: 12px;">
+Select: (p) postpone, (df) diff-full, (e) edit, (r) resolved,
+        (mc) mine-conflict, (tc) theirs-conflict,
+        (s) show all options: p
+C    README
+Updated to revision 7.
+Summary of conflicts:
+  Text conflicts: 1
+</pre> 
+ <p> 在文本编辑器中打开README文件后，他意识到，Subversion会包含Tom 的代码和他冲突标记代码。</p> 
+ <pre class="result" style="margin-bottom: 0px; background-color: rgb(241, 241, 241); font-size: 12px;">
+[jerry@CentOS trunk]$ cat README
+&lt;&lt;&lt;&lt;&lt;&lt;&lt; .min
+* File list
+
+1) array.c	Implementation of array operation.
+2) README	Instructions for user.
+=======
+* Supported operations:
+
+1) Accept input
+2) Display array elements
+&gt;&gt;&gt;&gt;&gt;&gt;&gt; .r7
+</pre> 
+ <p> Jerry&nbsp;希望&nbsp;Tom&nbsp;同他的变化一起修改，所以他只是删除了行包含冲突标记。</p> 
+ <p> 所以修改后的README文件会如下这个样子。</p>   
+ <pre class="result" style="margin-bottom: 0px; background-color: rgb(241, 241, 241); font-size: 12px;">
+[jerry@CentOS trunk]$ cat README
+* File list
+
+1) array.c	Implementation of array operation.
+2) README	Instructions for user.
+
+* Supported operations:
+
+1) Accept input
+2) Display array elements
+</pre> 
+ <p style="margin: 0.8em 0px 1em; padding: 0px; text-align: justify; color: rgb(0, 0, 0); font-family: Helvetica, Arial, sans-serif;"> Jerry&nbsp;解决冲突并提交，并让他重试。</p> 
+ <div style="float:left;margin-bottom: 10px;">  
+ </div>
+ <div style="float:left;margin-bottom: 10px;">  
+ </div>
+ <pre class="result" style="margin-bottom: 0px; background-color: rgb(241, 241, 241); font-size: 12px;">
+[jerry@CentOS trunk]$ svn commit -m "Updated README"
+svn: Commit failed (details follow):
+svn: Aborting commit: '/home/jerry/project_repo/trunk/README' remains in conflict
+ 
+[jerry@CentOS trunk]$ svn status
+?       README.r6
+?       README.r7
+?       README.mine
+C       README
+</pre> 
+ <h2> Step 3: 解决冲突</h2> 
+ <p> 这里是C字母表示有README文件冲突。Jerry&nbsp;解决冲突，但没有告诉Subversion他解决冲突。他使用解决命令通知Subversion有关解决冲突</p> 
+ <pre class="result" style="margin-bottom: 0px; background-color: rgb(241, 241, 241); font-size: 12px;">
+[jerry@CentOS trunk]$ svn resolve --accept=working README
+Resolved conflicted state of 'README'
+
+[jerry@CentOS trunk]$ svn status
+M       README
+
+[jerry@CentOS trunk]$ svn commit -m "Updated README"
+Sending        trunk/README
+Transmitting file data .
+Committed revision 8.</pre> 
+ <br>      
+</div></body></html>

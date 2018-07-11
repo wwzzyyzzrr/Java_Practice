@@ -1,0 +1,109 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">C语言指针算术运算</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>在C语言指针中保存一个值的地址，所以可以对指针变量进行算术运算。 C语言中的指针可以进行以下算术运算：</p> 
+ <ul> 
+  <li>递增</li>
+  <li>递减</li>
+  <li>加法</li>
+  <li>减法</li>
+  <li>比较</li>
+ </ul> 
+ <h2 id="h2-1-"><a name="1.递增指针" class="reference-link"></a><span class="header-link octicon octicon-link"></span>1.递增指针</h2>
+ <p>在数组中使用递增指针是因为它是连续的内存位置。此外，经过计算我们可以知道下一个位置的值。</p> 
+ <p>递增操作取决于指针变量的数据类型。递增指针的公式如下：</p> 
+ <pre><code class="lang-c">new_address= current_address + i * size_of(data type)
+</code></pre> 
+ <p><strong>32位</strong></p> 
+ <p>对于<code>32</code>位<code>int</code>变量，它将增加到<code>2</code>个字节。</p> 
+ <p><strong>64位</strong></p> 
+ <p>对于<code>64</code>位<code>int</code>变量，它将增加到<code>4</code>个字节。</p> 
+ <p>下面来看看看在<code>64</code>位操作系统上增加指针变量的例子。创建一个源文件：<em>increment-pointer.c</em>，其代码如下 - </p> 
+ <pre><code class="lang-c">#include &lt;stdio.h&gt;          
+void main() {
+    int number = 50;
+    int *p;//pointer to int    
+    p = &amp;number;//stores the address of number variable      
+
+    printf("Address of p variable is %u \n", p);
+    p = p + 1;
+    printf("After increment: Address of p variable is %u \n", p);
+}
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 - </p> 
+ <pre><code class="lang-shell">Address of p variable is 17824724
+After increment: Address of p variable is 17824728
+</code></pre> 
+ <h2 id="h2-2-"><a name="2.指针递减" class="reference-link"></a><span class="header-link octicon octicon-link"></span>2.指针递减</h2>
+ <p>与指针递增一样，我们可以递减一个指针变量。递减指针的公式如下：</p> 
+ <p><strong>32位</strong></p> 
+ <p>对于<code>32</code>位<code>int</code>变量，它将递减<code>2</code>个字节。</p> 
+ <p><strong>64位</strong></p> 
+ <p>对于<code>64</code>位<code>int</code>变量，它将递减<code>4</code>个字节。</p> 
+ <p>我们来看看在<code>64</code>位操作系统上递减指针变量的例子。创建一个源文件：<em>decrement-pointer.c</em>，其代码如下 - </p> 
+ <pre><code class="lang-c">#include &lt;stdio.h&gt;          
+void main() {
+    int number = 50;
+    int *p;//pointer to int    
+    p = &amp;number;//stores the address of number variable      
+
+    printf("Address of p variable is %u \n", p);
+    p = p - 1;
+    printf("After decrement: Address of p variable is %u \n", p);
+}
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 - </p> 
+ <pre><code class="lang-shell">Address of p variable is 18218432
+After decrement: Address of p variable is 18218428
+</code></pre> 
+ <h2 id="h2-3-"><a name="3.指针相加" class="reference-link"></a><span class="header-link octicon octicon-link"></span>3.指针相加</h2>
+ <p>我们可以在指针变量上相加一个值。指针相加值的公式如下：</p> 
+ <pre><code class="lang-c">new_address= current_address + (number * size_of(data type))
+</code></pre> 
+ <p><strong>32位</strong></p> 
+ <p>对于<code>32</code>位<code>int</code>变量，它将相加上<code>2 * number</code>的值。</p> 
+ <p><strong>64位</strong></p> 
+ <p>对于<code>64</code>位<code>int</code>变量，它将增加<code>4 * number</code>的值。</p> 
+ <p>下面来看看看在<code>64</code>位操作系统上相加一个值到指针变量的例子。创建一个源文件：<em>addition-pointer.c</em>，其代码如下 - </p> 
+ <pre><code class="lang-c">#include &lt;stdio.h&gt;          
+void main() {
+    int number = 50;
+    int *p;//pointer to int    
+    p = &amp;number;//stores the address of number variable      
+
+    printf("Address of p variable is %u \n", p);
+    p = p + 3;   //adding 3 to pointer variable  
+    printf("After adding 3: Address of p variable is %u \n", p);
+}
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 - </p>   
+ <pre><code class="lang-shell">Address of p variable is 11926728
+After adding 3: Address of p variable is 11926740
+</code></pre> 
+ <p>正如你所看到的，<code>p</code>的地址是<code>11926728</code>，但是在添加了<code>3</code>与<code>p</code>变量之后，它是<code>11926740</code>，即<code>4 * 3 = 12</code>增量。由于我们使用<code>64</code>位操作系统，所以它会相加<code>12</code>，但是如果使用<code>32</code>位操作系统，它会相加<code>6</code>，即<code>2 * 3 = 6</code>。这是由于整数值占用<code>32</code>位操作系统中的<code>2</code>字节内存。</p> 
+ <h2 id="h2-4-"><a name="4.指针减法" class="reference-link"></a><span class="header-link octicon octicon-link"></span>4.指针减法</h2>
+ <p>类似于指针加法，我们可以从指针变量中减去一个值。下面给出了从指针变量中减去指定值的公式：</p> 
+ <pre><code class="lang-c">new_address= current_address - (number * size_of(data type))
+</code></pre> 
+ <p><strong>32位</strong></p> 
+ <p>对于<code>32</code>位<code>int</code>变量，它将减去<code>2 * number</code>的值。</p> 
+ <p><strong>64位</strong></p> 
+ <p>对于 <code>64</code>位<code>int</code>变量，它将减去<code>4 * number</code>的值。</p> 
+ <p>我们来看一下<code>64</code>位操作系统从指针变量减去指定值的例子。</p> 
+ <p>创建一个源文件：<em>subtraction-pointer.c</em>，其代码如下 - </p> 
+ <pre><code class="lang-c">#include &lt;stdio.h&gt;          
+void main() {
+    int number = 50;
+    int *p;//pointer to int    
+    p = &amp;number;//stores the address of number variable      
+
+    printf("Address of p variable is %u \n", p);
+    p = p - 3; //subtracting 3 from pointer variable  
+    printf("After subtracting 3: Address of p variable is %u \n", p);
+}
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 - </p> 
+ <pre><code class="lang-shell">Address of p variable is 17825120
+After subtracting 3: Address of p variable is 17825108
+</code></pre> 
+ <p>从指针变量中减去<code>3</code>后，可以看到比前一个地址值小<code>12</code>，即：<code>(4 * 3)</code>。</p>
+ <br>      
+</div></body></html>

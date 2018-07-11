@@ -1,0 +1,122 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Struts2 &lt;s:iterator&gt;迭代器标签示例</h1><div style="width:100%;float:left;" class="article-content">   
+ <p> Struts2迭代器标签用来迭代一个值，它可以是任何&nbsp;java.util.Collection&nbsp;或&nbsp;java.util.Iterator的值。在本教程中，您将创建一个列表变量，使用迭代器标签来遍历，并得到使用IteratorStatus迭代状态。 </p> 
+ <p> <span style="color:#535B60;line-height:22px;background-color:#FFFFFF;">这里创建一个Web工程：strut2<span style="color:#333333;">iterator</span>，来演示</span><span style="color:#535B60;line-height:22px;background-color:#FFFFFF;">在多个复选框</span><span style="color:#535B60;line-height:22px;background-color:#FFFFFF;">如何设置的默认值，整个项目的结构如下图所示：</span> </p> 
+ <p> <img src="/uploads/tutorial/20151116/1-151116143320620.png" alt=""> </p> 
+ <h2> 1. 动作 </h2> 
+ <p> Action类有列表属性，它包含多种美味&nbsp;“KFC combo meals”. </p> 
+ <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  background-color:#FFFFFF;"> <strong>IteratorKFCAction</strong> </p> 
+ <pre>package com.yiibai.common.action;
+ 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.opensymphony.xwork2.ActionSupport;
+ 
+public class IteratorKFCAction extends ActionSupport{
+ 
+	private List&lt;String&gt; comboMeals;
+	
+	public List&lt;String&gt; getComboMeals() {
+		return comboMeals;
+	}
+
+	public void setComboMeals(List&lt;String&gt; comboMeals) {
+		this.comboMeals = comboMeals;
+	}
+
+	public String execute() {
+		
+		comboMeals = new ArrayList&lt;String&gt;();
+		comboMeals.add("Snack Plate");
+		comboMeals.add("Dinner Plate");
+		comboMeals.add("Colonel Chicken Rice Combo");
+		comboMeals.add("Colonel Burger");
+		comboMeals.add("O.R. Fillet Burger");
+		comboMeals.add("Zinger Burger");
+		
+		return SUCCESS;
+	}
+}</pre> 
+ <h2> 2. 迭代器 - Iterator示例 </h2> 
+ <p> 下面的JSP页面使用iterator标签来遍历显示所有的“肯德基组合餐”名单。&nbsp;在迭代器标签，它包含了一个“status”的属性，它用于在IteratorStatus类中声明名称。 </p> 
+ <div>
+   IteratorStatus类用于获取有关迭代的状态信息。支持属性索引，计数，第一个，最后，奇，偶和等。 
+ </div> 
+ <pre>&lt;%@ taglib prefix="s" uri="/struts-tags" %&gt;
+ 
+&lt;html&gt;
+&lt;head&gt;
+&lt;/head&gt;
+ 
+&lt;body&gt;
+&lt;h1&gt;Struts2 &lt;s:iterator&gt;标签示例&lt;/h1&gt;
+
+&lt;div&gt;&lt;div class="ads-in-post hide_if_width_less_800"&gt;
+&lt;script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"&gt;&lt;/script&gt;
+&lt;!-- 728x90 - After2ndH4 --&gt;
+&lt;ins class="adsbygoogle hide_if_width_less_800" 
+     style="display:inline-block;width:728px;height:90px"
+     data-ad-client="ca-pub-2836379775501347"
+     data-ad-slot="3642936086"
+	 data-ad-region="yiibairegion"&gt;&lt;/ins&gt;
+&lt;script&gt;
+(adsbygoogle = window.adsbygoogle || []).push({});
+&lt;/script&gt;
+&lt;/div&gt;&lt;/div&gt;&lt;h2&gt;Simple Iterator&lt;/h2&gt;
+&lt;ol&gt;
+&lt;s:iterator value="comboMeals"&gt;
+  &lt;li&gt;&lt;s:property /&gt;&lt;/li&gt;
+&lt;/s:iterator&gt;
+&lt;/ol&gt;
+
+&lt;h2&gt;Iterator with IteratorStatus&lt;/h2&gt;
+&lt;table&gt;
+&lt;s:iterator value="comboMeals" status="comboMealsStatus"&gt;
+  &lt;tr&gt;
+  	&lt;s:if test="#comboMealsStatus.even == true"&gt;
+      &lt;td style="background: #CCCCCC"&gt;&lt;s:property/&gt;&lt;/td&gt;
+    &lt;/s:if&gt;
+    &lt;s:elseif test="#comboMealsStatus.first == true"&gt;
+      &lt;td&gt;&lt;s:property/&gt; (This is first value) &lt;/td&gt;
+    &lt;/s:elseif&gt;
+    &lt;s:else&gt;
+      &lt;td&gt;&lt;s:property/&gt;&lt;/td&gt;
+    &lt;/s:else&gt;
+  &lt;/tr&gt;
+&lt;/s:iterator&gt;
+&lt;/table&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;</pre> 
+ <h2 style="color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:24px;font-weight:500;background-color:#FFFFFF;"> 3. struts.xml </h2>   
+ <pre>&lt;?xml version="1.0" encoding="UTF-8" ?&gt;
+&lt;!DOCTYPE struts PUBLIC
+"-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+"http://struts.apache.org/dtds/struts-2.0.dtd"&gt;
+ 
+&lt;struts&gt;
+
+ 	&lt;constant name="struts.devMode" value="true" /&gt;
+	
+	&lt;package name="default" namespace="/" extends="struts-default"&gt;
+	
+		&lt;action name="iteratorKFCAction" 
+			class="com.yiibai.common.action.IteratorKFCAction" &gt;
+			&lt;result name="success"&gt;/pages/iterator.jsp&lt;/result&gt;
+		&lt;/action&gt;
+		
+	&lt;/package&gt;
+		
+&lt;/struts&gt;</pre> 
+ <h2 style="color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:24px;font-weight:500;background-color:#FFFFFF;"> 4. 示例 </h2> 
+ <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  background-color:#FFFFFF;"> <em>http://localhost:8080/struts2iterator/iteratorKFCAction.action</em> </p> 
+ <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  background-color:#FFFFFF;"> <em><img src="/uploads/tutorial/20151116/1-151116143206338.png" alt=""><br> </em> </p> 
+ <h2 style="color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:24px;font-weight:500;background-color:#FFFFFF;"> 参考 </h2> 
+ <ol style="color:#333333;font-family:'Helvetica Neue', Helvetica,  background-color:#FFFFFF;"> 
+  <li style="background-color:inherit;"> <a target="_blank" href="http://struts.apache.org/2.0.14/docs/iterator.html">Struts2 &lt;s:Iterator&gt;标签示例</a> </li> 
+  <li style="background-color:inherit;"> <a target="_blank" href="http://struts.apache.org/2.1.8/struts2-core/apidocs/org/apache/struts2/views/jsp/IteratorStatus.html">IteratorStatus文档</a> </li> 
+ </ol> 
+ <br> 下载代码 -&nbsp;
+ <a target="_blank" href="http://pan.baidu.com/s/1gdx02fp">http://pan.baidu.com/s/1gdx02fp</a>
+ <br>      
+</div></body></html>

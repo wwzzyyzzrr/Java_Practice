@@ -1,0 +1,204 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Yii资源(Asset)</h1><div style="width:100%;float:left;" class="article-content">   
+ <div> 
+  <div>
+    资源(asset)是一个文件，该文件可在网页中被引用(CSS，JS，视频，音频或图像等)。Yii使用资源包管理asset.&nbsp;资产包的目的是要有一组代码库关联JS或CSS文件，并能够在一个单一的PHP调用中注册。资源包还依懒于其他资源包。 
+  </div> 
+ </div> 
+ <div> 
+  <div>
+    在assets文件夹里面，可找到基本的应用程序模板资源包- 
+  </div> 
+  <pre>&lt;?php
+   namespace app\assets;
+   use yii\web\AssetBundle;
+   /**
+   * @author Qiang Xue &lt;qiang.xue@gmail.com&gt;
+   * @since 2.0
+   */
+   class AppAsset extends AssetBundle {
+      public $basePath = '@webroot';
+      public $baseUrl = '@web';
+      public $css = [
+         'css/site.css',
+      ];
+      public $js = [];
+      public $depends = [
+         'yii\web\YiiAsset',
+         'yii\bootstrap\BootstrapAsset',
+      ];
+   }
+?&gt;&nbsp;</pre> 
+  <p> 上述类指定资源文件位于 @webroot 文件夹中，其对应于URL&nbsp;@web&nbsp;。&nbsp;此资源包不包含 JS 文件和 CSS 文件。该包依赖于其他包- </p> 
+  <p> yii\web\YiiAsset 和 yii\bootstrap\BootstrapAsset </p> 
+  <h2> AssetBundle的属性 </h2> 
+  <div>
+    以下是资源包的属性。 
+  </div> 
+  <ul> 
+   <li> <p style="text-align:justify;"> <strong>basePath</strong><strong>&nbsp;</strong>−&nbsp;定义在此捆绑包包含资源文件的Web访问目录。 </p> </li> 
+   <li> <p style="text-align:justify;"> <strong>baseUrl</strong><strong>&nbsp;</strong>−&nbsp;指定对应于根路径属性的URL </p> </li> 
+   <li> <p style="text-align:justify;"> js&nbsp;−&nbsp;定义包含在此捆绑包的JS文件数组 </p> </li> 
+   <li> <p style="text-align:justify;"> css&nbsp;−&nbsp;定义包含在这个捆绑包的CSS文件数组 </p> </li> 
+   <li> <p style="text-align:justify;"> depends&nbsp;−&nbsp;定义了该包依赖于资源包数组。这意味着，当前资源包的CSS和JS文件将被包括在资源包，这是取决于属性声明之后。 </p> </li> 
+   <li> <p style="text-align:justify;"> <strong>sourcePath</strong><strong>&nbsp;</strong>−&nbsp;定义包含资源文件的根目录。如果根目录不是通过Web访问，应该要设置这个属性。 </p> 
+    <div>
+      否则应该设置basePath和baseUrl属性。 
+    </div> </li> 
+   <li> <p style="text-align:justify;"> cssOptions&nbsp;−&nbsp;定义选项将传递到&nbsp;yii\web\View∷registerCssFile&nbsp;函数 </p> </li> 
+   <li> <p style="text-align:justify;"> <strong>jsOptions</strong><strong>&nbsp;</strong>−&nbsp;定义的选项被传递到&nbsp;yii\web\View::registerJsFile 函数 </p> </li> 
+   <li> <p style="text-align:justify;"> publishOptions:&nbsp;指定选项将被传递到yii\web\AssetManager::publish&nbsp;函数 </p> </li> 
+  </ul> 
+  <h3> 
+   <div>
+     资源的分类 
+   </div> </h3> 
+  <div>
+    根据位置，assets&nbsp;可以被归类为- 
+  </div> 
+  <ul> 
+   <li> <p style="text-align:justify;"> Source <strong>Assets</strong><strong>&nbsp;</strong>−&nbsp;assets是位于无法通过网络直接访问的目录。在页面使用源资源应该被复制到网站目录。 </p> 
+    <div>
+      这个过程被称为资源发布。 
+    </div> </li> 
+   <li> <p style="text-align:justify;"> <strong>Published </strong>Assets&nbsp;−&nbsp;该&nbsp;assets&nbsp;为位于一个Web访问的目录 </p> </li> 
+   <li> <p style="text-align:justify;"> External <em><strong>Assets</strong></em><em><strong>&nbsp;</strong></em>−&nbsp;该&nbsp;assets&nbsp;位于另一台Web服务器上。 </p> </li> 
+  </ul> 
+  <h3> 
+   <div>
+     使用资源包 
+   </div> </h3> 
+  <div>
+    第1步&nbsp;-&nbsp;在&nbsp;assets&nbsp;文件夹里面创建一个名为&nbsp;DemoAsset.php&nbsp;的新文件包含以下内容。 
+  </div> 
+  <pre>&lt;?php
+   namespace app\assets;
+   use yii\web\AssetBundle;
+   class DemoAsset extends AssetBundle {
+      public $basePath = '@webroot';
+      public $baseUrl = '@web';
+      public $js = ['js/demo.js'];
+   }
+?&gt;&nbsp;</pre> 
+  <p> 第2步&nbsp;-&nbsp;声明一个demo.js文件的新资源包。现在，在&nbsp;web/js&nbsp;文件夹中，创建一个名为&nbsp;demo.js&nbsp;文件并使用以下代码。 </p> 
+  <pre>console.log("hello from Demo asset");</pre> 
+  <div>
+    第3步&nbsp;-&nbsp;要注册新创建的资源包，转到&nbsp;views/layouts&nbsp;目录，并在 main.php 文件的顶部，添加以下行。 
+  </div> 
+  <pre>\app\assets\DemoAsset::register($this);</pre> 
+  <div>
+    第4步&nbsp;-&nbsp;如果在Web浏览器中打开URL：
+   <a target="_blank" href="http://localhost:8080/index.php">http://localhost:8080/index.php</a>，你应该看到下面的&nbsp;chrome&nbsp;控制台输出。
+   <br> 
+   <img src="/uploads/tutorial/20160519/1-1605192110315I.png" alt="">
+   <br> 
+  </div> 
+  <p> 还可以定义jsOptions和cssOptions属性来定制该CSS和JS文件包含在一页面。&nbsp;默认情况下，JS文件包括在结束标记之前。 </p> 
+  <div>
+    步骤5&nbsp;-&nbsp;在JS文件包函在头部分，使用以下列方式修改&nbsp;DemoAsset.php&nbsp;文件。 
+  </div> 
+  <pre>&lt;?php
+   namespace app\assets;
+   use yii\web\AssetBundle;
+   use yii\web\View;
+   class DemoAsset extends AssetBundle {
+      public $basePath = '@webroot';
+      public $baseUrl = '@web';
+      public $js = ['js/demo.js'];
+      public  $jsOptions = ['position' =&gt; View::POS_HEAD];
+   }
+?&gt;</pre> 
+  <div>
+    第6步&nbsp;-&nbsp;现在进入到&nbsp;
+   <a target="_blank" href="http://localhost:8080/index.php">http://localhost:8080/index.php</a>，应该看到 demo.js 脚本包含在页面的 head 部分。
+   <br> 
+   <img src="/uploads/tutorial/20160519/1-160519211053b0.png" alt="">
+   <br> 
+  </div> 
+  <p> 这是一个Web应用程序的普遍做法，在生产模式下运行，以使HTTP缓存&nbsp;assets&nbsp;资源。通过这样做，最近修改的时间戳将被附加到所有已发布的&nbsp;assets&nbsp;资源。 </p> 
+  <div>
+    第7步&nbsp;-&nbsp;转到 config/web.php 并修改文件web.php，如下面的代码。 
+  </div>   
+  <pre>&lt;?php
+   $params = require(__DIR__ . '/params.php');
+   $config = [
+      'id' =&gt; 'basic',
+      'basePath' =&gt; dirname(__DIR__),
+      'bootstrap' =&gt; ['log'],
+      'components' =&gt; [
+         'assetManager' =&gt; [
+            'appendTimestamp' =&gt; true,
+         ],
+         'request' =&gt; [
+            // !!! insert a secret key in the following (if it is empty) - this is
+               //required by cookie validation
+            'cookieValidationKey' =&gt; 'yiibai.com',
+         ],
+         'cache' =&gt; [
+            'class' =&gt; 'yii\caching\FileCache',
+         ],
+         'user' =&gt; [
+            'identityClass' =&gt; 'app\models\User',
+            'enableAutoLogin' =&gt; true,
+         ],
+         'errorHandler' =&gt; [
+            'errorAction' =&gt; 'site/error',
+         ],
+         'mailer' =&gt; [
+            'class' =&gt; 'yii\swiftmailer\Mailer',
+            // send all mails to a file by default. You have to set
+            // 'useFileTransport' to false and configure a transport
+            // for the mailer to send real emails.
+            'useFileTransport' =&gt; true,
+         ],
+         'log' =&gt; [
+            'traceLevel' =&gt; YII_DEBUG ? 3 : 0,
+            'targets' =&gt; [
+               [
+                  'class' =&gt; 'yii\log\FileTarget',
+                  'levels' =&gt; ['error', 'warning'],
+               ],
+            ],
+         ],
+         'db' =&gt; require(__DIR__ . '/db.php'),
+      ],
+      'modules' =&gt; [
+         'admin' =&gt; [
+            'class' =&gt; 'app\modules\admin\Admin',
+         ],
+      ],
+      'params' =&gt; $params,
+   ];
+   if (YII_ENV_DEV) {
+      // configuration adjustments for 'dev' environment
+      $config['bootstrap'][] = 'debug';
+      $config['modules']['debug'] = [
+         'class' =&gt; 'yii\debug\Module',
+      ];
+      $config['bootstrap'][] = 'gii';
+      $config['modules']['gii'] = [
+         'class' =&gt; 'yii\gii\Module',
+      ];
+   }
+   return $config;
+?&gt;</pre> 
+  <div>
+    我们已经增加了AssetManager&nbsp;组件，并设置&nbsp;appendTimestamp&nbsp;属性。 
+  </div> 
+  <p> 第8步，在Web浏览器的地址栏中输入：&nbsp;<a target="_blank" href="http://localhost:8080/index.php">http://localhost:8080/index.php</a>&nbsp;。你会发现，所有的&nbsp;assets&nbsp;资源现在有一个时间戳，如下面的图片所示。<br> <img src="/uploads/tutorial/20160519/1-160519211114P7.png" alt=""> </p> 
+  <h2> 
+   <div>
+     Yii的核心Assetbundles 
+   </div> </h2> 
+  <div>
+    以下是&nbsp;Yii&nbsp;核心Assetbundles 
+  </div> 
+  <ul> 
+   <li> <p style="text-align:justify;"> yii\web\JqueryAsset&nbsp;−&nbsp;包含 jquery.js 文件 </p> </li> 
+   <li> <p style="text-align:justify;"> yii\web\YiiAsset&nbsp;−&nbsp;包含yii.js文件，它实现在模块组织JS代码的机制 </p> </li> 
+   <li> <p style="text-align:justify;"> yii\bootstrap\BootstrapAsset&nbsp;−&nbsp;包含yii.js文件，它在模块组织实现JS代码的机制 </p> </li> 
+   <li> <p style="text-align:justify;"> yii\bootstrap\BootstrapPluginAsset&nbsp;−&nbsp;包函来自Twitter&nbsp;Bootstrap&nbsp;框架JS文件 </p> </li> 
+   <li> <p style="text-align:justify;"> yii\jui\JuiAsset&nbsp;−&nbsp;包括&nbsp;jQuery&nbsp;UI库中的CSS和JS文件 </p> </li> 
+  </ul> 
+ </div>
+ <br>      
+</div></body></html>

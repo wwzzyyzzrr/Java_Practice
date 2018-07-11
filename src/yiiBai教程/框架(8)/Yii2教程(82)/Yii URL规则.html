@@ -1,0 +1,91 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Yii URL规则</h1><div style="width:100%;float:left;" class="article-content">   
+ <div> 
+  <div>
+    URL规则是&nbsp;yii\web\UrlRule&nbsp;的一个实例。当启用prettyURL格式，urlManager组件使用其规则属性声明URL规则。 
+  </div> 
+ </div> 
+ <div> 
+  <div>
+    要解析请求，URL管理器取得它们的声明，并按顺序查找第一个规则。 
+  </div> 
+  <div>
+    第1步-&nbsp;修改&nbsp;config/web.php&nbsp;文件中的urlManager&nbsp;组件。 
+  </div> 
+  <pre>'urlManager' =&gt; [
+   'showScriptName' =&gt; false,
+   'enablePrettyUrl' =&gt; true,
+   'rules' =&gt; [
+      'about' =&gt; 'site/about',
+   ]
+],</pre> 
+  <div>
+    第2步&nbsp;-&nbsp;打开Web浏览器访问：
+   <a target="_blank" href="http://localhost:8080/about">http://localhost:8080/about</a>，会看到关于页面如下。 
+  </div> 
+  <img src="/uploads/tutorial/20160530/1-160530223K2116.png" width="814" height="475" title="Yii URL规则" alt="Yii URL规则">
+  <br> 
+  <div>
+    在这个模式下，一个URL规则可以与查询参数相关联- 
+  </div> 
+  <p style="text-align:justify;"> &lt;ParamName:RegExp&gt;, 这里 − </p> 
+  <ul> 
+   <li> <p style="text-align:justify;"> ParamName&nbsp;−参数名称 </p> </li> 
+   <li> <p style="text-align:justify;"> RegExp&nbsp;−&nbsp;可选的正则表达式用于匹配参数值 </p> </li> 
+  </ul> 
+  <div>
+    假设，我们已经声明如下URL规则&nbsp;- 
+  </div> 
+  <pre>[
+   'articles/&lt;year:\d{4}&gt;/&lt;category&gt;' =&gt; 'article/index',
+   'articles' =&gt; 'article/index',
+   'article/&lt;id:\d+&gt;' =&gt; 'article/view',
+]</pre> 
+  <div>
+    当规则用于解析&nbsp;- 
+  </div> 
+  <ul> 
+   <li> /index.php/articles&nbsp;被解析成&nbsp;article/index </li> 
+   <li> /index.php/articles/2014/php&nbsp;被解析成&nbsp;article/index </li> 
+   <li> /index.php/article/100&nbsp;被解析成&nbsp;article/view </li> 
+   <li> /index.php/articles/php&nbsp;被解析成&nbsp;articles/php </li> 
+  </ul> 
+  <div>
+    当规则被用于创建的URL&nbsp;- 
+  </div> 
+  <ul> 
+   <li> <p style="text-align:justify;"> Url::to(['article/index']) 创建成 /index.php/articles </p> </li> 
+   <li> <p style="text-align:justify;"> Url::to(['article/index', 'year' =&gt; 2016, 'category' =&gt; 'php'])&nbsp;创建成&nbsp;/index.php/articles/2016/php </p> </li> 
+   <li> <p style="text-align:justify;"> Url::to(['article/view', 'id' =&gt; 100])&nbsp;创建成/index.php/article/100 </p> </li> 
+   <li> <p style="text-align:justify;"> Url::to(['article/view', 'id' =&gt; 100, 'source' =&gt; 'ad'])&nbsp;创建成/index.php/article/100?source=ad </p> </li> 
+   <li> <p style="text-align:justify;"> Url::to(['article/index', 'category' =&gt; 'php'])&nbsp;创建成&nbsp;/index.php/article/index?category=php </p> </li> 
+  </ul> 
+  <div> 
+   <p> 在urlManager的使用上，用得最多的配置项就是： </p> 
+   <ul> 
+    <li> $enablePrettyUrl&nbsp;，是否开启URL美化功能。关于美化功能，我们在&nbsp;路由(Route)&nbsp;部分已经介绍过了。 注意如果&nbsp;$enablePrettyUrl&nbsp;不开启，表明使用原始的格式，那么所有路由规则都是无效的。 </li> 
+    <li> $showScriptName&nbsp;，是否在URL中显示入口脚本。是对美化功能的进一步补充。 </li> 
+    <li> suffix&nbsp;设置一个&nbsp;.html&nbsp;之类的假后缀，是对美化功能的进一步补充。 </li> 
+    <li> rules&nbsp;保存路由规则们的声明，注意并非保存其实例。 </li> 
+    <li> $enableStrictParsing&nbsp;是否开启严格解析。该选项仅在开启美化功能后生效。在开启严格解析模式时， 所有请求必须匹配&nbsp;$rules[]&nbsp;所声明的至少一个路由规则。 如果未开启，请求的PATH_INFO部分将作为所请求的路由进行后续处理。 </li> 
+   </ul> 
+   <p> 在&nbsp;UrlManager::init()&nbsp;初始化过程中，可以发现 urlManager 使用了应用所提供的缓存组件(有果有的话)， 对所有路由规则的实例进行缓存。 </p> yii\web\UrlManager::$suffix&nbsp; 
+  </div> 
+  <div>
+    第3步&nbsp;-&nbsp;在&nbsp;config/web.php&nbsp;文件修改 urlComponent 组件配置。 
+  </div>   
+  <pre>'urlManager' =&gt; [
+   'showScriptName' =&gt; false,
+   'enablePrettyUrl' =&gt; true,
+   'enableStrictParsing' =&gt; true,
+   'suffix' =&gt; '.html'
+],</pre> 
+  <div>
+    第4步-&nbsp;在Web浏览器地址栏键入URL地址访问：
+   <a target="_blank" href="http://localhost:8080/site/contact.html">http://localhost:8080/site/contact.html</a>&nbsp;查看结果，注意这里后缀是：.html 
+  </div> 
+  <div> 
+   <br> 
+  </div> 
+ </div>
+ <br>      
+</div></body></html>

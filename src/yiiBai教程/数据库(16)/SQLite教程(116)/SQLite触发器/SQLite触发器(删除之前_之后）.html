@@ -1,0 +1,44 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">SQLite触发器(删除之前/之后）</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>SQLite触发器(删除之前/之后)指定如何在删除数据后执行触发器。假设有两个表：<code>company</code>和<code>audit</code>。</p> 
+ <p>创建<code>company</code>表的语句如下 - </p> 
+ <pre><code class="lang-sql">CREATE TABLE company(  
+   ID INT PRIMARY KEY     NOT NULL,  
+   NAME           TEXT    NOT NULL,  
+   AGE            INT     NOT NULL,  
+   ADDRESS        CHAR(50),  
+   SALARY         REAL  
+);
+</code></pre> 
+ <p>创建<code>audit</code>表的语句如下 - </p> 
+ <pre><code class="lang-sql">CREATE TABLE audit(  
+    EMP_ID INT NOT NULL,  
+    BEFORE_VAL TEXT NULL,
+    ACTION_TYPE TEXT NULL,
+    ENTRY_DATE TEXT NOT NULL  
+);
+</code></pre> 
+ <p><strong>创建删除后触发器：</strong></p> 
+ <p>在删除操作后，使用以下语法在<code>company</code>表上创建名为“<code>after_del</code>”的触发器，当删除<code>company</code>表中的一条记录成功之后，就会将这条删除的名称记录到<code>audit</code>表中。</p> 
+ <pre><code class="lang-sql">CREATE TRIGGER after_del  AFTER DELETE    
+ON COMPANY  
+BEGIN  
+INSERT INTO AUDIT(EMP_ID, BEFORE_VAL, ACTION_TYPE, ENTRY_DATE) VALUES (old.ID, old.name, 'AFTER DELETE', datetime('now'));  
+END;
+</code></pre> 
+ <p>先插入一条数据，以供后面删除使用 - </p>   
+ <pre><code class="lang-sql">
+INSERT INTO COMPANY (ID,NAME,AGE,ADDRESS,SALARY)  VALUES (1, 'Maxsu', 24, 'Haikou', 40000.00);  
+
+-- 删除记录，触发上面定义的触发器 
+delete from company where id=1;
+
+-- 查询删除记录的执行结果
+select * from company;
+
+-- 查询删除记录之后的审计记录情况
+select * from audit;
+</code></pre> 
+ <p>完整的执行过程如下图中所示 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201705/2505/592100541_63265.png" alt=""></p>
+ <br>      
+</div></body></html>

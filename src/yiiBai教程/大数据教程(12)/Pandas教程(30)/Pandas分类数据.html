@@ -1,0 +1,178 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Pandas分类数据</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>通常实时的数据包括重复的文本列。例如：性别，国家和代码等特征总是重复的。这些是分类数据的例子。</p> 
+ <p>分类变量只能采用有限的数量，而且通常是固定的数量。除了固定长度，分类数据可能有顺序，但不能执行数字操作。 分类是<em>Pandas</em>数据类型。</p> 
+ <p>分类数据类型在以下情况下非常有用 -</p> 
+ <ul> 
+  <li>一个字符串变量，只包含几个不同的值。将这样的字符串变量转换为分类变量将会节省一些内存。</li>
+  <li>变量的词汇顺序与逻辑顺序(<code>"one"</code>，<code>"two"</code>，<code>"three"</code>)不同。 通过转换为分类并指定类别上的顺序，排序和最小/最大将使用逻辑顺序，而不是词法顺序。</li>
+  <li>作为其他python库的一个信号，这个列应该被当作一个分类变量(例如，使用合适的统计方法或<code>plot</code>类型)。</li>
+ </ul> 
+ <h2 id="h2-u5BF9u8C61u521Bu5EFA"><a name="对象创建" class="reference-link"></a><span class="header-link octicon octicon-link"></span>对象创建</h2>
+ <p>分类对象可以通过多种方式创建。下面介绍了不同的方法 -</p> 
+ <p><strong>类别/分类</strong></p> 
+ <p>通过在<code>pandas</code>对象创建中将<code>dtype</code>指定为<code>“category”</code>。</p> 
+ <pre><code class="lang-python">import pandas as pd
+s = pd.Series(["a","b","c","a"], dtype="category")
+print (s)
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 - </p> 
+ <pre><code class="lang-shell">0    a
+1    b
+2    c
+3    a
+dtype: category
+Categories (3, object): [a, b, c]
+</code></pre> 
+ <p>传递给系列对象的元素数量是四个，但类别只有三个。观察相同的输出类别。</p> 
+ <p><strong>pd.Categorical</strong></p> 
+ <p>使用标准<em>Pandas</em>分类构造函数，我们可以创建一个类别对象。语法如下 - </p> 
+ <pre><code class="lang-python">pandas.Categorical(values, categories, ordered)
+</code></pre> 
+ <p>举个例子 -</p> 
+ <pre><code class="lang-python">import pandas as pd
+cat = pd.Categorical(['a', 'b', 'c', 'a', 'b', 'c'])
+print (cat)
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 - </p> 
+ <pre><code class="lang-shell">[a, b, c, a, b, c]
+Categories (3, object): [a, b, c]
+</code></pre> 
+ <p>再举一个例子 -</p> 
+ <pre><code class="lang-python">import pandas as pd
+cat = cat=pd.Categorical(['a','b','c','a','b','c','d'], ['c', 'b', 'a'])
+print (cat)
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 - </p> 
+ <pre><code class="lang-shell">[a, b, c, a, b, c, NaN]
+Categories (3, object): [c, b, a]
+</code></pre> 
+ <p>这里，第二个参数表示类别。因此，在类别中不存在的任何值将被视为<code>NaN</code>。</p> 
+ <p>现在，看看下面的例子 -</p> 
+ <pre><code class="lang-python">import pandas as pd
+cat = cat=pd.Categorical(['a','b','c','a','b','c','d'], ['c', 'b', 'a'],ordered=True)
+print (cat)
+</code></pre> 
+ <p>执行上面示例代码，得到以结果 - </p> 
+ <pre><code class="lang-shell">[a, b, c, a, b, c, NaN]
+Categories (3, object): [c &lt; b &lt; a]
+</code></pre> 
+ <p>从逻辑上讲，排序(<em>ordered</em>)意味着，<code>a</code>大于<code>b</code>，<code>b</code>大于<code>c</code>。</p> 
+ <p><strong>描述</strong></p> 
+ <p>使用分类数据上的<code>.describe()</code>命令，可以得到与类型字符串的Series或DataFrame类似的输出。</p> 
+ <pre><code class="lang-python">import pandas as pd
+import numpy as np
+
+cat = pd.Categorical(["a", "c", "c", np.nan], categories=["b", "a", "c"])
+df = pd.DataFrame({"cat":cat, "s":["a", "c", "c", np.nan]})
+print (df.describe())
+print ("=============================")
+print (df["cat"].describe())
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 - </p> 
+ <pre><code class="lang-shell">       cat  s
+count    3  3
+unique   2  2
+top      c  c
+freq     2  2
+=============================
+count     3
+unique    2
+top       c
+freq      2
+Name: cat, dtype: object
+</code></pre> 
+ <p><strong>获取类别的属性</strong></p> 
+ <p><code>obj.cat.categories</code>命令用于获取对象的类别。</p> 
+ <pre><code class="lang-python">import pandas as pd
+import numpy as np
+
+s = pd.Categorical(["a", "c", "c", np.nan], categories=["b", "a", "c"])
+print (s.categories)
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 - </p> 
+ <pre><code class="lang-shell">Index(['b', 'a', 'c'], dtype='object')
+</code></pre> 
+ <p><strong>obj.ordered</strong>命令用于获取对象的顺序。</p> 
+ <pre><code class="lang-python">import pandas as pd
+import numpy as np
+
+cat = pd.Categorical(["a", "c", "c", np.nan], categories=["b", "a", "c"])
+print (cat.ordered)
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 - </p>   
+ <pre><code class="lang-shell">False
+</code></pre> 
+ <p>该函数返回结果为：<em>False</em>，因为这里没有指定任何顺序。</p> 
+ <p><strong>重命名类别</strong></p> 
+ <p>重命名类别是通过将新值分配给<code>series.cat.categories</code>属性来完成的。参考以下示例代码 -</p> 
+ <pre><code class="lang-python">import pandas as pd
+
+s = pd.Series(["a","b","c","a"], dtype="category")
+s.cat.categories = ["Group %s" % g for g in s.cat.categories]
+
+print (s.cat.categories)
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 - </p> 
+ <pre><code class="lang-shell">Index(['Group a', 'Group b', 'Group c'], dtype='object')
+</code></pre> 
+ <p>初始类别<code>[a，b，c]</code>由对象的<code>s.cat.categories</code>属性更新。</p> 
+ <p><strong>附加新类别</strong><br>使用<code>Categorical.add.categories()</code>方法，可以追加新的类别。</p> 
+ <pre><code class="lang-python">import pandas as pd
+
+s = pd.Series(["a","b","c","a"], dtype="category")
+s = s.cat.add_categories([4])
+print (s.cat.categories)
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 - </p> 
+ <pre><code class="lang-shell">Index(['a', 'b', 'c', 4], dtype='object')
+</code></pre> 
+ <p><strong>删除类别</strong><br>使用<code>Categorical.remove_categories()</code>方法，可以删除不需要的类别。</p> 
+ <pre><code class="lang-python">import pandas as pd
+
+s = pd.Series(["a","b","c","a"], dtype="category")
+print ("Original object:")
+print (s)
+print("=====================================")
+print ("After removal:")
+print (s.cat.remove_categories("a"))
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 - </p> 
+ <pre><code class="lang-shell">Original object:
+0    a
+1    b
+2    c
+3    a
+dtype: category
+Categories (3, object): [a, b, c]
+=====================================
+After removal:
+0    NaN
+1      b
+2      c
+3    NaN
+dtype: category
+Categories (2, object): [b, c]
+</code></pre> 
+ <p><strong>分类数据的比较</strong></p> 
+ <p>在三种情况下可以将分类数据与其他对象进行比较 -</p> 
+ <ul> 
+  <li>将等号(<code>==</code>和<code>!=</code>)与类别数据相同长度的类似列表的对象(列表，系列，数组…)进行比较。</li>
+  <li>当<code>ordered==True</code>和类别是相同时，所有比较(<code>==</code>，<code>!=</code>，<code>&gt;</code>，<code>&gt;=</code>，<code>&lt;</code>，和<code>&lt;=</code>)分类数据到另一个分类系列。</li>
+  <li>将分类数据与标量进行比较。</li>
+ </ul> 
+ <p>看看下面的例子 -</p> 
+ <pre><code class="lang-python">import pandas as pd
+
+cat = pd.Series([1,2,3]).astype("category", categories=[1,2,3], ordered=True)
+cat1 = pd.Series([2,2,2]).astype("category", categories=[1,2,3], ordered=True)
+
+print (cat&gt;cat1)
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 - </p> 
+ <pre><code class="lang-shell">0    False
+1    False
+2     True
+dtype: bool
+</code></pre>
+ <br>      
+</div></body></html>

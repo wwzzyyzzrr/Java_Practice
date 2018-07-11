@@ -1,0 +1,66 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">java.lang.SecurityManager.checkPermission(Permission perm, Object context)方法实例</h1><div style="width:100%;float:left;" class="article-content">   
+ <p> <strong>java.lang.SecurityManager.checkPermission(Permission perm, Object context)</strong>&nbsp;方法抛出，如果指定的安全上下文被拒绝访问的获准指定的资源一个SecurityException。上下文必须是以前调用getSecurityContext和访问控制决策返回安全上下文是基于对于安全性方面的配置的安全策略。</p> 
+ <p> 如果上下文是AccessControlContext的一个实例，AccessControlContext.checkPermission方法被调用，指定权限。如果上下不是AccessControlContext的一个实例，那么会抛出一个SecurityException。</p> 
+ <h2> 声明</h2> 
+ <p> 以下是<strong>java.lang.SecurityManager.checkPermission()</strong>方法的声明</p> 
+ <pre class="prettyprint" style="border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; font-size: 12px; overflow: auto;">
+public void checkPermission(Permission perm, Object context)</pre> 
+ <h2> 参数</h2> 
+ <ul> 
+  <li> <p> perm&nbsp;-- 所请求的许可。</p> </li> 
+ </ul> 
+ <ul> 
+  <li> <p> context&nbsp;-- 依赖于系统的安全上下文。</p> </li> 
+ </ul> 
+ <h2> 返回值</h2> 
+ <p> 这个方法没有返回值。</p> 
+ <h2> 异常</h2> 
+ <ul> 
+  <li> <p> SecurityException&nbsp;-- 如果指定的安全上下文不是AccessControlContext的实例(例如，为空)，或者被拒绝访问由给定权限所指定的资源。</p> </li> 
+  <li> <p> NullPointerException&nbsp;-- 如果permission参数为null。</p> </li> 
+ </ul> 
+ <h2> 例子</h2> 
+ <p> 我们的示例，需要为每个命令的权限被阻止。一项新政策文件设置，仅允许创建和我们的安全管理器的设置。该文件位于C：/java.policy，包含以下文字：</p> 
+ <pre class="prettyprint" style="border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; font-size: 12px; overflow: auto;">
+grant {
+  permission java.lang.RuntimePermission "setSecurityManager";
+  permission java.lang.RuntimePermission "createSecurityManager";
+  permission java.lang.RuntimePermission "usePolicy";
+};</pre> 
+ <p> 下面的例子显示了lang.SecurityManager.checkPermission()方法的使用。</p> 
+ <pre class="prettyprint" style="border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; font-size: 12px; overflow: auto;">
+package com.yiibai;
+
+import java.io.FilePermission;
+import java.security.AccessControlContext;
+import java.security.AccessController;
+
+public class SecurityManagerDemo extends SecurityManager {
+
+   public static void main(String[] args) {
+
+      // get current security context
+      AccessControlContext con = AccessController.getContext();
+
+      // set the policy file as the system securuty policy
+      System.setProperty("java.security.policy", "file:/C:/java.policy");
+
+      // create a security manager
+      SecurityManagerDemo sm = new SecurityManagerDemo();
+
+      // set the system security manager
+      System.setSecurityManager(sm);
+
+      // perform the check
+      sm.checkPermission(new FilePermission("test.txt", "read,write"), con);
+
+      // print a message if we passed the check
+      System.out.println("Allowed!");
+   }
+}
+</pre> 
+ <p> 让我们来编译和运行上面的程序，这将产生以下结果：</p>   
+ <pre class="prettyprint" style="border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; font-size: 12px; overflow: auto;">
+Exception in thread "main" java.security.AccessControlException: access denied (java.io.FilePermission test.txt read,write)</pre> 
+ <br>      
+</div></body></html>

@@ -1,0 +1,70 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Go写文件实例</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>在Go中写入文件与读取文件的模式类似。首先我们来看一些读取文件的例子。写入文件需要检查大多数调用错误。</p> 
+ <blockquote> 
+  <p>所有的示例代码，都放在 <code>F:\worksp\golang</code> 目录下。安装Go编程环境请参考：<a target="_blank" href="http://www.yiibai.com/go/go_environment.html">http://www.yiibai.com/go/go_environment.html</a> </p> 
+ </blockquote> 
+ <p><code>writing-files.go</code>的完整代码如下所示 -</p> 
+ <pre><code class="lang-go">package main
+
+import (
+    "bufio"
+    "fmt"
+    "io/ioutil"
+    "os"
+)
+
+func check(e error) {
+    if e != nil {
+        panic(e)
+    }
+}
+
+func main() {
+
+    // To start, here's how to dump a string (or just
+    // bytes) into a file.
+    d1 := []byte("hello\ngo\n")
+    err := ioutil.WriteFile("dat1.txt", d1, 0644)
+    check(err)
+
+    // For more granular writes, open a file for writing.
+    f, err := os.Create("dat2.txt")
+    check(err)
+
+    // It's idiomatic to defer a `Close` immediately
+    // after opening a file.
+    defer f.Close()
+
+    // You can `Write` byte slices as you'd expect.
+    d2 := []byte{115, 111, 109, 101, 10}
+    n2, err := f.Write(d2)
+    check(err)
+    fmt.Printf("wrote %d bytes\n", n2)
+
+    // A `WriteString` is also available.
+    n3, err := f.WriteString("writes\n")
+    fmt.Printf("wrote %d bytes\n", n3)
+
+    // Issue a `Sync` to flush writes to stable storage.
+    f.Sync()
+
+    // `bufio` provides buffered writers in addition
+    // to the buffered readers we saw earlier.
+    w := bufio.NewWriter(f)
+    n4, err := w.WriteString("buffered\n")
+    fmt.Printf("wrote %d bytes\n", n4)
+
+    // Use `Flush` to ensure all buffered operations have
+    // been applied to the underlying writer.
+    w.Flush()
+
+}
+</code></pre> 
+ <p>执行上面代码，将得到以下输出结果 - </p>   
+ <pre><code class="lang-go">F:\worksp\golang&gt;go run writing-files.go
+wrote 5 bytes
+wrote 7 bytes
+wrote 9 bytes
+</code></pre>
+ <br>      
+</div></body></html>

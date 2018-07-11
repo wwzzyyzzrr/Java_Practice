@@ -1,0 +1,62 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">git clone命令</h1><div style="width:100%;float:left;" class="article-content">   
+ <p><code>git clone</code>命令将存储库克隆到新目录中。</p> 
+ <p><strong>简介</strong></p> 
+ <pre><code class="lang-shell">git clone [--template=&lt;template_directory&gt;]
+      [-l] [-s] [--no-hardlinks] [-q] [-n] [--bare] [--mirror]
+      [-o &lt;name&gt;] [-b &lt;name&gt;] [-u &lt;upload-pack&gt;] [--reference &lt;repository&gt;]
+      [--dissociate] [--separate-git-dir &lt;git dir&gt;]
+      [--depth &lt;depth&gt;] [--[no-]single-branch]
+      [--recurse-submodules] [--[no-]shallow-submodules]
+      [--jobs &lt;n&gt;] [--] &lt;repository&gt; [&lt;directory&gt;]
+</code></pre> 
+ <h2 id="h2-u63CFu8FF0"><a name="描述" class="reference-link"></a><span class="header-link octicon octicon-link"></span>描述</h2>
+ <p>将存储库克隆到新创建的目录中，为克隆的存储库中的每个分支创建远程跟踪分支(使用<code>git branch -r</code>可见)，并从克隆检出的存储库作为当前活动分支的初始分支。</p> 
+ <p>在克隆之后，没有参数的普通git提取将更新所有远程跟踪分支，并且没有参数的<code>git pull</code>将另外将远程主分支合并到当前主分支(如果有的话)。</p> 
+ <p>此默认配置通过在<code>refs/remotes/origin</code>下创建对远程分支头的引用，并通过初始化<code>remote.origin.url</code>和<code>remote.origin.fetch</code>配置变量来实现。</p> 
+ <p>执行远程操作的第一步，通常是从远程主机克隆一个版本库，这时就要用到<code>git clone</code>命令。</p> 
+ <pre><code class="lang-shell">$ git clone &lt;版本库的网址&gt;
+</code></pre> 
+ <p>比如，克隆jQuery的版本库。</p> 
+ <pre><code class="lang-shell">$ git clone http://github.com/jquery/jquery.git
+</code></pre> 
+ <p>该命令会在本地主机生成一个目录，与远程主机的版本库同名。如果要指定不同的目录名，可以将目录名作为<code>git clone</code>命令的第二个参数。</p> 
+ <pre><code class="lang-shell">$ git clone &lt;版本库的网址&gt; &lt;本地目录名&gt;
+</code></pre> 
+ <p><code>git clone</code>支持多种协议，除了HTTP(s)以外，还支持SSH、Git、本地文件协议等，下面是一些例子。</p> 
+ <h2 id="h2-u793Au4F8B"><a name="示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例</h2>
+ <p>以下是所支持协议的一些示例 -</p>   
+ <pre><code class="lang-shell">$ git clone http[s]://example.com/path/to/repo.git
+$ git clone http://git.oschina.net/yiibai/sample.git
+$ git clone ssh://example.com/path/to/repo.git
+$ git clone git://example.com/path/to/repo.git
+$ git clone /opt/git/project.git 
+$ git clone file:///opt/git/project.git
+$ git clone ftp[s]://example.com/path/to/repo.git
+$ git clone rsync://example.com/path/to/repo.git
+</code></pre> 
+ <p>SSH协议还有另一种写法。</p> 
+ <pre><code class="lang-shell">$ git clone [user@]example.com:path/to/repo.git
+</code></pre> 
+ <p>通常来说，Git协议下载速度最快，SSH协议用于需要用户认证的场合。</p> 
+ <p><strong>应用场景示例</strong></p> 
+ <p>从上游克隆下来：</p> 
+ <pre><code class="lang-shell">$ git clone git://git.kernel.org/pub/scm/.../linux.git mydir
+$ cd mydir
+$ make # 执行代码或其它命令
+</code></pre> 
+ <p>在当前目录中使用克隆，而无需检出：</p> 
+ <pre><code class="lang-shell">$ git clone -l -s -n . ../copy
+$ cd ../copy
+$ git show-branch
+</code></pre> 
+ <p>从现有本地目录借用从上游克隆：</p> 
+ <pre><code class="lang-shell">$ git clone --reference /git/linux.git 
+    git://git.kernel.org/pub/scm/.../linux.git 
+    mydir
+$ cd mydir
+</code></pre> 
+ <p>创建一个裸存储库以将您的更改发布给公众：</p> 
+ <pre><code class="lang-shell">$ git clone --bare -l /home/proj/.git /pub/scm/proj.git
+</code></pre>
+ <br>      
+</div></body></html>

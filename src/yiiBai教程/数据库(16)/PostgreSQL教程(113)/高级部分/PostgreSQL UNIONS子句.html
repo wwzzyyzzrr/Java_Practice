@@ -1,0 +1,103 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">PostgreSQL UNIONS子句</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>PostgreSQL UNION子句/运算符用于组合两个或多个SELECT语句的结果，而不返回任何重复的行。</p> 
+ <p>要使用UNION，每个SELECT必须具有相同的列数，相同数量的列表达式，相同的数据类型，并且具有相同的顺序，但不一定要相同。</p> 
+ <h2 id="h2--"><a name="语法：" class="reference-link"></a><span class="header-link octicon octicon-link"></span>语法：</h2>
+ <p>UNION的基本语法如下：</p> 
+ <pre><code class="lang-sql">SELECT column1 [, column2 ]
+FROM table1 [, table2 ]
+[WHERE condition]
+
+UNION
+
+SELECT column1 [, column2 ]
+FROM table1 [, table2 ]
+[WHERE condition]
+</code></pre> 
+ <p>这里根据您的要求给出的条件表达式。</p> 
+ <p><strong>示例：</strong><br>考虑以下两个表，<code>COMPANY</code>表如下：</p> 
+ <pre><code class="lang-sql">yiibai_db=# SELECT * from COMPANY;
+ id | name  | age | address   | salary
+----+-------+-----+-----------+--------
+  1 | Paul  |  32 | California|  20000
+  2 | Allen |  25 | Texas     |  15000
+  3 | Teddy |  23 | Norway    |  20000
+  4 | Mark  |  25 | Rich-Mond |  65000
+  5 | David |  27 | Texas     |  85000
+  6 | Kim   |  22 | South-Hall|  45000
+  7 | James |  24 | Houston   |  10000
+(7 rows)
+</code></pre> 
+ <p>另一张表是<code>DEPARTMENT</code>如下：</p> 
+ <pre><code class="lang-sql">yiibai_db=# SELECT * from DEPARTMENT;
+ id | dept        | emp_id
+----+-------------+--------
+  1 | IT Billing  |      1
+  2 | Engineering |      2
+  3 | Finance     |      7
+  4 | Engineering |      3
+  5 | Finance     |      4
+  6 | Engineering |      5
+  7 | Finance     |      6
+(7 rows)
+</code></pre> 
+ <p>现在使用<code>SELECT</code>语句和<code>UNION</code>子句连接这两个表，如下所示：</p> 
+ <pre><code class="lang-sql">yiibai_db=# SELECT EMP_ID, NAME, DEPT FROM COMPANY INNER JOIN DEPARTMENT
+        ON COMPANY.ID = DEPARTMENT.EMP_ID
+   UNION
+     SELECT EMP_ID, NAME, DEPT FROM COMPANY LEFT OUTER JOIN DEPARTMENT
+        ON COMPANY.ID = DEPARTMENT.EMP_ID;
+</code></pre> 
+ <p>这将产生以下结果：</p> 
+ <pre><code class="lang-sql"> emp_id | name  |  dept
+--------+-------+--------------
+      5 | David | Engineering
+      6 | Kim   | Finance
+      2 | Allen | Engineering
+      3 | Teddy | Engineering
+      4 | Mark  | Finance
+      1 | Paul  | IT Billing
+      7 | James | Finance
+(7 rows)
+</code></pre> 
+ <h2 id="h2-union-all-"><a name="UNION ALL子句" class="reference-link"></a><span class="header-link octicon octicon-link"></span>UNION ALL子句</h2>
+ <p><code>UNION ALL</code>运算符用于组合两个<code>SELECT</code>语句(包括重复行)的结果。 适用于UNION的相同规则也适用于<code>UNION ALL</code>运算符。</p> 
+ <p><strong>语法：</strong><br>UNION ALL的基本语法如下：</p>   
+ <pre><code class="lang-sql">SELECT column1 [, column2 ]
+FROM table1 [, table2 ]
+[WHERE condition]
+
+UNION ALL
+
+SELECT column1 [, column2 ]
+FROM table1 [, table2 ]
+[WHERE condition]
+</code></pre> 
+ <p>这里根据您的要求给出的条件表达式。</p> 
+ <p><strong>示例：</strong><br>现在，我们在SELECT语句中加入上面提到的两个表，如下所示：</p> 
+ <pre><code class="lang-sql">yiibai_db=# SELECT EMP_ID, NAME, DEPT FROM COMPANY INNER JOIN DEPARTMENT
+        ON COMPANY.ID = DEPARTMENT.EMP_ID
+   UNION ALL
+     SELECT EMP_ID, NAME, DEPT FROM COMPANY LEFT OUTER JOIN DEPARTMENT
+        ON COMPANY.ID = DEPARTMENT.EMP_ID;
+</code></pre> 
+ <p>这将产生以下结果：</p> 
+ <pre><code class="lang-sql"> emp_id | name  | dept
+--------+-------+--------------
+      1 | Paul  | IT Billing
+      2 | Allen | Engineering
+      7 | James | Finance
+      3 | Teddy | Engineering
+      4 | Mark  | Finance
+      5 | David | Engineering
+      6 | Kim   | Finance
+      1 | Paul  | IT Billing
+      2 | Allen | Engineering
+      7 | James | Finance
+      3 | Teddy | Engineering
+      4 | Mark  | Finance
+      5 | David | Engineering
+      6 | Kim   | Finance
+(14 rows)
+</code></pre>
+ <br>      
+</div></body></html>

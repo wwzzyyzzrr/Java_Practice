@@ -1,0 +1,41 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Kotlin数据类</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>我们经常创建一个类，只能持有数据。 在这样一个类中，一些标准功能通常是从数据中机械推导出来的。 在Kotlin中，这被称为数据类，并被标记为数据：</p> 
+ <pre><code class="lang-kotlin">data class User(val name: String, val age: Int)
+</code></pre> 
+ <p>编译器自动从主构造函数中声明的所有属性导出以下成员：</p> 
+ <ul> 
+  <li><code>equals()</code>/<code>hashCode()</code>函数对</li>
+  <li><code>toString()</code>函数，它由”<code>User(name=John, age=42)</code>“构成</li>
+  <li><a target="_blank" href="http://www.yiibai.com/kotlin/multi-declarations.html" title="componentN()">componentN()</a>函数对应于属性的声明顺序</li>
+  <li><code>copy()</code>函数(见下文)</li>
+ </ul> 
+ <p>如果这些函数中的任何一个在类体中显式定义或继承自其基类型，则不会生成该函数。</p> 
+ <p>为了确保生成的代码的一致性和有意义的行为，数据类必须满足以下要求：</p> 
+ <ul> 
+  <li>主构造函数需要至少有一个参数；</li>
+  <li>主构造函数的所有参数需要标记为 <code>val</code> 或 <code>var</code>；</li>
+  <li>数据类不能是抽象、开放、密封或者内部的；</li>
+  <li>数据类只能实现接口(在1.1之前)。</li>
+ </ul> 
+ <p>自 1.1 起，数据类可以扩展其他类(示例请参见密封类)。</p> 
+ <p>在 JVM 中，如果生成的类需要含有一个无参的构造函数，则所有的属性必须指定默认值。 (参见构造函数)。</p> 
+ <pre><code class="lang-kotlin">data class User(val name: String = "", val age: Int = 0)
+</code></pre> 
+ <h2 id="h2-u590Du5236"><a name="复制" class="reference-link"></a><span class="header-link octicon octicon-link"></span>复制</h2>
+ <p>在很多情况下，我们需要复制一个对象改变它的一些属性，但其余部分保持不变。 copy() 函数就是为此而生成。对于上文的 User 类，其实现会类似下面这样：</p>   
+ <pre><code class="lang-kotlin">fun copy(name: String = this.name, age: Int = this.age) = User(name, age)
+</code></pre> 
+ <p>这也可以写成 - </p> 
+ <pre><code class="lang-kotlin">val jack = User(name = "Jack", age = 1)
+val olderJack = jack.copy(age = 2)
+</code></pre> 
+ <h2 id="h2-u6570u636Eu7C7Bu548Cu89E3u6784u58F0u660E"><a name="数据类和解构声明" class="reference-link"></a><span class="header-link octicon octicon-link"></span>数据类和解构声明</h2>
+ <p>为数据类生成的 <code>Component</code> 函数 使它们可在解构声明中使用：</p> 
+ <pre><code class="lang-kotlin">val jane = User("Jane", 35)
+val (name, age) = jane
+println("$name, $age years of age") // 输出 "Jane, 35 years of age"
+</code></pre> 
+ <h2 id="h2-u6807u51C6u6570u636Eu7C7B"><a name="标准数据类" class="reference-link"></a><span class="header-link octicon octicon-link"></span>标准数据类</h2>
+ <p>标准库提供了 Pair 和 Triple。尽管在很多情况下命名数据类是更好的设计选择， 因为它们通过为属性提供有意义的名称使代码更具可读性。</p>
+ <br>      
+</div></body></html>

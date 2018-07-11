@@ -1,0 +1,74 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">JSF &lt;h:attribute&gt;标签</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>可以使用<code>&lt;h:attribute&gt;</code>标签通过动作侦听器将属性值传递给组件，或将参数传递给组件。<br>以下代码显示如何使用<code>&lt;h:attribute&gt;</code>标签。</p> 
+ <pre><code class="lang-html">&lt;h:commandButton id="submit" 
+actionListener="#{userData.attributeListener}" action="result"&gt; 
+   &lt;f:attribute name="value" value="Show Message" /&gt;        
+   &lt;f:attribute name="username" value="JSF 2.0 User" /&gt;
+&lt;/h:commandButton&gt;
+</code></pre> 
+ <h2 id="h2-u5B9Eu4F8B"><a name="实例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实例</h2>
+ <p>以下是文件：<em>UserBean.java</em> 中的代码。</p> 
+ <pre><code class="lang-java">package com.yiibai.common;
+
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.SessionScoped;
+import javax.faces.event.ActionEvent;
+
+@ManagedBean(name="user")
+@SessionScoped
+public class UserBean{
+  public String nickname;
+
+  public void attrListener(ActionEvent event){
+    nickname = (String)event.getComponent().getAttributes().get("username");
+  }
+  public String outcome(){
+    return "result";
+  }
+  public String getNickname() {
+    return nickname;
+  }
+  public void setNickname(String nickname) {
+    this.nickname = nickname;
+  }
+
+}
+</code></pre> 
+ <p>以下是文件：<em>index.xhtml</em> 中的代码 -</p> 
+ <pre><code class="lang-html">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"&gt;
+&lt;html xmlns="http://www.w3.org/1999/xhtml"   
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"&gt;
+    &lt;h:body&gt;
+    &lt;h:form id="form"&gt;
+      &lt;h:commandButton action="#{user.outcome}"
+          actionListener="#{user.attrListener}"&gt;
+        &lt;f:attribute name="username" value="yiibai.com" /&gt;
+        &lt;f:attribute name="value" value="Click Me" /&gt;
+      &lt;/h:commandButton&gt;
+    &lt;/h:form&gt;
+    &lt;/h:body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>以下是文件：<em>result.xhtml</em> 中的代码 -</p>   
+ <pre><code class="lang-html">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"&gt;
+&lt;html xmlns="http://www.w3.org/1999/xhtml"   
+      xmlns:h="http://java.sun.com/jsf/html"&gt;
+
+    &lt;h:body&gt;
+    #{user.nickname}
+    &lt;/h:body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <h2 id="h2-u8FD0u884Cu6D4Bu8BD5"><a name="运行测试" class="reference-link"></a><span class="header-link octicon octicon-link"></span>运行测试</h2>
+ <p>打开 <strong>NetBeans</strong> 创建一个名称为： <em>Attribute</em> 的Web工程，并使用上面文件代码。运行项目，打开浏览器访问以下网址：</p> 
+ <pre><code>http://localhost:8084/Attribute
+</code></pre>
+ <p>如果没有错误，应该会看到以下结果 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201704/2504/446160456_58880.png" alt=""></p>
+ <br>      
+</div></body></html>

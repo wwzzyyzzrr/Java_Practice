@@ -1,0 +1,156 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">VueJS路由</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>VueJS没有内置的路由器功能。需要遵循以下步骤来安装它。</p> 
+ <h2 id="h2--cdn-"><a name="直接从CDN下载" class="reference-link"></a><span class="header-link octicon octicon-link"></span>直接从CDN下载</h2>
+ <p><code>vue-router</code>的最新版本可在 <a target="_blank" href="http://unpkg.com/vue-router/dist/vue-router.js">http://unpkg.com/vue-router/dist/vue-router.js</a> </p> 
+ <p>Unpkg.com提供基于<code>npm</code>的<code>cdn</code>链接。 上面的链接总是更新到最近的版本。我们可以下载并托管它，并使用脚本标记和vue.js一起使用，如下所示 -</p> 
+ <pre><code class="lang-html">&lt;script src = "/path-to/vue.js"&gt;&lt;/script&gt;
+&lt;script src = "/path-to/vue-router.js"&gt;&lt;/script&gt;
+</code></pre> 
+ <p><strong>使用NPM</strong></p> 
+ <p>运行以下命令来安装<code>vue-router</code>。</p> 
+ <pre><code class="lang-shell">npm  install vue-router
+</code></pre> 
+ <p><strong>使用GitHub</strong></p> 
+ <p>可以从GitHub克隆仓库如下 -</p> 
+ <pre><code class="lang-shell">git clone http://github.com/vuejs/vue-router.git node_modules/vue-router
+cd node_modules/vue-router
+npm install
+npm run build
+</code></pre> 
+ <p>下面从一个简单的例子开始，使用<code>vue-router.js</code>。创建一个文件：<em>vue-router.html</em> - </p> 
+ <pre><code class="lang-html">&lt;html&gt;
+   &lt;head&gt;
+      &lt;meta charset="utf-8" /&gt;
+      &lt;title&gt;VueJs路由示例&lt;/title&gt;
+      &lt;script type = "text/javascript" src = "js/vue.js"&gt;&lt;/script&gt;
+      &lt;script type = "text/javascript" src = "http://unpkg.com/vue-router@3.0.1/dist/vue-router.js"&gt;&lt;/script&gt;      
+   &lt;/head&gt;
+   &lt;body&gt;
+      &lt;div id = "app"&gt;
+         &lt;h2&gt;路由示例&lt;/h2&gt;
+         &lt;p&gt;
+            &lt;router-link to = "/route1"&gt;路由链接-1&lt;/router-link&gt;
+            &lt;router-link to = "/route2"&gt;路由链接-2&lt;/router-link&gt;
+         &lt;/p&gt;
+         &lt;!-- route outlet --&gt;
+         &lt;!-- component matched by the route will render here --&gt;
+         &lt;router-view&gt;&lt;/router-view&gt;
+      &lt;/div&gt;
+      &lt;script type = "text/javascript"&gt;
+         const Route1 = { template: '&lt;div style = "border-radius:20px;background-color:cyan;width:200px;height:50px;margin:10px;font-size:25px;padding:10px;"&gt;This is router 1&lt;/div&gt;' }
+         const Route2 = { template: '&lt;div style = "border-radius:20px;background-color:green;width:200px;height:50px;margin:10px;font-size:25px;padding:10px;"&gt;This is router 2&lt;/div&gt;' }
+         const routes = [
+            { path: '/route1', component: Route1 },
+            { path: '/route2', component: Route2 }
+         ];
+         const router = new VueRouter({
+            routes // short for `routes: routes`
+         });
+         var vm = new Vue({
+            el: '#app',
+            router
+         });
+      &lt;/script&gt;
+   &lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 -<br><img src="http://www.yiibai.com/uploads/images/201712/2412/242091207_92098.gif" alt=""></p> 
+ <p>要使用路由，我们需要添加<code>vue-router.js</code>文件。 从<code>http://unpkg.com/vue-router/dist/vue-router.js</code>获取代码并将其保存在<code>vue-router.js</code>文件中或者直接引用。</p> 
+ <p>脚本在<code>vue.js</code>之后添加如下 -</p> 
+ <pre><code class="lang-html">&lt;script type = "text/javascript" src = "js/vue.js"&gt;&lt;/script&gt;
+&lt;script type = "text/javascript" src = "js/vue-router.js"&gt;&lt;/script&gt;
+</code></pre> 
+ <p>或者 -</p> 
+ <pre><code class="lang-html">&lt;script type = "text/javascript" src = "js/vue.js"&gt;&lt;/script&gt;
+&lt;script type = "text/javascript" src = "http://unpkg.com/vue-router/dist/vue-router.js"&gt;&lt;/script&gt;
+</code></pre> 
+ <p>在正文部分，有一个路由器链接定义如下 -</p> 
+ <pre><code class="lang-html">&lt;p&gt;
+&lt;router-link to = "/route1"&gt;路由链接-1&lt;/router-link&gt;
+&lt;router-link to = "/route2"&gt;路由链接-2&lt;/router-link&gt;
+&lt;/p&gt;
+</code></pre> 
+ <p><code>&lt;router-link&gt;</code>是用于导航到HTML内容以显示给用户的组件。<code>to</code>属性是目的地，即将被显示的内容。</p> 
+ <p>在上面这段代码中，我们创建了两个路由器链接。</p> 
+ <p>看看路由器初始化的脚本部分。 有两个常量创建如下 -</p> 
+ <pre><code class="lang-html">const  Route1 = { template: '&lt;div style = "border-radius:20px;background-color:cyan;width:200px;height:50px;margin:10px;font-size:25px;padding:10px;"&gt;This is router 1&lt;/div&gt;' };
+const Route2 = { template: '&lt;div style = "border-radius:20px;background-color:green;width:200px;height:50px;margin:10px;font-size:25px;padding:10px;"&gt;This is router 2&lt;/div&gt;' }
+</code></pre> 
+ <p>当点击路由器链接时需要显示模板。接下来是路由<code>const</code>，它定义了要在URL中显示的路径。</p> 
+ <pre><code class="lang-html">const routes = [
+   { path: '/route1', component: Route1 },
+   { path: '/route2', component: Route2 }
+];
+</code></pre> 
+ <p>路由定义路径和组件。 当用户点击<em>路由器链接</em> 时，路径即<code>/route1</code>将显示在URL中。组件将显示模板名称。路由的路径需要与路由器链路匹配到属性。</p> 
+ <p>例如，<code>&lt;router-link to =“here here”&gt; &lt;/ router-link&gt;</code></p> 
+ <p>接下来，使用下面的一段代码将该实例创建到<code>VueRouter</code>。</p> 
+ <pre><code class="lang-html">const router = new VueRouter({
+   routes // short for `routes: routes`
+});
+</code></pre> 
+ <p><code>VueRouter</code>构造函数将路由作为参数。 路由器对象使用以下代码分配给主vue实例。</p> 
+ <pre><code class="lang-js">var vm = new Vue({
+   el: '#app',
+   router
+});
+</code></pre> 
+ <p>执行示例并查看浏览器中的显示。 在检查和检查路由器链路时，发现它将类添加到活动元素，如下面的截图所示 -<br><img src="http://www.yiibai.com/uploads/images/201712/2412/364091204_23811.png" alt=""></p> 
+ <p>添加的类是<code>class = “router-link-exact-active router-link-active”</code>。 活动链接获取类如上面的屏幕截图所示。 另外要注意的是，<code>&lt;router-link&gt;</code>被渲染为一个标签。</p> 
+ <h2 id="h2-u8DEFu7531u5668u94FEu63A5u7684u9053u5177"><a name="路由器链接的道具" class="reference-link"></a><span class="header-link octicon octicon-link"></span>路由器链接的道具</h2>
+ <p>下面来看看一些传递给<code>&lt;router-link&gt;</code>的其它的属性。</p> 
+ <p><strong>to</strong></p> 
+ <p>这是给<code>&lt;router-link&gt;</code>的目标路径。 点击后，<code>to</code>的值将在内部传递给<code>router.push()</code>。 该值需要是一个字符串或一个位置对象。 当使用一个对象时，需要将它绑定，如下。</p>   
+ <pre><code class="lang-html">示例-1:  &lt;router-link to = "/route1"&gt;Router Link 1&lt;/router-link&gt;
+renders as
+&lt;a href = ”#/route”&gt;Router Link &lt;/a&gt;
+示例-2:  &lt;router-link v-bind:to = "{path:'/route1'}"&gt;Router Link 1&lt;/router-link&gt;
+示例-3: &lt;router-link v-bind:to =
+   "{path:'/route1', query: { name: 'Tery' }}"&gt;Router Link 3&lt;/router-link&gt;//router link with query string.
+</code></pre> 
+ <p>以下是<em>示例-3</em> 的链接 - </p> 
+ <pre><code class="lang-html">&lt;p&gt;
+&lt;router-link to = "/route1"&gt;路由链接-1&lt;/router-link&gt;
+&lt;router-link to = "/route2"&gt;路由链接-2&lt;/router-link&gt;
+&lt;router-link v-bind:to = "{path:'/route1', query: { name: 'maxsu' }}"&gt;Router Link 3&lt;/router-link&gt;
+&lt;/p&gt;
+</code></pre> 
+ <p>执行上面修改后的代码，得到以下结果 -<br><img src="http://www.yiibai.com/uploads/images/201712/2412/185091221_83904.png" alt=""></p> 
+ <p>在URL路径中，<code>name=maxsu</code>是查询字符串的一部分。 例如：<code>http://localhost/vueexamples/vue_router.html#/route1?name=maxsu</code></p> 
+ <p><strong>replace</strong></p> 
+ <p>添加替换到路由器链接将调用<code>router.replace()</code>而不是<code>router.push()</code>。 使用替换，导航历史不存储。例如，</p> 
+ <pre><code class="lang-html">&lt;router-link v-bind:to = "{path:'/route1', query: { name: 'maxsu' }}"   replace&gt;Router Link 1&lt;/router-link&gt;
+</code></pre> 
+ <p><strong>append</strong></p> 
+ <p>添加追加到<code>&lt;router-link&gt;&lt;router-link&gt;</code>将使路径相对。<br>如果想从路由器<code>/route1</code>到路由器的链路路径<code>/route2</code>，它会在浏览器中显示路径为:<code>/route1/route2</code>。如下 - </p> 
+ <pre><code class="lang-html">&lt;router-link v-bind:to = "{ path: '/route1'}" append&gt;Router Link 1&lt;/router-link&gt;
+</code></pre> 
+ <p><strong>tag</strong></p> 
+ <p>目前<code>&lt;router-link&gt;</code>呈现为标签。如果想把它作为一些其他的标签，需要使用<code>tag ="tagname"</code> 来指定相同的标签。</p> 
+ <pre><code class="lang-html">&lt;p&gt;
+   &lt;router-link v-bind:to = "{ path: '/route1'}" tag = "span"&gt;Router Link 1&lt;/router-link&gt;
+   &lt;router-link v-bind:to = "{ path: '/route2'}" tag = "span"&gt;Router Link 2&lt;/router-link&gt;
+&lt;/p&gt;
+</code></pre> 
+ <p>上面已经将标签指定为范围，这就是浏览器中显示的内容。<br><img src="http://www.yiibai.com/uploads/images/201712/2412/427091227_98685.jpg" alt=""></p> 
+ <p><strong>active-class</strong></p> 
+ <p>缺省情况下，路由器链路处于活动状态时添加的活动类是<code>router-link-active</code>。可以通过设置相同的代码来覆盖这个类。</p> 
+ <pre><code class="lang-html">&lt;style&gt;
+   ._active{
+      background-color : red;
+   }
+&lt;/style&gt;
+&lt;p&gt;
+   &lt;router-link v-bind:to = "{ path: '/route1'}" active-class = "_active"&gt;Router Link 1&lt;/router-link&gt;
+   &lt;router-link v-bind:to = "{ path: '/route2'}" tag = "span"&gt;Router Link 2&lt;/router-link&gt;
+&lt;/p&gt;
+</code></pre> 
+ <p>使用的类是<code>active_class ="_active"</code>。下面是浏览器中显示的输出 -<br><img src="http://www.yiibai.com/uploads/images/201712/2412/152091229_81377.jpg" alt=""></p> 
+ <p><strong>event</strong></p> 
+ <p>目前，<code>router-link</code>的默认事件是<code>click</code>事件。可以使用<code>event</code>属性来改变它。参考以下代码 - </p> 
+ <pre><code class="lang-html">&lt;router-link v-bind:to = "{ path: '/route1'}" event = "mouseover"&gt;Router Link 1&lt;/router-link&gt;
+</code></pre> 
+ <p>现在，当将鼠标悬停在路由器链接上时，它将如下面的浏览器中所示进行导航。 将鼠标悬停在<em>Router link 1</em> 上时，将看到导航有变化。如下效果 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201712/2412/742091232_56480.jpg" alt=""></p>
+ <br>      
+</div></body></html>

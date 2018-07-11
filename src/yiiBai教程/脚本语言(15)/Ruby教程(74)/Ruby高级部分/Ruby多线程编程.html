@@ -1,0 +1,283 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Ruby多线程编程</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>线程表示轻量级的子进程。 它是一个单独的执行路径。 在Ruby中，程序的不同部分可以通过使用多个进程在不同程序之间使用多个线程执行，或拆分程序中的任务来同时运行。</p> 
+ <p>Ruby中的线程是并发编程模型的实现。</p> 
+ <h2 id="h2-ruby-"><a name="Ruby多线程" class="reference-link"></a><span class="header-link octicon octicon-link"></span>Ruby多线程</h2>
+ <p>一般情况下，一个正常的程序的执行路径是单线执行。 按编码的顺序执行程序中的所有语句。<br>但是在多线程程序中，可以按多个路径多个执行程序。 多线程使用较少的内存空间并共享相同的地址空间。 多线程用于一次执行多个任务。</p> 
+ <p>使用<code>thread.new</code>调用创建一个新线程。它与主线程的执行不同。</p> 
+ <h2 id="h2-u7EBFu7A0Bu521Du59CBu5316"><a name="线程初始化" class="reference-link"></a><span class="header-link octicon octicon-link"></span>线程初始化</h2>
+ <p>要创建一个新的线程Ruby提供了三个关键字，即<code>::new</code>，<code>::start</code>和<code>::fork</code>。</p> 
+ <p>要启动新线程，请将一个代码块调用<code>Thread.new</code>，<code>Thread.start</code>或<code>Thread.fork</code>相关联。这样线程将被创建，新的线程在块退出时退出。</p> 
+ <p><strong>语法：</strong></p> 
+ <pre><code class="lang-ruby"># Original thread runs  
+Thread.new {  
+  # New thread is created.  
+}  
+# Original thread runs
+</code></pre> 
+ <h2 id="h2-u7EBFu7A0Bu7EC8u6B62"><a name="线程终止" class="reference-link"></a><span class="header-link octicon octicon-link"></span>线程终止</h2>
+ <p>在Ruby中终止一个线程有不同的方法。 要退出给定的线程，使用类名 <code>::kill</code> 方法。</p> 
+ <p><strong>语法：</strong></p> 
+ <pre><code class="lang-ruby">thr = Thread.new { ... }  
+Thread.kill(thr)
+</code></pre> 
+ <h2 id="h2-ruby-"><a name="Ruby线程实例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>Ruby线程实例</h2>
+ <pre><code class="lang-ruby">#!/usr/bin/ruby
+# file : thread-example.rb
+
+th = Thread.new do #Here we start a new thread   
+  Thread.current['counter']=0   
+  5.times do |i| #loop starts and increases i each time   
+    Thread.current['counter']=i   
+    sleep 1   
+  end   
+  return nil   
+end   
+while th['counter'].to_i &lt; 4  do   
+=begin   
+th is the long running thread   
+and we can access the same variable   
+from inside the thread here   
+=end   
+  puts "Counter is #{th['counter']}"   
+  sleep 0.5   
+end   
+puts "Long running process finished!"
+</code></pre> 
+ <p>执行上面代码，输出以下结果 -</p> 
+ <pre><code>F:\worksp\ruby&gt;ruby thread-example.rb
+Counter is
+Counter is 0
+Counter is 1
+Counter is 1
+Counter is 2
+Counter is 2
+Counter is 3
+Counter is 3
+Long running process finished!
+
+F:\worksp\ruby&gt;
+</code></pre>
+ <h2 id="h2-u7EBFu7A0Bu751Fu547Du5468u671F"><a name="线程生命周期" class="reference-link"></a><span class="header-link octicon octicon-link"></span>线程生命周期</h2>
+ <p>线程创建完成后，无需启动线程。 它获得正确的CPU资源后自动运行。 块中的最后一个表达式是线程的值。 如果线程完全运行，则<code>value</code>方法返回线程值，否则，<code>value</code>方法阻塞，并在线程完成时返回。 线程类在运行查询和操作线程时定义了一些方法。</p> 
+ <p>通过调用线程的<code>Thread.join</code>方法，可以等待一个特定的线程完成。</p> 
+ <h2 id="h2-u7EBFu7A0Bu5F02u5E38u5904u7406"><a name="线程异常处理" class="reference-link"></a><span class="header-link octicon octicon-link"></span>线程异常处理</h2>
+ <p>线程可能也会有一些异常。异常发生在主线程以外的任何线程中，但这取决于<code>abort_on_exception</code>。 默认情况下，此选项始终为<code>false</code>。表示未处理的异常将静默地终止线程。 这可以通过将<code>abort_on_exception = true</code>或<code>$DEBUG</code>设置为<code>true</code>来更改。</p> 
+ <p>要处理异常，可以使用类的<code>::handle_interrupt</code>方法。 它将使用线程异步处理异常。</p> 
+ <h2 id="h2-u7EBFu7A0Bu53D8u91CFu548Cu8303u56F4"><a name="线程变量和范围" class="reference-link"></a><span class="header-link octicon octicon-link"></span>线程变量和范围</h2>
+ <p>在块上创建线程。 在块内创建的局部变量仅可在该块存在的线程中访问。</p> 
+ <p>Ruby线程类允许通过名称创建和访问线程局部变量。 线程对象像哈希一样处理，使用<code>[]=</code>写入元素，并使用<code>[]</code>读取它们。</p> 
+ <h2 id="h2-u7EBFu7A0Bu8C03u5EA6"><a name="线程调度" class="reference-link"></a><span class="header-link octicon octicon-link"></span>线程调度</h2>
+ <p>Ruby支持通过在程序中使用<code>::stop</code>和<code>::pass</code>方法调度线程。</p> 
+ <p>类的<code>::stop</code>方法将当前正在运行的线程置于休眠状态并调度另一个线程的执行。 一旦线程处于休眠状态，实例方法唤醒被用来标记线程符合调度条件。</p> 
+ <p>类的<code>::pass</code>方法尝试将执行传递给另一个线程。 这取决于操作系统运行的线程是否切换。</p> 
+ <p>线程优先级提供了根据优先级调度线程的操作。 高优先级线程首先安排执行。 它也取决于操作系统。 线程可以随着第一个动作增加或减少自己的优先级。</p> 
+ <h2 id="h2-u7EBFu7A0Bu6392u9664"><a name="线程排除" class="reference-link"></a><span class="header-link octicon octicon-link"></span>线程排除</h2>
+ <p>Ruby线程排除的状态，当两个线程共享相同的数据并且其中一个线程修改该数据时，需要确保在没有线程操作数据处于不一致的状态。 例如，银行服务器。 一个线程在账户中进行汇款，其他线程正在为客户生成月度报表。</p> 
+ <h2 id="h2-u516Cu5171u7C7Bu65B9u6CD5"><a name="公共类方法" class="reference-link"></a><span class="header-link octicon octicon-link"></span>公共类方法</h2>
+ <table> 
+  <thead> 
+   <tr> 
+    <th>方法</th> 
+    <th>描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>abort_on_exception</td> 
+    <td>它返回全局“异常中止”状态，默认值为<code>true</code>。 当它设置为<code>true</code>时，如果在任何线程中引发异常时，则所有线程将中止。</td> 
+   </tr> 
+   <tr> 
+    <td>abort_on_exception=</td> 
+    <td>当设置为<code>true</code>时，如果引发异常，所有线程将中止。 它返回新的状态。</td> 
+   </tr> 
+   <tr> 
+    <td>current</td> 
+    <td>它返回当前执行的线程。</td> 
+   </tr> 
+   <tr> 
+    <td>exclusive{block}</td> 
+    <td>它将块封装在一个单独的块中，返回块的值。</td> 
+   </tr> 
+   <tr> 
+    <td>exit</td> 
+    <td>它终止当前运行的线程并计划另一个线程运行。</td> 
+   </tr> 
+   <tr> 
+    <td>kill(thread)</td> 
+    <td>它使指定的线程退出。</td> 
+   </tr> 
+   <tr> 
+    <td><code>fork([args]*){args / block}</code></td> 
+    <td>它与<code>::new</code>方法基本相同。</td> 
+   </tr> 
+   <tr> 
+    <td>handle_interrupt(hash){…}</td> 
+    <td>更改异步中断时序。</td> 
+   </tr> 
+   <tr> 
+    <td>list</td> 
+    <td>返回可运行或停止的所有线程的线程对象数组。</td> 
+   </tr> 
+   <tr> 
+    <td>main</td> 
+    <td>返回主线程</td> 
+   </tr> 
+   <tr> 
+    <td><code>new{...}/ new(*args, &amp;proc)/ new(*args){/args/...}</code></td> 
+    <td>它创建一个执行给定块的新线程。</td> 
+   </tr> 
+   <tr> 
+    <td>pass</td> 
+    <td>它给线程调度程序一个提示，以将执行传递给另一个线程。 运行的线程可能会或可能不会根据操作系统进行切换。</td> 
+   </tr> 
+   <tr> 
+    <td>pending_interrupt?(error = nil)</td> 
+    <td>它返回异步队列是否为空?</td> 
+   </tr> 
+   <tr> 
+    <td><code>start([args]*){/args/block}</code></td> 
+    <td>它与<code>::new</code>方法基本相同。</td> 
+   </tr> 
+   <tr> 
+    <td>stop</td> 
+    <td>它停止执行当前线程，将其置于“睡眠”状态，并计划执行另一个线程。</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h2 id="h2-u516Cu5171u5B9Eu4F8Bu65B9u6CD5"><a name="公共实例方法" class="reference-link"></a><span class="header-link octicon octicon-link"></span>公共实例方法</h2>
+ <table> 
+  <thead> 
+   <tr> 
+    <th>方法</th> 
+    <th>描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>thr[sym]</td> 
+    <td>它使用字符串或符号名称返回局部变量的值。</td> 
+   </tr> 
+   <tr> 
+    <td>thr[sym]=</td> 
+    <td>它使用字符串或符号名称创建局部变量的值。</td> 
+   </tr> 
+   <tr> 
+    <td>abort_on_exception</td> 
+    <td>它返回第三个“异常中止”的状态。</td> 
+   </tr> 
+   <tr> 
+    <td>abort_on_exception=</td> 
+    <td>当设置为<code>true</code>时，如果在此<code>thr</code>中引发异常，所有线程将中止。</td> 
+   </tr> 
+   <tr> 
+    <td>add_trace_func(proc)</td> 
+    <td>添加<code>proc</code>作为跟踪的处理程序。</td> 
+   </tr> 
+   <tr> 
+    <td>alive?</td> 
+    <td>如果此<code>thr</code>运行或睡眠，则返回true。</td> 
+   </tr> 
+   <tr> 
+    <td>backtrace</td> 
+    <td>它返回目标的追溯目标。</td> 
+   </tr> 
+   <tr> 
+    <td><code>backtrace_locations(*args)</code></td> 
+    <td>它返回前面的目标的执行堆栈。</td> 
+   </tr> 
+   <tr> 
+    <td>exit/kill/terminate</td> 
+    <td>它终止<code>thr</code>并执行另一个线程运行。</td> 
+   </tr> 
+   <tr> 
+    <td>group</td> 
+    <td>它返回包含给定线程的<code>ThreadGroup</code>，或返回<code>nil</code>。</td> 
+   </tr> 
+   <tr> 
+    <td>inspect</td> 
+    <td>它将返回<code>thr</code>的字符串名称，id和状态。</td> 
+   </tr> 
+   <tr> 
+    <td>join</td> 
+    <td>调用线程将暂停执行并运行此<code>thr</code>。</td> 
+   </tr> 
+   <tr> 
+    <td>key?(sym)</td> 
+    <td>如果给定的字符串作为<code>thr</code>局部变量存在，则返回<code>true</code>。</td> 
+   </tr> 
+   <tr> 
+    <td>keys</td> 
+    <td>它返回一个<code>thr</code>局部变量名称的数组。</td> 
+   </tr> 
+   <tr> 
+    <td>pending_interrupt?(error=nil)</td> 
+    <td>判断返回目标线程的异步队列是否为空。</td> 
+   </tr> 
+   <tr> 
+    <td>priority</td> 
+    <td>它返回<code>thr</code>的优先级。</td> 
+   </tr> 
+   <tr> 
+    <td>priority=</td> 
+    <td>它将<code>thr</code>的优先级设置为一个整数。</td> 
+   </tr> 
+   <tr> 
+    <td>kill</td> 
+    <td>它与<code>exit</code>方法一样。</td> 
+   </tr> 
+   <tr> 
+    <td>raise</td> 
+    <td>它引发了给定线程的异常。</td> 
+   </tr> 
+   <tr> 
+    <td>run</td> 
+    <td>它唤醒了<code>thr</code>，使其可调度。</td> 
+   </tr> 
+   <tr> 
+    <td>safe_level</td> 
+    <td>它返回安全级别。</td> 
+   </tr> 
+   <tr> 
+    <td>set_trace_func(proc)</td> 
+    <td>它作为处理程序在<code>thr</code>上建立proc。</td> 
+   </tr> 
+   <tr> 
+    <td>status</td> 
+    <td>它返回<code>thr</code>的状态。</td> 
+   </tr> 
+   <tr> 
+    <td>stop?</td> 
+    <td>如果<code>thr</code>休眠或终止，则返回<code>true</code>。</td> 
+   </tr> 
+   <tr> 
+    <td>terminate</td> 
+    <td>它终止<code>thr</code>并计划另一个线程运行。</td> 
+   </tr> 
+   <tr> 
+    <td>thread_variable?(key)</td> 
+    <td>如果给定的字符串作为线程局部变量存在，则返回<code>true</code>。</td> 
+   </tr> 
+   <tr> 
+    <td>thread_variable_get(key)</td> 
+    <td>它返回已设置的线程局部变量的值。</td> 
+   </tr> 
+   <tr> 
+    <td>thread_variable_set(key, value)</td> 
+    <td>设置一个线程的局部键和值。</td> 
+   </tr> 
+   <tr> 
+    <td>thread_variable</td> 
+    <td>它返回线程局部变量的数组。</td> 
+   </tr> 
+   <tr> 
+    <td>value</td> 
+    <td>它等待<code>thr</code>完成，使用<code>join</code>并返回其值。</td> 
+   </tr> 
+   <tr> 
+    <td>wakeup</td> 
+    <td>使给定线程有资格进行调度，尽管它仍然可能在I/O上阻塞。</td> 
+   </tr> 
+  </tbody> 
+ </table>
+ <br>      
+</div></body></html>

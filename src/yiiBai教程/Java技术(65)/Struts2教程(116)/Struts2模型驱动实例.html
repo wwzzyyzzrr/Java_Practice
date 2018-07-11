@@ -1,0 +1,141 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Struts2模型驱动实例</h1><div style="width:100%;float:left;" class="article-content">   
+ <div> 
+  <div>
+    这里我们创建一个web工程为：struts2-modeldrive ，用于讲解演示Struts2模型驱动这一章内容的学习。 
+  </div> 
+ </div> 
+ <p> 如果一个动作实现了“模型驱动”- ModelDriven&nbsp;接口，它就获得了表单数据自动传输到对象的额外能力。请参见下面的完整的例子： </p> 
+ <h2> 1.&nbsp;域对象 </h2> 
+ <p> 一个顾客(customer)对象，有 setter 和 getter 方法。 </p> 
+ <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  background-color:#FFFFFF;"> <strong>Customer.java</strong> </p> 
+ <pre>package com.yiibai.common;
+
+public class Customer{
+	
+	String name;
+	int age;
+	
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public int getAge() {
+		return age;
+	}
+	public void setAge(int age) {
+		this.age = age;
+	}
+
+}</pre> 
+ <h2> 2. 动作 - Action </h2> 
+ <p> Action类，实现了模型驱动ModelDriven&nbsp;接口，声明getModel()方法返回客户的对象。当表单数据提交到这个动作，它会自动将表单数据传输到客户的属性。 </p> 
+ <div> 
+  <div>
+    客户对象必须手动初始化。 
+  </div> 
+ </div> 
+ <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  background-color:#FFFFFF;"> <strong>CustomerAction.java</strong> </p> 
+ <pre>package com.yiibai.common.action;
+
+import com.yiibai.common.Customer;
+import com.opensymphony.xwork2.ActionSupport;
+import com.opensymphony.xwork2.ModelDriven;
+ 
+public class CustomerAction extends ActionSupport 
+	implements ModelDriven{
+
+	//have to initialize it
+	Customer customer = new Customer();
+	
+	public String execute() throws Exception {
+	
+		return SUCCESS;
+		
+	}
+
+	public Object getModel() {
+		
+		return customer;
+		
+	}
+}</pre> 
+ <h2> 3. JSP页面 </h2> 
+ <div>
+   JSP页面的模型驱动(ModelDriven)的示范。 
+ </div> 
+ <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  background-color:#FFFFFF;"> <strong>addCustomer.jsp</strong> </p> 
+ <pre>&lt;%@ taglib prefix="s" uri="/struts-tags" %&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;/head&gt;
+ 
+&lt;body&gt;
+&lt;h1&gt;Struts 2 ModelDriven example&lt;/h1&gt;
+
+&lt;h2&gt;Add Customer&lt;/h2&gt;
+&lt;s:form  action="customerAction" &gt;
+  &lt;s:textfield name="name" label="Name" /&gt;
+  &lt;s:textfield name="age" label="Age" value=""/&gt;
+  &lt;s:submit /&gt;
+&lt;/s:form&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;</pre> 
+ <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  background-color:#FFFFFF;"> <strong>success.jsp</strong> </p> 
+ <pre>&lt;%@ taglib prefix="s" uri="/struts-tags" %&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;/head&gt;
+ 
+&lt;body&gt;
+&lt;h1&gt;Struts 2 ModelDriven example&lt;/h1&gt;
+
+&lt;h2&gt;Customer Details&lt;/h2&gt;
+Name : &lt;s:property value="name" /&gt;&lt;br&gt;
+Age : &lt;s:property value="age" /&gt;&lt;br&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;</pre> 
+ <h2 style="color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:24px;font-weight:500;background-color:#FFFFFF;"> 4. struts.xml </h2>   
+ <pre>&lt;?xml version="1.0" encoding="UTF-8" ?&gt;
+&lt;!DOCTYPE struts PUBLIC
+"-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+"http://struts.apache.org/dtds/struts-2.0.dtd"&gt;
+ 
+&lt;struts&gt;
+ 	&lt;constant name="struts.devMode" value="true" /&gt;
+ 	
+	&lt;package name="default" namespace="/" extends="struts-default"&gt;
+		
+		&lt;action name="addCustomerAction" 
+			class="com.yiibai.common.action.CustomerAction" &gt;
+		    &lt;result name="success"&gt;pages/addCustomer.jsp&lt;/result&gt;
+		&lt;/action&gt;
+	
+		&lt;action name="customerAction" 
+			class="com.yiibai.common.action.CustomerAction" &gt;
+		    &lt;result name="success"&gt;pages/success.jsp&lt;/result&gt;
+		&lt;/action&gt;
+		
+	&lt;/package&gt;
+	
+&lt;/struts&gt;</pre> 
+ <h2> 5. 示例 </h2> 
+ <p> 访问客户表，填写表格&nbsp;(name : “yiibai.com”, age ” “26”)&nbsp;并点击提交按钮，表单数据(name&nbsp;&amp;&nbsp;age)&nbsp;将自动转移到客户的属性(name&nbsp;&amp;&nbsp;age)&nbsp;(按属性名称匹配)。 </p> 
+ <p> http://localhost:8080/struts2-modeldrive/addCustomerAction.action </p> 
+ <p> <img src="/uploads/tutorial/20151113/1-1511131PF01K.png" alt=""> </p> 
+ <p> http://localhost:8080/struts2-modeldrive/customerAction.action </p> 
+ <div style="font-family:微软雅黑;font-size:14px;background-color:#FFFFFF;"> 
+  <img src="/uploads/tutorial/20151113/1-1511131PG6160.png" alt="">
+  <br> 
+ </div> 
+ <div style="font-family:微软雅黑;font-size:14px;background-color:#FFFFFF;"> 
+  <br> 
+ </div> 
+ <div style="font-family:微软雅黑;font-size:14px;background-color:#FFFFFF;"> 
+  <span style="background-color:inherit;"><span style="background-color:inherit;line-height:24px;">工程源代码下载 -&nbsp;<a target="_blank" href="http://pan.baidu.com/s/1hqxyjf2">http://pan.baidu.com/s/1hqxyjf2</a></span></span> 
+ </div>
+ <br>      
+</div></body></html>

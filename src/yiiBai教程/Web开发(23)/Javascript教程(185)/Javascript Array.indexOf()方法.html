@@ -1,0 +1,82 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Javascript Array.indexOf()方法</h1><div style="width:100%;float:left;" class="article-content">   
+ <p> JavaScript数组indexOf()方法返回在该给定元素可以数组中可以找到第一个索引，或如果它不存在返回-1。</p> 
+ <h2> 语法</h2> 
+ <pre style="'Courier New', monospace; font-size: 12px; ">
+<i>array</i>.indexOf(searchElement[, fromIndex]);</pre> 
+ <p> 下面是参数的详细信息：</p> 
+ <ul> 
+  <li> <p> <strong>searchElement&nbsp;: </strong>元素来定位数组</p> </li> 
+  <li> <p> <strong>fromIndex&nbsp;: </strong>索引在其处开始搜索。默认为0，即整个数组将被搜索。如果该指数大于或等于数组的长度，则返回-1。</p> </li> 
+ </ul> 
+ <h2> 返回值:</h2> 
+ <p> 返回找到的元素的索引</p> 
+ <h2> 兼容性：</h2> 
+ <p> 这种方法是一个JavaScript扩展到ECMA-262标准;因此它可能不存在在标准的其他实现。为了使它工作，你需要添加下面的脚本的顶部代码：</p> 
+ <pre style="'Courier New', monospace; font-size: 12px; ">
+if (!Array.prototype.indexOf)
+{
+  Array.prototype.indexOf = function(elt /*, from*/)
+  {
+    var len = this.length;
+
+    var from = Number(arguments[1]) || 0;
+    from = (from &lt; 0)
+         ? Math.ceil(from)
+         : Math.floor(from);
+    if (from &lt; 0)
+      from += len;
+
+    for (; from &lt; len; from++)
+    {
+      if (from in this &amp;&amp;
+          this[from] === elt)
+        return from;
+    }
+    return -1;
+  };
+}</pre> 
+ <h2> 例子：</h2> 
+ <pre style="'Courier New', monospace; font-size: 12px; ">
+&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;JavaScript Array indexOf Method&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;script type="text/javascript"&gt;
+if (!Array.prototype.indexOf)
+{
+  Array.prototype.indexOf = function(elt /*, from*/)
+  {
+    var len = this.length;
+
+    var from = Number(arguments[1]) || 0;
+    from = (from &lt; 0)
+         ? Math.ceil(from)
+         : Math.floor(from);
+    if (from &lt; 0)
+      from += len;
+
+    for (; from &lt; len; from++)
+    {
+      if (from in this &amp;&amp;
+          this[from] === elt)
+        return from;
+    }
+    return -1;
+  };
+}
+var index = [12, 5, 8, 130, 44].indexOf(8);
+document.write("index is : " + index ); 
+
+var index = [12, 5, 8, 130, 44].indexOf(13);
+document.write("&lt;br /&gt;index is : " + index ); 
+&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre> 
+ <p> 这将产生以下结果：</p>   
+ <pre style="'Courier New', monospace; font-size: 12px; ">
+index is : 2
+index is : -1 </pre> 
+ <p style="text-align: justify; verdana, helvetica, arial,  color: rgb(0, 0, 0);"> &nbsp;</p> 
+ <br>      
+</div></body></html>

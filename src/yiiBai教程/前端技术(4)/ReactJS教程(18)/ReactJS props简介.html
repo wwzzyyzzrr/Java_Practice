@@ -1,0 +1,111 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">ReactJS props简介</h1><div style="width:100%;float:left;" class="article-content">   
+ <p><code>props</code>和<code>state</code>的主要区别是<code>props</code>是不变的。 这就是为什么容器组件应该定义可以更新和更改的状态，而子组件只应该使用<code>props</code>来传递状态数据。</p> 
+ <h2 id="h2--props"><a name="使用props" class="reference-link"></a><span class="header-link octicon octicon-link"></span>使用props</h2>
+ <p>当我们在组件中需要不可变的数据时，可以在<code>main.js</code>中添加<code>props</code>到<code>reactDOM.render()</code>函数中，并在组件中使用它。</p> 
+ <p>文件：<em>App.jsx</em> -</p> 
+ <pre><code class="lang-js">import React from 'react';
+
+class App extends React.Component {
+   render() {
+      return (
+         &lt;div&gt;
+            &lt;h1&gt;{this.props.headerProp}&lt;/h1&gt;
+            &lt;h2&gt;{this.props.contentProp}&lt;/h2&gt;
+         &lt;/div&gt;
+      );
+   }
+}
+export default App;
+</code></pre> 
+ <p>文件：<em>main.js</em> - </p> 
+ <pre><code class="lang-js">import React from 'react';
+import ReactDOM from 'react-dom';
+import App from './App.jsx';
+
+ReactDOM.render(&lt;App headerProp = "Header from props..." contentProp = "Content
+   from props..."/&gt;, document.getElementById('app'));
+
+export default App;
+</code></pre> 
+ <p>这将产生以下结果 -<br><img src="http://www.yiibai.com/uploads/images/201801/0201/882090139_81581.png" alt=""></p> 
+ <h2 id="h2--props"><a name="默认props" class="reference-link"></a><span class="header-link octicon octicon-link"></span>默认props</h2>
+ <p>我们也可以直接在组件构造函数中设置默认属性值，而不是将其添加到<code>reactDom.render()</code>元素。</p> 
+ <p>文件：<em>App.jsx</em> - </p> 
+ <pre><code class="lang-js">import React from 'react';
+
+class App extends React.Component {
+   render() {
+      return (
+         &lt;div&gt;
+            &lt;h1&gt;{this.props.headerProp}&lt;/h1&gt;
+            &lt;h2&gt;{this.props.contentProp}&lt;/h2&gt;
+         &lt;/div&gt;
+      );
+   }
+}
+App.defaultProps = {
+   headerProp: "Header from props...",
+   contentProp:"Content from props..."
+}
+export default App;
+</code></pre> 
+ <p>文件：<em>main.js</em> - </p> 
+ <pre><code class="lang-js">import React from 'react';
+import ReactDOM from 'react-dom';
+import App from './App.jsx';
+
+ReactDOM.render(&lt;App/&gt;, document.getElementById('app'));
+</code></pre> 
+ <p>输出和以前一样 -<br><img src="http://www.yiibai.com/uploads/images/201801/0201/422090142_30004.png" alt=""></p> 
+ <h2 id="h2-state-props"><a name="State 和 Props" class="reference-link"></a><span class="header-link octicon octicon-link"></span>State 和 Props</h2>
+ <p>以下示例显示如何在应用程序中组合<code>State</code> 和 <code>Props</code>。 在父组件中设置状态并使用<code>Props</code>将其传递给组件树。 在<code>render</code>函数内部，设置了在子组件中使用的<code>headerProp</code>和<code>contentProp</code>。</p> 
+ <p>文件：<em>App.jsx</em> - </p>   
+ <pre><code class="lang-js">import React from 'react';
+
+class App extends React.Component {
+   constructor(props) {
+      super(props);
+      this.state = {
+         header: "Header from props...",
+         content: "Content from props..."
+      }
+   }
+   render() {
+      return (
+         &lt;div&gt;
+            &lt;Header headerProp = {this.state.header}/&gt;
+            &lt;Content contentProp = {this.state.content}/&gt;
+         &lt;/div&gt;
+      );
+   }
+}
+class Header extends React.Component {
+   render() {
+      return (
+         &lt;div&gt;
+            &lt;h1&gt;{this.props.headerProp}&lt;/h1&gt;
+         &lt;/div&gt;
+      );
+   }
+}
+class Content extends React.Component {
+   render() {
+      return (
+         &lt;div&gt;
+            &lt;h2&gt;{this.props.contentProp}&lt;/h2&gt;
+         &lt;/div&gt;
+      );
+   }
+}
+export default App;
+</code></pre> 
+ <p>文件：<em>main.js</em> -</p> 
+ <pre><code class="lang-js">import React from 'react';
+import ReactDOM from 'react-dom';
+import App from './App.jsx';
+
+ReactDOM.render(&lt;App/&gt;, document.getElementById('app'));
+</code></pre> 
+ <p>结果会和前面两个例子一样，唯一不同的是我们数据的来源，现在来自<code>state</code>。 当想更新它时，只需要更新状态，所有的子组件都会被更新。 更多关于这个在事件章节。<br><img src="http://www.yiibai.com/uploads/images/201801/0201/930090147_28038.png" alt=""></p>
+ <br>      
+</div></body></html>

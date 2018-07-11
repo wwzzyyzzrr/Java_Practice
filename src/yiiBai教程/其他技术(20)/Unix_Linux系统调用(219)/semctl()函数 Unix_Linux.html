@@ -1,0 +1,293 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">semctl()函数 Unix/Linux</h1><div style="width:100%;float:left;" class="article-content">   
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">semctl -&nbsp;</span>信号灯控制操作 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> 内容简介</h1> 
+ <table cellpadding="5" cellspacing="5" class="src" style="font-family: verdana, helvetica, arial, sans-serif;  border-color: rgb(170, 170, 170); width: 552px; background-color: rgb(241, 241, 241); border-collapse: collapse; padding-left: 5px; vertical-align: top; color: rgb(0, 0, 0);"> 
+  <tbody> 
+   <tr> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse;  border-color: rgb(170, 170, 170);"> <pre style="font-family: 'Courier New', monospace; font-size: 12px; margin-bottom: 0px;">
+<b>#include &lt;sys/types.h&gt;</b> 
+<b>#include &lt;sys/ipc.h&gt;</b> 
+<b>#include &lt;sys/sem.h&gt;</b> 
+</pre> <p style="text-align: justify;"> <b>int semctl(int </b><i>semid</i><b>, int </b><i>semnum</i><b>, int </b><i>cmd</i><b>, ...);</b></p> </td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> 描述</h1> 
+ <b style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">semctl</b>
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">() performs the control operation specified by&nbsp;</span>
+ <i style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">cmd</i>
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">&nbsp;on the semaphore set identified by&nbsp;</span>
+ <i style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">semid</i>
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">, or on the&nbsp;</span>
+ <i style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">semnum</i>
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">-th semaphore of that set. (The semaphores in a set are numbered starting at 0.)</span> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> This function has three or four arguments, depending on&nbsp;<i>cmd</i>. When there are four, the fourth has the type&nbsp;<i>union semun</i>. The&nbsp;<i>calling program</i>&nbsp;must define this union as follows:</p> 
+ <table cellpadding="5" cellspacing="5" class="src" style="font-family: verdana, helvetica, arial, sans-serif;  border-color: rgb(170, 170, 170); width: 552px; background-color: rgb(241, 241, 241); border-collapse: collapse; padding-left: 5px; vertical-align: top; color: rgb(0, 0, 0);"> 
+  <tbody> 
+   <tr> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse;  border-color: rgb(170, 170, 170);"> <pre style="font-family: 'Courier New', monospace; font-size: 12px; margin-bottom: 0px;">
+union semun {
+    int              val;    /* Value for SETVAL */
+    struct semid_ds *buf;    /* Buffer for IPC_STAT, IPC_SET */
+    unsigned short  *array;  /* Array for GETALL, SETALL */
+    struct seminfo  *__buf;  /* Buffer for IPC_INFO
+                                (Linux specific) */
+};
+</pre> </td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> The&nbsp;<i>semid_ds</i>&nbsp;data structure is defined in &lt;sys/sem.h&gt; as follows:</p> 
+ <table cellpadding="5" cellspacing="5" class="src" style="font-family: verdana, helvetica, arial, sans-serif;  border-color: rgb(170, 170, 170); width: 552px; background-color: rgb(241, 241, 241); border-collapse: collapse; padding-left: 5px; vertical-align: top; color: rgb(0, 0, 0);"> 
+  <tbody> 
+   <tr> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse;  border-color: rgb(170, 170, 170);"> <pre style="font-family: 'Courier New', monospace; font-size: 12px; margin-bottom: 0px;">
+struct semid_ds {
+    struct ipc_perm sem_perm;  /* Ownership and permissions
+    time_t          sem_otime; /* Last semop time */
+    time_t          sem_ctime; /* Last change time */
+    unsigned short  sem_nsems; /* No. of semaphores in set */
+};
+</pre> </td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> The&nbsp;<i>ipc_perm</i>&nbsp;structure is defined in &lt;sys/ipc.h&gt; as follows (the highlighted fields are settable using&nbsp;<b>IPC_SET</b>):</p> 
+ <table cellpadding="5" cellspacing="5" class="src" style="font-family: verdana, helvetica, arial, sans-serif;  border-color: rgb(170, 170, 170); width: 552px; background-color: rgb(241, 241, 241); border-collapse: collapse; padding-left: 5px; vertical-align: top; color: rgb(0, 0, 0);"> 
+  <tbody> 
+   <tr> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse;  border-color: rgb(170, 170, 170);"> <pre style="font-family: 'Courier New', monospace; font-size: 12px; margin-bottom: 0px;">
+struct ipc_perm {
+    key_t key;            /* Key supplied to semget() */
+    uid_t <b>uid</b>;            /* Effective UID of owner */
+    gid_t <b>gid</b>;            /* Effective GID of owner */
+    uid_t cuid;           /* Effective UID of creator */
+    gid_t cgid;           /* Effective GID of creator */
+    unsigned short <b>mode</b>;  /* Permissions */
+    unsigned short seq;   /* Sequence number */
+};
+
+</pre> </td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> Valid values for&nbsp;<i>cmd</i>&nbsp;are:</p> 
+ <table border="1" cellpadding="5" cellspacing="0" class="src" style="font-family: verdana, helvetica, arial, sans-serif; border: 1px solid rgb(170, 170, 170); width: 552px; background-color: rgb(241, 241, 241); border-collapse: collapse; padding-left: 5px; vertical-align: top; color: rgb(0, 0, 0);"> 
+  <tbody> 
+   <tr> 
+    <th style="background-color: rgb(205, 205, 205); border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" width="25%"> 标签</th> 
+    <th style="background-color: rgb(205, 205, 205); border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> 描述</th> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>IPC_STAT</b></td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" valign="bottom"> Copy information from the kernel data structure associated with<i>semid</i>&nbsp;into the&nbsp;<i>semid_ds</i>&nbsp;structure pointed to by&nbsp;<i>arg.buf</i>. The argument&nbsp;<i>semnum</i>&nbsp;is ignored. The calling process must have read permission on the semaphore set.</td> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>IPC_SET</b></td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" valign="bottom"> Write the values of some members of the&nbsp;<i>semid_ds</i>&nbsp;structure pointed to by&nbsp;<i>arg.buf</i>&nbsp;to the kernel data structure associated with this semaphore set, updating also its&nbsp;<i>sem_ctime</i>&nbsp;member. The following members of the structure are updated:<i>sem_perm.uid</i>,&nbsp;<i>sem_perm.gid</i>, and (the least significant 9 bits of)<i>sem_perm.mode</i>. The effective UID of the calling process must match the owner (<i>sem_perm.uid</i>) or creator (<i>sem_perm.cuid</i>) of the semaphore set, or the caller must be privileged. The argument&nbsp;<i>semnum</i>&nbsp;is ignored.</td> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>IPC_RMID</b></td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" valign="bottom"> Immediately remove the semaphore set, awakening all processes blocked in&nbsp;<b>semop</b>() calls on the set (with an error return and&nbsp;<i>errno</i>&nbsp;set to&nbsp;<b>EIDRM</b>). The effective user ID of the calling process must match the creator or owner of the semaphore set, or the caller must be privileged. The argument<i>semnum</i>&nbsp;is ignored.</td> 
+   </tr> 
+   <tr valign="top"> 
+    <td colspan="2" style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>IPC_INFO</b>&nbsp;(Linux specific)</td> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" width="12%"> &nbsp;</td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> Returns information about system-wide semaphore limits and parameters in the structure pointed to by&nbsp;<i>arg.__buf</i>. This structure is of type&nbsp;<i>seminfo</i>, defined in&nbsp;<i>&lt;sys/sem.h&gt;</i>&nbsp;if the _GNU_SOURCE feature test macro is defined: 
+     <table cellpadding="5" cellspacing="5" class="src" style=" border-color: rgb(170, 170, 170); width: 401px; border-collapse: collapse; padding-left: 5px; vertical-align: top;"> 
+      <tbody> 
+       <tr> 
+        <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse;  border-color: rgb(170, 170, 170);"> <pre style="font-family: 'Courier New', monospace; font-size: 12px; margin-bottom: 0px;">
+struct  seminfo {
+    int semmap;  /* # of entries in semaphore map;
+                    unused */
+    int semmni;  /* Max. # of semaphore sets */
+    int semmns;  /* Max. # of semaphores in all
+                    semaphore sets */
+    int semmnu;  /* System-wide max. # of undo
+                    structures; unused */
+    int semmsl;  /* Max. # of semaphores in a set */
+    int semopm;  /* Max. # of operations for semop() */
+    int semume;  /* Max. # of undo entries per
+                    process; unused */
+    int semusz;  /* size of struct sem_undo */
+    int semvmx;  /* Maximum semaphore value */
+    int semaem;  /* Max. value that can be recorded for
+                    semaphore adjustment (SEM_UNDO) */
+};
+
+</pre> </td> 
+       </tr> 
+      </tbody> 
+     </table> The&nbsp;<i>semmsl</i>,&nbsp;<i>semmns</i>,&nbsp;<i>semopm</i>, and&nbsp;<i>semmni</i>&nbsp;settings can be changed via&nbsp;<i>/proc/sys/kernel/sem</i>; see&nbsp;<b>proc</b>(5) for details.</td> 
+   </tr> 
+   <tr valign="top"> 
+    <td colspan="2" style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>SEM_INFO</b>&nbsp;(Linux specific)</td> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" width="12%"> &nbsp;</td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> Returns a&nbsp;<i>seminfo</i>&nbsp;structure containing the same information as for&nbsp;<b>IPC_INFO</b>, except that the following fields are returned with information about system resources consumed by semaphores: the&nbsp;<i>semusz</i>&nbsp;field returns the number of semaphore sets that currently exist on the system; and the&nbsp;<i>semaem</i>&nbsp;field returns the total number of semaphores in all semaphore sets on the system.</td> 
+   </tr> 
+   <tr valign="top"> 
+    <td colspan="2" style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>SEM_STAT</b>&nbsp;(Linux specific)</td> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" width="12%"> &nbsp;</td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> Returns a&nbsp;<i>semid_ds</i>&nbsp;structure as for&nbsp;<b>IPC_STAT</b>. However, the<i>semid</i>&nbsp;argument is not a semaphore identifier, but instead an index into the kernel’s internal array that maintains information about all semaphore sets on the system.</td> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>GETALL</b></td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" valign="bottom"> Return&nbsp;<b>semval</b>&nbsp;(i.e., the current value) for all semaphores of the set into&nbsp;<i>arg.array</i><b>.</b>&nbsp;The argument&nbsp;<i>semnum</i>&nbsp;is ignored. The calling process must have read permission on the semaphore set.</td> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>GETNCNT</b></td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" valign="bottom"> The system call returns the value of&nbsp;<b>semncnt</b>&nbsp;(i.e., the number of processes waiting for the value of this semaphore to increase) for the&nbsp;<i>semnum</i>-th semaphore of the set (i.e. the number of processes waiting for an increase of&nbsp;<b>semval</b>&nbsp;for the<i>semnum</i>-th semaphore of the set). The calling process must have read permission on the semaphore set.</td> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>GETPID</b></td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" valign="bottom"> The system call returns the value of&nbsp;<b>sempid</b>&nbsp;for the&nbsp;<i>semnum</i>-th semaphore of the set (i.e. the PID of the process that executed the last&nbsp;<b>semop</b>() call for the&nbsp;<i>semnum</i>-th semaphore of the set). The calling process must have read permission on the semaphore set.</td> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>GETVAL</b></td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" valign="bottom"> The system call returns the value of&nbsp;<b>semval</b>&nbsp;for the&nbsp;<i>semnum</i>-th semaphore of the set. The calling process must have read permission on the semaphore set.</td> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>GETZCNT</b></td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" valign="bottom"> The system call returns the value of&nbsp;<b>semzcnt</b>&nbsp;(i.e., the number of processes waiting for the value of this semaphore to become zero) for the&nbsp;<i>semnum</i>-th semaphore of the set (i.e. the number of processes waiting for&nbsp;<b>semval</b>&nbsp;of the&nbsp;<i>semnum</i>-th semaphore of the set to become 0). The calling process must have read permission on the semaphore set.</td> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>SETALL</b></td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" valign="bottom"> Set&nbsp;<b>semval</b>&nbsp;for all semaphores of the set using&nbsp;<i>arg.array</i><b>,</b>updating also the&nbsp;<i>sem_ctime</i>&nbsp;member of the&nbsp;<i>semid_ds</i>&nbsp;structure associated with the set. Undo entries (see&nbsp;<b>semop</b>(2)) are cleared for altered semaphores in all processes. If the changes to semaphore values would permit blocked&nbsp;<b>semop</b>() calls in other processes to proceed, then those processes are woken up. The argument&nbsp;<i>semnum</i>&nbsp;is ignored. The calling process must have alter (write) permission on the semaphore set.</td> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>SETVAL</b></td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" valign="bottom"> Set the value of&nbsp;<b>semval</b>&nbsp;to&nbsp;<i>arg.val</i>&nbsp;for the&nbsp;<i>semnum</i>-th semaphore of the set, updating also the&nbsp;<i>sem_ctime</i>&nbsp;member of the&nbsp;<i>semid_ds</i>&nbsp;structure associated with the set. Undo entries are cleared for altered semaphores in all processes. If the changes to semaphore values would permit blocked&nbsp;<b>semop</b>() calls in other processes to proceed, then those processes are woken up. The calling process must have alter permission on the semaphore set.</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> 返回值</h1> 
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">On failure&nbsp;</span>
+ <b style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">semctl</b>
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">() returns -1 with&nbsp;</span>
+ <i style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">errno</i>
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">&nbsp;indicating the error.</span> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> Otherwise the system call returns a nonnegative value depending on&nbsp;<i>cmd</i>&nbsp;as follows:</p> 
+ <table border="1" cellpadding="5" cellspacing="0" class="src" style="font-family: verdana, helvetica, arial, sans-serif; border: 1px solid rgb(170, 170, 170); width: 552px; background-color: rgb(241, 241, 241); border-collapse: collapse; padding-left: 5px; vertical-align: top; color: rgb(0, 0, 0);"> 
+  <tbody> 
+   <tr> 
+    <th style="background-color: rgb(205, 205, 205); border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" width="25%"> 标签</th> 
+    <th style="background-color: rgb(205, 205, 205); border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> 描述</th> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>GETNCNT</b></td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" valign="bottom"> the value of&nbsp;<b>semncnt</b>.</td> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>GETPID</b></td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" valign="bottom"> the value of&nbsp;<b>sempid</b>.</td> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>GETVAL</b></td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" valign="bottom"> the value of&nbsp;<b>semval</b>.</td> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>GETZCNT</b></td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" valign="bottom"> the value of&nbsp;<b>semzcnt</b>.</td> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>IPC_INFO</b></td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" valign="bottom"> the index of the highest used entry in the kernel’s internal array recording information about all semaphore sets. (This information can be used with repeated&nbsp;<b>SEM_STAT</b>&nbsp;operations to obtain information about all semaphore sets on the system.)</td> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>SEM_INFO</b></td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" valign="bottom"> As for&nbsp;<b>IPC_INFO</b>.</td> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>SEM_STAT</b></td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" valign="bottom"> the identifier of the semaphore set whose index was given in<i>semid</i>.</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">All other&nbsp;</span>
+ <i style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">cmd</i>
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">&nbsp;values return 0 on success.</span> 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> 错误</h1> 
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">On failure,&nbsp;</span>
+ <i style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">errno</i>
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">&nbsp;will be set to one of the following:</span> 
+ <table border="1" cellpadding="5" cellspacing="0" class="src" style="font-family: verdana, helvetica, arial, sans-serif; border: 1px solid rgb(170, 170, 170); width: 552px; background-color: rgb(241, 241, 241); border-collapse: collapse; padding-left: 5px; vertical-align: top; color: rgb(0, 0, 0);"> 
+  <tbody> 
+   <tr> 
+    <th style="background-color: rgb(205, 205, 205); border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" width="25%"> 标签</th> 
+    <th style="background-color: rgb(205, 205, 205); border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> 描述</th> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>EACCES</b></td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" valign="bottom"> The argument&nbsp;<i>cmd</i>&nbsp;has one of the values&nbsp;<b>GETALL</b>,&nbsp;<b>GETPID</b>,<b>GETVAL</b>,&nbsp;<b>GETNCNT</b>,&nbsp;<b>GETZCNT</b>,&nbsp;<b>IPC_STAT</b>,&nbsp;<b>SEM_STAT</b>,<b>SETALL</b>, or&nbsp;<b>SETVAL</b>&nbsp;and the calling process does not have the required permissions on the semaphore set and does not have the&nbsp;<b>CAP_IPC_OWNER</b>&nbsp;capability.</td> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>EFAULT</b></td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" valign="bottom"> The address pointed to by&nbsp;<i>arg.buf</i>&nbsp;or&nbsp;<i>arg.array</i>&nbsp;isn’t accessible.</td> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>EIDRM</b></td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" valign="bottom"> The semaphore set was removed.</td> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>EINVAL</b></td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" valign="bottom"> Invalid value for&nbsp;<i>cmd</i>&nbsp;or&nbsp;<i>semid</i>. Or: for a&nbsp;<b>SEM_STAT</b>&nbsp;operation, the index value specified in&nbsp;<i>semid</i>&nbsp;referred to an array slot that is currently unused.</td> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>EPERM</b></td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" valign="bottom"> The argument&nbsp;<i>cmd</i>&nbsp;has the value&nbsp;<b>IPC_SET</b>&nbsp;or&nbsp;<b>IPC_RMID</b>&nbsp;but the effective user ID of the calling process is not the creator (as found in&nbsp;<i>sem_perm.cuid</i>) or the owner (as found in<i>sem_perm.uid</i>) of the semaphore set, and the process does not have the&nbsp;<b>CAP_SYS_ADMIN</b>&nbsp;capability.</td> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>ERANGE</b></td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" valign="bottom"> The argument&nbsp;<i>cmd</i>&nbsp;has the value&nbsp;<b>SETALL</b>&nbsp;or&nbsp;<b>SETVAL</b>&nbsp;and the value to which&nbsp;<b>semval</b>&nbsp;is to be set (for some semaphore of the set) is less than 0 or greater than the implementation limit<b>SEMVMX</b>.</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> 注意</h1> 
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">The&nbsp;</span>
+ <b style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">IPC_INFO</b>
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">,&nbsp;</span>
+ <b style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">SEM_STAT</b>
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">&nbsp;and&nbsp;</span>
+ <b style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">SEM_INFO</b>
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">&nbsp;operations are used by the&nbsp;</span>
+ <b style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">ipcs</b>
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">(8) program to provide information on allocated resources. In the future these may modified or moved to a /proc file system interface.</span> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> Various fields in a&nbsp;<i>struct semid_ds</i>&nbsp;were shorts under Linux 2.2 and have become longs under Linux 2.4. To take advantage of this, a recompilation under glibc-2.1.91 or later should suffice. (The kernel distinguishes old and new calls by an IPC_64 flag in&nbsp;<i>cmd</i>.)</p> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> In some earlier versions of glibc, the&nbsp;<i>semun</i>&nbsp;union was defined in &lt;sys/sem.h&gt;, but POSIX.1-2001 requires that the caller define this union. On versions of glibc where this union is&nbsp;<i>not</i>&nbsp;defined, the macro&nbsp;<b>_SEM_SEMUN_UNDEFINED</b>&nbsp;is defined in &lt;sys/sem.h&gt;.</p> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> The following system limit on semaphore sets affects a&nbsp;<b>semctl</b>() call:</p> 
+ <table border="1" cellpadding="5" cellspacing="0" class="src" style="font-family: verdana, helvetica, arial, sans-serif; border: 1px solid rgb(170, 170, 170); width: 552px; background-color: rgb(241, 241, 241); border-collapse: collapse; padding-left: 5px; vertical-align: top; color: rgb(0, 0, 0);"> 
+  <tbody> 
+   <tr> 
+    <th style="background-color: rgb(205, 205, 205); border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" width="25%"> 标签</th> 
+    <th style="background-color: rgb(205, 205, 205); border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> 描述</th> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>SEMVMX</b></td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" valign="bottom"> Maximum value for&nbsp;<b>semval</b>: implementation dependent (32767).</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">For greater portability it is best to always call&nbsp;</span>
+ <b style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">semctl</b>
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">() with four arguments.</span> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> Under Linux,&nbsp;<b>semctl</b>() is not a system call, but is implemented via the system call&nbsp;<b>ipc</b>(2).</p> 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> 遵循于</h1> 
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">SVr4, POSIX.1-2001.</span> 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> 另请参阅</h1> 
+ <ul style="font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> 
+  <li> <p style="text-align: justify;"> <a target="_blank" href="http://www.yiibai.com/unix_system_calls/ipc.html" style="color: rgb(144, 11, 9); background-color: transparent;">ipc (2)</a></p> </li> 
+  <li> <p style="text-align: justify;"> <a target="_blank" href="http://www.yiibai.com/unix_system_calls/semget.html" style="color: rgb(144, 11, 9); background-color: transparent;">semget (2)</a></p> </li> 
+  <li> <p style="text-align: justify;"> <a target="_blank" href="http://www.yiibai.com/unix_system_calls/semop.html" style="color: rgb(144, 11, 9); background-color: transparent;">semop (2)</a></p> 
+   <div>
+     &nbsp;
+   </div> </li> 
+ </ul> 
+ <br>      
+</div></body></html>

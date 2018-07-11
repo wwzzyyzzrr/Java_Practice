@@ -1,0 +1,167 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Gson序列化内部类</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>在本章中，我们将解释具有内部类的类的序列化/反序列化。</p> 
+ <h2 id="h2-u5D4Cu5957u5185u90E8u7C7Bu793Au4F8B"><a name="嵌套内部类示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>嵌套内部类示例</h2>
+ <p>参考以下示例代码片段 - </p> 
+ <pre><code class="lang-java">Student student = new Student(); 
+student.setRollNo(1); 
+Student.Name name = student.new Name(); 
+name.firstName = "Max"; 
+name.lastName = "Su"; 
+
+student.setName(name); 
+//serialize inner class object 
+String nameString = gson.toJson(name); 
+System.out.println(nameString); 
+
+//deserialize inner class object   
+name = gson.fromJson(nameString,Student.Name.class); 
+System.out.println(name.getClass());
+</code></pre> 
+ <p><strong>示例</strong></p> 
+ <p>让我们来看看一个内部类的序列化/反序列化。 创建一个名为<code>GsonTester</code>的Java类文件:<em>GsonTester.java</em> - </p> 
+ <pre><code class="lang-java">import com.google.gson.Gson;  
+
+public class GsonTester { 
+   public static void main(String args[]) { 
+      Student student = new Student();  
+      student.setRollNo(1); 
+      Student.Name name = student.new Name(); 
+
+      name.firstName = "Mahesh"; 
+      name.lastName = "Kumar"; 
+      student.setName(name); 
+      Gson gson = new Gson(); 
+
+      String jsonString = gson.toJson(student); 
+      System.out.println(jsonString);  
+      student = gson.fromJson(jsonString, Student.class);  
+
+      System.out.println("Roll No: "+ student.getRollNo()); 
+      System.out.println("First Name: "+ student.getName().firstName); 
+      System.out.println("Last Name: "+ student.getName().lastName);  
+
+      String nameString = gson.toJson(name); 
+      System.out.println(nameString);  
+
+      name = gson.fromJson(nameString,Student.Name.class); 
+      System.out.println(name.getClass()); 
+      System.out.println("First Name: "+ name.firstName); 
+      System.out.println("Last Name: "+ name.lastName); 
+   }      
+}  
+class Student { 
+   private int rollNo; 
+   private Name name;  
+
+   public int getRollNo() { 
+      return rollNo; 
+   }  
+   public void setRollNo(int rollNo) { 
+      this.rollNo = rollNo; 
+   }  
+   public Name getName() { 
+      return name; 
+   } 
+   public void setName(Name name) { 
+      this.name = name; 
+   } 
+   class Name { 
+      public String firstName; 
+      public String lastName; 
+   } 
+}
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 - </p> 
+ <pre><code class="lang-shell">{"rollNo":1,"name":{"firstName":"Max","lastName":"Su"}} 
+Roll No: 1 
+First Name: Max 
+Last Name: Su 
+{"firstName":"Max","lastName":"Su"} 
+class Student$Name 
+First Name: Max 
+Last Name: Su
+</code></pre> 
+ <h2 id="h2-u5D4Cu5957u7684u9759u6001u5185u90E8u7C7Bu793Au4F8B"><a name="嵌套的静态内部类示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>嵌套的静态内部类示例</h2>
+ <p>参考以下代码实现 - </p> 
+ <pre><code class="lang-java">Student student = new Student(); 
+student.setRollNo(1); 
+Student.Name name = new Student.Name(); 
+
+name.firstName = "Mahesh"; 
+name.lastName = "Kumar"; 
+student.setName(name); 
+
+//serialize static inner class object 
+String nameString = gson.toJson(name); 
+System.out.println(nameString); 
+
+//deserialize static inner class object   
+name = gson.fromJson(nameString,Student.Name.class); 
+System.out.println(name.getClass());
+</code></pre> 
+ <p><strong>示例</strong></p> 
+ <p>我们来看一个实例，其中包含一个静态内部类的序列化/反序列化。 创建一个名为<code>GsonTester</code>的Java类文件:<em>GsonTester.java</em> - </p>   
+ <pre><code class="lang-java">import com.google.gson.Gson;  
+
+public class GsonTester { 
+   public static void main(String args[]) { 
+      Student student = new Student();  
+      student.setRollNo(1); 
+      Student.Name name = new Student.Name(); 
+
+      name.firstName = "Max"; 
+      name.lastName = "Su";  
+      student.setName(name); 
+
+      Gson gson = new Gson(); 
+      String jsonString = gson.toJson(student); 
+      System.out.println(jsonString);  
+      student = gson.fromJson(jsonString, Student.class);  
+
+      System.out.println("Roll No: "+ student.getRollNo()); 
+      System.out.println("First Name: "+ student.getName().firstName); 
+      System.out.println("Last Name: "+ student.getName().lastName);  
+      String nameString = gson.toJson(name); 
+      System.out.println(nameString);  
+
+      name = gson.fromJson(nameString,Student.Name.class); 
+      System.out.println(name.getClass()); 
+      System.out.println("First Name: "+ name.firstName); 
+      System.out.println("Last Name: "+ name.lastName); 
+   }      
+}  
+class Student { 
+   private int rollNo; 
+   private Name name;  
+
+   public int getRollNo() { 
+      return rollNo; 
+   }  
+   public void setRollNo(int rollNo) { 
+      this.rollNo = rollNo; 
+   }  
+   public Name getName() { 
+      return name; 
+   }  
+   public void setName(Name name) { 
+      this.name = name; 
+   } 
+   static class Name { 
+      public String firstName; 
+      public String lastName; 
+   } 
+} 
+Verify the resul
+</code></pre> 
+ <p>执行上面示例代码，得到以下输出结果 - </p> 
+ <pre><code class="lang-shell">{"rollNo":1,"name":{"firstName":"Max","lastName":"Su"}} 
+Roll No: 1 
+First Name: Max 
+Last Name: Su 
+{"firstName":"Max","lastName":"Su"} 
+class Student$Name 
+First Name: Max 
+Last Name: Su
+</code></pre>
+ <br>      
+</div></body></html>

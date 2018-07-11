@@ -1,0 +1,232 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Java RMI图形界面应用程序</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>在上一章中，我们创建了一个RMI应用程序的示例。 在本章中，我们将介绍如何创建一个客户端调用显示GUI窗口(基于JavaFX)的RMI应用程序。</p> 
+ <h2 id="h2-u5B9Au4E49u8FDCu7A0Bu63A5u53E3"><a name="定义远程接口" class="reference-link"></a><span class="header-link octicon octicon-link"></span>定义远程接口</h2>
+ <p>在这里，首先定义一个名称为<code>Hello</code>的远程接口，此接口中有一个名称为<code>animation()</code>的方法。</p> 
+ <pre><code class="lang-java">import java.rmi.Remote; 
+import java.rmi.RemoteException;  
+
+// Creating Remote interface for our application 
+public interface Hello extends Remote { 
+   void animation() throws RemoteException; 
+}
+</code></pre> 
+ <h2 id="h2-u5F00u53D1u5B9Eu73B0u7C7B"><a name="开发实现类" class="reference-link"></a><span class="header-link octicon octicon-link"></span>开发实现类</h2>
+ <p>在本应用程序的<code>Implementation</code>类(远程对象)中，将创建一个使用JavaFX显示GUI内容的窗口。创建一个Java源代码文件：<em>FxSample.java</em>，其代码如下所示 - </p> 
+ <pre><code class="lang-java">import javafx.animation.RotateTransition;  
+import javafx.application.Application;  
+import javafx.event.EventHandler;   
+
+import javafx.scene.Group;  
+import javafx.scene.PerspectiveCamera;  
+import javafx.scene.Scene;  
+import javafx.scene.control.TextField;  
+import javafx.scene.input.KeyEvent;  
+import javafx.scene.paint.Color;  
+import javafx.scene.paint.PhongMaterial; 
+
+import javafx.scene.shape.Box;  
+import javafx.scene.text.Font;  
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;   
+import javafx.scene.transform.Rotate;  
+
+import javafx.stage.Stage;  
+import javafx.util.Duration;  
+
+// Implementing the remote interface 
+public class FxSample extends Application implements Hello {  
+   @Override  
+   public void start(Stage stage) { 
+      // Drawing a Box  
+      Box box = new Box();  
+
+      // Setting the properties of the Box  
+      box.setWidth(150.0);  
+      box.setHeight(150.0);    
+      box.setDepth(100.0);  
+
+      // Setting the position of the box  
+      box.setTranslateX(350);   
+      box.setTranslateY(150);  
+      box.setTranslateZ(50);  
+
+      // Setting the text  
+      Text text = new Text(
+         "Type any letter to rotate the box, and click on the box to stop the rotation");
+
+      // Setting the font of the text  
+      text.setFont(Font.font(null, FontWeight.BOLD, 15));      
+
+      // Setting the color of the text  
+      text.setFill(Color.CRIMSON);  
+
+      // Setting the position of the text  
+      text.setX(20);  
+      text.setY(50); 
+
+      // Setting the material of the box  
+      PhongMaterial material = new PhongMaterial();   
+      material.setDiffuseColor(Color.DARKSLATEBLUE);   
+
+      // Setting the diffuse color material to box  
+      box.setMaterial(material);        
+
+      // Setting the rotation animation to the box     
+      RotateTransition rotateTransition = new RotateTransition();  
+
+      // Setting the duration for the transition  
+      rotateTransition.setDuration(Duration.millis(1000));  
+
+      // Setting the node for the transition  
+      rotateTransition.setNode(box);        
+
+      // Setting the axis of the rotation  
+      rotateTransition.setAxis(Rotate.Y_AXIS);  
+
+      // Setting the angle of the rotation 
+      rotateTransition.setByAngle(360);  
+
+      // Setting the cycle count for the transition  
+      rotateTransition.setCycleCount(50);  
+
+      // Setting auto reverse value to false  
+      rotateTransition.setAutoReverse(false);   
+
+      // Creating a text filed  
+      TextField textField = new TextField();    
+
+      // Setting the position of the text field  
+      textField.setLayoutX(50);  
+      textField.setLayoutY(100);  
+
+      // Handling the key typed event  
+      EventHandler&lt;KeyEvent&gt; eventHandlerTextField = new EventHandler&lt;KeyEvent&gt;() {  
+         @Override  
+         public void handle(KeyEvent event) {  
+            // Playing the animation  
+            rotateTransition.play();  
+         }            
+      };               
+
+      // Adding an event handler to the text feld  
+      textField.addEventHandler(KeyEvent.KEY_TYPED, eventHandlerTextField);  
+
+      // Handling the mouse clicked event(on box)  
+      EventHandler&lt;javafx.scene.input.MouseEvent&gt; eventHandlerBox =  
+         new EventHandler&lt;javafx.scene.input.MouseEvent&gt;() {  
+         @Override  
+         public void handle(javafx.scene.input.MouseEvent e) {  
+            rotateTransition.stop();   
+         }  
+      };  
+
+      // Adding the event handler to the box   
+      box.addEventHandler(javafx.scene.input.MouseEvent.MOUSE_CLICKED, eventHandlerBox); 
+
+      // Creating a Group object 
+      Group root = new Group(box, textField, text);  
+
+      // Creating a scene object  
+      Scene scene = new Scene(root, 600, 300);       
+
+      // Setting camera  
+      PerspectiveCamera camera = new PerspectiveCamera(false);  
+      camera.setTranslateX(0);  
+      camera.setTranslateY(0);  
+      camera.setTranslateZ(0);  
+      scene.setCamera(camera);   
+
+      // Setting title to the Stage
+      stage.setTitle("Event Handlers Example");  
+
+      // Adding scene to the stage  
+      stage.setScene(scene);  
+
+      // Displaying the contents of the stage  
+      stage.show();  
+   }  
+
+   // Implementing the interface method 
+   public void animation() {  
+      launch();  
+   }  
+}
+</code></pre> 
+ <h2 id="h2-u670Du52A1u5668u7A0Bu5E8F"><a name="服务器程序" class="reference-link"></a><span class="header-link octicon octicon-link"></span>服务器程序</h2>
+ <p>RMI服务器程序应实现远程接口或扩展实现类。 在这里，应该创建一个远程对象并将其绑定到<code>RMIregistry</code>。</p> 
+ <p>以下是本应用程序的服务器程序。在这里，我们将扩展上述创建的类，创建一个远程对象，并使用绑定名称：<em>hello</em> 将其注册到RMI注册表。创建一个Java源代码文件：<em>Server.java</em>，其代码如下所示 - </p>   
+ <pre><code class="lang-java">import java.rmi.registry.Registry; 
+import java.rmi.registry.LocateRegistry; 
+import java.rmi.RemoteException; 
+import java.rmi.server.UnicastRemoteObject; 
+
+public class Server extends FxSample { 
+   public Server() {} 
+   public static void main(String args[]) { 
+      try { 
+         // Instantiating the implementation class 
+         FxSample obj = new FxSample();
+
+         // Exporting the object of implementation class  
+         // (here we are exporting the remote object to the stub) 
+         Hello stub = (Hello) UnicastRemoteObject.exportObject(obj, 0);  
+
+         // Binding the remote object (stub) in the registry 
+         Registry registry = LocateRegistry.getRegistry(); 
+
+         registry.bind("Hello", stub);  
+         System.err.println("Server ready"); 
+      } catch (Exception e) { 
+         System.err.println("Server exception: " + e.toString()); 
+         e.printStackTrace(); 
+      } 
+   } 
+}
+</code></pre> 
+ <h2 id="h2-u5BA2u6237u7AEFu7A0Bu5E8F"><a name="客户端程序" class="reference-link"></a><span class="header-link octicon octicon-link"></span>客户端程序</h2>
+ <p>以下是本应用程序的客户端程序。 在这里，我们提取远程对象并调用其<code>animation()</code>方法。创建一个Java源代码文件：<em>Client.java</em>，其代码如下所示 - </p> 
+ <pre><code class="lang-java">import java.rmi.registry.LocateRegistry; 
+import java.rmi.registry.Registry;  
+
+public class Client { 
+   private Client() {} 
+   public static void main(String[] args) {  
+      try { 
+         // Getting the registry 
+         Registry registry = LocateRegistry.getRegistry(null); 
+
+         // Looking up the registry for the remote object 
+         Hello stub = (Hello) registry.lookup("Hello"); 
+
+         // Calling the remote method using the obtained object 
+         stub.animation(); 
+
+         System.out.println("Remote method invoked"); 
+      } catch (Exception e) {
+         System.err.println("Client exception: " + e.toString()); 
+         e.printStackTrace(); 
+      } 
+   } 
+}
+</code></pre> 
+ <h2 id="h2-u8FD0u884Cu793Au4F8Bu7684u6B65u9AA4"><a name="运行示例的步骤" class="reference-link"></a><span class="header-link octicon octicon-link"></span>运行示例的步骤</h2>
+ <p>以下是运行RMI示例的步骤。</p> 
+ <p><strong>第一步</strong> - 打开存储所有程序的文件夹，并编译所有Java文件，如下所示。</p> 
+ <pre><code class="lang-java">F:\worksp\java_rmi\java-gui&gt;javac *.java
+F:\worksp\java_rmi\java-gui&gt;
+</code></pre> 
+ <p><strong>第二步</strong> - 使用以下命令启动rmi注册表。</p> 
+ <pre><code class="lang-shell">start rmiregistry
+</code></pre> 
+ <p>这将在单独的窗口中启动一个rmi注册表，如下所示。</p> 
+ <p><strong>第三步</strong> - 运行服务器类文件，如下所示。</p> 
+ <pre><code class="lang-shell">F:\worksp\java_rmi\java-gui&gt;java Server
+Server ready
+</code></pre> 
+ <p><strong>第四步</strong> - 运行客户端类文件，如下所示。</p> 
+ <pre><code class="lang-shell">F:\worksp\java_rmi\java-gui&gt; java Client
+</code></pre> 
+ <p><strong>验证调用结果</strong> - 当启动客户端以后，将在服务器中看到启动一个图形界面，如下所示 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201707/1607/324090744_50954.png" alt=""></p>
+ <br>      
+</div></body></html>

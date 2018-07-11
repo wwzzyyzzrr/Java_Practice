@@ -1,0 +1,33 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Firebase数组</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>本章将解释数组在Firebase中如何表示。 参考以几下数据 -<br><img src="http://www.yiibai.com/uploads/images/201802/0202/635170202_28551.png" alt=""></p> 
+ <p>我们可以通过将以下JSON树发送给<code>players</code>集合来创建这些数据。</p> 
+ <pre><code class="lang-html">&lt;!DOCTYPE html&gt;
+&lt;html lang="zh"&gt;
+    &lt;head&gt;
+        &lt;meta charset="utf-8" /&gt;
+        &lt;title&gt;FireBase Example&lt;/title&gt;
+        &lt;script src="https://www.gstatic.com/firebasejs/4.9.1/firebase.js"&gt;&lt;/script&gt;
+        &lt;script&gt;
+          // Initialize Firebase
+          var config = {
+            apiKey: "AIzaSyAOSPYpgn7T_bKa6VbCaSeQlsw-3p3zqDs",
+            authDomain: "yiibai-firebase.firebaseapp.com",
+            databaseURL: "https://yiibai-firebase.firebaseio.com/",
+            projectId: "yiibai-firebase",
+            storageBucket: "yiibai-firebase.appspot.com",
+            messagingSenderId: "334522625008"
+          };
+          firebase.initializeApp(config);
+          var playersRef = firebase.database().ref().child('players');
+          // console.log(playersRef);
+          playersRef.set (
+               ['john', 'amanda']
+            );
+        &lt;/script&gt;
+    &lt;/head&gt;
+&lt;body&gt;
+</code></pre> 
+ <p>这是因为Firebase不直接支持数组，而是使用整数作为键名创建对象列表。<br>不使用数组的原因是因为Firebase充当实时数据库，如果有几个用户同时操作数组，结果可能会有问题，因为数组索引不断变化。</p> 
+ <p>Firebase处理数组的方式是:键(索引)将始终保持不变。 我们可以删除<strong>john</strong> 和 <strong>amanda</strong>，但仍然有键(索引)<code>1</code>。</p>
+ <br>      
+</div></body></html>

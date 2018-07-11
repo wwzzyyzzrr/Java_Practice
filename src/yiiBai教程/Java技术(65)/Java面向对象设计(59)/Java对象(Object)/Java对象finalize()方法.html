@@ -1,0 +1,50 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Java对象finalize()方法</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>Java提供了一种在对象即将被销毁时执行资源释放的方法。在Java中创建对象，但是不能销毁对象。JVM运行一个称为垃圾收集器的低优先级特殊任务来销毁不再引用的所有对象。</p> 
+ <p>垃圾回收器给我们一个机会，在对象被销毁之前执行清理代码。<code>Object</code>类有一个<code>finalize()</code>方法就是用于在对象被销毁之前执行清理代码，声明如下：</p> 
+ <pre><code class="lang-java">protected void  finalize() throws   Throwable  {  }
+</code></pre> 
+ <p><code>Object</code>类中的<code>finalize()</code>方法不会做任何事情。所以需要覆盖类中的<code>finalize()</code>方法。类的<code>finalize()</code>方法将在类的对象销毁之前由垃圾回收器调用。</p> 
+ <h2 id="h2-u793Au4F8B"><a name="示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例</h2>
+ <p>以下代码显示了如何创建一个<code>Finalize</code>类覆盖对象类的<code>finalize()</code>方法。</p> 
+ <pre><code class="lang-java">class Finalize {
+  private int x;
+  public Finalize(int x) {
+    this.x = x;
+  }
+  public void finalize() {
+    System.out.println("Finalizing " + this.x);
+  }
+}
+public class Main {
+  public static void main(String[] args) {
+    for (int i = 0; i &lt; 20; i++) {
+        Finalize f= new Finalize(i);
+        f.finalize();// 可显示的调用
+    }
+  }
+}
+</code></pre> 
+ <p>上面的代码生成以下结果。</p>   
+ <pre><code class="lang-java">Finalizing 0
+Finalizing 1
+Finalizing 2
+Finalizing 3
+Finalizing 4
+Finalizing 5
+Finalizing 6
+Finalizing 7
+Finalizing 8
+Finalizing 9
+Finalizing 10
+Finalizing 11
+Finalizing 12
+Finalizing 13
+Finalizing 14
+Finalizing 15
+Finalizing 16
+Finalizing 17
+Finalizing 18
+Finalizing 19
+</code></pre>
+ <br>      
+</div></body></html>

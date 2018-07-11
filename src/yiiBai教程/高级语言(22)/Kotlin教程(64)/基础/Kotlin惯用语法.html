@@ -1,0 +1,187 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Kotlin惯用语法</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>Kotlin中有很多经常使用惯用语法，如果你有一个最喜欢的惯用语法，那就贡献它吧。 做一个拉请求。</p> 
+ <p><strong>创建DTO(POJO/POCO)</strong></p> 
+ <pre><code class="lang-kt">data class Customer(val name: String, val email: String)
+</code></pre> 
+ <p>假设<code>Customer</code>类提供以下功能：</p> 
+ <ul> 
+  <li>所有属性的<code>getter</code>和<code>setter</code></li>
+  <li><code>equals()</code>方法</li>
+  <li><code>hashCode()</code>方法</li>
+  <li><code>toString()</code>方法</li>
+  <li><code>copy()</code>方法</li>
+  <li>对于所有属性有<code>component1()</code>, <code>component2()</code>, …(请参阅<a target="_blank" href="http://www.yiibai.com/kotlin/data-classes.html" title="数据类">数据类</a>)</li>
+ </ul> 
+ <p>函数参数的默认值</p> 
+ <pre><code class="lang-kt">fun foo(a: Int = 0, b: String = "") { ... }
+</code></pre> 
+ <p>过滤列表</p> 
+ <pre><code class="lang-kt">val positives = list.filter { x -&gt; x &gt; 0 }
+</code></pre> 
+ <p>或者，甚至可以写得更短一些：</p> 
+ <pre><code class="lang-kt">val positives = list.filter { it &gt; 0 }
+</code></pre> 
+ <p>字符串插值</p> 
+ <pre><code class="lang-kt">println("Name $name")
+</code></pre> 
+ <p>实例检查</p> 
+ <pre><code class="lang-kt">when (x) {
+    is Foo -&gt; ...
+    is Bar -&gt; ...
+    else   -&gt; ...
+}
+</code></pre> 
+ <p>遍历映射/列表对</p> 
+ <pre><code class="lang-kt">for ((k, v) in map) {
+    println("$k -&gt; $v")
+}
+</code></pre> 
+ <p><code>k</code>，<code>v</code>可以是任何东西。</p> 
+ <p>使用范围</p> 
+ <pre><code class="lang-kt">for (i in 1..100) { ... }  // closed range: includes 100
+for (i in 1 until 100) { ... } // half-open range: does not include 100
+for (x in 2..10 step 2) { ... }
+for (x in 10 downTo 1) { ... }
+if (x in 1..10) { ... }
+</code></pre> 
+ <p>只读列表</p> 
+ <pre><code class="lang-kt">val list = listOf("a", "b", "c")
+</code></pre> 
+ <p>只读映射</p> 
+ <pre><code class="lang-kt">val map = mapOf("a" to 1, "b" to 2, "c" to 3)
+</code></pre> 
+ <p>访问映射</p> 
+ <pre><code class="lang-kt">println(map["key"]) // 打印值
+map["key"] = value // 设置值
+</code></pre> 
+ <p>懒属性</p> 
+ <pre><code class="lang-kt">val p: String by lazy {
+    // compute the string
+}
+</code></pre> 
+ <p>扩展函数</p> 
+ <pre><code class="lang-kt">fun String.spaceToCamelCase() { ... }
+
+"Convert this to camelcase".spaceToCamelCase()
+</code></pre> 
+ <p>创建单例</p> 
+ <pre><code class="lang-kt">object Resource {
+    val name = "Name"
+}
+</code></pre> 
+ <p>如果不为<code>null</code>的速记</p> 
+ <pre><code class="lang-kt">val files = File("Test").listFiles()
+
+println(files?.size)
+</code></pre> 
+ <p>如果不为<code>null</code>和<code>else</code>的速记</p> 
+ <pre><code class="lang-kt">val files = File("Test").listFiles()
+
+println(files?.size ?: "empty")
+</code></pre> 
+ <p>如果为<code>null</code>,执行语句</p> 
+ <pre><code class="lang-kt">val data = ...
+val email = data["email"] ?: throw IllegalStateException("Email is missing!")
+</code></pre> 
+ <p>如果不为<code>null</code>,执行语句</p> 
+ <pre><code class="lang-kt">val data = ...
+
+data?.let {
+    ... // execute this block if not null
+}
+</code></pre> 
+ <p>在 <code>when</code> 语句上返回</p> 
+ <pre><code class="lang-kt">fun transform(color: String): Int {
+    return when (color) {
+        "Red" -&gt; 0
+        "Green" -&gt; 1
+        "Blue" -&gt; 2
+        else -&gt; throw IllegalArgumentException("Invalid color param value")
+    }
+}
+</code></pre> 
+ <p><code>try/catch</code> 表达式</p>   
+ <pre><code class="lang-kt">fun test() {
+    val result = try {
+        count()
+    } catch (e: ArithmeticException) {
+        throw IllegalStateException(e)
+    }
+
+    // Working with result
+}
+</code></pre> 
+ <p><code>if</code>表达式</p> 
+ <pre><code class="lang-kt">fun foo(param: Int) {
+    val result = if (param == 1) {
+        "one"
+    } else if (param == 2) {
+        "two"
+    } else {
+        "three"
+    }
+}
+</code></pre> 
+ <p>方法生成器风格的使用返回<code>Unit</code></p> 
+ <pre><code class="lang-kt">fun arrayOfMinusOnes(size: Int): IntArray {
+    return IntArray(size).apply { fill(-1) }
+}
+</code></pre> 
+ <p>单表达式函数</p> 
+ <pre><code class="lang-kt">fun theAnswer() = 42
+</code></pre> 
+ <p>这相当于 - </p> 
+ <pre><code class="lang-kt">fun theAnswer(): Int {
+    return 42
+}
+</code></pre> 
+ <p>这可以与其他惯用语法有效结合，从而代码更短。 例如，与<code>when-expression</code>结合：</p> 
+ <pre><code class="lang-kt">fun transform(color: String): Int = when (color) {
+    "Red" -&gt; 0
+    "Green" -&gt; 1
+    "Blue" -&gt; 2
+    else -&gt; throw IllegalArgumentException("Invalid color param value")
+}
+</code></pre> 
+ <p>在对象实例上调用多个方法(‘with’)</p> 
+ <pre><code class="lang-kt">class Turtle {
+    fun penDown()
+    fun penUp()
+    fun turn(degrees: Double)
+    fun forward(pixels: Double)
+}
+
+val myTurtle = Turtle()
+with(myTurtle) { //draw a 100 pix square
+    penDown()
+    for(i in 1..4) {
+        forward(100.0)
+        turn(90.0)
+    }
+    penUp()
+}
+</code></pre> 
+ <p>Java 7的<code>try</code>与资源的用法</p> 
+ <pre><code class="lang-kt">val stream = Files.newInputStream(Paths.get("/some/file.txt"))
+stream.buffered().reader().use { reader -&gt;
+    println(reader.readText())
+}
+</code></pre> 
+ <p>需要通用类型信息的通用函数的方便形式</p> 
+ <pre><code class="lang-kt">//  public final class Gson {
+//     ...
+//     public &lt;T&gt; T fromJson(JsonElement json, Class&lt;T&gt; classOfT) throws JsonSyntaxException {
+//     ...
+
+inline fun &lt;reified T: Any&gt; Gson.fromJson(json): T = this.fromJson(json, T::class.java)
+</code></pre> 
+ <p>使用可空的布尔值</p> 
+ <pre><code class="lang-kt">val b: Boolean? = ...
+if (b == true) {
+    ...
+} else {
+    // `b` is false or null
+}
+</code></pre>
+ <br>      
+</div></body></html>

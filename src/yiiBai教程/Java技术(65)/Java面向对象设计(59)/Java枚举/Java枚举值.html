@@ -1,0 +1,104 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Java枚举值</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>枚举类型定义了两件事：</p> 
+ <ul> 
+  <li>枚举常量名称</li>
+  <li>常量的顺序</li>
+ </ul> 
+ <p>以下代码声明了一个名为<code>Level</code>的公共枚举类型，它具有四个枚举常量：<code>LOW</code>，<code>MEDIUM</code>，<code>HIGH</code> 和 <code>URGENT</code>。</p> 
+ <pre><code class="lang-java">public enum Level {
+    LOW,  MEDIUM,  HIGH, URGENT;
+}
+</code></pre> 
+ <p><code>Level</code>枚举类型定义了四个枚举常量。<br>级别枚举类型的变量只能是以下四个值之一 - <code>LOW</code>，<code>MEDIUM</code>，<code>HIGH</code> 和 <code>URGENT</code> 或 <code>null</code>。可以通过使用枚举类型名称作为限定符和点符号来引用枚举常量。<br>以下代码将<code>Level</code>枚举类型常量的值分配给一些局部变量：</p> 
+ <pre><code class="lang-java">Level low  = Level.LOW; 
+Level medium = Level.MEDIUM; 
+Level high  = Level.HIGH; 
+Level urgent = Level.URGENT;
+</code></pre> 
+ <p>但是不能实例化枚举类型。例如，以下代码导致编译时错误：</p> 
+ <pre><code class="lang-java">Level badAttempt   = new Level(); // A  compile-time error
+</code></pre> 
+ <p>枚举顺序号 枚举类型为其所有常量分配一个顺序号，称为<code>ordinal</code>。顺序值从零开始，在常数列表中从第一个到最后一个依次递增<code>1</code>。第一个枚举常量赋值为<code>0</code>，第二个为<code>1</code>，第三个为<code>2</code>，依此类推。<br>分配给<code>Level</code>枚举类型中声明的常量的序数值是：将<code>0</code>分配给<code>LOW</code>，<code>1</code>分配给<code>MEDIUM</code>，<code>2</code>到<code>HIGH</code>，以及<code>3</code>到<code>URGENT</code>。</p> 
+ <p>每个枚举常量都有一个与常量的标识符相同的名称。例如，级别枚举类型中的<code>LOW</code>常数的名称为“<code>LOW</code>”。可以分别使用<code>name()</code>和<code>ordinal()</code>方法获取枚举常量的名称和序号值。每个枚举类型都有一个名为<code>values()</code>的静态方法，它按在枚举主体中声明的顺序返回一个常量数组。<br>以下代码打印在<code>Level</code>枚举类型中声明的所有枚举常量的名称和序号。</p> 
+ <pre><code class="lang-java">enum Level {
+  LOW, MEDIUM, HIGH, URGENT;
+}
+
+public class Main {
+  public static void main(String[] args) {
+    for (Level s : Level.values()) {
+      String name = s.name();
+      int ordinal = s.ordinal();
+      System.out.println(name + "(" + ordinal + ")");
+    }
+  }
+}
+</code></pre> 
+ <p>上面的代码生成以下结果。</p> 
+ <pre><code class="lang-java">LOW(0)
+MEDIUM(1)
+HIGH(2)
+URGENT(3)
+</code></pre> 
+ <h2 id="h2-u679Au4E3Eu5E38u91CFu7684u53CDu5411u67E5u627E"><a name="枚举常量的反向查找" class="reference-link"></a><span class="header-link octicon octicon-link"></span>枚举常量的反向查找</h2>
+ <p>可以从名称或位置获得枚举常量的引用。使用<code>valueOf()</code>方法就可以做到这点。</p> 
+ <p>枚举常量的反向查找区分大小写。可以使用<code>values()</code>方法返回的数组，通过顺序执行反向查找。<code>values()</code>方法返回的数组中的值的顺序与枚举常量的声明顺序相同。枚举常量的序数从零开始。<br>以下代码演示了如何反转查找枚举常量：</p>   
+ <pre><code class="lang-java">enum Level {
+  LOW, MEDIUM, HIGH, URGENT;
+}
+
+public class Main {
+  public static void main(String[] args) {
+    Level low1 = Level.valueOf("LOW");
+    // A reverse lookup using a name
+    Level low2 = Level.values()[0];
+    // A reverse lookup using an ordinal
+    System.out.println(low1);
+    System.out.println(low2);
+    System.out.println(low1 == low2);
+
+  }
+}
+</code></pre> 
+ <p>执行上面的示例代码，得到如下结果 - </p> 
+ <pre><code class="lang-java">LOW
+LOW
+true
+</code></pre> 
+ <h2 id="h2-u679Au4E3Eu5E38u91CFu7684u8303u56F4"><a name="枚举常量的范围" class="reference-link"></a><span class="header-link octicon octicon-link"></span>枚举常量的范围</h2>
+ <p><code>java.util.EnumSet</code>集合类与枚举类型的枚举常量列表一起使用。<br>下面的代码演示了如何使用<code>EnumSet</code>类来处理枚举常量的范围。</p> 
+ <pre><code class="lang-java">import java.util.EnumSet;
+
+enum Level {
+    LOW, MEDIUM, HIGH, URGENT;
+}
+
+public class Main {
+    public static void main(String[] args) {
+        EnumSet&lt;Level&gt; allLevels = EnumSet.allOf(Level.class);
+        print(allLevels);
+
+        EnumSet&lt;Level&gt; l = EnumSet.range(Level.LOW, Level.URGENT);
+        print(l);
+
+    }
+
+    public static void print(EnumSet&lt;Level&gt; levels) {
+        for (Level d : levels) {
+            System.out.println(d + "  ");
+        }
+    }
+}
+</code></pre> 
+ <p>执行上面的示例代码，得到如下结果 - </p> 
+ <pre><code class="lang-java">LOW  
+MEDIUM  
+HIGH  
+URGENT  
+LOW  
+MEDIUM  
+HIGH  
+URGENT
+</code></pre>
+ <br>      
+</div></body></html>

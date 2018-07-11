@@ -1,0 +1,64 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Kotlin返回和跳转</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>Kotlin有三个结构跳转表达式：</p> 
+ <ul> 
+  <li><code>return</code> - 默认情况下，从最近的封闭函数或匿名函数返回。</li>
+  <li><code>break</code> - 终止最近的闭合循环。</li>
+  <li><code>continue</code> - 前进到最近的封闭循环的下一个步骤(迭代)。</li>
+ </ul> 
+ <p>所有这些表达式都可以用作更大表达式的一部分：</p> 
+ <pre><code class="lang-kotlin">val s = person.name ?: return
+</code></pre> 
+ <p>这些表达式的类型是<a target="_blank" href="http://www.yiibai.com/kotlin/exceptions.html#the-nothing-type" title="Nothing类型">Nothing类型</a>。</p> 
+ <h2 id="h2-break-continue-"><a name="Break 和 Continue 标签" class="reference-link"></a><span class="header-link octicon octicon-link"></span>Break 和 Continue 标签</h2>
+ <p>Kotlin中的任何表达式都可以标记一个标签。标签具有标识符的形式，它的后面跟<code>@</code>符号，例如：<code>abc@</code>，<code>fooBar@</code>是有效标签(请<a target="_blank" href="http://www.yiibai.com/kotlin/grammar.html#labelReference" title="参阅语法">参阅语法</a>)。 要使用标注表达式，只是在其前面放上一个标签。</p> 
+ <pre><code class="lang-kotlin">loop@ for (i in 1..100) {
+    // ...
+}
+</code></pre> 
+ <p>现在，可以标记<code>break</code>或<code>continue</code>标签：</p> 
+ <pre><code class="lang-kotlin">loop@ for (i in 1..100) {
+    for (j in 1..100) {
+        if (...) break@loop
+    }
+}
+</code></pre> 
+ <p>标记 <code>break</code> 为标记跳转到执行点后。标记继续进行到该循环的下一次迭代。</p> 
+ <h2 id="h2-u5728u6807u7B7Eu4E0Au8FD4u56DE"><a name="在标签上返回" class="reference-link"></a><span class="header-link octicon octicon-link"></span>在标签上返回</h2>
+ <p>使用函数文字，局部函数和对象表达式，函数可以嵌套在<code>Kotlin</code>中。 修饰<code>return</code>允许从外部函数返回。 最重要的用例是从<code>lambda</code>表达式返回。如下代码示例 -</p> 
+ <pre><code class="lang-kotlin">fun foo() {
+    ints.forEach {
+        if (it == 0) return
+        print(it)
+    }
+}
+</code></pre> 
+ <p>返回表达式从最近的包围函数返回，即<code>foo</code>。 (请注意，这种非局部返回仅适用于传递给内联函数的<code>lambda</code>表达式)，如果需要从<code>lambda</code>表达式返回，必须对它进行标注并限定返回值：</p>   
+ <pre><code class="lang-kotlin">fun foo() {
+    ints.forEach lit@ {
+        if (it == 0) return@lit
+        print(it)
+    }
+}
+</code></pre> 
+ <p>现在，它只从<code>lambda</code>表达式返回。通常使用隐性标签更为方便：这样的标签与传递lambda的函数具有相同的名称。</p> 
+ <pre><code class="lang-kotlin">fun foo() {
+    ints.forEach {
+        if (it == 0) return@forEach
+        print(it)
+    }
+}
+</code></pre> 
+ <p>或者，可以用匿名函数替换<code>lambda</code>表达式。异常函数中的返回语句将从匿名函数中返回。</p> 
+ <pre><code class="lang-kotlin">fun foo() {
+    ints.forEach(fun(value: Int) {
+        if (value == 0) return
+        print(value)
+    })
+}
+</code></pre> 
+ <p>当返回值时，解析器优先考虑标签的返回值，即 - </p> 
+ <pre><code class="lang-kotlin">return@a 1
+</code></pre> 
+ <p>表示“在标签<code><a target="_blank" href="https://github.com/a" title="@a" class="at-link">@a</a></code>处返回<code>1</code>”，而不是“返回标记的表达式<code>(<a target="_blank" href="https://github.com/a" title="@a" class="at-link">@a</a> 1)</code>”。</p>
+ <br>      
+</div></body></html>

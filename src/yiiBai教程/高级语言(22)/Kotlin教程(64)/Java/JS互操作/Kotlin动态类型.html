@@ -1,0 +1,46 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Kotlin动态类型</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>作为一种静态类型的语言，Kotlin仍然需要与无类型或松散类型的环境(例如<br>JavaScript生态系统)进行互操作。为了方便这些使用场景，语言中有 <code>dynamic</code> 类型可用：</p> 
+ <pre><code class="lang-kotlin">val dyn: dynamic = ……
+</code></pre> 
+ <blockquote> 
+  <p>在面向 JVM 平台的代码中不支持动态类型</p> 
+ </blockquote> 
+ <p><code>dynamic</code> 类型基本上关闭了 Kotlin 的类型检查系统：</p> 
+ <ul> 
+  <li>该类型的值可以赋值给任何变量或作为参数传递到任何位置，</li>
+  <li>任何值都可以赋值给 <code>dynamic</code> 类型的变量，或者传递给一个接受 <code>dynamic</code> 作为参数的函数，</li>
+  <li><code>null</code>-检查对这些值是禁用的。</li>
+ </ul> 
+ <p><code>dynamic</code> 最特别的特性是，我们可以对 <code>dynamic</code> 变量调用<strong>任何</strong>属性或以任意参数调用<strong>任何</strong>函数<br>：</p> 
+ <pre><code class="lang-kotlin">dyn.whatever(1, "foo", dyn) // “whatever”在任何地方都没有定义
+dyn.whatever(*arrayOf(1, 2, 3))
+</code></pre> 
+ <p>在 JavaScript 平台上，该代码将按照原样编译：在生成的 JavaScript 代码中，Kotlin中的 <code>dyn.whatever(1)</code> 变为 <code>dyn.whatever(1)</code><br>。</p> 
+ <p>当在 <code>dynamic</code> 类型的值上调用 Kotlin 写的函数时，请记住由<br>Kotlin 到 JavaScript 编译器执行的名字修饰。你可能需要使用 <a target="_blank" href="js-to-kotlin-interop.html#jsname-注解" ">@JsName 注解</a><br>为要调用的函数分配明确的名称。</p> 
+ <p>动态调用总是返回 <code>dynamic</code> 作为结果，所以我们可以自由地这样链接调用：</p> 
+ <pre><code class="lang-kotlin">dyn.foo().bar.baz()
+</code></pre> 
+ <p>当我们把一个 lambda 表达式传给一个动态调用时，它的所有参数默认都是 <code>dynamic</code> 类型的：</p> 
+ <pre><code class="lang-kotlin">dyn.foo {
+    x -&gt; x.bar() // x 是 dynamic
+}
+</code></pre> 
+ <p>使用 <code>dynamic</code> 类型值的表达式会按照原样转换为 JavaScript，并且不使用 Kotlin 运算符约定。<br>支持以下运算符：</p> 
+ <ul> 
+  <li>二元：<code>+</code>、 <code>-</code>、 <code>*</code>、 <code>/</code>、 <code>%</code>、 <code>&gt;</code>、 <code>&lt;</code>、 <code>&gt;=</code>、 <code>&lt;=</code>、 <code>==</code>、 <code>!=</code>、 <code>===</code>、 <code>!==</code>、 <code>&amp;&amp;</code>、 <code>||</code></li>
+  <li>一元
+   <ul> 
+    <li>前置：<code>-</code>、 <code>+</code>、 <code>!</code></li>
+    <li>前置及后置：<code>++</code>、 <code>--</code></li>
+   </ul> </li>
+  <li>赋值：<code>+=</code>、 <code>-=</code>、 <code>*=</code>、 <code>/=</code>、 <code>%=</code></li>
+  <li>索引访问：
+   <ul> 
+    <li>读：<code>d[a]</code>，多于一个参数会出错</li>
+    <li>写：<code>d[a1] = a2</code>，<code>[]</code> 中有多于一个参数会出错</li>
+   </ul> </li>
+ </ul> 
+ <p><code>in</code>、 <code>!in</code> 以及 <code>..</code> 操作对于 <code>dynamic</code> 类型的值是禁用的。</p> 
+ <p>更多技术说明请参见<a target="_blank" href="https://github.com/JetBrains/kotlin/blob/master/spec-docs/dynamic-types.md">规范文档</a>。</p>
+ <br>      
+</div></body></html>

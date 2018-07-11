@@ -1,0 +1,687 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Spring MVC4使用Servlet3 MultiPartConfigElement文件上传实例</h1><div style="width:100%;float:left;" class="article-content">   
+ <div> 
+  <div>
+    在这篇文章中，我们将使用Spring&nbsp;MultipartResolver 实现 StandardServletMultipartResolver在Servlet3环境中实现单点和多文件上传功能。Spring提供了内置的multipart支持来处理Web应用程序文件上传。 
+  </div> 
+ </div> 
+ <div> 
+  <h3> 
+   <div>
+     简短的概述 
+   </div> </h3> 
+  <p> 在这篇文章中，我们将使用Servlet3.0以及javax.servlet.MultipartConfigElement，为了激活&nbsp;Servlet3.0环境和Spring&nbsp;的Multipart支持，你需要做以下： </p> 
+  <p> 1.添加 StandardServletMultipartResolver Bean 在 Spring 配置。这是一个标准实现 MultipartResolver 接口，基于Servlet3.0&nbsp;javax.servlet.http.Part&nbsp;API。 </p> 
+  <p> 2.&nbsp;启用在Servlet3.0环境的多解析(MultiParsing)。要做到这一点，你有多种方案可供选择。 </p> 
+  <ul> 
+   <li> 方案A.&nbsp;对方案性 Servlet 注册设置 javax.servlet.MultipartConfigElement。MultipartConfigElement是javax.servlet.annotation.MultipartConfig 的注释值(如选择C所述)的简单Java类表示。&nbsp;这篇文章将特别侧重于这个选择。 </li> 
+   <li> 方案B.&nbsp;如果您使用基于XML的配置，可以在web.xml中在servlet配置声明&nbsp;multipart-configsection&nbsp;部分，如下图所示： <pre>    &lt;servlet&gt;
+        &lt;servlet-name&gt;SpringDispatcher&lt;/servlet-name&gt;
+        &lt;servlet-class&gt;org.springframework.web.servlet.DispatcherServlet&lt;/servlet-class&gt;
+        &lt;multipart-config&gt;
+            &lt;location&gt;/tmp&lt;/location&gt;
+            &lt;max-file-size&gt;5242880&lt;/max-file-size&gt;&lt;!--5MB--&gt;
+            &lt;max-request-size&gt;20971520&lt;/max-request-size&gt;&lt;!--20MB--&gt;
+            &lt;file-size-threshold&gt;0&lt;/file-size-threshold&gt;
+        &lt;/multipart-config&gt;
+    &lt;/servlet&gt;<span style="background-color:inherit;font-size:1.5rem;"></span></pre> </li> 
+   <li> 方案C.&nbsp;可以创建一个自定义 Servlet 和 javax.servlet.annotation.MultipartConfig 标注其标注，如下图所示： <pre>@WebServlet(name = "fileUploadServlet", urlPatterns = {"/upload"})
+@MultipartConfig(location=/tmp,
+                 fileSizeThreshold=0,    
+                 maxFileSize=5242880,       // 5 MB
+                 maxRequestSize=20971520)   // 20 MB
+public class FileUploadServlet extends HttpServlet {
+  
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        //handle file upload
+    } <span style="background-color:inherit;font-size:1.5rem;"></span></pre> </li> 
+  </ul> 
+  <div>
+    话虽这么说，我们将专注于在这个例子中选择。 
+  </div> 
+  <hr> 
+  <h2> 
+   <div>
+     完整的例子 
+   </div> </h2> 
+  <div>
+    使用以下技术： 
+  </div> 
+  <ul> 
+   <li> Spring 4.2.0.RELEASE </li> 
+   <li> validation-api 1.1.0.Final </li> 
+   <li> Bootstrap v3.3.2 </li> 
+   <li> Maven 3 </li> 
+   <li> JDK 1.7 </li> 
+   <li> Tomcat 8.0.21 </li> 
+   <li> Eclipse JUNO Service Release 2 </li> 
+  </ul> 
+  <p> Let’s begin. </p> 
+  <h3> 
+   <div>
+     项目结构 
+   </div> </h3> 
+  <p> <img src="/uploads/tutorial/20160116/1-1601161A6141O.jpg" alt=""> </p> 
+  <h3> 
+   <div>
+     在pom.xml声明依赖关系 
+   </div> </h3> 
+  <pre>&lt;project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd"&gt;
+	&lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
+	&lt;groupId&gt;com.yiibai.springmvc&lt;/groupId&gt;
+	&lt;artifactId&gt;Spring4MVCFileUploadMultipartFile&lt;/artifactId&gt;
+	&lt;packaging&gt;war&lt;/packaging&gt;
+	&lt;version&gt;1.0.0&lt;/version&gt;
+	&lt;name&gt;Spring4MVCFileUploadMultipartFile Maven Webapp&lt;/name&gt;
+	&lt;url&gt;http://maven.apache.org&lt;/url&gt;
+
+	&lt;properties&gt;
+		&lt;springframework.version&gt;4.2.0.RELEASE&lt;/springframework.version&gt;
+	&lt;/properties&gt;
+
+	&lt;dependencies&gt;
+		&lt;dependency&gt;
+			&lt;groupId&gt;org.springframework&lt;/groupId&gt;
+			&lt;artifactId&gt;spring-webmvc&lt;/artifactId&gt;
+			&lt;version&gt;${springframework.version}&lt;/version&gt;
+		&lt;/dependency&gt;
+
+		&lt;dependency&gt;
+			&lt;groupId&gt;javax.validation&lt;/groupId&gt;
+			&lt;artifactId&gt;validation-api&lt;/artifactId&gt;
+			&lt;version&gt;1.1.0.Final&lt;/version&gt;
+		&lt;/dependency&gt;
+
+		&lt;dependency&gt;
+			&lt;groupId&gt;javax.servlet&lt;/groupId&gt;
+			&lt;artifactId&gt;javax.servlet-api&lt;/artifactId&gt;
+			&lt;version&gt;3.1.0&lt;/version&gt;
+		&lt;/dependency&gt;
+		&lt;dependency&gt;
+			&lt;groupId&gt;javax.servlet&lt;/groupId&gt;
+			&lt;artifactId&gt;jstl&lt;/artifactId&gt;
+			&lt;version&gt;1.2&lt;/version&gt;
+		&lt;/dependency&gt;
+	&lt;/dependencies&gt;
+
+
+	&lt;build&gt;
+		&lt;pluginManagement&gt;
+			&lt;plugins&gt;
+				&lt;plugin&gt;
+					&lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+					&lt;artifactId&gt;maven-war-plugin&lt;/artifactId&gt;
+					&lt;version&gt;2.4&lt;/version&gt;
+					&lt;configuration&gt;
+						&lt;warSourceDirectory&gt;src/main/webapp&lt;/warSourceDirectory&gt;
+						&lt;warName&gt;Spring4MVCFileUploadMultipartFile&lt;/warName&gt;
+						&lt;failOnMissingWebXml&gt;false&lt;/failOnMissingWebXml&gt;
+					&lt;/configuration&gt;
+				&lt;/plugin&gt;
+			&lt;/plugins&gt;
+		&lt;/pluginManagement&gt;
+
+		&lt;finalName&gt;Spring4MVCFileUploadMultipartFile&lt;/finalName&gt;
+	&lt;/build&gt;
+&lt;/project&gt;
+  </pre> 
+  <h3 style="color:#404040;font-size:20px;"> 
+   <div style="background-color:inherit;">
+     MultiPartConfigElement的编程注册 
+   </div> </h3> 
+  <div style="background-color:inherit;">
+    这个注册提供一个配置，以设置像最大文件大小，请求大小，位置和门限值。文件上传操作期间暂时存储在磁盘上的特定属性。 
+  </div> 
+  <pre>package com.yiibai.springmvc.configuration;
+
+import javax.servlet.MultipartConfigElement;
+import javax.servlet.ServletRegistration;
+
+import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
+
+public class HelloWorldInitializer extends
+		AbstractAnnotationConfigDispatcherServletInitializer {
+
+	@Override
+	protected Class&lt;?&gt;[] getRootConfigClasses() {
+		return new Class[] { HelloWorldConfiguration.class };
+	}
+
+	@Override
+	protected Class&lt;?&gt;[] getServletConfigClasses() {
+		return null;
+	}
+
+	@Override
+	protected String[] getServletMappings() {
+		return new String[] { "/" };
+	}
+
+	@Override
+	protected void customizeRegistration(ServletRegistration.Dynamic registration) {
+		registration.setMultipartConfig(getMultipartConfigElement());
+	}
+
+	private MultipartConfigElement getMultipartConfigElement() {
+		MultipartConfigElement multipartConfigElement = new MultipartConfigElement(	LOCATION, MAX_FILE_SIZE, MAX_REQUEST_SIZE, FILE_SIZE_THRESHOLD);
+		return multipartConfigElement;
+	}
+
+	private static final String LOCATION = "C:/temp/"; // Temporary location where files will be stored
+
+	private static final long MAX_FILE_SIZE = 5242880; // 5MB : Max file size.
+														// Beyond that size spring will throw exception.
+	private static final long MAX_REQUEST_SIZE = 20971520; // 20MB : Total request size containing Multi part.
+	
+	private static final int FILE_SIZE_THRESHOLD = 0; // Size threshold after which files will be written to disk
+}</pre> 
+  <div style="background-color:inherit;">
+    请注意，我们如何才能注册所需的 MultiPartConfigElement 到 DispatcherServlet 的重写函数 customizeRegistration。 
+  </div> 
+  <h3 style="color:#404040;font-size:20px;"> 
+   <div style="background-color:inherit;">
+     创建配置 
+   </div> </h3> 
+  <p style="color:#404040;font-size:15px;"> <span style="background-color:inherit;font-family:微软雅黑;font-size:14px;line-height:1.5;">配置StandardServletMultipartResolver&nbsp;Bean。</span><span style="background-color:inherit;font-family:微软雅黑;font-size:14px;line-height:1.5;">这是一个标准实现MultipartResolver接口，基于Servlet3.0&nbsp;javax.servlet.http.Part&nbsp;API。</span> </p> 
+  <pre>package com.yiibai.springmvc.configuration;
+
+import org.springframework.context.MessageSource;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.web.multipart.support.StandardServletMultipartResolver;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.ViewResolverRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.view.InternalResourceViewResolver;
+import org.springframework.web.servlet.view.JstlView;
+
+@Configuration
+@EnableWebMvc
+@ComponentScan(basePackages = "com.yiibai.springmvc")
+public class HelloWorldConfiguration extends WebMvcConfigurerAdapter {
+
+	@Bean(name = "multipartResolver")
+	public StandardServletMultipartResolver resolver() {
+		return new StandardServletMultipartResolver();
+	}
+
+	@Override
+	public void configureViewResolvers(ViewResolverRegistry registry) {
+		InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
+		viewResolver.setViewClass(JstlView.class);
+		viewResolver.setPrefix("/WEB-INF/views/");
+		viewResolver.setSuffix(".jsp");
+		registry.viewResolver(viewResolver);
+	}
+
+	@Bean
+	public MessageSource messageSource() {
+		ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
+		messageSource.setBasename("messages");
+		return messageSource;
+	}
+
+	@Override
+	public void addResourceHandlers(ResourceHandlerRegistry registry) {
+		registry.addResourceHandler("/static/**").addResourceLocations( "/static/");
+	}
+
+}</pre> 
+  <div style="background-color:inherit;">
+    以XML格式配置类将是： 
+  </div> 
+  <pre>&lt;beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:mvc="http://www.springframework.org/schema/mvc"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+    http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd
+    http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd"&gt;
+ 
+    &lt;context:component-scan base-package="com.yiibai.springmvc" /&gt;
+    &lt;mvc:annotation-driven /&gt;
+
+    &lt;bean id="multipartResolver" class="org.springframework.web.multipart.support.StandardServletMultipartResolver"/&gt;
+
+    &lt;mvc:resources mapping="/static/**" location="/static/" /&gt;
+    &lt;mvc:default-servlet-handler /&gt;
+
+
+    &lt;bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource"&gt;
+        &lt;property name="basename"&gt;
+            &lt;value&gt;messages&lt;/value&gt;
+        &lt;/property&gt;
+    &lt;/bean&gt;
+
+
+    &lt;bean class="org.springframework.web.servlet.view.InternalResourceViewResolver"&gt;
+        &lt;property name="prefix"&gt;
+            &lt;value&gt;/WEB-INF/views/&lt;/value&gt;
+        &lt;/property&gt;
+        &lt;property name="suffix"&gt;
+            &lt;value&gt;.jsp&lt;/value&gt;
+        &lt;/property&gt;
+    &lt;/bean&gt;
+&lt;/beans&gt;</pre> 
+  <h3> 
+   <div>
+     创建模型类 
+   </div> </h3> 
+  <p> Spring提供 org.springframework.web.multipart.MultipartFile， 这是一个 multipart&nbsp;请求获得上传文件的表示。&nbsp;它提供了方便的方法，如getName()，getContentType()，GetBytes()，getInputStream()等。这让我们处理更容易一点，同时检索有关被上传文件的信息。 </p> 
+  <div>
+    让我们写一个包装类，进一步简化我们应用程序的使用。 
+  </div> 
+  <pre>package com.yiibai.springmvc.model;
+
+import org.springframework.web.multipart.MultipartFile;
+
+public class FileBucket {
+
+	MultipartFile file;
+	
+	public MultipartFile getFile() {
+		return file;
+	}
+
+	public void setFile(MultipartFile file) {
+		this.file = file;
+	}
+}</pre> 
+  <div>
+    为了展示Multiple上传的例子，让我们再创建一个包装类。 
+  </div> 
+  <pre>package com.yiibai.springmvc.model;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class MultiFileBucket {
+
+	List&lt;FileBucket&gt; files = new ArrayList&lt;FileBucket&gt;();
+	
+	public MultiFileBucket(){
+		files.add(new FileBucket());
+		files.add(new FileBucket());
+		files.add(new FileBucket());
+	}
+	
+	public List&lt;FileBucket&gt; getFiles() {
+		return files;
+	}
+
+	public void setFiles(List&lt;FileBucket&gt; files) {
+		this.files = files;
+	}
+}</pre> 
+  <div>
+    这个类可以处理多达3个文件上传。 
+  </div> 
+  <h3> 
+   <div>
+     创建控制器 
+   </div> </h3> 
+  <pre>package com.yiibai.springmvc.controller;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.validation.Valid;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
+import org.springframework.util.FileCopyUtils;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.multipart.MultipartFile;
+
+import com.yiibai.springmvc.model.FileBucket;
+import com.yiibai.springmvc.model.MultiFileBucket;
+import com.yiibai.springmvc.util.FileValidator;
+import com.yiibai.springmvc.util.MultiFileValidator;
+
+@Controller
+public class FileUploadController {
+
+	private static String UPLOAD_LOCATION="C:/mytemp/";
+
+	@Autowired
+	FileValidator fileValidator;
+
+	@Autowired
+	MultiFileValidator multiFileValidator;
+
+	@InitBinder("fileBucket")
+	protected void initBinderFileBucket(WebDataBinder binder) {
+		binder.setValidator(fileValidator);
+	}
+
+	@InitBinder("multiFileBucket")
+	protected void initBinderMultiFileBucket(WebDataBinder binder) {
+		binder.setValidator(multiFileValidator);
+	}
+
+	@RequestMapping(value = { "/", "/welcome" }, method = RequestMethod.GET)
+	public String getHomePage(ModelMap model) {
+		return "welcome";
+	}
+
+	@RequestMapping(value = "/singleUpload", method = RequestMethod.GET)
+	public String getSingleUploadPage(ModelMap model) {
+		FileBucket fileModel = new FileBucket();
+		model.addAttribute("fileBucket", fileModel);
+		return "singleFileUploader";
+	}
+
+	@RequestMapping(value = "/singleUpload", method = RequestMethod.POST)
+	public String singleFileUpload(@Valid FileBucket fileBucket,
+			BindingResult result, ModelMap model) throws IOException {
+
+		if (result.hasErrors()) {
+			System.out.println("validation errors");
+			return "singleFileUploader";
+		} else {
+			System.out.println("Fetching file");
+			MultipartFile multipartFile = fileBucket.getFile();
+
+			// Now do something with file...
+			FileCopyUtils.copy(fileBucket.getFile().getBytes(), new File( UPLOAD_LOCATION + fileBucket.getFile().getOriginalFilename()));
+			String fileName = multipartFile.getOriginalFilename();
+			model.addAttribute("fileName", fileName);
+			return "success";
+		}
+	}
+
+	@RequestMapping(value = "/multiUpload", method = RequestMethod.GET)
+	public String getMultiUploadPage(ModelMap model) {
+		MultiFileBucket filesModel = new MultiFileBucket();
+		model.addAttribute("multiFileBucket", filesModel);
+		return "multiFileUploader";
+	}
+
+	@RequestMapping(value = "/multiUpload", method = RequestMethod.POST)
+	public String multiFileUpload(@Valid MultiFileBucket multiFileBucket,
+			BindingResult result, ModelMap model) throws IOException {
+
+		if (result.hasErrors()) {
+			System.out.println("validation errors in multi upload");
+			return "multiFileUploader";
+		} else {
+			System.out.println("Fetching files");
+			List&lt;String&gt; fileNames = new ArrayList&lt;String&gt;();
+			// Now do something with file...
+			for (FileBucket bucket : multiFileBucket.getFiles()) {
+				FileCopyUtils.copy(bucket.getFile().getBytes(), new File(UPLOAD_LOCATION + bucket.getFile().getOriginalFilename()));
+				fileNames.add(bucket.getFile().getOriginalFilename());
+			}
+
+			model.addAttribute("fileNames", fileNames);
+			return "multiSuccess";
+		}
+	}
+
+}
+&nbsp;</pre> 
+  <p> 以上控制器是相当微不足道。它处理上传视图的GET和POST请求的文件。当文件从文件选择器，用户选择点击上传，我们只是创建具有相同的名称和字节的内容作为原始文件的新文件，从原始复制文件的字节数。为此，我们正在使用Spring&nbsp;FileCopyUtils工具类流从源复制到目的地。在这个例子中，我们指定的目的地是&nbsp;C:/mytemp&nbsp;文件夹，所有文件将存在这个文件夹中。 </p> 
+  <h3> 
+   <div>
+     创建验证类 
+   </div> </h3> 
+  <div>
+    我们使用的是一些验证，以验证用户确实选择了要上传的文件。它们如下所示。 
+  </div>   
+  <pre>package com.yiibai.springmvc.util;
+
+import org.springframework.stereotype.Component;
+import org.springframework.validation.Errors;
+import org.springframework.validation.Validator;
+
+import com.yiibai.springmvc.model.FileBucket;
+
+@Component
+public class FileValidator implements Validator {
+	
+	public boolean supports(Class&lt;?&gt; clazz) {
+		return FileBucket.class.isAssignableFrom(clazz);
+	}
+
+	public void validate(Object obj, Errors errors) {
+		FileBucket file = (FileBucket) obj;
+		
+		if(file.getFile()!=null){
+			if (file.getFile().getSize() == 0) {
+				errors.rejectValue("file", "missing.file");
+			}
+		}
+	}
+}</pre> 
+  <pre>package com.yiibai.springmvc.util;
+
+import org.springframework.stereotype.Component;
+import org.springframework.validation.Errors;
+import org.springframework.validation.Validator;
+
+import com.yiibai.springmvc.model.FileBucket;
+import com.yiibai.springmvc.model.MultiFileBucket;
+
+@Component
+public class MultiFileValidator implements Validator {
+	
+	public boolean supports(Class&lt;?&gt; clazz) {
+		return MultiFileBucket.class.isAssignableFrom(clazz);
+	}
+
+	public void validate(Object obj, Errors errors) {
+		MultiFileBucket multiBucket = (MultiFileBucket) obj;
+		
+		int index=0;
+		
+		for(FileBucket file : multiBucket.getFiles()){
+			if(file.getFile()!=null){
+				if (file.getFile().getSize() == 0) {
+					errors.rejectValue("files["+index+"].file", "missing.file");
+				}
+			}
+			index++;
+		}
+		
+	}
+}</pre> 
+  <p> messages.properties </p> 
+  <pre>missing.file= Please select a file.</pre> 
+  <h3> 
+   <div>
+     创建视图 
+   </div> </h3> 
+  <p> singleFileUploader.jsp </p> 
+  <pre>&lt;%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%&gt;
+&lt;%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%&gt;
+&lt;%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%&gt;
+&lt;html&gt;
+
+&lt;head&gt;
+	&lt;meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"&gt;
+	&lt;title&gt;Spring 4 MVC File Upload Example&lt;/title&gt;
+	&lt;link href="&lt;c:url value='/static/css/bootstrap.css' /&gt;"  rel="stylesheet" type="text/css"&gt;&lt;/link&gt;
+	&lt;link href="&lt;c:url value='/static/css/app.css' /&gt;" rel="stylesheet" type="text/css"&gt;&lt;/link&gt;
+&lt;/head&gt;
+&lt;body&gt; 
+
+	&lt;div class="form-container"&gt;
+		&lt;h1&gt;Spring 4 MVC File Upload Example &lt;/h1&gt;
+		&lt;form:form method="POST" modelAttribute="fileBucket" enctype="multipart/form-data" class="form-horizontal"&gt;
+		
+			&lt;div class="row"&gt;
+				&lt;div class="form-group col-md-12"&gt;
+					&lt;label class="col-md-3 control-lable" for="file"&gt;Upload a file&lt;/label&gt;
+					&lt;div class="col-md-7"&gt;
+						&lt;form:input type="file" path="file" id="file" class="form-control input-sm"/&gt;
+						&lt;div class="has-error"&gt;
+							&lt;form:errors path="file" class="help-inline"/&gt;
+						&lt;/div&gt;
+					&lt;/div&gt;
+				&lt;/div&gt;
+			&lt;/div&gt;
+	
+			&lt;div class="row"&gt;
+				&lt;div class="form-actions floatRight"&gt;
+					&lt;input type="submit" value="Upload" class="btn btn-primary btn-sm"&gt;
+				&lt;/div&gt;
+			&lt;/div&gt;
+		&lt;/form:form&gt;
+		&lt;a href="&lt;c:url value='/welcome' /&gt;"&gt;Home&lt;/a&gt;
+	&lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre> 
+  <p> success.jsp </p> 
+  <pre>&lt;%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%&gt;
+&lt;%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %&gt;
+&lt;html&gt;
+&lt;head&gt;
+	&lt;meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"&gt;
+	&lt;title&gt;File Upload Success&lt;/title&gt;
+	&lt;link href="&lt;c:url value='/static/css/bootstrap.css' /&gt;" rel="stylesheet"&gt;&lt;/link&gt;
+	&lt;link href="&lt;c:url value='/static/css/app.css' /&gt;" rel="stylesheet"&gt;&lt;/link&gt;
+&lt;/head&gt;
+&lt;body&gt;
+	&lt;div class="success"&gt;
+		File  &lt;strong&gt;${fileName}&lt;/strong&gt; uploaded successfully.
+		&lt;br/&gt;&lt;br/&gt;
+		&lt;a href="&lt;c:url value='/welcome' /&gt;"&gt;Home&lt;/a&gt;	
+	&lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre> 
+  <p> multiFileUploader.jsp </p> 
+  <pre>&lt;%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%&gt;
+&lt;%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%&gt;
+&lt;%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%&gt;
+&lt;html&gt;
+
+&lt;head&gt;
+	&lt;meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"&gt;
+	&lt;title&gt;Spring 4 MVC File Multi Upload Example&lt;/title&gt;
+	&lt;link href="&lt;c:url value='/static/css/bootstrap.css' /&gt;"  rel="stylesheet" type="text/css"&gt;&lt;/link&gt;
+	&lt;link href="&lt;c:url value='/static/css/app.css' /&gt;" rel="stylesheet" type="text/css"&gt;&lt;/link&gt;
+&lt;/head&gt;
+&lt;body&gt; 
+
+	&lt;div class="form-container"&gt;
+		&lt;h1&gt;Spring 4 MVC Multi File Upload Example &lt;/h1&gt;
+		&lt;form:form method="POST" modelAttribute="multiFileBucket" enctype="multipart/form-data" class="form-horizontal"&gt;
+		
+			&lt;c:forEach var="v" varStatus="vs" items="${multiFileBucket.files}"&gt;
+				&lt;form:input type="file" path="files[${vs.index}].file" id="files[${vs.index}].file" class="form-control input-sm"/&gt;
+				&lt;div class="has-error"&gt;
+					&lt;form:errors path="files[${vs.index}].file" class="help-inline"/&gt;
+				&lt;/div&gt;
+			&lt;/c:forEach&gt;
+			&lt;br/&gt;
+			&lt;div class="row"&gt;
+				&lt;div class="form-actions floatRight"&gt;
+					&lt;input type="submit" value="Upload" class="btn btn-primary btn-sm"&gt;
+				&lt;/div&gt;
+			&lt;/div&gt;
+		&lt;/form:form&gt;
+		
+		&lt;br/&gt;
+		&lt;a href="&lt;c:url value='/welcome' /&gt;"&gt;Home&lt;/a&gt;
+	&lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre> 
+  <p> multiSuccess.jsp </p> 
+  <pre>&lt;%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%&gt;
+&lt;%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %&gt;
+&lt;html&gt;
+&lt;head&gt;
+	&lt;meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"&gt;
+	&lt;title&gt;File Upload Success&lt;/title&gt;
+	&lt;link href="&lt;c:url value='/static/css/bootstrap.css' /&gt;" rel="stylesheet"&gt;&lt;/link&gt;
+	&lt;link href="&lt;c:url value='/static/css/app.css' /&gt;" rel="stylesheet"&gt;&lt;/link&gt;
+&lt;/head&gt;
+&lt;body&gt;
+	&lt;div class="success"&gt;
+			&lt;c:forEach var="fileName" items="${fileNames}"&gt;
+				File  &lt;strong&gt;${fileName}&lt;/strong&gt; uploaded successfully&lt;br/&gt;
+			&lt;/c:forEach&gt;
+			&lt;br/&gt;
+		&lt;a href="&lt;c:url value='/welcome' /&gt;"&gt;Home&lt;/a&gt;
+	&lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre> 
+  <p> welcome.jsp </p> 
+  <pre>&lt;%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%&gt;
+&lt;%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %&gt;
+&lt;html&gt;
+
+&lt;head&gt;
+	&lt;meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"&gt;
+	&lt;title&gt;Spring 4 MVC File Upload Example&lt;/title&gt;
+	&lt;link href="&lt;c:url value='/static/css/bootstrap.css' /&gt;"  rel="stylesheet"&gt;&lt;/link&gt;
+	&lt;link href="&lt;c:url value='/static/css/app.css' /&gt;" rel="stylesheet"&gt;&lt;/link&gt;
+&lt;/head&gt;
+&lt;body&gt;
+	&lt;div class="form-container"&gt;
+		&lt;h1&gt;Welcome to FileUploader Example&lt;/h1&gt;
+		
+		Click on below links to see FileUpload in action.&lt;br/&gt;&lt;br/&gt;
+		
+		&lt;a href="&lt;c:url value='/singleUpload' /&gt;"&gt;Single File Upload&lt;/a&gt;  OR  &lt;a href="&lt;c:url value='multiUpload' /&gt;"&gt;Multi File Upload&lt;/a&gt;
+	&lt;/div&gt; 
+&lt;/body&gt;
+&lt;/html&gt;</pre> 
+  <h3> 
+   <div>
+     构建，部署和运行应用程序 
+   </div> </h3> 
+  <p> 现在构建&nbsp;war(前面的Eclipse教程)或通过Maven的命令行( mvn clean install).部署&nbsp;war&nbsp;到Servlet3.0容器。 </p> 
+  <p> 打开浏览器，浏览&nbsp;<a target="_blank" href="http://localhost:8080/Spring4MVCFileUploadMultipart/">http://localhost:8080/Spring4MVCFileUploadMultipart/</a> </p> 
+  <p> <img src="/uploads/tutorial/20160116/1-1601161AH0O9.png" alt=""> </p> 
+  <div>
+    现在点击单个文件上传的链接。 
+  </div> 
+  <p> <img src="/uploads/tutorial/20160116/1-1601161AIO23.png" alt=""> </p> 
+  <div>
+    点击上传，而不是选择一个文件。它应该显示验证失败消息。 
+  </div> 
+  <p> <img src="/uploads/tutorial/20160116/1-1601161AKR27.png" alt=""> </p> 
+  <div>
+    单击选择文件。 
+  </div> 
+  <p> <img src="/uploads/tutorial/20160116/1-1601161ASI16.png" alt=""> </p> 
+  <div>
+    应显示文件选择器。选择一个文件。 
+  </div> 
+  <div>
+    点击上传。开始上传文件。 
+  </div> 
+  <p> <img src="/uploads/tutorial/20160116/1-1601161AUW42.png" alt=""> </p> 
+  <p> 您可以查看上传的文件夹&nbsp;[C:/mytemp]&nbsp;对于上传的文件。&nbsp; </p> 
+  <div>
+    现在回去，然后点击 multiupload 链接。 
+  </div> 
+  <p> <img src="/uploads/tutorial/20160116/1-1601161A914R6.png" alt=""> </p> 
+  <div>
+    点击上传没有任何文件的选择，会收到验证错误。 
+  </div> 
+  <p> <img src="/uploads/tutorial/20160116/1-1601161A93C23.png" alt=""> </p> 
+  <p> 选择要上传的文件。 </p> 
+  <p> <img src="/uploads/tutorial/20160116/1-1601161F001T1.png" alt=""> </p> 
+  <div>
+    点击上传。所有选中的文件都会被上传。 
+  </div> 
+  <p> <img src="/uploads/tutorial/20160116/1-1601161F016407.png" alt=""> </p> 
+  <p> 最后，查看存储文件夹&nbsp;[C:/mytemp]. </p> 
+  <p> <img src="/uploads/tutorial/20160116/1-1601161F033629.png" alt=""> </p> 
+  <p> 所有步骤完成，就讲解到这里，包教不包会！ </p> 
+  <p> 代码下载：<a target="_blank" href="http://pan.baidu.com/s/1pK3gMXP">http://pan.baidu.com/s/1pK3gMXP</a> </p> 
+ </div>
+ <br>      
+</div></body></html>

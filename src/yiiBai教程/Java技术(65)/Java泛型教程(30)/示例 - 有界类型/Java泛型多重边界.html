@@ -1,0 +1,53 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Java泛型多重边界</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>类型参数可以有多个边界。</p> 
+ <p><strong>语法</strong></p> 
+ <pre><code class="lang-java">public static &lt;T extends Number &amp; Comparable&lt;T&gt;&gt; T maximum(T x, T y, T z)
+</code></pre> 
+ <p>在上面代码中，</p> 
+ <ul> 
+  <li><em>maximum</em> - 最大值是一种通用方法。</li>
+  <li><em>T</em> - 通用类型参数传递给泛型方法。 它可以采取任何对象。</li>
+ </ul> 
+ <h2 id="h2-u63CFu8FF0"><a name="描述" class="reference-link"></a><span class="header-link octicon octicon-link"></span>描述</h2>
+ <p><em>T</em>是传递给泛型类的类型参数应该是<code>Number</code>类的子类型，并且必须包含<code>Comparable</code>接口。 如果一个类作为绑定传递，它应该在接口之前先传递，否则编译时会发生错误。</p> 
+ <h2 id="h2-u793Au4F8B"><a name="示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例</h2>
+ <p>使用您喜欢的编辑器创建以下java程序，并保存到文件：<em>MultipleBounds.java</em> 中，代码如下所示 -</p> 
+ <pre><code class="lang-java">package com.yiibai;
+
+public class MultipleBounds {
+    public static void main(String[] args) {
+        System.out.printf("Max of %d, %d and %d is %d\n\n", 30, 24, 15,
+                maximum(30, 24, 15));
+
+        System.out.printf("Max of %.1f,%.1f and %.1f is %.1f\n\n", 16.6, 28.8,
+                17.7, maximum(16.6, 28.8, 17.7));
+    }
+
+    public static &lt;T extends Number &amp; Comparable&lt;T&gt;&gt; T maximum(T x, T y, T z) {
+        T max = x;
+        if (y.compareTo(max) &gt; 0) {
+            max = y;
+        }
+
+        if (z.compareTo(max) &gt; 0) {
+            max = z;
+        }
+        return max;
+    }
+
+    // Compiler throws error in case of below declaration
+    /*
+     * public static &lt;T extends Comparable&lt;T&gt; &amp; Number&gt; T maximum1(T x, T y, T
+     * z) { T max = x; if(y.compareTo(max) &gt; 0) { max = y; }
+     * 
+     * if(z.compareTo(max) &gt; 0) { max = z; } return max; }
+     */
+}
+</code></pre> 
+ <p>执行上面代码，得到以下结果 - </p>   
+ <pre><code class="lang-shell">Max of 30, 24 and 15 is 30
+
+Max of 16.6,28.8 and 17.7 is 28.8
+</code></pre>
+ <br>      
+</div></body></html>

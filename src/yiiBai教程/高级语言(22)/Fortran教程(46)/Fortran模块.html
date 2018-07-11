@@ -1,0 +1,173 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Fortran模块</h1><div style="width:100%;float:left;" class="article-content">   
+ <p> 模块就像一个包，可以包含函数和子程序，如果正在编写一个非常大的项目，或者函数或子程序需要在多个程序中使用。</p> 
+ <p> 模块提供拆分多个文件之间程序的方式。</p> 
+ <p> 模块用于：</p> 
+ <ul> 
+  <li> 包装子程序，数据和接口块。</li> 
+  <li> 定义，可以使用多于一个常规全局数据。</li> 
+  <li> 声明可以选择的任何程序内提供的变量。</li> 
+  <li> 导入整个模块，可使用在另一个程序或子程序。</li> 
+ </ul> 
+ <h3> 模块的语法</h3> 
+ <p> 模块由两部分组成：</p> 
+ <ul> 
+  <li> 规范的一部分，语句声明</li> 
+  <li> 包含一部分用于子程序和函数定义</li> 
+ </ul> 
+ <p> 模块的一般形式是：</p> 
+ <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+<span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">module</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> name     
+   </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">statement declarations</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">  
+   </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">contains </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">subroutine </span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">and</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">function</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> definitions</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> 
+</span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">end</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">module</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">name</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span></pre> 
+ <h2> 使用一个模块到程序中</h2> 
+ <p> 可以将一个程序或子程序通过使用声明的模块：</p> 
+ <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+<span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">use</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> name  </span></pre> 
+ <p> 请注意</p> 
+ <ul> 
+  <li> <p> 可以根据需要添加尽可能多的模块，在不同的文件中，并单独编译。</p> </li> 
+  <li> <p> 一个模块可以在各种不同的程序中使用。</p> </li> 
+  <li> <p> 一个模块在同一程序中可使用多次。</p> </li> 
+  <li> <p> 在模块规格说明部分内声明的变量，在模块是全局的。</p> </li> 
+  <li> <p> 在一个模块中声明的变量成为在模块中使用的任何程序或例程的全局变量。</p> </li> 
+  <li> <p> 使用声明可以出现在主程序中，或任何其他子程序或模块，它使用所述例程或在一个特定的模块声明的变量。</p> </li> 
+ </ul> 
+ <p> 示例</p> 
+ <p> 下面的例子演示了这一概念：</p> 
+ <pre class="prettyprint notranslate tryit prettyprinted" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); cursor: default; background-image: url(http://www.yiibai.com/fortran/images/tryit.jpg) !important; background-attachment: initial !important; background-size: initial !important; background-origin: initial !important; background-clip: initial !important; background-position: 100% 0%; background-repeat: no-repeat !important;">
+<span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">module</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> constants  
+</span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">implicit</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> none 
+
+   real</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">,</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> parameter </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">::</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> pi </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">=</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="lit" style="box-sizing: border-box; color: rgb(0, 102, 102);">3.1415926536</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">  
+   real</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">,</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> parameter </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">::</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> e </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">=</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="lit" style="box-sizing: border-box; color: rgb(0, 102, 102);">2.7182818285</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> 
+   
+contains      
+   subroutine show_consts</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">()</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">          
+      </span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">print</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">*,</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"Pi = "</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">,</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> pi          
+      </span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">print</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">*,</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">  </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"e = "</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">,</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> e     
+   </span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">end</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> subroutine show_consts 
+   
+</span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">end</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">module</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> constants 
+
+
+program module_example     
+</span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">use</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> constants      
+</span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">implicit</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> none     
+
+   real </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">::</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> x</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">,</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> ePowerx</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">,</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> area</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">,</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> radius 
+   x </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">=</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="lit" style="box-sizing: border-box; color: rgb(0, 102, 102);">2.0</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+   radius </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">=</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="lit" style="box-sizing: border-box; color: rgb(0, 102, 102);">7.0</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+   ePowerx </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">=</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> e </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">**</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> x
+   area </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">=</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> pi </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">*</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> radius</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">**</span><span class="lit" style="box-sizing: border-box; color: rgb(0, 102, 102);">2</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">     
+   
+   call show_consts</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">()</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> 
+   
+   </span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">print</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">*,</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"e raised to the power of 2.0 = "</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">,</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> ePowerx
+   </span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">print</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">*,</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"Area of a circle with radius 7.0 = "</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">,</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> area  
+   
+</span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">end</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> program module_example</span></pre> 
+ <p> 当编译并执行上述程序，它会产生以下结果：</p> 
+ <pre class="result notranslate" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+Pi = 3.14159274    
+e =  2.71828175    
+e raised to the power of 2.0 = 7.38905573    
+Area of a circle with radius 7.0 = 153.938049   </pre> 
+ <h2> 在一个模块变量和子程序的访问</h2> 
+ <p> 缺省情况下，在一个模块中的所有的变量和子程序被提供给正在使用的模块代码，通过 use 语句声明。</p> 
+ <p> 但是，可以控制模块代码中使用的private 和 public 属性的访问性。当声明一些变量或子程序为私有，这是不可以用在模块之外使用。</p> 
+ <p> 示例</p> 
+ <p> 下面的例子说明了这个概念：</p> 
+ <p> 在前面的例子中，有两个模块变量，e和PI。把它们设置为private并观察输出：</p> 
+ <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+<span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">module</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> constants  
+</span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">implicit</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> none 
+
+   real</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">,</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> parameter</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">,</span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">private</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">::</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> pi </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">=</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="lit" style="box-sizing: border-box; color: rgb(0, 102, 102);">3.1415926536</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">  
+   real</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">,</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> parameter</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">,</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">private</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">::</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> e </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">=</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="lit" style="box-sizing: border-box; color: rgb(0, 102, 102);">2.7182818285</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> 
+   
+contains      
+   subroutine show_consts</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">()</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">          
+      </span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">print</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">*,</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"Pi = "</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">,</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> pi          
+      </span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">print</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">*,</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"e = "</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">,</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> e     
+   </span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">end</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> subroutine show_consts 
+   
+</span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">end</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">module</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> constants 
+
+
+program module_example     
+</span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">use</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> constants      
+</span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">implicit</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> none     
+
+   real </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">::</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> x</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">,</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> ePowerx</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">,</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> area</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">,</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> radius 
+   x </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">=</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="lit" style="box-sizing: border-box; color: rgb(0, 102, 102);">2.0</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+   radius </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">=</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="lit" style="box-sizing: border-box; color: rgb(0, 102, 102);">7.0</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+   ePowerx </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">=</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> e </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">**</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> x
+   area </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">=</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> pi </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">*</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> radius</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">**</span><span class="lit" style="box-sizing: border-box; color: rgb(0, 102, 102);">2</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">     
+   
+   call show_consts</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">()</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> 
+   
+   </span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">print</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">*,</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"e raised to the power of 2.0 = "</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">,</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> ePowerx
+   </span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">print</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">*,</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"Area of a circle with radius 7.0 = "</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">,</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> area  
+   
+</span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">end</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> program module_example</span></pre> 
+ <p> 当编译和执行上面的程序，它提供了以下错误信息：</p>   
+ <pre class="result notranslate" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+   ePowerx = e ** x
+   1
+Error: Symbol 'e' at (1) has no IMPLICIT type
+main.f95:19.13:
+
+   area = pi * radius**2     
+   1
+Error: Symbol 'pi' at (1) has no IMPLICIT type</pre> 
+ <p> 由于e 和 pi两者都声明为private，module_example不能再访问这些变量程序。</p> 
+ <p> 但是其他模块子程序可以访问它们：</p> 
+ <pre class="prettyprint notranslate tryit prettyprinted" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); cursor: default; background-image: url(http://www.yiibai.com/fortran/images/tryit.jpg) !important; background-attachment: initial !important; background-size: initial !important; background-origin: initial !important; background-clip: initial !important; background-position: 100% 0%; background-repeat: no-repeat !important;">
+<span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">module</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> constants  
+</span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">implicit</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> none 
+
+   real</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">,</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> parameter</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">,</span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">private</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">::</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> pi </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">=</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="lit" style="box-sizing: border-box; color: rgb(0, 102, 102);">3.1415926536</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">  
+   real</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">,</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> parameter</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">,</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">private</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">::</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> e </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">=</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="lit" style="box-sizing: border-box; color: rgb(0, 102, 102);">2.7182818285</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> 
+   
+contains      
+   subroutine show_consts</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">()</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">          
+      </span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">print</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">*,</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"Pi = "</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">,</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> pi          
+      </span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">print</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">*,</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"e = "</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">,</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> e     
+   </span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">end</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> subroutine show_consts 
+   
+   </span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">function</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> ePowerx</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">x</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">)</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">result</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">ePx</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">)</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> 
+   </span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">implicit</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> none
+      real</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">::</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">x
+      real</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">::</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">ePx
+      ePx </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">=</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> e </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">**</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> x
+   </span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">end</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">function</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> ePowerx
+    
+   </span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">function</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> areaCircle</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">r</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">)</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">result</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">a</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">)</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">  
+   </span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">implicit</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> none
+      real</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">::</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">r
+      real</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">::</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">a
+      a </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">=</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> pi </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">*</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> r</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">**</span><span class="lit" style="box-sizing: border-box; color: rgb(0, 102, 102);">2</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">  
+   </span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">end</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">function</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> areaCircle
+    
+</span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">end</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">module</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> constants 
+
+
+program module_example     
+</span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">use</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> constants      
+</span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">implicit</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> none     
+
+   call show_consts</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">()</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> 
+   
+   </span><span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">Print</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">*,</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"e raised to the power of 2.0 = "</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">,</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> ePowerx</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span><span class="lit" style="box-sizing: border-box; color: rgb(0, 102, 102);">2.0</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">)</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+   </span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">print</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">*,</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"Area of a circle with radius 7.0 = "</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">,</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> areaCircle</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span><span class="lit" style="box-sizing: border-box; color: rgb(0, 102, 102);">7.0</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">)</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">  
+   
+</span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">end</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> program module_example</span></pre> 
+ <p> 当编译并执行上述程序，它会产生以下结果：</p> 
+ <pre class="result notranslate" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+Pi = 3.14159274    
+e = 2.71828175    
+e raised to the power of 2.0 = 7.38905573    
+Area of a circle with radius 7.0 = 153.938049   </pre> 
+ <br>      
+</div></body></html>

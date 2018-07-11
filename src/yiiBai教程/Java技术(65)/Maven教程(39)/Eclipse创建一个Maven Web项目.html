@@ -1,0 +1,118 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Eclipse创建一个Maven Web项目</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>在这篇文章中，我们将演示如何在Eclipse IDE中使用maven创建一个动态Web项目。</p> 
+ <p>使用的工具和技术 -</p> 
+ <ul> 
+  <li>Eclipse Jee Oxygen</li>
+  <li>Maven 3.3.3</li>
+  <li>JavaSE 1.8</li>
+  <li>Servlet API 3.1.0</li>
+  <li>Apache Tomcat 7.0.47 (Embeded)</li>
+ </ul> 
+ <p>下面开始一步一步在Eclipse中使用maven创建一个web项目。</p> 
+ <h2 id="h2--1-"><a name="第1步" class="reference-link"></a><span class="header-link octicon octicon-link"></span>第1步</h2>
+ <p>转到 <em>New</em> 菜单 <em>Other..</em> -&gt; <em>Maven</em> -&gt; <em>Maven Project</em> ，然后单击 <em>Next</em> 。如下图所示 -<br><img src="http://www.yiibai.com/uploads/images/201802/1202/714150209_25673.png" alt=""></p> 
+ <h2 id="h2--2-"><a name="第2步" class="reference-link"></a><span class="header-link octicon octicon-link"></span>第2步</h2>
+ <p>在New Maven Project向导中，选择<code>Create a simple project</code>并指定项目保存的目录(如：<em>F:\worksp\Maven\webproject</em>)，然后单击<code>Next</code>。如下图所示 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201802/1202/852150213_98420.png" alt=""></p> 
+ <h2 id="h2--3-"><a name="第3步" class="reference-link"></a><span class="header-link octicon octicon-link"></span>第3步</h2>
+ <p>在下一个向导中，添加项目信息，如下所示，然后单击<code>Finish</code>。<br><img src="http://www.yiibai.com/uploads/images/201802/1202/306150221_41606.png" alt=""></p> 
+ <p>了解有关<a target="_blank" href="https://maven.apache.org/guides/mini/guide-naming-conventions.html" title="groupid artifactId和版本的Maven命名约定的更多信息">groupid artifactId和版本的Maven命名约定的更多信息</a>。</p> 
+ <h2 id="h2--4-"><a name="第4步" class="reference-link"></a><span class="header-link octicon octicon-link"></span>第4步</h2>
+ <p>打开<code>pom.xml</code>文件并在其中添加servlet依赖项和Tomcat maven插件，如下代码所示，<em>pom.xml</em> - </p> 
+ <pre><code class="lang-xml">&lt;project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"&gt;
+  &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
+  &lt;groupId&gt;com.yiibai&lt;/groupId&gt;
+  &lt;artifactId&gt;webproject&lt;/artifactId&gt;
+  &lt;version&gt;0.0.1-SNAPSHOT&lt;/version&gt;
+  &lt;packaging&gt;war&lt;/packaging&gt;
+
+  &lt;properties&gt;
+    &lt;project.build.sourceEncoding&gt;UTF-8&lt;/project.build.sourceEncoding&gt;
+    &lt;failOnMissingWebXml&gt;false&lt;/failOnMissingWebXml&gt;
+  &lt;/properties&gt;
+
+    &lt;dependencies&gt;
+    &lt;!-- Servlet API --&gt;
+    &lt;dependency&gt;
+      &lt;groupId&gt;javax.servlet&lt;/groupId&gt;
+      &lt;artifactId&gt;javax.servlet-api&lt;/artifactId&gt;
+      &lt;version&gt;3.1.0&lt;/version&gt;
+      &lt;scope&gt;provided&lt;/scope&gt;
+    &lt;/dependency&gt;
+  &lt;/dependencies&gt;
+
+  &lt;build&gt;
+    &lt;sourceDirectory&gt;src/main/java&lt;/sourceDirectory&gt;
+    &lt;plugins&gt;
+      &lt;plugin&gt;
+        &lt;artifactId&gt;maven-compiler-plugin&lt;/artifactId&gt;
+        &lt;version&gt;3.5.1&lt;/version&gt;
+        &lt;configuration&gt;
+          &lt;source&gt;1.8&lt;/source&gt;
+          &lt;target&gt;1.8&lt;/target&gt;
+        &lt;/configuration&gt;
+      &lt;/plugin&gt;
+
+      &lt;!-- Embedded Apache Tomcat required for testing war --&gt;
+
+      &lt;plugin&gt;
+        &lt;groupId&gt;org.apache.tomcat.maven&lt;/groupId&gt;
+        &lt;artifactId&gt;tomcat7-maven-plugin&lt;/artifactId&gt;
+        &lt;version&gt;2.2&lt;/version&gt;
+        &lt;configuration&gt;
+          &lt;path&gt;/&lt;/path&gt;
+        &lt;/configuration&gt;
+      &lt;/plugin&gt;
+    &lt;/plugins&gt;
+  &lt;/build&gt;
+&lt;/project&gt;
+</code></pre> 
+ <p>在更改<code>pom.xml</code>文件之后，更新maven web项目。</p> 
+ <p>要更新web maven项目，请右键单击项目名称(如：<code>webproject</code>)-&gt; <code>Maven</code> -&gt; <code>Update Project...</code> 来更新项目。</p> 
+ <h2 id="h2--5-"><a name="第5步" class="reference-link"></a><span class="header-link octicon octicon-link"></span>第5步</h2>
+ <p>查看maven web项目结构，如下图所示 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201802/1202/734150226_92738.png" alt=""></p> 
+ <h2 id="h2--6-"><a name="第6步" class="reference-link"></a><span class="header-link octicon octicon-link"></span>第6步</h2>
+ <p>现在，创建一个包：<code>com.yiibai.servlet</code>，并在此包下创建一个<code>HelloWorldServlet</code>类，并在其中写入以下代码。文件：<em>HelloWorldServlet.java</em> - </p>   
+ <pre><code class="lang-java">package com.yiibai.servlet;
+
+import java.io.IOException;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+/**
+ * @author maxsu
+ */
+@WebServlet("/hello")
+public class HelloWorldServlet extends HttpServlet {
+
+    private static final long serialVersionUID = 1L;
+
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        resp.setContentType("text/plain");
+        resp.getWriter().write("Hello World! Maven Web Project Example.");
+    }
+}
+</code></pre> 
+ <h2 id="h2--7-"><a name="第7步" class="reference-link"></a><span class="header-link octicon octicon-link"></span>第7步</h2>
+ <p>使用以下maven命令构建项目。</p> 
+ <pre><code class="lang-shell">mvn clean install
+</code></pre> 
+ <p>要在Eclipse IDE中执行maven命令，请右键点击项目名称，打开<code>Run</code>菜单 -&gt; <code>Run Configuration..</code>以创建新配置。</p> 
+ <p>在运行配置向导中，双击<code>Maven Build</code>并提供配置信息(Name，Base directory和Goals)，如下图所示。<br><img src="http://www.yiibai.com/uploads/images/201802/1202/372150238_49994.png" alt=""></p> 
+ <p>然后点击运行(<code>Run</code>)并在控制台中输出结果如下 -<br><img src="http://www.yiibai.com/uploads/images/201802/1202/783150239_61198.png" alt=""></p> 
+ <h2 id="h2--8-"><a name="第8步" class="reference-link"></a><span class="header-link octicon octicon-link"></span>第8步</h2>
+ <p>使用以下命令运行嵌入式tomcat服务器。</p> 
+ <pre><code class="lang-shell">mvn tomcat7:run
+</code></pre> 
+ <p>要在Eclipse IDE中执行maven命令，请创建一个新的配置，如下图所示 -<br><img src="http://www.yiibai.com/uploads/images/201802/1202/930150243_94991.png" alt=""></p> 
+ <p>现在运行配置启动tomcat服务器。 控制台输出如下图所示 -<br><img src="http://www.yiibai.com/uploads/images/201802/1202/211150244_77398.png" alt=""></p> 
+ <h2 id="h2--9-"><a name="第9步" class="reference-link"></a><span class="header-link octicon octicon-link"></span>第9步</h2>
+ <p>打开浏览器并在地址栏中输入URL: <code>http://localhost:8080/hello</code> ，得到以下结果 -<br><img src="http://www.yiibai.com/uploads/images/201802/1202/277150245_91215.png" alt=""></p>
+ <br>      
+</div></body></html>

@@ -1,0 +1,134 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Struts2 &lt;s:url&gt;标签示例</h1><div style="width:100%;float:left;" class="article-content">   
+ <div> 
+  <div>
+    Struts2&nbsp;&lt;s:url&gt;标签被用来创建一个URL，并输出它作为文本格式。它从不通过自己的工作，但它可以提供URL链接到其他标签，如&lt;s:a&gt;创建超链接或&lt;img&gt;渲染图像。在本教程中，它显示 Struts2&nbsp;&lt;s:url&gt;标签的5种常见用法。 
+  </div> 
+ </div> 
+ <h2> 1. 动作 </h2> 
+ <div>
+   Action类转发请求。 
+ </div> 
+ <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:16px;"> <strong>URLTagAction.java</strong> </p> 
+ <pre>package com.yiibai.common.action;
+
+import com.opensymphony.xwork2.ActionSupport;
+ 
+public class URLTagAction extends ActionSupport{
+	
+	public String execute() {
+		return SUCCESS;
+	}
+	
+}</pre> 
+ <h2> 2. &lt;s:url&gt;标签示例 </h2> 
+ <div>
+   这里举5个例子来说明如何使用Struts2&nbsp;&lt;s:url&gt;&nbsp;标签。 
+ </div> 
+ <ol> 
+  <li> 
+   <div>
+     创建图片URL。 
+   </div> <pre>&lt;img src="&lt;s:url value="/images/man.jpg"/&gt;" /&gt;</pre> 
+   <div style="background-color:inherit;">
+     输出(假设根上下文名称为“Struts2Example”) 
+   </div> <pre>&lt;img src="/Struts2Example/images/man.jpg" /&gt;</pre> </li> 
+  <li> 
+   <div style="background-color:inherit;">
+     创建一个“Google”文字，并将其链接到
+    <a target="_blank" href="http://www.google.com/">http://www.google.com</a>。 
+   </div> <pre>&lt;a href="&lt;s:url value="http://www.google.com"  /&gt;" target="_blank"&gt;Google&lt;/a&gt;</pre> <p style="background-color:inherit;"> 输出 </p> <pre>&lt;a href="http://www.google.com" target="_blank"&gt;Google&lt;/a&gt; &nbsp;</pre> 
+   <div>
+     当以“http”或“www”字符开始定义URL值，在Struts&nbsp;2将呈现它，因为它是不增加额外的根上下文的域名为example1。 
+   </div> </li> 
+  <li style="background-color:inherit;"> 
+   <div style="background-color:inherit;">
+     创建操作URL以“id”参数，并输出它作为文本格式。 
+   </div> <pre>&lt;s:url action="urlTagAction.action" &gt;
+    &lt;s:param name="id"&gt;123&lt;/s:param&gt;
+&lt;/s:url&gt;</pre> <p style="background-color:inherit;"> 输出 </p> <pre>/Struts2Example/urlTagAction.action?id=123</pre> </li> 
+  <li style="background-color:inherit;"> 
+   <div style="background-color:inherit;">
+     使用“name”参数来创建操作URL，并用&lt;s:a&gt;组合通过&lt;s:property&gt;标签。 
+   </div> <pre>&lt;s:url action="urlTagAction.action" var="urlTag" &gt;
+    &lt;s:param name="name"&gt;yiibai&lt;/s:param&gt;
+&lt;/s:url&gt;
+&lt;a href="&lt;s:property value="#urlTag" /&gt;" &gt;URL Tag Action (via property)&lt;/a&gt;</pre> <p style="background-color:inherit;"> 输出 </p> <pre>&lt;a href="/Struts2Example/urlTagAction.action?name=yiibai" &gt;URL Tag Action (via property)&lt;/a&gt;</pre> </li> 
+  <li style="background-color:inherit;"> 
+   <div style="background-color:inherit;">
+     使用 “age” 参数创建操作URL，并用&lt;s:a&gt;通过组合“%{urlTag}标记。 
+   </div> <pre>&lt;s:url action="urlTagAction.action" var="urlTag" &gt;
+    &lt;s:param name="age"&gt;99&lt;/s:param&gt;
+&lt;/s:url&gt;
+&lt;s:a href="%{urlTag}"&gt;URL Tag Action (via %)&lt;/s:a&gt;</pre> <p style="background-color:inherit;"> 输出 </p> <pre>&lt;a href="/Struts2Example/urlTagAction.action?age=99"&gt;URL Tag Action (via %)&lt;/a&gt;</pre> </li> 
+ </ol> 
+ <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:16px;"> 全部的JSP代码 </p> 
+ <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:16px;"> <strong>url.jsp</strong> </p>   
+ <pre>&lt;%@ taglib prefix="s" uri="/struts-tags" %&gt;
+ &lt;html&gt;
+&lt;head&gt;
+&lt;/head&gt;
+ 
+&lt;body&gt;
+&lt;h1&gt;Struts 2 URL tag example&lt;/h1&gt;
+
+&lt;ol&gt;
+&lt;li&gt;
+&lt;img src="&lt;s:url value="/images/man.jpg"/&gt;" /&gt;
+&lt;/li&gt;
+
+&lt;li&gt;
+&lt;a href="&lt;s:url value="http://www.google.com"  /&gt;" target="_blank"&gt;Google&lt;/a&gt;
+&lt;/li&gt;
+
+&lt;li&gt;
+&lt;s:url action="urlTagAction.action" &gt;
+    &lt;s:param name="id"&gt;123&lt;/s:param&gt;
+&lt;/s:url&gt;
+&lt;/li&gt;
+
+&lt;li&gt;
+&lt;s:url action="urlTagAction.action" var="urlTag" &gt;
+    &lt;s:param name="name"&gt;yiibai&lt;/s:param&gt;
+&lt;/s:url&gt;
+&lt;a href="&lt;s:property value="#urlTag" /&gt;" &gt;URL Tag Action (via property)&lt;/a&gt;
+&lt;/li&gt;
+
+&lt;li&gt;
+&lt;s:url action="urlTagAction.action" var="urlTag" &gt;
+    &lt;s:param name="age"&gt;99&lt;/s:param&gt;
+&lt;/s:url&gt;
+&lt;s:a href="%{urlTag}"&gt;URL Tag Action (via %)&lt;/s:a&gt;
+&lt;/li&gt;
+
+&lt;/ol&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;</pre> 
+ <h2 style="color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:24px;font-weight:500;"> 3. struts.xml </h2> 
+ <pre>&lt;?xml version="1.0" encoding="UTF-8" ?&gt;
+&lt;!DOCTYPE struts PUBLIC
+"-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+"http://struts.apache.org/dtds/struts-2.0.dtd"&gt;
+ 
+&lt;struts&gt;
+    &lt;constant name="struts.devMode" value="true" /&gt;
+    &lt;package name="default" namespace="/" extends="struts-default"&gt;
+	
+	&lt;action name="urlTagAction" 
+		class="com.yiibai.common.action.URLTagAction" &gt;
+		&lt;result name="success"&gt;/pages/url.jsp&lt;/result&gt;
+	&lt;/action&gt;
+		
+    &lt;/package&gt;		
+&lt;/struts&gt;</pre> 
+ <h2> 4. 示例 </h2> 
+ <p> http://localhost:8080/struts2urltag/urlTagAction.action </p> 
+ <p> 在浏览器中打上面的网址，它显示结果如下图： </p> 
+ <p> <img src="/uploads/tutorial/20151121/1-151121063516157.png" alt=""> </p> 
+ <h2> 参考 </h2> 
+ <ol> 
+  <li> <a target="_blank" href="http://struts.apache.org/2.0.14/docs/url.html">Struts2 &lt;s:url&gt;标签文档</a> </li> 
+ </ol> 
+ <p> 代码下载 -&nbsp;<a target="_blank" href="http://pan.baidu.com/s/1c0gBXeC">http://pan.baidu.com/s/1c0gBXeC</a> </p>
+ <br>      
+</div></body></html>

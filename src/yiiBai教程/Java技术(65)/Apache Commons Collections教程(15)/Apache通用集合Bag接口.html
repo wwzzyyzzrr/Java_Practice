@@ -1,0 +1,125 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Apache通用集合Bag接口</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>新的接口被添加到支持<code>bag</code>。 <code>Bag</code>接口定义了一个集合，它可以计算一个对象出现在集合中的次数。 例如，如果<code>Bag</code>包含<code>{a，a，b，c}</code>，则<code>getCount("a")</code>方法将返回<code>2</code>，而<code>uniqueSet()</code>返回唯一值。</p> 
+ <h2 id="h2-u63A5u53E3u58F0u660E"><a name="接口声明" class="reference-link"></a><span class="header-link octicon octicon-link"></span>接口声明</h2>
+ <p>以下是<code>org.apache.commons.collections4.Bag&lt;E&gt;</code>接口的声明 - </p> 
+ <pre><code class="lang-java">public interface Bag&lt;E&gt;
+   extends Collection&lt;E&gt;
+</code></pre> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>编号</th> 
+    <th>方法</th> 
+    <th>描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>1</td> 
+    <td><code>boolean add(E object)</code></td> 
+    <td>(冲突)将指定的对象到<code>Bag</code>的一个副本。</td> 
+   </tr> 
+   <tr> 
+    <td>2</td> 
+    <td><code>boolean add(E object, int nCopies)</code></td> 
+    <td>将指定对象的<code>nCopies</code>副本添加到<code>Bag</code>中。</td> 
+   </tr> 
+   <tr> 
+    <td>3</td> 
+    <td><code>boolean containsAll(Collection&lt;?&gt; coll)</code></td> 
+    <td>(冲突)如果包包含给定集合中的所有元素，并且尊重基数，则返回<code>true</code>。</td> 
+   </tr> 
+   <tr> 
+    <td>4</td> 
+    <td><code>int getCount(Object object)</code></td> 
+    <td>返回包中当前给定对象的出现次数(基数)。</td> 
+   </tr> 
+   <tr> 
+    <td>5</td> 
+    <td><code>Iterator&lt;E&gt; iterator()</code></td> 
+    <td>在整个成员集上返回一个迭代器，包括由于基数而产生的副本。</td> 
+   </tr> 
+   <tr> 
+    <td>6</td> 
+    <td><code>boolean remove(Object object)</code></td> 
+    <td>从<code>Bag</code>中移除所有给定的对象。</td> 
+   </tr> 
+   <tr> 
+    <td>7</td> 
+    <td><code>boolean remove(Object object, int nCopies)</code></td> 
+    <td>从<code>Bag</code>中删除指定对象的<code>nCopies</code>副本。</td> 
+   </tr> 
+   <tr> 
+    <td>8</td> 
+    <td><code>boolean removeAll(Collection&lt;?&gt; coll)</code></td> 
+    <td>删除给定集合中的所有元素，尊重基数。</td> 
+   </tr> 
+   <tr> 
+    <td>9</td> 
+    <td><code>boolean retainAll(Collection&lt;?&gt; coll)</code></td> 
+    <td>移除不在给定集合中的所有<code>Bag</code>成员，尊重基数。</td> 
+   </tr> 
+   <tr> 
+    <td>10</td> 
+    <td><code>int size()</code></td> 
+    <td>返回<code>Bag</code>中所有类型对象的总数。</td> 
+   </tr> 
+   <tr> 
+    <td>11</td> 
+    <td><code>Set&lt;E&gt; uniqueSet()</code></td> 
+    <td>返回<code>Bag</code>中的一组唯一元素。</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h2 id="h2-u65B9u6CD5u7EE7u627F"><a name="方法继承" class="reference-link"></a><span class="header-link octicon octicon-link"></span>方法继承</h2>
+ <p>该接口从以下接口继承方法 -</p> 
+ <ul> 
+  <li><code>java.util.Collection</code></li>
+ </ul> 
+ <p><strong>Bag接口示例</strong></p>   
+ <pre><code class="lang-java">import org.apache.commons.collections4.Bag;
+import org.apache.commons.collections4.bag.HashBag;
+
+public class BagTester {
+   public static void main(String[] args) {
+      Bag&lt;String&gt; bag = new HashBag&lt;&gt;();
+
+      //add "a" two times to the bag.
+      bag.add("a" , 2);
+
+      //add "b" one time to the bag.
+      bag.add("b");
+
+      //add "c" one time to the bag.
+      bag.add("c");
+
+      //add "d" three times to the bag.
+      bag.add("d",3);
+
+      //get the count of "d" present in bag.
+      System.out.println("d is present " + bag.getCount("d") + " times.");
+      System.out.println("bag: " +bag);
+
+      //get the set of unique values from the bag
+      System.out.println("Unique Set: " +bag.uniqueSet());
+
+      //remove 2 occurrences of "d" from the bag
+      bag.remove("d",2);
+      System.out.println("2 occurences of d removed from bag: " +bag);
+      System.out.println("d is present " + bag.getCount("d") + " times.");
+      System.out.println("bag: " +bag);
+      System.out.println("Unique Set: " +bag.uniqueSet());
+   }
+}
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 - </p> 
+ <pre><code class="lang-shell">d is present 3 times.
+bag: [2:a,1:b,1:c,3:d]
+Unique Set: [a, b, c, d]
+2 occurences of d removed from bag: [2:a,1:b,1:c,1:d]
+d is present 1 times.
+bag: [2:a,1:b,1:c,1:d]
+Unique Set: [a, b, c, d]
+</code></pre>
+ <br>      
+</div></body></html>

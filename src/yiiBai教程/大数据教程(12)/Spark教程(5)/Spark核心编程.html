@@ -1,0 +1,368 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Spark核心编程</h1><div style="width:100%;float:left;" class="article-content">   
+ <div> 
+  <div>
+    Spark&nbsp;核心是整个项目的基础。它提供了分布式任务调度，调度和基本的 I/O 功能。Spark&nbsp;使用一种称为RDD(弹性分布式数据集)一个专门的基础数据结构，是整个机器分区数据的逻辑集合。RDDS可以用两种方法来创建的;一个是在外部存储系统引用的数据集，第二个是通过应用转换(如map,&nbsp;filter,&nbsp;reducer,&nbsp;join)在现有RDDS。 
+  </div> 
+ </div> 
+ <div> 
+  <p style="text-align:justify;"> RDD抽象通过语言集成API公开。这简化了编程的复杂性，因为应用程序的处理RDDS方式类似于操纵的本地集合数据。 </p> 
+  <h2> Spark Shell </h2> 
+  <p style="text-align:justify;"> Spark提供了一个交互的shell&nbsp;−&nbsp;一个强大的工具，以交互方式分析数据。&nbsp;这是在&nbsp;Scala或Python语言。Spark主要抽象称为弹性分布式数据集(RDD)项目的分布式采集。RDDS可以从Hadoop的输入格式来创建(如HDFS文件)或通过转化其他RDDS。 </p> 
+  <h3> 打开 Spark Shell </h3> 
+  <div>
+    下面的命令用来打开Spark&nbsp;shell。 
+  </div> 
+  <pre>$ spark-shell</pre> 
+  <h3> 创建简单RDD </h3> 
+  <div>
+    让我们从文本文件中创建一个简单的 RDD。使用下面的命令来创建一个简单的 RDD。 
+  </div> 
+  <pre>scala&gt; val inputfile = sc.textFile(“input.txt”)</pre> 
+  <div>
+    对上述命令的输出为： 
+  </div> 
+  <pre>inputfile: org.apache.spark.rdd.RDD[String] = input.txt MappedRDD[1] at textFile at &lt;console&gt;:12</pre> 
+  <div>
+    Spark&nbsp;RDD&nbsp;API引入了一些变革和一些动作来操纵RDD。 
+  </div> 
+  <h2> RDD&nbsp;转换 </h2> 
+  <p style="text-align:justify;"> RDD转换返回指向新的RDD，并允许创建RDDS之间的依赖关系。&nbsp;在依赖关系链中的每个RDD(依赖关系的字串)具有这样的功能，用于计算其数据并具有一个指针(依赖性)到其父RDD。 </p> 
+  <p style="text-align:justify;"> Spark是懒惰的，所以什么都不会被执行，除非调用一些改造或行动将触发作业创建和执行。看单词计数示例，如下面的代码片段。 </p> 
+  <div>
+    因此，RDD转型不是一组数据而是在程序中的一个步骤(可能是唯一的步骤)告诉Spark如何获取数据以及如何使用它。 
+  </div> 
+  <div>
+    下面给出是RDD转换的列表。 
+  </div> 
+  <table border="1" cellpadding="2" cellspacing="0" style="font-size:14px;color:#313131;font-family:Verdana, Geneva, Tahoma,  Helvetica, background-color:inherit;"> 
+   <tbody> 
+    <tr> 
+     <th style="border:1px solid #999999;background-color:#EEEEEE;"> S.No </th> 
+     <th style="border:1px solid #999999;background-color:#EEEEEE;text-align:center;"> 
+      <div style="background-color:inherit;">
+        转换&amp;含义 
+      </div> </th> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 1 </td> 
+     <td style="border:1px solid #999999;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>map(func)</b> </p> <p style="text-align:justify;"> 返回一个新的分布式数据集，传递源的每个元素形成通过一个函数&nbsp;func </p> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 2 </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>filter(func)</b> </p> 
+      <div style="background-color:inherit;">
+        返回由选择在func返回true，源元素组成了一个新的数据集 
+      </div> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 3 </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>flatMap(func)</b> </p> 
+      <div style="background-color:inherit;">
+        类似映射，但每个输入项目可以被映射到0以上输出项目(所以func应返回seq而不是单一的项目) 
+      </div> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 4 </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>mapPartitions(func)</b> </p> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <span style="background-color:inherit;font-size:inherit;color:#313131;line-height:1.5;">类似映射，只不过是单独的每个分区(块)上运行RDD，</span><span style="background-color:inherit;font-size:inherit;color:#313131;line-height:1.5;">因此&nbsp;func&nbsp;的类型必须是Iterator</span><span style="background-color:inherit;line-height:1.5;">&lt;T&gt; ⇒ Iterator&lt;U&gt;&nbsp;</span><span style="background-color:inherit;font-size:inherit;color:#313131;line-height:1.5;">对类型T在RDD上运行时</span> </p> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 5 </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>mapPartitionsWithIndex(func)</b> </p> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <span style="background-color:inherit;font-size:inherit;color:#313131;line-height:1.5;">类似映射分区，而且还提供func&nbsp;来表示分区的索引的整数值，</span><span style="background-color:inherit;font-size:inherit;color:#313131;line-height:1.5;">因此&nbsp;func&nbsp;必须是类型</span><span style="background-color:inherit;line-height:1.5;">&nbsp;(Int, Iterator&lt;T&gt;) ⇒ Iterator&lt;U&gt;&nbsp;<span style="color:#313131;font-family:Verdana, Geneva, Tahoma,  Helvetica,;">当类型T在RDD上运行时</span></span> </p> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 6 </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>sample(withReplacement, fraction, seed)</b> </p> 
+      <div style="background-color:inherit;">
+        采样数据的一小部分，有或没有更换，利用给定的随机数发生器的种子 
+      </div> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 7 </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>union(otherDataset)</b> </p> 
+      <div style="background-color:inherit;">
+        返回一个新的数据集，其中包含源数据和参数元素的结合 
+      </div> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 8 </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>intersection(otherDataset)</b> </p> 
+      <div style="background-color:inherit;">
+        返回包含在源数据和参数元素的新RDD
+       <span style="font-family:Verdana, Geneva, Tahoma,  Helvetica, font-size:14px;">交集</span> 
+      </div> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 9 </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>distinct([numTasks])</b> </p> 
+      <div style="background-color:inherit;">
+        返回一个新的数据集包含源数据集的不同元素 
+      </div> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 10 </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>groupByKey([numTasks])</b> </p> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <span style="background-color:inherit;font-size:inherit;color:#313131;line-height:1.5;">当调用(K，V)数据集，</span><span style="background-color:inherit;font-size:inherit;color:#313131;line-height:1.5;">返回(K,&nbsp;Iterable&lt;V&gt;)&nbsp;对数据集</span> </p> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 11 </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>reduceByKey(func, [numTasks])</b> </p> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 12 </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>aggregateByKey(zeroValue)(seqOp, combOp, [numTasks])</b> </p> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 13 </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>sortByKey([ascending], [numTasks])</b> </p> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 14 </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>join(otherDataset, [numTasks])</b> </p> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 15 </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>cogroup(otherDataset, [numTasks])</b> </p> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 16 </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>cartesian(otherDataset)</b> </p> 
+      <div style="background-color:inherit;">
+        当上调用类型T和U的数据集，返回(T，U)对数据集(所有元素对) 
+      </div> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 17 </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>pipe(command, [envVars])</b> </p> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <span style="background-color:inherit;font-size:inherit;color:#313131;line-height:1.5;">RDD通过shell命令每个分区，例如：一个Perl或bash脚本。</span><span style="background-color:inherit;font-size:inherit;color:#313131;line-height:1.5;">RDD元素被写入到进程的标准输入和线路输出，标准输出形式返回一个字符串RDD</span> </p> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 18 </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>coalesce(numPartitions)</b> </p> 
+      <div style="background-color:inherit;">
+        减少RDD到numPartitions分区的数量。过滤大型数据集后，更高效地运行的操作 
+      </div> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 19 </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>repartition(numPartitions)</b> </p> 
+      <div style="background-color:inherit;"> 
+       <span style="font-family:Verdana, Geneva, Tahoma,  Helvetica, font-size:14px;">打乱</span>RDD数据随机创造更多或更少的分区，并在它们之间平衡。这总是打乱的所有数据在网络上 
+      </div> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 20 </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>repartitionAndSortWithinPartitions(partitioner)</b> </p> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <span style="background-color:inherit;font-size:inherit;color:#313131;line-height:1.5;">根据给定的分区重新分区RDD及在每个结果分区，排序键记录。</span><span style="background-color:inherit;font-size:inherit;color:#313131;line-height:1.5;">这是调用重新分配排序在每个分区内，因为它可以推动分拣向下进入混洗机制效率更高。</span> </p> </td> 
+    </tr> 
+   </tbody> 
+  </table> 
+  <h2> 动作 </h2> 
+  <div>
+    下表给出了操作，及其返回值的列表。 
+  </div> 
+  <table border="1" cellpadding="2" cellspacing="0" style="font-size:14px;color:#313131;font-family:Verdana, Geneva, Tahoma,  Helvetica, background-color:inherit;"> 
+   <tbody> 
+    <tr> 
+     <th style="border:1px solid #999999;background-color:#EEEEEE;"> S.No </th> 
+     <th style="border:1px solid #999999;background-color:#EEEEEE;text-align:center;"> 操作 &amp; 含义 </th> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 1 </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>reduce(func)</b> </p> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <span style="background-color:inherit;font-size:inherit;color:#313131;line-height:1.5;">合计数据集的元素，使用函数</span>&nbsp;<b>func</b>&nbsp;(<span style="background-color:inherit;font-size:inherit;color:#313131;line-height:1.5;">其中有两个参数和返回一行</span><span style="background-color:inherit;line-height:1.5;">).&nbsp;</span><span style="background-color:inherit;font-size:inherit;color:#313131;line-height:1.5;">该函数应该是可交换和可结合，以便它可以正确地在并行计算。</span> </p> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 2 </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>collect()</b> </p> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <span style="background-color:inherit;font-size:inherit;color:#313131;line-height:1.5;">返回数据集的所有作为数组在驱动程序的元素。</span><span style="background-color:inherit;font-size:inherit;color:#313131;line-height:1.5;">这是一个过滤器或其它操作之后返回数据的一个足够小的子集，通常是有用的</span> </p> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 3 </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>count()</b> </p> 
+      <div style="background-color:inherit;">
+        返回该数据集的元素数 
+      </div> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 4 </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>first()</b> </p> 
+      <div style="background-color:inherit;">
+        返回的数据集的第一个元素(类似于使用(1)) 
+      </div> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 5 </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>take(n)</b> </p> 
+      <div style="background-color:inherit;">
+        返回与该数据集的前n个元素的阵列。 
+      </div> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 6 </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>takeSample (withReplacement,num, [seed])</b> </p> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <span style="background-color:inherit;font-size:inherit;color:#313131;line-height:1.5;">返回数组的数据集num个元素，有或没有更换随机抽样，</span><span style="background-color:inherit;font-size:inherit;color:#313131;line-height:1.5;">预指定的随机数发生器的种子<span style="font-family:Verdana, Geneva, Tahoma,  Helvetica,;">可选</span></span> </p> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 7 </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>takeOrdered(n, [ordering])</b> </p> 
+      <div style="background-color:inherit;">
+        返回RDD使用或者按其自然顺序或自定义比较的前第n个元素 
+      </div> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 8 </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>saveAsTextFile(path)</b> </p> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <span style="background-color:inherit;font-size:inherit;color:#313131;line-height:1.5;">写入数据集是一个文本文件中的元素(或一组文本文件)，在给定的目录的本地文件系统，</span><span style="background-color:inherit;font-size:inherit;color:#313131;line-height:1.5;">HDFS或任何其他的Hadoop支持的文件系统。</span><span style="background-color:inherit;font-size:inherit;color:#313131;line-height:1.5;">Spark调用每个元素的 toString，将其转换为文件中的文本行</span> </p> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 9 </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>saveAsSequenceFile(path) (Java and Scala)</b> </p> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <span style="background-color:inherit;font-size:inherit;color:#313131;line-height:1.5;">写入数据集，为Hadoop&nbsp;SequenceFile元素在给定的路径写入在本地文件系统，</span><span style="background-color:inherit;font-size:inherit;color:#313131;line-height:1.5;">HDFS或任何其他Hadoop支持的文件系统。</span><span style="background-color:inherit;line-height:1.5;">&nbsp;</span><span style="background-color:inherit;font-size:inherit;color:#313131;line-height:1.5;">这是适用于实现Hadoop可写接口RDDS的键&nbsp;-&nbsp;值对。</span><span style="background-color:inherit;font-size:inherit;color:#313131;line-height:1.5;">在Scala中，它也可以在属于隐式转换为可写(Spark包括转换为基本类型，如&nbsp;Int,&nbsp;Double,&nbsp;String&nbsp;等等)类型。</span> </p> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 10 </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>saveAsObjectFile(path) (Java and Scala)</b> </p> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <span style="background-color:inherit;font-size:inherit;color:#313131;line-height:1.5;">写入数据集的内容使用Java序列化为一个简单的格式，</span><span style="background-color:inherit;font-size:inherit;color:#313131;line-height:1.5;">然后可以使用SparkContext.objectFile()加载。</span> </p> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 11 </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>countByKey()</b> </p> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <span style="background-color:inherit;font-size:inherit;color:#313131;line-height:1.5;">仅适用于RDDS的<span style="font-family:Verdana, Geneva, Tahoma,  Helvetica,;">类型</span></span>&nbsp;(K, V).&nbsp;<span style="background-color:inherit;font-size:inherit;color:#313131;line-height:1.5;">返回(K,&nbsp;Int)对与每个键的次数的一个HashMap。</span> </p> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 12 </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>foreach(func)</b> </p> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <span style="background-color:inherit;font-size:inherit;color:#313131;line-height:1.5;">数据集的每个元素上运行函数func。</span><span style="background-color:inherit;font-size:inherit;color:#313131;line-height:1.5;">这通常对于不良反应，例如更新累加器或与外部存储系统进行交互进行。</span> </p> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>注</b>&nbsp;−&nbsp;<span style="background-color:inherit;font-size:inherit;color:#313131;line-height:1.5;">在 foreach()以外修改变量，其他累加器可能会导致不确定的行为。</span><span style="background-color:inherit;font-size:inherit;color:#313131;line-height:1.5;">请参阅了解闭包的更多细节。</span> </p> </td> 
+    </tr> 
+   </tbody> 
+  </table> 
+  <h2> 
+   <div>
+     RDD编程 
+   </div> </h2> 
+  <div>
+    让我们来看看几个RDD转换和操作RDD编程实现，用一个例子的协助说明。 
+  </div> 
+  <h3> 示例 </h3> 
+  <p> 考虑一个单词计数的例子&nbsp;−&nbsp;它计算出现在文档中的每个单词。请看下面的文字为输入并保存在主目录中的 input.txt 文件。 </p> 
+  <p> input.txt&nbsp;− 作为输入文件 </p>   
+  <pre>people are not as beautiful as they look, 
+as they walk or as they talk.
+they are only as beautiful  as they love, 
+as they care as they share.</pre> 
+  <div>
+    按照下面给出命令执行示例程序。 
+  </div> 
+  <h3> 打开Spark-Shell </h3> 
+  <p> 下面的命令用来打开spark shell.&nbsp;通常情况下，spark&nbsp;使用Scala构建。因此，Spark&nbsp;程序需要在&nbsp;Scala&nbsp;环境中运行。 </p> 
+  <pre>$ spark-shell&nbsp;</pre> 
+  <p> 如果Spark&nbsp;shell&nbsp;成功打开，会发现下面的输出。看看输出“Spark&nbsp;上下文可作为sc”&nbsp;的最后一行表示Spark容器会自动创建Spark&nbsp;上下文对象名为sc。启动程序的第一步骤之前，SparkContext 对象应该被创建。 </p> 
+  <pre>Spark assembly has been built with Hive, including Datanucleus jars on classpath 
+Using Spark's default log4j profile: org/apache/spark/log4j-defaults.properties 
+15/06/04 15:25:22 INFO SecurityManager: Changing view acls to: hadoop 
+15/06/04 15:25:22 INFO SecurityManager: Changing modify acls to: hadoop 
+15/06/04 15:25:22 INFO SecurityManager: SecurityManager: authentication disabled;
+   ui acls disabled; users with view permissions: Set(hadoop); users with modify permissions: Set(hadoop) 
+15/06/04 15:25:22 INFO HttpServer: Starting HTTP Server 
+15/06/04 15:25:23 INFO Utils: Successfully started service 'HTTP class server' on port 43292. 
+Welcome to 
+      ____              __ 
+     / __/__  ___ _____/ /__ 
+    _\ \/ _ \/ _ `/ __/  '_/ 
+   /___/ .__/\_,_/_/ /_/\_\   version 1.4.0 
+      /_/  
+		
+Using Scala version 2.10.4 (Java HotSpot(TM) 64-Bit Server VM, Java 1.7.0_71) 
+Type in expressions to have them evaluated. 
+Spark context available as sc 
+scala&gt;</pre> 
+  <h3> 创建一个RDD </h3> 
+  <div>
+    首先，我们必须使用&nbsp;Spark-Scala&nbsp;API&nbsp;读取输入文件，并创建一个RDD。 
+  </div> 
+  <p> 下面的命令被用于从给定位置读出的文件。这里，新的 RDD 使用输入文件名创建。这是在&nbsp;textFile(“”)方法的参数字符串是用于输入文件名的绝对路径。然而，如果仅给出文件名，那么它输入文件则在当前位置。 </p> 
+  <pre>scala&gt; val inputfile = sc.textFile("input.txt")</pre> 
+  <h3> 
+   <div>
+     执行字数转换 
+   </div> </h3> 
+  <p> 我们的目标是计算一个文件中的字数。分裂每一行成词创建一个平面地图(flatMap(line ⇒ line.split(“ ”)). </p> 
+  <p> 接下来，读每个词作为一个键和值&nbsp;‘1’&nbsp;(&lt;key, value&gt; = &lt;word,1&gt;) 使用映射函数 (map(word ⇒ (word, 1)). </p> 
+  <p> 最后，加入类似的键值降低这些键&nbsp;(reduceByKey(_+_)). </p> 
+  <p> 下面的命令用于执行字数统计逻辑。执行此操作后，不会有任何输出，因为这不是一个动作，这是一个转换;&nbsp;指向一个新的RDD或告诉spark，用给定的数据来做什么)。 </p> 
+  <pre>scala&gt; val counts = inputfile.flatMap(line =&gt; line.split(" ")).map(word =&gt; (word, 1)).reduceByKey(_+_);</pre> 
+  <h3> 
+   <div>
+     当前RDD 
+   </div> </h3> 
+  <p> 同时用RDD工作，如果想了解当前的RDD，那么可使用下面的命令。&nbsp;它会告诉你关于当前RDD及其依赖调试的描述。 </p> 
+  <pre>scala&gt; counts.toDebugString</pre> 
+  <h3> 
+   <div>
+     缓存转换 
+   </div> </h3> 
+  <p> 可以使用&nbsp;persist()&nbsp;或&nbsp;cache()&nbsp;方法标记一个RDD。在第一次计算的操作，这将被保存在存储器中的节点上。使用下面的命令来存储中间转换在内存中。 </p> 
+  <pre>scala&gt; counts.cache()</pre> 
+  <h3> 
+   <div>
+     应用动作 
+   </div> </h3> 
+  <p> 应用动作(操作)，比如存储所有的转换结果到一个文本文件中。saveAsTextFile(“”)方法字符串参数是输出文件夹的绝对路径。试试下面的命令来保存输出文本文件。在下面的例子中，&nbsp;‘output’&nbsp;的文件夹为当前位置。 </p> 
+  <pre>scala&gt; counts.saveAsTextFile("output")</pre> 
+  <h3> 
+   <div>
+     检查输出 
+   </div> </h3> 
+  <p> 打开另一个终端进入主目录(其中spark&nbsp;在其他终端中执行)。下面的命令用于检查输出目录。 </p> 
+  <pre>[hadoop@localhost ~]$ cd output/ 
+[hadoop@localhost output]$ ls -1 
+ 
+part-00000 
+part-00001 
+_SUCCESS</pre> 
+  <p> 下面的命令是用来查看输出的&nbsp;Part-00001&nbsp;文件。 </p> 
+  <pre>[hadoop@localhost output]$ cat part-00000</pre> 
+  <h3> 输出 </h3> 
+  <pre>(people,1) 
+(are,2) 
+(not,1) 
+(as,8) 
+(beautiful,2) 
+(they, 7) 
+(look,1) </pre> 
+  <div>
+    下面的命令是用来查看输出的&nbsp;Part-00001&nbsp;文件。 
+  </div> 
+  <pre>[hadoop@localhost output]$ cat part-00001 </pre> 
+  <h3> 输出 </h3> 
+  <pre>(walk, 1) 
+(or, 1) 
+(talk, 1) 
+(only, 1) 
+(love, 1) 
+(care, 1) 
+(share, 1) </pre> 
+  <h2> 
+   <div>
+     UN持久存储 
+   </div> </h2> 
+  <div>
+    UN持续存在之前，如果想看到用于该应用程序的存储空间，可使用下面的URL在浏览器中查看。 
+  </div> 
+  <pre>http://localhost:4040</pre> 
+  <div>
+    这将会看到下面的屏幕，该屏幕显示用于应用程序，这些都在 Spark&nbsp;shell 运行的存储空间。 
+  </div> 
+  <img src="file://E:/data/youdao/qq24B39E2329F08D9F4C3146A571A415EF/68e4aaa43b364310bada818bbecc2ba5/orage_space.jpeg" alt="storage space"> 
+  <div>
+    如果想特别的RDD存储空间，然后使用下面的命令。 
+  </div> 
+  <pre>Scala&gt; counts.unpersist()&nbsp;</pre> 
+  <p> 将看到如下输出&nbsp;− </p> 
+  <pre>15/06/27 00:57:33 INFO ShuffledRDD: Removing RDD 9 from persistence list 
+15/06/27 00:57:33 INFO BlockManager: Removing RDD 9 
+15/06/27 00:57:33 INFO BlockManager: Removing block rdd_9_1 
+15/06/27 00:57:33 INFO MemoryStore: Block rdd_9_1 of size 480 dropped from memory (free 280061810) 
+15/06/27 00:57:33 INFO BlockManager: Removing block rdd_9_0 
+15/06/27 00:57:33 INFO MemoryStore: Block rdd_9_0 of size 296 dropped from memory (free 280062106) 
+res7: cou.type = ShuffledRDD[9] at reduceByKey at &lt;console&gt;:14</pre> 
+  <div>
+    为了验证在浏览器中的存储空间，使用下面的URL。 
+  </div> 
+  <pre>http://localhost:4040/</pre> 
+  <div>
+    会看到下面的画面。它用于应用程序，这是在Spark&nbsp;shell运行存储空间。 
+  </div> 
+  <img src="file://E:/data/youdao/qq24B39E2329F08D9F4C3146A571A415EF/9f35763ef2e74c0f821293d2feee9d1f/application.jpeg" alt="Storage space for application"> 
+ </div>
+ <br>      
+</div></body></html>

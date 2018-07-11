@@ -1,0 +1,56 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">wxPython多文档界面</h1><div style="width:100%;float:left;" class="article-content">   
+ <div> 
+  <div>
+    一个典型的GUI应用程序可以有多个窗口。标签和堆叠部件一次允许激活一个这样的窗口。然而，很多时候这种方法可能不是有用，因为其他窗口可能是隐藏的。 
+  </div> 
+ </div> 
+ <div> 
+  <p style="text-align:justify;"> 同时显示多个窗口的一种方法是创建它们作为独立的窗口。这被称为SDI(单文档界面)。这需要更多的存储器资源，每个窗口可以具有其自己的菜单系统，工具栏等等 </p> 
+  <div>
+    在wxPython中的MDI框架提供了wx.MDIParentFrame类。其对象充当容器为多个子窗口，每个对象是wx.MDIChildFrame类。 
+  </div> 
+  <div>
+    子窗口位于父框架的MDIClientWindow区域。当一个孩子帧添加，父框架的菜单栏将显示包含子窗口按钮排放在级联或平铺方式在菜单。 
+  </div> 
+  <h2> 实例 </h2> 
+  <p style="text-align:justify;"> 下面的例子演示MDIParentFrame的用途为顶层窗口。菜单按钮被称为NewWindow增加在客户区的子窗口。多个窗口可以被添加，然后设置为层叠或平铺顺序。 </p> 
+  <div>
+    完整的代码如下&nbsp;- 
+  </div> 
+  <pre>import wx 
+ 
+class MDIFrame(wx.MDIParentFrame): 
+   def __init__(self): 
+      wx.MDIParentFrame.__init__(self, None, -1, "MDI Parent - www.yiibai.com", size = (600,400)) 
+      menu = wx.Menu() 
+      menu.Append(5000, "&amp;New Window") 
+      menu.Append(5001, "&amp;Exit") 
+      menubar = wx.MenuBar() 
+      menubar.Append(menu, "&amp;File") 
+		
+      self.SetMenuBar(menubar) 
+      self.Bind(wx.EVT_MENU, self.OnNewWindow, id = 5000) 
+      self.Bind(wx.EVT_MENU, self.OnExit, id = 5001) 
+		
+   def OnExit(self, evt): 
+      self.Close(True)  
+		
+   def OnNewWindow(self, evt): 
+      win = wx.MDIChildFrame(self, -1, "Child Window")
+      win.Show(True) 
+		
+app = wx.App() 
+frame = MDIFrame() 
+frame.Show() 
+app.MainLoop()</pre> 
+  <div>
+    上面的代码产生下面的输出&nbsp;-
+   <br> 
+   <img src="/uploads/tutorial/20151208/1-15120R00H5L9.png" alt="">
+   <br> 
+  </div> 
+  <img src="file://E:/data/youdao/qq24B39E2329F08D9F4C3146A571A415EF/8b18d46561654ed1af799b9640dbb1df/clipboard.png">
+  <br> 
+ </div>
+ <br>      
+</div></body></html>

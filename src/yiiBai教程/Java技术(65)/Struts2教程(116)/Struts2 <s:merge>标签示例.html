@@ -1,0 +1,218 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Struts2 &lt;s:merge&gt;标签示例</h1><div style="width:100%;float:left;" class="article-content">   
+ <p> <span style="line-height:1.5;">Struts2&nbsp;merge标签用来合并几个迭代器(由列表或映射创建)成一个迭代器。这里创建一个Web工程：struts2mergetag，来演示在多个复选框如何设置的默认值，整个项目的结构如下图所示：</span> </p> 
+ <p> <img src="/uploads/tutorial/20151116/1-15111620395L40.png" alt=""> </p> 
+ <p> <br> </p> 
+ <p> <br> </p> 
+ <div> 
+  <img src="file://E:/data/youdao/qq24B39E2329F08D9F4C3146A571A415EF/61683608182c45c2b9d54be9662fab6e/clipboard.png"> 
+ </div> 
+ <div>
+   在本教程中，将使用Struts2 &lt;s:merge&gt;标签执行以下任务： 
+ </div> 
+ <ol> 
+  <li> 
+   <div>
+     合并三个ArrayList到一个迭代器 
+   </div> </li> 
+  <li> 
+   <div>
+     合并三个HashMap到一个迭代器 
+   </div> </li> 
+  <li> 
+   <div>
+     合并ArrayList和HashMap到一个迭代器 
+   </div> </li> 
+ </ol> 
+ <div>
+   假设有2个迭代器，每个有两个条目，使用merge标记合并成一个迭代后，这些条目的顺序将类似于以下内容： 
+  <ol> 
+   <li> 
+    <div>
+      第一个迭代的第一个条目。 
+    </div> </li> 
+   <li> 
+    <div>
+      第二个迭代器的第一项 
+    </div> </li> 
+   <li> 
+    <div>
+      第一个迭代器的第二项 
+    </div> </li> 
+   <li> 
+    <div>
+      第二个迭代器的第二项。 
+    </div> </li> 
+  </ol> 
+  <div>
+    这仅适用于列表迭代器;映射迭代器，顺序将是随机的。 
+  </div> 
+ </div> 
+ <h2> 1. 动作 </h2> 
+ <div>
+   Action类有3个ArrayList&nbsp;和&nbsp;3&nbsp;个&nbsp;HashMap属性。 
+ </div> 
+ <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:16px;"> <strong>MergeTagAction</strong> </p> 
+ <pre>package com.yiibai.common.action;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import com.opensymphony.xwork2.ActionSupport;
+ 
+public class MergeTagAction extends ActionSupport{
+ 
+	private List&lt;String&gt; list1 = new ArrayList&lt;String&gt;();
+	private List&lt;String&gt; list2 = new ArrayList&lt;String&gt;();
+	private List&lt;String&gt; list3 = new ArrayList&lt;String&gt;();
+
+	private Map&lt;String,String&gt; map1 = new HashMap&lt;String,String&gt;();
+	private Map&lt;String,String&gt; map2 = new HashMap&lt;String,String&gt;();
+	private Map&lt;String,String&gt; map3 = new HashMap&lt;String,String&gt;();
+	
+	public String execute() {
+		
+		list1.add("List1 - 1");
+		list1.add("List1 - 2");
+		list1.add("List1 - 3");
+		
+		list2.add("List2 - 1");
+		list2.add("List2 - 2");
+		list2.add("List2 - 3");
+		
+		list3.add("List3 - 1");
+		list3.add("List3 - 2");
+		list3.add("List3 - 3");
+		
+		map1.put("map1-key1", "map1-value1");
+		map1.put("map1-key2", "map1-value2");
+		map1.put("map1-key3", "map1-value3");
+		
+		map2.put("map2-key1", "map2-value1");
+		map2.put("map2-key2", "map2-value2");
+		map2.put("map2-key3", "map2-value3");
+		
+		map3.put("map3-key1", "map3-value1");
+		map3.put("map3-key2", "map3-value2");
+		map3.put("map3-key3", "map3-value3");
+		
+		return SUCCESS;
+	}
+
+	//getter methods...
+}</pre> 
+ <h2> 2. Merge 标签示例 </h2> 
+ <p> JSP页面使用merge标记为3个ArrayList/3个HashMap/1个ArrayList+1个HashMap合并成一个迭代器，循环它的值，并把打印出来。 </p> 
+ <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:16px;"> <strong>merge.jsp</strong> </p> 
+ <pre>&lt;%@ taglib prefix="s" uri="/struts-tags" %&gt;
+ &lt;html&gt;
+&lt;head&gt;<span style="font-family:Monaco, Consolas, Courier, 'Lucida Console', monospace;font-size:inherit;line-height:1.5;">&lt;title&gt;Generator&nbsp;标签示例&nbsp;-&nbsp;&nbsp;</span><a target="_blank" href="http://www.yiibai.com/">www.yiibai.com</a><span style="font-family:Monaco, Consolas, Courier, 'Lucida Console', monospace;font-size:inherit;line-height:1.5;">&lt;/title&gt;</span> &lt;/head&gt;
+ 
+&lt;body&gt;
+&lt;h1&gt;Struts 2 Merge tag example&lt;/h1&gt;
+
+1. Merge 3 ArrayList into a single iterator.
+&lt;s:merge var="customListIterator"&gt;
+     &lt;s:param value="%{list1}" /&gt;
+     &lt;s:param value="%{list2}" /&gt;
+     &lt;s:param value="%{list3}" /&gt;
+&lt;/s:merge&gt;
+&lt;ol&gt;
+&lt;s:iterator value="%{#customListIterator}"&gt;
+     &lt;li&gt;&lt;s:property /&gt;&lt;/li&gt;
+&lt;/s:iterator&gt;
+&lt;/ol&gt;
+
+2. Merge 3 HashMap into a single iterator.
+&lt;s:merge var="customMapIterator"&gt;
+     &lt;s:param value="%{map1}" /&gt;
+     &lt;s:param value="%{map2}" /&gt;
+     &lt;s:param value="%{map3}" /&gt;
+&lt;/s:merge&gt;
+&lt;ol&gt;
+&lt;s:iterator value="%{#customMapIterator}"&gt;
+     &lt;li&gt;&lt;s:property /&gt;&lt;/li&gt;
+&lt;/s:iterator&gt;
+&lt;/ol&gt;
+
+3. Merge ArrayList and HashMap into a single iterator.
+&lt;s:merge var="customMixedIterator"&gt;
+     &lt;s:param value="%{list1}" /&gt;
+     &lt;s:param value="%{map1}" /&gt;
+&lt;/s:merge&gt;
+&lt;ol&gt;
+&lt;s:iterator value="%{#customMixedIterator}"&gt;
+     &lt;li&gt;&lt;s:property /&gt;&lt;/li&gt;
+&lt;/s:iterator&gt;
+&lt;/ol&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;</pre> 
+ <h2 style="color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:24px;font-weight:500;"> 3. struts.xml </h2>   
+ <pre>&lt;?xml version="1.0" encoding="UTF-8" ?&gt;
+&lt;!DOCTYPE struts PUBLIC
+"-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+"http://struts.apache.org/dtds/struts-2.0.dtd"&gt;
+ 
+&lt;struts&gt;
+
+ 	&lt;constant name="struts.devMode" value="true" /&gt;
+	
+	&lt;package name="default" namespace="/" extends="struts-default"&gt;
+	
+		&lt;action name="mergeTagAction" 
+			class="com.yiibai.common.action.MergeTagAction" &gt;
+			&lt;result name="success"&gt;pages/merge.jsp&lt;/result&gt;
+		&lt;/action&gt;
+		
+	&lt;/package&gt;
+		
+&lt;/struts&gt;</pre> 
+ <h2> 4. 示例 </h2> 
+ <p> <a target="_blank" href="http://localhost:8080/struts2mergetag/mergeTagAction.action">http://localhost:8080/struts2mergetag/mergeTagAction.action</a> </p> 
+ <p> <img src="/uploads/tutorial/20151116/1-151116204G9E0.png" alt=""> </p> 
+ <p> <img src="file://E:/data/youdao/qq24B39E2329F08D9F4C3146A571A415EF/2e155e3cd0cf4e88880394fe6d16c2f9/clipboard.png"> </p> 
+ <p> 在浏览器打开上面的网址，输出以下结果： </p> 
+ <pre>Struts 2 Merge tag example
+
+1. Merge 3 ArrayList into a single iterator.
+
+  1. List1 - 1
+  2. List2 - 1
+  3. List3 - 1
+  4. List1 - 2
+  5. List2 - 2
+  6. List3 - 2
+  7. List1 - 3
+  8. List2 - 3
+  9. List3 - 3
+
+2. Merge 3 HashMap into a single iterator.
+
+  1. map1-key3=map1-value3
+  2. map2-key2=map2-value2
+  3. map3-key3=map3-value3
+  4. map1-key1=map1-value1
+  5. map2-key3=map2-value3
+  6. map3-key1=map3-value1
+  7. map1-key2=map1-value2
+  8. map2-key1=map2-value1
+  9. map3-key2=map3-value2
+
+3. Merge ArrayList and HashMap into a single iterator.
+
+  1. List1 - 1
+  2. map1-key3=map1-value3
+  3. List1 - 2
+  4. map1-key1=map1-value1
+  5. List1 - 3
+  6. map1-key2=map1-value2</pre> 
+ <h2> 参考 </h2> 
+ <ol> 
+  <li> <a target="_blank" href="http://struts.apache.org/2.1.8/docs/merge.html">Struts 2 Merge 标签文档</a> </li> 
+ </ol> 
+ <p> <br> </p> 代码下载 -&nbsp;
+ <a target="_blank" href="http://pan.baidu.com/s/1c0dnNcW">http://pan.baidu.com/s/1c0dnNcW</a>
+ <br>      
+</div></body></html>

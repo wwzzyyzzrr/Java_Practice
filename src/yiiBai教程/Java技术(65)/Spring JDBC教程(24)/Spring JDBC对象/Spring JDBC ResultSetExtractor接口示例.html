@@ -1,0 +1,289 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Spring JDBC ResultSetExtractor接口示例</h1><div style="width:100%;float:left;" class="article-content">   
+ <p><code>org.springframework.jdbc.core.ResultSetExtractor</code>接口是<code>JdbcTemplate</code>的查询方法使用的回调接口。此接口的实现执行从<code>ResultSet</code>提取结果的实际工作，不需要担心异常处理，它调用<code>JdbcTemplate</code>捕获并处理SQLExceptions。 该接口主要用于JDBC框架本身。 <code>RowMapper</code>通常是<code>ResultSet</code>处理的简单选择查询，每行映射一个结果对象，而不是整个<code>ResultSet</code>的一个结果对象。</p> 
+ <p><strong>接口的声明</strong></p> 
+ <p>以下是<code>org.springframework.jdbc.core.ResultSetExtractor</code>接口的声明 -</p> 
+ <pre><code class="lang-java">public interface ResultSetExtractor
+</code></pre> 
+ <p><strong>用法</strong></p> 
+ <p><em>步骤1</em> - 使用配置的数据源创建一个<code>JdbcTemplate</code>对象。<br><em>步骤2</em> - 在使用<code>ResultSetExtractor</code>解析结果集时，使用<code>JdbcTemplate</code>对象方法进行数据库操作。</p> 
+ <h2 id="h2-u5B9Eu4F8B"><a name="实例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实例</h2>
+ <p>以下示例将演示如何使用<code>JdbcTemplate</code>类和<code>ResultSetExtractor</code>接口进行读取查询。这里我们将从<code>student</code>表中读取记录。</p> 
+ <p><strong>语法</strong></p> 
+ <pre><code class="lang-java">public List&lt;Student&gt; listStudents() {
+   String SQL = "select * from Student";
+      List &lt;Student&gt; students = jdbcTemplateObject.query(SQL, 
+         new ResultSetExtractor&lt;List&lt;Student&gt;&gt;(){
+            public List&lt;Student&gt; extractData(
+               ResultSet rs) throws SQLException, DataAccessException {
+               List&lt;Student&gt; list=new ArrayList&lt;Student&gt;();  
+               while(rs.next()){  
+                  Student student = new Student();
+                  student.setId(rs.getInt("id"));
+                  student.setName(rs.getString("name"));
+                  student.setAge(rs.getInt("age"));
+                  student.setDescription(rs.getString("description"));
+                  student.setImage(rs.getBytes("image"));
+                  list.add(student);  
+               }  
+               return list;  
+            }          
+         });
+   return students;
+}
+</code></pre> 
+ <p>在上面示例(语法)代码中 - </p> 
+ <ul> 
+  <li><em>SQL</em> - 选择查询语句来来读取学生记录信息。</li>
+  <li><em>jdbcTemplateObject</em> - <code>StudentJDBCTemplate</code>对象从数据库中读取<code>Student</code>对象。</li>
+  <li><em>ResultSetExtractor</em> - <code>ResultSetExtractor</code>对象用来解析<code>resultset</code>对象。</li>
+ </ul> 
+ <h2 id="h2-u5B9Eu4F8Bu9879u76EE"><a name="实例项目" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实例项目</h2>
+ <p>要了解上述与Spring JDBC相关的概念，下面我们编写一个select查询语句的示例。打开Eclipse IDE，并按照以下步骤创建一个Spring应用程序，这里创建一个名称为：<strong>ResultSetExtractor</strong> 的项目。</p> 
+ <p><strong>步骤说明</strong></p> 
+ <ol> 
+  <li>参考第一个Spring JDBC项目来创建一个Maven项目 - <a target="_blank" href="http://www.yiibai.com/springjdbc/first_application.html">http://www.yiibai.com/springjdbc/first_application.html</a></li>
+  <li>更新bean配置并运行应用程序。</li>
+ </ol> 
+ <p>完整的项目结构如下所示 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201706/1206/903110604_22123.png" alt=""></p> 
+ <p>以下是Maven配置文件：<em>pom.xml</em>的代码内容：</p> 
+ <pre><code class="lang-xml">&lt;project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"&gt;
+    &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
+    &lt;groupId&gt;com.yiibai&lt;/groupId&gt;
+    &lt;artifactId&gt;ResultSetExtractor&lt;/artifactId&gt;
+    &lt;version&gt;0.0.1-SNAPSHOT&lt;/version&gt;
+    &lt;packaging&gt;jar&lt;/packaging&gt;
+    &lt;name&gt;ResultSetExtractor&lt;/name&gt;
+    &lt;url&gt;http://maven.apache.org&lt;/url&gt;
+    &lt;dependencies&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;junit&lt;/groupId&gt;
+            &lt;artifactId&gt;junit&lt;/artifactId&gt;
+            &lt;version&gt;3.8.1&lt;/version&gt;
+            &lt;scope&gt;test&lt;/scope&gt;
+        &lt;/dependency&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;mysql&lt;/groupId&gt;
+            &lt;artifactId&gt;mysql-connector-java&lt;/artifactId&gt;
+            &lt;version&gt;5.1.40&lt;/version&gt;
+        &lt;/dependency&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-jdbc&lt;/artifactId&gt;
+            &lt;version&gt;4.1.0.RELEASE&lt;/version&gt;
+        &lt;/dependency&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-context&lt;/artifactId&gt;
+            &lt;version&gt;4.1.4.RELEASE&lt;/version&gt;
+        &lt;/dependency&gt;
+    &lt;/dependencies&gt;
+&lt;/project&gt;
+</code></pre> 
+ <p>以下是数据访问对象接口文件：<em>StudentDAO.java</em>的内容：</p> 
+ <pre><code class="lang-java">package com.yiibai;
+
+import java.util.List;
+import javax.sql.DataSource;
+
+public interface StudentDAO {
+    /**
+     * This is the method to be used to initialize database resources ie.
+     * connection.
+     */
+    public void setDataSource(DataSource ds);
+
+    /**
+     * This is the method to be used to list down all the records from the
+     * Student table.
+     */
+    public List&lt;Student&gt; listStudents();
+    public Student getStudent(Integer id);
+    public void create(String name, Integer age);
+
+}
+</code></pre> 
+ <p>以下是文件：<em>Student.java</em>的代码内容：</p> 
+ <pre><code class="lang-java">package com.yiibai;
+
+public class Student {
+    private Integer age;
+    private String name;
+    private Integer id;
+
+    public void setAge(Integer age) {
+        this.age = age;
+    }
+
+    public Integer getAge() {
+        return age;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+}
+</code></pre> 
+ <p>以下是文件：<em>StudentMapper.java</em>的代码内容：</p> 
+ <pre><code class="lang-java">package com.yiibai;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import org.springframework.jdbc.core.RowMapper;
+
+public class StudentMapper implements RowMapper&lt;Student&gt; {
+   public Student mapRow(ResultSet rs, int rowNum) throws SQLException {
+      Student student = new Student();
+      student.setId(rs.getInt("id"));
+      student.setName(rs.getString("name"));
+      student.setAge(rs.getInt("age"));
+      return student;
+   }
+}
+</code></pre> 
+ <p>实现类<code>StudentJDBCTemplate.java</code>实现了定义的DAO接口 - <code>StudentDAO.java</code>，以下是文件：<em>StudentJDBCTemplate.java</em>的代码内容：</p> 
+ <pre><code class="lang-java">package com.yiibai;
+
+import java.util.List;
+import java.util.ArrayList;
+import javax.sql.DataSource;
+
+import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.PreparedStatementSetter;
+import org.springframework.jdbc.core.ResultSetExtractor;
+
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+public class StudentJDBCTemplate implements StudentDAO {
+    private DataSource dataSource;
+    private JdbcTemplate jdbcTemplateObject;
+
+    public void setDataSource(DataSource dataSource) {
+        this.dataSource = dataSource;
+        this.jdbcTemplateObject = new JdbcTemplate(dataSource);
+    }
+
+    public List&lt;Student&gt; listStudents() {
+        String SQL = "select * from Student";
+        List&lt;Student&gt; students = jdbcTemplateObject.query(SQL, new ResultSetExtractor&lt;List&lt;Student&gt;&gt;() {
+            public List&lt;Student&gt; extractData(ResultSet rs) throws SQLException, DataAccessException {
+                List&lt;Student&gt; list = new ArrayList&lt;Student&gt;();
+                while (rs.next()) {
+                    Student student = new Student();
+                    student.setId(rs.getInt("id"));
+                    student.setName(rs.getString("name"));
+                    student.setAge(rs.getInt("age"));
+//                    student.setDescription(rs.getString("description"));
+//                    student.setImage(rs.getBytes("image"));
+                    list.add(student);
+                }
+                return list;
+            }
+        });
+        return students;
+    }
+
+    public void create(String name, Integer age) {
+        // TODO Auto-generated method stub
+        String insertQuery = "insert into student (name, age) values (?, ?)";
+
+        jdbcTemplateObject.update(insertQuery, name, age);
+        System.out.println("Created Record Name = " + name + " Age = " + age);
+        return;
+    }
+
+    public Student getStudent(final Integer id) {
+        final String SQL = "select * from Student where id = ? ";
+        List&lt;Student&gt; students = jdbcTemplateObject.query(SQL, new PreparedStatementSetter() {
+            public void setValues(PreparedStatement preparedStatement) throws SQLException {
+                preparedStatement.setInt(1, id);
+            }
+        }, new StudentMapper());
+        return students.get(0);
+    }
+}
+</code></pre> 
+ <p>以下是文件：<em>MainApp.java</em>的代码内容：</p>   
+ <pre><code class="lang-java">package com.yiibai;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+import com.yiibai.StudentJDBCTemplate;
+
+public class MainApp {
+    public static void main(String[] args) {
+        ApplicationContext context = new ClassPathXmlApplicationContext("application-beans.xml");
+
+        StudentJDBCTemplate studentJDBCTemplate = (StudentJDBCTemplate) context.getBean("studentJDBCTemplate");
+
+        System.out.println("------Records Creation--------");
+        studentJDBCTemplate.create("Maxsu", 21);
+        studentJDBCTemplate.create("Curry", 22);
+        studentJDBCTemplate.create("Suzend", 23);
+
+        List&lt;Student&gt; students = studentJDBCTemplate.listStudents();
+
+        for (Student student : students) {
+            System.out.print("ID : " + student.getId());
+            System.out.println(", Age : " + student.getAge());
+        }
+    }
+}
+</code></pre> 
+ <p>以下是文件：<em>application-beans.xml</em>的代码内容：</p> 
+ <pre><code class="lang-xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans-3.0.xsd "&gt;
+
+    &lt;!-- Initialization for data source --&gt;
+    &lt;bean id="dataSource"
+        class="org.springframework.jdbc.datasource.DriverManagerDataSource"&gt;
+        &lt;property name="driverClassName" value="com.mysql.jdbc.Driver" /&gt;
+        &lt;property name="url" value="jdbc:mysql://localhost:3306/test?characterEncoding=utf8&amp;useSSL=true" /&gt;
+        &lt;property name="username" value="root" /&gt;
+        &lt;property name="password" value="123456" /&gt;
+    &lt;/bean&gt;
+
+    &lt;!-- Definition for studentJDBCTemplate bean --&gt;
+    &lt;bean id="studentJDBCTemplate" class="com.yiibai.StudentJDBCTemplate"&gt;
+        &lt;property name="dataSource" ref="dataSource" /&gt;
+    &lt;/bean&gt;
+
+&lt;/beans&gt;
+</code></pre> 
+ <blockquote> 
+  <p>注意： <em>application-beans.xml</em> 文件的位置是：{workspace}/fistapp/src/main/java 目录，如果放置错了，程序可能会因为找不到此配置文件而出错。</p> 
+ </blockquote> 
+ <p>完成创建源代码和bean和数据库连接信息的文件配置后，运行应用程序。这里先简单说明一下运行的步骤，在项目名称(<strong>ResultSetExtractor</strong>)上点击右键，在弹出的菜单中选择：【Run As】-&gt; 【Maven test】</p> 
+ <p>在运行测试成功后，应该会输出类似以下内容(含有 <em> BUILD SUCCESS</em> 的信息) 。<br>接下来，点击类文件：<em>MainApp.java</em> 选择【Run As】-&gt;【Java Application】，如果应用程序一切正常，这将打印以下结果：</p> 
+ <pre><code class="lang-shell">------Records Creation--------
+Created Record Name = Maxsu Age = 21
+Created Record Name = Curry Age = 22
+Created Record Name = Suzend Age = 23
+ID : 1, Age : 21
+ID : 2, Age : 22
+ID : 3, Age : 23
+</code></pre>
+ <br>      
+</div></body></html>

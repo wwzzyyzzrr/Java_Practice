@@ -1,0 +1,63 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Euphoria短路计算</h1><div style="width:100%;float:left;" class="article-content">   
+ <p> 当条件测试由&nbsp;if, elsif, until&nbsp;或&nbsp;while&nbsp;使用&nbsp;and&nbsp;或&nbsp;or&nbsp;操作符, 短路计算将被使用。例如:</p> 
+ <table cellpadding="5" class="src" style="font-family: verdana, helvetica, arial, sans-serif; border-style: solid; border-color: rgb(170, 170, 170); width: 552px; background-color: rgb(241, 241, 241); border-collapse: collapse; padding-left: 5px; vertical-align: top; color: rgb(0, 0, 0);"> 
+  <tbody> 
+   <tr> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border-style: solid; border-color: rgb(170, 170, 170);"> <pre style="font-family: 'Courier New', monospace; font-size: 12px; margin-bottom: 0px;">
+if a &lt; 0 and b &gt; 0 then
+   -- block of code
+end if
+</pre> </td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p> 如果 a &lt; 0 是 false，那么Euphoria&nbsp;不会刻意去测试，如果 b 大于0。它会知道，总的结果是 false。同理：</p> 
+ <table cellpadding="5" class="src" style="font-family: verdana, helvetica, arial, sans-serif; border-style: solid; border-color: rgb(170, 170, 170); width: 552px; background-color: rgb(241, 241, 241); border-collapse: collapse; padding-left: 5px; vertical-align: top; color: rgb(0, 0, 0);"> 
+  <tbody> 
+   <tr> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border-style: solid; border-color: rgb(170, 170, 170);"> <pre style="font-family: 'Courier New', monospace; font-size: 12px; margin-bottom: 0px;">
+if a &lt; 0 or b &gt; 0 then
+   -- block of code
+end if
+</pre> </td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p> 如果 a &lt; 0 为 true, &nbsp;Euphoria 将立即决定，结果为 true，没有测试b的值，因为这个测试的结果会是不相干的。</p> 
+ <h2> 通常:</h2> 
+ <p> 每当我们有一个条件的形式：</p> 
+ <table cellpadding="5" class="src" style="font-family: verdana, helvetica, arial, sans-serif; border-style: solid; border-color: rgb(170, 170, 170); width: 552px; background-color: rgb(241, 241, 241); border-collapse: collapse; padding-left: 5px; vertical-align: top; color: rgb(0, 0, 0);"> 
+  <tbody> 
+   <tr> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border-style: solid; border-color: rgb(170, 170, 170);"> <pre style="font-family: 'Courier New', monospace; font-size: 12px; margin-bottom: 0px;">
+A and B
+</pre> </td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p> 其中 A 和 B 可以是任何两个表达式，Euphoria&nbsp;将采取短切当A 为 false，并立即做出整体结果 false，看也不看表达B.</p> 
+ <p> 同样，每当我们有一个条件的形式：</p> 
+ <table cellpadding="5" class="src" style="font-family: verdana, helvetica, arial, sans-serif; border-style: solid; border-color: rgb(170, 170, 170); width: 552px; background-color: rgb(241, 241, 241); border-collapse: collapse; padding-left: 5px; vertical-align: top; color: rgb(0, 0, 0);"> 
+  <tbody> 
+   <tr> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border-style: solid; border-color: rgb(170, 170, 170);">   <pre style="font-family: 'Courier New', monospace; font-size: 12px; margin-bottom: 0px;">
+A or  B
+</pre> </td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p> 当A为 true，Euphoria&nbsp;会跳过表达式B 的计算，并宣布结果是 true .</p> 
+ <p> &nbsp;短路计算（Short-circuit）发生，if, elsif, until 和 while&nbsp;唯一的条件。在其他情况下它不被使用。例如：</p> 
+ <table cellpadding="5" class="src" style="font-family: verdana, helvetica, arial, sans-serif; border-style: solid; border-color: rgb(170, 170, 170); width: 552px; background-color: rgb(241, 241, 241); border-collapse: collapse; padding-left: 5px; vertical-align: top; color: rgb(0, 0, 0);"> 
+  <tbody> 
+   <tr> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border-style: solid; border-color: rgb(170, 170, 170);"> <pre style="font-family: 'Courier New', monospace; font-size: 12px; margin-bottom: 0px;">
+x = 1 or {1,2,3,4,5} -- x should be set to {1,1,1,1,1}
+</pre> </td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p> 如果短路，用在这里，我们将设置x为1，连看都不看{1,2,3,4,5}，这是错误的。</p> 
+ <p> 因此，短路可在 if/elsif/until/while&nbsp;条件，因为我们只关心如果结果是真的还是 false，须出示原子和条件 .</p> 
+ <br>      
+</div></body></html>

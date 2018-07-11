@@ -1,0 +1,35 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">std::get_time()函数</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>此函数首先通过构造一个类型为 <code>basic_istream::sentry</code> 的对象来访问输入序列。<br>然后（如果计算 <code>sentry</code> 对象为 <code>true</code>），它调用 <code>time_get::get</code>（使用流的所选区域设置）来执行提取和解析操作，并相应地调整流的内部状态标志。<br>最后，它在返回之前销毁 <code>sentry</code> 对象。</p> 
+ <p>它用于从应用中输入流的字符中提取字符，并将它们解析为参数<code>fmt</code>中指定的时间和日期信息。获得的数据存储在<code>tmb</code>指向的<code>struct tm</code>对象。</p> 
+ <h2 id="h2-u58F0u660E"><a name="声明" class="reference-link"></a><span class="header-link octicon octicon-link"></span>声明</h2>
+ <p>以下是 <code>std::get_time</code> 函数的声明。</p> 
+ <pre><code class="lang-cpp">template &lt;class charT&gt;
+/*unspecified*/ get_time (struct tm* tmb, const charT* fmt);
+</code></pre> 
+ <h2 id="h2-u53C2u6570"><a name="参数" class="reference-link"></a><span class="header-link octicon octicon-link"></span>参数</h2>
+ <ul> 
+  <li><p><code>tmb</code> − 指向<code>struct tm</code>类型的对象的指针，其中存储提取的时间和日期信息。<code>struct tm</code>是在ctime&gt;头中定义的类。</p> </li>
+  <li><p><code>fmt</code> − <code>time_get::get</code>使用 C字符串作为格式字符串（见 <code>time_get::get</code>）。 <code>charT</code>是c字符串中的字符类型。</p> </li>
+ </ul> 
+ <h2 id="h2-u793Au4F8B"><a name="示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例</h2>
+ <p>在下面的例子中解释 <code>get_time()</code> 函数的用法。</p>   
+ <pre><code class="lang-cpp">#include &lt;iostream&gt;     
+#include &lt;iomanip&gt;      
+#include &lt;ctime&gt;        
+
+int main () {
+  struct std::tm when;
+  std::cout &lt;&lt; "Please, enter the time: ";
+  std::cin &gt;&gt; std::get_time(&amp;when,"%R");   
+
+  if (std::cin.fail()) std::cout &lt;&lt; "Error reading time/n";
+  else {
+    std::cout &lt;&lt; "The time entered is: ";
+    std::cout &lt;&lt; when.tm_hour &lt;&lt; " hours and " &lt;&lt; when.tm_min &lt;&lt; " minutes/n";
+  }
+
+  return 0;
+}
+</code></pre>
+ <br>      
+</div></body></html>

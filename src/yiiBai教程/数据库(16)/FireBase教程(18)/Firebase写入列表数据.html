@@ -1,0 +1,70 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Firebase写入列表数据</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>在上一章中，我们已经演示了如何在Firebase中写入数据。 有时需要有一个唯一的数据标识符。 如果要为数据创建唯一标识符，则需要使用<code>push</code>方法而不是<code>set</code>方法。</p> 
+ <p>在使用写入功能之前，避免遇到权限问题，建议设置规则为如下 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201802/0202/916160222_92791.png" alt=""></p> 
+ <h2 id="h2-push-"><a name="push()方法" class="reference-link"></a><span class="header-link octicon octicon-link"></span>push()方法</h2>
+ <p><code>push()</code>方法将在数据被推送时创建一个唯一的ID。 如果想用前面的章节创建一个具有唯一ID的运动员数据，可以使用下面给出的代码片段。</p> 
+ <pre><code class="lang-html">&lt;!DOCTYPE html&gt;
+&lt;html lang="zh"&gt;
+    &lt;head&gt;
+        &lt;meta charset="utf-8" /&gt;
+        &lt;title&gt;FireBase Example&lt;/title&gt;
+        &lt;script src="https://www.gstatic.com/firebasejs/4.9.1/firebase.js"&gt;&lt;/script&gt;
+        &lt;script&gt;
+          // Initialize Firebase
+          var config = {
+            apiKey: "AIzaSyAOSPYpgn7T_bKa6VbCaSeQlsw-3p3zqDs",
+            authDomain: "yiibai-firebase.firebaseapp.com",
+            databaseURL: "https://yiibai-firebase.firebaseio.com/",
+            projectId: "yiibai-firebase",
+            storageBucket: "yiibai-firebase.appspot.com",
+            messagingSenderId: "334522625008"
+          };
+          firebase.initializeApp(config);
+          var playersRef = firebase.database().ref().child('players');
+          // console.log(playersRef);
+          playersRef.push ({
+               John: {
+                  number: 1,
+                  age: 30
+               },
+
+               Amanda: {
+                  number: 2,
+                  age: 20
+               }
+            });
+        &lt;/script&gt;
+    &lt;/head&gt;
+&lt;body&gt;
+</code></pre> 
+ <p>现在数据看起来有些变化了。该名称将只是一个名称/值对，类似于其他的属性。</p> 
+ <h2 id="h2-key-"><a name="Key属性" class="reference-link"></a><span class="header-link octicon octicon-link"></span>Key属性</h2>
+ <p>可以使用<code>key</code>属性用于从Firebase获取任何键。 例如，如果想获取集合名称，可以使用下面的代码片段。</p>   
+ <pre><code class="lang-js">&lt;!DOCTYPE html&gt;
+&lt;html lang="zh"&gt;
+    &lt;head&gt;
+        &lt;meta charset="utf-8" /&gt;
+        &lt;title&gt;FireBase Example&lt;/title&gt;
+        &lt;script src="http://www.gstatic.com/firebasejs/4.9.1/firebase.js"&gt;&lt;/script&gt;
+        &lt;script&gt;
+          // Initialize Firebase
+          var config = {
+            apiKey: "AIzaSyAOSPYpgn7T_bKa6VbCaSeQlsw-3p3zqDs",
+            authDomain: "yiibai-firebase.firebaseapp.com",
+            databaseURL: "http://www.yiibai-firebase.firebaseio.com",
+            projectId: "yiibai-firebase",
+            storageBucket: "yiibai-firebase.appspot.com",
+            messagingSenderId: "334522625008"
+          };
+          firebase.initializeApp(config);
+          var playersRef = firebase.database().ref().child('players');        
+          var playersKey = playersRef.key;
+          console.log(playersKey);
+        &lt;/script&gt;
+    &lt;/head&gt;
+&lt;body&gt;
+</code></pre> 
+ <p>控制台将输入集合的名称为:<code>players</code>。</p>
+ <br>      
+</div></body></html>

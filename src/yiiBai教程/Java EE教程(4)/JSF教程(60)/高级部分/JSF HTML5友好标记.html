@@ -1,0 +1,165 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">JSF HTML5友好标记</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>JavaServer Faces支持HTML5，允许您直接在网页中使用HTML5标记。 它还允许您在HTML5元素中使用JavaServer Faces属性。 JavaServer Faces支持HTML5分为两类：</p> 
+ <ul> 
+  <li>直通元素</li>
+  <li>传递属性</li>
+ </ul> 
+ <p>HTML5友好的标记功能可通过渲染的页面输出完成对Facelets页面的控制，而不必将该控件传递给组件。 您可以混合和匹配JavaServer Faces和HTML5组件和元素。</p> 
+ <h2 id="h2-u4F7Fu7528u4F20u9012u5143u7D20"><a name="使用传递元素" class="reference-link"></a><span class="header-link octicon octicon-link"></span>使用传递元素</h2>
+ <p>它允许您在应用程序中使用HTML5标签和属性。 JSF将其视为与服务器端UI组件实例关联的JavaServer Faces组件相当。</p> 
+ <p>您必须指定命名空间 <code>http://xmlns.jcp.org/jsf</code>(而不是JavaServer Faces元素)的元素作为直通元素。 在以下示例中，代码使用短名称<code>jsf</code>声明命名空间：</p> 
+ <p>在这里，我们使用JSF格式的HTML5电子邮件类型，它工作友好。 <code>jsf</code>前缀放在<code>id</code>属性上，以便HTML5输入标签的属性被视为<code>Facelets</code>页面的一部分。</p> 
+ <p>创建一个名称为：<em>Html5FriendlyMarkup</em> 的Web工程，其目录如下所示 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201704/2704/844100405_85713.png" alt=""></p> 
+ <p>以下是文件：<em>index.xhtml</em> 中的代码 - </p> 
+ <pre><code class="lang-html">&lt;!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN""http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"&gt;  
+&lt;html xmlns="http://www.w3.org/1999/xhtml"  
+xmlns:h="http://xmlns.jcp.org/jsf/html"  
+xmlns:jsf="http://xmlns.jcp.org/jsf"  
+&gt;  
+&lt;h:head&gt;  
+&lt;title&gt;HTML5-Friendly-markup&lt;/title&gt;  
+&lt;/h:head&gt;  
+&lt;h:body&gt;  
+&lt;h:form&gt;  
+&lt;h:outputLabel for="username" value="User Name "/&gt;  
+&lt;h:inputText value="#{user.name}"/&gt;&lt;br/&gt;  
+&lt;h:outputLabel for="email" value="Email ID "/&gt;  
+&lt;input type="email" jsf:id="email" name="email" value="#{user.email}"/&gt;&lt;br/&gt;&lt;br/&gt;  
+&lt;h:commandButton action="result.xhtml" value="submit"/&gt;  
+&lt;/h:form&gt;  
+&lt;/h:body&gt;  
+&lt;/html&gt;
+</code></pre> 
+ <p>以下是文件：<em>User.java</em> 中的代码 - </p> 
+ <pre><code class="lang-java">import javax.faces.bean.ManagedBean;  
+import javax.faces.bean.RequestScoped;  
+@ManagedBean  
+@RequestScoped  
+public class User {  
+    String name;  
+    String email;  
+    public String getName() {  
+    return name;  
+    }  
+    public void setName(String name) {  
+    this.name = name;  
+    }  
+    public String getEmail() {  
+    return email;  
+    }  
+    public void setEmail(String email) {  
+    this.email = email;  
+    }  
+}
+</code></pre> 
+ <p>以下是文件：<em>result.xhtml</em> 中的代码 - </p> 
+ <pre><code class="lang-html">&lt;!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN""http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"&gt;  
+&lt;html xmlns="http://www.w3.org/1999/xhtml"  
+xmlns:h="http://xmlns.jcp.org/jsf/html"&gt;  
+&lt;h:head&gt;  
+&lt;title&gt;Response Page&lt;/title&gt;  
+&lt;/h:head&gt;  
+&lt;h:body&gt;  
+&lt;h1&gt;  
+&lt;h:outputText value="Hello #{user.name}"/&gt;  
+&lt;/h1&gt;  
+&lt;h4&gt;&lt;h:outputText value="Your email is: #{user.email}" /&gt;&lt;/h4&gt;  
+&lt;/h:body&gt;  
+&lt;/html&gt;
+</code></pre> 
+ <p>运行 <strong>Html5FriendlyMarkup</strong> 工程，打开浏览器输入以下网址：</p> 
+ <pre><code>http://localhost:8084/Html5FriendlyMarkup/
+</code></pre>
+ <p>没有错误应该会看到以下界面 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201704/2704/229100416_12892.png" alt=""></p> 
+ <p>写入一些简单的信息提交，会看到以下界面 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201704/2704/759100420_27668.png" alt=""></p> 
+ <h2 id="h2-u4F7Fu7528u4F20u9012u5C5Eu6027"><a name="使用传递属性" class="reference-link"></a><span class="header-link octicon octicon-link"></span>使用传递属性</h2>
+ <p>传递属性允许将不属于JavaServer Faces属性的属性传递给浏览器。 如果在JavaServer Faces UI组件中指定传递属性，则属性名称和值直接传递到浏览器，而不被JavaServer Faces组件或渲染器解释。</p> 
+ <p>您必须将JavaServer Faces命名空间用于传递属性，才能在JavaServer Faces组件中前缀属性名称。在下面的示例中，将属性传递给HTML5输入组件。</p> 
+ <h3 id="h3-u4F20u9012u5C5Eu6027u793Au4F8B"><a name="传递属性示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>传递属性示例</h3>
+ <p>创建一个名称为：<em>Html5FriendlyMarkup2</em> 的Web工程，其目录如下所示 -</p> 
+ <p>以下是文件：<em>index.xhtml</em> 中的代码 - </p>   
+ <pre><code class="lang-html">&lt;?xml version='1.0' encoding='UTF-8' ?&gt;  
+&lt;!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"&gt;  
+&lt;html xmlns="http://www.w3.org/1999/xhtml"  
+      xmlns:h="http://xmlns.jcp.org/jsf/html"  
+      xmlns:f="http://xmlns.jcp.org/jsf/core"&gt;  
+    &lt;h:head&gt;  
+        &lt;title&gt;Pass-Through Attributes&lt;/title&gt;  
+    &lt;/h:head&gt;  
+    &lt;h:body&gt;  
+        &lt;h:form&gt;  
+            &lt;h:outputLabel for="username" value="User Name "/&gt;  
+            &lt;h:inputText value="#{user.name}"&gt;  
+                &lt;f:passThroughAttribute name="type" value="text" /&gt;  
+            &lt;/h:inputText&gt;&lt;br/&gt;  
+            &lt;h:outputLabel for="email" value="Email ID "/&gt;  
+            &lt;h:inputText value="#{user.email}"&gt;  
+                &lt;f:passThroughAttribute name="type" value="email" /&gt;  
+            &lt;/h:inputText&gt;&lt;br/&gt;&lt;br/&gt;  
+            &lt;h:commandButton action="result.xhtml" value="submit"/&gt;  
+        &lt;/h:form&gt;  
+    &lt;/h:body&gt;  
+&lt;/html&gt;
+</code></pre> 
+ <p>以下是文件：<em>result.xhtml</em> 中的代码 - </p> 
+ <pre><code class="lang-html">&lt;!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"&gt;  
+&lt;html xmlns="http://www.w3.org/1999/xhtml"  
+      xmlns:h="http://xmlns.jcp.org/jsf/html"&gt;  
+    &lt;h:head&gt;  
+        &lt;title&gt;Response Page&lt;/title&gt;  
+    &lt;/h:head&gt;  
+    &lt;h:body&gt;  
+        &lt;h1&gt;  
+            &lt;h:outputText value="Hello #{user.name}"/&gt;  
+        &lt;/h1&gt;  
+        &lt;h4&gt;&lt;h:outputText value="Your email is: #{user.email}" /&gt;&lt;/h4&gt;  
+    &lt;/h:body&gt;  
+&lt;/html&gt;
+</code></pre> 
+ <p>以下是文件：<em>User.java</em> 中的代码 - </p> 
+ <pre><code class="lang-java">
+package com.yiibai;
+
+/**
+ *
+ * @author Maxsu
+ */
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.RequestScoped;
+
+@ManagedBean
+@RequestScoped
+public class User {
+
+    String name;
+    String email;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+}
+</code></pre> 
+ <p>运行 <strong>Html5FriendlyMarkup2</strong> 工程，打开浏览器输入以下网址：</p> 
+ <pre><code>http://localhost:8084/Html5FriendlyMarkup2/
+</code></pre>
+ <p>没有错误应该会看到以下界面 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201704/2704/356100434_67185.png" alt=""></p> 
+ <p>写入一些简单的信息提交，会看到以下界面 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201704/2704/354100434_88677.png" alt=""></p>
+ <br>      
+</div></body></html>

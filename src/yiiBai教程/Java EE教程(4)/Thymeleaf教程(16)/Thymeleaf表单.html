@@ -1,0 +1,139 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Thymeleaf表单</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>本文章将介绍Thymeleaf中实现表单的语法和概念。</p> 
+ <p>编辑源代码以便将产品列表中的某个数据。已经将<code>Product</code>类的对象列表设置为具有变量名称<code>product</code>的上下文模型(参考:<code>MyController.java</code>中的实现)。</p> 
+ <p>如果要上机实践，请参考:<a target="_blank" href="https://www.yiibai.com/thymeleaf/thymeleaf-springmvc5.html" title="Thymeleaf+SpringMVC5示例项目">Thymeleaf+SpringMVC5示例项目</a>。这里不再重复创建项目的过程，这里将只介绍如何使用<code>Thymeleaf</code> Spring表达式和标签。</p> 
+ <p>这里创建一个Maven Web项目: <em>thymeleaf-tutorials</em> ，其目录结构如下所示 -<br><img src="http://www.yiibai.com/uploads/images/201802/1402/876150238_78276.png" alt=""></p> 
+ <p>数据访问类的实现:<em>DAO.java</em> - </p> 
+ <pre><code class="lang-java">package com.yiibai.dao;
+
+import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import com.yiibai.spring.bean.*;
+
+/**
+ * Mock persistence.
+ */
+public class DAO {
+
+    private static final String NO_WEBSITE = null;
+
+    public static Product loadProduct() {
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            return new Product("Wooden wardrobe with glass doors", Integer.valueOf(850), sdf.parse("2013-02-18"));
+        } catch (ParseException ex) {
+            throw new RuntimeException("Invalid date");
+        }
+    }
+
+    public static List&lt;Product&gt; loadAllProducts() {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        List&lt;Product&gt; products = new ArrayList&lt;Product&gt;();
+        try {
+            products.add(new Product("花生油", Integer.valueOf(125), sdf.parse("2018-02-18")));
+            products.add(new Product("苏打饼干", Integer.valueOf(15), sdf.parse("208-02-15")));
+            products.add(new Product("拿铁", Integer.valueOf(45), sdf.parse("2019-02-20")));
+            products.add(new Product("调和油", Integer.valueOf(20), sdf.parse("2019-02-21")));
+            products.add(new Product("大豆油", Integer.valueOf(49), sdf.parse("2019-02-15")));
+            products.add(new Product("玉米汁", Integer.valueOf(80), sdf.parse("2019-02-17")));
+        } catch (ParseException ex) {
+            throw new RuntimeException("Invalid date");
+        }
+        return products;
+    }
+
+    public static Timestamp loadReleaseDate() {
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+            Date date = sdf.parse("2014-01-31 15:00");
+            return new Timestamp(date.getTime());
+        } catch (ParseException ex) {
+            throw new RuntimeException("Invalid date");
+        }
+    }
+}
+</code></pre> 
+ <p>控制器类的实现:<em>MyController.java</em> - </p> 
+ <pre><code class="lang-java">package com.yiibai.spring.controller;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+
+import com.yiibai.dao.DAO;
+import com.yiibai.spring.bean.Product;
+
+@Controller
+public class MyController {
+
+    @GetMapping("/")
+    public String index(Model model) throws ParseException {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Product product = new Product("花生油", 129, sdf.parse("2018-02-18"), "");
+        model.addAttribute("product", product);
+        return "index";
+    }
+
+    @RequestMapping(value = { "/addProduct" }, method = RequestMethod.GET)
+    public String showaddProduct(Model model)throws ParseException {
+        //List&lt;Product&gt; saleTypes = new ArrayList&lt;Product&gt;();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Product product = new Product("花生油","花生油描述~", 119, sdf.parse("2018-02-11"), "CX");
+        model.addAttribute("product", product);
+
+        return "addProduct";
+    }
+
+    @RequestMapping(value = { "/saveProduct" }, method = RequestMethod.POST)
+    public String saveprodcut(Model model, String name) throws ParseException {
+        //List productList = DAO.loadAllProducts();
+        //model.addAttribute("productList", productList);
+        return "springel";
+    }
+
+}
+</code></pre> 
+ <p>模板文件的实现:<em>/webapp/WEB-INFO/views/addProduct.html</em> - </p>   
+ <pre><code class="lang-html">&lt;html xmlns:th="http://www.thymeleaf.org"&gt;
+&lt;head&gt;
+&lt;meta charset="UTF-8"&gt;
+&lt;meta http-equiv="X-UA-Compatible" content="IE=edge"&gt;
+&lt;link rel="stylesheet" th:href="@{/css/main.css}" /&gt;
+&lt;title&gt;Spring MVC5 + Thymeleaf 表单示例&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h2&gt;Spring MVC5 + Thymeleaf 表单示例&lt;/h2&gt;
+    &lt;form th:action="@{/saveProduct}" th:object="${product}" method="POST"&gt;
+          &lt;label for="firstName"&gt;产品名称:&lt;/label&gt;
+          &lt;input type="text" th:field="*{name}" value="" /&gt;&lt;br/&gt;
+
+          &lt;label for="firstName"&gt;有效日期:&lt;/label&gt;
+          &lt;input type="text" th:field="*{availableFrom}" value="2018-03-28" /&gt; &lt;br/&gt;        
+
+          &lt;label for="price"&gt;价格 (RMB):&lt;/label&gt;
+          &lt;input type="text" th:field="*{price}" size="10" value="198" /&gt;&lt;br/&gt;
+
+          &lt;input type="submit" value="提交"/&gt;
+    &lt;/form&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>运行上面项目，在浏览器中显示效果如下 -<br><img src="http://www.yiibai.com/uploads/images/201802/2502/253150250_25734.png" alt=""></p>
+ <br>      
+</div></body></html>

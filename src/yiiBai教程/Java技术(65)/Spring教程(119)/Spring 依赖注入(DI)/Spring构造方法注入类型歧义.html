@@ -1,0 +1,140 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Spring构造方法注入类型歧义</h1><div style="width:100%;float:left;" class="article-content">   
+ <div> 
+  <div>
+    在Spring框架中，当一个类包含多个构造函数带的参数相同，它总是会造成构造函数注入参数类型歧义的问题。 
+  </div> 
+ </div> 
+ <div> 
+  <h2> 问题 </h2> 
+  <div>
+    让我们来看看这个客户 bean 实例。它包含两个构造方法，均接受3个不同的数据类型参数。 
+  </div> 
+  <pre>package com.yiibai.common;
+
+public class Customer 
+{
+	private String name;
+	private String address;
+	private int age;
+	
+	public Customer(String name, String address, int age) {
+		this.name = name;
+		this.address = address;
+		this.age = age;
+	}
+	
+	public Customer(String name, int age, String address) {
+		this.name = name;
+		this.age = age;
+		this.address = address;
+	}
+	//getter and setter methods
+	public String toString(){
+		return " name : " +name + "\n address : "
+               + address + "\n age : " + age;
+	}
+
+}</pre> 
+  <div>
+    在Spring&nbsp;bean 的配置文件中，通过传递一个“yiibai' 的名字，地址为'188'，以及年龄为'28'。 
+  </div> 
+  <pre>&lt;!--Spring-Customer.xml--&gt;
+&lt;beans xmlns="http://www.springframework.org/schema/beans"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans-2.5.xsd"&gt;
+
+	&lt;bean id="CustomerBean" class="com.yiibai.common.Customer"&gt;
+
+		&lt;constructor-arg&gt;
+			&lt;value&gt;yiibai&lt;/value&gt;
+		&lt;/constructor-arg&gt;
+		
+		&lt;constructor-arg&gt;
+			&lt;value&gt;188&lt;/value&gt;
+		&lt;/constructor-arg&gt;
+		
+		&lt;constructor-arg&gt;
+			&lt;value&gt;28&lt;/value&gt;
+		&lt;/constructor-arg&gt;
+        &lt;/bean&gt;
+
+&lt;/beans&gt;</pre> 
+  <div>
+    运行它，你期望的结果是什么？ 
+  </div> 
+  <pre>package com.yiibai.common;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+public class App 
+{
+    public static void main( String[] args )
+    {
+    	ApplicationContext context = 
+    	  new ClassPathXmlApplicationContext(new String[] {"Spring-Customer.xml"});
+
+    	Customer cust = (Customer)context.getBean("CustomerBean");
+    	System.out.println(cust);
+    }
+}</pre> 
+  <p> 输出结果 </p> 
+  <pre>name : yiibai
+ address : 28
+ age : 188</pre> 
+  <div>
+    其结果不是我们所期望的，第一个构造器不执行，而是第二构造函数运行。在Spring参数类型'188'&nbsp;能够转换成int，所以Spring只是转换它，并采用第二个构造来执行，即使你认为它应该是一个字符串。 
+  </div> 
+  <div>
+    另外，如果Spring不能解决使用哪个构造函数，它会提示以下错误信息 
+  </div>   
+  <pre>constructor arguments specified but no matching constructor 
+found in bean 'CustomerBean' (hint: specify index and/or 
+type arguments for simple parameters to avoid type ambiguities)</pre> 
+  <h2> 解决 </h2> 
+  <div>
+    为了解决这个问题，应该为构造函数指定的确切数据类型，通过像这样类型的属性： 
+  </div> 
+  <pre>&lt;beans xmlns="http://www.springframework.org/schema/beans"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans-2.5.xsd"&gt;
+
+	&lt;bean id="CustomerBean" class="com.yiibai.common.Customer"&gt;
+	
+		&lt;constructor-arg type="java.lang.String"&gt;
+			&lt;value&gt;yiibai&lt;/value&gt;
+		&lt;/constructor-arg&gt;
+		
+		&lt;constructor-arg type="java.lang.String"&gt;
+			&lt;value&gt;188&lt;/value&gt;
+		&lt;/constructor-arg&gt;
+		
+		&lt;constructor-arg type="int"&gt;
+			&lt;value&gt;28&lt;/value&gt;
+		&lt;/constructor-arg&gt;
+		
+	&lt;/bean&gt;
+
+&lt;/beans&gt;</pre> 
+  <div>
+    再次运行它，现在得到你所期望的。 
+  </div> 
+  <h5> 输出结果 </h5> 
+  <pre>name : yiibai
+ address : 188
+ age : 28</pre> 
+  <div> 
+   <strong>注</strong>
+   <br> 
+   <div>
+     这是一个很好的做法，显式声明每个构造函数参数的数据类型，以避免上述构造注入型歧义的问题。 
+   </div> 
+   <div> 
+    <br> 
+   </div> 
+  </div> 
+ </div>
+ <br>      
+</div></body></html>

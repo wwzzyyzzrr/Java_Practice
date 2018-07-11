@@ -1,0 +1,143 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Spring自动装配Beans</h1><div style="width:100%;float:left;" class="article-content">   
+ <div> 
+  <div>
+    在Spring框架，可以用&nbsp;auto-wiring&nbsp;功能会自动装配Bean。要启用它，只需要在&nbsp;&lt;bean&gt;定义“autowire”属性。 
+  </div> 
+ </div> 
+ <div> 
+  <pre>&lt;bean id="customer" class="com.yiibai.common.Customer" autowire="byName" /&gt;</pre> 
+  <div>
+    在Spring中，支持&nbsp;5&nbsp;自动装配模式。 
+  </div> 
+  <ul> 
+   <li> no –&nbsp;缺省情况下，自动配置是通过“ref”属性手动设定 </li> 
+   <li> byName –&nbsp;根据属性名称自动装配。如果一个bean的名称和其他bean属性的名称是一样的，将会自装配它。 </li> 
+   <li> byType –&nbsp;按数据类型自动装配。如果一个bean的数据类型是用其它bean属性的数据类型，兼容并自动装配它。 </li> 
+   <li> constructor –&nbsp;在构造函数参数的byType方式。 </li> 
+   <li> autodetect –&nbsp;如果找到默认的构造函数，使用“自动装配用构造”;&nbsp;否则，使用“按类型自动装配”。 </li> 
+  </ul> 
+  <h2> 示例 </h2> 
+  <div>
+    Customer 和 Person 对象自动装配示范。 
+  </div> 
+  <pre>package com.yiibai.common;
+
+public class Customer 
+{
+	private Person person;
+	
+	public Customer(Person person) {
+		this.person = person;
+	}
+	
+	public void setPerson(Person person) {
+		this.person = person;
+	}
+	//...
+}</pre> 
+  <pre>package com.yiibai.common;
+
+public class Person 
+{
+	//...
+}</pre> 
+  <h2> 1. Auto-Wiring ‘no’ </h2> 
+  <div>
+    这是默认的模式，你需要通过&nbsp;'ref'&nbsp;属性来连接 bean。 
+  </div> 
+  <pre>&lt;bean id="customer" class="com.yiibai.common.Customer"&gt;
+                  &lt;property name="person" ref="person" /&gt;
+	&lt;/bean&gt;
+
+	&lt;bean id="person" class="com.yiibai.common.Person" /&gt;</pre> 
+  <h2> 2. Auto-Wiring ‘byName’ </h2> 
+  <p> 按属性名称自动装配。在这种情况下，由于对“person”&nbsp;bean的名称是相同于“customer”&nbsp;bean&nbsp;的属性(“person”)名称，所以，Spring会自动通过setter方法将其装配&nbsp;– “setPerson(Person person)“. </p> 
+  <pre>&lt;bean id="customer" class="com.yiibai.common.Customer" autowire="byName" /&gt;	
+&lt;bean id="person" class="com.yiibai.common.Person" /&gt;</pre> 
+  <p> 查看完整的示例 –&nbsp;<a target="_blank" href="http://www.yiibai.com/spring/spring-autowiring-by-name.html">Spring按名称自动装配</a> </p> 
+  <h2> 3. Auto-Wiring ‘byType’ </h2> 
+  <p> 通过按属性的数据类型自动装配Bean。在这种情况下，由于“Person”&nbsp;bean中的数据类型是与“customer”&nbsp;bean的属性(Person对象)的数据类型一样的，所以，Spring会自动通过setter方法将其自动装配。– “setPerson(Person person)“. </p> 
+  <pre>&lt;bean id="customer" class="com.yiibai.common.Customer" autowire="byType" /&gt;
+&lt;bean id="person" class="com.yiibai.common.Person" /&gt;</pre> 
+  <p> 查看完整的示例&nbsp;–&nbsp;<a target="_blank" href="http://www.yiibai.com/spring/spring-autowiring-by-type.html">Spring通过类型自动装配</a> </p> 
+  <h2> 4. Auto-Wiring ‘constructor’ </h2> 
+  <p> 通过构造函数参数的数据类型按属性自动装配Bean。在这种情况下，由于“person”&nbsp;bean的数据类型与“customer”&nbsp;bean的属性(Person对象)的构造函数参数的数据类型是一样的，所以，Spring通过构造方法自动装配&nbsp;– “public Customer(Person person)“. </p> 
+  <pre>&lt;bean id="customer" class="com.yiibai.common.Customer" autowire="constructor" /&gt;
+	
+	&lt;bean id="person" class="com.yiibai.common.Person" /&gt;</pre> 
+  <p> 查看完整的示例&nbsp;–&nbsp;<a target="_blank" href="http://www.yiibai.com/spring/spring-autowiring-by-constructor.html>Spring通过构造方法自动装配</a> 
+	</p>
+	<h2>
+		5. Auto-Wiring ‘autodetect’
+	</h2>
+	<p>
+		如果找到默认的构造函数，则使用“构造方法”;&nbsp;否则，使用“byType”。在这种情况下，由于有默认的构造函数在“Customer”类，所以，Spring通过构造方法自动装配&nbsp;– “public Customer(Person person)“.
+	</p>
+<script async src=" pagead2.googlesyndication.com pagead js adsbygoogle.js">  </a></p>
+  <pre><a target="_blank" href="http://www.yiibai.com/spring/spring-autowiring-by-constructor.html>Spring通过构造方法自动装配</a> 
+	</p>
+	<h2>
+		5. Auto-Wiring ‘autodetect’
+	</h2>
+	<p>
+		如果找到默认的构造函数，则使用“构造方法”;&nbsp;否则，使用“byType”。在这种情况下，由于有默认的构造函数在“Customer”类，所以，Spring通过构造方法自动装配&nbsp;– “public Customer(Person person)“.
+	</p>
+<script async src=" pagead2.googlesyndication.com pagead js adsbygoogle.js">&lt;bean id=" customer"="" class="com.yiibai.common.Customer" autowire="autodetect" &gt;="" &lt;bean="" id="person" &gt;&lt;="" pre=""&gt; </a> 
+		<p></p>
+
+		<p>
+			<a target="_blank" href="http://www.yiibai.com/spring/spring-autowiring-by-constructor.html>Spring通过构造方法自动装配</a> 
+		</p>
+
+		<h2>
+			5. Auto-Wiring ‘autodetect’
+		</h2>
+
+		<p>
+			如果找到默认的构造函数，则使用“构造方法”;&nbsp;否则，使用“byType”。在这种情况下，由于有默认的构造函数在“Customer”类，所以，Spring通过构造方法自动装配&nbsp;– “public Customer(Person person)“.
+		</p>
+
+<pre><bean id=" customer"="" class="com.yiibai.common.Customer" autowire="autodetect" &gt;="" &lt;bean="" id="person" &gt;<="" pre="">查看完整的示例&nbsp;–&nbsp;</a><a target="_blank" href="http://www.yiibai.com/spring/spring-autowiring-by-autodetect.html">Spring按AutoDetect自动装配成功</a>.
+	</p>
+
+	
+   <div>
+		
+    <strong>注</strong> 
+		
+    <div>
+     
+			这是一件好事，这两个auto-wire’&nbsp;和&nbsp;‘dependency-check’&nbsp;相结合，以确保属性始终自动装配成功。
+		
+    </div>
+
+
+    <pre>&lt;bean id="customer" class="com.yiibai.common.Customer" 
+			autowire="autodetect" dependency-check="objects /&gt;
+	
+	&lt;bean id="person" class="com.yiibai.common.Person" /&gt;</pre>
+	
+   </div>
+	<h2>
+		结论
+	</h2>
+	
+   <div>
+    
+		在我看来，Spring&nbsp;‘auto-wiring’&nbsp;以极大的成本做出更快开发效率&nbsp;-&nbsp;它增加了对整个&nbsp;bean&nbsp;配置文件复杂性，甚至不知道哪些bean将自动装配哪个Bean。
+	
+   </div>
+	<p>
+		在实践中，我更顷向手动关联创建，它始终是干净，也很好地工作，或者使用&nbsp;<a target="_blank" href="http://www.yiibai.com/spring/spring-auto-wiring-beans-with-autowired-annotation.html">@Autowired&nbsp;注解</a>，这是更加灵活和建议。
+	</p>
+	
+   <div>
+		
+    <span style="background-color:inherit;font-family:微软雅黑;font-size:14px;line-height:1.5;"><br>
+</span> 
+	
+   </div>
+</pre>
+ </div>
+ <br>      
+</div></body></html>

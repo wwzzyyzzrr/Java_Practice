@@ -1,0 +1,129 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Spring JdbcTemplate+JdbcDaoSupport实例</h1><div style="width:100%;float:left;" class="article-content">   
+ <div> 
+  <div>
+    在Spring&nbsp;JDBC开发中，可以使用 JdbcTemplate 和 JdbcDaoSupport 类来简化整个数据库的操作过程。 
+  </div> 
+ </div> 
+ <div> 
+  <div>
+    在本教程中，我们将重复上一篇文章
+   <a target="_blank" href="http://www.yiibai.com/spring/maven-spring-jdbc-example.html">&nbsp;Spring+JDBC例子</a>，看之前(无JdbcTemplate支持)和之后(含JdbcTemplate的支持)之间不同的例子。 
+  </div> 
+  <h2> 1. 不使用JdbcTemplate示例 </h2> 
+  <div>
+    如果不用JdbcTemplate，必须创建大量的冗余代码(创建连接，关闭连接，处理异常)中的所有DAO数据库的操作方法&nbsp;-&nbsp;插入，更新和删除。它的效率并不是很高，容易出错和乏味。 
+  </div> 
+  <pre>private DataSource dataSource;
+		
+	public void setDataSource(DataSource dataSource) {
+		this.dataSource = dataSource;
+	}
+		
+	public void insert(Customer customer){
+			
+		String sql = "INSERT INTO CUSTOMER " +
+				"(CUST_ID, NAME, AGE) VALUES (?, ?, ?)";
+		Connection conn = null;
+			
+		try {
+			conn = dataSource.getConnection();
+			PreparedStatement ps = conn.prepareStatement(sql);
+			ps.setInt(1, customer.getCustId());
+			ps.setString(2, customer.getName());
+			ps.setInt(3, customer.getAge());
+			ps.executeUpdate();
+			ps.close();
+				
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+				
+		} finally {
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {}
+			}
+		}
+	}</pre> 
+  <h2> 2. 使用JdbcTemplate示例 </h2> 
+  <div>
+    使用JdbcTemplate可节省大量的冗余代码，因为JdbcTemplate类会自动处理它。 
+  </div> 
+  <pre>private DataSource dataSource;
+	private JdbcTemplate jdbcTemplate;
+		
+	public void setDataSource(DataSource dataSource) {
+		this.dataSource = dataSource;
+	}
+
+	public void insert(Customer customer){
+			
+		String sql = "INSERT INTO CUSTOMER " +
+			"(CUST_ID, NAME, AGE) VALUES (?, ?, ?)";
+				 
+		jdbcTemplate = new JdbcTemplate(dataSource);
+				
+		jdbcTemplate.update(sql, new Object[] { customer.getCustId(),
+			customer.getName(),customer.getAge()  
+		});
+				
+	}</pre> 
+  <div>
+    看看有什么不同？ 
+  </div> 
+  <h2> 3. 使用JdbcDaoSupport示例 </h2> 
+  <p> 通过扩展 JdbcDaoSupport，设置数据源，并且 JdbcTemplate 在你的类中不再是必需的，只需要正确的数据源注入JdbcCustomerDAO。可以使用 getJdbcTemplate()方法得到 JdbcTemplate。 </p> 
+  <pre>public class JdbcCustomerDAO extends JdbcDaoSupport implements CustomerDAO
+	{
+	   //no need to set datasource here
+	   public void insert(Customer customer){
+			
+		String sql = "INSERT INTO CUSTOMER " +
+			"(CUST_ID, NAME, AGE) VALUES (?, ?, ?)";
+				 
+		getJdbcTemplate().update(sql, new Object[] { customer.getCustId(),
+				customer.getName(),customer.getAge()  
+		});
+				
+	}</pre>   
+  <pre>&lt;beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-2.5.xsd"&gt;
+	
+	&lt;bean id="dataSource" 
+         class="org.springframework.jdbc.datasource.DriverManagerDataSource"&gt;
+
+		&lt;property name="driverClassName" value="com.mysql.jdbc.Driver" /&gt;
+		&lt;property name="url" value="jdbc:mysql://localhost:3306/yiibaijava" /&gt;
+		&lt;property name="username" value="root" /&gt;
+		&lt;property name="password" value="password" /&gt;
+	&lt;/bean&gt;
+	
+&lt;/beans&gt;</pre> 
+  <pre>&lt;beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-2.5.xsd"&gt;
+
+	&lt;bean id="customerDAO" class="com.yiibai.customer.dao.impl.JdbcCustomerDAO"&gt;
+		&lt;property name="dataSource" ref="dataSource" /&gt;
+	&lt;/bean&gt;
+	
+&lt;/beans&gt;</pre> 
+  <div> 
+   <strong>注:&nbsp;</strong>
+   <span style="line-height:1.5;">在Spring&nbsp;JDBC开发，它总是建议使用，总是建议使用&nbsp;JdbcTemplate和JdbcDaoSupport，而不使用自己的JDBC编程代码。</span> 
+  </div> 
+  <div> 
+   <br> 
+  </div> 
+  <div>
+    下载代码 &nbsp;–&nbsp;
+   <a target="_blank" href="http://pan.baidu.com/s/1bnIGdiR">http://pan.baidu.com/s/1bnIGdiR</a> 
+  </div> 
+  <div> 
+  </div> 
+ </div>
+ <br>      
+</div></body></html>

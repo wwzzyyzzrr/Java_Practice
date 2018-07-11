@@ -1,0 +1,127 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">ReactJS开发环境设置</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>在本章中，我们将演示如何为React开发建立一个环境。 请注意，涉及的步骤很多，但这此步骤将有助于以后加快开发流程。 我们将需要NodeJS，所以如果您没有安装，请查看下面教程文章的链接 - <a target="_blank" href="http://www.yiibai.com/nodejs/node_install.html">http://www.yiibai.com/nodejs/node_install.html</a></p> 
+ <p>安装ReactJS有好几种方法，这里重点介绍第1种方法，其它方法要选介绍演示。</p> 
+ <blockquote> 
+  <p>注意：在编写本教程时，使用nodejs版本为：<code>v9.3.0</code> ，npm的版本为：<code>5.6.0</code></p> 
+ </blockquote> 
+ <h2 id="h2--"><a name="安装方式一(推荐)" class="reference-link"></a><span class="header-link octicon octicon-link"></span>安装方式一(推荐)</h2>
+ <p><strong>第1步</strong> - 创建根文件夹<br>根文件夹将被命名为<em>reactApp</em>，我们将把它放在目录：<em>F:\worksp\reactjs</em>。 创建文件夹后，打开它，并通过命令提示符运行<code>npm init</code>来创建空的<code>package.json</code>文件，并按照命令说明进行操作。</p> 
+ <pre><code class="lang-shell">F:\worksp\reactjs&gt; mkdir reactApp
+F:\worksp\reactjs\reactApp&gt; npm init
+</code></pre> 
+ <p><strong>第2步</strong> - 安装全局包</p> 
+ <p>我们将需要为这个设置安装几个软件包。这里将需要一些<code>babel</code>插件，所以首先通过在命令提示符窗口中运行以下代码来安装<code>babel</code>。</p> 
+ <pre><code class="lang-shell">F:\worksp\reactjs\reactApp&gt; npm install -g babel
+F:\worksp\reactjs\reactApp&gt; npm install -g babel-cli
+</code></pre> 
+ <p><strong>第3步</strong> - 添加依赖和插件<br>我们将在接下来的教程中使用<code>webpack</code>捆绑器。所以需要安装<code>webpack</code>和<code>webpack-dev-server</code>。</p> 
+ <pre><code class="lang-shell">F:\worksp\reactjs\reactApp&gt; npm install webpack --save
+F:\worksp\reactjs\reactApp&gt; npm install webpack-dev-server --save
+</code></pre> 
+ <p>既然要使用React，那么需要先安装它。 <code>--save</code>命令将把这些包添加到<code>package.json</code>文件中。</p> 
+ <pre><code class="lang-shell">F:\worksp\reactjs\reactApp&gt; npm install react --save
+F:\worksp\reactjs\reactApp&gt; npm install react-dom --save
+</code></pre> 
+ <p>如前所述，我们需要一些<code>babel</code>插件，所以也安装它。</p> 
+ <pre><code class="lang-shell">F:\worksp\reactjs\reactApp&gt; npm install babel-core
+F:\worksp\reactjs\reactApp&gt; npm install babel-loader
+F:\worksp\reactjs\reactApp&gt; npm install babel-preset-react
+F:\worksp\reactjs\reactApp&gt; npm install babel-preset-es2015
+</code></pre> 
+ <p><strong>第4步</strong> - 创建文件<br>下面来创建一些需要的文件。 它可以手动添加或使用命令提示符创建以下文件 -</p> 
+ <ul> 
+  <li><em>index.html</em></li>
+  <li><em>App.jsx</em></li>
+  <li><em>main.js</em></li>
+  <li><em>webpack.config.js</em></li>
+ </ul> 
+ <p>先保持上面几个文件的内容为空。</p> 
+ <p><strong>第5步</strong> - 设置编译器，服务器和加载器<br>打开<code>webpack.config.js</code>文件并添加下面的代码。将<code>webpack</code>入口点设置为<code>main.js</code>。 输出路径是提供捆绑应用程序的地方。还将为开发服务器设置为<code>8080</code>端口。可以选择你想要的任何端口。</p> 
+ <p>最后，设置<code>babel</code>加载器来搜索js文件，并使用<code>es2015</code>并对之前安装的预设做出反应。</p> 
+ <p>文件：<em>webpack.config.js</em> - </p> 
+ <pre><code class="lang-js">var config = {
+   entry: './main.js',
+   output: {
+      path:'/',
+      filename: 'index.js',
+   },
+   devServer: {
+      inline: true,
+      port: 8080
+   },
+   module: {
+      loaders: [
+         {
+            test: /\.jsx?$/,
+            exclude: /node_modules/,
+            loader: 'babel-loader',
+            query: {
+               presets: ['es2015', 'react']
+            }
+         }
+      ]
+   }
+}
+module.exports = config;
+</code></pre> 
+ <p>打开<em>package.json</em> 并删除在<code>“scripts”</code>对象内的语句：<code>"test" "echo \"Error: no test specified\" &amp;&amp; exit 1"</code>。因为在本教程中不会进行任何测试。接下来添加启动命令。</p> 
+ <pre><code class="lang-json">"start": "webpack-dev-server --hot"
+</code></pre> 
+ <p>在上述步骤之前，将需要<code>webpack-dev-server</code>。 要安装<code>webpack-dev-server</code>，请使用以下命令。</p> 
+ <pre><code class="lang-shell">F:\worksp\reactjs\reactApp&gt; npm install webpack-dev-server -g
+</code></pre> 
+ <p>现在，可以使用<code>npm start</code>命令启动服务器。 <code>--hot</code>命令将在文件内部更改内容后添加实时重载，所以不需要每次更改的代码就可以刷新浏览器。</p> 
+ <p><strong>第6步</strong> - index.html</p> 
+ <p>这只是普通的HTML代码文件。可将<code>div id = "app"</code>设置为应用程序的根元素，并添加<code>index.js</code>脚本，这是捆绑应用程序文件。</p>   
+ <pre><code class="lang-html">&lt;!DOCTYPE html&gt;
+&lt;html lang = "en"&gt;
+
+   &lt;head&gt;
+      &lt;meta charset = "UTF-8"&gt;
+      &lt;title&gt;React App&lt;/title&gt;
+   &lt;/head&gt;
+
+   &lt;body&gt;
+      &lt;div id = "app"&gt;&lt;/div&gt;
+      &lt;script src = "index.js"&gt;&lt;/script&gt;
+   &lt;/body&gt;
+
+&lt;/html&gt;
+</code></pre> 
+ <p><strong>第7步</strong> - App.jsx和main.js</p> 
+ <p>这是第一个React组件。我们将在后面的章节中深入讲解React组件。 这个组件将显示输出：<code>"Hello World !!!"</code> </p> 
+ <p>文件：<em>App.jsx</em> - </p> 
+ <pre><code class="lang-js">import React from 'react';
+
+class App extends React.Component {
+   render() {
+      return (
+         &lt;div&gt;
+            Hello World!!!
+         &lt;/div&gt;
+      );
+   }
+}
+export default App;
+</code></pre> 
+ <p>我们需要导入这个组件，并将其呈现给的根App元素，所以可在浏览器中看到它。</p> 
+ <p>文件：<em>main.js</em> - </p> 
+ <pre><code class="lang-js">import React from 'react';
+import ReactDOM from 'react-dom';
+import App from './App.jsx';
+
+ReactDOM.render(&lt;App /&gt;, document.getElementById('app'));
+</code></pre> 
+ <blockquote> 
+  <p>注 - 无论何时您想使用某些东西，都需要先导入它。如果您希望使组件在应用程序的其他部分可用，则需要在创建后导出它，并将其导入到要使用它的文件中。</p> 
+ </blockquote> 
+ <p>完整的目录结构如下所示 -<br><img src="http://www.yiibai.com/uploads/images/201801/0101/862120120_58805.png" alt=""></p> 
+ <p><strong>第8步</strong> - 运行服务器<br>设置完成，我们可以通过运行以下命令启动服务器。</p> 
+ <pre><code class="lang-shell">F:\worksp\reactjs\reactApp&gt; npm start
+</code></pre> 
+ <p>执行输出如下 -<br><img src="http://www.yiibai.com/uploads/images/201801/0101/265120118_14691.png" alt=""></p> 
+ <p>在我们的例子中，它打开访问的URL是：<code>http://localhost:8080/</code> ，打开之后，应该会看到下面的输出。<br><img src="http://www.yiibai.com/uploads/images/201801/0101/962120119_71698.png" alt=""></p> 
+ <h2 id="h2--html-"><a name="方法二(最小的HTML模板)" class="reference-link"></a><span class="header-link octicon octicon-link"></span>方法二(最小的HTML模板)</h2>
+ <p>如果您喜欢使用自己的文本编辑器，也可以下载这个HTML文件( <a target="_blank" href="http://raw.githubusercontent.com/reactjs/reactjs.org/master/static/html/single-file-example.html">http://raw.githubusercontent.com/reactjs/reactjs.org/master/static/html/single-file-example.html</a> )，编辑它，并从浏览器的本地文件系统中打开它。但它的运行时代码转换很慢，所以不要在生产中使用它。</p>
+ <br>      
+</div></body></html>

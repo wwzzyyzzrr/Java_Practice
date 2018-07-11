@@ -1,0 +1,95 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Servlet显示所有头信息</h1><div style="width:100%;float:left;" class="article-content">   
+ <p><code>ServletRequest</code>接口的<code>getHeaderNames()</code>方法返回一个包含所有头名称的<code>Enumeration</code>对象。<code>ServletRequest</code>接口的<code>getHeader()</code>方法返回给定头名称的头值。 在这个例子中，我们在<code>servlet</code>页面中显示一个请求的所有头信息。</p> 
+ <p><strong>getHeaderNames()方法的语法</strong></p> 
+ <pre><code class="lang-java">public Enumeration getHeaderNames()
+</code></pre> 
+ <p><strong>getHeader()方法的语法</strong></p> 
+ <pre><code class="lang-java">public String getHeader(String headerName)
+</code></pre> 
+ <h2 id="h2--servlet-"><a name="在servlet中显示所有头信息的示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>在servlet中显示所有头信息的示例</h2>
+ <p>在本示例中，我们调用<code>ServletRequest</code>接口的<code>getHeaderNames()</code>方法，该方法返回包含所有头名称的<code>Enumeration</code>对象。通过调用<code>getHeader()</code>方法来获取和显示所有的报头值。下面来看一个例子：</p> 
+ <p>打开Eclipse，创建一个动态Web项目：<em>ShowHeaders</em>，并在<code>com.yiibai</code>包下创建一个名称为：<em>HeaderServlet.java</em>的Servlet类以及在<em>WebContent</em>目录下创建一个HTML文件：<em>index.html</em>，如下所示 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/1010/933101027_29661.png" alt=""></p> 
+ <p>完整的代码实现如下所示 - </p> 
+ <p>文件：<em>index.html</em> - </p> 
+ <pre><code class="lang-html">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;meta charset="UTF-8"&gt;
+&lt;title&gt;ShowHeaders Servlet&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div style="text-align: center;"&gt;
+        请&lt;a href="/ShowHeaders/headers?key1=name"&gt;点击这里&lt;/a&gt;查看所有报头信息
+    &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>文件：<em>HeaderServlet.java</em> - </p> 
+ <pre><code class="lang-java">package com.yiibai;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Enumeration;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+/**
+ * Servlet implementation class HeaderServlet
+ */
+public class HeaderServlet extends HttpServlet {
+    private static final long serialVersionUID = 1L;
+
+    /**
+     * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
+     *      response)
+     */
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        // TODO Auto-generated method stub
+        response.setContentType("text/html");
+        PrintWriter out = response.getWriter();
+
+        // out.println("HTTP headers sent by your client:&lt;br&gt;");
+
+        Enumeration enums = request.getHeaderNames();
+        while (enums.hasMoreElements()) {
+            String headerName = (String) enums.nextElement();
+            String headerValue = request.getHeader(headerName);
+            out.print("&lt;b&gt;" + headerName + "&lt;/b&gt;: ");
+            out.println(headerValue + "&lt;br/&gt;");
+        }
+    }
+
+}
+</code></pre> 
+ <p>文件：<em>web.xml</em> - </p>   
+ <pre><code class="lang-xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+    xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
+    id="WebApp_ID" version="3.1"&gt;
+    &lt;display-name&gt;ShowHeaders-HeaderServlet&lt;/display-name&gt;
+    &lt;welcome-file-list&gt;
+        &lt;welcome-file&gt;index.html&lt;/welcome-file&gt;
+        &lt;welcome-file&gt;index.jsp&lt;/welcome-file&gt;
+    &lt;/welcome-file-list&gt;
+    &lt;servlet&gt;
+        &lt;servlet-name&gt;HeaderServlet&lt;/servlet-name&gt;
+        &lt;servlet-class&gt;com.yiibai.HeaderServlet&lt;/servlet-class&gt;
+    &lt;/servlet&gt;
+
+    &lt;servlet-mapping&gt;
+        &lt;servlet-name&gt;HeaderServlet&lt;/servlet-name&gt;
+        &lt;url-pattern&gt;/headers&lt;/url-pattern&gt;
+    &lt;/servlet-mapping&gt;
+&lt;/web-app&gt;
+</code></pre> 
+ <p>执行结果如下所示 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/1010/497101040_28943.png" alt=""></p>
+ <br>      
+</div></body></html>

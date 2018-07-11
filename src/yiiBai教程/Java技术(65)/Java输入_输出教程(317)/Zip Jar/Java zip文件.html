@@ -1,0 +1,195 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Java zip文件</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>Java对ZIP文件格式有直接支持。通过使用<code>java.util.zip</code>包中的以下四个类来处理ZIP文件格式：</p> 
+ <ul> 
+  <li>ZipEntry</li>
+  <li>ZipInputStream</li>
+  <li>ZipOutputStream</li>
+  <li>ZipFile</li>
+ </ul> 
+ <p><code>ZipEntry</code>对象表示ZIP文件格式的归档文件中的条目。zip条目可以是压缩的或未压缩的。<code>ZipEntry</code>类具有设置和获取有关ZIP文件中的条目的信息的方法。<code>ZipInputStream</code>可以从每个条目的ZIP文件读取数据。<br><code>ZipOutputStream</code>可以将数据写入每个条目的ZIP文件。<code>ZipFile</code>是一个从ZIP文件读取条目的实用程序类。<br>以下代码显示如何创建ZIP文件。</p> 
+ <pre><code class="lang-java">import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.zip.Deflater;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+
+public class Main {
+  public static void main(String[] args) {
+    String zipFileName = "ziptest.zip";
+    String[] entries = new String[2];
+    entries[0] = "test1.txt";
+    entries[1] = "notes" + File.separator + "test2.txt";
+    zip(zipFileName, entries);
+  }
+
+  public static void zip(String zipFileName, String[] zipEntries) {
+
+    try (ZipOutputStream zos = new ZipOutputStream(new BufferedOutputStream(
+        new FileOutputStream(zipFileName)))) {
+
+      // Set the compression level to best compression
+      zos.setLevel(Deflater.BEST_COMPRESSION);
+
+      for (int i = 0; i &lt; zipEntries.length; i++) {
+        File entryFile = new File(zipEntries[i]);
+        if (!entryFile.exists()) {
+          System.out.println("The entry file  " + entryFile.getAbsolutePath()
+              + "  does  not  exist");
+          System.out.println("Aborted   processing.");
+          return;
+        }
+        ZipEntry ze = new ZipEntry(zipEntries[i]);
+        zos.putNextEntry(ze);
+        addEntryContent(zos, zipEntries[i]);
+        zos.closeEntry();
+      }
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
+
+  public static void addEntryContent(ZipOutputStream zos, String entryFileName)
+      throws IOException, FileNotFoundException {
+    BufferedInputStream bis = new BufferedInputStream(new FileInputStream(
+        entryFileName));
+
+    byte[] buffer = new byte[1024];
+    int count = -1;
+    while ((count = bis.read(buffer)) != -1) {
+      zos.write(buffer, 0, count);
+    }
+    bis.close();
+  }
+}
+</code></pre> 
+ <p>上面的代码生成以下结果。</p> 
+ <pre><code class="lang-java">The entry file  F:\website\yiibai\worksp\test1.txt  does  not  exist
+Aborted   processing.
+</code></pre> 
+ <h2 id="h2--zip-"><a name="读取Zip文件" class="reference-link"></a><span class="header-link octicon octicon-link"></span>读取Zip文件</h2>
+ <p>以下代码显示如何读取ZIP文件的内容。</p> 
+ <pre><code class="lang-java">import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+
+public class Main {
+  public static void main(String[] args) {
+    String zipFileName = "ziptest.zip";
+    String unzipdirectory = "extracted";
+    unzip(zipFileName, unzipdirectory);
+  }
+
+  public static void unzip(String zipFileName, String unzipdir) {
+    try (ZipInputStream zis = new ZipInputStream(new BufferedInputStream(
+        new FileInputStream(zipFileName)))) {
+
+      ZipEntry entry = null;
+      while ((entry = zis.getNextEntry()) != null) {
+        // Extract teh entry's contents 
+        extractEntryContent(zis, entry, unzipdir);
+      }
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
+
+  public static void extractEntryContent(ZipInputStream zis, ZipEntry entry,
+      String unzipdir) throws IOException, FileNotFoundException {
+
+    String entryFileName = entry.getName();
+    String entryPath = unzipdir + File.separator + entryFileName;
+
+    createFile(entryPath);
+
+    BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(
+        entryPath));
+
+    byte[] buffer = new byte[1024];
+    int count = -1;
+    while ((count = zis.read(buffer)) != -1) {
+      bos.write(buffer, 0, count);
+    }
+
+    bos.close();
+  }
+
+  public static void createFile(String filePath) throws IOException {
+    File file = new File(filePath);
+    File parent = file.getParentFile();
+
+    if (!parent.exists()) {
+      parent.mkdirs();
+    }
+    file.createNewFile();
+  }
+}
+</code></pre> 
+ <h2 id="h2--2"><a name="实例-2" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实例-2</h2>
+ <p>下面的代码显示了如何使用<code>ZipFile</code>类。当想在ZIP文件中列出条目时，<code>ZipFile</code>类派上用场。</p>   
+ <pre><code class="lang-java">import java.io.InputStream;
+import java.util.Enumeration;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+
+public class Main {
+  public static void main(String[] args) throws Exception {
+    ZipFile zf = new ZipFile("ziptest.zip");
+
+    // Get the enumeration for all zip entries and loop through them
+    Enumeration&lt;? extends ZipEntry&gt; e = zf.entries();
+    ZipEntry entry = null;
+
+    while (e.hasMoreElements()) {
+      entry = e.nextElement();
+
+      // Get the input stream for the current zip entry
+      InputStream is = zf.getInputStream(entry);
+
+      /* Read data for the entry using the is object */
+
+      // Print the name of the entry
+      System.out.println(entry.getName());
+    }
+
+  }
+}
+</code></pre> 
+ <p>以下代码使用<code>Stream</code>类和<code>lambda</code>表达式重写上述代码。</p> 
+ <pre><code class="lang-java">import java.io.IOException;
+import java.io.InputStream;
+import java.util.stream.Stream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+
+public class Main {
+  public static void main(String[] args) throws Exception {
+    ZipFile zf = new ZipFile("ziptest.zip");
+
+    Stream&lt;? extends ZipEntry&gt; entryStream = zf.stream();
+    entryStream.forEach(entry -&gt; {
+      try {
+        // Get the input stream for the current zip entry
+        InputStream is = zf.getInputStream(entry);
+        System.out.println(entry.getName());
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+
+    });
+  }
+}
+</code></pre> 
+ <p><code>GZIPInputStream</code>和<code>GZIPOutputStream</code>类用于处理GZIP文件格式。</p>
+ <br>      
+</div></body></html>

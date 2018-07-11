@@ -1,0 +1,60 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Java泛型不能使用实例</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>类型参数不能用于在方法中实例化其对象。</p> 
+ <pre><code class="lang-java">public static &lt;T&gt; void add(Box&lt;T&gt; box) {
+   //compiler error
+   //Cannot instantiate the type T
+   //T item = new T();  
+   //box.add(item);
+}
+</code></pre> 
+ <p>如果要实现这样的功能，请使用反射。</p> 
+ <pre><code class="lang-java">public static &lt;T&gt; void add(Box&lt;T&gt; box, Class&lt;T&gt; clazz) 
+   throws InstantiationException, IllegalAccessException{
+   T item = clazz.newInstance();   // OK
+   box.add(item);
+   System.out.println("Item added.");
+}
+</code></pre> 
+ <h2 id="h2-u793Au4F8B"><a name="示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例</h2>
+ <p>创建一个名称为：<em>NoInstance.java</em> 文件，并编写以下代码 - </p> 
+ <pre><code class="lang-java">package demo5;
+
+public class NoInstance {
+    public static void main(String[] args) throws InstantiationException,
+            IllegalAccessException {
+        Box&lt;String&gt; stringBox = new Box&lt;String&gt;();
+        add(stringBox, String.class);
+    }
+
+    public static &lt;T&gt; void add(Box&lt;T&gt; box) {
+        // compiler error
+        // Cannot instantiate the type T
+        // T item = new T();
+        // box.add(item);
+    }
+
+    public static &lt;T&gt; void add(Box&lt;T&gt; box, Class&lt;T&gt; clazz)
+            throws InstantiationException, IllegalAccessException {
+        T item = clazz.newInstance(); // OK
+        box.add(item);
+        System.out.println("Item has been added.");
+    }
+}
+
+class Box&lt;T&gt; {
+    private T t;
+
+    public void add(T t) {
+        this.t = t;
+    }
+
+    public T get() {
+        return t;
+    }
+}
+</code></pre> 
+ <p>执行上面代码，得到输出结果如下 -</p>   
+ <pre><code class="lang-shell">Item has been added.
+</code></pre>
+ <br>      
+</div></body></html>

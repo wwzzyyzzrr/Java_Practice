@@ -1,0 +1,172 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">内存映射</h1><div style="width:100%;float:left;" class="article-content">   
+ <p><code>mmap()</code>系统调用在调用进程的虚拟地址空间中提供映射，将文件或设备映射到内存中。 下面是两种类型 -</p> 
+ <p><strong>文件映射或文件支持的映射</strong> - 此映射将进程的虚拟内存区域映射到文件。 这意味着读取或写入这些内存区域会导致文件被读取或写入。这是默认的映射类型。</p> 
+ <p><strong>匿名映射</strong> - 此映射映射进程的虚拟内存区域，不受任何文件的支持。 内容被初始化为零。 这种映射类似于动态内存分配(malloc())，在某些<code>malloc()</code>实现中用于某些分配。</p> 
+ <p>一个进程映射中的内存可以与其他进程中的映射共享。 这可以通过两种方式完成 -</p> 
+ <ul> 
+  <li>当两个进程映射文件的同一个区域时，它们共享相同的物理内存页面。</li>
+  <li>如果创建了一个子进程，它将继承父进程的映射，并且这些映射引用与父进程相同的物理内存页面。 在子进程中的任何数据更改后，将为子进程创建不同的页面。</li>
+ </ul> 
+ <p>当两个或多个进程共享相同的页面时，每个进程可以根据映射类型查看其他进程所做的页面内容更改。 映射类型可以是私有的也可以是共享的 - </p> 
+ <ul> 
+  <li><strong>私有映射(MAP_PRIVATE)</strong> - 对此映射的内容所做的修改对其他进程是不可见的，并且映射不会传递到底层文件。</li>
+  <li><strong>共享映射(MAP_SHARED)</strong> - 对此映射内容的修改对其他进程可见，并将映射传送到底层文件。</li>
+ </ul> 
+ <pre><code class="lang-cpp">#include &lt;sys/mman.h&gt;
+
+void *mmap(void *addr, size_t length, int prot, int flags, int fd, off_t offset);
+</code></pre> 
+ <p>上述系统调用返回成功映射的起始地址，或者返回<code>MAP_FAILED</code>出错。</p> 
+ <p>虚拟地址<code>addr</code>可以是用户指定的，也可以是内核生成的(将<code>addr</code>作为<code>NULL</code>传递)。 指示的字段长度需要以字节为单位的映射大小。 字段prot表示内存保护值，例如<code>PROT_NONE</code>，<code>PROT_READ</code>，<code>PROT_WRITE</code>，<code>PROT_EXEC</code>分别表示不可访问，读取，写入或执行的区域。 该值可以是单个(PROT_NONE)，也可以是三个标志中的任何一个(最后3个)。 字段标志指示映射类型或<code>MAP_PRIVATE</code>或<code>MAP_SHARED</code>。 字段<code>'fd'</code>表示标识要映射的文件的文件描述符，字段<code>'offset'</code>表示文件的起始点，如果需要映射整个文件，<code>offset</code>应该是零。</p> 
+ <pre><code class="lang-cpp">#include &lt;sys/mman.h&gt;
+
+int munmap(void *addr, size_t length);
+</code></pre> 
+ <p>上述系统调用在成功时返回<code>0</code>，错误时返回<code>-1</code>。</p> 
+ <p>系统调用<code>munmap</code>，执行已映射内存区域的映射。 字段<code>addr</code>指示映射的起始地址，<code>length</code>指示要被映射的映射的大小(以字节为单位)。 通常，映射和解映射将针对整个映射区域。 如果这必须有所不同，那么它应该被缩小或分成两部分。 如果<code>addr</code>没有任何映射，这个调用将不起作用，调用返回<code>0</code>(成功)。</p> 
+ <p>让我们考虑一个例子 -</p> 
+ <p><strong>第1步</strong> - 写入文件如下所示的字母数字字符 -</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>0</th> 
+    <th>1</th> 
+    <th>2</th> 
+    <th>…</th> 
+    <th>25</th> 
+    <th>26</th> 
+    <th>27</th> 
+    <th>38</th> 
+    <th>…</th> 
+    <th>59</th> 
+    <th>60</th> 
+    <th>61</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>A</td> 
+    <td>B</td> 
+    <td>C</td> 
+    <td>…</td> 
+    <td>Z</td> 
+    <td>0</td> 
+    <td>1</td> 
+    <td>2</td> 
+    <td>…</td> 
+    <td>x</td> 
+    <td>y</td> 
+    <td>z</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p><strong>第2步</strong> - 使用<code>mmap()</code>系统调用将文件内容映射到内存中。 这将映射到内存后返回起始地址。</p> 
+ <p><strong>第3步</strong> - 使用数组表示法访问文件内容(也可以使用指针表示法访问)，因为不会读取昂贵的<code>read()</code>系统调用。 使用内存映射，避免在用户空间，内核空间缓冲区和缓冲区缓存之间进行多次复制。<br><strong>第4步</strong> - 重复读取文件内容，直到用户输入<code>“-1”</code>(表示访问结束)。<br><strong>第5步</strong> - 执行清理活动，即取消映射映射的内存区域(<code>munmap()</code>)，关闭文件并删除文件。</p>   
+ <pre><code class="lang-cpp">/* Filename: mmap_test.c */
+#include &lt;stdio.h&gt;
+#include &lt;sys/stat.h&gt;
+#include &lt;sys/types.h&gt;
+#include &lt;fcntl.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;sys/mman.h&gt;
+void write_mmap_sample_data();
+
+int main() {
+   struct stat mmapstat;
+   char *data;
+   int minbyteindex;
+   int maxbyteindex;
+   int offset;
+   int fd;
+   int unmapstatus;
+   write_mmap_sample_data();
+   if (stat("MMAP_DATA.txt", &amp;mmapstat) == -1) {
+      perror("stat failure");
+      return 1;
+   }
+
+   if ((fd = open("MMAP_DATA.txt", O_RDONLY)) == -1) {
+      perror("open failure");
+      return 1;
+   }
+   data = mmap((caddr_t)0, mmapstat.st_size, PROT_READ, MAP_SHARED, fd, 0);
+
+   if (data == (caddr_t)(-1)) {
+      perror("mmap failure");
+      return 1;
+   }
+   minbyteindex = 0;
+   maxbyteindex = mmapstat.st_size - 1;
+
+   do {
+      printf("Enter -1 to quit or ");
+      printf("enter a number between %d and %d: ", minbyteindex, maxbyteindex);
+      scanf("%d",&amp;offset);
+      if ( (offset &gt;= 0) &amp;&amp; (offset &lt;= maxbyteindex) )
+      printf("Received char at %d is %c\n", offset, data[offset]);
+      else if (offset != -1)
+      printf("Received invalid index %d\n", offset);
+   } while (offset != -1);
+   unmapstatus = munmap(data, mmapstat.st_size);
+
+   if (unmapstatus == -1) {
+      perror("munmap failure");
+      return 1;
+   }
+   close(fd);
+   system("rm -f MMAP_DATA.txt");
+   return 0;
+}
+
+void write_mmap_sample_data() {
+   int fd;
+   char ch;
+   struct stat textfilestat;
+   fd = open("MMAP_DATA.txt", O_CREAT|O_TRUNC|O_WRONLY, 0666);
+   if (fd == -1) {
+      perror("File open error ");
+      return;
+   }
+   // Write A to Z
+   ch = 'A';
+
+   while (ch &lt;= 'Z') {
+      write(fd, &amp;ch, sizeof(ch));
+      ch++;
+   }
+   // Write 0 to 9
+   ch = '0';
+
+   while (ch &lt;= '9') {
+      write(fd, &amp;ch, sizeof(ch));
+      ch++;
+   }
+   // Write a to z
+   ch = 'a';
+
+   while (ch &lt;= 'z') {
+      write(fd, &amp;ch, sizeof(ch));
+      ch++;
+   }
+   close(fd);
+   return;
+}
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 - </p> 
+ <pre><code class="lang-shell">Enter -1 to quit or enter a number between 0 and 61: 3 
+Received char at 3 is D 
+Enter -1 to quit or enter a number between 0 and 61: 28
+Received char at 28 is 2 
+Enter -1 to quit or enter a number between 0 and 61: 38 
+Received char at 38 is c 
+Enter -1 to quit or enter a number between 0 and 61: 59 
+Received char at 59 is x 
+Enter -1 to quit or enter a number between 0 and 61: 65 
+Received invalid index 65 
+Enter -1 to quit or enter a number between 0 and 61: -99 
+Received invalid index -99 
+Enter -1 to quit or enter a number between 0 and 61: -1
+</code></pre>
+ <br>      
+</div></body></html>

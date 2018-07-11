@@ -1,0 +1,115 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Elasticsearch集群API</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>此API用于获取有关集群及其节点的信息，并对其进行更改。 对于调用此API，需要指定节点名称，地址或<code>_local</code>。 例如，</p> 
+ <pre><code>GET http://localhost:9200/_nodes/_local
+</code></pre>
+ <p>或者</p> 
+ <pre><code>Get http://localhost:9200/_nodes/127.0.0.1
+</code></pre>
+ <p><strong>响应</strong></p> 
+ <pre><code class="lang-json">... ...
+{
+   "cluster_name":"elasticsearch", "nodes":{
+      "Vy3KxqcHQdm4cIM22U1ewA":{
+         "name":"Red Guardian", "transport_address":"127.0.0.1:9300", 
+         "host":"127.0.0.1", "ip":"127.0.0.1", "version":"2.1.1", 
+         "build":"40e2c53", "http_address":"127.0.0.1:9200",
+      }
+   }
+}
+... ...
+</code></pre> 
+ <h3 id="h3-u96C6u7FA4u8FD0u884Cu72B6u51B5"><a name="集群运行状况" class="reference-link"></a><span class="header-link octicon octicon-link"></span>集群运行状况</h3>
+ <p>此API用于通过追加<code>health</code>关键字来获取集群运行状况的状态。 例如，</p> 
+ <pre><code>GET http://localhost:9200/_cluster/health
+</code></pre>
+ <p><strong>响应</strong></p> 
+ <pre><code>{
+   "cluster_name":"elasticsearch", "status":"yellow", "timed_out":false,
+   "number_of_nodes":1, "number_of_data_nodes":1, "active_primary_shards":23,
+   "active_shards":23, "relocating_shards":0, "initializing_shards":0,
+   "unassigned_shards":23, "delayed_unassigned_shards":0, "number_of_pending_tasks":0,
+   "number_of_in_flight_fetch":0, "task_max_waiting_in_queue_millis":0,
+   "active_shards_percent_as_number":50.0
+}
+</code></pre>
+ <h3 id="h3--strong-strong-"><a name="<strong>集群状态</strong>" class="reference-link"></a><span class="header-link octicon octicon-link"></span><strong>集群状态</strong></h3>
+ <p>此API用于通过附加’<code>state</code>‘关键字URL来获取有关集群的状态信息。状态信息包含:版本，主节点，其他节点，路由表，元数据和块。 例如，</p> 
+ <pre><code>GET http://localhost:9200/_cluster/state 10. Elasticsearch — Cluster APIs
+</code></pre>
+ <p><strong>响应</strong></p> 
+ <pre><code>{
+   "cluster_name":"elasticsearch", "version":27, "state_uuid":"B3P7uHGKQUGsSsiX2rGYUQ",
+   "master_node":"Vy3KxqcHQdm4cIM22U1ewA",
+
+}
+</code></pre>
+ <h3 id="h3-u7FA4u96C6u7EDFu8BA1u4FE1u606F"><a name="群集统计信息" class="reference-link"></a><span class="header-link octicon octicon-link"></span>群集统计信息</h3>
+ <p>此API有助于使用’<code>stats</code>‘关键字检索有关集群的统计信息。 此API返回碎片编号，存储大小，内存使用情况，节点数，角色，操作系统和文件系统。 例如，</p> 
+ <pre><code>GET http://localhost:9200/_cluster/stats
+</code></pre>
+ <p><strong>响应</strong></p> 
+ <pre><code>{
+   "timestamp":1454496710020, "cluster_name":"elasticsearch", "status":"yellow",
+   "indices":{
+      "count":5, "shards":{
+         "total":23, "primaries":23, "replication":0.0,"
+      }
+   }
+}
+</code></pre>
+ <h3 id="h3-u6B63u5728u7B49u5F85u7684u7FA4u96C6u4EFBu52A1"><a name="正在等待的群集任务" class="reference-link"></a><span class="header-link octicon octicon-link"></span>正在等待的群集任务</h3>
+ <p>此API用于监视任何集群中的挂起任务。任务类似于创建索引，更新映射，分配碎片，故障碎片等。例如，</p> 
+ <pre><code>GET http://localhost:9200/_cluster/pending_tasks
+</code></pre>
+ <h3 id="h3-u96C6u7FA4u91CDu65B0u8DEFu7531"><a name="集群重新路由" class="reference-link"></a><span class="header-link octicon octicon-link"></span>集群重新路由</h3>
+ <p>此API用于将分片从一个节点移动到另一个节点，或者用于取消任何分配或分配任何未分配的碎片。 例如，</p>   
+ <pre><code>POST http://localhost:9200/_cluster/reroute
+</code></pre>
+ <p><strong>请求正文</strong></p> 
+ <pre><code>{
+   "commands" : [ 
+      {
+         "move" :
+         {
+            "index" : "schools", "shard" : 2,
+            "from_node" : "nodea", "to_node" : "nodeb"
+         }
+      },
+
+      {
+         "allocate" : {
+            "index" : "test", "shard" : 1, "node" : "nodec"
+         }
+      }
+   ]
+}
+</code></pre>
+ <h3 id="h3-u7FA4u96C6u66F4u65B0u8BBEu7F6E"><a name="群集更新设置" class="reference-link"></a><span class="header-link octicon octicon-link"></span>群集更新设置</h3>
+ <p>此API允许使用<code>settings</code>关键字更新群集的设置。有两种类型的设置 - <code>persistent</code>(在重新启动时应用)和<code>transient</code>(在完全群集重新启动后不会生存)。</p> 
+ <h3 id="h3-u8282u70B9u7EDFu8BA1"><a name="节点统计" class="reference-link"></a><span class="header-link octicon octicon-link"></span>节点统计</h3>
+ <p>此API用于检索集群的一个节点的统计信息。节点状态与集群几乎相同。 例如，</p> 
+ <pre><code>GET http://localhost:9200/_nodes/stats
+</code></pre>
+ <p><strong>响应</strong></p> 
+ <pre><code class="lang-json">{
+   "cluster_name":"elasticsearch", "nodes":{
+      "Vy3KxqcHQdm4cIM22U1ewA":{
+         "timestamp":1454497097572, "name":"Red Guardian", 
+         "transport_address":"127.0.0.1:9300", "host":"127.0.0.1", "ip":["127.0.0.1:9300",
+      }
+   }
+}
+</code></pre> 
+ <h3 id="h3--hot_threads"><a name="节点hot_threads" class="reference-link"></a><span class="header-link octicon octicon-link"></span>节点hot_threads</h3>
+ <p>此API可用于检索有关集群中每个节点上当前热线程的信息。 例如，</p> 
+ <pre><code>GET http://localhost:9200/_nodes/hot_threads
+</code></pre>
+ <p><strong>响应</strong></p> 
+ <pre><code class="lang-json">{Red Guardian} {Vy3KxqcHQdm4cIM22U1ewA} {127.0.0.1}{127.0.0.1:9300}Hot threads at 
+   2017-02-01T10:59:48.856Z, interval = 500ms, busiestThreads = 3, 
+   ignoreIdleThreads = true:0.0% (0s out of 500ms) cpu usage by thread 'Attach Listener'
+      unique snapshot
+      unique snapshot
+</code></pre>
+ <br>      
+</div></body></html>

@@ -1,0 +1,93 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">JMeter JMS点到点测试计划</h1><div style="width:100%;float:left;" class="article-content">   
+ <h2> 构建一个JMS点到点的测试计划</h2> 
+ <p> 现在，让我们写一个JMeter测试计划，测试JMS点到点对点消息传递解决方案。测试设置1个线程组及1个线程或用户发送2条消息通过请求队列。&nbsp;</p> 
+ <p> 首先，让我们启动JMeter&nbsp;/home/manisha/apache-jmeter-2.9/bin/jmeter.sh.</p> 
+ <h3> 添加用户</h3> 
+ <p> 现在，创建一个线程组，右键点击&nbsp;Test Plan &gt; Add&gt; Threads(Users)&gt; Thread Group. 根据测试计划节点将添加线程组。命名此主题组为&nbsp;JMSTestPlan-PointtoPoint.</p> 
+ <img alt="Thread Group Added" src="/uploads/allimg/130930/0K622O04-0.jpg" style="margin: auto; padding: 0px 0px 10px; border: 0px; max-width: 560px; height: auto; display: block; color: rgb(0, 0, 0); font-family: Helvetica, Arial, sans-serif;"> 
+ <p style="margin: 0.8em 0px 1em; padding: 0px; text-align: justify; color: rgb(0, 0, 0); font-family: Helvetica, Arial, sans-serif;"> 我们将改变循环次数为2。其余的线程组的默认属性将被保留。这意味着，一个线程或用户发送一个线程组各2条消息通过请求队列。</p> 
+ <h3 style="margin: 0.2em 0.2em 0.2em 0px; padding: 0px; font-size: 1.2em; line-height: 1.5em; text-transform: uppercase; font-weight: normal; text-shadow: rgb(204, 204, 204) 1px 1px 2px; color: rgb(0, 0, 0); font-family: Helvetica, Arial, sans-serif;"> 加入JMS的点到点取样</h3> 
+ <p style="margin: 0.8em 0px 1em; padding: 0px; text-align: justify; color: rgb(0, 0, 0); font-family: Helvetica, Arial, sans-serif;"> 现在，我们已经定义了我们的用户，它是时间来定义，他们将要执行的任务。开始采样JMS点到点，点到点元素加入&nbsp;(<b style="margin: 0px; padding: 0px;">Add &gt; Sampler &gt; JMS Point-to-Point</b>). 然后，选择JMS树中的点到点取样元素。以下属性进行更改的JMS点到点取样元素：</p> 
+ <table class="src" style="margin: 8px 0px; padding: 0px; border-style: solid; border-color: rgb(214, 214, 214); width: 560px; border-collapse: collapse; vertical-align: top; background-color: rgb(247, 247, 247); color: rgb(0, 0, 0); font-family: Helvetica, Arial, sans-serif;"> 
+  <tbody style="margin: 0px; padding: 0px;"> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <th style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214); background-color: rgb(238, 238, 238);"> 属性</th> 
+    <th style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214); background-color: rgb(238, 238, 238);"> 值</th> 
+    <th style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214); background-color: rgb(238, 238, 238);"> 描述</th> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> QueueuConnectionFactory</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> ConnectionFactory</td> 
+    <td> 这是默认JNDI条目内ActiveMQ连接工厂。</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> JNDI Name Request Queue</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> Q.REQ</td> 
+    <td> JMeter&nbsp;JNDI名称使连接工厂和队列之间的连接。</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> JNDI Name Receive Queue</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> Q.REQ</td> 
+    <td> JMeter&nbsp;JNDI名称使连接工厂和队列之间的连接。我们都使用相同的响应队列。</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> Communication Style</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> Request Response</td> 
+    <td> 这意味着至少需要服务运行JMeter外，将响应请求。此服务必须侦听请求队列，并发送消息引用的队列由message.getJMSReplyTo()</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> Use Request message ID</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> checked</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> 可以留下JMeter的使用消息ID请求传入的消息并回收之间的相关性（押金）。</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> Use Response message ID</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> checked</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> 可以留下使用JMeter的消息标识符响应（恢复）传入的消息和恢复之间的相关性。</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> Time(milliseconds)</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> 2000</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> 使用此超时的消息时，如果没有收到JMeter的恢复时间（这里2秒），那么该项目将被标记错误。</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> Content</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> Testing point to point</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> 这仅仅是该消息的内容。</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> InitialContextFactory</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> org.apache.activemq.jndi<br style="margin: 0px; padding: 0px;"> .ActiveMQInitialContextFactory</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> Active MQ标准InitialContextFactory</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> queue.Q.REQ</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> example.A</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> 之间的对应关系的队列JNDI名称（Q.REQ）的队列中的ActiveMQ（example.A）真实姓名。</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> Provider URL</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> tcp://localhost:61616</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> ActiveMQ地址和端口。</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p style="margin: 0.8em 0px 1em; padding: 0px; text-align: justify; color: rgb(0, 0, 0); font-family: Helvetica, Arial, sans-serif;"> 下面的屏幕截图显示，上述配置：</p> 
+ <img alt="JMS Point to point sampler" src="/uploads/allimg/130930/0K62243c-1.jpg" style="margin: auto; padding: 0px 0px 10px; border: 0px; max-width: 560px; height: auto; display: block; color: rgb(0, 0, 0); font-family: Helvetica, Arial, sans-serif;"> 
+ <h3 style="margin: 0.2em 0.2em 0.2em 0px; padding: 0px; font-size: 1.2em; line-height: 1.5em; text-transform: uppercase; font-weight: normal; text-shadow: rgb(204, 204, 204) 1px 1px 2px; color: rgb(0, 0, 0); font-family: Helvetica, Arial, sans-serif;"> CREATE LISTENER</h3> 
+ <p style="margin: 0.8em 0px 1em; padding: 0px; text-align: justify; color: rgb(0, 0, 0); font-family: Helvetica, Arial, sans-serif;"> Now add the Listener element. This element is responsible for storing all of the results of your JMS requests in a file and presenting a visual model of the data.</p> 
+ <p style="margin: 0.8em 0px 1em; padding: 0px; text-align: justify; color: rgb(0, 0, 0); font-family: Helvetica, Arial, sans-serif;"> Select the Thread Group element and add a View Results Tree listener (<b style="margin: 0px; padding: 0px;">Add &gt; Listener &gt; View Results Tree</b>).</p> 
+ <img alt="JMS Point to Point Test Listener" src="/uploads/allimg/130930/0K6224340-2.jpg" style="margin: auto; padding: 0px 0px 10px; border: 0px; max-width: 560px; height: auto; display: block; color: rgb(0, 0, 0); font-family: Helvetica, Arial, sans-serif;"> 
+ <h3 style="margin: 0.2em 0.2em 0.2em 0px; padding: 0px; font-size: 1.2em; line-height: 1.5em; text-transform: uppercase; font-weight: normal; text-shadow: rgb(204, 204, 204) 1px 1px 2px; color: rgb(0, 0, 0); font-family: Helvetica, Arial, sans-serif;"> SAVE AND EXECUTE TEST PLAN</h3> 
+ <p style="margin: 0.8em 0px 1em; padding: 0px; text-align: justify; color: rgb(0, 0, 0); font-family: Helvetica, Arial, sans-serif;"> Now save the above test plan as&nbsp;<i style="margin: 0px; padding: 0px;">jmsptp_test.jmx</i>. Execute this test plan using&nbsp;<b style="margin: 0px; padding: 0px;">Run &gt; Start</b>&nbsp;option.</p> 
+ <h3 style="margin: 0.2em 0.2em 0.2em 0px; padding: 0px; font-size: 1.2em; line-height: 1.5em; text-transform: uppercase; font-weight: normal; text-shadow: rgb(204, 204, 204) 1px 1px 2px; color: rgb(0, 0, 0); font-family: Helvetica, Arial, sans-serif;"> VERIFY OUTPUT</h3> 
+ <img alt="JMS PTP Test Output" src="/uploads/allimg/130930/0K62239E-3.jpg" style="margin: auto; padding: 0px 0px 10px; border: 0px; max-width: 560px; height: auto; display: block; color: rgb(0, 0, 0); font-family: Helvetica, Arial, sans-serif;">
+ <img alt="JMS PTP Test Output" src="/uploads/allimg/130930/0K6222330-4.jpg" style="margin: auto; padding: 0px 0px 10px; border: 0px; max-width: 560px; height: auto; display: block; color: rgb(0, 0, 0); font-family: Helvetica, Arial, sans-serif;">
+ <img alt="JMS PTP Test Output" src="/uploads/allimg/130930/0K62262c-5.jpg" style="margin: auto; padding: 0px 0px 10px; border: 0px; max-width: 560px; height: auto; display: block; color: rgb(0, 0, 0); font-family: Helvetica, Arial, sans-serif;"> 
+ <p style="margin: 0.8em 0px 1em; padding: 0px; text-align: justify; color: rgb(0, 0, 0); font-family: Helvetica, Arial, sans-serif;"> Return to the admin console of ActiveMQ, from this we can see message status in the queue.</p> 
+ <img alt="JMS PTP Admin Console" src="/uploads/allimg/130930/0K6225a4-6.jpg" style="margin: auto; padding: 0px 0px 10px; border: 0px; max-width: 560px; height: auto; display: block; color: rgb(0, 0, 0); font-family: Helvetica, Arial, sans-serif;"> 
+ <div>
+   &nbsp;
+ </div> 
+ <br>      
+</div></body></html>

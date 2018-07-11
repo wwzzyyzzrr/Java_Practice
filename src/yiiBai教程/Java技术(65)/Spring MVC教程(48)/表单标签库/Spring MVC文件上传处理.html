@@ -1,0 +1,140 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Spring MVC文件上传处理</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>以下示例显示如何在使用<strong>Spring Web MVC</strong>框架的表单中上传文件和处理。首先使用Eclipse IDE来创建一个WEB工程，实现一个上传文件并保存的功能。并按照以下步骤使用<strong>Spring Web Framework</strong>开发基于动态表单的Web应用程序：</p> 
+ <ol> 
+  <li>创建一个名称为 <strong>FileUpload</strong> 的动态WEB项目。</li>
+  <li>在 <code>com.yiibai.springmvc</code> 包下创建两个Java类<code>FileModel</code>, <code>FileUploadController</code>。</li>
+  <li>在<code>jsp</code>子文件夹下创建两个视图文件：<code>fileUpload.jsp</code> 和 <code>success.jsp</code>。</li>
+  <li>在<code>WebContent</code>文件夹下创建一个文件夹：<code>temp</code>。</li>
+  <li>下载<strong>Apache Commons FileUpload</strong>库：<a target="_blank" href="http://commons.apache.org/proper/commons-fileupload/download_fileupload.cgi" title="commons-fileupload.jar">commons-fileupload.jar</a>和<strong>Apache Commons IO</strong>库：<a target="_blank" href="http://commons.apache.org/proper/commons-io/download_io.cgi" title="commons-io.jar">commons-io.jar</a>。把它们放在<code>CLASSPATH</code>中。</li>
+  <li>最后一步是创建所有源和配置文件的内容并运行应用程序，详细如下所述。</li>
+ </ol> 
+ <p>完整的项目文件目录结构如下所示 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201701/2001/462110138_50754.png" alt=""></p> 
+ <p><strong>FileModel.java</strong> 的代码如下所示 -</p> 
+ <pre><code class="lang-java">package com.yiibai.springmvc;
+
+import org.springframework.web.multipart.MultipartFile;
+
+public class FileModel {
+   private MultipartFile file;
+
+   public MultipartFile getFile() {
+      return file;
+   }
+
+   public void setFile(MultipartFile file) {
+      this.file = file;
+   }
+}
+</code></pre> 
+ <p><strong>FileUploadController.java</strong> 的代码如下所示 -</p> 
+ <pre><code class="lang-java">package com.yiibai.springmvc;
+
+import java.io.File;
+import java.io.IOException;
+
+import javax.servlet.ServletContext;
+
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
+import org.springframework.util.FileCopyUtils;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.ModelAndView;
+
+@Controller
+public class FileUploadController {
+
+   @Autowired
+   ServletContext context; 
+
+   @RequestMapping(value = "/fileUploadPage", method = RequestMethod.GET)
+   public ModelAndView fileUploadPage() {
+      FileModel file = new FileModel();
+      ModelAndView modelAndView = new ModelAndView("fileUpload", "command", file);
+      return modelAndView;
+   }
+
+   @RequestMapping(value="/fileUploadPage", method = RequestMethod.POST)
+   public String fileUpload(@Validated FileModel file, BindingResult result, ModelMap model) throws IOException {
+      if (result.hasErrors()) {
+         System.out.println("validation errors");
+         return "fileUploadPage";
+      } else {            
+         System.out.println("Fetching file");
+         MultipartFile multipartFile = file.getFile();
+         String uploadPath = context.getRealPath("") + File.separator + "temp" + File.separator;
+         //Now do something with file...
+         FileCopyUtils.copy(file.getFile().getBytes(), new File(uploadPath+file.getFile().getOriginalFilename()));
+         String fileName = multipartFile.getOriginalFilename();
+         model.addAttribute("fileName", fileName);
+         return "success";
+      }
+   }
+}
+</code></pre> 
+ <p><strong>FileUpload-servlet.xml</strong> 的代码如下所示 - </p> 
+ <pre><code class="lang-xml">&lt;beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+   http://www.springframework.org/schema/beans     
+   http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+   http://www.springframework.org/schema/context 
+   http://www.springframework.org/schema/context/spring-context-3.0.xsd"&gt;
+
+    &lt;context:component-scan base-package="com.yiibai.springmvc" /&gt;
+
+    &lt;bean
+        class="org.springframework.web.servlet.view.InternalResourceViewResolver"&gt;
+        &lt;property name="prefix" value="/WEB-INF/jsp/" /&gt;
+        &lt;property name="suffix" value=".jsp" /&gt;
+    &lt;/bean&gt;
+
+    &lt;bean id="multipartResolver"
+        class="org.springframework.web.multipart.commons.CommonsMultipartResolver" /&gt;
+&lt;/beans&gt;
+</code></pre> 
+ <p>这里的第一个服务方法<code>fileUploadPage()</code>，我们已经在名为“<code>command</code>”的<code>ModelAndView</code>对象中传递了一个空的<code>FileModel</code>对象，因为如果JSP文件中使用<code>&lt;form：form&gt;</code>标签，spring框架期望一个名称为“<code>command</code>”的对象。 因此，当调用<code>fileUploadPage()</code>方法时，它返回<code>fileUpload.jsp</code>视图。<br>第二个服务方法<code>fileUpload()</code>将根据 URL =&gt; <code>FileUpload/fileUploadPage</code>上的POST方法进行调用。将根据提交的信息准备要上传的文件。最后从服务方法返回“<code>success</code>”视图，这将呈现<code>success.jsp</code>视图。</p> 
+ <p><strong>fileUpload.jsp</strong> 的代码如下所示 -</p>   
+ <pre><code class="lang-html">&lt;%@ page contentType="text/html; charset=UTF-8"%&gt;
+&lt;%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;Spring MVC上传文件示例&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;form:form method="POST" modelAttribute="fileUpload"
+        enctype="multipart/form-data"&gt;
+      请选择一个文件上传 : 
+      &lt;input type="file" name="file" /&gt;
+        &lt;input type="submit" value="提交上传" /&gt;
+    &lt;/form:form&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>这里使用带有<code>value =“fileUpload”</code>的<code>modelAttribute</code>属性来映射文件用服务器模型上传控件。</p> 
+ <p><strong>success.jsp</strong> 的代码如下所示 -</p> 
+ <pre><code class="lang-html">&lt;%@ page contentType="text/html; charset=UTF-8"%&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;Spring MVC上传文件示例&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    文件名称 :
+    &lt;b&gt; ${fileName} &lt;/b&gt; - 上传成功！
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>完成创建源和配置文件后，发布应用程序到Tomcat服务器。</p> 
+ <p>现在启动Tomcat服务器，现在尝试访问URL =&gt; <a target="_blank" href="http://localhost:8080/FileUpload/fileUploadPage">http://localhost:8080/FileUpload/fileUploadPage</a> ，如果<strong>Spring Web</strong>应用程序没有问题，应该看到以下结果：</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201701/2001/941110140_19976.png" alt=""></p> 
+ <p>提交所需信息后，点击提交按钮提交表单。 如果 <strong>Spring Web</strong> 应用程序没有问题，应该看到以下结果：</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201701/2001/216110141_41273.png" alt=""></p>
+ <br>      
+</div></body></html>

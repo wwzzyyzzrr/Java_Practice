@@ -1,0 +1,386 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">C/C++连接PostgreSQL数据库</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>本教程将使用<strong>libpqxx</strong>库，它是PostgreSQL的官方C++客户端API。 <strong>libpqxx</strong>的源代码可以在BSD许可证下使用，因此您可以免费下载它，将其传递给其他人，更改它，销售，将其包含在您自己的代码中，并与任何人分享您的更改/修改。</p> 
+ <h2 id="h2-u5B89u88C5"><a name="安装" class="reference-link"></a><span class="header-link octicon octicon-link"></span>安装</h2>
+ <p>最新版本的<strong>libpqxx</strong>可从链接下载：<a target="_blank" href="http://pqxx.org/download/software/libpqxx/" title="Libpqxx下载">Libpqxx下载</a>。 所以下载最新版本，并按照以下步骤：</p> 
+ <pre><code class="lang-shell">wget http://pqxx.org/download/software/libpqxx/libpqxx-4.0.tar.gz
+tar xvfz libpqxx-4.0.tar.gz
+cd libpqxx-4.0
+./configure
+make
+make install
+</code></pre> 
+ <p>在开始使用C/C++的PostgreSQL接口之前，请在PostgreSQL安装目录中找到<code>pg_hba.conf</code>文件，并添加以下行：</p> 
+ <pre><code class="lang-shell"># IPv4 local connections:
+host    all         all         127.0.0.1/32          md5
+</code></pre> 
+ <p>可以启动/重新启动<strong>postgres</strong>服务器，使用以下命令运行：</p> 
+ <pre><code class="lang-shell">[root@host]# service postgresql restart
+Stopping postgresql service:                               [  OK  ]
+Starting postgresql service:                               [  OK  ]
+</code></pre> 
+ <h2 id="h2-c-c-postgresql-"><a name="C/C++连接到PostgreSQL数据库" class="reference-link"></a><span class="header-link octicon octicon-link"></span>C/C++连接到PostgreSQL数据库</h2>
+ <p>以下<code>C</code>代码段显示如何连接到端口<code>5432</code>上本地机器上运行的现有数据库。在这里，我使用反斜杠<code>\</code>行继续。</p> 
+ <pre><code class="lang-c">#include &lt;iostream&gt;
+#include &lt;pqxx/pqxx&gt; 
+
+using namespace std;
+using namespace pqxx;
+
+int main(int argc, char* argv[])
+{
+   try{
+      connection C("dbname=testdb user=postgres password=cohondob \
+      hostaddr=127.0.0.1 port=5432");
+      if (C.is_open()) {
+         cout &lt;&lt; "Opened database successfully: " &lt;&lt; C.dbname() &lt;&lt; endl;
+      } else {
+         cout &lt;&lt; "Can't open database" &lt;&lt; endl;
+         return 1;
+      }
+      C.disconnect ();
+   }catch (const std::exception &amp;e){
+      cerr &lt;&lt; e.what() &lt;&lt; std::endl;
+      return 1;
+   }
+}
+</code></pre> 
+ <p>现在，我们编译并运行上面的程序来连接到数据库<code>testdb</code>，它已经在你的架构中可用，可以使用用户<code>postgres</code>和密码为：<code>pass123</code>进行访问。 您可以根据数据库设置使用用户名和密码。记住保持<code>-lpqxx</code>和<code>-lpq</code>在给定的顺序！ 否则，链接器将抱怨关于缺少以“<code>PQ</code>”开头的名称的函数。</p> 
+ <pre><code class="lang-shell">$g++ test.cpp -lpqxx -lpq
+$./a.out
+Opened database successfully: testdb
+</code></pre> 
+ <h2 id="h2-u521Bu5EFAu8868"><a name="创建表" class="reference-link"></a><span class="header-link octicon octicon-link"></span>创建表</h2>
+ <p>以下<code>C</code>代码段将用于在之前创建的数据库(<code>testdb</code>)中创建一个表：</p> 
+ <pre><code class="lang-c">#include &lt;iostream&gt;
+#include &lt;pqxx/pqxx&gt; 
+
+using namespace std;
+using namespace pqxx;
+
+int main(int argc, char* argv[])
+{
+   char * sql;
+
+   try{
+      connection C("dbname=testdb user=postgres password=cohondob \
+      hostaddr=127.0.0.1 port=5432");
+      if (C.is_open()) {
+         cout &lt;&lt; "Opened database successfully: " &lt;&lt; C.dbname() &lt;&lt; endl;
+      } else {
+         cout &lt;&lt; "Can't open database" &lt;&lt; endl;
+         return 1;
+      }
+      /* Create SQL statement */
+      sql = "CREATE TABLE COMPANY("  \
+      "ID INT PRIMARY KEY     NOT NULL," \
+      "NAME           TEXT    NOT NULL," \
+      "AGE            INT     NOT NULL," \
+      "ADDRESS        CHAR(50)," \
+      "SALARY         REAL );";
+
+      /* Create a transactional object. */
+      work W(C);
+
+      /* Execute SQL query */
+      W.exec( sql );
+      W.commit();
+      cout &lt;&lt; "Table created successfully" &lt;&lt; endl;
+      C.disconnect ();
+   }catch (const std::exception &amp;e){
+      cerr &lt;&lt; e.what() &lt;&lt; std::endl;
+      return 1;
+   }
+
+   return 0;
+}
+</code></pre> 
+ <p>当编译和执行上述程序时，它将在<code>testdb</code>数据库中创建一张<code>COMPANY</code>表，并显示以下语句：</p> 
+ <pre><code class="lang-shell">Opened database successfully: testdb
+Table created successfully
+</code></pre> 
+ <h2 id="h2-u63D2u5165u64CDu4F5C"><a name="插入操作" class="reference-link"></a><span class="header-link octicon octicon-link"></span>插入操作</h2>
+ <p>以下<code>C</code>代码段显示了如何在上述示例中创建的COMPANY表中创建记录：</p> 
+ <pre><code class="lang-shell">#include &lt;iostream&gt;
+#include &lt;pqxx/pqxx&gt; 
+
+using namespace std;
+using namespace pqxx;
+
+int main(int argc, char* argv[])
+{
+   char * sql;
+
+   try{
+      connection C("dbname=testdb user=postgres password=cohondob \
+      hostaddr=127.0.0.1 port=5432");
+      if (C.is_open()) {
+         cout &lt;&lt; "Opened database successfully: " &lt;&lt; C.dbname() &lt;&lt; endl;
+      } else {
+         cout &lt;&lt; "Can't open database" &lt;&lt; endl;
+         return 1;
+      }
+      /* Create SQL statement */
+      sql = "INSERT INTO COMPANY (ID,NAME,AGE,ADDRESS,SALARY) "  \
+      "VALUES (1, 'Paul', 32, 'California', 20000.00 ); " \
+      "INSERT INTO COMPANY (ID,NAME,AGE,ADDRESS,SALARY) "  \
+      "VALUES (2, 'Allen', 25, 'Texas', 15000.00 ); "     \
+      "INSERT INTO COMPANY (ID,NAME,AGE,ADDRESS,SALARY)" \
+      "VALUES (3, 'Teddy', 23, 'Norway', 20000.00 );" \
+      "INSERT INTO COMPANY (ID,NAME,AGE,ADDRESS,SALARY)" \
+      "VALUES (4, 'Mark', 25, 'Rich-Mond ', 65000.00 );";
+
+      /* Create a transactional object. */
+      work W(C);
+
+      /* Execute SQL query */
+      W.exec( sql );
+      W.commit();
+      cout &lt;&lt; "Records created successfully" &lt;&lt; endl;
+      C.disconnect ();
+   }catch (const std::exception &amp;e){
+      cerr &lt;&lt; e.what() &lt;&lt; std::endl;
+      return 1;
+   }
+
+   return 0;
+}
+</code></pre> 
+ <p>当上述程序被编译和执行时，它将在<code>COMPANY</code>表中创建给定的记录，并显示以下两行：</p> 
+ <pre><code class="lang-shell">Opened database successfully: testdb
+Records created successfully
+</code></pre> 
+ <h2 id="h2-select-"><a name="SELECT操作" class="reference-link"></a><span class="header-link octicon octicon-link"></span>SELECT操作</h2>
+ <p>以下<code>C</code>代码段显示了如何从上述示例中创建的<code>COMPANY</code>表中获取和显示记录：</p> 
+ <pre><code class="lang-c">#include &lt;iostream&gt;
+#include &lt;pqxx/pqxx&gt; 
+
+using namespace std;
+using namespace pqxx;
+
+int main(int argc, char* argv[])
+{
+   char * sql;
+
+   try{
+      connection C("dbname=testdb user=postgres password=cohondob \
+      hostaddr=127.0.0.1 port=5432");
+      if (C.is_open()) {
+         cout &lt;&lt; "Opened database successfully: " &lt;&lt; C.dbname() &lt;&lt; endl;
+      } else {
+         cout &lt;&lt; "Can't open database" &lt;&lt; endl;
+         return 1;
+      }
+      /* Create SQL statement */
+      sql = "SELECT * from COMPANY";
+
+      /* Create a non-transactional object. */
+      nontransaction N(C);
+
+      /* Execute SQL query */
+      result R( N.exec( sql ));
+
+      /* List down all the records */
+      for (result::const_iterator c = R.begin(); c != R.end(); ++c) {
+         cout &lt;&lt; "ID = " &lt;&lt; c[0].as&lt;int&gt;() &lt;&lt; endl;
+         cout &lt;&lt; "Name = " &lt;&lt; c[1].as&lt;string&gt;() &lt;&lt; endl;
+         cout &lt;&lt; "Age = " &lt;&lt; c[2].as&lt;int&gt;() &lt;&lt; endl;
+         cout &lt;&lt; "Address = " &lt;&lt; c[3].as&lt;string&gt;() &lt;&lt; endl;
+         cout &lt;&lt; "Salary = " &lt;&lt; c[4].as&lt;float&gt;() &lt;&lt; endl;
+      }
+      cout &lt;&lt; "Operation done successfully" &lt;&lt; endl;
+      C.disconnect ();
+   }catch (const std::exception &amp;e){
+      cerr &lt;&lt; e.what() &lt;&lt; std::endl;
+      return 1;
+   }
+
+   return 0;
+}
+</code></pre> 
+ <p>当上述程序被编译和执行时，将产生以下结果：</p>   
+ <pre><code class="lang-shell">Opened database successfully: testdb
+ID = 1
+Name = Paul
+Age = 32
+Address = California
+Salary = 20000
+ID = 2
+Name = Allen
+Age = 25
+Address = Texas
+Salary = 15000
+ID = 3
+Name = Teddy
+Age = 23
+Address = Norway
+Salary = 20000
+ID = 4
+Name = Mark
+Age = 25
+Address = Rich-Mond
+Salary = 65000
+Operation done successfully
+</code></pre> 
+ <h2 id="h2-u66F4u65B0u64CDu4F5C"><a name="更新操作" class="reference-link"></a><span class="header-link octicon octicon-link"></span>更新操作</h2>
+ <p>以下<code>C</code>代码段显示了如何使用<code>UPDATE</code>语句来更新指定记录，然后从<code>COMPANY</code>表中获取并显示更新的记录：</p> 
+ <pre><code class="lang-c">#include &lt;iostream&gt;
+#include &lt;pqxx/pqxx&gt; 
+
+using namespace std;
+using namespace pqxx;
+
+int main(int argc, char* argv[])
+{
+   char * sql;
+
+   try{
+      connection C("dbname=testdb user=postgres password=cohondob \
+      hostaddr=127.0.0.1 port=5432");
+      if (C.is_open()) {
+         cout &lt;&lt; "Opened database successfully: " &lt;&lt; C.dbname() &lt;&lt; endl;
+      } else {
+         cout &lt;&lt; "Can't open database" &lt;&lt; endl;
+         return 1;
+      }
+
+      /* Create a transactional object. */
+      work W(C);
+      /* Create  SQL UPDATE statement */
+      sql = "UPDATE COMPANY set SALARY = 25000.00 where ID=1";
+      /* Execute SQL query */
+      W.exec( sql );
+      W.commit();
+      cout &lt;&lt; "Records updated successfully" &lt;&lt; endl;
+
+      /* Create SQL SELECT statement */
+      sql = "SELECT * from COMPANY";
+
+      /* Create a non-transactional object. */
+      nontransaction N(C);
+
+      /* Execute SQL query */
+      result R( N.exec( sql ));
+
+      /* List down all the records */
+      for (result::const_iterator c = R.begin(); c != R.end(); ++c) {
+         cout &lt;&lt; "ID = " &lt;&lt; c[0].as&lt;int&gt;() &lt;&lt; endl;
+         cout &lt;&lt; "Name = " &lt;&lt; c[1].as&lt;string&gt;() &lt;&lt; endl;
+         cout &lt;&lt; "Age = " &lt;&lt; c[2].as&lt;int&gt;() &lt;&lt; endl;
+         cout &lt;&lt; "Address = " &lt;&lt; c[3].as&lt;string&gt;() &lt;&lt; endl;
+         cout &lt;&lt; "Salary = " &lt;&lt; c[4].as&lt;float&gt;() &lt;&lt; endl;
+      }
+      cout &lt;&lt; "Operation done successfully" &lt;&lt; endl;
+      C.disconnect ();
+   }catch (const std::exception &amp;e){
+      cerr &lt;&lt; e.what() &lt;&lt; std::endl;
+      return 1;
+   }
+
+   return 0;
+}
+</code></pre> 
+ <p>当上述程序被编译和执行时，将产生以下结果：</p> 
+ <pre><code class="lang-shell">Opened database successfully: testdb
+Records updated successfully
+ID = 2
+Name = Allen
+Age = 25
+Address = Texas
+Salary = 15000
+ID = 3
+Name = Teddy
+Age = 23
+Address = Norway
+Salary = 20000
+ID = 4
+Name = Mark
+Age = 25
+Address = Rich-Mond
+Salary = 65000
+ID = 1
+Name = Paul
+Age = 32
+Address = California
+Salary = 25000
+Operation done successfully
+</code></pre> 
+ <h2 id="h2-u5220u9664u64CDu4F5C"><a name="删除操作" class="reference-link"></a><span class="header-link octicon octicon-link"></span>删除操作</h2>
+ <p>以下<code>C</code>代码段显示了如何使用<code>DELETE</code>语句删除指定记录，然后再<code>COMPANY</code>表中获取并显示剩余的记录：</p> 
+ <pre><code class="lang-c">#include &lt;iostream&gt;
+#include &lt;pqxx/pqxx&gt; 
+
+using namespace std;
+using namespace pqxx;
+
+int main(int argc, char* argv[])
+{
+   char * sql;
+
+   try{
+      connection C("dbname=testdb user=postgres password=cohondob \
+      hostaddr=127.0.0.1 port=5432");
+      if (C.is_open()) {
+         cout &lt;&lt; "Opened database successfully: " &lt;&lt; C.dbname() &lt;&lt; endl;
+      } else {
+         cout &lt;&lt; "Can't open database" &lt;&lt; endl;
+         return 1;
+      }
+
+      /* Create a transactional object. */
+      work W(C);
+      /* Create  SQL DELETE statement */
+      sql = "DELETE from COMPANY where ID = 2";
+      /* Execute SQL query */
+      W.exec( sql );
+      W.commit();
+      cout &lt;&lt; "Records deleted successfully" &lt;&lt; endl;
+
+      /* Create SQL SELECT statement */
+      sql = "SELECT * from COMPANY";
+
+      /* Create a non-transactional object. */
+      nontransaction N(C);
+
+      /* Execute SQL query */
+      result R( N.exec( sql ));
+
+      /* List down all the records */
+      for (result::const_iterator c = R.begin(); c != R.end(); ++c) {
+         cout &lt;&lt; "ID = " &lt;&lt; c[0].as&lt;int&gt;() &lt;&lt; endl;
+         cout &lt;&lt; "Name = " &lt;&lt; c[1].as&lt;string&gt;() &lt;&lt; endl;
+         cout &lt;&lt; "Age = " &lt;&lt; c[2].as&lt;int&gt;() &lt;&lt; endl;
+         cout &lt;&lt; "Address = " &lt;&lt; c[3].as&lt;string&gt;() &lt;&lt; endl;
+         cout &lt;&lt; "Salary = " &lt;&lt; c[4].as&lt;float&gt;() &lt;&lt; endl;
+      }
+      cout &lt;&lt; "Operation done successfully" &lt;&lt; endl;
+      C.disconnect ();
+   }catch (const std::exception &amp;e){
+      cerr &lt;&lt; e.what() &lt;&lt; std::endl;
+      return 1;
+   }
+
+   return 0;
+}
+</code></pre> 
+ <p>当上述程序被编译和执行时，将产生以下结果：</p> 
+ <pre><code class="lang-shell">Opened database successfully: testdb
+Records deleted successfully
+ID = 3
+Name = Teddy
+Age = 23
+Address = Norway
+Salary = 20000
+ID = 4
+Name = Mark
+Age = 25
+Address = Rich-Mond
+Salary = 65000
+ID = 1
+Name = Paul
+Age = 32
+Address = California
+Salary = 25000
+Operation done successfully
+</code></pre>
+ <br>      
+</div></body></html>

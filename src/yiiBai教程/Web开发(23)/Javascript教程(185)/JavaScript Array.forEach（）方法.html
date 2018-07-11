@@ -1,0 +1,75 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">JavaScript Array.forEach（）方法</h1><div style="width:100%;float:left;" class="article-content">   
+ <p> JavaScript数组的 forEach()方法调用数组中的每个元素。</p> 
+ <h2> 语法</h2> 
+ <pre style="'Courier New', monospace; font-size: 12px; ">
+<i>array</i>.forEach(callback[, thisObject]);</pre> 
+ <p> 下面是参数的详细信息：</p> 
+ <ul> 
+  <li> <p> <strong>callback&nbsp;: </strong>函数测试数组的每个元素。</p> </li> 
+  <li> <p> <strong>thisObject&nbsp;:</strong> 对象作为该执行回调时使用。</p> </li> 
+ </ul> 
+ <h2> 返回值:</h2> 
+ <p> 返回创建数组。</p> 
+ <h2> 兼容性：</h2> 
+ <p> 这种方法是一个JavaScript扩展到ECMA-262标准;因此它可能不存在在标准的其他实现。为了使它工作，你需要添加下面的脚本代码的顶部：</p> 
+ <pre style="'Courier New', monospace; font-size: 12px; ">
+if (!Array.prototype.forEach)
+{
+  Array.prototype.forEach = function(fun /*, thisp*/)
+  {
+    var len = this.length;
+    if (typeof fun != "function")
+      throw new TypeError();
+
+    var thisp = arguments[1];
+    for (var i = 0; i &lt; len; i++)
+    {
+      if (i in this)
+        fun.call(thisp, this[i], i, this);
+    }
+  };
+}</pre> 
+ <h2> 例子：</h2> 
+ <pre style="'Courier New', monospace; font-size: 12px; ">
+&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;JavaScript Array forEach Method&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;script type="text/javascript"&gt;
+if (!Array.prototype.forEach)
+{
+  Array.prototype.forEach = function(fun /*, thisp*/)
+  {
+    var len = this.length;
+    if (typeof fun != "function")
+      throw new TypeError();
+
+    var thisp = arguments[1];
+    for (var i = 0; i &lt; len; i++)
+    {
+      if (i in this)
+        fun.call(thisp, this[i], i, this);
+    }
+  };
+}
+
+function printBr(element, index, array) {
+  document.write("&lt;br /&gt;[" + index + "] is " + element ); 
+}
+
+[12, 5, 8, 130, 44].forEach(printBr);
+  
+&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre> 
+ <p> 这将产生以下结果：</p>   
+ <pre style="'Courier New', monospace; font-size: 12px; ">
+[0] is 12
+[1] is 5
+[2] is 8
+[3] is 130
+[4] is 44 </pre> 
+ <p style="text-align: justify; verdana, helvetica, arial,  color: rgb(0, 0, 0);"> &nbsp;</p> 
+ <br>      
+</div></body></html>

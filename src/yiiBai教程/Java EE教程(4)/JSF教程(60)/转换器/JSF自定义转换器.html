@@ -1,0 +1,118 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">JSF自定义转换器</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>我们可以在JSF中创建自己的自定义转换器。<br>以下列表是我们可以在JSF中创建自定义转换器的步骤。</p> 
+ <ol> 
+  <li>通过实现<code>javax.faces.convert.Converter</code>接口创建一个转换器类。</li>
+  <li>实现上述接口的<code>getAsObject()</code>和<code>getAsString()</code>方法。</li>
+  <li>使用注解<code><a target="_blank" href="https://github.com/FacesConvertor" title="@FacesConvertor" class="at-link">@FacesConvertor</a></code>为自定义转换器分配唯一的ID。</li>
+ </ol> 
+ <h2 id="h2-jsf-"><a name="JSF自定义转换器实例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>JSF自定义转换器实例</h2>
+ <p>打开 <strong>NetBeans IDE</strong> 创建一个Web工程：<strong>CustomConverter</strong>，其目录结构如下所示 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201704/2504/273090434_18877.png" alt=""></p> 
+ <p>创建以下文件代码，文件：<em>index.xhtml</em> 的代码内容如下所示 -</p> 
+ <pre><code class="lang-html">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"&gt;
+&lt;html xmlns="http://www.w3.org/1999/xhtml"   
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"&gt;
+    &lt;h:body&gt;
+        &lt;h:form&gt;
+            &lt;h:panelGrid columns="3"&gt;
+                Enter your bookmark URL :
+                &lt;h:inputText id="bookmarkURL" value="#{user.bookmarkURL}" 
+                             size="40" required="true" label="Bookmark URL"&gt;
+                    &lt;f:converter converterId="com.yiibai.URLConverter" /&gt;
+                &lt;/h:inputText&gt;
+
+                &lt;h:message for="bookmarkURL" style="color:red" /&gt;
+
+            &lt;/h:panelGrid&gt;
+
+            &lt;h:commandButton value="Submit" action="result" /&gt;
+
+        &lt;/h:form&gt;
+
+    &lt;/h:body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>文件：<em>result.xhtml</em> 的代码内容如下所示 -</p> 
+ <pre><code class="lang-html">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"&gt;
+&lt;html xmlns="http://www.w3.org/1999/xhtml"   
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:c="http://java.sun.com/jsp/jstl/core"
+      &gt;
+    &lt;h:body&gt;
+        &lt;h:panelGrid columns="2"&gt;
+
+            Bookmark URL :  
+            &lt;h:outputText value="#{user.bookmarkURL}" /&gt;
+
+        &lt;/h:panelGrid&gt;
+
+    &lt;/h:body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>文件：<em>User.java</em> 的代码内容如下所示 -</p>   
+ <pre><code class="lang-java">/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package com.yiibai;
+
+/**
+ *
+ * @author Administrator
+ */
+import javax.faces.application.FacesMessage;
+import javax.faces.component.UIComponent;
+import javax.faces.context.FacesContext;
+import javax.faces.convert.Converter;
+import javax.faces.convert.ConverterException;
+import javax.faces.convert.FacesConverter;
+
+@FacesConverter("com.yiibai.URLConverter")
+public class URLConverter implements Converter {
+
+    @Override
+    public Object getAsObject(FacesContext context, UIComponent component,
+            String value) {
+
+        String HTTP = "http://";
+        StringBuilder url = new StringBuilder();
+
+        if (!value.startsWith(HTTP, 0)) {
+            url.append(HTTP);
+        }
+        url.append(value);
+
+        if (url.toString().length() &gt; 30) {
+            FacesMessage msg
+                    = new FacesMessage("URL Conversion error.",
+                            "Invalid URL format.");
+            msg.setSeverity(FacesMessage.SEVERITY_ERROR);
+            throw new ConverterException(msg);
+        }
+        return url.toString();
+    }
+
+    @Override
+    public String getAsString(FacesContext context, UIComponent component,
+            Object value) {
+
+        return value.toString();
+    }
+}
+</code></pre> 
+ <p>右键运行工程：<strong>CustomConverter</strong>，如果没有任何错误，打开浏览器访问：</p> 
+ <pre><code>http://localhost:8084/CustomConverter/
+</code></pre>
+ <p>应该会看到以下结果 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201704/2504/490090441_91931.png" alt=""></p> 
+ <p>简单写入一些信息，然后提交 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201704/2504/970090440_50220.png" alt=""></p>
+ <br>      
+</div></body></html>

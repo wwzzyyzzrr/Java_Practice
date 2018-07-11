@@ -1,0 +1,138 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Cordova存储</h1><div style="width:100%;float:left;" class="article-content">   
+ <div> 
+  <div>
+    我们可以使用数据存储API将数据存储在客户端应用程序。这有助于应用程序的使用，当用户处于脱机状态，同时也可以提高性能。由于这是初学者教程，我们只将向您展示如何使用本地存储。在我们以后的教程中会学习使用其他插件。 
+  </div> 
+ </div> 
+ <div> 
+  <h2> 
+   <div>
+     第1步&nbsp;-&nbsp;添加按钮 
+   </div> </h2> 
+  <div>
+    我们将在 index.html&nbsp;文件创建四个按钮。这些按钮将位于div&nbsp;class&nbsp;=&nbsp;"app"&nbsp;的元素中。 
+  </div> 
+  <pre>&lt;button id = "setLocalStorage"&gt;SET LOCAL STORAGE&lt;/button&gt;
+&lt;button id = "showLocalStorage"&gt;SHOW LOCAL STORAGE&lt;/button&gt;
+&lt;button id = "removeProjectFromLocalStorage"&gt;REMOVE PROJECT&lt;/button&gt;
+&lt;button id = "getLocalStorageByKey"&gt;GET BY KEY&lt;/button&gt;</pre> 运行后显示结果如下：
+  <br> 
+  <img src="/uploads/tutorial/20160217/1-16021GH413X9.png" alt="">
+  <br> 
+ </div> 
+ <div> 
+  <img src="file://E:/data/youdao/qq24B39E2329F08D9F4C3146A571A415EF/7f9959bada9c495a9ebceb0156677fc8/clipboard.png">
+  <br> 
+  <h2> 
+   <div>
+     第2步&nbsp;-&nbsp;添加事件监听器 
+   </div> </h2> 
+  <p style="text-align:justify;"> Cordova安全策略不允许内嵌事件，以便我们将在index.js文件内增加事件侦听器。我们也将分配给window.localStorage，稍后会使用localStorage 变量。 </p> 
+  <pre>document.getElementById("setLocalStorage").addEventListener("click", setLocalStorage);
+document.getElementById("showLocalStorage").addEventListener("click", showLocalStorage);
+document.getElementById("removeProjectFromLocalStorage").addEventListener
+   ("click", removeProjectFromLocalStorage);
+document.getElementById("getLocalStorageByKey").addEventListener
+   ("click", getLocalStorageByKey);
+
+var localStorage = window.localStorage;	</pre> 
+  <h2> 
+   <div>
+     第3步&nbsp;-&nbsp;创建函数 
+   </div> </h2> 
+  <p style="text-align:justify;"> 现在，我们需要创建当按钮被点击后将调用函数。第一函数用于将数据添加到本地存储。 </p> 
+  <pre>function setLocalStorage() {
+   localStorage.setItem("Name", "John");
+   localStorage.setItem("Job", "Developer");
+   localStorage.setItem("Project", "Cordova Project");
+}</pre> 
+  <div>
+    下一个会记录数据，我们添加到控制台。 
+  </div> 
+  <pre>function showLocalStorage() {
+   console.log(localStorage.getItem("Name"));
+   console.log(localStorage.getItem("Job"));
+   console.log(localStorage.getItem("Project"));
+}	&nbsp;</pre> 
+  <p style="text-align:justify;"> 如果我们点击&nbsp;LOCAL&nbsp;STORAGE&nbsp;按钮，我们将设置三个项目到本地存储。如果我们点击 SHOW&nbsp;LOCAL&nbsp;STORAGE&nbsp;之后，控制台会记录我们想要的项目。 </p> 
+  <img src="file://E:/data/youdao/qq24B39E2329F08D9F4C3146A571A415EF/c6d51d549bac43ca81d3f4a77a2b641d/cal-storage.jpeg" alt="Local Storage Log"> 
+  <div>
+    现在让我们创建的函数来存储本地删除项目。 
+  </div> 
+  <pre>function removeProjectFromLocalStorage() {
+   localStorage.removeItem("Project");
+}</pre> 
+  <div>
+    如果我们点击SHOW&nbsp;LOCAL&nbsp;STORAGE按钮后，我们删除了该项目，输出将显示该项目字段则为空值。 
+  </div> 
+  <img src="file://E:/data/youdao/qq24B39E2329F08D9F4C3146A571A415EF/ad8bc364bebb4e7ca4f4f69baffdba97/l-storage-2.jpeg" alt="Local Sorage Log Removed Item"> 
+  <div>
+    我们还可以通过使用key()&nbsp;方法将采取指数作为参数，并返回相应的索引值的元素的本地存储元素。 
+  </div> 
+  <pre>function getLocalStorageByKey() {
+   console.log(localStorage.key(0));
+}</pre> 
+  <div>
+    现在，当我们轻点GET&nbsp;BY&nbsp;KEY&nbsp;按钮，我们将得到以下的输出。 
+  </div> 
+  <h3> 注 </h3> 
+  <p style="text-align:justify;"> 当我们用key()&nbsp;方法在控制台记录工作，而不是名称，即使我们通过参数0获取第一个对象。这是因为本地存储空间，按字母顺序排列存储数据。 </p> 
+  <div>
+    下表列出了所有本地存储可用的方法。 
+  </div> 
+  <table border="1" cellpadding="2" cellspacing="0" style="font-size:14px;color:#313131;font-family:Verdana, Geneva, Tahoma,  Helvetica, background-color:inherit;"> 
+   <tbody> 
+    <tr> 
+     <th style="border:1px solid #999999;background-color:#EEEEEE;"> SN </th> 
+     <th style="border:1px solid #999999;background-color:#EEEEEE;"> 
+      <div style="background-color:inherit;">
+        方法与说明 
+      </div> </th> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 1 </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>setItem(key, value)</b> </p> 
+      <div style="background-color:inherit;">
+        用于将项目设置到本地存储 
+      </div> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 2 </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>getItem(key)</b> </p> 
+      <div style="background-color:inherit;">
+        用于从本地存储中获得项目 
+      </div> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 3 </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>removeItem(key)</b> </p> 
+      <div style="background-color:inherit;">
+        用于从本地存储中删除该项目 
+      </div> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 4 </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>key(index)</b> </p> 
+      <div style="background-color:inherit;">
+        用于通过使用在本地存储器中的项的索引获得的项目。项目是按字母顺序排序的 
+      </div> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 5 </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>length()</b> </p> 
+      <div style="background-color:inherit;">
+        用于检索存在于本地存储器的项目数量 
+      </div> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 6 </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>clear()</b> </p> 
+      <div style="background-color:inherit;">
+        用于从本地存储中删除所有的键/值对 
+      </div> </td> 
+    </tr> 
+   </tbody> 
+  </table> 
+ </div>
+ <br>      
+</div></body></html>

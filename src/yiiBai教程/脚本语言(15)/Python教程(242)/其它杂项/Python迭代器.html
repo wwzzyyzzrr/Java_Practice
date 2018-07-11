@@ -1,0 +1,162 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Python迭代器</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>迭代器是可以迭代的对象。 在本教程中，您将了解迭代器的工作原理，以及如何使用<code>__iter__</code>和<code>__next__</code>方法构建自己的迭代器。</p> 
+ <p>迭代器在Python中无处不在。 它们优雅地实现在循环，推导，生成器等中，但隐藏在明显的视觉中。</p> 
+ <p>Python中的迭代器只是一个可以迭代的对象。一个将一次返回数据的对象或一个元素。</p> 
+ <p>从技术上讲，Python迭代器对象必须实现两个特殊的方法<code>__iter__()</code>和<code>__next__()</code>，统称为迭代器协议。</p> 
+ <p>如果我们从中获取一个迭代器，那么一个对象被称为<code>iterable</code>。 大多数Python中的内置容器是列表，元组，字符串等都是可迭代的。</p> 
+ <p><code>iter()</code>函数(这又调用<code>__iter__()</code>方法)返回一个迭代器。</p> 
+ <h2 id="h2--python-"><a name="通过Python中的迭代器迭代" class="reference-link"></a><span class="header-link octicon octicon-link"></span>通过Python中的迭代器迭代</h2>
+ <p>使用<code>next()</code>函数来手动遍历迭代器的所有项目。当到达结束，没有更多的数据要返回时，它将会引发<code>StopIteration</code>。 以下是一个例子。</p> 
+ <pre><code class="lang-python"># define a list
+my_list = [4, 7, 0, 3]
+
+# get an iterator using iter()
+my_iter = iter(my_list)
+
+## iterate through it using next() 
+
+#prints 4
+print(next(my_iter))
+
+#prints 7
+print(next(my_iter))
+
+## next(obj) is same as obj.__next__()
+
+#prints 0
+print(my_iter.__next__())
+
+#prints 3
+print(my_iter.__next__())
+
+## This will raise error, no items left
+next(my_iter)
+</code></pre> 
+ <p>更优雅的自动迭代方式是使用<code>for</code>循环。 使用<code>for</code>循环可以迭代任何可以返回迭代器的对象，例如列表，字符串，文件等。</p> 
+ <pre><code class="lang-python">&gt;&gt;&gt; for element in my_list:
+...     print(element)
+...     
+4
+7
+0
+3
+</code></pre> 
+ <h2 id="h2--"><a name="循环如何实际工作？" class="reference-link"></a><span class="header-link octicon octicon-link"></span>循环如何实际工作？</h2>
+ <p>在上面的例子中看到的，<code>for</code>循环能够自动通过列表迭代。</p> 
+ <p>事实上，<code>for</code>循环可以迭代任何可迭代对象。我们来仔细看一下在Python中是如何实现<code>for</code>循环的。</p> 
+ <pre><code class="lang-python">for element in iterable:
+    # do something with element
+</code></pre> 
+ <p>实际上它是以类似下面的方式来实现的 - </p> 
+ <pre><code class="lang-python"># create an iterator object from that iterable
+iter_obj = iter(iterable)
+
+# infinite loop
+while True:
+    try:
+        # get the next item
+        element = next(iter_obj)
+        # do something with element
+    except StopIteration:
+        # if StopIteration is raised, break from loop
+        break
+</code></pre> 
+ <p>所以在<code>for</code>的内部，<code>for</code>循环通过在可迭代的对象上调用<code>iter()</code>来创建一个迭代器对象<code>iter_obj</code>。</p> 
+ <p>有意思的是，这个<code>for</code>循环实际上是一个无限循环~..~。</p> 
+ <p>在循环中，它调用<code>next()</code>来获取下一个元素，并使用该值执行<code>for</code>循环的主体。 在所有对象耗尽后，引发<code>StopIteration</code>异常，内部被捕获从而结束循环。请注意，任何其他类型的异常都将正常通过。</p> 
+ <h2 id="h2--python-iterator"><a name="在Python中构建自己的Iterator" class="reference-link"></a><span class="header-link octicon octicon-link"></span>在Python中构建自己的Iterator</h2>
+ <p>构建迭代器在Python中很容易。只需要实现<code>__iter__()</code>和<code>__next__()</code>方法。</p> 
+ <p><code>__iter__()</code>方法返回迭代器对象本身。如果需要，可以执行一些初始化。</p> 
+ <p><code>__next__()</code>方法必须返回序列中的下一个项目(数据对象)。 在到达结束后，并在随后的调用中它必须引发<code>StopIteration</code>异常。</p> 
+ <p>在这里，我们展示一个例子，在每次迭代中给出下一个<code>2</code>的几次方。 次幂指数从零开始到用户设定的数字。</p> 
+ <pre><code class="lang-python">class PowTwo:
+    """Class to implement an iterator
+    of powers of two"""
+
+    def __init__(self, max = 0):
+        self.max = max
+
+    def __iter__(self):
+        self.n = 0
+        return self
+
+    def __next__(self):
+        if self.n &lt;= self.max:
+            result = 2 ** self.n
+            self.n += 1
+            return result
+        else:
+            raise StopIteration
+</code></pre> 
+ <p>现在可以创建一个迭代器，并通过它迭代如下 - </p>   
+ <pre><code class="lang-shell">&gt;&gt;&gt; a = PowTwo(4)
+&gt;&gt;&gt; i = iter(a)
+&gt;&gt;&gt; next(i)
+1
+&gt;&gt;&gt; next(i)
+2
+&gt;&gt;&gt; next(i)
+4
+&gt;&gt;&gt; next(i)
+8
+&gt;&gt;&gt; next(i)
+16
+&gt;&gt;&gt; next(i)
+Traceback (most recent call last):
+...
+StopIteration
+</code></pre> 
+ <p>也可以使用<code>for</code>循环迭代那些迭代器类。</p> 
+ <pre><code class="lang-shell">&gt;&gt;&gt; for i in PowTwo(5):
+...     print(i)
+...     
+1
+2
+4
+8
+16
+32
+</code></pre> 
+ <h2 id="h2-python-"><a name="Python无限迭代器" class="reference-link"></a><span class="header-link octicon octicon-link"></span>Python无限迭代器</h2>
+ <p>迭代器对象中的项目不必都是可耗尽的，可以是无限迭代器(永远不会结束)。 处理这样的迭代器时一定要小心。</p> 
+ <p>下面是用来演示无限迭代器的一个简单的例子。</p> 
+ <p>内置的函数<code>iter()</code>可以用两个参数来调用，其中第一个参数必须是可调用对象(函数)，而第二个参数是标头。迭代器调用此函数，直到返回的值等于指定值。</p> 
+ <pre><code class="lang-python">&gt;&gt;&gt; int()
+0
+
+&gt;&gt;&gt; inf = iter(int,1)
+&gt;&gt;&gt; next(inf)
+0
+&gt;&gt;&gt; next(inf)
+0
+</code></pre> 
+ <p>可以看到，<code>int()函</code>数总是返回<code>0</code>，所以将它作为<code>iter(int，1)</code>传递将返回一个调用<code>int()</code>的迭代器，直到返回值等于<code>1</code>。这从来没有发生，所以这样就得到一个无限迭代器。</p> 
+ <p>我们也可以建立自己的无限迭代器。 以下迭代器理论上将返回所有奇数。</p> 
+ <pre><code class="lang-python">class InfIter:
+    """Infinite iterator to return all
+        odd numbers"""
+
+    def __iter__(self):
+        self.num = 1
+        return self
+
+    def __next__(self):
+        num = self.num
+        self.num += 2
+        return num
+</code></pre> 
+ <p>示例运行如下 - </p> 
+ <pre><code class="lang-shell">&gt;&gt;&gt; a = iter(InfIter())
+&gt;&gt;&gt; next(a)
+1
+&gt;&gt;&gt; next(a)
+3
+&gt;&gt;&gt; next(a)
+5
+&gt;&gt;&gt; next(a)
+7
+</code></pre> 
+ <p>当迭代这些类型的无限迭代器时，请注意指定终止条件。</p> 
+ <p>使用迭代器的优点是它们可以节省资源。 如上所示，我们可以获得所有奇数，而不将整个系统存储在内存中。理论上，可以在有限的内存中计算有无限的项目。</p>
+ <br>      
+</div></body></html>

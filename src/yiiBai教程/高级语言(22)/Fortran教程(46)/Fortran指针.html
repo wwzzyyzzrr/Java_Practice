@@ -1,0 +1,162 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Fortran指针</h1><div style="width:100%;float:left;" class="article-content">   
+ <p> 在大多数编程语言中，一个指针变量存储对象的内存地址。然而，在Fortran中，指针是具有不是仅仅存储存储器地址多功能性的数据对象。它包含有关特定对象的详细信息，如类型，等级，扩展和存储器地址。</p> 
+ <p> 指针是通过分配或指针赋值的目标相关联。</p> 
+ <h2> 声明一个指针变量</h2> 
+ <p> 一个指针变量与指针属性声明。</p> 
+ <p> 下面的实施例示出了声明指针变量：</p> 
+ <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+<span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">integer</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">,</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> pointer </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">::</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> p1 </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">!</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> pointer to integer  
+real</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">,</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> pointer</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">,</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> dimension </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(:)</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">::</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> pra </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">!</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> pointer to </span><span class="lit" style="box-sizing: border-box; color: rgb(0, 102, 102);">1</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">-</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">dim real array  
+real</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">,</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> pointer</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">,</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> dimension </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(:,:)</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">::</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> pra2 </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">!</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> pointer to </span><span class="lit" style="box-sizing: border-box; color: rgb(0, 102, 102);">2</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">-</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">dim real array</span></pre> 
+ <p> 指针可以指向：</p> 
+ <ul> 
+  <li> 动态分配的内存区域</li> 
+  <li> 数据对象与目标属性相同类型的指针</li> 
+ </ul> 
+ <h2> 分配指针的空间</h2> 
+ <p> allocate语句可以分配指针对象空间。例如：</p> 
+ <pre class="prettyprint notranslate tryit prettyprinted" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); background-image: url(http://www.yiibai.com/fortran/images/tryit.jpg) !important; background-attachment: initial !important; background-size: initial !important; background-origin: initial !important; background-clip: initial !important; background-position: 100% 0%; background-repeat: no-repeat !important;">
+<span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">program pointerExample
+</span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">implicit</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> none
+
+   integer</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">,</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> pointer </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">::</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> p1
+   allocate</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">p1</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">)</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+   
+   p1 </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">=</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="lit" style="box-sizing: border-box; color: rgb(0, 102, 102);">1</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+   </span><span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">Print</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">*,</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> p1
+   
+   p1 </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">=</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> p1 </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">+</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="lit" style="box-sizing: border-box; color: rgb(0, 102, 102);">4</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+   </span><span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">Print</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">*,</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> p1
+   
+</span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">end</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> program pointerExample</span></pre> 
+ <p> 当上述代码被编译和执行时，它产生了以下结果：</p> 
+ <pre class="result notranslate" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+1
+5</pre> 
+ <p> 应该解除分配语句清空该分配的存储空间当它不再需要，并避免未使用的和不可用的存储器空间的积累。</p> 
+ <h2> 目标和关联</h2> 
+ <p> 目标是另一个正态变量，空间预留给它。目标变量必须与目标属性进行声明。</p> 
+ <p> 一个指针变量使用的关联操作符使目标变量相关联(=&gt;)。</p> 
+ <p> 让我们重写前面的例子中，以说明这个概念：</p> 
+ <pre class="prettyprint notranslate tryit prettyprinted" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); cursor: default; background-image: url(http://www.yiibai.com/fortran/images/tryit.jpg) !important; background-attachment: initial !important; background-size: initial !important; background-origin: initial !important; background-clip: initial !important; background-position: 100% 0%; background-repeat: no-repeat !important;">
+<span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">program pointerExample
+</span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">implicit</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> none
+
+   integer</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">,</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> pointer </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">::</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> p1
+   integer</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">,</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> target </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">::</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> t1 
+   
+   p1</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">=&gt;</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">t1
+   p1 </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">=</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="lit" style="box-sizing: border-box; color: rgb(0, 102, 102);">1</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+   
+   </span><span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">Print</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">*,</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> p1
+   </span><span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">Print</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">*,</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> t1
+   
+   p1 </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">=</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> p1 </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">+</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="lit" style="box-sizing: border-box; color: rgb(0, 102, 102);">4</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+   
+   </span><span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">Print</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">*,</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> p1
+   </span><span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">Print</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">*,</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> t1
+   
+   t1 </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">=</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="lit" style="box-sizing: border-box; color: rgb(0, 102, 102);">8</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+   
+   </span><span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">Print</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">*,</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> p1
+   </span><span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">Print</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">*,</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> t1
+   
+</span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">end</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> program pointerExample</span></pre> 
+ <p> 当上述代码被编译和执行时，它产生了以下结果：</p> 
+ <pre class="result notranslate" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+1
+1
+5
+5
+8
+8</pre> 
+ <p> 指针可以是：</p> 
+ <ul> 
+  <li> 未定义的</li> 
+  <li> 关联的</li> 
+  <li> 未关联的</li> 
+ </ul> 
+ <p> 在上面的程序中，我们使用associated的指针p1与目标t1时，使用=&gt;运算符。相关的函数，测试指针的关联状态。</p> 
+ <p> 这个声明无效的关联从一个目标一个指针。</p> 
+ <p> 无效非空目标，因为可能有多个指针指向同一个目标。然而空指针指也是无效的。</p> 
+ <p> 示例 1</p> 
+ <p> 下面的例子演示了概念：</p> 
+ <pre class="prettyprint notranslate tryit prettyprinted" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); cursor: default; background-image: url(http://www.yiibai.com/fortran/images/tryit.jpg) !important; background-attachment: initial !important; background-size: initial !important; background-origin: initial !important; background-clip: initial !important; background-position: 100% 0%; background-repeat: no-repeat !important;">
+<span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">program pointerExample
+</span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">implicit</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> none
+
+   integer</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">,</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> pointer </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">::</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> p1
+   integer</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">,</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> target </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">::</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> t1 
+   integer</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">,</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> target </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">::</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> t2
+   
+   p1</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">=&gt;</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">t1
+   p1 </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">=</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="lit" style="box-sizing: border-box; color: rgb(0, 102, 102);">1</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+   
+   </span><span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">Print</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">*,</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> p1
+   </span><span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">Print</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">*,</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> t1
+   
+   p1 </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">=</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> p1 </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">+</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="lit" style="box-sizing: border-box; color: rgb(0, 102, 102);">4</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+   </span><span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">Print</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">*,</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> p1
+   </span><span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">Print</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">*,</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> t1
+   
+   t1 </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">=</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="lit" style="box-sizing: border-box; color: rgb(0, 102, 102);">8</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+   </span><span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">Print</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">*,</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> p1
+   </span><span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">Print</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">*,</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> t1
+   
+   nullify</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">p1</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">)</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+   </span><span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">Print</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">*,</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> t1
+   
+   p1</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">=&gt;</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">t2
+   </span><span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">Print</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">*,</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> associated</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">p1</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">)</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+   </span><span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">Print</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">*,</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> associated</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">p1</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">,</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> t1</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">)</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+   </span><span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">Print</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">*,</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> associated</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">p1</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">,</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> t2</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">)</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+   
+   </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">!</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">what </span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">is</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> the value of p1 at present
+   </span><span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">Print</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">*,</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> p1
+   </span><span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">Print</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">*,</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> t2
+   
+   p1 </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">=</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="lit" style="box-sizing: border-box; color: rgb(0, 102, 102);">10</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+   </span><span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">Print</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">*,</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> p1
+   </span><span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">Print</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">*,</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> t2
+   
+</span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">end</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> program pointerExample</span></pre> 
+ <p> 当上述代码被编译和执行时，它产生了以下结果：</p>   
+ <pre class="result notranslate" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+1
+1
+5
+5
+8
+8
+8
+T
+F
+T
+952754640
+952754640
+10
+10</pre> 
+ <p> 请注意，每次运行该代码时，内存地址会有所不同。</p> 
+ <p style="box-sizing: border-box; color: rgb(0, 0, 0); line-height: 24px; margin: 0em 0.2em 1em; padding: 0px; text-align: justify; font-family: 'Open Sans', Arial, sans-serif; font-size: 14px;"> <b style="box-sizing: border-box;">示例 2</b></p> 
+ <pre class="prettyprint notranslate tryit prettyprinted" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); cursor: default; background-image: url(http://www.yiibai.com/fortran/images/tryit.jpg) !important; background-attachment: initial !important; background-size: initial !important; background-origin: initial !important; background-clip: initial !important; background-position: 100% 0%; background-repeat: no-repeat !important;">
+<span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">program pointerExample
+</span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">implicit</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> none
+
+   integer</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">,</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> pointer </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">::</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> a</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">,</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> b
+   integer</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">,</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> target </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">::</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> t
+   integer </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">::</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> n
+   
+   t</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">=</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="lit" style="box-sizing: border-box; color: rgb(0, 102, 102);">1</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+   a</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">=&gt;</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">t
+   t </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">=</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="lit" style="box-sizing: border-box; color: rgb(0, 102, 102);">2</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+   b </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">=&gt;</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> t
+   n </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">=</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> a </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">+</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> b
+   
+   </span><span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">Print</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">*,</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> a</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">,</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> b</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">,</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> t</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">,</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> n 
+   
+</span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">end</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> program pointerExample</span></pre> 
+ <p> 当上述代码被编译和执行时，它产生了以下结果：</p> 
+ <pre class="result notranslate" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+2  2  2  4</pre> 
+ <br>      
+</div></body></html>

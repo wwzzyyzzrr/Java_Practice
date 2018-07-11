@@ -1,0 +1,129 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Yii使用Cookies</h1><div style="width:100%;float:left;" class="article-content">   
+ <div> 
+  <div>
+    Cookie允许数据跨请求持久化。在PHP中，可以通过&nbsp;$_COOKIE&nbsp;变量访问它们。Yii&nbsp;中表示&nbsp;cookie&nbsp;作为&nbsp;yii\web\Cookie&nbsp;类的一个对象。在本章中，我们描述了读取&nbsp;cookie&nbsp;的方法。 
+  </div> 
+ </div> 
+ <div> 
+  <div>
+    第1步-&nbsp;在&nbsp;SiteController&nbsp;创建一个动作&nbsp;actionReadCookies()方法。 
+  </div> 
+  <pre>public function actionReadCookies() { 
+   // get cookies from the "request" component 
+   $cookies = Yii::$app-&gt;request-&gt;cookies; 
+   // get the "language" cookie value 
+   // if the cookie does not exist, return "Py" as the default value 
+   $language = $cookies-&gt;getValue('language', 'Py'); 
+   // an alternative way of getting the "language" cookie value 
+   if (($cookie = $cookies-&gt;get('language')) !== null) { 
+      $language = $cookie-&gt;value; 
+   } 
+   // you may also use $cookies like an array 
+   if (isset($cookies['language'])) { 
+      $language = $cookies['language']-&gt;value; 
+   } 
+   // check if there is a "language" cookie 
+   if ($cookies-&gt;has('language')) echo "Current language: $language"; 
+}</pre> 
+  <div>
+    第2步&nbsp;-&nbsp;在&nbsp;SiteController&nbsp;创建一个名为动作&nbsp;actionSendCookies&nbsp;()方法用于发送&nbsp;cookie&nbsp;到客户端。 
+  </div> 
+  <pre>public function actionSendCookies() { 
+   // get cookies from the "response" component 
+   $cookies = Yii::$app-&gt;response-&gt;cookies; 
+   // add a new cookie to the response to be sent 
+   $cookies-&gt;add(new \yii\web\Cookie([ 
+      'name' =&gt; 'language', 
+      'value' =&gt; 'Chinese', 
+   ])); 
+   $cookies-&gt;add(new \yii\web\Cookie([
+      'name' =&gt; 'username', 
+      'value' =&gt; 'Hippo', 
+   ])); 
+   $cookies-&gt;add(new \yii\web\Cookie([ 
+      'name' =&gt; 'country', 
+      'value' =&gt; 'China', 
+   ])); 
+} </pre> 
+  <div>
+    &nbsp;第3步&nbsp;-&nbsp;现在，打开&nbsp;
+   <a target="_blank" href="http://localhost:8080/index.php?r=site/send-cookies">http://localhost:8080/index.php?r=site/send-cookies</a>，&nbsp;你会发现&nbsp;cookies&nbsp;已经保存在浏览器内。 
+  </div> 
+  <img src="/uploads/tutorial/20160531/1-1605310I3139C.png" width="937" height="249" title="Yii使用Cookies" alt="Yii使用Cookies">
+  <br> 
+  <div>
+    在Yii中默认情况下，cookie验证已启用。它保护&nbsp;cookies&nbsp;在客户端被别人修改。在&nbsp;config/web.php&nbsp;文件使用哈希字符串签名每个&nbsp;cookie。 
+  </div> 
+  <pre>&lt;?php 
+   $params = require(__DIR__ . '/params.php'); 
+   $config = [ 
+      'id' =&gt; 'basic', 
+      'basePath' =&gt; dirname(__DIR__), 
+      'bootstrap' =&gt; ['log'], 
+      'components' =&gt; [ <b>'request' =&gt; [ 
+            // !!! insert a secret key in the following (if it is empty) - this is 
+            //required by cookie validation 
+            'cookieValidationKey' =&gt; 'ywfdsa7829347898fLXfsCfdKjfO-fss0', 
+         ],</b> 'cache' =&gt; [ 
+            'class' =&gt; 'yii\caching\FileCache', 
+         ], 
+         'user' =&gt; [ 
+            'identityClass' =&gt; 'app\models\User', 
+            'enableAutoLogin' =&gt; true, 
+         ], 
+         'errorHandler' =&gt; [ 
+            'errorAction' =&gt; 'site/error', 
+         ], 
+         'mailer' =&gt; [ 
+            'class' =&gt; 'yii\swiftmailer\Mailer', 
+            // send all mails to a file by default. You have to set 
+            // 'useFileTransport' to false and configure a transport 
+            // for the mailer to send real emails. 
+            'useFileTransport' =&gt; true, 
+         ], 
+         'log' =&gt; [ 
+            'traceLevel' =&gt; YII_DEBUG ? 3 : 0, 
+            'targets' =&gt; [ 
+               [ 
+                  'class' =&gt; 'yii\log\FileTarget', 
+                     'levels' =&gt; ['error', 'warning'], 
+                ], 
+            ], 
+         ], 
+         'urlManager' =&gt; [ 
+            //'showScriptName' =&gt; false, 
+            //'enablePrettyUrl' =&gt; true, 
+            //'enableStrictParsing' =&gt; true, 
+            //'suffix' =&gt; '/' 
+         ], 
+         'db' =&gt; require(__DIR__ . '/db.php'), 
+      ], 
+      'modules' =&gt; [ 
+         'admin' =&gt; [ 
+            'class' =&gt; 'app\modules\admin\Admin', 
+         ], 
+      ], 
+      'params' =&gt; $params,
+   ]; 
+   if (YII_ENV_DEV) { 
+      // configuration adjustments for 'dev' environment 
+      $config['bootstrap'][] = 'debug'; 
+      $config['modules']['debug'] = [ 
+         'class' =&gt; 'yii\debug\Module', 
+      ]; 
+      $config['bootstrap'][] = 'gii'; 
+      $config['modules']['gii'] = [ 
+         'class' =&gt; 'yii\gii\Module', 
+      ]; 
+   } 
+   return $config; 
+?&gt;</pre> 
+  <div>
+    可以通过设置&nbsp;yii\web\Request::$enableCookieValidation&nbsp;属性为&nbsp;false。 
+  </div> 
+  <div> 
+   <br> 
+  </div> 
+ </div>
+ <br>      
+</div></body></html>

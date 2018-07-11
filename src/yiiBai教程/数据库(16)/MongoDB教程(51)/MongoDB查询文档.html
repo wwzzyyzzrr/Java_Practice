@@ -1,0 +1,192 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">MongoDB查询文档</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>在本章中，我们将学习如何从MongoDB集合中查询文档。</p> 
+ <h2 id="h2-find-"><a name="find()方法" class="reference-link"></a><span class="header-link octicon octicon-link"></span>find()方法</h2>
+ <p>要从MongoDB集合查询数据，需要使用MongoDB的<code>find()</code>方法。</p> 
+ <p><strong>语法</strong></p> 
+ <p><code>find()</code>命令的基本语法如下：</p> 
+ <pre><code class="lang-shell">&gt;db.COLLECTION_NAME.find(document)
+</code></pre> 
+ <p><code>find()</code>方法将以非结构化的方式显示所有文档。</p> 
+ <h2 id="h2-pretty-"><a name="pretty()方法" class="reference-link"></a><span class="header-link octicon octicon-link"></span>pretty()方法</h2>
+ <p>要以格式化的方式显示结果，可以使用<code>pretty()</code>方法。</p> 
+ <p><strong>语法</strong></p> 
+ <pre><code class="lang-shell">&gt; db.mycol.find().pretty()
+</code></pre> 
+ <p><strong>示例</strong></p> 
+ <pre><code class="lang-shell">&gt;db.mycol.find().pretty()
+{
+   "_id": 100,
+   "title": "MongoDB Overview", 
+   "description": "MongoDB is no sql database",
+   "by": "yiibai tutorials",
+   "url": "http://www.yiibai.com",
+   "tags": ["mongodb", "database", "NoSQL"],
+   "likes": "100"
+}
+&gt;
+</code></pre> 
+ <p>除了<code>find()</code>方法外，还有一个<code>findOne()</code>方法，它只返回一个文档。</p> 
+ <h2 id="h2-mongodb-rdbms-where-"><a name="MongoDB 与 RDBMS的等效 Where 子句" class="reference-link"></a><span class="header-link octicon octicon-link"></span>MongoDB 与 RDBMS的等效 Where 子句</h2>
+ <p>要在一些条件的基础上查询文档，可以使用以下操作。</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>操作</th> 
+    <th>语法</th> 
+    <th>示例</th> 
+    <th>RDBMS等效语句</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>相等</td> 
+    <td><code>{&lt;key&gt;:&lt;value&gt;}</code></td> 
+    <td><code>db.mycol.find({"by":"yiibai"}).pretty()</code></td> 
+    <td><code>where by = 'yiibai'</code></td> 
+   </tr> 
+   <tr> 
+    <td>小于</td> 
+    <td><code>{&lt;key&gt;:{$lt:&lt;value&gt;}}</code></td> 
+    <td><code>db.mycol.find({"likes":{$lt:50}}).pretty()</code></td> 
+    <td><code>where likes &lt; 50</code></td> 
+   </tr> 
+   <tr> 
+    <td>小于等于</td> 
+    <td><code>{&lt;key&gt;:{$lte:&lt;value&gt;}}</code></td> 
+    <td><code>db.mycol.find({"likes":{$lte:50}}).pretty()</code></td> 
+    <td><code>where likes &lt;= 50</code></td> 
+   </tr> 
+   <tr> 
+    <td>大于</td> 
+    <td><code>{&lt;key&gt;:{$gt:&lt;value&gt;}}</code></td> 
+    <td><code>db.mycol.find({"likes":{$gt:50}}).pretty()</code></td> 
+    <td><code>where likes &gt; 50</code></td> 
+   </tr> 
+   <tr> 
+    <td>大于等于</td> 
+    <td><code>{&lt;key&gt;:{$gte:&lt;value&gt;}}</code></td> 
+    <td><code>db.mycol.find({"likes":{$gte:50}}).pretty()</code></td> 
+    <td><code>where likes &gt;= 50</code></td> 
+   </tr> 
+   <tr> 
+    <td>不等于</td> 
+    <td><code>{&lt;key&gt;:{$ne:&lt;value&gt;}}</code></td> 
+    <td><code>db.mycol.find({"likes":{$ne:50}}).pretty()</code></td> 
+    <td><code>where likes != 50</code></td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p>下面我们将对上表中的所有操作演示 - </p> 
+ <h3 id="h3-mongodb-and-"><a name="MongoDB中的AND操作符" class="reference-link"></a><span class="header-link octicon octicon-link"></span>MongoDB中的AND操作符</h3>
+ <p><strong>语法</strong></p> 
+ <p>在<code>find()</code>方法中，如果通过使用’<code>，</code>‘将它们分开传递多个键，则 MongoDB 将其视为<code>AND</code>条件。 以下是<code>AND</code>的基本语法 -</p> 
+ <pre><code class="lang-shell">&gt;db.mycol.find(
+   {
+      $and: [
+         {key1: value1}, {key2:value2}
+      ]
+   }
+).pretty()
+</code></pre> 
+ <p><strong>示例</strong></p> 
+ <p>以下示例将显示由“<code>yiibai tutorials</code>”编写并且标题为“<em>MongoDB Overview</em>”的所有教程。</p> 
+ <pre><code class="lang-shell">&gt; db.mycol.find({$and:[{"by":"yiibai tutorials"},{"title": "MongoDB Overview"}]}).pretty()
+{
+        "_id" : 100,
+        "title" : "MongoDB Overview",
+        "description" : "MongoDB is no sql database",
+        "by" : "yiibai tutorials",
+        "url" : "http://www.yiibai.com",
+        "tags" : [
+                "mongodb",
+                "database",
+                "NoSQL"
+        ],
+        "likes" : 100
+}
+&gt;
+</code></pre> 
+ <p>对于上面给出的例子，等效的SQL <code>where</code>子句是 - </p> 
+ <pre><code class="lang-sql">SELECT * FROM mycol where by ='yiibai tutorials' AND title ='MongoDB Overview'
+</code></pre> 
+ <p>可以在<code>find</code>子句中传递任意数量的键值。</p> 
+ <h3 id="h3-mongodb-or-"><a name="MongoDB中的OR操作符" class="reference-link"></a><span class="header-link octicon octicon-link"></span>MongoDB中的OR操作符</h3>
+ <p><strong>语法</strong></p> 
+ <p>在要根据<code>OR</code>条件查询文档，需要使用<code>$or</code>关键字。 以下是<code>OR</code>条件的基本语法 -</p> 
+ <pre><code class="lang-shell">&gt;db.mycol.find(
+   {
+      $or: [
+         {key1: value1}, {key2:value2}
+      ]
+   }
+).pretty()
+</code></pre> 
+ <p><strong>示例</strong></p> 
+ <p>以下示例将显示由“<code>yiibai tutorials</code>”编写或标题为“<em>MongoDB Overview</em>”的所有教程。</p> 
+ <pre><code class="lang-shell">&gt;db.mycol.find({$or:[{"by":"yiibai tutorials"},{"title": "MongoDB Overview"}]}).pretty()
+{
+   "_id": 100,
+   "title": "MongoDB Overview", 
+   "description": "MongoDB is no sql database",
+   "by": "yiibai tutorials",
+   "url": "http://www.yiibai.com",
+   "tags": ["mongodb", "database", "NoSQL"],
+   "likes": "100"
+}
+&gt;
+</code></pre> 
+ <h3 id="h3--and-or-"><a name="使用 AND 和 OR 条件一起" class="reference-link"></a><span class="header-link octicon octicon-link"></span>使用 AND 和 OR 条件一起</h3>
+ <p><strong>示例</strong></p> 
+ <p>以下示例将显示<code>likes</code>大于<code>10</code>以及标题是“<code>MongoDB Overview</code>”或者“<code>yiibai tutorials</code>”的所有文档。 等价SQL where子句为 - </p>   
+ <pre><code class="lang-sql">SELECT * FROM mycol where likes&gt; 10 AND(by ='yiibai tutorials' OR title ='MongoDB Overview')
+</code></pre> 
+ <pre><code class="lang-shell">&gt;db.mycol.find({"likes": {$gt:10}, $or: [{"by": "yiibai tutorials"},
+   {"title": "MongoDB Overview"}]}).pretty()
+{
+   "_id": 100,
+   "title": "MongoDB Overview", 
+   "description": "MongoDB is no sql database",
+   "by": "yiibai tutorials",
+   "url": "http://www.yiibai.com",
+   "tags": ["mongodb", "database", "NoSQL"],
+   "likes": "100"
+}
+&gt;
+</code></pre> 
+ <h2 id="h2--"><a name="查询嵌入/嵌套文档" class="reference-link"></a><span class="header-link octicon octicon-link"></span>查询嵌入/嵌套文档</h2>
+ <p>这里演示如何使用：<code>db.collection.find()</code>方法对嵌入/嵌套文档的查询操作的示例。 此页面上的示例使用<code>inventory</code>集合。要填充库存(<code>inventory</code>)集合以准备一些数据，请运行以下命令：</p> 
+ <pre><code class="lang-shell">db.inventory.insertMany( [
+   { item: "journal", qty: 25, size: { h: 14, w: 21, uom: "cm" }, status: "A" },
+   { item: "notebook", qty: 50, size: { h: 8.5, w: 11, uom: "in" }, status: "A" },
+   { item: "paper", qty: 100, size: { h: 8.5, w: 11, uom: "in" }, status: "D" },
+   { item: "planner", qty: 75, size: { h: 22.85, w: 30, uom: "cm" }, status: "D" },
+   { item: "postcard", qty: 45, size: { h: 10, w: 15.25, uom: "cm" }, status: "A" }
+]);
+</code></pre> 
+ <p><strong>匹配嵌入/嵌套文档</strong></p> 
+ <p>要在作为嵌入/嵌套文档的字段上指定相等条件，请使用查询过滤器文档<code>{&lt;field&gt;：&lt;value&gt;}</code>，其中<code>&lt;value&gt;</code>是要匹配的文档。</p> 
+ <p>例如，以下查询选择字段<code>size</code>等于<code>{ h: 14, w: 21, uom: "cm" }</code>的所有文档：</p> 
+ <pre><code class="lang-shell">db.inventory.find( { size: { h: 14, w: 21, uom: "cm" } } )
+</code></pre> 
+ <p>整个嵌入式文档中的相等匹配需要精确匹配指定的<code>&lt;value&gt;</code>文档，包括字段顺序。<br>例如，以下查询与库存(<code>inventory</code>)集合中的任何文档不匹配：</p> 
+ <pre><code class="lang-shell">db.inventory.find(  { size: { w: 21, h: 14, uom: "cm" } }  )
+</code></pre> 
+ <p><strong>查询嵌套字段</strong></p> 
+ <p>要在嵌入/嵌套文档中的字段上指定查询条件，请使用点符号(“<code>field.nestedField</code>”)。</p> 
+ <p><em>在嵌套字段上指定等于匹配</em></p> 
+ <p>以下示例选择在<code>size</code>字段中嵌套的字段<code>uom</code>等于“<code>in</code>”的所有文档：</p> 
+ <pre><code class="lang-shell">db.inventory.find( { "size.uom": "in" } )
+</code></pre> 
+ <p><strong>使用查询运算符指定匹配</strong></p> 
+ <p>查询过滤器文档可以使用查询运算符来指定，如以下形式的条件：</p> 
+ <pre><code class="lang-shell">{ &lt;field1&gt;: { &lt;operator1&gt;: &lt;value1&gt; }, ... }
+</code></pre> 
+ <p>以下查询使用<code>size</code>字段中嵌入的字段<code>h</code>中的小于运算符(<code>$lt</code>)：</p> 
+ <pre><code class="lang-shell">db.inventory.find( { "size.h": { $lt: 15 } } )
+</code></pre> 
+ <p><strong>指定AND条件</strong></p> 
+ <p>以下查询选择嵌套字段<code>h</code>小于<code>15</code>的所有文档，嵌套字段<code>uom</code>等于“<code>in</code>”，<code>status</code>字段等于“<code>D</code>”：</p> 
+ <pre><code class="lang-shell">db.inventory.find( { "size.h": { $lt: 15 }, "size.uom": "in", status: "D" } )
+</code></pre>
+ <br>      
+</div></body></html>

@@ -1,0 +1,214 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Java文件属性</h1><div style="width:100%;float:left;" class="article-content">   
+ <p><code>Files</code>类可以访问常用的文件属性。<code>Files.isHidden(Path p)</code>方法测试文件是否被隐藏。<br><code>Files</code>类中的以下方法可以访问各种类型文件的常用属性。</p> 
+ <pre><code class="lang-java">long size(Path)
+boolean isHidden(Path path)
+boolean isRegularFile(Path path, LinkOption... options)
+boolean isDirectory(Path path, LinkOption... options)
+boolean isSymbolicLink(Path path)
+FileTime getLastModifiedTime(Path path, LinkOption... options)
+</code></pre> 
+ <h2 id="h2-u6587u4EF6u5C5Eu6027"><a name="文件属性" class="reference-link"></a><span class="header-link octicon octicon-link"></span>文件属性</h2>
+ <p><code>java.nio.attribute</code>包中包含文件属性相关的类。它在以下六种类型的视图中捆绑文件属性。</p> 
+ <p><code>BasicFileAttributeView</code>管理基本文件属性，如创建时间，上次访问时间，上次修改时间，大小，文件类型(常规文件，目录，符号链接或其他)和文件键(文件的唯一编号)。 所有平台都支持此视图。</p> 
+ <p><code>DosFileAttributeView</code>扩展<code>BasicFileAttributeView</code>访问特定于<strong>DOS</strong>文件属性。 它提供了支持以检查文件是否是隐藏文件，系统文件，归档文件和只读文件。 它仅在支持DOS系统(如Microsoft Windows)上可用。</p> 
+ <p><code>POSIX</code>代表UNIX的便携式操作系统接口。 <code>PosixFileAttributeView</code>扩展了<code>BasicFileAttributeView</code>，并添加了对支持POSIX标准(如UNIX)的系统上可用的属性的支持。它允许我们管理所有者，组和[相关访问]权限。</p> 
+ <p><code>FileOwnerAttributeView</code>管理文件的所有者。ACL代表访问控制列表。 <code>AclFileAttributeView</code>管理文件的ACL。<code>UserDefinedFileAttributeView</code>管理一组文件的用户定义属性。 属性的名称是一个字符串。属性的值可以是任何数据类型。</p> 
+ <h2 id="h2-u6587u4EF6u5C5Eu6027u89C6u56FEu652Fu6301"><a name="文件属性视图支持" class="reference-link"></a><span class="header-link octicon octicon-link"></span>文件属性视图支持</h2>
+ <p><code>FileStore</code>类的<code>supportsFileAttributeView()</code>方法告诉文件存储器是否支持特定文件属性视图。如果支持指定的文件属性视图，则返回<code>true</code>; 否则，返回<code>false</code>。</p> 
+ <p>以下代码显示如何检查文件属性支持。</p> 
+ <pre><code class="lang-java">import java.nio.file.FileStore;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.attribute.PosixFileAttributeView;
+
+public class Main {
+  public static void main(String[] args) throws Exception {
+    Path path = Paths.get("");
+    FileStore fs = Files.getFileStore(path);
+
+    // Check if POSIX file attribute is supported by the file store
+    boolean supported = fs
+        .supportsFileAttributeView(PosixFileAttributeView.class);
+    if (supported) {
+      System.out.println("POSIX file attribute view  is supported.");
+    } else {
+      System.out.println("POSIX file attribute view  is not  supported.");
+    }
+
+  }
+}
+</code></pre> 
+ <p>上面的代码生成以下结果。</p> 
+ <pre><code class="lang-java">POSIX file attribute view  is not  supported.
+</code></pre> 
+ <h2 id="h2-u793Au4F8B"><a name="示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例</h2>
+ <p>以下代码显示如何检查文件存储的支持的文件属性视图。</p> 
+ <pre><code class="lang-java">import java.io.IOException;
+import java.nio.file.FileStore;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.attribute.AclFileAttributeView;
+import java.nio.file.attribute.BasicFileAttributeView;
+import java.nio.file.attribute.DosFileAttributeView;
+import java.nio.file.attribute.FileAttributeView;
+import java.nio.file.attribute.FileOwnerAttributeView;
+import java.nio.file.attribute.PosixFileAttributeView;
+import java.nio.file.attribute.UserDefinedFileAttributeView;
+
+public class Main {
+  public static void main(String[] args) {
+    Path path = Paths.get("C:");
+
+    try {
+      FileStore fs = Files.getFileStore(path);
+      printDetails(fs, AclFileAttributeView.class);
+      printDetails(fs, BasicFileAttributeView.class);
+      printDetails(fs, DosFileAttributeView.class);
+      printDetails(fs, FileOwnerAttributeView.class);
+      printDetails(fs, PosixFileAttributeView.class);
+      printDetails(fs, UserDefinedFileAttributeView.class);
+    } catch (IOException ex) {
+      ex.printStackTrace();
+    }
+  }
+
+  public static void printDetails(FileStore fs,
+      Class&lt;? extends FileAttributeView&gt; attribClass) {
+    boolean supported = fs.supportsFileAttributeView(attribClass);
+    System.out.format("%s is  supported: %s%n", attribClass.getSimpleName(),
+        supported);
+  }
+}
+</code></pre> 
+ <p>上面的代码生成以下结果。</p> 
+ <pre><code class="lang-java">AclFileAttributeView is  supported: true
+BasicFileAttributeView is  supported: true
+DosFileAttributeView is  supported: true
+FileOwnerAttributeView is  supported: true
+PosixFileAttributeView is  supported: false
+UserDefinedFileAttributeView is  supported: true
+</code></pre> 
+ <h2 id="h2-u8BFBu53D6u548Cu66F4u65B0u6587u4EF6u5C5Eu6027"><a name="读取和更新文件属性" class="reference-link"></a><span class="header-link octicon octicon-link"></span>读取和更新文件属性</h2>
+ <p>要读取或更新一个文件属性，请使用<code>Files</code>类。<code>Files</code>类具有以下两种静态方法，使用属性名称作为字符串来读取和更新文件属性：</p> 
+ <pre><code class="lang-java">Object getAttribute(Path path, String attribute, LinkOption... options)
+Path setAttribute(Path path, String attribute, Object value, LinkOption... options)
+</code></pre> 
+ <p>要读取或更新文件的多个属性，请使用特定的文件属性视图。对于大多数文件属性视图，可使用名为<code>TypeAttributes</code>和<code>TypeAttributeView</code>这两个接口。对于基本文件属性，有<code>BasicFileAttributes</code>和<code>BasicFileAtrributeView</code>接口。<code>TypeAttributes</code>读取属性。<code>TypeAttributeView</code>读取/更新属性。<br>以下是<code>Files</code>类两个方法批量读取文件属性。</p> 
+ <pre><code class="lang-java">&lt;A extends BasicFileAttributes&gt; A readAttributes(Path path, Class&lt;A&gt; type, LinkOption... options)
+
+Map&lt;String,Object&gt; readAttributes(Path path, String attributes, LinkOption... options)
+</code></pre> 
+ <p>两种方法的最后一个参数指定如何处理符号链接。默认情况下，如果文件是符号链接，则读取符号链接的目标属性。<br>如果指定<code>NOFOLLOW_LINKS</code>作为选项，则读取符号链接的属性，而不是其目标的属性。</p> 
+ <p>第一个<code>readAttributes()</code>方法返回<code>TypeAttributes</code>对象中指定类型的所有文件属性。创建表示文件路径的<code>Path</code>对象</p> 
+ <pre><code class="lang-java">Path  path   = Paths.get("C:\\Java_Dev\\test1.txt");
+</code></pre> 
+ <p>读取基本文件属性</p> 
+ <pre><code class="lang-java">BasicFileAttributes bfa  = Files.readAttributes(path, BasicFileAttributes.class);
+</code></pre> 
+ <p>获取上次修改时间</p> 
+ <pre><code class="lang-java">FileTime lastModifiedTime  = bfa.lastModifiedTime();
+</code></pre> 
+ <p>获取文件的大小</p> 
+ <pre><code class="lang-java">long  size = bfa.size();
+</code></pre> 
+ <p>第二个<code>readAttributes()</code>方法返回特定类型的所有或部分属性。要读取的属性列表以字符串形式提供。 属性列表的字符串形式使用以下语法：</p>   
+ <pre><code class="lang-java">view-name:comma-separated-attributes
+</code></pre> 
+ <p><code>view-name</code>是要读取的属性视图的名称，例如<code>basic</code>，<code>posix</code>，<code>acl</code>等。如果省略<code>view-name</code>，则默认为<code>basic</code>。 如果<code>view-name</code>存在，它后面跟一个冒号。</p> 
+ <p>通过将星号指定为属性列表，可以读取特定视图类型的所有属性。 例如，可以指定“<code>basic:*</code>”或“<code>*</code>”来读取所有基本文件属性。要读取基本视图的大小和最后修改时间，可使用 - </p> 
+ <pre><code class="lang-java">"basic:size,lastModifiedTime" or "size,lastModifiedTime".
+</code></pre> 
+ <p>要使用ACL视图读取文件的<code>owner</code>属性，那么可使用字符串“<code>acl:owner</code>”。要读取文件的所有<code>posix</code>属性，那么可使用“<code>posix:*</code>”。<br>以下代码打印文件 <code>C:\Java_Dev\test1.txt</code> 的大小和最后修改时间。</p> 
+ <pre><code class="lang-java">import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Map;
+
+public class Main {
+  public static void main(String[] args) throws Exception {
+    Path path = Paths.get("C:\\Java_Dev\\test1.txt");
+
+    // Prepare the attribute list
+    String attribList = "basic:size,lastModifiedTime";
+
+    // Read the attributes
+    Map&lt;String, Object&gt; attribs = Files.readAttributes(path, attribList);
+
+    System.out.format("Size:%s, Last   Modified   Time:%s %n",
+        attribs.get("size"), attribs.get("lastModifiedTime"));
+
+  }
+}
+</code></pre> 
+ <h2 id="h2--2"><a name="实例-2" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实例-2</h2>
+ <p>以下代码读取文件<code>C:\Java_Dev\test1.txt</code>的基本文件属性，并在标准输出上打印其中的一些。</p> 
+ <pre><code class="lang-java">import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.attribute.BasicFileAttributes;
+
+public class Main {
+  public static void main(String[] args) {
+    Path path = Paths.get("C:\\Java_Dev\\test1.txt");
+
+    try {
+      BasicFileAttributes bfa = Files.readAttributes(path,
+          BasicFileAttributes.class);
+      System.out.format("Size:%s bytes %n", bfa.size());
+      System.out.format("Creation Time:%s %n", bfa.creationTime());
+      System.out.format("Last Access  Time:%s %n", bfa.lastAccessTime());
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
+}
+</code></pre> 
+ <p>还可以使用指定的视图对象读取文件属性。使用如下的<code>Files</code>类的<code>getFileAttributeView()</code>方法来获取特定的属性视图。如果文件属性视图不可用，则返回<code>null</code>。</p> 
+ <pre><code class="lang-java">&lt;V extends FileAttributeView&gt; V  getFileAttributeView(Path path,  Class&lt;V&gt; type, LinkOption... options)
+</code></pre> 
+ <p>获得特定视图类型的视图对象后，可以使用视图对象的<code>readAttributes()</code>方法读取该视图类型的所有属性。</p> 
+ <h2 id="h2--3"><a name="实施例3" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实施例3</h2>
+ <p>以下代码使用基本视图对象读取<code>C:\Java_Dev\test1.txt</code>文件的所有基本属性：</p> 
+ <pre><code class="lang-java">Path  path   = Paths.get("C:\\Java_Dev\\test1.txt");
+BasicFileAttributeView bfv = Files.getFileAttributeView(path,  BasicFileAttributeView.class);
+BasicFileAttributes bfa  = bfv.readAttributes();
+</code></pre> 
+ <p>以下代码显示如何使用基本文件属性视图来读取和更新基本文件属性。</p> 
+ <pre><code class="lang-java">import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.attribute.BasicFileAttributeView;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.nio.file.attribute.FileTime;
+import java.time.Instant;
+
+public class Main {
+  public static void main(String[] args) {
+    Path path = Paths.get("C:\\Java_Dev\\test1.txt");
+
+    try {
+      BasicFileAttributeView bfv = Files.getFileAttributeView(path,
+          BasicFileAttributeView.class);
+      BasicFileAttributes bfa = bfv.readAttributes();
+
+      System.out.format("Size:%s bytes %n", bfa.size());
+      System.out.format("Creation  Time:%s %n", bfa.creationTime());
+      System.out.format("Last Access  Time:%s %n", bfa.lastAccessTime());
+
+      FileTime newLastModifiedTime = null;
+      FileTime newLastAccessTime = null;
+      FileTime newCreateTime = FileTime.from(Instant.now());
+
+      bfv.setTimes(newLastModifiedTime, newLastAccessTime, newCreateTime);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
+}
+</code></pre>
+ <br>      
+</div></body></html>

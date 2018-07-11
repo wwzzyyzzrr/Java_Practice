@@ -1,0 +1,43 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">PostgreSQL跨连接（CROSS JOIN）</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>PostgreSQL跨连接(<code>CROSS JOIN</code>)将第一个表的每一行与第二个表的每一行相匹配。 它也被称为笛卡儿积分。 如果<code>table1</code>具有“<code>x</code>”列，而<code>table2</code>具有“<code>y</code>”列，则所得到的表将具有(<code>x + y</code>)列。</p> 
+ <p><strong>语法：</strong></p> 
+ <pre><code class="lang-sql">SELECT coloums   
+FROM table1   
+CROSS JOIN table2
+</code></pre> 
+ <h2 id="h2--"><a name="例子：" class="reference-link"></a><span class="header-link octicon octicon-link"></span>例子：</h2>
+ <p>我们来看一下表“<code>EMPLOYEES</code>”，具有以下数据。<br><img src="http://www.yiibai.com/uploads/images/201704/0904/337110416_64544.png" alt=""></p> 
+ <p><strong>表2</strong>： <code>DEPARTMENT</code> </p> 
+ <p>创建另一个表“<code>DEPARTMENT</code>”并插入以下值。</p> 
+ <pre><code class="lang-sql">-- Table: public.department
+
+-- DROP TABLE public.department;
+
+CREATE TABLE public.department
+(
+  id integer,
+  dept text,
+  fac_id integer
+)
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE public.department
+  OWNER TO postgres;
+
+-- 插入数据
+INSERT INTO department VALUES(1,'IT', 1);
+INSERT INTO department VALUES(2,'Engineering', 2);
+INSERT INTO department VALUES(3,'HR', 7);
+INSERT INTO department VALUES(10,'Market', 10);
+</code></pre> 
+ <p>现在，<code>DEPARTMENT</code>有以下数据 -<br><img src="http://www.yiibai.com/uploads/images/201704/0904/368110413_70460.png" alt=""></p> 
+ <p>执行以下跨连接查询：</p>   
+ <pre><code class="lang-sql">SELECT NAME, DEPT 
+FROM EMPLOYEES  
+CROSS JOIN DEPARTMENT;
+</code></pre> 
+ <p>得到以下结果 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201704/0904/531110427_70652.png" alt=""></p>
+ <br>      
+</div></body></html>

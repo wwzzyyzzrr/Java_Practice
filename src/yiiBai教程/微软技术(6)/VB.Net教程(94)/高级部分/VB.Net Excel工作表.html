@@ -1,0 +1,92 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">VB.Net Excel工作表</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>VB.Net支持Microsoft Excel 2010的COM对象模型和应用程序之间的互操作性。</p> 
+ <p>要应用程序中使用这种互操作性，需要在Windows窗体应用程序中导入名称空间<code>Microsoft.Office.Interop.Excel</code>。</p> 
+ <h2 id="h2-vb-net-excel-"><a name="VB.Net创建一个Excel文件的应用程序" class="reference-link"></a><span class="header-link octicon octicon-link"></span>VB.Net创建一个Excel文件的应用程序</h2>
+ <p>让我们开始创建一个窗体窗体应用程序按照以下步骤在Microsoft Visual Studio中：<em>文件</em> -&gt; <em>新建项目</em> -&gt; <em>Windows窗体应用程序</em>。</p> 
+ <p>最后，选择确定，Microsoft Visual Studio创建一个项目(<em>ExcelSheet</em>)并显示以下<em>Form1</em> 。</p> 
+ <p>在窗体中插入一个<code>Button</code>控件Button1。<br>将Microsoft Excel对象库的引用添加到项目。参考以下步骤：</p> 
+ <ul> 
+  <li>从项目菜单中选择<em>添加引用</em>。如下图所示 -<br><img src="http://www.yiibai.com/uploads/images/201711/1611/378101145_95332.png" alt=""></li>
+  <li>在COM选项卡上找到Microsoft Excel对象库，然后单击<em>选择</em>。如下图所示 - </li>
+ </ul> 
+ <p><img src="http://www.yiibai.com/uploads/images/201711/1611/669111155_87007.png" alt=""></p> 
+ <ul> 
+  <li>最后点击<em>确定</em>。</li>
+ </ul> 
+ <p>双击代码窗口并填充<code>Button1</code>的Click事件，如下所示。参考以下实现代码 - </p> 
+ <pre><code class="lang-vbnet">'  Add the following code snippet on top of Form1.vb
+
+Imports Excel = Microsoft.Office.Interop.Excel
+
+Public Class Form1
+    Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
+        Dim appXL As Excel.Application
+        Dim wbXl As Excel.Workbook
+        Dim shXL As Excel.Worksheet
+        Dim raXL As Excel.Range
+        ' Start Excel and get Application object.
+        appXL = CreateObject("Excel.Application")
+        appXL.Visible = True
+        ' Add a new workbook.
+        wbXl = appXL.Workbooks.Add
+        shXL = wbXl.ActiveSheet
+        ' Add table headers going cell by cell.
+        shXL.Cells(1, 1).Value = "姓氏"
+        shXL.Cells(1, 2).Value = "名字"
+        shXL.Cells(1, 3).Value = "姓名"
+        shXL.Cells(1, 4).Value = "专业"
+        ' Format A1:D1 as bold, vertical alignment = center.
+        With shXL.Range("A1", "D1")
+            .Font.Bold = True
+            .VerticalAlignment = Excel.XlVAlign.xlVAlignCenter
+        End With
+        ' Create an array to set multiple values at once.
+        Dim students(5, 2) As String
+        students(0, 0) = "张"
+        students(0, 1) = "雨寒"
+        students(1, 0) = "牛"
+        students(1, 1) = "乐蕊"
+        students(2, 0) = "李"
+        students(2, 1) = "采梦"
+        students(3, 0) = "王"
+        students(3, 1) = "妙晴"
+        students(4, 0) = "杨"
+        students(4, 1) = "思松"
+        ' Fill A2:B6 with an array of values (First and Last Names).
+        shXL.Range("A2", "B6").Value = students
+        ' Fill C2:C6 with a relative formula (=A2 &amp; " " &amp; B2).
+        raXL = shXL.Range("C2", "C6")
+        raXL.Formula = "=A2 &amp; """"&amp; B2"
+        ' Fill D2:D6 values.
+        With shXL
+            .Cells(2, 4).Value = "生物学"
+            .Cells(3, 4).Value = "数学"
+            .Cells(4, 4).Value = "物理"
+            .Cells(5, 4).Value = "化学"
+            .Cells(6, 4).Value = "地理"
+        End With
+        ' AutoFit columns A:D.
+        raXL = shXL.Range("A1", "D1")
+        raXL.EntireColumn.AutoFit()
+        ' Make sure Excel is visible and give the user control
+        ' of Excel's lifetime.
+        appXL.Visible = True
+        appXL.UserControl = True
+        ' Release object references.
+        raXL = Nothing
+        shXL = Nothing
+        wbXl = Nothing
+        appXL.Quit()
+        appXL = Nothing
+        Exit Sub
+Err_Handler:
+        MsgBox(Err.Description, vbCritical, "Error: " &amp; Err.Number)
+    End Sub
+End Class
+</code></pre> 
+ <p>当上面的代码执行并使用Microsoft Visual Studio工具栏上的“开始”按钮运行时，它将显示以下窗口：</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201711/1611/277111155_59386.png" alt=""></p> 
+ <p>点击<em>导出成Excel文件</em> 按钮应用程序将要求保存Excel工作簿，Excel表格内容如下 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201711/1611/401111156_51266.png" alt=""></p>
+ <br>      
+</div></body></html>

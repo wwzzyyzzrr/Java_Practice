@@ -1,0 +1,20 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Java符号链接</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>符号链接包含对另一个文件或目录的引用。符号链接引用的文件称为符号链接的目标文件。符号链接上的操作对应用程序是透明的。可以使用<code>java.nio.file.Files</code>类处理符号链接。</p> 
+ <p><code>isSymbolicLink(Path p)</code>方法检查指定路径指定的文件是否是符号链接。<code>Files</code>类的<code>createSymbolicLink()</code>方法(可能不是在所有平台上都支持)创建符号链接。</p> 
+ <pre><code class="lang-java">import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+public class Main {
+    public static void main(String[] args) throws Exception {
+        Path existingFilePath = Paths.get("C:\\Java_Dev\\test1.txt");
+        Path symLinkPath = Paths.get("C:\\test1_link.txt");
+        Files.createSymbolicLink(symLinkPath, existingFilePath);
+    }
+}
+</code></pre> 
+ <p>默认情况下，Java NIO API遵循符号链接。我们可以指定是否要遵循符号链接。使用枚举常量<code>LinkOption</code>来指示不遵循符号链接的选项 - <code>NOFOLLOW_LINKS</code>。</p> 
+ <p><code>LinkOption</code>枚举在<code>java.nio.file</code>包中声明。支持此选项的方法可传递<code>LinkOption</code>类型的参数。</p> 
+ <p>可以使用<code>Files</code>类的<code>createLink(Path newLink，Path existingPath)</code>方法来创建硬链接。</p>
+ <br>      
+</div></body></html>

@@ -1,0 +1,558 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Hadoop安装</h1><div style="width:100%;float:left;" class="article-content">   
+ <p> 本教程是以Ubuntu 系统作为安装讲解环境，为了减少不必要的麻烦，请您 &nbsp;<a target="_blank" href="http://www.yiibai.com/t/ubuntu/article-59.html">安装Ubuntu</a>&nbsp;并能正常启动进入系统。同时也必须要&nbsp;<a target="_blank" href="http://www.yiibai.com/java/how-to-install-java-on-ubuntu.html">安装Java</a>。</p> 
+ <h3> 一、添加 Hadoop 系统用户组和用户</h3> 使用以下命令在终端中执行以下命令来先创建一个用户组： 
+ <pre style="'Courier New', Courier, monospace; color: rgb(51, 51, 51); font-size: 14px; background-color: rgb(245, 245, 245);">
+yiibai@ubuntu:~$ sudo addgroup hadoop_</pre> 操作结果如下：
+ <br> 
+ <img alt="" src="/uploads/allimg/201509/1-1509130TI4X7.png" style="width: 571px; height: 139px;">
+ <br> 
+ <img data-attr-org-img-file="file:///D:/Program%20Files/qq24B39E2329F08D9F4C3146A571A415EF/8465a38ad19b48699799a8f96bcf0670/clipboard.png" data-attr-org-src-id="A22A00C31A854BD2964A36A3D9A2D9F9" data-media-type="image" src="file:///D:/Program%20Files/qq24B39E2329F08D9F4C3146A571A415EF/8465a38ad19b48699799a8f96bcf0670/clipboard.png">
+ <br> 使用以下命令来添加用户： 
+ <pre style="'Courier New', Courier, monospace; color: rgb(51, 51, 51); font-size: 14px; background-color: rgb(245, 245, 245);">
+yiibai@ubuntu:~$ sudo adduser --ingroup hadoop_ hduser_</pre> 
+ <p> 输入您的密码，姓名和其他详细信息。<br> <img alt="" src="/uploads/allimg/201509/1-1509130T944240.png" style="width: 726px; height: 347px;"></p> 
+ <h3> 二、配置SSH</h3> 
+ <p> 为了在集群管理节点，Hadoop需要SSH访问</p> 
+ <p> 首先，切换用户，输入以下命令：</p> 
+ <pre style="'Courier New', Courier, monospace; color: rgb(51, 51, 51); font-size: 14px; background-color: rgb(245, 245, 245);">
+yiibai@ubuntu:~$ su hduser_</pre> 
+ <p style="margin: 5px 0px; color: rgb(52, 52, 52); 'Droid Sans'; font-size: 17px;"> <img alt="" src="/uploads/allimg/201509/1-150913092603157.png" style="width: 506px; height: 151px;"><img data-attr-org-img-file="file:///D:/Program%20Files/qq24B39E2329F08D9F4C3146A571A415EF/52c0d00386804afb9bfdc3bfbeb1cac5/clipboard.png" data-attr-org-src-id="7341C4E71EF744CCB5BF9EB0CC626C76" data-media-type="image" src="file:///D:/Program%20Files/qq24B39E2329F08D9F4C3146A571A415EF/52c0d00386804afb9bfdc3bfbeb1cac5/clipboard.png" style="display: inline-block; margin-top: 8px; max-width: 800px; background-color: inherit;"></p> 以下这个命令将创建一个新的密钥。 
+ <pre style="'Courier New', Courier, monospace; color: rgb(51, 51, 51); font-size: 14px; background-color: rgb(245, 245, 245);">
+hduser_@ubuntu:~$ ssh-keygen -t rsa -P ""</pre> 
+ <p style="margin: 5px 0px; color: rgb(52, 52, 52); 'Droid Sans'; font-size: 17px;"> <img data-attr-org-img-file="file:///D:/Program%20Files/qq24B39E2329F08D9F4C3146A571A415EF/832a5572730a4e62b37366aa2b0b3030/clipboard.png" data-attr-org-src-id="B52749AF367B446CBBE73083E438C3CF" data-media-type="image" src="file:///D:/Program%20Files/qq24B39E2329F08D9F4C3146A571A415EF/832a5572730a4e62b37366aa2b0b3030/clipboard.png" style="display: inline-block; margin-top: 8px; max-width: 800px; background-color: inherit;"><img alt="" src="/uploads/allimg/201509/1-150913092A9129.png" style="width: 637px; height: 466px;"></p> 
+ <p> 使用此密钥启用SSH访问本地计算机。</p> 
+ <pre style="'Courier New', Courier, monospace; color: rgb(51, 51, 51); font-size: 14px; background-color: rgb(245, 245, 245);">
+hduser_@ubuntu:~$ cat /home/hduser_/.ssd/id_rsa.pub &gt;&gt; /home/hduser_/.ssh/authorized_keys</pre> 
+ <p style="margin: 5px 0px; color: rgb(52, 52, 52); 'Droid Sans'; font-size: 17px;"> <img data-attr-org-img-file="file:///D:/Program%20Files/qq24B39E2329F08D9F4C3146A571A415EF/6884007eb10548918293f180cdc7cd4a/clipboard.png" data-attr-org-src-id="362D2DDB5BE1460EB6053A5C72899CC1" data-media-type="image" src="file:///D:/Program%20Files/qq24B39E2329F08D9F4C3146A571A415EF/6884007eb10548918293f180cdc7cd4a/clipboard.png" style="display: inline-block; margin-top: 8px; max-width: 800px; background-color: inherit;"><img alt="" src="/uploads/allimg/201509/1-150913092I4613.png" style="width: 639px; height: 68px;"></p> 
+ <p> 现在，测试SSH设置通过“hduser”用户连接到locahost。</p> 
+ <pre style="'Courier New', Courier, monospace; color: rgb(51, 51, 51); font-size: 14px; background-color: rgb(245, 245, 245);">
+hduser_@ubuntu:~$ ssh localhost</pre> 
+ <p style="margin: 5px 0px; color: rgb(52, 52, 52); 'Droid Sans'; font-size: 17px;"> <img data-attr-org-img-file="file:///D:/Program%20Files/qq24B39E2329F08D9F4C3146A571A415EF/3bd1ad62f90c4c67828f4c0b033ce7f8/clipboard.png" data-attr-org-src-id="4E8BAAA35BED429388E4C87E10C97093" data-media-type="image" src="file:///D:/Program%20Files/qq24B39E2329F08D9F4C3146A571A415EF/3bd1ad62f90c4c67828f4c0b033ce7f8/clipboard.png" style="display: inline-block; margin-top: 8px; max-width: 800px; background-color: inherit;"><img alt="" src="/uploads/allimg/201509/1-150913092Q2953.png" style="width: 735px; height: 355px;"></p> 
+ <p> 注意：</p> 
+ <p> 请注意，执行&nbsp;&nbsp;'ssh localhost' 命令后如果看到下面的错误响应, &nbsp;可能 SSH 在此系统不可用。</p> 
+ <p> <img alt="" src="/uploads/allimg/201509/1-150913092TWC.png" style="width: 642px; height: 83px;"></p> 
+ <p> 来解决上面这个问题，安装 SSH 服务 -</p> 
+ <p> 清除 SSH 使用以下命令：</p> 
+ <pre style="'Courier New', Courier, monospace; color: rgb(51, 51, 51); font-size: 14px; background-color: rgb(245, 245, 245);">
+hduser_@ubuntu:~$ sudo apt-get purge openssh-server</pre> 
+ <p> 在安装开始前清除 SSH 服务，这是一个很好的做法(建议)，如果遇到“</p> 
+ <div title="Linux下is not in the sudoers file解决方法">
+   is not in the sudoers file ...“提示，请使用有sudo 的用户来执行，
+ </div> 
+ <div title="Linux下is not in the sudoers file解决方法">
+   这里使用的用户是：yiibai
+  <br> 
+  <img alt="" src="/uploads/allimg/201509/1-1509130929529B.png">
+  <br> 
+  <img data-attr-org-img-file="file:///D:/Program%20Files/qq24B39E2329F08D9F4C3146A571A415EF/b8e1e772d48248ea9bca28a0038b7f9c/clipboard.png" data-attr-org-src-id="21A2392A0E3B4729B56905B4EB97BEE3" data-media-type="image" src="file:///D:/Program%20Files/qq24B39E2329F08D9F4C3146A571A415EF/b8e1e772d48248ea9bca28a0038b7f9c/clipboard.png">
+ </div> 使用以下命令来安装SSH，使用以下命令： 
+ <pre style="'Courier New', Courier, monospace; color: rgb(51, 51, 51); font-size: 14px; background-color: rgb(245, 245, 245);">
+yiibai@ubuntu:~$ sudo apt-get install openssh-server</pre> 
+ <p style="margin: 5px 0px; color: rgb(52, 52, 52); 'Droid Sans'; font-size: 17px;"> <img alt="" src="/uploads/allimg/201509/1-15091309314H58.png" style="width: 732px; height: 181px;"><img data-attr-org-img-file="file:///D:/Program%20Files/qq24B39E2329F08D9F4C3146A571A415EF/a01f47e343354601b642d4b2878809b5/clipboard.png" data-attr-org-src-id="FC56AAFED434402381CAADA955B9DFCD" data-media-type="image" src="file:///D:/Program%20Files/qq24B39E2329F08D9F4C3146A571A415EF/a01f47e343354601b642d4b2878809b5/clipboard.png" style="display: inline-block; margin-top: 8px; max-width: 800px; background-color: inherit;"></p> 
+ <p style="margin: 5px 0px; color: rgb(52, 52, 52); 'Droid Sans'; font-size: 17px;"> &nbsp;</p> 
+ <h3 style="margin: 5px 0px; color: rgb(52, 52, 52); font-size: 17px;"> <b style="background-color: inherit;">三、下载Hadoop</b></h3> 在浏览器中打开网址：
+ <a target="_blank" href="http://hadoop.apache.org/releases.html" style="background-color: inherit; cursor: pointer;">http://hadoop.apache.org/releases.html</a>
+ <br> 
+ <img alt="" src="/uploads/allimg/201509/1-150913093233602.png" style="width: 787px; height: 579px;">
+ <br> 选择一个最新 2.7.1 的稳定版本(stable)的二进制包下载，如下：
+ <br> 
+ <img alt="" src="/uploads/allimg/201509/1-150913093302600.png" style="width: 781px; height: 582px;"> 
+ <p style="margin: 5px 0px; color: rgb(52, 52, 52); 'Droid Sans'; font-size: 17px;"> <img data-attr-org-img-file="file:///D:/Program%20Files/qq24B39E2329F08D9F4C3146A571A415EF/d3cb1af09b0c4a1391c835da67cf34c5/clipboard.png" data-attr-org-src-id="A2735FFA2E1D41E2A0157F49712E66CA" data-media-type="image" src="file:///D:/Program%20Files/qq24B39E2329F08D9F4C3146A571A415EF/d3cb1af09b0c4a1391c835da67cf34c5/clipboard.png" style="display: inline-block; margin-top: 8px; max-width: 800px; background-color: inherit;"></p> 下载完成后，默认将文件放在 /home/yiibai/Downloads，如下图所示： 
+ <p style="margin: 5px 0px; color: rgb(52, 52, 52); 'Droid Sans'; font-size: 17px;"> <img alt="" src="/uploads/allimg/201509/1-15091309332LB.png" style="width: 737px; height: 385px;"><img data-attr-org-img-file="file:///D:/Program%20Files/qq24B39E2329F08D9F4C3146A571A415EF/87a1d7deffd64e6cae4ddeccef043f77/clipboard.png" data-attr-org-src-id="A66964EB997043DEBACB6809584A1F3B" data-media-type="image" src="file:///D:/Program%20Files/qq24B39E2329F08D9F4C3146A571A415EF/87a1d7deffd64e6cae4ddeccef043f77/clipboard.png" style="display: inline-block; margin-top: 8px; max-width: 800px; background-color: inherit;"></p> 现在进入到到包含tar文件的目录，准备解压 tar.gz 文件： 
+ <pre style="'Courier New', Courier, monospace; color: rgb(51, 51, 51); font-size: 14px; background-color: rgb(245, 245, 245);">
+yiibai@ubuntu:~$ cd /home/yiibai/Downloads</pre> 使用以下命令解压文件包：&nbsp; 
+ <div style="background-color: inherit;"> 
+  <pre style="'Courier New', Courier, monospace; color: rgb(51, 51, 51); font-size: 14px; background-color: rgb(245, 245, 245);">
+yiibai@ubuntu:~$ sudo tar xzf hadoop-2.7.1.tar.gz</pre> 
+ </div> 
+ <div style="background-color: inherit;">
+   现在重命名 hadoop-2.2.0 为 hadoop 
+  <pre style="'Courier New', Courier, monospace; color: rgb(51, 51, 51); font-size: 14px; background-color: rgb(245, 245, 245);">
+yiibai@ubuntu:~$ sudo mv hadoop-2.7.1 /usr/local/hadoop</pre> 更改文件用户属性，执行以下命令： 
+  <pre style="'Courier New', Courier, monospace; color: rgb(51, 51, 51); font-size: 14px; background-color: rgb(245, 245, 245);">
+yiibai@ubuntu:~$ cd /usr/local
+yiibai@ubuntu:~$ sudo chown -R hduser_:hadoop_ hadoop</pre> 
+ </div> 到这里，hadoop文件的相关工作已经准备好，接下来我们还要做一些关键的设置。 
+ <div style="background-color: inherit;"> 
+  <p style="margin: 5px 0px; color: rgb(52, 52, 52); 'Droid Sans'; font-size: 17px;"> &nbsp;</p> 
+  <h3 style="margin: 5px 0px; background-color: inherit;"> <span style="background-color: inherit;"><font size="3" style="background-color: inherit;"><b style="background-color: inherit;">四、修改 &nbsp;~/.bashrc&nbsp;文件</b></font></span></h3> 
+  <p style="margin: 5px 0px; background-color: inherit;"> 添加以下这些行到&nbsp;<span style="background-color: inherit;">~/.bashrc&nbsp;</span>文件的末尾，内容如下所示：</p> 
+  <div style="color: rgb(52, 52, 52); 'Droid Sans'; font-size: 17px;"> 
+   <div style="font-size: 1em !important;"> 
+    <table border="1" cellpadding="2" cellspacing="0" style="border-collapse: collapse; margin-top: 10px; margin-bottom: 10px; font-size: 1em !important; Consolas, 'Bitstream Vera Sans Mono', 'Courier New', Courier, monospace !important; background-color: inherit;"> 
+     <tbody style="background-color: inherit; font-size: 1em !important;"> 
+      <tr style="background-color: inherit; font-size: 1em !important;"> 
+       <td style="word-break: break-all; border: 1px solid rgb(153, 153, 153); padding: 5px 16px 5px 14px; min-height: 25px; min-width: 25px; height: auto !important; background-color: inherit; color: rgb(175, 175, 175) !important; font-size: 1em !important; width: auto !important;"> 
+        <div style="min-width: 2px; background-color: inherit; font-size: 1em !important;">
+          1
+        </div> 
+        <div style="min-width: 2px; background-color: inherit; font-size: 1em !important;">
+          2
+        </div> 
+        <div style="min-width: 2px; background-color: inherit; font-size: 1em !important;">
+          3
+        </div> 
+        <div style="min-width: 2px; background-color: inherit; font-size: 1em !important;">
+          4
+        </div> 
+        <div style="min-width: 2px; background-color: inherit; font-size: 1em !important;">
+          5
+        </div> 
+        <div style="min-width: 2px; background-color: inherit; font-size: 1em !important;">
+          6
+        </div> </td> 
+       <td> 
+        <div> 
+         <div>
+           #Set HADOOP_HOME
+         </div> 
+         <div>
+           export HADOOP_HOME=/usr/local/hadoop
+         </div> 
+         <div>
+           #Set JAVA_HOME
+         </div> 
+         <div>
+           export JAVA_HOME=/usr/local/jdk1.8.0_60
+         </div> 
+         <div>
+           # Add bin/ directory of Hadoop to PATH
+         </div> 
+         <div>
+           export PATH=$PATH:$HADOOP_HOME/bin
+         </div> 
+        </div> </td> 
+      </tr> 
+     </tbody> 
+    </table> 
+   </div> 
+  </div> 
+  <p> 在终端下执行以下命令，打开编辑器并将上面的内容加入到文件的底部，如下图所示：</p> 
+  <pre style="'Courier New', Courier, monospace; color: rgb(51, 51, 51); font-size: 14px; background-color: rgb(245, 245, 245);">
+yiibai@ubuntu:~$ vi ~/.bashrc</pre> 
+  <p style="margin: 5px 0px; color: rgb(52, 52, 52); 'Droid Sans'; font-size: 17px;"> <img alt="" src="/uploads/allimg/201509/1-15091309343M57.png" style="width: 658px; height: 455px;"><img data-attr-org-img-file="file:///D:/Program%20Files/qq24B39E2329F08D9F4C3146A571A415EF/db002848340a4ad18e755062a23fc71a/clipboard.png" data-attr-org-src-id="69F28D2D17D84E4087F1DCEA41A95369" data-media-type="image" src="file:///D:/Program%20Files/qq24B39E2329F08D9F4C3146A571A415EF/db002848340a4ad18e755062a23fc71a/clipboard.png" style="display: inline-block; margin-top: 8px; max-width: 800px; background-color: inherit;"></p> 
+  <p style="margin: 5px 0px; background-color: inherit;"> 现在，使用下面的命令环境配置</p> 
+  <pre style="'Courier New', Courier, monospace; color: rgb(51, 51, 51); font-size: 14px; background-color: rgb(245, 245, 245);">
+yiibai@ubuntu:~$ . ~/.bashrc</pre> 
+  <p style="margin: 5px 0px; color: rgb(52, 52, 52); 'Droid Sans'; font-size: 17px;"> &nbsp;</p> 
+  <h3> <font size="3" style="background-color: inherit;"><b style="background-color: inherit;"><span style="background-color: inherit;">五、</span>配置关联HDFS</b></font></h3> 
+ </div> 设置&nbsp;
+ <b style="background-color: inherit;">JAVA_HOME&nbsp;</b>在文件&nbsp;
+ <b style="background-color: inherit;">/usr/local/hadoop/etc/hadoop/hadoop-env.sh</b>&nbsp;中，使用以下行代替，即写上完整的 Java 安装路径。如下所示： 
+ <div style="background-color: inherit;"> 
+  <p style="margin: 5px 0px; color: rgb(52, 52, 52); 'Droid Sans'; font-size: 17px;"> <img alt="" src="/uploads/allimg/201509/1-1509130935125F.png"><img data-attr-org-img-file="file:///D:/Program%20Files/qq24B39E2329F08D9F4C3146A571A415EF/9bf2a1d85d18466eadd883261aad08a8/clipboard.png" data-attr-org-src-id="665EECF1691542EFB05F9FCFCFDB9044" data-media-type="image" src="file:///D:/Program%20Files/qq24B39E2329F08D9F4C3146A571A415EF/9bf2a1d85d18466eadd883261aad08a8/clipboard.png" style="display: inline-block; margin-top: 8px; max-width: 800px; background-color: inherit;"></p> 
+ </div> 
+ <p style="margin: 5px 0px; background-color: inherit;"> 在&nbsp;<span style="background-color: inherit;">$HADOOP_HOME/etc/hadoop/core-site.xml 文件中还有两个参数需要设置</span>：</p> 
+ <p style="margin: 5px 0px; background-color: inherit;"> 1.&nbsp;'<b style="background-color: inherit;">hadoop.tmp.dir</b>' -&nbsp;用于指定目录让 Hadoop 来存储其数据文件。</p> 
+ <p style="margin: 5px 0px; background-color: inherit;"> 2. '<b style="background-color: inherit;">fs.default.name</b>' - 指定默认的文件系统</p> 
+ <p style="margin: 5px 0px; background-color: inherit;"> 为了设置两个参数，打开文件 core-site.xml</p> 
+ <pre style="'Courier New', Courier, monospace; color: rgb(51, 51, 51); font-size: 14px; background-color: rgb(245, 245, 245);">
+yiibai@ubuntu:~$ sudo gedit /usr/local/hadoop/etc/hadoop/core-site.xml</pre> 拷贝以下所有行的内容放入到标签 &lt;configuration&gt;&lt;/configuration&gt; 中间。 
+ <div style="background-color: inherit;"> 
+  <div style="color: rgb(52, 52, 52); 'Droid Sans'; font-size: 17px;"> 
+   <div style="font-size: 1em !important;"> 
+    <table border="1" cellpadding="2" cellspacing="0" style="border-collapse: collapse; margin-top: 10px; margin-bottom: 10px; font-size: 1em !important; Consolas, 'Bitstream Vera Sans Mono', 'Courier New', Courier, monospace !important; background-color: inherit;"> 
+     <tbody style="background-color: inherit; font-size: 1em !important;"> 
+      <tr style="background-color: inherit; font-size: 1em !important;"> 
+       <td style="word-break: break-all; border: 1px solid rgb(153, 153, 153); padding: 5px 16px 5px 14px; min-height: 25px; min-width: 25px; height: auto !important; background-color: inherit; color: rgb(175, 175, 175) !important; font-size: 1em !important; width: auto !important;"> 
+        <div style="min-width: 2px; background-color: inherit; font-size: 1em !important;">
+          1
+        </div> 
+        <div style="min-width: 2px; background-color: inherit; font-size: 1em !important;">
+          2
+        </div> 
+        <div style="min-width: 2px; background-color: inherit; font-size: 1em !important;">
+          3
+        </div> 
+        <div style="min-width: 2px; background-color: inherit; font-size: 1em !important;">
+          4
+        </div> 
+        <div style="min-width: 2px; background-color: inherit; font-size: 1em !important;">
+          5
+        </div> 
+        <div style="min-width: 2px; background-color: inherit; font-size: 1em !important;">
+          6
+        </div> 
+        <div style="min-width: 2px; background-color: inherit; font-size: 1em !important;">
+          7
+        </div> 
+        <div style="min-width: 2px; background-color: inherit; font-size: 1em !important;">
+          8
+        </div> 
+        <div style="min-width: 2px; background-color: inherit; font-size: 1em !important;">
+          9
+        </div> 
+        <div style="min-width: 2px; background-color: inherit; font-size: 1em !important;">
+          10
+        </div> </td> 
+       <td style="word-break: break-all; border: 1px solid rgb(153, 153, 153); padding: 5px 16px 5px 14px; min-height: 25px; min-width: 25px; height: auto !important; background-color: inherit; width: 785px; font-size: 1em !important;"> 
+        <div style="min-width: 2px; background-color: inherit;"> 
+         <div style="background-color: inherit;"> 
+          <span style="background-color: inherit;">&lt;</span>
+          <span style="background-color: inherit;">property</span>
+          <span style="background-color: inherit;">&gt;</span>
+         </div> 
+         <div style="background-color: inherit;"> 
+          <span style="background-color: inherit;">&nbsp; &nbsp; &lt;</span>
+          <span style="background-color: inherit;">name</span>
+          <span style="background-color: inherit;">&gt;hadoop.tmp.dir&lt;/</span>
+          <span style="background-color: inherit;">name</span>
+          <span style="background-color: inherit;">&gt;</span>
+         </div> 
+         <div style="background-color: inherit;"> 
+          <span style="background-color: inherit;">&nbsp; &nbsp; &lt;</span>
+          <span style="background-color: inherit;">value</span>
+          <span style="background-color: inherit;">&gt;/app/hadoop/tmp&lt;/</span>
+          <span style="background-color: inherit;">value</span>
+          <span style="background-color: inherit;">&gt;</span>
+         </div> 
+         <div style="background-color: inherit;"> 
+          <span style="background-color: inherit;">&nbsp; &nbsp; &lt;</span>
+          <span style="background-color: inherit;">description</span>
+          <span style="background-color: inherit;">&gt;Parent directory for other temporary directories.&lt;/</span>
+          <span style="background-color: inherit;">description</span>
+          <span style="background-color: inherit;">&gt;</span>
+         </div> 
+         <div style="background-color: inherit;"> 
+          <span style="background-color: inherit;">&lt;/</span>
+          <span style="background-color: inherit;">property</span>
+          <span style="background-color: inherit;">&gt;</span>
+         </div> 
+         <div style="background-color: inherit;"> 
+          <span style="background-color: inherit;">&lt;</span>
+          <span style="background-color: inherit;">property</span>
+          <span style="background-color: inherit;">&gt;</span>
+         </div> 
+         <div style="background-color: inherit;"> 
+          <span style="background-color: inherit;">&nbsp; &nbsp; &lt;</span>
+          <span style="background-color: inherit;">name</span>
+          <span style="background-color: inherit;">&gt;fs.defaultFS &lt;/</span>
+          <span style="background-color: inherit;">name</span>
+          <span style="background-color: inherit;">&gt;</span>
+         </div> 
+         <div style="background-color: inherit;"> 
+          <span style="background-color: inherit;">&nbsp; &nbsp; &lt;</span>
+          <span style="background-color: inherit;">value</span>
+          <span style="background-color: inherit;">&gt;hdfs://localhost:54310&lt;/</span>
+          <span style="background-color: inherit;">value</span>
+          <span style="background-color: inherit;">&gt;</span>
+         </div> 
+         <div style="background-color: inherit;"> 
+          <span style="background-color: inherit;">&nbsp; &nbsp; &lt;</span>
+          <span style="background-color: inherit;">description</span>
+          <span style="background-color: inherit;">&gt;The name of the default file system. &lt;/</span>
+          <span style="background-color: inherit;">description</span>
+          <span style="background-color: inherit;">&gt;</span>
+         </div> 
+         <div style="background-color: inherit;"> 
+          <span style="background-color: inherit;">&lt;/</span>
+          <span style="background-color: inherit;">property</span>
+          <span style="background-color: inherit;">&gt;</span>
+         </div> 
+        </div> </td> 
+      </tr> 
+     </tbody> 
+    </table> 
+   </div> 
+  </div> 
+ </div> 结果如下图所示： 
+ <div style="background-color: inherit;"> 
+  <p style="margin: 5px 0px; color: rgb(52, 52, 52); 'Droid Sans'; font-size: 17px;"> <img alt="" src="/uploads/allimg/201509/1-1509130935521W.png" style="width: 767px; height: 440px;"></p> 
+ </div> 进入到目录：/usr/local/hadoop/etc/hadoop，使用如下的命令： 
+ <div style="background-color: inherit;"> 
+  <pre style="'Courier New', Courier, monospace; color: rgb(51, 51, 51); font-size: 14px; background-color: rgb(245, 245, 245);">
+yiibai@ubuntu:~$ cd /usr/local/hadoop/etc/hadoop
+yiibai@ubuntu:/usr/local/hadoop/etc/hadoop$</pre> 
+  <div style="background-color: inherit;"> 
+   <p> 现在创建一个目录，如上面配置&nbsp;core-site.xml&nbsp;中使用的目录：/app/hadoop/tmp</p> 
+   <pre style="'Courier New', Courier, monospace; color: rgb(51, 51, 51); font-size: 14px; background-color: rgb(245, 245, 245);">
+yiibai@ubuntu:/usr/local/hadoop/etc/hadoop$ sudo mkdir -p /app/hadoop/tmp</pre> 
+   <p> 授予权限目录 /app/hadoop/tmp，执行如下的命令：</p> 
+   <pre style="'Courier New', Courier, monospace; color: rgb(51, 51, 51); font-size: 14px; background-color: rgb(245, 245, 245);">
+yiibai@ubuntu:~$ sudo chown -R hduser_:hadoop_  /app/hadoop/tmp
+yiibai@ubuntu:~$ sudo chmod 750 /app/hadoop/tmp</pre> 
+   <p style="margin: 5px 0px; color: rgb(52, 52, 52); 'Droid Sans'; font-size: 17px;"> &nbsp;</p> 
+  </div> 
+ </div> 
+ <font size="3" style="background-color: inherit;"><b style="background-color: inherit;"><span style="background-color: inherit;">六、</span>Map Reduce 配置</b></font> 
+ <div style="background-color: inherit;">
+   &nbsp;
+ </div> 
+ <div style="background-color: inherit;">
+   在设置这个配置之前， 我们需要设置 HADOOP_HOME 的路径，执行以下命令： 
+  <div style="background-color: inherit;"> 
+   <pre style="'Courier New', Courier, monospace; color: rgb(51, 51, 51); font-size: 14px; background-color: rgb(245, 245, 245);">
+yiibai@ubuntu:~$ sudo gedit /etc/profile.d/hadoop.sh</pre> 
+  </div> 
+  <p> 然后输入以下一行，</p> 
+  <p> export HADOOP_HOME=/usr/local/hadoop<br> <img alt="" src="/uploads/allimg/201509/1-150913093912161.png" style="width: 591px; height: 267px;"><img data-attr-org-img-file="file:///D:/Program%20Files/qq24B39E2329F08D9F4C3146A571A415EF/e9748559ffdf4ca7b055c6bece5de7ce/clipboard.png" data-attr-org-src-id="33642C0464BD409B8B9ECB4727CFFED6" data-media-type="image" src="file:///D:/Program%20Files/qq24B39E2329F08D9F4C3146A571A415EF/e9748559ffdf4ca7b055c6bece5de7ce/clipboard.png" style="background-color: inherit;"></p> 
+  <div> 
+   <p> 再执行以下命令：</p> 
+   <pre style="'Courier New', Courier, monospace; color: rgb(51, 51, 51); font-size: 14px; background-color: rgb(245, 245, 245);">
+yiibai@ubuntu:~$ sudo chmod +x /etc/profile.d/hadoop.sh</pre> 
+  </div> 
+ </div> 退出命令行终端再次进入，并输入以下命令：echo $HADOOP_HOME 以验证 hadoop 的路径： 
+ <div style="background-color: inherit;"> 
+  <pre style="'Courier New', Courier, monospace; color: rgb(51, 51, 51); font-size: 14px; background-color: rgb(245, 245, 245);">
+yiibai@ubuntu:~$ echo $HADOOP_HOME
+/usr/local/hadoop</pre> 
+  <div style="background-color: inherit;"> 
+   <p style="margin: 5px 0px; color: rgb(52, 52, 52); 'Droid Sans'; font-size: 17px;"> <span style="color: rgb(34, 34, 34); font-size: 14px;">现在复制文件，执行以下命令：</span></p> 
+  </div> 
+ </div> 
+ <div style="background-color: inherit;"> 
+  <pre style="'Courier New', Courier, monospace; color: rgb(51, 51, 51); font-size: 14px; background-color: rgb(245, 245, 245);">
+yiibai@ubuntu:~$ sudo cp $HADOOP_HOME/etc/hadoop/mapred-site.xml.template $HADOOP_HOME/etc/hadoop/mapred-site.xml</pre> 
+  <p style="margin: 5px 0px; color: rgb(52, 52, 52); 'Droid Sans'; font-size: 17px;"> &nbsp;</p> 
+ </div> 使用vi 打开文件&nbsp;mapred-site.xml&nbsp; 
+ <div style="background-color: inherit;"> 
+  <pre style="'Courier New', Courier, monospace; color: rgb(51, 51, 51); font-size: 14px; background-color: rgb(245, 245, 245);">
+yiibai@ubuntu:~$ sudo vi $HADOOP_HOME/etc/hadoop/mapred-site.xml</pre> 
+  <p style="margin: 5px 0px; color: rgb(52, 52, 52); 'Droid Sans'; font-size: 17px;"> &nbsp;</p> 
+ </div> 添加以下的设置内容到标签&lt;configuration&gt; 和 &lt;/configuration&gt; 中，如下图所示： 
+ <div style="background-color: inherit;"> 
+  <div style="color: rgb(52, 52, 52); 'Droid Sans'; font-size: 17px;"> 
+   <div style="font-size: 1em !important;"> 
+    <table border="1" cellpadding="2" cellspacing="0" style="border-collapse: collapse; margin-top: 10px; margin-bottom: 10px; font-size: 1em !important; Consolas, 'Bitstream Vera Sans Mono', 'Courier New', Courier, monospace !important; background-color: inherit;"> 
+     <tbody style="background-color: inherit; font-size: 1em !important;"> 
+      <tr style="background-color: inherit; font-size: 1em !important;"> 
+       <td style="word-break: break-all; border: 1px solid rgb(153, 153, 153); padding: 5px 16px 5px 14px; min-height: 25px; min-width: 25px; height: auto !important; background-color: inherit; color: rgb(175, 175, 175) !important; font-size: 1em !important; width: auto !important;"> 
+        <div style="min-width: 2px; background-color: inherit; font-size: 1em !important;">
+          1
+        </div> 
+        <div style="min-width: 2px; background-color: inherit; font-size: 1em !important;">
+          2
+        </div> 
+        <div style="min-width: 2px; background-color: inherit; font-size: 1em !important;">
+          3
+        </div> 
+        <div style="min-width: 2px; background-color: inherit; font-size: 1em !important;">
+          4
+        </div> 
+        <div style="min-width: 2px; background-color: inherit; font-size: 1em !important;">
+          5
+        </div> 
+        <div style="min-width: 2px; background-color: inherit; font-size: 1em !important;">
+          6
+        </div> </td> 
+       <td style="word-break: break-all; border: 1px solid rgb(153, 153, 153); padding: 5px 16px 5px 14px; min-height: 25px; min-width: 25px; height: auto !important; background-color: inherit; width: 795px; font-size: 1em !important;"> 
+        <div style="min-width: 2px; background-color: inherit;"> 
+         <div style="background-color: inherit;"> 
+          <span style="background-color: inherit;">&lt;</span>
+          <span style="background-color: inherit;">property</span>
+          <span style="background-color: inherit;">&gt;</span>
+         </div> 
+         <div style="background-color: inherit;"> 
+          <span style="background-color: inherit;">&nbsp; &nbsp; &lt;</span>
+          <span style="background-color: inherit;">name</span>
+          <span style="background-color: inherit;">&gt;mapreduce.jobtracker.address&lt;/</span>
+          <span style="background-color: inherit;">name</span>
+          <span style="background-color: inherit;">&gt;</span>
+         </div> 
+         <div style="background-color: inherit;"> 
+          <span style="background-color: inherit;">&nbsp; &nbsp; &lt;</span>
+          <span style="background-color: inherit;">value</span>
+          <span style="background-color: inherit;">&gt;localhost:54311&lt;/</span>
+          <span style="background-color: inherit;">value</span>
+          <span style="background-color: inherit;">&gt;</span>
+         </div> 
+         <div style="background-color: inherit;"> 
+          <span style="background-color: inherit;">&nbsp; &nbsp; &lt;</span>
+          <span style="background-color: inherit;">description</span>
+          <span style="background-color: inherit;">&gt;MapReduce job tracker runs at this host and port.</span>
+         </div> 
+         <div style="background-color: inherit;"> 
+          <span style="background-color: inherit;">&nbsp; &nbsp; &lt;/</span>
+          <span style="background-color: inherit;">description</span>
+          <span style="background-color: inherit;">&gt;</span>
+         </div> 
+         <div style="background-color: inherit;"> 
+          <span style="background-color: inherit;">&lt;/</span>
+          <span style="background-color: inherit;">property</span>
+          <span style="background-color: inherit;">&gt;</span>
+         </div> 
+        </div> </td> 
+      </tr> 
+     </tbody> 
+    </table> 
+    <p style="margin: 5px 0px; background-color: inherit;"> <img alt="" src="/uploads/allimg/201509/1-150913093956251.png" style="width: 627px; height: 248px;"></p> 
+   </div> 
+  </div> 
+  <p style="margin: 5px 0px; color: rgb(52, 52, 52); 'Droid Sans'; font-size: 17px;"> <img data-attr-org-img-file="file:///D:/Program%20Files/qq24B39E2329F08D9F4C3146A571A415EF/cad6f608d1bb459896e4aac6c9a0ae53/clipboard.png" data-attr-org-src-id="802112FA450044EEAF29897D1EB69BF4" data-media-type="image" src="file:///D:/Program%20Files/qq24B39E2329F08D9F4C3146A571A415EF/cad6f608d1bb459896e4aac6c9a0ae53/clipboard.png" style="display: inline-block; margin-top: 8px; max-width: 800px; background-color: inherit;"></p> 
+ </div> 打开&nbsp;$HADOOP_HOME/etc/hadoop/hdfs-site.xml&nbsp;文件如下： 
+ <div style="background-color: inherit;">   
+  <pre style="'Courier New', Courier, monospace; color: rgb(51, 51, 51); font-size: 14px; background-color: rgb(245, 245, 245);">
+yiibai@ubuntu:~$ sudo vi $HADOOP_HOME/etc/hadoop/hdfs-site.xml</pre> 
+  <p> 添加以下的设置内容到标签&lt;configuration&gt; 和 &lt;/configuration&gt; 中，如下图所示：</p> 
+  <div style="color: rgb(52, 52, 52); 'Droid Sans'; font-size: 17px;"> 
+   <div style="font-size: 1em !important;"> 
+    <table border="1" cellpadding="2" cellspacing="0" style="border-collapse: collapse; margin-top: 10px; margin-bottom: 10px; font-size: 1em !important; Consolas, 'Bitstream Vera Sans Mono', 'Courier New', Courier, monospace !important; background-color: inherit;"> 
+     <tbody style="background-color: inherit; font-size: 1em !important;"> 
+      <tr style="background-color: inherit; font-size: 1em !important;"> 
+       <td style="word-break: break-all; border: 1px solid rgb(153, 153, 153); padding: 5px 16px 5px 14px; min-height: 25px; min-width: 25px; height: auto !important; background-color: inherit; color: rgb(175, 175, 175) !important; font-size: 1em !important; width: auto !important;"> 
+        <div style="min-width: 2px; background-color: inherit; font-size: 1em !important;">
+          1
+        </div> 
+        <div style="min-width: 2px; background-color: inherit; font-size: 1em !important;">
+          2
+        </div> 
+        <div style="min-width: 2px; background-color: inherit; font-size: 1em !important;">
+          3
+        </div> 
+        <div style="min-width: 2px; background-color: inherit; font-size: 1em !important;">
+          4
+        </div> 
+        <div style="min-width: 2px; background-color: inherit; font-size: 1em !important;">
+          5
+        </div> 
+        <div style="min-width: 2px; background-color: inherit; font-size: 1em !important;">
+          6
+        </div> 
+        <div style="min-width: 2px; background-color: inherit; font-size: 1em !important;">
+          7
+        </div> 
+        <div style="min-width: 2px; background-color: inherit; font-size: 1em !important;">
+          8
+        </div> 
+        <div style="min-width: 2px; background-color: inherit; font-size: 1em !important;">
+          9
+        </div> </td> 
+       <td style="word-break: break-all; border: 1px solid rgb(153, 153, 153); padding: 5px 16px 5px 14px; min-height: 25px; min-width: 25px; height: auto !important; background-color: inherit; width: 795px; font-size: 1em !important;"> 
+        <div style="min-width: 2px; background-color: inherit;"> 
+         <div style="background-color: inherit;"> 
+          <span style="background-color: inherit;">&lt;</span>
+          <span style="background-color: inherit;">property</span>
+          <span style="background-color: inherit;">&gt;</span>
+         </div> 
+         <div style="background-color: inherit;"> 
+          <span style="background-color: inherit;">&nbsp; &nbsp; &lt;</span>
+          <span style="background-color: inherit;">name</span>
+          <span style="background-color: inherit;">&gt;dfs.replication&lt;/</span>
+          <span style="background-color: inherit;">name</span>
+          <span style="background-color: inherit;">&gt;</span>
+         </div> 
+         <div style="background-color: inherit;"> 
+          <span style="background-color: inherit;">&nbsp; &nbsp; &lt;</span>
+          <span style="background-color: inherit;">value</span>
+          <span style="background-color: inherit;">&gt;1&lt;/</span>
+          <span style="background-color: inherit;">value</span>
+          <span style="background-color: inherit;">&gt;</span>
+         </div> 
+         <div style="background-color: inherit;"> 
+          <span style="background-color: inherit;">&nbsp; &nbsp; &lt;</span>
+          <span style="background-color: inherit;">description</span>
+          <span style="background-color: inherit;">&gt;Default block replication.&lt;/</span>
+          <span style="background-color: inherit;">description</span>
+          <span style="background-color: inherit;">&gt;</span>
+         </div> 
+         <div style="background-color: inherit;"> 
+          <span style="background-color: inherit;">&lt;/</span>
+          <span style="background-color: inherit;">property</span>
+          <span style="background-color: inherit;">&gt;</span>
+         </div> 
+         <div style="background-color: inherit;"> 
+          <span style="background-color: inherit;">&lt;</span>
+          <span style="background-color: inherit;">property</span>
+          <span style="background-color: inherit;">&gt;</span>
+         </div> 
+         <div style="background-color: inherit;"> 
+          <span style="background-color: inherit;">&nbsp; &nbsp; &lt;</span>
+          <span style="background-color: inherit;">name</span>
+          <span style="background-color: inherit;">&gt;dfs.datanode.data.dir&lt;/</span>
+          <span style="background-color: inherit;">name</span>
+          <span style="background-color: inherit;">&gt;</span>
+         </div> 
+         <div style="background-color: inherit;"> 
+          <span style="background-color: inherit;">&nbsp; &nbsp; &lt;</span>
+          <span style="background-color: inherit;">value</span>
+          <span style="background-color: inherit;">&gt;/home/hduser_/hdfs&lt;/</span>
+          <span style="background-color: inherit;">value</span>
+          <span style="background-color: inherit;">&gt;</span>
+         </div> 
+         <div style="background-color: inherit;"> 
+          <span style="background-color: inherit;">&lt;/</span>
+          <span style="background-color: inherit;">property</span>
+          <span style="background-color: inherit;">&gt;</span>
+         </div> 
+        </div> </td> 
+      </tr> 
+     </tbody> 
+    </table> 
+    <p style="margin: 5px 0px; background-color: inherit;"> <img alt="" src="/uploads/allimg/201509/1-1509130941225a.png" style="width: 627px; height: 328px;"></p> 
+   </div> 
+  </div> 
+ </div> 创建以上配置指定的目录并授权目录给用户，使用以下命令： 
+ <div style="background-color: inherit;"> 
+  <pre style="'Courier New', Courier, monospace; color: rgb(51, 51, 51); font-size: 14px; background-color: rgb(245, 245, 245);">
+yiibai@ubuntu:~$ sudo mkdir -p /home/hduser_/hdfs
+yiibai@ubuntu:~$ sudo chown -R hduser_:hadoop_ /home/hduser_/hdfs
+yiibai@ubuntu:~$ sudo chmod 750 /home/hduser_/hdfs</pre> 
+  <p style="margin: 5px 0px; color: rgb(52, 52, 52); 'Droid Sans'; font-size: 17px;"> &nbsp;</p> 
+ </div> 
+ <h3> <font size="3" style="background-color: inherit;"><b style="background-color: inherit;">七、格式化HDFS&nbsp;</b></font></h3> 
+ <div style="background-color: inherit;">
+   在第一使用 Hadoop 之前，需要先格式化 HDFS，使用下面的命令 
+  <div style="background-color: inherit;"> 
+   <pre style="'Courier New', Courier, monospace; color: rgb(51, 51, 51); font-size: 14px; background-color: rgb(245, 245, 245);">
+yiibai@ubuntu:~$ $HADOOP_HOME/bin/hdfs namenode -format</pre> 
+  </div> 执行结果如下图所示： 
+  <div style="background-color: inherit;"> 
+   <p style="margin: 5px 0px; color: rgb(52, 52, 52); 'Droid Sans'; font-size: 17px;"> <img data-attr-org-img-file="file:///D:/Program%20Files/qq24B39E2329F08D9F4C3146A571A415EF/10b7330c6c184c8eaf326ed18a576ef5/clipboard.png" data-attr-org-src-id="54F3139901404A1886FC1BABCFE29C44" data-media-type="image" src="/uploads/allimg/201509/1-150913094145G3.png" style="display: inline-block; margin-top: 8px; width: 800px; background-color: inherit;"></p> 
+   <p style="margin: 5px 0px; color: rgb(52, 52, 52); 'Droid Sans'; font-size: 17px;"> &nbsp;</p> 
+  </div> 
+ </div> 输入：y，继往下... 
+ <div style="background-color: inherit;"> 
+  <b style="background-color: inherit;">注：</b>可能会遇到一些提示错误：“java.io.IOException: Cannot create directory /app/hadoop/tmp/dfs/name/current...”，请执行以下命令来创建目录： 
+  <div style="background-color: inherit;"> 
+   <pre style="'Courier New', Courier, monospace; color: rgb(51, 51, 51); font-size: 14px; background-color: rgb(245, 245, 245);">
+yiibai@ubuntu:~$ sudo mkdir -p /app/hadoop/tmp/dfs/name/current
+yiibai@ubuntu:~$ sudo chmod -R a+w /app/hadoop/tmp/dfs/name/current/</pre> 
+   <p style="margin: 5px 0px; color: rgb(52, 52, 52); 'Droid Sans'; font-size: 17px;"> &nbsp;</p> 
+  </div> 
+ </div> 
+ <h3 style="margin: 5px 0px; background-color: inherit;"> <font size="3" style="background-color: inherit;"><b style="background-color: inherit;"><span style="background-color: inherit;">八、&nbsp;</span>启动 Hadoop 的单节点集群</b></font></h3> 
+ <p style="margin: 5px 0px; background-color: inherit;"> <span style="background-color: inherit;">使用以下命令启动cHadoop 的单节点集群(使用 hduser_ 用户来启动)，如下：</span></p> 
+ <div style="background-color: inherit;"> 
+  <pre style="'Courier New', Courier, monospace; color: rgb(51, 51, 51); font-size: 14px; background-color: rgb(245, 245, 245);">
+hduser_@ubuntu:~$ $HADOOP_HOME/sbin/start-dfs.sh</pre> 
+ </div> 上面的命令输出结果如下所示： 
+ <div style="background-color: inherit;"> 
+  <img alt="" src="/uploads/allimg/201509/1-15091309423X25.png" style="width: 683px; height: 280px;">
+ </div> 接下来再执行命令： 
+ <div style="background-color: inherit;"> 
+  <pre style="'Courier New', Courier, monospace; color: rgb(51, 51, 51); font-size: 14px; background-color: rgb(245, 245, 245);">
+hduser_@ubuntu:~$ $HADOOP_HOME/sbin/start-yarn.sh</pre> 
+  <p style="margin: 5px 0px; color: rgb(52, 52, 52); 'Droid Sans'; font-size: 17px;"> <img alt="" src="/uploads/allimg/201509/1-1509130943101L.png" style="width: 660px; height: 231px;"><img data-attr-org-img-file="file:///D:/Program%20Files/qq24B39E2329F08D9F4C3146A571A415EF/066fdbdf4f1c438c930f00ab7fd794a8/clipboard.png" data-attr-org-src-id="0857D3DF548C4BD386A196C9C4438980" data-media-type="image" src="file:///D:/Program%20Files/qq24B39E2329F08D9F4C3146A571A415EF/066fdbdf4f1c438c930f00ab7fd794a8/clipboard.png" style="display: inline-block; margin-top: 8px; max-width: 800px; background-color: inherit;"></p> 
+ </div> 现在使用&nbsp;'
+ <b style="background-color: inherit;">jps</b>'&nbsp;工具/命令, 验证是否所有 Hadoop 相关的进程正在运行。 
+ <div style="background-color: inherit;"> 
+  <pre style="'Courier New', Courier, monospace; color: rgb(51, 51, 51); font-size: 14px; background-color: rgb(245, 245, 245);">
+hduser_@ubuntu:~$ /usr/local/jdk1.8.0_60/bin/jps</pre> 
+ </div> 如果 Hadoop 成功启动，那么 jps 输出应显示： NameNode, NodeManager, ResourceManager, SecondaryNameNode, DataNode. 
+ <div style="background-color: inherit;"> 
+  <div style="background-color: inherit;"> 
+   <p style="margin: 5px 0px; color: rgb(52, 52, 52); 'Droid Sans'; font-size: 17px;"> &nbsp;</p> 
+  </div> 
+ </div> 
+ <b style="background-color: inherit;"><font size="3" style="background-color: inherit;"><span style="background-color: inherit;">九、</span>停止/关闭 Hadoop</font></b> 
+ <div style="background-color: inherit;"> 
+  <pre style="'Courier New', Courier, monospace; color: rgb(51, 51, 51); font-size: 14px; background-color: rgb(245, 245, 245);">
+hduser_@ubuntu:~$ $HADOOP_HOME/sbin/stop-dfs.sh</pre> 
+  <div style="background-color: inherit;"> 
+   <p style="margin: 5px 0px; color: rgb(52, 52, 52); 'Droid Sans'; font-size: 17px;"> <img alt="" src="/uploads/allimg/201509/1-15091309432D21.png" style="width: 655px; height: 113px;"><br> <img data-attr-org-img-file="file:///D:/Program%20Files/qq24B39E2329F08D9F4C3146A571A415EF/00af87e6b70843bcb5460a9efe83715a/clipboard.png" data-attr-org-src-id="DE6FB34ED0284ADCA6AF059E1F4A18BA" data-media-type="image" src="file:///D:/Program%20Files/qq24B39E2329F08D9F4C3146A571A415EF/00af87e6b70843bcb5460a9efe83715a/clipboard.png" style="display: inline-block; margin-top: 8px; max-width: 800px; background-color: inherit;"></p> 
+   <pre style="'Courier New', Courier, monospace; color: rgb(51, 51, 51); font-size: 14px; background-color: rgb(245, 245, 245);">
+hduser_@ubuntu:~$ $HADOOP_HOME/sbin/stop-yarn.sh</pre> 
+   <p style="margin: 5px 0px; color: rgb(52, 52, 52); 'Droid Sans'; font-size: 17px;"> <img alt="" src="/uploads/allimg/201509/1-15091309435B28.png" style="width: 648px; height: 98px;"><img data-attr-org-img-file="file:///D:/Program%20Files/qq24B39E2329F08D9F4C3146A571A415EF/c0d8b7aff6e846f5acd8e9cd96abc436/clipboard.png" data-attr-org-src-id="F1EA00233370409A9F16CB700A32C2C1" data-media-type="image" src="file:///D:/Program%20Files/qq24B39E2329F08D9F4C3146A571A415EF/c0d8b7aff6e846f5acd8e9cd96abc436/clipboard.png" style="display: inline-block; margin-top: 8px; max-width: 800px; background-color: inherit;"></p> 
+   <div style="color: rgb(52, 52, 52); 'Droid Sans'; font-size: 17px;"> 
+    <div style="line-height: 25px; widows: auto;"> 
+     <br> the end.
+    </div> 
+    <div>
+      &nbsp;
+    </div> 
+   </div> 
+  </div> 
+ </div> 
+ <br> 
+ <br>      
+</div></body></html>

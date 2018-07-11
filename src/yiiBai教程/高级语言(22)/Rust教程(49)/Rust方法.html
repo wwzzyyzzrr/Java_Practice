@@ -1,0 +1,120 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Rust方法</h1><div style="width:100%;float:left;" class="article-content">   
+ <h2 id="81-methods" style="box-sizing: border-box; -webkit-tap-highlight-color: transparent; -webkit-font-smoothing: antialiased; margin-bottom: 16px; line-height: 1.225; font-size: 1.75em; position: relative; padding-bottom: 0.3em; border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: rgb(238, 238, 238); color: rgb(51, 51, 51);  'Clear Sans', 'Helvetica Neue', Helvetica,   margin-top: 0px !important;"> 方法</h2> 
+ <p> 方法是附着于对象的函数。这些方法通过self关键字访问对象的数据和它的其他方法。&nbsp;方法是一个实现了impl块的定义。<br> &nbsp;</p> 
+ <pre>
+struct Point {
+    x: f64,
+    y: f64,
+}
+
+// Implementation block, all `Point` methods go in here
+impl Point {
+    // This is a static method
+    // Static methods don't need to be called by an instance
+    // These methods are generally used as constructors
+    fn origin() -&gt; Point {
+        Point { x: 0.0, y: 0.0 }
+    }
+
+    // Another static method, that takes two arguments
+    fn new(x: f64, y: f64) -&gt; Point {
+        Point { x: x, y: y }
+    }
+}
+
+struct Rectangle {
+    p1: Point,
+    p2: Point,
+}
+
+impl Rectangle {
+    // This is an instance method
+    // `&amp;self` is sugar for `self: &amp;Self`, where `Self` is the type of the
+    // caller object. In this case `Self` = `Rectangle`
+    fn area(&amp;self) -&gt; f64 {
+        // `self` gives access to the struct fields via the dot operator
+        let Point { x: x1, y: y1 } = self.p1;
+        let Point { x: x2, y: y2 } = self.p2;
+
+        // `abs` is a `f64` method that returns the absolute value of the
+        // caller
+        ((x1 - x2) * (y1 - y2)).abs()
+    }
+
+    fn perimeter(&amp;self) -&gt; f64 {
+        let Point { x: x1, y: y1 } = self.p1;
+        let Point { x: x2, y: y2 } = self.p2;
+
+        2.0 * ((x1 - x2).abs() + (y1 - y2).abs())
+    }
+
+    // This method requires the caller object to be mutable
+    // `&amp;mut self` desugars to `self: &amp;mut Self`
+    fn translate(&amp;mut self, x: f64, y: f64) {
+        self.p1.x += x;
+        self.p2.x += x;
+
+        self.p1.y += y;
+        self.p2.y += y;
+    }
+}
+
+// `Pair` owns resources: two heap allocated integers
+struct Pair(Box
+  <i32>
+   , Box
+   <i32>
+    );
+
+impl Pair {
+    // This method "consumes" the resources of the caller object
+    // `self` desugars to `self: Self`
+    fn destroy(self) {
+        // Destructure `self`
+        let Pair(first, second) = self;
+
+        println!("Destroying Pair({}, {})", first, second);
+
+        // `first` and `second` go out of scope and get freed
+    }
+}
+
+fn main() {
+    let rectangle = Rectangle {
+        // Static methods are called using double colons
+        p1: Point::origin(),
+        p2: Point::new(3.0, 4.0),
+    };
+
+    // Instance method are called using the dot operator
+    // Note that the first argument `&amp;self` is implicitly passed, i.e.
+    // `rectangle.perimeter()` === `perimeter(&amp;rectangle)`
+    println!("Rectangle perimeter: {}", rectangle.perimeter());
+    println!("Rectangle area: {}", rectangle.area());
+
+    let mut square = Rectangle {
+        p1: Point::origin(),
+        p2: Point::new(1.0, 1.0),
+    };
+
+    // Error! `rectangle` is immutable, but this method requires a mutable
+    // object
+    //rectangle.translate(1.0, 0.0);
+    // TODO ^ Try uncommenting this line
+
+    // Ok, mutable object can call mutable methods
+    square.translate(1.0, 1.0);
+
+    let pair = Pair(Box::new(1), Box::new(2));
+
+    pair.destroy();
+
+    // Error! Previous `destroy` call "consumed" `pair`
+    //pair.destroy();
+    // TODO ^ Try uncommenting this line
+}
+
+   </i32>
+  </i32></pre> 
+ <br>      
+</div></body></html>

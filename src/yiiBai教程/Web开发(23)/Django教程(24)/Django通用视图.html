@@ -1,0 +1,97 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Django通用视图</h1><div style="width:100%;float:left;" class="article-content">   
+ <div> 
+  <div>
+    在某些情况下编写视图代码，正如我们所看到前面工作真的很繁重。想象一下，只需要一个静态页面或列表页。&nbsp;Django还提供了一种简单的方法来设置这些简单的视图被称为通用视图。 
+  </div> 
+ </div> 
+ <div> 
+  <p style="text-align:justify;"> 不同于传统的视图，一般的视图是一个类但没有函数。Django还提供了一组类 django.views.generic 通用视图，以及每一个普通视图是这些类或从它们中的一个类继承的。 </p> 
+  <p style="text-align:justify;"> 有10+泛型类− </p> 
+  <pre>&gt;&gt;&gt; import django.views.generic
+&gt;&gt;&gt; dir(django.views.generic)
+
+['ArchiveIndexView', 'CreateView', 'DateDetailView', 'DayArchiveView', 
+   'DeleteView', 'DetailView', 'FormView', 'GenericViewError', 'ListView', 
+   'MonthArchiveView', 'RedirectView', 'TemplateView', 'TodayArchiveView', 
+   'UpdateView', 'View', 'WeekArchiveView', 'YearArchiveView', '__builtins__', 
+   '__doc__', '__file__', '__name__', '__package__', '__path__', 'base', 'dates', 
+   'detail', 'edit', 'list']</pre> 
+  <div>
+    你可以使用通用视图。让我们来看一些例子来看看它是如何工作的。 
+  </div> 
+  <h2> 静态网页 </h2> 
+  <div>
+    让我们从“static.html”模板发布静态页面。 
+  </div> 
+  <p style="text-align:justify;"> 我们的 static.html − </p> 
+  <pre>&lt;html&gt;
+   &lt;body&gt; 
+      This is a static page!!! 
+   &lt;/body&gt;
+&lt;/html&gt;&nbsp;</pre> 
+  <p style="text-align:justify;"> 如果我们这样做，按以前学过的方式，我们将不得不改变 myapp/views.py&nbsp;− </p> 
+  <pre>from django.shortcuts import render
+
+def static(request):
+   return render(request, 'static.html', {})&nbsp;</pre> 
+  <p style="text-align:justify;"> myapp/urls.py 如下&nbsp;− </p> 
+  <pre>from django.conf.urls import patterns, url
+
+urlpatterns = patterns("myapp.views", url(r'^static/', 'static', name = 'static'),)&nbsp;</pre> 
+  <p style="text-align:justify;"> 最好的办法就是使用通用视图。对于这一点，我们的 myapp/views.py 将变成为&nbsp;− </p> 
+  <pre>from django.views.generic import TemplateView
+
+class StaticView(TemplateView):
+   template_name = "static.html"&nbsp;</pre> 
+  <p style="text-align:justify;"> 而我们的 myapp/urls.py 将如下&nbsp;− </p> 
+  <pre>from myapp.views import StaticView
+from django.conf.urls import patterns
+
+urlpatterns = patterns("myapp.views", (r'^static/$', StaticView.as_view()),)&nbsp;</pre> 
+  <p style="text-align:justify;"> 当访问&nbsp;/myapp/static&nbsp;将得到&nbsp;−<br> <img src="/uploads/tutorial/20160130/1-1601301JJ4434.jpg" alt=""> </p> 
+  <p style="text-align:justify;"> 出于同样的结果，我们也可以，执行下列操作&nbsp;− </p> 
+  <ul> 
+   <li> 不需要修改 views.py </li> 
+   <li> 
+    <div>
+      更改url.py文件为 - 
+    </div> </li> 
+  </ul>   
+  <pre>from django.views.generic import TemplateView
+from django.conf.urls import patterns, url
+
+urlpatterns = patterns("myapp.views",
+   url(r'^static/',TemplateView.as_view(template_name = 'static.html')),)</pre> 
+  <div>
+    正如你所看到的，只需要改变url.py文件中的第二个方法。 
+  </div> 
+  <h3> </h3> 
+  <h2> 从数据库列表和显示数据 </h2> 
+  <p> 我们要列出所有条目在Dreamreal模型。这样使用ListView通用视图类变得容易。编辑url.py文件，并对其进行更新 - </p> 
+  <pre>from django.views.generic import ListView
+from django.conf.urls import patterns, url
+
+urlpatterns = patterns(
+   "myapp.views", url(r'^dreamreals/', ListView.as_view(model = Dreamreal, 
+      template_name = "dreamreal_list.html")),
+)&nbsp;</pre> 
+  <p> 重要的是要注意，在这一点上是变量通由通用视图到模板为object_list。如果你想自己的名字，将需要一个 context_object_name 参数添加到as_view方法。然后 url.py 成为&nbsp;- </p> 
+  <pre>from django.views.generic import ListView
+from django.conf.urls import patterns, url
+
+urlpatterns = patterns("myapp.views",
+   url(r'^dreamreals/', ListView.as_view(
+      template_name = "dreamreal_list.html")),
+      model = Dreamreal, context_object_name = ”dreamreals_objects” ,)&nbsp;</pre> 
+  <p> 然后关联的模板将成为&nbsp;− </p> 
+  <pre>{% extends "main_template.html" %}
+{% block content %}
+Dreamreals:&lt;p&gt;
+{% for dr in object_list %}
+{{dr.name}}&lt;/p&gt;
+{% endfor %}
+{% endblock %}&nbsp;</pre> 
+  <p> 访问 /myapp/dreamreals/ 将产生如下页面&nbsp;−<br> <img src="/uploads/tutorial/20160130/1-1601301JG0Q9.jpg" alt=""> </p> 
+ </div>
+ <br>      
+</div></body></html>

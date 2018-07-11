@@ -1,0 +1,108 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Struts2下载文件实例</h1><div style="width:100%;float:left;" class="article-content">   
+ <div> 
+  <div> 
+   <span style="line-height:1.5;">这是一个Struts2的例子来说明使用定制返回类型，允许用户下载文件。web工程的文件夹结构如下所示：<br> <img src="/uploads/tutorial/20151203/1-151203211R3T0.png" alt=""><br> </span> 
+  </div> 
+ </div> 
+ <div> 
+  <h2> 1. Action </h2> 
+  <div>
+    在Action类中，声明一个&nbsp;InputStream&nbsp;的数据类型和getter方法。 
+  </div> 
+  <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:16px;"> <strong>DownloadAction.java</strong> </p> 
+  <pre>package com.yiibai.common.action;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import com.opensymphony.xwork2.ActionSupport;
+
+public class DownloadAction extends ActionSupport{
+
+	private InputStream fileInputStream;
+	
+	public InputStream getFileInputStream() {
+		return fileInputStream;
+	}
+
+	public String execute() throws Exception {
+	    fileInputStream = new FileInputStream(new File("C:\\<span style="font-family:Monaco, Consolas, Courier, 'Lucida Console', monospace;font-size:inherit;line-height:1.5;">file-for-download</span><span style="font-family:Monaco, Consolas, Courier, 'Lucida Console', monospace;font-size:inherit;line-height:1.5;">.txt"));</span> return SUCCESS;
+	}
+}</pre> 
+  <h2> 2. 视图文件 </h2> 
+  <div>
+    一个正常的页面，有一个下载链接，用于下载文件。 
+  </div> 
+  <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:16px;"> <strong>downloadPage.jsp</strong> </p> 
+  <pre>&lt;%@ taglib prefix="s" uri="/struts-tags" %&gt;
+&lt;html&gt;
+
+&lt;body&gt;
+&lt;h1&gt;Struts 2 download file example&lt;/h1&gt;
+
+&lt;s:url id="fileDownload" namespace="/" action="download" &gt;&lt;/s:url&gt;
+
+&lt;div&gt;&lt;div class="ads-in-post hide_if_width_less_800"&gt;
+&lt;script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"&gt;&lt;/script&gt;
+&lt;!-- 728x90 - After2ndH4 --&gt;
+&lt;ins class="adsbygoogle hide_if_width_less_800" 
+     style="display:inline-block;width:728px;height:90px"
+     data-ad-client="ca-pub-2836379775501347"
+     data-ad-slot="3642936086"
+	 data-ad-region="yiibairegion"&gt;&lt;/ins&gt;
+&lt;script&gt;
+(adsbygoogle = window.adsbygoogle || []).push({});
+&lt;/script&gt;
+&lt;/div&gt;&lt;/div&gt;&lt;h2&gt;Download file - &lt;s:a href="%{fileDownload}"&gt;fileABC.txt&lt;/s:a&gt;
+&lt;/h2&gt;
+	
+&lt;/body&gt;
+&lt;/html&gt;</pre> 
+  <h2> 3. struts.xml </h2> 
+  <p> 定义下载文件的细节。&nbsp;&lt;param name=”inputName”&gt;&nbsp;值是从Action的InputStream属性的名称。 </p> 
+  <div>
+    阅读
+   <a target="_blank" href="http://struts.apache.org/2.x/docs/stream-result.html">Struts2的数据流结果文档</a>以了解更详细信息。 
+  </div> 
+  <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:16px;"> <strong>struts.xml</strong> </p> 
+  <pre>&lt;?xml version="1.0" encoding="UTF-8" ?&gt;
+&lt;!DOCTYPE struts PUBLIC
+"-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+"http://struts.apache.org/dtds/struts-2.0.dtd"&gt;
+ 
+&lt;struts&gt;
+
+&lt;constant name="struts.devMode" value="true" /&gt;
+	
+&lt;package name="default" namespace="/" extends="struts-default"&gt;
+   &lt;action name="show"&gt;
+	&lt;result name="success"&gt;pages/downloadPage.jsp&lt;/result&gt;
+   &lt;/action&gt;
+		
+   &lt;action name="download" class="com.yiibai.common.action.DownloadAction"&gt;
+	&lt;result name="success" type="stream"&gt;
+	  &lt;param name="contentType"&gt;application/octet-stream&lt;/param&gt;
+	  &lt;param name="inputName"&gt;fileInputStream&lt;/param&gt;
+	  &lt;param name="contentDisposition"&gt;attachment;filename="<span style="font-family:Monaco, Consolas, Courier, 'Lucida Console', monospace;font-size:inherit;line-height:1.5;">file-for-download</span><span style="font-family:Monaco, Consolas, Courier, 'Lucida Console', monospace;font-size:inherit;line-height:1.5;">.txt"&lt;/param&gt;</span> &lt;param name="bufferSize"&gt;1024&lt;/param&gt;
+	&lt;/result&gt;
+   &lt;/action&gt;
+&lt;/package&gt;
+	
+&lt;/struts&gt;</pre> 
+  <h2> 4. 执行结果 </h2> 
+  <p> 在浏览器中打开：http://localhost:8080/struts2download/<br> <img src="/uploads/tutorial/20151203/1-151203211U31Z.png" alt=""> </p> 
+  <h2> 参考 </h2> 
+  <ol> 
+   <li> <a target="_blank" href="http://struts.apache.org/2.x/docs/stream-result.html">http://struts.apache.org/2.x/docs/stream-result.html</a> </li> 
+   <li> <a target="_blank" href="http://www.iana.org/assignments/media-types/">http://www.iana.org/assignments/media-types/</a> </li> 
+   <li> <a target="_blank" href="http://www.yiibai.com/struts/struts-download-file-from-website-example.html">http://www.yiibai.com/struts/struts-download-file-from-website-example.html</a> </li> 
+   <li> <a target="_blank" href="http://www.yiibai.com/java/how-to-download-file-from-website-java-jsp.html">http://www.yiibai.com/java/how-to-download-file-from-website-java-jsp.html</a> </li> 
+   <li> <a target="_blank" href="http://struts.apache.org/2.x/docs/how-can-we-return-a-text-string-as-the-response.html">http://struts.apache.org/2.x/docs/how-can-we-return-a-text-string-as-the-response.html</a> </li> 
+  </ol> 
+  <div>
+    代码下载(struts2download) -&nbsp;
+   <a target="_blank" href="http://pan.baidu.com/s/1n2C5S">http://pan.baidu.com/s/1jGg0Lzo</a> 
+  </div> 
+ </div>
+ <br>      
+</div></body></html>

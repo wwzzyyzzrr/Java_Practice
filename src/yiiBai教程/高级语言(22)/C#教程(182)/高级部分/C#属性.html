@@ -1,0 +1,253 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">C#属性</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>属性是一个声明性的标签，用于向运行时传递有关程序中各种元素(如类，方法，结构，枚举器，程序集等)的行为的信息。可以通过使用属性将声明性信息添加到程序。声明式标签由放置在其所用元素上方的方括号(<code>[]</code>)表示。</p> 
+ <p>属性用于向程序添加元数据，如编译器指令和其他信息，如注释，描述，方法和类。<em>.Net</em>框架提供了两种类型的属性：预定义属性和自定义构建的属性。</p> 
+ <h2 id="h2-u6307u5B9Au5C5Eu6027"><a name="指定属性" class="reference-link"></a><span class="header-link octicon octicon-link"></span>指定属性</h2>
+ <p>用于指定属性的语法如下：</p> 
+ <pre><code class="lang-csharp">[attribute(positional_parameters, name_parameter = value, ...)]
+element
+</code></pre> 
+ <p>属性名称及其值在方括号内，在应用该属性的元素之前指定。位置参数指定必要信息，名称参数指定可选信息。</p> 
+ <h2 id="h2-u9884u5B9Au4E49u5C5Eu6027"><a name="预定义属性" class="reference-link"></a><span class="header-link octicon octicon-link"></span>预定义属性</h2>
+ <p><code>.Net</code>框架提供了三个预定义的属性：</p> 
+ <ul> 
+  <li><em>AttributeUsage</em></li>
+  <li><em>Conditional</em></li>
+  <li><em>Obsolete</em></li>
+ </ul> 
+ <h3 id="h3--attributeusage"><a name="预定义属性:AttributeUsage" class="reference-link"></a><span class="header-link octicon octicon-link"></span>预定义属性:AttributeUsage</h3>
+ <p>预定义属性<code>AttributeUsage</code>描述了如何使用自定义属性类。它指定可以应用该属性的项目的类型。</p> 
+ <p>用于指定此属性的语法如下：</p> 
+ <pre><code class="lang-csharp">[AttributeUsage(
+   validon,
+   AllowMultiple=allowmultiple,
+   Inherited=inherited
+)]
+</code></pre> 
+ <p>其中，</p> 
+ <ul> 
+  <li>参数<code>validon</code>指定可以放置属性的语言元素。它是枚举器<code>AttributeTargets</code>的值的组合。默认值为<code>AttributeTargets.All</code>。</li>
+  <li>参数<code>allowmultiple</code>(可选)为此属性的<code>AllowMultiple</code>属性提供了一个布尔值。 如果些值为:<code>true</code>，则表示属性是多次使用。默认值为<code>false</code>，表示一次性使用。</li>
+  <li>参数<code>inherited</code>(可选)为此属性的<code>Inherited</code>属性提供了一个布尔值。 如果此参数值为：<code>true</code>，则属性由派生类继承。 它默认值为<code>false</code>(不继承)。</li>
+ </ul> 
+ <p>例如，</p> 
+ <pre><code class="lang-csharp">[AttributeUsage(AttributeTargets.Class |
+AttributeTargets.Constructor |
+AttributeTargets.Field |
+AttributeTargets.Method |
+AttributeTargets.Property, 
+AllowMultiple = true)]
+</code></pre> 
+ <h3 id="h3--conditional"><a name="预定义属性:Conditional" class="reference-link"></a><span class="header-link octicon octicon-link"></span>预定义属性:Conditional</h3>
+ <p>此预定义属性标记一个条件方法，其执行取决于指定的预处理标识符。</p> 
+ <p>它使方法调用条件编译，具体取决于指定的值，如：调试(<code>Debug</code>)或跟踪(<code>Trace</code>)。 例如，它在调试代码时显示变量的值。</p> 
+ <p>用于指定此属性的语法如下：</p> 
+ <pre><code class="lang-csharp">[Conditional(
+   conditionalSymbol
+)]
+</code></pre> 
+ <p>例如，</p> 
+ <pre><code class="lang-csharp">[Conditional("DEBUG")]
+</code></pre> 
+ <p>以下示例演示了该属性：</p> 
+ <pre><code class="lang-csharp">#define DEBUG
+using System;
+using System.Diagnostics;
+
+public class Myclass
+{
+   [Conditional("DEBUG")]
+   public static void Message(string msg)
+   {
+      Console.WriteLine(msg);
+   }
+}
+
+class Test
+{
+   static void function1()
+   {
+      Myclass.Message("In Function 1.");
+      function2();
+   }
+   static void function2()
+   {
+      Myclass.Message("In Function 2.");
+   }
+
+   public static void Main()
+   {
+      Myclass.Message("In Main function.");
+      function1();
+      Console.ReadKey();
+   }
+}
+</code></pre> 
+ <p>当上述代码被编译并执行时，它产生以下结果：</p> 
+ <pre><code class="lang-shell">In Main function
+In Function 1
+In Function 2
+</code></pre> 
+ <h3 id="h3--obsolete"><a name="预定义属性: Obsolete" class="reference-link"></a><span class="header-link octicon octicon-link"></span>预定义属性: Obsolete</h3>
+ <p>此预定义属性标记不应该使用的程序实体。它能够通知编译器丢弃特定的目标元素。 例如，当一个类中正在使用一个新方法，并且如果仍然希望在类中保留旧方法时，可以通过显示新方法而不是旧方法来显示消息来将其标记为过时。</p> 
+ <p>用于指定此属性的语法如下：</p> 
+ <pre><code class="lang-csharp">[Obsolete(
+   message
+)]
+[Obsolete(
+   message,
+   iserror
+)]
+</code></pre> 
+ <p>其中，</p> 
+ <ul> 
+  <li>参数 - <code>message</code>是一个字符串，描述项目过时的原因以及使用的替代方法。</li>
+  <li>参数 - <code>iserror</code>，是一个布尔值。 如果值为<code>true</code>，则编译器应将该项目的使用视为错误。默认值为<code>false</code>，编译器生成警告。</li>
+ </ul> 
+ <p>示例程序如下：</p> 
+ <pre><code class="lang-csharp">using System;
+
+public class MyClass
+{
+   [Obsolete("Don't use OldMethod, use NewMethod instead", true)]
+   static void OldMethod()
+   {
+      Console.WriteLine("It is the old method");
+   }
+   static void NewMethod()
+   {
+      Console.WriteLine("It is the new method"); 
+   }
+   public static void Main()
+   {
+      OldMethod();
+   }
+}
+</code></pre> 
+ <p>当尝试编译程序时，编译器会提供一条错误消息：</p> 
+ <pre><code class="lang-csharp">Don't use OldMethod, use NewMethod instead
+</code></pre> 
+ <h2 id="h2-u521Bu5EFAu81EAu5B9Au4E49u5C5Eu6027"><a name="创建自定义属性" class="reference-link"></a><span class="header-link octicon octicon-link"></span>创建自定义属性</h2>
+ <p><em>.Net</em>框架允许创建可用于存储声明性信息的自定义属性，并可在运行时检索。该信息可以根据设计标准和应用需要与任何目标元素相关。</p> 
+ <p>创建和使用自定义属性涉及四个步骤：</p> 
+ <ul> 
+  <li>声明一个自定义属性</li>
+  <li>构造自定义属性</li>
+  <li>将自定义属性应用于目标程序元素</li>
+  <li>通过反射访问属性</li>
+ </ul> 
+ <p>最后一步是编写一个简单的程序来读取元数据以找到各种标记。元数据是用于描述其他数据的数据或信息。程序可在运行时访问属性的反射。这将在下一章讨论。</p> 
+ <h3 id="h3-u58F0u660Eu81EAu5B9Au4E49u5C5Eu6027"><a name="声明自定义属性" class="reference-link"></a><span class="header-link octicon octicon-link"></span>声明自定义属性</h3>
+ <p>应该从<code>System.Attribute</code>类派生一个新的自定义属性。 例如，</p>   
+ <pre><code class="lang-csharp">//a custom attribute BugFix to be assigned to a class and its members
+[AttributeUsage(AttributeTargets.Class |
+AttributeTargets.Constructor |
+AttributeTargets.Field |
+AttributeTargets.Method |
+AttributeTargets.Property,
+AllowMultiple = true)]
+
+public class DeBugInfo : System.Attribute
+</code></pre> 
+ <p>在上面的代码中，声明了一个名称为<code>DeBugInfo</code>的自定义属性。</p> 
+ <h3 id="h3-u6784u9020u81EAu5B9Au4E49u5C5Eu6027"><a name="构造自定义属性" class="reference-link"></a><span class="header-link octicon octicon-link"></span>构造自定义属性</h3>
+ <p>下面来构建一个名称为<code>DeBugInfo</code>的自定义属性，它存储通过调试任何程序获得的信息。它存储以下信息：</p> 
+ <ul> 
+  <li>错误代码编号</li>
+  <li>识别错误的开发人员的名称</li>
+  <li>代码上次审查日期</li>
+  <li>用于存储开发人员言论的字符串消息</li>
+ </ul> 
+ <p><code>DeBugInfo</code>类有三个私有属性用于存储前三个信息和一个用于存储消息的公共属性。 因此，错误编号，开发人员名称和审查日期是<code>DeBugInfo</code>类的位置参数，并且消息是可选的或命名的参数。</p> 
+ <p>每个属性必须至少有一个构造函数。位置参数应通过构造函数传递。以下代码显示<code>DeBugInfo</code>类：</p> 
+ <pre><code class="lang-csharp">//a custom attribute BugFix to be assigned to a class and its members
+[AttributeUsage(AttributeTargets.Class |
+AttributeTargets.Constructor |
+AttributeTargets.Field |
+AttributeTargets.Method |
+AttributeTargets.Property,
+AllowMultiple = true)]
+
+public class DeBugInfo : System.Attribute
+{
+   private int bugNo;
+   private string developer;
+   private string lastReview;
+   public string message;
+
+   public DeBugInfo(int bg, string dev, string d)
+   {
+      this.bugNo = bg;
+      this.developer = dev;
+      this.lastReview = d;
+   }
+
+   public int BugNo
+   {
+      get
+      {
+         return bugNo;
+      }
+   }
+
+   public string Developer
+   {
+      get
+      {
+         return developer;
+      }
+   }
+
+   public string LastReview
+   {
+      get
+      {
+         return lastReview;
+      }
+   }
+
+   public string Message
+   {
+      get
+      {
+         return message;
+      }
+      set
+      {
+         message = value;
+      }
+   }
+}
+</code></pre> 
+ <h3 id="h3-u5E94u7528u81EAu5B9Au4E49u5C5Eu6027"><a name="应用自定义属性" class="reference-link"></a><span class="header-link octicon octicon-link"></span>应用自定义属性</h3>
+ <p>该属性是通过放置在目标之前来应用：</p> 
+ <pre><code class="lang-csharp">[DeBugInfo(45, "Maxsu", "12/8/2018", Message = "Return type mismatch")]
+[DeBugInfo(49, "Sukyda", "10/10/2018", Message = "Unused variable")]
+class Rectangle
+{
+   //member variables
+   protected double length;
+   protected double width;
+   public Rectangle(double l, double w)
+   {
+      length = l;
+      width = w;
+   }
+   [DeBugInfo(55, "Maxsu", "19/10/2018", Message = "Return type mismatch")]
+
+   public double GetArea()
+   {
+      return length * width;
+   }
+   [DeBugInfo(56, "Maxsu", "19/10/2018")]
+
+   public void Display()
+   {
+      Console.WriteLine("Length: {0}", length);
+      Console.WriteLine("Width: {0}", width);
+      Console.WriteLine("Area: {0}", GetArea());
+   }
+}
+</code></pre> 
+ <p>在下一章中，使用<code>Reflection</code>类对象检索属性信息。</p>
+ <br>      
+</div></body></html>

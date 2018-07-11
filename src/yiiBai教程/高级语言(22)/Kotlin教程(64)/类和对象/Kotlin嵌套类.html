@@ -1,0 +1,40 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Kotlin嵌套类</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>类可以嵌套在其他类中</p> 
+ <pre><code class="lang-kotlin">class Outer {
+    private val bar: Int = 1
+    class Nested {
+        fun foo() = 2
+    }
+}
+
+val demo = Outer.Nested().foo() // == 2
+</code></pre> 
+ <h2 id="h2-u5185u90E8u7C7B"><a name="内部类" class="reference-link"></a><span class="header-link octicon octicon-link"></span>内部类</h2>
+ <p>类可以标记为 <em>inner</em>{: .keyword } 以便能够访问外部类的成员。内部类会带有一个对外部类的对象的引用： </p> 
+ <pre><code class="lang-kotlin">class Outer {
+    private val bar: Int = 1
+    inner class Inner {
+        fun foo() = bar
+    }
+}
+
+val demo = Outer().Inner().foo() // == 1
+</code></pre> 
+ <p>参见<a target="_blank" href="this-expressions.html">限定的 <em>this</em>{: .keyword } 表达式</a>以了解内部类中的 <em>this</em>{: .keyword } 的消歧义用法。</p> 
+ <h2 id="h2-u533Fu540Du5185u90E8u7C7B"><a name="匿名内部类" class="reference-link"></a><span class="header-link octicon octicon-link"></span>匿名内部类</h2>
+ <p>使用<a target="_blank" href="object-declarations.html#对象表达式">对象表达式</a>创建匿名内部类实例：</p>   
+ <pre><code class="lang-kotlin">window.addMouseListener(object: MouseAdapter() {
+    override fun mouseClicked(e: MouseEvent) {
+        // ……
+    }
+
+    override fun mouseEntered(e: MouseEvent) {
+        // ……
+    }
+})
+</code></pre> 
+ <p>如果对象是函数式 Java 接口(即具有单个抽象方法的 Java 接口)的实例，<br>你可以使用带接口类型前缀的lambda表达式创建它：</p> 
+ <pre><code class="lang-kotlin">val listener = ActionListener { println("clicked") }
+</code></pre>
+ <br>      
+</div></body></html>

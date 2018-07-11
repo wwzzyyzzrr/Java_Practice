@@ -1,0 +1,123 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">cp命令使用示例</h1><div style="width:100%;float:left;" class="article-content">   
+ <p><strong>cp</strong>命令用来复制文件或者目录，是Linux系统中最常用的命令之一。一般情况下，shell会设置一个别名，在命令行下复制文件时，如果目标文件已经存在，就会询问是否覆盖，不管你是否使用<code>-i</code>参数。但是如果是在shell脚本中执行<code>cp</code>时，没有<code>-i</code>参数时不会询问是否覆盖。这说明命令行和shell脚本的执行方式有些不同。 </p> 
+ <h2 id="h2-1-"><a name="1．命令格式" class="reference-link"></a><span class="header-link octicon octicon-link"></span>1．命令格式</h2>
+ <p>用法：</p> 
+ <pre><code class="lang-shell">cp [选项]... [-T] 源 目的
+或：
+cp [选项]... 源... 目录
+或：
+cp [选项]... -t 目录 源...
+</code></pre> 
+ <h2 id="h2-2-"><a name="2．命令功能" class="reference-link"></a><span class="header-link octicon octicon-link"></span>2．命令功能</h2>
+ <p>将源文件复制至目标文件，或将多个源文件复制至目标目录。</p> 
+ <h2 id="h2-3-"><a name="3．命令参数" class="reference-link"></a><span class="header-link octicon octicon-link"></span>3．命令参数</h2>
+ <ul> 
+  <li><code>-a</code>, <code>--archive</code> - 等于<code>-dR --preserve=all</code>，<code>--backup[=CONTROL</code>为每个已存在的目标文件创建备份</li>
+  <li><code>-b</code> - 类似 <code>--backup</code> 但不接受参数 <code>--copy-contents</code> 在递归处理是复制特殊文件内容</li>
+  <li><code>-d</code> - 等于<code>--no-dereference --preserve=links</code></li>
+  <li><code>-f</code>, <code>--force</code> - 如果目标文件无法打开则将其移除并重试(当 <code>-n</code> 选项 存在时则不需再选此项)</li>
+  <li><code>-i</code>, <code>--interactive</code> - 覆盖前询问(使前面的 <code>-n</code> 选项失效)</li>
+  <li><code>-H</code> - 跟随源文件中的命令行符号链接</li>
+  <li><code>-l</code>, <code>--link</code> - 链接文件而不复制</li>
+  <li><code>-L</code>, <code>--dereference</code> - 总是跟随符号链接</li>
+  <li><code>-n</code>, <code>--no-clobber</code> - 不要覆盖已存在的文件(使前面的 -i 选项失效)</li>
+  <li><code>-P</code>, <code>--no-dereference</code> - 不跟随源文件中的符号链接</li>
+  <li><code>-p</code> - 等于<code>--preserve=</code>模式,所有权,时间戳<br> <code>--preserve</code>[=属性列表 保持指定的属性(默认：模式,所有权,时间戳)，如果<pre><code>         可能保持附加属性：环境、链接、xattr 等
+</code></pre></li>
+  <li><code>-R</code>, <code>-r</code>, <code>--recursive</code> 复制目录及目录内的所有项目</li>
+ </ul> 
+ <h2 id="h2-4-"><a name="4．命令实例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>4．命令实例</h2>
+ <h3 id="h3--"><a name="实例一：复制单个文件到目标目录，文件在目标文件中不存在" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实例一：复制单个文件到目标目录，文件在目标文件中不存在</h3>
+ <p>命令：</p> 
+ <pre><code class="lang-shell">cp log.log logs
+</code></pre> 
+ <p>输出：</p> 
+ <pre><code class="lang-shell">[yiibai@localhost ~]$ ll
+total 20
+-rwxr-xr-x. 1 yiibai yiibai  464 Feb 15 20:58 log1.log
+-rw-rw-r--. 1 yiibai yiibai    0 Feb 15 20:43 log2018.log
+-rw-rw-r--. 1 yiibai yiibai    0 Feb 15 20:43 log2019.log
+-rw-rw-r--. 1 yiibai yiibai    0 Feb 15 20:43 log2020.log
+-rwxrwxr-x. 1 yiibai yiibai    0 Feb 15 20:43 log2.log
+-rw-rw-r--. 1 yiibai yiibai  384 Feb 15 20:59 log3.log
+-rwxr-xr-x. 1 yiibai yiibai 1197 Feb 15 20:58 log.log
+drwxrwxr-x. 2 yiibai yiibai    6 Feb 15 22:36 logs
+drwxrwxr-x. 7 yiibai yiibai   66 Feb 15 20:48 project
+drwxrwxr-x. 2 yiibai yiibai    6 Feb 15 21:12 test3
+-rw-rw-r--. 1 yiibai yiibai    0 Feb 15 21:10 test3.log
+drwxrwxr-x. 2 yiibai yiibai   39 Feb 15 21:31 test4
+-rw-rw-r--. 1 yiibai yiibai   19 Feb 15 21:08 text.txt
+-rw-rw-r--. 1 yiibai yiibai    1 Feb 15 20:46 tmpcore.log
+[yiibai@localhost ~]$ ll logs/
+total 0
+[yiibai@localhost ~]$ cp log.log logs/
+[yiibai@localhost ~]$ ll logs/
+total 4
+-rwxr-xr-x. 1 yiibai yiibai 1197 Feb 15 22:37 log.log
+[yiibai@localhost ~]$
+</code></pre> 
+ <blockquote> 
+  <p>说明：在没有带<code>-a</code>参数时，两个文件的时间是不一样的。在带了<code>-a</code>参数时，两个文件的时间是一致的。 </p> 
+ </blockquote> 
+ <h3 id="h3--"><a name="实例二：目标文件存在时，会询问是否覆盖" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实例二：目标文件存在时，会询问是否覆盖</h3>
+ <p>命令：</p>   
+ <pre><code class="lang-shell">cp log.log logs
+</code></pre> 
+ <p>输出：</p> 
+ <pre><code class="lang-shell">[yiibai@localhost ~]$ cp log.log logs/
+[yiibai@localhost ~]$ cp -i log.log logs/
+cp: overwrite ‘logs/log.log’? y
+[yiibai@localhost ~]$ cp -a log.log logs/
+[yiibai@localhost ~]$ cp -a log.log logs/
+[yiibai@localhost ~]$ ll logs/
+total 4
+-rwxr-xr-x. 1 yiibai yiibai 1197 Feb 15 20:58 log.log
+[yiibai@localhost ~]$ cp -i log.log logs/
+cp: overwrite ‘logs/log.log’? y
+[yiibai@localhost ~]$
+</code></pre> 
+ <blockquote> 
+  <p>说明：目标文件存在时，<code>cp -i</code>会询问是否覆盖。目标文件存在时，即使加了<code>-f</code>标志，也还会询问是否覆盖。</p> 
+ </blockquote> 
+ <h3 id="h3--"><a name="实例三：复制整个目录" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实例三：复制整个目录</h3>
+ <p>命令执行演示及输出：</p> 
+ <pre><code class="lang-shell">[yiibai@localhost ~]$ ll logs/
+total 4
+-rwxr-xr-x. 1 yiibai yiibai 1197 Feb 15 22:40 log.log
+[yiibai@localhost ~]$ cp -a test3 logs/
+[yiibai@localhost ~]$ ll logs/
+total 4
+-rwxr-xr-x. 1 yiibai yiibai 1197 Feb 15 22:40 log.log
+drwxrwxr-x. 2 yiibai yiibai    6 Feb 15 21:12 test3
+[yiibai@localhost ~]$
+</code></pre> 
+ <blockquote> 
+  <p>说明：注意目标目录存在与否结果是不一样的。目标目录存在时，整个源目录被复制到目标目录里面。</p> 
+ </blockquote> 
+ <h3 id="h3--log-log-log_link-log"><a name="实例四：复制 log.log 建立一个连结档 log_link.log" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实例四：复制 log.log 建立一个连结档 log_link.log</h3>
+ <p>命令：</p> 
+ <pre><code class="lang-shell">cp -s log.log log_link.log
+</code></pre> 
+ <p>输出：</p> 
+ <pre><code class="lang-shell">[yiibai@localhost ~]$ cp -s log.log log_link.log
+[yiibai@localhost ~]$ ll
+total 20
+-rwxr-xr-x. 1 yiibai yiibai  464 Feb 15 20:58 log1.log
+-rw-rw-r--. 1 yiibai yiibai    0 Feb 15 20:43 log2018.log
+-rw-rw-r--. 1 yiibai yiibai    0 Feb 15 20:43 log2019.log
+-rw-rw-r--. 1 yiibai yiibai    0 Feb 15 20:43 log2020.log
+-rwxrwxr-x. 1 yiibai yiibai    0 Feb 15 20:43 log2.log
+-rw-rw-r--. 1 yiibai yiibai  384 Feb 15 20:59 log3.log
+lrwxrwxrwx. 1 yiibai yiibai    7 Feb 15 22:46 log_link.log -&gt; log.log
+-rwxr-xr-x. 1 yiibai yiibai 1197 Feb 15 20:58 log.log
+drwxrwxr-x. 3 yiibai yiibai   34 Feb 15 22:44 logs
+drwxrwxr-x. 7 yiibai yiibai   66 Feb 15 20:48 project
+drwxrwxr-x. 2 yiibai yiibai    6 Feb 15 21:12 test3
+-rw-rw-r--. 1 yiibai yiibai    0 Feb 15 21:10 test3.log
+drwxrwxr-x. 2 yiibai yiibai   39 Feb 15 21:31 test4
+-rw-rw-r--. 1 yiibai yiibai   19 Feb 15 21:08 text.txt
+-rw-rw-r--. 1 yiibai yiibai    1 Feb 15 20:46 tmpcore.log
+[yiibai@localhost ~]$
+</code></pre>
+ <br>      
+</div></body></html>

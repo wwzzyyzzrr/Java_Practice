@@ -1,0 +1,52 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">MyBatis where标签语句</h1><div style="width:100%;float:left;" class="article-content">   
+ <p> 当&nbsp;where&nbsp;中的条件使用的&nbsp;if&nbsp;标签较多时，这样的组合可能会导致错误。当&nbsp;java&nbsp;代码按如下方法调用时： </p> 
+ <pre class="prettyprint lang-xml">@Test  
+public void select_test_where() {  
+    User user = new User();  
+    user.setUsername(null);  
+    user.setSex(1);  
+    List&lt;User&gt; userList = this.dynamicSqlMapper.getUsertList_where(user);  
+    for (User u : userList ) {  
+        System.out.println(u.toString());  
+    }  
+}  </pre> 
+ <p> <span style="line-height:1.5;">如果上面例子，参数 username 为 null，将不会进行</span><span style="line-height:1.5;">列</span><span style="line-height:1.5;"> username 的判断，则会直接导“WHERE AND”关键字多余的错误 SQL。</span> </p> 
+ <p class="MsoNormal"> 这时可以使用 where 动态语句来解决。“where”标签会知道如果它包含的标签中有返回值的话，它就插入一个‘where’。此外，如果标签返回的内容是以 AND&nbsp;或OR&nbsp;开头的，则它会剔除掉。 </p> 
+ <p class="MsoNormal"> 上面例子修改为： </p> 
+ <pre class="prettyprint lang-xml">&lt;select id="getUserList_whereIf" resultMap="resultMap_User" parameterType="com.yiibai.pojo.User"&gt;  
+    SELECT u.user_id,  
+           u.username,  
+           u.sex,  
+           u.birthday 
+      FROM User u
+    &lt;where&gt;  
+        &lt;if test="username !=null "&gt;  
+            u.username LIKE CONCAT(CONCAT('%', #{username, jdbcType=VARCHAR}),'%')  
+        &lt;/if&gt;  
+        &lt;if test="sex != null and sex != '' "&gt;  
+            AND u.sex = #{sex, jdbcType=INTEGER}  
+        &lt;/if&gt;  
+        &lt;if test="birthday != null "&gt;  
+            AND u.birthday = #{birthday, jdbcType=DATE}  
+        &lt;/if&gt; 
+    &lt;/where&gt;    
+&lt;/select&gt;  </pre> 
+ <p> where 主要是用来简化 sql 语句中 where 条件判断，自动地处理 AND/OR 条件。 </p> 
+ <pre class="prettyprint lang-xml">&lt;select id="dynamicWhereTest" parameterType="Blog" resultType="Blog"&gt;
+        select * from t_blog 
+        &lt;where&gt;
+            &lt;if test="title != null"&gt;
+                title = #{title}
+            &lt;/if&gt;
+            &lt;if test="content != null"&gt;
+                and content = #{content}
+            &lt;/if&gt;
+            &lt;if test="owner != null"&gt;
+                and owner = #{owner}
+            &lt;/if&gt;
+        &lt;/where&gt;
+    &lt;/select&gt;</pre> 
+ <p> where 元素的作用是会在写入 where 元素的地方输出一个 where，另外一个好处是你不需要考虑 where 元素里面的条件输出是什么样子的，MyBatis 会智能的帮处理，如果所有的条件都不满足那么 MyBatis 就会查出所有的记录，如果输出后是 and 开头的，MyBatis 会把第一个and忽略，当然如果是 or 开头的，MyBatis 也会把它忽略；此外，在 where 元素中你不需要考虑空格的问题，MyBatis 会智能的帮你加上。像上述例子中，如果 title=null， 而 content != null，那么输出的整个语句会是 select * from t_blog where content = #{content}，而不是 select * from t_blog where and content = #{content}，因为 MyBatis 会自动地把首个 and / or 给忽略。 </p> 
+ <p> <br> </p>
+ <br>      
+</div></body></html>

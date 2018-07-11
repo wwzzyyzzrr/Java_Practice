@@ -1,0 +1,37 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">C语言rewind()函数</h1><div style="width:100%;float:left;" class="article-content">   
+ <p><code>rewind()</code>函数将文件指针设置在流的开头。在需要多次使用流时，这就很有用。</p> 
+ <p><code>rewind()</code>函数的语法：</p> 
+ <pre><code class="lang-c">void rewind(FILE *stream)
+</code></pre> 
+ <p><strong>示例：</strong></p> 
+ <p>创建一个源文件：<em>rewind-file.c</em>，其代码如下所示 - </p> 
+ <pre><code class="lang-c">#include&lt;stdio.h&gt;   
+void main() {
+    FILE *fp;
+    char c;
+
+    fp = fopen("string-file.txt", "r");
+    while ((c = fgetc(fp)) != EOF) {
+        printf("%c", c);
+    }
+
+    rewind(fp); // moves the file pointer at beginning of the file  
+    // 不用重新打开文件，直接从头读取内容
+    while ((c = fgetc(fp)) != EOF) {
+        printf("%c", c);
+    }
+
+    fclose(fp);
+
+}
+</code></pre> 
+ <p>创建一个文本文件：<em>string-file.txt</em>，内容如下 - </p>   
+ <pre><code class="lang-txt">this is rewind()function from yiibai tutorials.
+</code></pre> 
+ <p>执行上面示例代码后，得到以下结果 - </p> 
+ <pre><code class="lang-shell">this is rewind()function from yiibai tutorials.
+this is rewind()function from yiibai tutorials.
+</code></pre> 
+ <p>如上所示，<code>rewind()</code>函数将文件指针移动到文件的开头，这就是为什么文件<em>string-file.txt</em>中的内容被打印<code>2</code>次。 如果不调用<code>rewind()</code>函数，文件中的内容将只打印一次。</p>
+ <br>      
+</div></body></html>

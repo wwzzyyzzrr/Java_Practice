@@ -1,0 +1,248 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Spring Boot文件上传示例</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>本文介绍如何在Spring Boot Web应用程序中上传文件。</p> 
+ <p>使用的工具 ：</p> 
+ <ol> 
+  <li>Spring Boot 1.4.3.RELEASE</li>
+  <li>Spring 4.3.5.RELEASE</li>
+  <li>Thymeleaf</li>
+  <li>Maven 3</li>
+  <li>Embedded Tomcat 8.5.6</li>
+ </ol> 
+ <h2 id="h2-1-"><a name="1. 项目结构" class="reference-link"></a><span class="header-link octicon octicon-link"></span>1. 项目结构</h2>
+ <p>标准项目结构如下图所示 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201703/3103/493140339_96235.png" alt=""></p> 
+ <h2 id="h2-2-"><a name="2. 项目依赖" class="reference-link"></a><span class="header-link octicon octicon-link"></span>2. 项目依赖</h2>
+ <p>Spring boot依赖关系，无需额外的文件上传库。</p> 
+ <pre><code class="lang-xml">&lt;project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+  http://maven.apache.org/maven-v4_0_0.xsd"&gt;
+    &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
+
+    &lt;groupId&gt;com.yiibai&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-boot-file-upload&lt;/artifactId&gt;
+    &lt;packaging&gt;jar&lt;/packaging&gt;
+    &lt;version&gt;1.0&lt;/version&gt;
+
+    &lt;parent&gt;
+        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-boot-starter-parent&lt;/artifactId&gt;
+        &lt;version&gt;1.4.3.RELEASE&lt;/version&gt;
+    &lt;/parent&gt;
+
+    &lt;properties&gt;
+        &lt;java.version&gt;1.8&lt;/java.version&gt;
+    &lt;/properties&gt;
+
+    &lt;dependencies&gt;
+
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-boot-starter-thymeleaf&lt;/artifactId&gt;
+        &lt;/dependency&gt;
+
+        &lt;!-- hot swapping, disable cache for template, enable live reload --&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-boot-devtools&lt;/artifactId&gt;
+            &lt;optional&gt;true&lt;/optional&gt;
+        &lt;/dependency&gt;
+
+    &lt;/dependencies&gt;
+
+    &lt;build&gt;
+        &lt;plugins&gt;
+            &lt;!-- Package as an executable jar/war --&gt;
+            &lt;plugin&gt;
+                &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+                &lt;artifactId&gt;spring-boot-maven-plugin&lt;/artifactId&gt;
+            &lt;/plugin&gt;
+        &lt;/plugins&gt;
+    &lt;/build&gt;
+
+&lt;/project&gt;
+</code></pre> 
+ <h2 id="h2-3-"><a name="3.文件上传示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>3.文件上传示例</h2>
+ <p>Spring Boot文件上传，不需要什么特别的配置。在Controller中，将上传的文件映射到<code>MultipartFile</code>。<br>文件：<em>UploadController.java</em> - </p> 
+ <pre><code class="lang-java">package com.yiibai.controller;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+@Controller
+public class UploadController {
+
+    //Save the uploaded file to this folder
+    private static String UPLOADED_FOLDER = "D://temp//";
+
+    @GetMapping("/")
+    public String index() {
+        return "upload";
+    }
+
+    @PostMapping("/upload") // //new annotation since 4.3
+    public String singleFileUpload(@RequestParam("file") MultipartFile file,
+                                   RedirectAttributes redirectAttributes) {
+
+        if (file.isEmpty()) {
+            redirectAttributes.addFlashAttribute("message", "Please select a file to upload");
+            return "redirect:uploadStatus";
+        }
+
+        try {
+
+            // Get the file and save it somewhere
+            byte[] bytes = file.getBytes();
+            Path path = Paths.get(UPLOADED_FOLDER + file.getOriginalFilename());
+            Files.write(path, bytes);
+
+            redirectAttributes.addFlashAttribute("message",
+                    "You successfully uploaded '" + file.getOriginalFilename() + "'");
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return "redirect:/uploadStatus";
+    }
+
+    @GetMapping("/uploadStatus")
+    public String uploadStatus() {
+        return "uploadStatus";
+    }
+
+}
+</code></pre> 
+ <p>在<code>thymeleaf</code>，只是一些普通的HTML文件标签。文件：<code>upload.html</code> -</p> 
+ <pre><code class="lang-html">&lt;!DOCTYPE html&gt;
+&lt;html xmlns:th="http://www.thymeleaf.org"&gt;
+&lt;body&gt;
+
+&lt;h1&gt;Spring Boot文件上传示例&lt;/h1&gt;
+
+&lt;form method="POST" action="/upload" enctype="multipart/form-data"&gt;
+    &lt;input type="file" name="file" /&gt;&lt;br/&gt;&lt;br/&gt;
+    &lt;input type="submit" value="提交" /&gt;
+&lt;/form&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>另外一个页面，用为显示文件上传的状态。文件：<code>uploadStatus.html</code> -</p> 
+ <pre><code class="lang-html">&lt;!DOCTYPE html&gt;
+&lt;html lang="en" xmlns:th="http://www.thymeleaf.org"&gt;
+&lt;body&gt;
+
+&lt;h1&gt;Spring Boot文件上传状态&lt;/h1&gt;
+
+&lt;div th:if="${message}"&gt;
+    &lt;h2 th:text="${message}"/&gt;
+&lt;/div&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <h2 id="h2-4-"><a name="4. 超过最大上传大小" class="reference-link"></a><span class="header-link octicon octicon-link"></span>4. 超过最大上传大小</h2>
+ <p>要处理最大上传大小超出异常，请声明一个<code><a target="_blank" href="https://github.com/ControllerAdvice" title="@ControllerAdvice" class="at-link">@ControllerAdvice</a></code>并捕获<code>MultipartException</code>。<br>文件：<em>GlobalExceptionHandler.java</em></p> 
+ <pre><code class="lang-java">package com.yiibai.controller;
+
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.multipart.MultipartException;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+@ControllerAdvice
+public class GlobalExceptionHandler {
+
+    //http://jira.spring.io/browse/SPR-14651
+    //4.3.5 supports RedirectAttributes redirectAttributes
+    @ExceptionHandler(MultipartException.class)
+    public String handleError1(MultipartException e, RedirectAttributes redirectAttributes) {
+
+        redirectAttributes.addFlashAttribute("message", e.getCause().getMessage());
+        return "redirect:/uploadStatus";
+
+    }
+
+}
+</code></pre> 
+ <h2 id="h2-5-tomcat-"><a name="5. Tomcat连接重置" class="reference-link"></a><span class="header-link octicon octicon-link"></span>5. Tomcat连接重置</h2>
+ <p>如果部署到Tomcat，请配置<code>maxSwallowSize</code>以避免此Tomcat连接重置问题。 对于嵌入式Tomcat，声明一个<code>TomcatEmbeddedServletContainerFactory</code>，如下所示, <em>SpringBootWebApplication.java</em> -</p>   
+ <pre><code class="lang-java">package com.yiibai;
+
+import org.apache.coyote.http11.AbstractHttp11Protocol;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.embedded.tomcat.TomcatConnectorCustomizer;
+import org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletContainerFactory;
+import org.springframework.context.annotation.Bean;
+
+//http://www.agilegroup.co.jp/technote/springboot-fileupload-error-handling.html
+@SpringBootApplication
+public class SpringBootWebApplication {
+
+    private int maxUploadSizeInMb = 10 * 1024 * 1024; // 10 MB
+
+    public static void main(String[] args) throws Exception {
+        SpringApplication.run(SpringBootWebApplication.class, args);
+    }
+
+    //Tomcat large file upload connection reset
+
+    @Bean
+    public TomcatEmbeddedServletContainerFactory tomcatEmbedded() {
+
+        TomcatEmbeddedServletContainerFactory tomcat = new TomcatEmbeddedServletContainerFactory();
+
+        tomcat.addConnectorCustomizers((TomcatConnectorCustomizer) connector -&gt; {
+            if ((connector.getProtocolHandler() instanceof AbstractHttp11Protocol&lt;?&gt;)) {
+                //-1 means unlimited
+                ((AbstractHttp11Protocol&lt;?&gt;) connector.getProtocolHandler()).setMaxSwallowSize(-1);
+            }
+        });
+
+        return tomcat;
+
+    }
+
+}
+</code></pre> 
+ <h2 id="h2-6-multipart-"><a name="6. Multipart文件大小" class="reference-link"></a><span class="header-link octicon octicon-link"></span>6. Multipart文件大小</h2>
+ <p>默认情况下，Spring Boot max文件上传大小为<code>1MB</code>，可以通过以下应用程序属性来配置它的值，<em>application.properties</em> - </p> 
+ <pre><code>#http://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#common-application-properties
+#search multipart
+spring.http.multipart.max-file-size=10MB
+spring.http.multipart.max-request-size=10MB
+</code></pre>
+ <h2 id="h2-7-"><a name="7. 运行示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>7. 运行示例</h2>
+ <p>使用默认的嵌入式Tomcat启动Spring Boot的命令如下： <code>mvn spring-boot:run</code> ，运行结果如下 -</p> 
+ <pre><code class="lang-java">23:40:03,238 |-INFO in ch.qos.logback.classic.joran.JoranConfigurator@5a39699c - Registering current configuration as safe fallback point
+
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+::Spring Boot::       (v1.4.3.RELEASE)
+
+2017-03-30 23:40:04 INFO  com.yiibai.SpringBootWebApplication - Starting SpringBootWebApplication on MY-PC with PID 880 (F:\worksp\springboot\file-upload\target\classes started by Administrator in F:\worksp\springboot\file-upload)
+2017-03-30 23:40:04 DEBUG com.yiibai.SpringBootWebApplication - Running with Spring Boot v1.4.3.RELEASE, Spring v4.3.5.RELEASE
+2017-03-30 23:40:04 INFO  com.yiibai.SpringBootWebApplication - No active profile set, falling back to default profiles: default
+2017-03-30 23:40:08 INFO  com.yiibai.SpringBootWebApplication - Started SpringBootWebApplication in 5.359 seconds (JVM running for 6.355)
+</code></pre> 
+ <p>打开浏览器，访问： <a target="_blank" href="http://localhost:8080/">http://localhost:8080/</a> 输出结果如下 -<br><img src="http://www.yiibai.com/uploads/images/201703/3103/696140315_17148.png" alt=""></p> 
+ <p>选择一个文件并将其上传，选择大于<code>10mb</code>的文件，将会看到页面提示如下 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201703/3103/619140318_18761.png" alt=""></p>
+ <br>      
+</div></body></html>

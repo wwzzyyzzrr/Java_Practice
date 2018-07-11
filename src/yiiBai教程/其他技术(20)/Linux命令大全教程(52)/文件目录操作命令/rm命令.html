@@ -1,0 +1,168 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">rm命令</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>昨天学习了创建文件和目录的命令<code>mkdir</code> ，今天学习一下linux中删除文件和目录的命令： <code>rm</code>命令。<code>rm</code>是常用的命令，该命令的功能为删除一个目录中的一个或多个文件或目录，它也可以将某个目录及其下的所有文件及子目录均删除。对于链接文件，只是删除了链接，原有文件均保持不变。<br><code>rm</code>是一个危险的命令，使用的时候要特别当心，尤其对于新手，否则整个系统就会毁在这个命令(比如在<code>/</code>(根目录)下执行<code>rm * -rf</code>)。所以，我们在执行rm之前最好先确认一下在哪个目录，到底要删除什么东西，操作时保持高度清醒的头脑。</p> 
+ <h2 id="h2-1-"><a name="1．命令格式" class="reference-link"></a><span class="header-link octicon octicon-link"></span>1．命令格式</h2>
+ <p>rm [选项] 文件… </p> 
+ <h2 id="h2-2-"><a name="2．命令功能" class="reference-link"></a><span class="header-link octicon octicon-link"></span>2．命令功能</h2>
+ <p>删除一个目录中的一个或多个文件或目录，如果没有使用<code>- r</code>选项，则<code>rm</code>不会删除目录。如果使用 <code>rm</code> 来删除文件，通常仍可以将该文件恢复原状。</p> 
+ <h2 id="h2-3-"><a name="3．命令参数" class="reference-link"></a><span class="header-link octicon octicon-link"></span>3．命令参数</h2>
+ <ul> 
+  <li><code>-f</code>, <code>--force</code> 忽略不存在的文件，从不给出提示。</li>
+  <li><code>-i</code>, <code>--interactive</code> 进行交互式删除</li>
+  <li><code>-r</code>, <code>-R</code>, <code>--recursive</code> 指示rm将参数中列出的全部目录和子目录均递归地删除。</li>
+  <li><code>-v</code>, <code>--verbose</code> 详细显示进行的步骤：
+   <ul> 
+    <li><code>--help</code> 显示此帮助信息并退出</li>
+    <li><code>--version</code> 输出版本信息并退出</li>
+   </ul> </li>
+ </ul> 
+ <h2 id="h2-4-"><a name="4．命令实例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>4．命令实例</h2>
+ <h3 id="h3-u5B9Eu4F8Bu4E00"><a name="实例一" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实例一</h3>
+ <p>删除文件，系统会先询问是否删除。</p> 
+ <pre><code class="lang-shell">rm 文件名
+</code></pre> 
+ <p>输出：</p> 
+ <pre><code class="lang-shell">yiibai@ubuntu:~/mkdir/test$ ll
+total 12
+drwxrwxr-x 2 yiibai yiibai 4096 Feb 12 17:14 ./
+drwxrwxr-x 8 yiibai yiibai 4096 Feb 12 17:14 ../
+-rw-rw-r-- 1 yiibai yiibai   30 Feb 12 17:14 mylog.txt
+
+yiibai@ubuntu:~/mkdir/test$ rm mylog.txt
+yiibai@ubuntu:~/mkdir/test$
+</code></pre> 
+ <blockquote> 
+  <p>说明：输入<code>rm mylog.txt</code>命令后，系统会询问是否删除，输入<code>y</code>后就会删除文件，不想删除则输入<code>n</code>。</p> 
+ </blockquote> 
+ <h3 id="h3-u5B9Eu4F8Bu4E8C"><a name="实例二" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实例二</h3>
+ <p>强行删除文件，系统不再提示。<br>命令：</p> 
+ <pre><code class="lang-shell">rm -f mylog.txt
+</code></pre> 
+ <p>输出：</p> 
+ <pre><code class="lang-shell">yiibai@ubuntu:~/mkdir/test$ rm -f mylog.txt
+yiibai@ubuntu:~/mkdir/test$ ll
+total 8
+drwxrwxr-x 2 yiibai yiibai 4096 Feb 12 17:17 ./
+drwxrwxr-x 8 yiibai yiibai 4096 Feb 12 17:14 ../
+</code></pre> 
+ <h3 id="h3-u5B9Eu4F8Bu4E09"><a name="实例三" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实例三</h3>
+ <p>删除任何<code>.txt</code>文件；删除前逐一询问确认 </p> 
+ <p>命令：</p> 
+ <pre><code class="lang-shell">rm -i *.txt
+</code></pre> 
+ <p>输出：</p> 
+ <pre><code class="lang-shell">yiibai@ubuntu:~/mkdir/test$ ll
+total 8
+drwxrwxr-x 2 yiibai yiibai 4096 Feb 12 17:20 ./
+drwxrwxr-x 8 yiibai yiibai 4096 Feb 12 17:14 ../
+-rw-rw-r-- 1 yiibai yiibai    0 Feb 12 17:20 text1.txt
+-rw-rw-r-- 1 yiibai yiibai    0 Feb 12 17:20 text2.txt
+-rw-rw-r-- 1 yiibai yiibai    0 Feb 12 17:20 text.txt
+
+yiibai@ubuntu:~/mkdir/test$ rm -i *.txt
+rm: remove regular empty file ‘text1.txt’? y
+rm: remove regular empty file ‘text2.txt’? y
+rm: remove regular empty file ‘text.txt’? y
+</code></pre> 
+ <h3 id="h3-u5B9Eu4F8Bu56DB"><a name="实例四" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实例四</h3>
+ <p>将目录及子目录中所有档案删除。<br>命令：</p> 
+ <pre><code class="lang-shell">rm -r tempdir
+</code></pre> 
+ <p>输出：</p> 
+ <pre><code class="lang-shell">yiibai@ubuntu:~/mkdir$ ll
+total 36
+drwxrwxr-x  9 yiibai yiibai 4096 Feb 12 17:23 ./
+drwxr-xr-x 18 yiibai yiibai 4096 Feb 12 17:24 ../
+drwxrwxr-x  7 yiibai yiibai 4096 Feb 10 00:46 project/
+drwxrwxr-x  5 yiibai yiibai 4096 Feb 12 17:24 tempdir/
+drwxrwxr-x  2 yiibai yiibai 4096 Feb 12 17:21 test/
+drwxrwxr-x  2 yiibai yiibai 4096 Feb 12 16:46 test1/
+drwxrwxrwx  2 yiibai yiibai 4096 Feb 10 00:39 test3/
+drwxrwxr-x  2 yiibai yiibai 4096 Feb 10 00:43 test4/
+drwxrwxr-x  3 yiibai yiibai 4096 Feb 10 00:43 test5/
+
+yiibai@ubuntu:~/mkdir$ rm -r tempdir
+yiibai@ubuntu:~/mkdir$ ll
+total 32
+drwxrwxr-x  8 yiibai yiibai 4096 Feb 12 17:26 ./
+drwxr-xr-x 18 yiibai yiibai 4096 Feb 12 17:24 ../
+drwxrwxr-x  7 yiibai yiibai 4096 Feb 10 00:46 project/
+drwxrwxr-x  2 yiibai yiibai 4096 Feb 12 17:21 test/
+drwxrwxr-x  2 yiibai yiibai 4096 Feb 12 16:46 test1/
+drwxrwxrwx  2 yiibai yiibai 4096 Feb 10 00:39 test3/
+drwxrwxr-x  2 yiibai yiibai 4096 Feb 10 00:43 test4/
+drwxrwxr-x  3 yiibai yiibai 4096 Feb 10 00:43 test5/
+</code></pre> 
+ <h3 id="h3-u5B9Eu4F8Bu4E94"><a name="实例五" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实例五</h3>
+ <p><code>rm -rf test2</code>命令会将 <code>test2</code> 子目录及子目录中所有档案删除,并且不用逐个确认。<br>命令：</p>   
+ <pre><code class="lang-shell">rm -rf  test3
+</code></pre> 
+ <p>输出：</p> 
+ <pre><code class="lang-shell">yiibai@ubuntu:~/mkdir$ ll
+total 32
+drwxrwxr-x  8 yiibai yiibai 4096 Feb 12 17:26 ./
+drwxr-xr-x 18 yiibai yiibai 4096 Feb 12 17:24 ../
+drwxrwxr-x  7 yiibai yiibai 4096 Feb 10 00:46 project/
+drwxrwxr-x  2 yiibai yiibai 4096 Feb 12 17:21 test/
+drwxrwxr-x  2 yiibai yiibai 4096 Feb 12 16:46 test1/
+drwxrwxrwx  2 yiibai yiibai 4096 Feb 10 00:39 test3/
+drwxrwxr-x  2 yiibai yiibai 4096 Feb 10 00:43 test4/
+drwxrwxr-x  3 yiibai yiibai 4096 Feb 10 00:43 test5/
+yiibai@ubuntu:~/mkdir$ rm -rf test3
+yiibai@ubuntu:~/mkdir$
+</code></pre> 
+ <h3 id="h3-u5B9Eu4F8Bu516D"><a name="实例六" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实例六</h3>
+ <p>删除以 <code>-f</code> 开头的文件<br>命令：</p> 
+ <pre><code class="lang-shell">rm -- -f
+</code></pre> 
+ <p>输出：</p> 
+ <pre><code class="lang-shell">yiibai@ubuntu:~/mkdir/test$ ls
+yiibai@ubuntu:~/mkdir/test$ touch -- -f
+yiibai@ubuntu:~/mkdir/test$ ls
+-f
+yiibai@ubuntu:~/mkdir/test$ ls -- -f
+-f
+yiibai@ubuntu:~/mkdir/test$ rm -- -f
+yiibai@ubuntu:~/mkdir/test$ ls
+yiibai@ubuntu:~/mkdir/test$ ls -- -f
+ls: cannot access -f: No such file or directory
+</code></pre> 
+ <p>也可以使用下面的操作步骤(另外一种方式):</p> 
+ <pre><code class="lang-shell">yiibai@ubuntu:~/mkdir/test$ touch ./-f
+yiibai@ubuntu:~/mkdir/test$ ls ./
+-f
+
+yiibai@ubuntu:~/mkdir/test$ rm ./-f
+yiibai@ubuntu:~/mkdir/test$ ls
+yiibai@ubuntu:~/mkdir/test$
+</code></pre> 
+ <h3 id="h3-u5B9Eu4F8Bu4E03"><a name="实例七" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实例七</h3>
+ <p>自定义回收站功能。<br>命令：</p> 
+ <pre><code class="lang-shell">myrm(){ D=/tmp/$(date +%Y%m%d%H%M%S); mkdir -p $D; mv "$@" $D &amp;&amp; echo "moved to $D ok"; }
+</code></pre> 
+ <p>执行结果：</p> 
+ <pre><code class="lang-shell">yiibai@ubuntu:~/mkdir/test$  myrm(){ D=/tmp/$(date +%Y%m%d%H%M%S); mkdir -p $D; mv "$@" $D &amp;&amp; echo "moved to $D ok"; }
+yiibai@ubuntu:~/mkdir/test$ alias rm='myrm'
+yiibai@ubuntu:~/mkdir/test$ touch 1.log 2.log 3.log
+yiibai@ubuntu:~/mkdir/test$ ll
+total 8
+drwxrwxr-x 2 yiibai yiibai 4096 Feb 12 17:34 ./
+drwxrwxr-x 7 yiibai yiibai 4096 Feb 12 17:28 ../
+-rw-rw-r-- 1 yiibai yiibai    0 Feb 12 17:34 1.log
+-rw-rw-r-- 1 yiibai yiibai    0 Feb 12 17:34 2.log
+-rw-rw-r-- 1 yiibai yiibai    0 Feb 12 17:34 3.log
+yiibai@ubuntu:~/mkdir/test$ rm [123].log
+moved to /tmp/20170212173443 ok
+yiibai@ubuntu:~/mkdir/test$ ll
+total 8
+drwxrwxr-x 2 yiibai yiibai 4096 Feb 12 17:34 ./
+drwxrwxr-x 7 yiibai yiibai 4096 Feb 12 17:28 ../
+
+yiibai@ubuntu:~/mkdir/test$ sudo ls /tmp/20170212173443
+1.log  2.log  3.log
+yiibai@ubuntu:~/mkdir/test$
+</code></pre> 
+ <blockquote> 
+  <p>注意：上面的操作过程模拟了回收站的效果，即删除文件的时候只是把文件放到一个临时目录中，这样在需要的时候还可以恢复过来。</p> 
+ </blockquote>
+ <br>      
+</div></body></html>

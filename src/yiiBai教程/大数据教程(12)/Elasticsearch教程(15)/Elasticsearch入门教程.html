@@ -1,0 +1,378 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Elasticsearch入门教程</h1><div style="width:100%;float:left;" class="article-content">   
+ <p><strong>ElasticSearch</strong>是一个高度可扩展的开源搜索引擎并使用REST API，所以您值得拥有。 在本教程中，将介绍开始使用<strong>ElasticSearch</strong>的一些主要概念。</p> 
+ <h2 id="h2--elasticsearch"><a name="下载并运行ElasticSearch" class="reference-link"></a><span class="header-link octicon octicon-link"></span>下载并运行ElasticSearch</h2>
+ <p><strong>ElasticSearch</strong>可以从<a target="_blank" href="http://www.elasticsearch.org/download/" title="elasticsearch.org">elasticsearch.org</a>下载对应的文件格式，如<code>ZIP</code>和<code>TAR.GZ</code>。下载并提取一个运行它的软件包之后不会容易得多，需要提前安装Java运行时环境。</p> 
+ <h3 id="h3--windows-elasticsearch"><a name="在Windows上运行ElasticSearch" class="reference-link"></a><span class="header-link octicon octicon-link"></span>在Windows上运行ElasticSearch</h3>
+ <p>在本文章中，所使用的环境是Windows，所以这里只介绍在Windows上运行ElasticSearch，可从命令窗口运行位于<code>bin</code>文件夹中的<code>elasticsearch.bat</code>。这将会启动ElasticSearch在控制台的前台运行，这意味着我们可在控制台中看到运行信息或一些错误信息，并可以使用<strong>CTRL + C</strong>停止或关闭它。</p> 
+ <p>当前版本是： <strong>elasticsearch-5.2.0</strong><br>下载链接： <a target="_blank" href="http://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-5.2.0.zip">http://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-5.2.0.zip</a></p> 
+ <p>把下载好的文件 <code>elasticsearch-5.2.0.zip</code> 解压到 <code>D:\software\elasticsearch-5.2.0</code>，其目录结构如下所示 -<br><img src="http://www.yiibai.com/uploads/images/201702/0702/943140206_77731.png" alt=""></p> 
+ <p>启动 <strong>ElasticSearch</strong> -</p> 
+ <pre><code class="lang-shell">Microsoft Windows [版本 10.0.10586]
+(c) 2015 Microsoft Corporation。保留所有权利。
+
+C:\Users\Administrator&gt;d:
+
+D:\&gt;cd software\elasticsearch-5.2.0
+
+D:\software\elasticsearch-5.2.0&gt;cd bin
+
+D:\software\elasticsearch-5.2.0\bin&gt;elasticsearch.bat
+[2017-01-28T14:10:32,177][INFO ][o.e.n.Node               ] [] initializing ...
+[2017-01-28T14:10:32,670][INFO ][o.e.e.NodeEnvironment    ] [SnafGWM] using [1] data paths, mounts [[Software (D:)]], net usable_space [61.6gb], net total_space [139gb], spins? [unknown], types [NTFS]
+[2017-01-28T14:10:32,686][INFO ][o.e.e.NodeEnvironment    ] [SnafGWM] heap size [1.9gb], compressed ordinary object pointers [true]
+[2017-01-28T14:10:32,686][INFO ][o.e.n.Node               ] node name [SnafGWM] derived from node ID [SnafGWMWRzmfwTKP6VJClA]; set [node.name] to override
+[2017-01-28T14:10:32,717][INFO ][o.e.n.Node               ] version[5.2.0], pid[9724], build[24e05b9/2017-01-24T19:52:35.800Z], OS[Windows 10/10.0/amd64], JVM[Oracle Corporation/Java HotSpot(TM) 64-Bit Server VM/1.8.0_65/25.65-b01]
+[2017-01-28T14:10:35,271][INFO ][o.e.p.PluginsService     ] [SnafGWM] loaded module [aggs-matrix-stats]
+[2017-01-28T14:10:35,271][INFO ][o.e.p.PluginsService     ] [SnafGWM] loaded module [ingest-common]
+[2017-01-28T14:10:35,271][INFO ][o.e.p.PluginsService     ] [SnafGWM] loaded module [lang-expression]
+[2017-01-28T14:10:35,271][INFO ][o.e.p.PluginsService     ] [SnafGWM] loaded module [lang-groovy]
+[2017-01-28T14:10:35,271][INFO ][o.e.p.PluginsService     ] [SnafGWM] loaded module [lang-mustache]
+[2017-01-28T14:10:35,287][INFO ][o.e.p.PluginsService     ] [SnafGWM] loaded module [lang-painless]
+[2017-01-28T14:10:35,287][INFO ][o.e.p.PluginsService     ] [SnafGWM] loaded module [percolator]
+[2017-01-28T14:10:35,288][INFO ][o.e.p.PluginsService     ] [SnafGWM] loaded module [reindex]
+[2017-01-28T14:10:35,290][INFO ][o.e.p.PluginsService     ] [SnafGWM] loaded module [transport-netty3]
+[2017-01-28T14:10:35,291][INFO ][o.e.p.PluginsService     ] [SnafGWM] loaded module [transport-netty4]
+[2017-01-28T14:10:35,292][INFO ][o.e.p.PluginsService     ] [SnafGWM] no plugins loaded
+[2017-01-28T14:10:41,394][INFO ][o.e.n.Node               ] initialized
+[2017-01-28T14:10:41,397][INFO ][o.e.n.Node               ] [SnafGWM] starting ...
+[2017-01-28T14:10:42,657][INFO ][o.e.t.TransportService   ] [SnafGWM] publish_address {127.0.0.1:9300}, bound_addresses {127.0.0.1:9300}, {[::1]:9300}
+[2017-01-28T14:10:46,439][INFO ][o.e.c.s.ClusterService   ] [SnafGWM] new_master {SnafGWM}{SnafGWMWRzmfwTKP6VJClA}{vG5mFSENST6eo-yl_O8HuA}{127.0.0.1}{127.0.0.1:9300}, reason: zen-disco-elected-as-master ([0] nodes joined)
+[2017-01-28T14:10:48,628][INFO ][o.e.h.HttpServer         ] [SnafGWM] publish_address {127.0.0.1:9200}, bound_addresses {127.0.0.1:9200}, {[::1]:9200}
+[2017-01-28T14:10:48,628][INFO ][o.e.n.Node               ] [SnafGWM] started
+[2017-01-28T14:10:48,928][INFO ][o.e.g.GatewayService     ] [SnafGWM] recovered [0] indices into cluster_state
+</code></pre> 
+ <p>在启动过程中，<strong>ElasticSearch</strong>的实例运行会占用大量的内存，所以在这一过程中，电脑会变得比较慢，需要耐心等待，启动加载完成后电脑就可以正常使用了。</p> 
+ <blockquote> 
+  <p>如果您没有安装Java运行时或没有正确配置，应该不会看到像上面的输出，而是一个消息说“<strong>JAVA_HOME环境变量必须设置！</strong>“ 要解决这个问题，首先下载并安装Java，其次，确保已正确配置<code>JAVA_HOME</code>环境变量(或参考 - <a target="_blank" href="http://www.yiibai.com/java/java_environment_setup.html" title="Java JDK安装和配置">Java JDK安装和配置</a>)。</p> 
+ </blockquote> 
+ <h2 id="h2--rest-api-sense"><a name="使用REST API与Sense" class="reference-link"></a><span class="header-link octicon octicon-link"></span>使用REST API与Sense</h2>
+ <p>当<strong>ElasticSearch</strong>的实例并运行，您可以使用<code>localhost:9200</code>,基于JSON的REST API与<strong>ElasticSearch</strong>进行通信。使用任何HTTP客户端来通信。在ElasticSearch自己的文档中，所有示例都使用curl。 但是，当使用API时也可使用图形客户端(如<a target="_blank" href="http://fiddler2.com/" title="Fiddler">Fiddler</a>或<a target="_blank" href="http://addons.mozilla.org/en-US/firefox/addon/restclient/" title="RESTClient">RESTClient</a>)，这样操作起更方便直观一些。</p> 
+ <p>更方便的是Chrome插件<a target="_blank" href="http://chrome.google.com/webstore/search/%20Sense?hl=zh-CN" title="Sense">Sense</a>。 Sense提供了一个专门用于使用<strong>ElasticSearch</strong>的REST API的简单用户界面。 它还具有许多方便的功能，例如：<strong>ElasticSearch</strong>的查询语法的自动完成功能以及curl格式的复制和粘贴请求，从而可以方便地在文档中运行示例。</p> 
+ <p>我们将在本教程中使用sense来执行curl请求，建议安装<strong>Sense</strong>并使用它学习后续文章内容。</p> 
+ <p>安装完成后，在Chrome的右上角找到Sense的图标。 第一次单击它运行Sense时，会为您准备一个非常简单的示例请求。如下图所示 -<br><img src="http://www.yiibai.com/uploads/images/201702/0702/613140230_70098.png" alt=""></p> 
+ <p>上述请求将执行最简单的搜索查询，匹配服务器上所有索引中的所有文档。针对ElasticSearch运行，Sense提供的最简单的查询，在响应结果的数据中并没有查询到任何数据，因为没有任何索引。如下所示 - </p> 
+ <pre><code class="lang-json">{
+   "took": 1,
+   "timed_out": false,
+   "_shards": {
+      "total": 0,
+      "successful": 0,
+      "failed": 0
+   },
+   "hits": {
+      "total": 0,
+      "max_score": 0,
+      "hits": []
+   }
+}
+</code></pre> 
+ <p>下一步我们来学习添加一些数据和索引，来修复这个问题。</p> 
+ <h2 id="h2--crud-"><a name="文档管理(CRUD)" class="reference-link"></a><span class="header-link octicon octicon-link"></span>文档管理(CRUD)</h2>
+ <p>想要使用<strong>ElasticSearch</strong>，用于搜索第一步就是使用一些数据填充来索引，CRUD表“创建”或者“索引”。我们还将学习如何更新，读取和删除文档。</p> 
+ <h3 id="h3-u521Bu5EFAu7D22u5F15"><a name="创建索引" class="reference-link"></a><span class="header-link octicon octicon-link"></span>创建索引</h3>
+ <p>在ElasticSearch索引中，对应于CRUD中的“创建”和“更新” - 如果对具有给定类型的文档进行索引，并且要插入原先不存在的ID。 如果具有相同类型和ID的文档已存在，则会被覆盖。</p> 
+ <p>要索引第一个JSON对象，我们对<strong>REST API</strong>创建一个<strong>PUT</strong>请求到一个由索引名称，类型名称和ID组成的URL。 也就是：<code>http://localhost:9200/&lt;index&gt;/&lt;type&gt;/[&lt;id&gt;]</code>。</p> 
+ <p>索引和类型是必需的，而<code>id</code>部分是可选的。如果不指定<code>ID</code>，<strong>ElasticSearch</strong>会为我们生成一个<code>ID</code>。 但是，如果不指定id，应该使用HTTP的<code>POST</code>而不是<code>PUT</code>请求。</p> 
+ <p>索引名称是任意的。如果服务器上没有此名称的索引，则将使用默认配置来创建一个索引。</p> 
+ <p>至于类型名称，它也是任意的。 它有几个用途，包括：</p> 
+ <ul> 
+  <li>每种类型都有自己的ID空间。</li>
+  <li>不同类型具有不同的映射(“模式”，定义属性/字段应如何编制索引)。</li>
+  <li>搜索多种类型是可以的，并且也很常见，但很容易搜索一种或多种指定类型。</li>
+ </ul> 
+ <p>现在我们来索引一些内容！ 可以把任何东西放到索引中，只要它可以表示为单个JSON对象。 在本教程中，使用索引和搜索电影的一个示例。这是一个经典的电影对象信息：</p> 
+ <pre><code class="lang-json">{
+    "title": "The Godfather",
+    "director": "Francis Ford Coppola",
+    "year": 1972
+}
+</code></pre> 
+ <p>要创建一个索引，这里使用索引的名称为“movies”，类型名称(“movie”)和id(“1”)，并按照上述模式使用JSON对象在正文中进行请求。</p> 
+ <pre><code class="lang-shell">curl -XPUT "http://localhost:9200/movies/movie/1" -d'
+{
+    "title": "The Godfather",
+    "director": "Francis Ford Coppola",
+    "year": 1972
+}'
+</code></pre> 
+ <p>可以使用curl来执行它，也可以使用Sense。这里使用Sense，可以自己填充URL，方法和请求正文，或者您以复制上述curl示例，将光标置于Sense中的正文字段中写入上面的Json对象，然后按点击绿色小箭头来执行创建索引操作。如下图所示 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201702/0702/217140254_75235.png" alt=""></p> 
+ <p>执行请求后，可以看到接收到来自ElasticSearch响应的JSON对象。如下所示 - </p> 
+ <pre><code class="lang-json">{
+   "_index": "movies",
+   "_type": "movie",
+   "_id": "1",
+   "_version": 1,
+   "result": "created",
+   "_shards": {
+      "total": 2,
+      "successful": 1,
+      "failed": 0
+   },
+   "created": true
+}
+</code></pre> 
+ <p>响应对象包含有关索引操作的信息，例如它是否成功(“ok”)和文档ID，如果不指定则<strong>ElasticSearch</strong>会自己生成一个。</p> 
+ <p>如果运行Sense提供的默认搜索请求(可以使用Sense中的“<strong>历史记录</strong>”按钮访问，因为确实已执行它)过了，就会看到返回有数据的结果。</p> 
+ <pre><code class="lang-json">{
+   "took": 146,
+   "timed_out": false,
+   "_shards": {
+      "total": 5,
+      "successful": 5,
+      "failed": 0
+   },
+   "hits": {
+      "total": 1,
+      "max_score": 1,
+      "hits": [
+         {
+            "_index": "movies",
+            "_type": "movie",
+            "_id": "1",
+            "_score": 1,
+            "_source": {
+               "title": "The Godfather",
+               "director": "Francis Ford Coppola",
+               "year": 1972
+            }
+         }
+      ]
+   }
+}
+</code></pre> 
+ <p>在上面返回结果中，看到的是搜索结果而不是错误或是空的结果。</p> 
+ <h3 id="h3-u66F4u65B0u7D22u5F15"><a name="更新索引" class="reference-link"></a><span class="header-link octicon octicon-link"></span>更新索引</h3>
+ <p>现在，在索引中有了一部电影信息，接下来来了解如何更新它，添加一个类型列表。要做到这一点，只需使用相同的ID索引它。使用与之前完全相同的索引请求，但类型扩展了JSON对象。</p> 
+ <pre><code class="lang-json">curl -XPUT "http://localhost:9200/movies/movie/1" -d'
+{
+    "title": "The Godfather",
+    "director": "Francis Ford Coppola",
+    "year": 1972,
+    "genres": ["Crime", "Drama"]
+}'
+</code></pre> 
+ <p>ElasticSearch的响应结果与前面的大体上一样，但有一点区别，结果对象中的<code>_version</code>属性的值为<code>2</code>，而不是<code>1</code>。响应结果如下 - </p> 
+ <pre><code class="lang-json">{
+   "_index": "movies",
+   "_type": "movie",
+   "_id": "1",
+   "_version": 2,
+   "result": "updated",
+   "_shards": {
+      "total": 2,
+      "successful": 1,
+      "failed": 0
+   },
+   "created": false
+}
+</code></pre> 
+ <p>版本号(<code>_version</code>)可用于跟踪文档已编入索引的次数。它的主要目的是允许乐观的并发控制，因为可以在索引请求中提供一个版本，如果提供的版本高于索引中的版本，<strong>ElasticSearch</strong>将只覆盖文档内容，ID值不变，版本号自动添加。</p> 
+ <h2 id="h2--id-"><a name="由ID获取文档/索引" class="reference-link"></a><span class="header-link octicon octicon-link"></span>由ID获取文档/索引</h2>
+ <p>上面已经学习了索引新文档以及更新存在的文档。还看到了一个简单搜索请求的示例。如果只是想检索一个具有已知ID的索引，一个方法是搜索索引中的文档。另一个简单而快速的方法是通过<code>ID</code>，使用<code>GET</code>来检索它。</p> 
+ <p>简单的做法是向同一个URL发出一个GET请求，URL的ID部分是强制性的。通过ID从ElasticSearch中检索文档可发出URL的GET请求：<code>http://localhost:9200/&lt;index&gt;/&lt;type&gt;/&lt;id&gt;</code>。</p> 
+ <p>使用以下请求尝试获取电影信息：</p> 
+ <pre><code class="lang-shell">curl -XGET "http://localhost:9200/movies/movie/1" -d''
+</code></pre> 
+ <p>执行结果如下所示 -<br><img src="http://www.yiibai.com/uploads/images/201702/0702/768150216_57741.png" alt=""></p> 
+ <p>正如下图所看到的，结果对象包含与索引时所看到的类似的元数据，如索引，类型和版本信息。 最后最重要的是，它有一个名称为“<code>_source</code>”的属性，它包含实际获取的文档信息。</p> 
+ <p>关于GET没有什么可说的，因为它很简单，继续最后<strong>删除</strong>操作。</p> 
+ <h3 id="h3-u5220u9664u6587u6863"><a name="删除文档" class="reference-link"></a><span class="header-link octicon octicon-link"></span>删除文档</h3>
+ <p>为了通过ID从索引中删除单个指定的文档，使用与获取索引文档相同的URL，只是这里将HTTP方法更改为<code>DELETE</code>。</p> 
+ <pre><code class="lang-shell">curl -XDELETE "http://localhost:9200/movies/movie/1" -d''
+</code></pre> 
+ <p>响应对象包含元数据方面的一些常见数据字段，以及名为“<code>_found</code>”的属性，表示文档确实已找到并且操作成功。<br><img src="http://www.yiibai.com/uploads/images/201702/0702/569150228_70406.png" alt=""></p> 
+ <blockquote> 
+  <p>在执行<code>DELETE</code>调用后切换回<code>GET</code>，可以验证文档是否确实已删除。</p> 
+ </blockquote> 
+ <h2 id="h2-u641Cu7D22"><a name="搜索" class="reference-link"></a><span class="header-link octicon octicon-link"></span>搜索</h2>
+ <p>在前面，已经介绍了在ElasticSearch索引中处理数据的基础知识，现在是时候进行核心功能的学习了。考虑到之前我们删除索引中的所有文档，所以，在进行搜索学习之前，需要一些添加一些示例数据。使用以下这些请求和数据对象来创建索引。</p> 
+ <pre><code class="lang-json">curl -XPUT "http://localhost:9200/movies/movie/1" -d'
+{
+    "title": "The Godfather",
+    "director": "Francis Ford Coppola",
+    "year": 1972,
+    "genres": ["Crime", "Drama"]
+}'
+
+curl -XPUT "http://localhost:9200/movies/movie/2" -d'
+{
+    "title": "Lawrence of Arabia",
+    "director": "David Lean",
+    "year": 1962,
+    "genres": ["Adventure", "Biography", "Drama"]
+}'
+
+curl -XPUT "http://localhost:9200/movies/movie/3" -d'
+{
+    "title": "To Kill a Mockingbird",
+    "director": "Robert Mulligan",
+    "year": 1962,
+    "genres": ["Crime", "Drama", "Mystery"]
+}'
+
+curl -XPUT "http://localhost:9200/movies/movie/4" -d'
+{
+    "title": "Apocalypse Now",
+    "director": "Francis Ford Coppola",
+    "year": 1979,
+    "genres": ["Drama", "War"]
+}'
+
+curl -XPUT "http://localhost:9200/movies/movie/5" -d'
+{
+    "title": "Kill Bill: Vol. 1",
+    "director": "Quentin Tarantino",
+    "year": 2003,
+    "genres": ["Action", "Crime", "Thriller"]
+}'
+
+curl -XPUT "http://localhost:9200/movies/movie/6" -d'
+{
+    "title": "The Assassination of Jesse James by the Coward Robert Ford",
+    "director": "Andrew Dominik",
+    "year": 2007,
+    "genres": ["Biography", "Crime", "Drama"]
+}'
+</code></pre> 
+ <p>值得指出的是，ElasticSearch具有和端点(<code>_bulk</code>)用于用单个请求索引多个文档，但是这超出了本教程的范围，这里只保持简单，使用六个单独的请求学习。</p> 
+ <h3 id="h3-_search-"><a name="_search端点" class="reference-link"></a><span class="header-link octicon octicon-link"></span>_search端点</h3>
+ <p>现在已经把一些电影信息放入了索引，可以通过搜索看看是否可找到它们。 为了使用ElasticSearch进行搜索，我们使用<code>_search</code>端点，可选择使用索引和类型。也就是说，按照以下模式向URL发出请求：<code>&lt;index&gt;/&lt;type&gt;/_search</code>。其中，<code>index</code>和<code>type</code>都是可选的。</p> 
+ <p>换句话说，为了搜索电影，可以对以下任一URL进行POST请求：</p> 
+ <ul> 
+  <li><a target="_blank" href="http://localhost:9200/_search">http://localhost:9200/_search</a> - 搜索所有索引和所有类型。</li>
+  <li><a target="_blank" href="http://localhost:9200/movies/_search">http://localhost:9200/movies/_search</a> - 在电影索引中搜索所有类型</li>
+  <li><a target="_blank" href="http://localhost:9200/movies/movie/_search">http://localhost:9200/movies/movie/_search</a> - 在电影索引中显式搜索电影类型的文档。</li>
+ </ul> 
+ <p>因为我们只有一个单一的索引和单一的类型，所以怎么使用都不会有什么问题。为了简洁起见使用第一个URL。</p> 
+ <h3 id="h3--elasticsearch-dsl"><a name="搜索请求正文和ElasticSearch查询DSL" class="reference-link"></a><span class="header-link octicon octicon-link"></span>搜索请求正文和ElasticSearch查询DSL</h3>
+ <p>如果只是发送一个请求到上面的URL，我们会得到所有的电影信息。为了创建更有用的搜索请求，还需要向请求正文中提供查询。 请求正文是一个JSON对象，除了其它属性以外，它还要包含一个名称为“<code>query</code>”的属性，这就可使用ElasticSearch的查询DSL。</p>   
+ <pre><code class="lang-json">{
+    "query": {
+        //Query DSL here
+    }
+}
+</code></pre> 
+ <p>你可能想知道查询DSL是什么。它是ElasticSearch自己基于JSON的域特定语言，可以在其中表达查询和过滤器。想象ElasticSearch它像关系数据库的SQL。这里是ElasticSearch自己的文档解释它的一部分(英文好自己撸吧)：</p> 
+ <blockquote> 
+  <p>Think of the Query DSL as an AST of queries. Certain queries can contain other queries (like the bool query), other can contain filters (like the constant_score), and some can contain both a query and a filter (like the filtered). Each of those can contain any query of the list of queries or any filter from the list of filters, resulting in the ability to build quite complex (and interesting) queries. see more: <a target="_blank" href="http://www.elasticsearch.org/guide/reference/query-dsl/">http://www.elasticsearch.org/guide/reference/query-dsl/</a></p> 
+ </blockquote> 
+ <h3 id="h3-u57FAu672Cu81EAu7531u6587u672Cu641Cu7D22"><a name="基本自由文本搜索" class="reference-link"></a><span class="header-link octicon octicon-link"></span>基本自由文本搜索</h3>
+ <p>查询DSL具有一长列不同类型的查询可以使用。 对于“普通”自由文本搜索，最有可能想使用一个名称为“查询字符串查询”。</p> 
+ <p><a target="_blank" href="http://www.elasticsearch.org/guide/reference/query-dsl/query-string-query/" title="查询字符串查询">查询字符串查询</a>是一个高级查询，有很多不同的选项，ElasticSearch将解析和转换为更简单的查询树。如果忽略了所有的可选参数，并且只需要给它一个字符串用于搜索，它可以很容易使用。</p> 
+ <p>现在尝试在两部电影的标题中搜索有“kill”这个词的电影信息：</p> 
+ <pre><code class="lang-json">curl -XPOST "http://localhost:9200/_search" -d'
+{
+    "query": {
+        "query_string": {
+            "query": "kill"
+        }
+    }
+}'
+</code></pre> 
+ <p>执行上面的请求并查看结果，如下所示 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201702/0702/510150256_35222.png" alt=""></p> 
+ <p>正如预期的，得到两个命中结果，每个电影的标题中都带有“kill”单词。再看看另一种情况，在特定字段中搜索。</p> 
+ <h3 id="h3-u6307u5B9Au641Cu7D22u7684u5B57u6BB5"><a name="指定搜索的字段" class="reference-link"></a><span class="header-link octicon octicon-link"></span>指定搜索的字段</h3>
+ <p>在前面的例子中，使用了一个非常简单的查询，一个只有一个属性“<code>query</code>”的查询字符串查询。 如前所述，查询字符串查询有一些可以指定设置，如果不使用，它将会使用默认的设置值。</p> 
+ <p>这样的设置称为“fields”，可用于指定要搜索的字段列表。如果不使用“fields”字段，ElasticSearch查询将默认自动生成的名为“<code>_all</code>”的特殊字段，来基于所有文档中的各个字段匹配搜索。</p> 
+ <p>为了做到这一点，修改以前的搜索请求正文，以便查询字符串查询有一个<code>fields</code>属性用来要搜索的字段数组：</p> 
+ <pre><code class="lang-json">curl -XPOST "http://localhost:9200/_search" -d'
+{
+    "query": {
+        "query_string": {
+            "query": "ford",
+            "fields": ["title"]
+        }
+    }
+}'
+</code></pre> 
+ <p>执行上面查询它，看看会有什么结果(应该只匹配到 <code>1</code> 行数据)：</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201702/0702/690160204_69463.png" alt=""></p> 
+ <p>正如预期的得到一个命中，电影的标题中的单词“<code>ford</code>”。现在，从查询中移除<code>fields</code>属性，应该能匹配到 <code>3</code> 行数据：</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201702/0702/669160214_72178.png" alt=""></p> 
+ <h2 id="h2-u8FC7u6EE4"><a name="过滤" class="reference-link"></a><span class="header-link octicon octicon-link"></span>过滤</h2>
+ <p>前面已经介绍了几个简单的自由文本搜索查询。现在来看看另一个示例，搜索“<code>drama</code>”，不明确指定字段，如下查询 -</p> 
+ <pre><code class="lang-json">curl -XPOST "http://localhost:9200/_search" -d'
+{
+    "query": {
+        "query_string": {
+            "query": "drama"
+        }
+    }
+}'
+</code></pre> 
+ <p>因为在索引中有五部电影在<code>_all</code>字段(从类别字段)中包含单词“<code>drama</code>”，所以得到了上述查询的<code>5</code>个命中。 现在，想象一下，如果我们想限制这些命中为只是<code>1962</code>年发布的电影。要做到这点，需要应用一个过滤器，要求“<code>year</code>”字段等于<code>1962</code>。</p> 
+ <p>要添加过滤器，修改搜索请求正文，以便当前的顶级查询(查询字符串查询)包含在过滤的查询中：</p> 
+ <pre><code class="lang-json">{
+    "query": {
+        "filtered": {
+            "query": {
+                "query_string": {
+                    "query": "drama"
+                }
+            },
+            "filter": {
+                //Filter to apply to the query
+            }
+        }
+    }
+}
+</code></pre> 
+ <p>过滤的查询是具有两个属性(<code>query</code>和<code>filter</code>)的查询。执行时，它使用过滤器过滤查询的结果。要完成这样的查询还需要添加一个过滤器，要求<code>year</code>字段的值为<code>1962</code>。</p> 
+ <p><strong>ElasticSearch</strong>查询DSL有各种各样的过滤器可供选择。对于这个简单的情况，某个字段应该匹配一个特定的值，一个<a target="_blank" href="http://www.elasticsearch.org/guide/reference/query-dsl/term-filter/" title="条件过滤器">条件过滤器</a>就能很好地完成工作。</p> 
+ <pre><code class="lang-json">"filter": {
+    "term": { "year": 1962 }
+}
+</code></pre> 
+ <p>完整的搜索请求如下所示：</p> 
+ <pre><code class="lang-json">curl -XPOST "http://localhost:9200/_search" -d'
+{
+    "query": {
+        "filtered": {
+            "query": {
+                "query_string": {
+                    "query": "drama"
+                }
+            },
+            "filter": {
+                "term": { "year": 1962 }
+            }
+        }
+    }
+}'
+</code></pre> 
+ <p>当执行上面请求，只得到两个命中，这个两个命中的数据的 <code>year</code> 字段的值都是等于 <code>1962</code>。</p> 
+ <h3 id="h3-u65E0u9700u67E5u8BE2u5373u53EFu8FDBu884Cu8FC7u6EE4"><a name="无需查询即可进行过滤" class="reference-link"></a><span class="header-link octicon octicon-link"></span>无需查询即可进行过滤</h3>
+ <p>在上面的示例中，使用过滤器限制查询字符串查询的结果。如果想要做的是应用一个过滤器呢？ 也就是说，我们希望所有电影符合一定的标准。</p> 
+ <p>在这种情况下，我们仍然在搜索请求正文中使用“<code>query</code>”属性。但是，我们不能只是添加一个过滤器，需要将它包装在某种查询中。</p> 
+ <p>一个解决方案是修改当前的搜索请求，替换查询字符串 <code>query</code> 过滤查询中的<code>match_all</code>查询，这是一个查询，只是匹配一切。类似下面这个：</p> 
+ <pre><code class="lang-json">curl -XPOST "http://localhost:9200/_search" -d'
+{
+    "query": {
+        "filtered": {
+            "query": {
+                "match_all": {
+                }
+            },
+            "filter": {
+                "term": { "year": 1962 }
+            }
+        }
+    }
+}'
+</code></pre> 
+ <p>另一个更简单的方法是使用常数分数查询：</p> 
+ <pre><code class="lang-json">curl -XPOST "http://localhost:9200/_search" -d'
+{
+    "query": {
+        "constant_score": {
+            "filter": {
+                "term": { "year": 1962 }
+            }
+        }
+    }
+}'
+</code></pre>
+ <br>      
+</div></body></html>

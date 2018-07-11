@@ -1,0 +1,219 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Python模块</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>模块允许逻辑地组织Python代码。 将相关代码分组到一个模块中，使代码更容易理解和使用。 模块是一个具有任意命名属性的Python对象，可以绑定和引用。</p> 
+ <p>简单来说，模块是一个由Python代码组成的文件。模块可以定义函数，类和变量。 模块还可以包括可运行的代码。</p> 
+ <p><strong>示例</strong></p> 
+ <p>下面是一个名称为<code>aname</code>的模块的Python代码通常位于一个名称为<code>aname.py</code>的文件中。以下是一个简单模块的例子：<code>support.py</code> -</p> 
+ <pre><code class="lang-python">def print_func( par ):
+   print "Hello : ", par
+   return
+</code></pre> 
+ <h2 id="h2-1-import-"><a name="1.import语句" class="reference-link"></a><span class="header-link octicon octicon-link"></span>1.import语句</h2>
+ <p>可以通过在其他Python源文件中执行<code>import</code>语句来将任何Python源文件用作模块。导入具有以下语法 -</p> 
+ <pre><code class="lang-python">import module1[, module2[,... moduleN]
+</code></pre> 
+ <p>当解释器遇到导入语句时，如果模块存在于搜索路径中，则导入该模块。搜索路径是导入模块之前解释器搜索的目录的列表。例如，要导入模块<code>hello.py</code>，需要将以下命令放在脚本的顶部 -</p> 
+ <pre><code class="lang-python">#!/usr/bin/python3
+
+# Import module support
+import support
+
+# Now you can call defined function that module as follows
+support.print_func("Maxsu")
+</code></pre> 
+ <p>当执行上述代码时，会产生以下结果 -</p> 
+ <pre><code class="lang-python">Hello : Maxsu
+</code></pre> 
+ <p>不管模块被导入多少次，模块只能加载一次。这样可以防止模块执行重复发生，如果有多个导入。</p> 
+ <h2 id="h2-2-from-import-"><a name="2.from…import语句" class="reference-link"></a><span class="header-link octicon octicon-link"></span>2.from…import语句</h2>
+ <p>Python <code>from</code>语句允许将模块中的特定属性导入到当前的命名空间中。 <code>from...import</code>具有以下语法 -</p> 
+ <pre><code class="lang-python">from modname import name1[, name2[, ... nameN]]
+</code></pre> 
+ <p>例如，要从模块 <code>fib</code> 导入函数<code>fibonacci</code>，请使用以下语句 -</p> 
+ <pre><code class="lang-python">#!/usr/bin/python3
+
+# Fibonacci numbers module
+
+def fib(n): # return Fibonacci series up to n
+   result = []
+   a, b = 0, 1
+   while b &lt; n:
+      result.append(b)
+      a, b = b, a + b
+   return result
+&gt;&gt;&gt; from fib import fib
+&gt;&gt;&gt; fib(100)
+[1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89]
+</code></pre> 
+ <p>此语句不会将整个模块<code>fib</code>导入到当前命名空间中; 它只是将<code>fibonacci</code>从模块<code>fib</code>引入导入模块的全局符号表。</p> 
+ <h2 id="h2-3-from-import-"><a name="3.from…import *语句" class="reference-link"></a><span class="header-link octicon octicon-link"></span>3.from…import *语句</h2>
+ <p>也可以使用以下<code>import</code>语句将模块中的所有名称导入到当前命名空间中 -</p> 
+ <pre><code class="lang-python">from modname import *
+</code></pre> 
+ <p>这提供了将所有项目从模块导入到当前命名空间中的简单方法; 但是，这个说法应该谨慎使用。</p> 
+ <h2 id="h2-4-"><a name="4.执行模块作为脚本" class="reference-link"></a><span class="header-link octicon octicon-link"></span>4.执行模块作为脚本</h2>
+ <p>在模块中，模块的名称(作为字符串)可用作全局变量<code>__name__</code>的值。模块中的代码将被执行，就像您导入它一样，但是<code>__name__</code>设置为“<code>__main__</code>”。</p> 
+ <p>在模块的最后添加这个代码 -</p> 
+ <pre><code class="lang-python">#!/usr/bin/python3
+
+# Fibonacci numbers module
+
+def fib(n): # return Fibonacci series up to n
+   result = []
+   a, b = 0, 1
+   while b &lt; n:
+      result.append(b)
+      a, b = b, a + b
+   return result
+if __name__ == "__main__":
+   f = fib(100)
+   print(f)
+</code></pre> 
+ <p>运行上述代码时，将显示以下输出。</p> 
+ <pre><code class="lang-python">[1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89]
+</code></pre> 
+ <h2 id="h2-5-"><a name="5.定位模块" class="reference-link"></a><span class="header-link octicon octicon-link"></span>5.定位模块</h2>
+ <p>当导入模块时，Python解释器将按以下顺序搜索模块 -</p> 
+ <ul> 
+  <li>当前目录。</li>
+  <li>如果没有找到该模块，Python会在shell变量<code>PYTHONPATH</code>中搜索每个目录。</li>
+  <li>如果其他所有失败，Python将检查默认路径。 在UNIX上，此默认路径通常是<code>/usr/local/lib/python3/</code> 或者 <code>/usr/sbin/</code></li>
+ </ul> 
+ <p>模块搜索路径作为<code>sys.path</code>变量存储在系统模块<code>sys</code>中。<code>sys.path</code>变量包含当前目录<code>PYTHONPATH</code>和依赖于安装的默认值。</p> 
+ <h2 id="h2-6-pythonpath-"><a name="6.PYTHONPATH变量" class="reference-link"></a><span class="header-link octicon octicon-link"></span>6.PYTHONPATH变量</h2>
+ <p><code>PYTHONPATH</code>是一个环境变量，由目录列表组成。 <code>PYTHONPATH</code>的语法与shell变量`PATH```的语法相同。</p> 
+ <p>这是一个典型的Windows系统上的<code>PYTHONPATH</code> -</p> 
+ <pre><code class="lang-shell">set PYTHONPATH = c:\python34\lib;
+</code></pre> 
+ <p>这里是UNIX系统的典型<code>PYTHONPATH</code> -</p> 
+ <pre><code class="lang-shell">set PYTHONPATH = /usr/local/lib/python
+</code></pre> 
+ <h2 id="h2-7-"><a name="7.命名空间和范围" class="reference-link"></a><span class="header-link octicon octicon-link"></span>7.命名空间和范围</h2>
+ <p>变量是映射到对象的名称(标识符)。 命名空间是变量名(键)及其对应对象(值)的字典。</p> 
+ <ul> 
+  <li>Python语句可以访问本地命名空间和全局命名空间中的变量。如果本地和全局变量具有相同的名称，则局部变量会影响全局变量。</li>
+  <li>每个函数都有自己的本地命名空间。 类方法遵循与普通函数相同的范围规则。</li>
+  <li>Python对于变量是本地还是全局都进行了有根据的判断。它假定在函数中分配值的任何变量都是本地的。</li>
+  <li>因此，为了将值分配给函数内的全局变量，必须首先使用<code>global</code>语句。</li>
+  <li>语句<code>global VarName</code>告诉Python <code>VarName</code>是一个全局变量。Python停止搜索本地命名空间的变量。</li>
+ </ul> 
+ <p>例如，在全局命名空间中定义一个变量<code>Money</code>。 在函数<code>Money</code>中为<code>Money</code>赋值，因此Python将<code>Money</code>作为局部变量。</p> 
+ <p>但是，如果在设置之前就访问了本地变量<code>Money</code>的值，它会产生一个错误：<code>UnboundLocalError</code>。 这里可以通过取消注释<code>global</code>语句来解决问题。如下示例代码 - </p> 
+ <pre><code class="lang-python">#!/usr/bin/python3
+
+Money = 2000
+def AddMoney():
+   # Uncomment the following line to fix the code:
+   # global Money
+   Money = Money + 1
+
+print (Money)
+AddMoney()
+print (Money)
+</code></pre> 
+ <h2 id="h2-8-dir-"><a name="8.dir( )函数" class="reference-link"></a><span class="header-link octicon octicon-link"></span>8.dir( )函数</h2>
+ <p><code>dir()</code>内置函数返回一个包含由模块定义的名称的字符串的排序列表。这个列表包含模块中定义的所有模块，变量和函数的名称。 以下是一个简单的例子 -</p>   
+ <pre><code class="lang-python">#!/usr/bin/python3
+
+# Import built-in module math
+import time
+
+content = dir(time)
+
+print (content)
+</code></pre> 
+ <p>当执行上述代码时，会产生以下结果 -</p> 
+ <pre><code class="lang-shell">['_STRUCT_TM_ITEMS', '__doc__', '__loader__', '__name__', '__package__', '__spec__', 'altzone', 'asctime', 'clock', 'ctime', 'daylight', 'get_clock_info', 'gmtime', 'localtime', 'mktime', 'monotonic', 'perf_counter', 'process_time', 'sleep', 'strftime', 'strptime', 'struct_time', 'time', 'timezone', 'tzname']
+</code></pre> 
+ <p>这里，特殊的字符串变量<code>__name__</code>是模块的名称，<code>__file__</code>是加载模块的文件名。</p> 
+ <h2 id="h2-9-globals-locals-"><a name="9.globals()和locals()函数" class="reference-link"></a><span class="header-link octicon octicon-link"></span>9.globals()和locals()函数</h2>
+ <p><code>globals()</code>和<code>locals()</code>函数可用于返回全局和本地命名空间中的名称，具体取决于它们被调用的位置。</p> 
+ <ul> 
+  <li>如果<code>locals()</code>从一个函数中调用，它将返回从该函数本地访问的所有名称。</li>
+  <li>如果从函数中调用<code>globals()</code>，它将返回从该函数全局访问的所有名称。</li>
+ </ul> 
+ <p>这两个函数的返回类型是字典。 因此，可以使用<code>keys()</code>函数提取名称。</p> 
+ <h2 id="h2-10-reload-"><a name="10.reload()函数" class="reference-link"></a><span class="header-link octicon octicon-link"></span>10.reload()函数</h2>
+ <p>当将模块导入到脚本中时，模块的顶级部分的代码只能执行一次。<br>因此，如果要重新执行模块中的顶级代码，可以使用<code>reload()</code>函数。<code>reload()</code>函数再次导入以前导入的模块。 <code>reload()</code>函数的语法是这样的 -</p> 
+ <pre><code class="lang-shell">reload(module_name)
+</code></pre> 
+ <p>这里，<code>module_name</code>是要重新加载的模块的名称，而不是包含模块名称的字符串。 例如，要重新加载<code>hello</code>模块，请执行以下操作 -</p> 
+ <pre><code class="lang-python">reload(hello)
+</code></pre> 
+ <h2 id="h2-11-python-"><a name="11.Python中的包" class="reference-link"></a><span class="header-link octicon octicon-link"></span>11.Python中的包</h2>
+ <p>Python中的包是一个分层文件目录结构，它定义了一个由模块和子包和子子包组成的Python应用程序环境，等等。</p> 
+ <p>在<code>package</code>目录中创建两个目录：<code>pkg</code>和<code>pkg2</code>， 然后分别在这两个目录中创建两个文件：<code>a.py</code>和<code>b.py</code>。该文件具有以下一行源代码 -</p> 
+ <p><em>文件： pkg/a.py</em> - </p> 
+ <pre><code class="lang-python">#!/usr/bin/python3
+#coding=utf-8
+# save file: pkg/a.py
+def fun():
+    print ("I'm pkg.a.fun() ")
+</code></pre> 
+ <p><em>文件： pkg/b.py</em> - </p> 
+ <pre><code class="lang-python">#!/usr/bin/python3
+#coding=utf-8
+# save file: pkg/b.py
+def fun():
+    print ("I'm pkg.b.fun() ")
+</code></pre> 
+ <p><em>文件： pkg2/a.py</em> - </p> 
+ <pre><code class="lang-python">#!/usr/bin/python3
+#coding=utf-8
+# save file: pkg2/a.py
+def fun():
+    print ("I'm pkg2.a.fun() ")
+</code></pre> 
+ <p><em>文件： pkg2/b.py</em> - </p> 
+ <pre><code class="lang-python">#!/usr/bin/python3
+#coding=utf-8
+# save file: pkg2/b.py
+def fun():
+    print ("I'm pkg2.b.fun() ")
+</code></pre> 
+ <p>在<code>package</code>目录中创建一个主程序文件：<code>main.py</code>，用于演示如何调用包中的各个文件 - </p> 
+ <pre><code class="lang-python">#!/usr/bin/python3
+#coding=utf-8
+# save file: phone/pots.py
+
+import pkg.a as a
+import pkg.b as b
+
+import pkg2.a as a2
+import pkg2.b as b2
+
+a.fun()
+b.fun()
+
+a2.fun()
+b2.fun()
+
+import pkg2.a
+import pkg2.b
+
+print('----------- another way -----------------')
+pkg2.a.fun()
+pkg2.b.fun()
+</code></pre> 
+ <p>整个代码的目录如下所示 - </p> 
+ <pre><code class="lang-shell">package
+  |- pkg
+      |- __init__.py
+      |- a.py
+      |- b.py
+  |- pkg2
+      |- __init__.py
+      |- a.py
+      |- b.py
+</code></pre> 
+ <p>当执行上述代码时，会产生以下结果 -</p> 
+ <pre><code class="lang-shell">I'm pkg.a.fun() 
+I'm pkg.b.fun() 
+I'm pkg2.a.fun() 
+I'm pkg2.b.fun() 
+----------- another way -----------------
+I'm pkg2.a.fun() 
+I'm pkg2.b.fun()
+</code></pre> 
+ <p>在上面的例子中，将每个文件中的一个函数作为示例，但是可以在文件中编写多个函数。还可以在这些文件中定义不同的Python类，然后可以使用这些类来创建包。</p>
+ <br>      
+</div></body></html>

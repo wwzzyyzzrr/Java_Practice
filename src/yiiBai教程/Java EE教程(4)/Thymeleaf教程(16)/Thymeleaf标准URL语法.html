@@ -1,0 +1,109 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Thymeleaf标准URL语法</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>Thymeleaf标准方言(称为Standard和SpringStandard)提供了一种在Web应用程序中轻松创建URL的方法，以便它们包含任何所需的URL工件。 这是通过连接表达方式来完成的，这是一种类似于Thymeleaf标准的表现:<code>@{...}</code></p> 
+ <h2 id="h2-1-"><a name="1. 绝对网址" class="reference-link"></a><span class="header-link octicon octicon-link"></span>1. 绝对网址</h2>
+ <p>绝对URL用于创建到其他服务器的链接。它们需要指定一个协议名称(<code>http://</code>或<code>https://</code>)开头。</p> 
+ <pre><code class="lang-html">&lt;a th:href="@{https://www.yiibai.com/thymeleaf/}"&gt;
+</code></pre> 
+ <p>上面链接不会被修改，除非在服务器上配置了URL重写过滤器，并在<code>HttpServletResponse.encodeUrl(...)</code>方法中执行修改。最后生成的HTML代码如下:</p> 
+ <pre><code class="lang-html">&lt;a href="https://www.yiibai.com/thymeleaf/"&gt;
+</code></pre> 
+ <h2 id="h2-2-url"><a name="2. 上下文相关URL" class="reference-link"></a><span class="header-link octicon octicon-link"></span>2. 上下文相关URL</h2>
+ <p>最常用的URL类型是上下文相关的。 这些URL是一旦安装在服务器上，就会与Web应用程序根相关联URL。 例如，如果将一个名称为<code>myapp.war</code>的文件部署到一个Tomcat服务器中，那么应用程序一般是通过URL:<code>http://localhost:8080/myapp</code>来访问，<code>myapp</code>就是上下文名称。</p> 
+ <p>与上下文相关的URL以<code>/</code>字符开头:</p> 
+ <pre><code class="lang-html">&lt;a th:href="@{/order/list}"&gt;
+</code></pre> 
+ <p>如果应用程序访问URL为:<code>http://localhost:8080/myapp</code>，则此URL将输出:</p> 
+ <pre><code class="lang-html">&lt;a href="/myapp/order/list"&gt;
+</code></pre> 
+ <h2 id="h2-3-url"><a name="3. 与服务器相关URL" class="reference-link"></a><span class="header-link octicon octicon-link"></span>3. 与服务器相关URL</h2>
+ <p>服务器相关的URL与上下文相关的URL非常相似，只是它们不假定URL要链接到应用程序上下文中的资源，因此允许链接到同一服务器中的不同上下文:</p> 
+ <pre><code class="lang-html">&lt;a th:href="@{~/billing-app/showDetails.html}"&gt;
+</code></pre> 
+ <p>当前应用程序的上下文将被忽略，因此尽管应用程序部署在<code>http:// localhost:8080 / myapp</code>，但该URL将输出:</p> 
+ <pre><code class="lang-html">&lt;a href="/billing-app/showDetails.html"&gt;
+</code></pre> 
+ <h2 id="h2-4-url"><a name="4. 协议相关URL" class="reference-link"></a><span class="header-link octicon octicon-link"></span>4. 协议相关URL</h2>
+ <p>与协议相关的URL实际上是绝对的URL，它将保持用于显示当前页面的协议(HTTP，HTTPS)。 它们通常用于包括样式，脚本等外部资源:</p> 
+ <pre><code class="lang-html">&lt;script th:src="@{//scriptserver.example.net/myscript.js}"&gt;...&lt;/script&gt;
+</code></pre> 
+ <p>它将呈现与上面一致的URL(URL重写除外)，如:</p> 
+ <pre><code class="lang-html">&lt;script src="//scriptserver.example.net/myscript.js"&gt;...&lt;/script&gt;
+</code></pre> 
+ <h2 id="h2-5-"><a name="5. 添加参数" class="reference-link"></a><span class="header-link octicon octicon-link"></span>5. 添加参数</h2>
+ <p>如何向使用<code>@{...}</code>表达式创建的URL添加参数？ 这也很简单:</p> 
+ <pre><code class="lang-html">&lt;a th:href="@{/order/details(id=3)}"&gt;
+</code></pre> 
+ <p>上面示例代码，最终将输出为:</p> 
+ <pre><code class="lang-html">&lt;a href="/order/details?id=3"&gt;
+</code></pre> 
+ <p>也可以添加几个参数，用逗号分隔它们:</p> 
+ <pre><code class="lang-html">&lt;a th:href="@{/order/details(id=3,action='show_all')}"&gt;
+</code></pre> 
+ <p>上面代码将输出结果为:</p> 
+ <pre><code class="lang-html">&lt;!-- 注意＆符号在标签属性中进行HTML转义... --&gt;
+&lt;a href="/order/details?id=3&amp;action=show_all"&gt;
+</code></pre> 
+ <p>还可以使用正常参数的路径变量的形式包含参数，但在URL的路径中指定一个占位符:</p> 
+ <pre><code class="lang-html">&lt;a th:href="@{/order/{id}/details(id=3,action='show_all')}"&gt;
+</code></pre> 
+ <p>上面输出结果为:</p> 
+ <pre><code class="lang-html">&lt;a href="/order/3/details?action=show_all"&gt;
+</code></pre> 
+ <h2 id="h2-6-"><a name="6. 网址片段标识符" class="reference-link"></a><span class="header-link octicon octicon-link"></span>6. 网址片段标识符</h2>
+ <p>片段标识符可以包含在URL中，包含参数和不包含参数。 它们将始终包含在网址的基础上，参考以下代码:</p> 
+ <pre><code class="lang-html">&lt;a th:href="@{/home#all_info(action='show')}"&gt;
+</code></pre> 
+ <p>执行输出结果如下 - </p> 
+ <pre><code class="lang-shell">&lt;a href="/home?action=show#all_info"&gt;
+</code></pre> 
+ <h2 id="h2-7-url-"><a name="7. URL重写" class="reference-link"></a><span class="header-link octicon octicon-link"></span>7. URL重写</h2>
+ <p>Thymeleaf允许在应用程序中配置URL重写过滤器，它通过调用Thymeleaf模板生成的每个URL的Servlet API的<code>javax.servlet.http.HttpServletResponse</code>类中的<code>response.encodeURL()</code>方法来实现。</p> 
+ <p>下面在Java Web应用程序中支持URL重写操作的标准方式，并允许URL:</p> 
+ <ul> 
+  <li>自动检测用户是否启用了Cookie，如果未启用或者如果它是第一个请求并且cookie配置仍未知。则将<code>;jsessionid=...</code>片段添加到URL。</li>
+  <li>在需要时自动将代理配置应用于URL。</li>
+  <li>使用不同的CDN设置，以便链接到分布在多个服务器中的内容。</li>
+ </ul> 
+ <h2 id="h2-8-url-"><a name="8. URL其它属性" class="reference-link"></a><span class="header-link octicon octicon-link"></span>8. URL其它属性</h2>
+ <p>不要以为在<code>@{...}</code>表达式中只有<code>th:href</code>属性来表示URL 。 事实上，它们可以像变量表达式(<code>${...}</code>)或消息外部化/国际化(<code>＃{...}</code>)一样用于任何地方。</p> 
+ <p>例如，表单提交时，可使用以下写法 - </p>   
+ <pre><code class="lang-html">&lt;form th:action="@{/order/processOrder}"&gt;
+</code></pre> 
+ <p>或作为其他表达的一部分。 如下作为外部化/国际化字符串的参数:</p> 
+ <pre><code class="lang-html">&lt;p th:text="#{orders.explanation('3', @{/order/details(id=3,action='show_all')})}"&gt;
+</code></pre> 
+ <h2 id="h2-9-url-"><a name="9. 在URL中使用表达式" class="reference-link"></a><span class="header-link octicon octicon-link"></span>9. 在URL中使用表达式</h2>
+ <p>下面来看看，如下所示的URL表达式:</p> 
+ <pre><code class="lang-html">&lt;a th:href="@{/order/details(id=3,action='show_all')}"&gt;
+</code></pre> 
+ <p>但<code>3</code>和<code>'show_all'</code>都不能是文字值，因为只有在运行时才能知道它们的值，怎么办？</p> 
+ <pre><code class="lang-html">&lt;a th:href="@{/order/details(id=${order.id},action=(${user.admin} ? 'show_all' : 'show_public'))}"&gt;
+</code></pre> 
+ <p>下面看看另一个URL表达式，如下所示:</p> 
+ <pre><code class="lang-html">&lt;a th:href="@{/order/details(id=${order.id})}"&gt;
+</code></pre> 
+ <p>它其实是下面URL的一个快捷方式:</p> 
+ <pre><code class="lang-html">&lt;a th:href="@{'/order/details'(id=${order.id})}"&gt;
+</code></pre> 
+ <p>这意味着URL基本身可以被指定为一个表达式，例如一个变量表达式:</p> 
+ <pre><code class="lang-html">&lt;a th:href="@{${detailsURL}(id=${order.id})}"&gt;
+</code></pre> 
+ <p>或外部化/国际化的文本:</p> 
+ <pre><code class="lang-html">&lt;a th:href="@{#{orders.details.localized_url}(id=${order.id})}"&gt;
+</code></pre> 
+ <p>甚至可以使用复杂的表达式，包括条件表达式，例如:</p> 
+ <pre><code class="lang-html">&lt;a th:href="@{(${user.admin}? '/admin/home' : ${user.homeUrl})(id=${order.id})}"&gt;
+</code></pre> 
+ <p>如果要更清洁，那么可以使用<code>th:with</code> :</p> 
+ <pre><code class="lang-html">&lt;a th:with="baseUrl=(${user.admin}? '/admin/home' : ${user.homeUrl})"
+  th:href="@{${baseUrl}(id=${order.id})}"&gt;
+</code></pre> 
+ <p>又或者 - </p> 
+ <pre><code class="lang-html">&lt;div th:with="baseUrl=(${user.admin}? '/admin/home' : ${user.homeUrl})"&gt;
+  ...
+  &lt;a th:href="@{${baseUrl}(id=${order.id})}"&gt;...&lt;/a&gt;
+  ...
+&lt;/div&gt;
+</code></pre>
+ <br>      
+</div></body></html>

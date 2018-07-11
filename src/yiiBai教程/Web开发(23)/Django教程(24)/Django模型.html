@@ -1,0 +1,171 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Django模型</h1><div style="width:100%;float:left;" class="article-content">   
+ <div>
+   模型是表示我们的数据库表或集合类，并且其中所述类的每个属性是表或集合的字段。模型是在&nbsp;app/models.py&nbsp;中定义(在我们的例子中是：myapp/models.py) 
+ </div> 
+ <div> 
+  <h2> </h2> 
+  <h2> 创建模型 </h2> 
+  <p style="text-align:justify;"> 下面是创建一个&nbsp;Dreamreal&nbsp;模型实例&nbsp;− </p> 
+  <pre>from django.db import models
+
+class Dreamreal(models.Model):
+
+   website = models.CharField(max_length = 50)
+   mail = models.CharField(max_length = 50)
+   name = models.CharField(max_length = 50)
+   phonenumber = models.IntegerField()
+
+   class Meta:
+      db_table = "dreamreal"</pre> 
+  <div>
+    每一个模型继承自django.db.models.Model。 
+  </div> 
+  <div>
+    我们类有4个属性(3&nbsp;CharField和1个整数)，这将是表中的字段。 
+  </div> 
+  <p style="text-align:justify;"> Meta类与db_table属性可以让我们定义的实际表或集合名称。Django会自动命名表或集合：myapp_modelName.&nbsp;这个类将强制表的名称。 </p> 
+  <p style="text-align:justify;"> 在 django.db.models 更多的字段的类型，你可以了解更多关于他们的URL： </p> 
+  <p style="text-align:justify;"> <a target="_blank" href="https://docs.djangoproject.com/en/1.5/ref/models/fields/#field-types">https://docs.djangoproject.com/en/1.5/ref/models/fields/#field-types</a> </p> 
+  <p style="text-align:justify;"> 在创建模型后需要 Django 产生实际的数据库&nbsp;− </p> 
+  <pre>$python manage.py syncdb&nbsp;</pre> 
+  <h2> 操作数据(CRUD) </h2> 
+  <p style="text-align:justify;"> 让我们创建一个“crudops”的视图，看看如何能够在模型上做的CRUD操作。&nbsp;现在&nbsp;myapp/views.py 然后将看起来像&nbsp;− </p> 
+  <p style="text-align:justify;"> myapp/views.py </p> 
+  <pre>from myapp.models import Dreamreal
+from django.http import HttpResponse
+
+def crudops(request):
+   #Creating an entry
+   
+   dreamreal = Dreamreal(
+      website = "www.polo.com", mail = "sorex@polo.com", 
+      name = "sorex", phonenumber = "002376970"
+   )
+   
+   dreamreal.save()
+   
+   #Read ALL entries
+   objects = Dreamreal.objects.all()
+   res ='Printing all Dreamreal entries in the DB : &lt;br&gt;'
+   
+   for elt in objects:
+      res += elt.name+"&lt;br&gt;"
+   
+   #Read a specific entry:
+   sorex = Dreamreal.objects.get(name = "sorex")
+   res += 'Printing One entry &lt;br&gt;'
+   res += sorex.name
+   
+   #Delete an entry
+   res += '&lt;br&gt; Deleting an entry &lt;br&gt;'
+   sorex.delete()
+   
+   #Update
+   dreamreal = Dreamreal(
+      website = "www.polo.com", mail = "sorex@polo.com", 
+      name = "sorex", phonenumber = "002376970"
+   )
+   
+   dreamreal.save()
+   res += 'Updating entry&lt;br&gt;'
+   
+   dreamreal = Dreamreal.objects.get(name = 'sorex')
+   dreamreal.name = 'thierry'
+   dreamreal.save()
+   
+   return HttpResponse(res)</pre> 
+  <h3> </h3> 
+  <h2> 其他数据操作 </h2> 
+  <p style="text-align:justify;"> 让我们来探讨可以对模型做的其他操作。&nbsp;需要注意的是 CRUD 操作都做对模型的实例，现在我们将直接表示模型类的工作。 </p> 
+  <div>
+    让我们创建一个“datamanipulation”视图在&nbsp;myapp/views.py 
+  </div> 
+  <pre>from myapp.models import Dreamreal
+from django.http import HttpResponse
+
+def datamanipulation(request):
+   res = ''
+   
+   #Filtering data:
+   qs = Dreamreal.objects.filter(name = "paul")
+   res += "Found : %s results&lt;br&gt;"%len(qs)
+   
+   #Ordering results
+   qs = Dreamreal.objects.order_by("name")
+   
+   for elt in qs:
+      res += elt.name + '&lt;br&gt;'
+   
+   return HttpResponse(res)</pre> 
+  <h2> </h2> 
+  <h2> 链接模型 </h2> 
+  <p style="text-align:justify;"> Django ORM提供3种方式来链接模型&nbsp;− </p> 
+  <p style="text-align:justify;"> 我们将在这里看到的第一示例是一个一对多的关系。正如在上面的例子中看到的，一个公司可以有多个在线网站。定义这种关系是通过使用 django.db.models.ForeignKey 完成&nbsp;- </p> 
+  <p style="text-align:justify;"> myapp/models.py </p> 
+  <pre>from django.db import models
+
+class Dreamreal(models.Model):
+   website = models.CharField(max_length = 50)
+   mail = models.CharField(max_length = 50)
+   name = models.CharField(max_length = 50)
+   phonenumber = models.IntegerField()
+   online = models.ForeignKey('Online', default = 1)
+   
+   class Meta:
+      db_table = "dreamreal"
+
+class Online(models.Model):
+      domain = models.CharField(max_length = 30)
+   
+   class Meta:
+      db_table = "online"</pre> 
+  <div>
+    可以更新myapp/models.py，正如你看到的，我们添加了一个在线模式，并链接到&nbsp;Dreamreal模型。 
+  </div> 
+  <p style="text-align:justify;"> 让我们来看看如何通过&nbsp;manage.py&nbsp;shell&nbsp;执行所有工作&nbsp;− </p> 
+  <p style="text-align:justify;"> 首先让我们来测试&nbsp;Django&nbsp;shell创建一些公司(Dreamreal项)− </p>   
+  <pre>$python manage.py shell
+
+&gt;&gt;&gt; from myapp.models import Dreamreal, Online
+&gt;&gt;&gt; dr1 = Dreamreal()
+&gt;&gt;&gt; dr1.website = 'company1.com'
+&gt;&gt;&gt; dr1.name = 'company1'
+&gt;&gt;&gt; dr1.mail = 'contact@company1'
+&gt;&gt;&gt; dr1.phonenumber = '12345'
+&gt;&gt;&gt; dr1.save()
+&gt;&gt;&gt; dr2 = Dreamreal()
+&gt;&gt;&gt; dr1.website = 'company2.com'
+&gt;&gt;&gt; dr2.website = 'company2.com'
+&gt;&gt;&gt; dr2.name = 'company2'
+&gt;&gt;&gt; dr2.mail = 'contact@company2'
+&gt;&gt;&gt; dr2.phonenumber = '56789'
+&gt;&gt;&gt; dr2.save()&nbsp;</pre> 
+  <span style="background-color:inherit;line-height:1.5;"> <p style="text-align:justify;"> 现在有一些代管网域&nbsp;− </p> <pre>&gt;&gt;&gt; on1 = Online()
+&gt;&gt;&gt; on1.company = dr1
+&gt;&gt;&gt; on1.domain = "site1.com"
+&gt;&gt;&gt; on2 = Online()
+&gt;&gt;&gt; on2.company = dr1
+&gt;&gt;&gt; on2.domain = "site2.com"
+&gt;&gt;&gt; on3 = Online()
+&gt;&gt;&gt; on3.domain = "site3.com"
+&gt;&gt;&gt; dr2 = Dreamreal.objects.all()[2]
+&gt;&gt;&gt; on3.company = dr2
+&gt;&gt;&gt; on1.save()
+&gt;&gt;&gt; on2.save()
+&gt;&gt;&gt; on3.save()&nbsp;</pre> </span>
+  <span style="background-color:inherit;line-height:1.5;"> <p style="text-align:justify;"> 从在线域访问托管公司(Dreamreal项)的属性是很简单的&nbsp;− </p> <pre>&gt;&gt;&gt; on1.company.name&nbsp;</pre> </span>
+  <span style="background-color:inherit;line-height:1.5;"> <p style="text-align:justify;"> 如果想知道公司Dreamreal主办的所有网上域名，我们将使用代码&nbsp;− </p> <pre>&gt;&gt;&gt; dr1.online_set.all()&nbsp;</pre> </span> 
+  <p style="text-align:justify;"> 为了得到一个QuerySet，请注意，所有的操作方法，我们以前见过(filter, all, exclude, order_by....) </p> 
+  <p style="text-align:justify;"> 也可以访问进行过滤操作链接模型属性，比方说，想获得的所有在线域所在Dreamreal名称包含“company”- </p> 
+  <span style="background-color:inherit;line-height:1.5;"> <pre>&gt;&gt;&gt; Online.objects.filter(company__name__contains = 'company'&nbsp;</pre> </span> 
+  <p style="text-align:justify;"> <strong>注&nbsp;</strong>-&nbsp;那种查询只支持SQL数据库。&nbsp;它不会对非关系数据库工作，其中连接不存在，并有两个“_”。 </p> 
+  <p style="text-align:justify;"> 但是，这不是链接模型的唯一方法，也有OneToOneField，这保证了两个对象之间的关系是唯一的链接关系。如果使用了OneToOneField在上面的例子中，这将意味着只有一个在线条目对应于每个Dreamreal条目。 </p> 
+  <div>
+    最后一个，ManyToManyField 表之间(NN)的关系这些都是基于SQL的数据库。 
+  </div> 
+  <div> 
+   <br> 
+  </div> 
+ </div>
+ <br>      
+</div></body></html>

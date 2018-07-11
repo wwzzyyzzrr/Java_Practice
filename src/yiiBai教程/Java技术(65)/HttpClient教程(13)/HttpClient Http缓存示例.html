@@ -1,0 +1,119 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">HttpClient Http缓存示例</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>HttpClient Cache提供了一个与HTTP / 1.1兼容的缓存层，可以与HttpClient一起使用 - Java相当于浏览器缓存。 以下示例使用HttpClient缓存库的<code>CacheConfig</code>。</p> 
+ <h2 id="h2-maven-"><a name="Maven依赖关系" class="reference-link"></a><span class="header-link octicon octicon-link"></span>Maven依赖关系</h2>
+ <p>我们使用maven来管理依赖关系，并使用Apache HttpClient 4.5版本。 将以下依赖项添加到您的项目中。</p> 
+ <p><em>pom.xml</em> 文件的内容如下 - </p> 
+ <pre><code class="lang-xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                             http://maven.apache.org/xsd/maven-4.0.0.xsd"&gt;
+
+    &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
+    &lt;groupId&gt;com.yiibai.httpclient.httmethods&lt;/groupId&gt;
+    &lt;artifactId&gt;http-get&lt;/artifactId&gt;
+    &lt;version&gt;1.0.0-SNAPSHOT&lt;/version&gt;
+    &lt;url&gt;https://memorynotfound.com&lt;/url&gt;
+    &lt;name&gt;httpclient - ${project.artifactId}&lt;/name&gt;
+
+    &lt;dependencies&gt;
+        &lt;!-- Apache Commons IO --&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.apache.httpcomponents&lt;/groupId&gt;
+            &lt;artifactId&gt;httpclient&lt;/artifactId&gt;
+            &lt;version&gt;4.5.2&lt;/version&gt;
+        &lt;/dependency&gt;
+    &lt;/dependencies&gt;
+
+    &lt;build&gt;
+        &lt;plugins&gt;
+            &lt;plugin&gt;
+                &lt;artifactId&gt;maven-compiler-plugin&lt;/artifactId&gt;
+                &lt;version&gt;3.5.1&lt;/version&gt;
+                &lt;configuration&gt;
+                    &lt;source&gt;1.8&lt;/source&gt;
+                    &lt;target&gt;1.8&lt;/target&gt;
+                &lt;/configuration&gt;
+            &lt;/plugin&gt;
+        &lt;/plugins&gt;
+    &lt;/build&gt;
+
+&lt;/project&gt;
+</code></pre> 
+ <h2 id="h2-httpclient-"><a name="HttpClient缓存示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>HttpClient缓存示例</h2>
+ <p>这是如何设置基本缓存HttpClient的简单示例。 按照配置，它将存储最多3000个缓存对象，其中每个对象的最大主体大小可能为<code>10240</code>字节。 我们配置<code>CacheConfig</code>并使用这个配置来创建HttpClient。 循环执行一次简单的HTTP GET请求<code>3</code>次，并期望最后两个请求将被缓存。</p> 
+ <p>文件:<em>HttpClientCachingExample.java</em> - </p> 
+ <pre><code class="lang-java">package com.yiibai.httpdemo;
+
+import org.apache.http.client.cache.CacheResponseStatus;
+import org.apache.http.client.cache.HttpCacheContext;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.cache.CacheConfig;
+import org.apache.http.impl.client.cache.CachingHttpClients;
+
+import java.io.IOException;
+
+/**
+ * This example demonstrates how to use caching {@link CacheConfig}.
+ */
+public class HttpClientCachingExample {
+
+    public static void main(String... args) throws IOException {
+
+        CacheConfig cacheConfig = CacheConfig.custom()
+                .setMaxCacheEntries(3000)
+                .setMaxObjectSize(10240) // 10MB
+                .build();
+
+        CloseableHttpClient cachingClient = CachingHttpClients.custom()
+                .setCacheConfig(cacheConfig)
+                .build();
+
+        for (int i = 0; i &lt; 3; i++){
+            HttpCacheContext context = HttpCacheContext.create();
+            HttpGet httpget = new HttpGet("http://httpbin.org/cache");
+            System.out.println("Executing request " + httpget.getRequestLine());
+            CloseableHttpResponse response = cachingClient.execute(httpget, context);
+            try {
+                System.out.println("----------------------------------------");
+                CacheResponseStatus responseStatus = context.getCacheResponseStatus();
+                switch (responseStatus) {
+                    case CACHE_HIT:
+                        System.out.println("A response was generated from the cache with " +
+                                "no requests sent upstream");
+                        break;
+                    case CACHE_MODULE_RESPONSE:
+                        System.out.println("The response was generated directly by the " +
+                                "caching module");
+                        break;
+                    case CACHE_MISS:
+                        System.out.println("The response came from an upstream server");
+                        break;
+                    case VALIDATED:
+                        System.out.println("The response was generated from the cache " +
+                                "after validating the entry with the origin server");
+                        break;
+                }
+            } finally {
+                response.close();
+            }
+        }
+    }
+
+}
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 - </p>   
+ <pre><code class="lang-shell">Executing request GET http://httpbin.org/cache HTTP/1.1
+----------------------------------------
+The response came from an upstream server
+Executing request GET http://httpbin.org/cache HTTP/1.1
+----------------------------------------
+The response was generated from the cache after validating the entry with the origin server
+Executing request GET http://httpbin.org/cache HTTP/1.1
+----------------------------------------
+The response was generated from the cache after validating the entry with the origin server
+</code></pre>
+ <br>      
+</div></body></html>

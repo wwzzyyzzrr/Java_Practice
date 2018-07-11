@@ -1,0 +1,68 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Scipy输入和输出</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>Scipy.io包提供了多种功能来解决不同格式的文件(输入和输出)。 其中一些格式是 -</p> 
+ <ul> 
+  <li>Matlab</li>
+  <li>IDL</li>
+  <li>Matrix Market</li>
+  <li>Wave</li>
+  <li>Arff</li>
+  <li>Netcdf等</li>
+ </ul> 
+ <p>这里讨论最常用的文件格式 -</p> 
+ <p><strong>MATLAB</strong></p> 
+ <p>以下是用于加载和保存<code>.mat</code>文件的函数。</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>编号</th> 
+    <th>函数</th> 
+    <th>描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>1</td> 
+    <td><code>loadmat</code></td> 
+    <td>加载一个MATLAB文件</td> 
+   </tr> 
+   <tr> 
+    <td>2</td> 
+    <td><code>savemat</code></td> 
+    <td>保存为一个MATLAB文件</td> 
+   </tr> 
+   <tr> 
+    <td>3</td> 
+    <td><code>whosmat</code></td> 
+    <td>列出MATLAB文件中的变量</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p>让我们来看看下面的例子。</p> 
+ <pre><code class="lang-python">import scipy.io as sio
+import numpy as np
+
+#Save a mat file
+vect = np.arange(10)
+sio.savemat('array.mat', {'vect':vect})
+
+#Now Load the File
+mat_file_content = sio.loadmat('array.mat')
+print (mat_file_content)
+</code></pre> 
+ <p>上述程序将生成以下输出 - </p>   
+ <pre><code class="lang-shell">{
+   'vect': array([[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]]), '__version__': '1.0', 
+   '__header__': 'MATLAB 5.0 MAT-file Platform: posix, Created on: Sat Sep 30 
+   09:49:32 2017', '__globals__': []
+}
+</code></pre> 
+ <p>可以看到数组以及元信息。 如果想在不读取数据到内存的情况下检查MATLAB文件的内容，请使用如下所示的<code>whosmat</code>命令。</p> 
+ <pre><code class="lang-python">import scipy.io as sio
+mat_file_content = sio.whosmat(‘array.mat’)
+print (mat_file_content)
+</code></pre> 
+ <p>上述程序将生成以下输出。</p> 
+ <pre><code class="lang-shell">[('vect', (1, 10), 'int64')]
+</code></pre>
+ <br>      
+</div></body></html>

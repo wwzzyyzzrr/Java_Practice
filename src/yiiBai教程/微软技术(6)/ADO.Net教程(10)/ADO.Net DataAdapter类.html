@@ -1,0 +1,150 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">ADO.Net DataAdapter类</h1><div style="width:100%;float:left;" class="article-content">   
+ <p><code>DataAdapter</code>类作为<code>DataSet</code>和数据源之间的桥梁来检索数据。 <code>DataAdapter</code>是一个代表一组SQL命令和一个数据库连接的类。它可以用来填充数据集并更新数据源。</p> 
+ <p><strong>DataAdapter类的签名</strong></p> 
+ <pre><code class="lang-csharp">public class DataAdapter : System.ComponentModel.Component, System.Data.IDataAdapter
+</code></pre> 
+ <p><strong>DataAdapter类的构造函数</strong></p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>编号</th> 
+    <th>构造函数</th> 
+    <th>描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>1</td> 
+    <td><code>DataAdapter()</code></td> 
+    <td>它用于初始化<code>DataAdapter</code>类的新实例。</td> 
+   </tr> 
+   <tr> 
+    <td>2</td> 
+    <td><code>DataAdapter(DataAdapter)</code></td> 
+    <td>它用于从相同类型的现有对象初始化<code>DataAdapter</code>类的新实例。</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p><strong>DataAdapter类的方法</strong></p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>编号</th> 
+    <th>方法</th> 
+    <th>描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>1</td> 
+    <td><code>CloneInternals()</code></td> 
+    <td>它用于创建<code>DataAdapter</code>的这个实例的副本。</td> 
+   </tr> 
+   <tr> 
+    <td>2</td> 
+    <td><code>Dispose(Boolean)</code></td> 
+    <td>它用于释放<code>DataAdapter</code>使用的非托管资源。</td> 
+   </tr> 
+   <tr> 
+    <td>3</td> 
+    <td><code>FillSchema(DataSet, SchemaType, String, IDataReader)</code></td> 
+    <td>它用于将<code>DataTable</code>添加到指定的<code>DataSet</code>。</td> 
+   </tr> 
+   <tr> 
+    <td>4</td> 
+    <td><code>GetFillParameters()</code></td> 
+    <td>它用于在执行SQL SELECT语句时获取用户设置的参数。</td> 
+   </tr> 
+   <tr> 
+    <td>5</td> 
+    <td><code>ResetFillLoadOption()</code></td> 
+    <td>它用于将<code>FillLoadOption</code>重置为默认状态。</td> 
+   </tr> 
+   <tr> 
+    <td>6</td> 
+    <td><code>ShouldSerializeAcceptChangesDuringFill()</code></td> 
+    <td>它确定是否应该保持<code>AcceptChangesDuringFill</code>属性。</td> 
+   </tr> 
+   <tr> 
+    <td>7</td> 
+    <td><code>ShouldSerializeFillLoadOption()</code></td> 
+    <td>它确定是否应该保持<code>FillLoadOption</code>属性。</td> 
+   </tr> 
+   <tr> 
+    <td>8</td> 
+    <td><code>ShouldSerializeTableMappings()</code></td> 
+    <td>它确定是否存在一个或多个<code>DataTableMapping</code>对象。</td> 
+   </tr> 
+   <tr> 
+    <td>9</td> 
+    <td><code>Update(DataSet)</code></td> 
+    <td>它用于调用相应的<code>INSERT</code>，<code>UPDATE</code>或<code>DELETE</code>语句。</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h2 id="h2-u793Au4F8B"><a name="示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例</h2>
+ <p>打开 <em>Visual Studio</em> 创建一个网站项目，一个ASP.NET空的网站：<em>AdoNetDataAdapter</em>，如下所示 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201711/2011/364091155_88197.png" alt=""></p> 
+ <p>在项目名称上点击右键，选择：<em>添加</em> -&gt; <em>添加新项</em> ，如下所示 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201711/2011/495101101_91247.png" alt=""></p> 
+ <p>创建一个名称为：<em>Default.html</em> 的文件，如下所示 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201711/2011/751101102_21197.png" alt=""></p> 
+ <p>以下是<em>Default.html</em> 文件的代码实现 - </p> 
+ <pre><code class="lang-aspnet">&lt;%@ Page Language="C#" AutoEventWireup="true" CodeFile="Default.html.cs" Inherits="_Default" %&gt;
+
+&lt;!DOCTYPE html&gt;  
+
+&lt;html xmlns="http://www.w3.org/1999/xhtml"&gt;  
+&lt;head runat="server"&gt;  
+    &lt;title&gt;ADO.Net DataAdapter类示例&lt;/title&gt;  
+&lt;/head&gt;  
+&lt;body&gt;  
+    &lt;form id="form1" runat="server"&gt;  
+        &lt;div&gt;  
+
+        &lt;/div&gt;  
+        &lt;asp:GridView ID="GridView1" runat="server" CellPadding="3" BackColor="#DEBA84"   
+        BorderColor="#DEBA84" BorderStyle="None" BorderWidth="1px" CellSpacing="2"&gt;  
+            &lt;FooterStyle BackColor="#F7DFB5" ForeColor="#8C4510" /&gt;  
+            &lt;HeaderStyle BackColor="#A55129" Font-Bold="True" ForeColor="White" /&gt;  
+            &lt;PagerStyle ForeColor="#8C4510" HorizontalAlign="Center" /&gt;  
+            &lt;RowStyle BackColor="#FFF7E7" ForeColor="#8C4510" /&gt;  
+            &lt;SelectedRowStyle BackColor="#738A9C" Font-Bold="True" ForeColor="White" /&gt;  
+            &lt;SortedAscendingCellStyle BackColor="#FFF1D4" /&gt;  
+            &lt;SortedAscendingHeaderStyle BackColor="#B95C30" /&gt;  
+            &lt;SortedDescendingCellStyle BackColor="#F1E5CE" /&gt;  
+            &lt;SortedDescendingHeaderStyle BackColor="#93451F" /&gt;  
+        &lt;/asp:GridView&gt;  
+    &lt;/form&gt;  
+&lt;/body&gt;  
+&lt;/html&gt;
+</code></pre> 
+ <p>以下是<em>Default.html.cs</em> 文件的代码实现 - </p>   
+ <pre><code class="lang-csharp">using System;
+using System.Data.SqlClient;
+using System.Data;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+
+public partial class _Default : System.Web.UI.Page
+{
+    protected void Page_Load(object sender, EventArgs e)
+    {
+        using (SqlConnection con = new SqlConnection("data source=.; database=student; integrated security=SSPI"))
+        {
+            SqlDataAdapter sde = new SqlDataAdapter("Select * from student_info", con);
+            DataSet ds = new DataSet();
+            sde.Fill(ds);
+            GridView1.DataSource = ds;
+            GridView1.DataBind();
+        }
+    }
+}
+</code></pre> 
+ <p>执行上面项目，点击菜单：调试 -&gt; 开始执行(不调试) ，Visual Studio自动打开浏览器，看到结果如下所示 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201711/2011/400101110_12408.png" alt=""></p>
+ <br>      
+</div></body></html>

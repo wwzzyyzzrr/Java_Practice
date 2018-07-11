@@ -1,0 +1,67 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">mybaits if标签语句</h1><div style="width:100%;float:left;" class="article-content">   
+ <p> Mybatis if&nbsp;标签可用在许多类型的 <a target="_blank" href="http://www.yiibai.com/sql/">SQL </a>语句中，我们以查询为例。首先看一个很普通的查询： </p> 
+ <p> <span style="font-family:Helvetica, Tahoma,  font-size:14px;line-height:25.2000007629395px;background-color:#FFFFFF;"> </span> </p> 
+ <pre class="prettyprint lang-xml">&lt;!-- 查询用户列表，like用户名称 --&gt;  
+&lt;select id="getUserListLikeName" parameterType="User" resultMap="userResultMap"&gt;  
+    SELECT * from user u   
+WHERE u.username LIKE CONCAT(CONCAT('%', #{username}),'%')  
+&lt;/select&gt;  </pre> 
+ <p> 但是当 username 或 sex 为 null 时，此语句很可能报错或查询结果为空。此时我们使用 if 动态 sql 语句先进行判断，如果值为 null 或等于空字符串，我们就不进行此条件的判断，增加灵活性。 </p> 
+ <p> 参数为实体类：User。将实体类中所有的属性均进行判断，如果不为空则执行判断条件。 </p> 
+ <pre class="prettyprint lang-xml">&lt;!-- 添加 if(判断参数) - 将实体类 User 不为空的属性作为 where 条件 --&gt;  
+&lt;select id="getUserList" resultMap="resultMap_User" parameterType="com.yiibai.pojo.User"&gt;  
+    SELECT u.username,  
+           u.password,  
+           u.sex,  
+           u.birthday,  
+           u.photo,  
+           u.score,  
+           u.sign
+      FROM user u   
+     WHERE  
+    &lt;if test="username !=null "&gt;  
+        u.username LIKE CONCAT(CONCAT('%', #{username, jdbcType=VARCHAR}),'%')  
+    &lt;/if&gt;  
+    &lt;if test="sex!= null and sex != '' "&gt;  
+        AND u.sex = #{Sex, jdbcType=INTEGER}  
+    &lt;/if&gt;  
+    &lt;if test="birthday != null "&gt;  
+        AND u.birthday = #{birthday, jdbcType=DATE}  
+    &lt;/if&gt;  
+
+    &lt;if test="userId <span id="__kindeditor_bookmark_end_6__"></span>!= null and userId != '' "&gt;  
+        AND id.user_id = #{userId, jdbcType=VARCHAR}  
+    &lt;/if&gt;   
+&lt;/select&gt; </pre> 
+ <p> 使用时比较灵活，创建新的一个这样的实体类，我们需要限制那个条件，只需要附上相应的值就会&nbsp;where&nbsp;这个条件，相反不去赋值就可以不在&nbsp;where&nbsp;中判断。 </p> 
+ <pre class="prettyprint lang-xml">public void select_by_if() {  
+    User user = new User();  
+    user.setUsername("");  
+    user.setSex(1);  
+    user.setBirthday(DateUtil.parse("1990-08-18"));  
+    List&lt;User&gt; userList = this.dynamicSqlMapper.getUserList_if(user);  
+    for (user u : userList) {  
+        System.out.println(u.toString());  
+    }  
+} </pre> 
+ <p> 我们再看看一下另一个示例，先来看看下面的代码： </p>   
+ <pre class="prettyprint lang-xml">&lt;select id="dynamicIfTest" parameterType="Blog" resultType="Blog"&gt;
+        select * from t_blog where 1 = 1
+        &lt;if test="title != null"&gt;
+            and title = #{title}
+        &lt;/if&gt;
+        &lt;if test="content != null"&gt;
+            and content = #{content}
+        &lt;/if&gt;
+        &lt;if test="owner != null"&gt;
+            and owner = #{owner}
+        &lt;/if&gt;
+    &lt;/select&gt;</pre> 这条语句的意思非常简单，如果提供了 title 参数，那么就要满足 title=#{title}，同样如果提供了 Content 和 Owner 的时候，它们也需要满足相应的条件，之后就是返回满足这些条件的所有 Blog，这是非常有用的一个功能，以往我们使用其他类型框架或者直接使用 
+ <a target="_blank" href="http://www.yiibai.com/jdbc/">JDBC</a> 的时候， 如果我们要达到同样的选择效果的时候，我们就需要拼 SQL 语句，这是极其麻烦的，比起来，上述的动态SQL就比较简单了。 
+ <p> <br> </p> 
+ <p> <br> </p> 
+ <p> <br> </p> 
+ <p> <br> </p> 
+ <p> <br> </p>
+ <br>      
+</div></body></html>

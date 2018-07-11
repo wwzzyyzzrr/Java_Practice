@@ -1,0 +1,116 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Java令牌和字符串拆分</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>Java有一些实用程序类，可将一个字符串分解成称为令牌的部分。通过定义分隔符字符来定义被认为是令牌的字符序列。<br><code>StringTokenizer</code>类位于<code>java.util</code>包中。<code>StreamTokenizer</code>类位于<code>java.io</code>包中。<code>StringTokenizer</code>将字符串拆分成令牌，而<code>StreamTokenizer</code>是基于字符的流来访问令牌。</p> 
+ <h2 id="h2-stringtokenizer"><a name="StringTokenizer" class="reference-link"></a><span class="header-link octicon octicon-link"></span>StringTokenizer</h2>
+ <p><code>StringTokenizer</code>对象根据对定界符的定义将字符串拆分为令牌，它一次返回一个令牌。还可以随时更改分隔符。可以通过指定字符串并接受默认分隔符来创建一个<code>StringTokenizer</code>，它是空格，制表符，新行，回车符和换行符(“\t\n\r\f”) 如下：</p> 
+ <pre><code class="lang-java">StringTokenizer st  = new StringTokenizer("here is my string");
+</code></pre> 
+ <p>可在创建<code>StringTokenizer</code>时指定自己的分隔符，如下所示：下面的代码使用空格，逗号和分号作为分隔符。</p> 
+ <pre><code class="lang-java">String delimiters = " ,;";
+StringTokenizer st  = new StringTokenizer("my text...",  delimiters);
+</code></pre> 
+ <p>可以使用<code>hasMoreTokens()</code>方法来检查是否有更多的令牌，以及<code>nextToken()</code>方法从字符串中获取下一个令牌。</p> 
+ <p>还可以使用<code>String</code>类的<code>split()</code>方法将字符串基于分隔符拆分为令牌。<code>split()</code>方法接受正则表达式作为分隔符。</p> 
+ <p>以下代码显示如何使用<code>StringTokenizer</code>和<code>String</code>类的<code>split()</code>方法。</p> 
+ <pre><code class="lang-java">import java.util.StringTokenizer;
+
+public class Main {
+    public static void main(String[] args) {
+        String str = "This is a  test, this is another test.";
+        String delimiters = "  ,"; // a space and a comma
+        StringTokenizer st = new StringTokenizer(str, delimiters);
+
+        System.out.println("Tokens  using a  StringTokenizer:");
+        String token = null;
+        while (st.hasMoreTokens()) {
+            token = st.nextToken();
+            System.out.println(token);
+        }
+    }
+}
+</code></pre> 
+ <p>执行上面的代码，得到以下结果 - </p> 
+ <pre><code class="lang-java">Tokens  using a  StringTokenizer:
+This
+is
+a
+test
+this
+is
+another
+test.
+</code></pre> 
+ <h2 id="h2-streamtokenizer"><a name="StreamTokenizer" class="reference-link"></a><span class="header-link octicon octicon-link"></span>StreamTokenizer</h2>
+ <p>根据它们的类型来区分令牌，可使用<code>StreamTokenizer</code>类。</p> 
+ <pre><code class="lang-java">import static java.io.StreamTokenizer.TT_EOF;
+import static java.io.StreamTokenizer.TT_NUMBER;
+import static java.io.StreamTokenizer.TT_WORD;
+
+import java.io.IOException;
+import java.io.StreamTokenizer;
+import java.io.StringReader;
+
+public class Main {
+  public static void main(String[] args) throws Exception {
+    String str = "This is a  test, 200.89  which  is  simple 50";
+    StringReader sr = new StringReader(str);
+    StreamTokenizer st = new StreamTokenizer(sr);
+    try {
+      while (st.nextToken() != TT_EOF) {
+        switch (st.ttype) {
+        case TT_WORD: /* a word has been read */
+          System.out.println("String value: " + st.sval);
+          break;
+        case TT_NUMBER: /* a number has been read */
+          System.out.println("Number value:  " + st.nval);
+          break;
+        }
+      }
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
+}
+</code></pre> 
+ <p>上面的程序使用<code>StringReader</code>对象作为数据源。可以使用<code>FileReader</code>对象或任何其他<code>Reader</code>对象作为数据源。</p> 
+ <p>重复调用<code>StreamTokenizer</code>的<code>nextToken()</code>方法。它填充<code>StreamTokenizer</code>对象的三个字段：<code>ttype</code>，<code>sval</code>和<code>nval</code>。 <code>ttype</code>字段指示已读取的令牌类型。</p> 
+ <p>以下是类型(<code>ttype</code>)字段的四个可能值：</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>字段</th> 
+    <th>含义</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>TT_EOF</td> 
+    <td>已达到流的结尾。</td> 
+   </tr> 
+   <tr> 
+    <td>TT_EOL</td> 
+    <td>已达到行尾。</td> 
+   </tr> 
+   <tr> 
+    <td>TT_WORD</td> 
+    <td>单词(字符串)已从流中读取为令牌。</td> 
+   </tr> 
+   <tr> 
+    <td>TT_NUMBER</td> 
+    <td>数字已从流中读取为令牌。</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p>如果<code>ttype</code>具有<code>TT_WORD</code>，则字符串值存储在其字段<code>sval</code>中。如果返回<code>TT_NUBMER</code>，其数值存储在<code>nval</code>字段中。</p> 
+ <p>上面的代码生成以下结果。</p>   
+ <pre><code class="lang-java">String value: This
+String value: is
+String value: a
+String value: test
+Number value:  200.89
+String value: which
+String value: is
+String value: simple
+Number value:  50.0
+</code></pre>
+ <br>      
+</div></body></html>

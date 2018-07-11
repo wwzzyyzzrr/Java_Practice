@@ -1,0 +1,179 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Android数据备份</h1><div style="width:100%;float:left;" class="article-content">   
+ <p> Android可以备份应用程序的数据到远程“云”存储，以应用程序的数据和设置的一个还原点。可以只备份应用程序数据。为了访问其他应用程序的数据，需要以root在手机上操作。</p> 
+ <p> 为了使数据备份的应用程序，需要注册使用谷歌备份服务应用程序。这已在实施例进行了说明。注册后必须在AndroidManifest.xml&nbsp;指定其键值</p> 
+ <pre class="prettyprint prettyprinted" style="border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; font-size: 12px; overflow: auto;">
+<span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;application</span><span class="pln" style="margin: 0px; padding: 0px;">
+   </span><span class="atn" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">android:allowBackup</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">=</span><span class="atv" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"true"</span><span class="pln" style="margin: 0px; padding: 0px;">
+   </span><span class="atn" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">android:backupAgent</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">=</span><span class="atv" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"MyBackupPlace"</span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">
+
+   </span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;meta-data</span><span class="pln" style="margin: 0px; padding: 0px;"> 
+      </span><span class="atn" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">android:name</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">=</span><span class="atv" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"com.google.android.backup.api_key"</span><span class="pln" style="margin: 0px; padding: 0px;">
+      </span><span class="atn" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">android:value</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">=</span><span class="atv" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"AEdPqrEAAAAIErlxFByGgNz2ywBeQb6TsmLpp5Ksh1PW-ZSexg"</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">/&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">
+</span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;/application&gt;</span></pre> 
+ <p> Android提供BackUpAgentHelper类来处理数据备份的所有操作。为了使用这个类，必须使用它的扩展类。它的语法如下：</p> 
+ <pre class="prettyprint prettyprinted" style="border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; font-size: 12px; overflow: auto;">
+<span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">public</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">class</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="typ" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">MyBackUpPlace</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">extends</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="typ" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">BackupAgentHelper</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">{</span><span class="pln" style="margin: 0px; padding: 0px;">
+
+</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">}</span></pre> 
+ <p> 要备份的持久性数据无论是哪两种形式。它可以是SharedPrefrences或者它可能是文件。 Android支持两种类型的备份在 SharedPreferencesBackupHelper 和 FileBackupHelper 各自的类。</p> 
+ <p> 为了使用SharedPerefernceBackupHelper，需要实例的对象sharedPerefernces文件的名称。它的语法如下：</p> 
+ <pre class="prettyprint prettyprinted" style="border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; font-size: 12px; overflow: auto;">
+<span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">static</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">final</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="typ" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">String</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="typ" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">File_Name_Of_Prefrences</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">=</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="str" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"myPrefrences"</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">;</span><span class="pln" style="margin: 0px; padding: 0px;">
+</span><span class="typ" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">SharedPreferencesBackupHelper</span><span class="pln" style="margin: 0px; padding: 0px;"> helper </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">=</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">new</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="typ" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">SharedPreferencesBackupHelper</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">this</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">,</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="typ" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">File_Name_Of_Prefrences</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">);</span></pre> 
+ <p> 需要做的最后一件事是通过指定的备份键字符串和辅助对象调用addHelper方法。它的语法如下：</p> 
+ <pre class="prettyprint prettyprinted" style="border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; font-size: 12px; overflow: auto;">
+<span class="pln" style="margin: 0px; padding: 0px;">addHelper</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="pln" style="margin: 0px; padding: 0px;">PREFS_BACKUP_KEY</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">,</span><span class="pln" style="margin: 0px; padding: 0px;"> helper</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">);</span></pre> 
+ <p> addHelper方法将一个辅助自动添加到给定数据集，以代理的配置。</p> 
+ <p> 除了这些方法，也有在 BackupAgentHelper 类中定义的其他方法。它们被定义如下：</p> 
+ <table class="src" style="margin: 8px 0px; padding: 0px;  border-color: rgb(214, 214, 214); width: 560px; border-collapse: collapse; vertical-align: top; color: rgb(0, 0, 0);  background-color: rgb(247, 247, 247);"> 
+  <tbody style="margin: 0px; padding: 0px;"> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <th style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214); background-color: rgb(238, 238, 238);"> Sr.No</th> 
+    <th style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214); background-color: rgb(238, 238, 238);"> Method &amp; description</th> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 1</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> <b style="margin: 0px; padding: 0px;">onBackup(ParcelFileDescriptor oldState, BackupDataOutput data, ParcelFileDescriptor newState)</b><br style="margin: 0px; padding: 0px;"> 运行备份过程的每个配置处理程序</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 2</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> <b style="margin: 0px; padding: 0px;">onRestore(BackupDataInput data, int appVersionCode, ParcelFileDescriptor newState)</b><br style="margin: 0px; padding: 0px;"> 运行在每个处理器配置的恢复过程</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p> 所述SharedPreferencesBackUpHelper类的方法在下面列出。</p> 
+ <table class="src" style="margin: 8px 0px; padding: 0px;  border-color: rgb(214, 214, 214); width: 560px; border-collapse: collapse; vertical-align: top; color: rgb(0, 0, 0);  background-color: rgb(247, 247, 247);"> 
+  <tbody style="margin: 0px; padding: 0px;"> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <th style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214); background-color: rgb(238, 238, 238);"> Sr.No</th> 
+    <th style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214); background-color: rgb(238, 238, 238);"> Method &amp; description</th> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 1</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> <b style="margin: 0px; padding: 0px;">performBackup(ParcelFileDescriptor oldState, BackupDataOutput data, ParcelFileDescriptor newState)</b><br style="margin: 0px; padding: 0px;"> 备份配置SharedPreferences群体</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 2</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> <b style="margin: 0px; padding: 0px;">restoreEntity(BackupDataInputStream data)</b><br style="margin: 0px; padding: 0px;"> 还原一个实体的恢复数据流的正确共享的首选项文件存储</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h2> 例子</h2> 
+ <p> 下面的例子演示了如何使用BackupAgentHelper类来创建应用程序数据的备份。</p> 
+ <p> 为了试验这个例子，需要在实际设备或模拟器运行此。</p> 
+ <table class="src" style="margin: 8px 0px; padding: 0px;  border-color: rgb(214, 214, 214); width: 560px; border-collapse: collapse; vertical-align: top; color: rgb(0, 0, 0);  background-color: rgb(247, 247, 247);"> 
+  <tbody style="margin: 0px; padding: 0px;"> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <th style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214); background-color: rgb(238, 238, 238);"> Steps</th> 
+    <th style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214); background-color: rgb(238, 238, 238);"> 描述</th> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 1</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 使用Android Studio创建Android应用程序，并将其命名为Backup。在创建这个项目，确保目标SDK编译在Android SDK最新版本或使用更高级别的API。</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 2</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 注册谷歌备份服务应用程序。</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 3</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 修改AndroidManifest添加相应的必要的密钥和其他组件</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 4</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 在AndroidManifest.xml中指定的名称创建备份代理类</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 5</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 运行应用程序并验证结果</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p> 注册您的Android应用程序使用谷歌备份服务。为了做到这一点，<a target="_blank" href="https://developer.android.com/google/backup/signup.html">访问这个链接</a>. 必须同意服务条款，然后输入应用程序包的名称。它如下所示：</p> 
+ <img alt="Android Data Backup Tutorial" src="/uploads/allimg/150126/203231N18-0.JPG" style="margin: auto; padding: 0px 0px 10px; border: 0px; max-width: 560px; height: auto; display: block; color: rgb(0, 0, 0); "> 
+ <p> 然后点击注册与Android备份服务。这会给定钥匙，以及AndroidManifest代码进行复制刚才的键。它如下所示：</p> 
+ <img alt="Android Data Backup Tutorial" src="/uploads/allimg/150126/2032313F1-1.JPG" style="margin: auto; padding: 0px 0px 10px; border: 0px; max-width: 560px; height: auto; display: block; color: rgb(0, 0, 0); "> 
+ <p> 复制的键之后，需要写入到AndroidManifest.xml文件。其代码如下：</p> 
+ <pre class="prettyprint prettyprinted" style="border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; font-size: 12px; overflow: auto;">
+<span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">&lt;?</span><span class="pln" style="margin: 0px; padding: 0px;">xml version</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">=</span><span class="str" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"1.0"</span><span class="pln" style="margin: 0px; padding: 0px;"> encoding</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">=</span><span class="str" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"utf-8"</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">?&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">
+</span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;manifest</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="atn" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">xmlns:android</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">=</span><span class="atv" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"http://schemas.android.com/apk/res/android"</span><span class="pln" style="margin: 0px; padding: 0px;">
+   </span><span class="atn" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">package</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">=</span><span class="atv" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"com.yiibai.backup"</span><span class="pln" style="margin: 0px; padding: 0px;">
+   </span><span class="atn" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">android:versionCode</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">=</span><span class="atv" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"1"</span><span class="pln" style="margin: 0px; padding: 0px;">
+   </span><span class="atn" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">android:versionName</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">=</span><span class="atv" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"1.0"</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">
+
+   </span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;uses-sdk</span><span class="pln" style="margin: 0px; padding: 0px;">
+      </span><span class="atn" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">android:minSdkVersion</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">=</span><span class="atv" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"8"</span><span class="pln" style="margin: 0px; padding: 0px;">
+      </span><span class="atn" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">android:targetSdkVersion</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">=</span><span class="atv" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"17"</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">/&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">
+
+   </span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;application</span><span class="pln" style="margin: 0px; padding: 0px;">
+      </span><span class="atn" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">android:allowBackup</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">=</span><span class="atv" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"true"</span><span class="pln" style="margin: 0px; padding: 0px;">
+      </span><span class="atn" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">android:icon</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">=</span><span class="atv" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"@drawable/ic_launcher"</span><span class="pln" style="margin: 0px; padding: 0px;">
+      </span><span class="atn" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">android:label</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">=</span><span class="atv" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"@string/app_name"</span><span class="pln" style="margin: 0px; padding: 0px;">
+      </span><span class="atn" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">android:backupAgent</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">=</span><span class="atv" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"MyBackUpPlace"</span><span class="pln" style="margin: 0px; padding: 0px;">
+      </span><span class="atn" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">android:theme</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">=</span><span class="atv" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"@style/AppTheme"</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">
+      </span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;activity</span><span class="pln" style="margin: 0px; padding: 0px;">
+         </span><span class="atn" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">android:name</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">=</span><span class="atv" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"com.yiibai.backup.MainActivity"</span><span class="pln" style="margin: 0px; padding: 0px;">
+         </span><span class="atn" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">android:label</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">=</span><span class="atv" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"@string/app_name"</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">
+         </span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;intent-filter&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">
+            </span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;action</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="atn" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">android:name</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">=</span><span class="atv" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"android.intent.action.MAIN"</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">/&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">
+
+            </span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;category</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="atn" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">android:name</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">=</span><span class="atv" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"android.intent.category.LAUNCHER"</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">/&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">
+         </span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;/intent-filter&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">
+      </span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;/activity&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">
+      </span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;meta-data</span><span class="pln" style="margin: 0px; padding: 0px;"> 
+         </span><span class="atn" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">android:name</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">=</span><span class="atv" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"com.google.android.backup.api_key"</span><span class="pln" style="margin: 0px; padding: 0px;">
+         </span><span class="atn" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">android:value</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">=</span><span class="atv" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"AEdPqrEAAAAIErlxFByGgNz2ywBeQb6TsmLpp5Ksh1PW-ZSexg"</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">/&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">
+
+   </span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;/application&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">
+
+</span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;/manifest&gt;</span></pre> 
+ <p> 这里是BackUpAgentHelper类的代码。在backupAgent标签下的应用程序在AndroidManifest.xml中指定的类的名称应该是相同的</p>   
+ <pre class="prettyprint prettyprinted" style="border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; font-size: 12px; overflow: auto;">
+<span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">package</span><span class="pln" style="margin: 0px; padding: 0px;"> com</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">.</span><span class="pln" style="margin: 0px; padding: 0px;">example</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">.</span><span class="pln" style="margin: 0px; padding: 0px;">backup</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">;</span><span class="pln" style="margin: 0px; padding: 0px;">
+
+</span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">import</span><span class="pln" style="margin: 0px; padding: 0px;"> android</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">.</span><span class="pln" style="margin: 0px; padding: 0px;">app</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">.</span><span class="pln" style="margin: 0px; padding: 0px;">backup</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">.</span><span class="typ" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">BackupAgentHelper</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">;</span><span class="pln" style="margin: 0px; padding: 0px;">
+</span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">import</span><span class="pln" style="margin: 0px; padding: 0px;"> android</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">.</span><span class="pln" style="margin: 0px; padding: 0px;">app</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">.</span><span class="pln" style="margin: 0px; padding: 0px;">backup</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">.</span><span class="typ" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">SharedPreferencesBackupHelper</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">;</span><span class="pln" style="margin: 0px; padding: 0px;">
+
+</span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">public</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">class</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="typ" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">MyBackUpPlace</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">extends</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="typ" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">BackupAgentHelper</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">{</span><span class="pln" style="margin: 0px; padding: 0px;">
+
+
+   </span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">static</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">final</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="typ" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">String</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="typ" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">File_Name_Of_Prefrences</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">=</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="str" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"myPrefrences"</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">;</span><span class="pln" style="margin: 0px; padding: 0px;">
+   </span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">static</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">final</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="typ" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">String</span><span class="pln" style="margin: 0px; padding: 0px;"> PREFS_BACKUP_KEY </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">=</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="str" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"backup"</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">;</span><span class="pln" style="margin: 0px; padding: 0px;">
+
+   </span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">@Override</span><span class="pln" style="margin: 0px; padding: 0px;">
+   </span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">public</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">void</span><span class="pln" style="margin: 0px; padding: 0px;"> onCreate</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">()</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">{</span><span class="pln" style="margin: 0px; padding: 0px;">
+      </span><span class="typ" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">SharedPreferencesBackupHelper</span><span class="pln" style="margin: 0px; padding: 0px;"> helper </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">=</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">new</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="typ" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">SharedPreferencesBackupHelper</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">this</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">,</span><span class="pln" style="margin: 0px; padding: 0px;"> 
+      </span><span class="typ" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">File_Name_Of_Prefrences</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">);</span><span class="pln" style="margin: 0px; padding: 0px;">
+      addHelper</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="pln" style="margin: 0px; padding: 0px;">PREFS_BACKUP_KEY</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">,</span><span class="pln" style="margin: 0px; padding: 0px;"> helper</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">);</span><span class="pln" style="margin: 0px; padding: 0px;">
+</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">}</span><span class="pln" style="margin: 0px; padding: 0px;">
+
+</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">}</span></pre> 
+ <h2> 测试BackupAgent</h2> 
+ <p> 实现备份代理之后，就可以测试备份和恢复功能如以下步骤，使用BMGR。</p> 
+ <h3> 安装应用程序在一个合适的ANDROID系统映像。</h3> 
+ <p> 如果使用模拟器，创建和使用AVD采用Android2.2（API等级8级）。</p> 
+ <p> 如果使用的设备，设备必须运行Android 2.2或更高版本，并已Google Play内置</p> 
+ <h3> 保证数据备份是启用</h3> 
+ <p> 如果使用模拟器，启用备份SDK工具/路径下面的命令：</p> 
+ <pre class="prettyprint prettyprinted" style="border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; font-size: 12px; overflow: auto;">
+<span class="pln" style="margin: 0px; padding: 0px;">adb shell bmgr enable </span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">true</span></pre> 
+ <p> 如果使用的设备，打开系统设置，选择隐私，然后启用备份数据，并自动恢复。</p> 
+ <h3> 执行备份</h3> 
+ <p> 出于测试目的，也可以用下面的命令BMGR一个请求：</p> 
+ <pre class="prettyprint prettyprinted" style="border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; font-size: 12px; overflow: auto;">
+<span class="pln" style="margin: 0px; padding: 0px;">adb shell bmgr backup your</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">.</span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">package</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">.</span><span class="pln" style="margin: 0px; padding: 0px;">name</span></pre> 
+ <p> 通过键入以下命令启动备份操作</p> 
+ <div style="float:left;margin-bottom: 10px;">  
+ </div>
+ <div style="float:left;margin-bottom: 10px;">  
+ </div>
+ <pre class="prettyprint prettyprinted" style="border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; font-size: 12px; overflow: auto;">
+<span class="pln" style="margin: 0px; padding: 0px;">adb shell bmgr run</span></pre> 
+ <p> 这迫使备份管理器来执行那些在队列中的所有备份请求。</p> 
+ <h3> 卸载并重新安装应用</h3> 
+ <p> 卸载使用以下命令应用程序：</p> 
+ <pre class="prettyprint prettyprinted" style="border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; font-size: 12px; overflow: auto;">
+<span class="pln" style="margin: 0px; padding: 0px;">adb uninstall your</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">.</span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">package</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">.</span><span class="pln" style="margin: 0px; padding: 0px;">name</span></pre> 
+ <p> 然后重新安装应用程序和验证结果</p> 
+ <br>      
+</div></body></html>

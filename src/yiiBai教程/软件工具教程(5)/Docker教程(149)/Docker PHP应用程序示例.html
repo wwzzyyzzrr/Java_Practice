@@ -1,0 +1,116 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Docker PHP应用程序示例</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>我们可以使用docker运行php应用程序。 在以下步骤中，将使用创建Docker并运行php应用程序。</p> 
+ <ol> 
+  <li>创建一个目录</li>
+ </ol> 
+ <p>使用以下命令创建一个目录来组织配置和PHP代码文件。</p> 
+ <pre><code class="lang-shell">yiibai@ubuntu:~$ mkdir /home/yiibai/docker/php-docker-app
+</code></pre> 
+ <ol> 
+  <li>创建一个PHP文件</li>
+ </ol> 
+ <p>创建一个名称为：<code>index.php</code>的PHP文件(<code>vi /home/yiibai/docker/php-docker-app/index.php</code>)，内容如下 - </p> 
+ <pre><code class="lang-php">&lt;?php  
+    echo "This is first PHP Script build by docker.";
+?&gt;
+</code></pre> 
+ <ol> 
+  <li>创建一个 Dockerfile 文件</li>
+ </ol> 
+ <pre><code class="lang-shell">FROM php:7.0-apache  
+COPY . /var/www/html 
+RUN rm -rf /etc/apache2/sites-enabled/000-default.conf
+</code></pre> 
+ <p>创建上面文件之后(<code>vi /home/yiibai/docker/php-docker-app/Dockerfile</code>)，项目有两个文件，如下面所示 - </p> 
+ <pre><code class="lang-shell">yiibai@ubuntu:~$ cd /home/yiibai/docker/php-docker-app/
+yiibai@ubuntu:~/docker/php-docker-app$ ll
+total 16
+drwxrwxr-x 2 yiibai yiibai 4096 Jun  3 20:10 ./
+drwxrwxr-x 4 yiibai yiibai 4096 Jun  3 20:08 ../
+-rw-rw-r-- 1 yiibai yiibai   44 Jun  3 20:10 Dockerfile
+-rw-rw-r-- 1 yiibai yiibai   66 Jun  3 20:08 index.php
+yiibai@ubuntu:~/docker/php-docker-app$
+</code></pre> 
+ <blockquote> 
+  <p>注意：Dockerfile文件的名称要区分大小写。</p> 
+ </blockquote> 
+ <ol> 
+  <li>创建Docker映像</li>
+ </ol> 
+ <pre><code class="lang-shell">yiibai@ubuntu:~/docker/php-docker-app$ docker build -t php-app .
+</code></pre> 
+ <p>在下面的屏幕截图中，是正在创建docker映像的输出。</p> 
+ <pre><code class="lang-shell">yiibai@ubuntu:~/docker/php-docker-app$ sudo docker build -t php-app .
+Sending build context to Docker daemon  3.072kB
+Step 1/2 : FROM php:7.0-apache
+7.0-apache: Pulling from library/php
+10a267c67f42: Downloading  23.79MB/52.58MB
+10a267c67f42: Pull complete
+370377701f89: Pull complete
+455c73a122bc: Pull complete
+fb71bac61c47: Pull complete
+288a1d91ad4e: Pull complete
+86e0256ba4b0: Pull complete
+f14fbe7a9dfb: Pull complete
+0f36dd91c0ab: Pull complete
+ee4d938396ab: Pull complete
+a0e5f6ef63c3: Pull complete
+4d3b68c01e8a: Pull complete
+855c8caa7af5: Pull complete
+cd53b61c5ad7: Pull complete
+Digest: sha256:9bec874758f731e5e4e2908744a5e2abfc8bbb6c94425b8abd8d6ef3b5938288
+Status: Downloaded newer image for php:7.0-apache
+ ---&gt; a4322279ced1
+Step 2/2 : COPY . /var/www/html
+ ---&gt; c2e626f9d9c6
+Removing intermediate container 9a44af0ee1bb
+Successfully built c2e626f9d9c6
+Successfully tagged php-app:latest
+yiibai@ubuntu:~/docker/php-docker-app$
+</code></pre> 
+ <p>现在可以看看Docker容器中所有可用的映像。使用 <code>docker images</code> -</p> 
+ <pre><code class="lang-shell">yiibai@ubuntu:~/docker/php-docker-app$ sudo docker images
+[sudo] password for yiibai:
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+php-app             latest              c2e626f9d9c6        16 minutes ago      390MB
+java-app            latest              bd61e7f49911        21 hours ago        643MB
+php                 7.0-apache          a4322279ced1        30 hours ago        390MB
+java                8                   d23bdf5b1b1b        4 months ago        643MB
+hello-world         latest              48b5124b2768        4 months ago        1.84kB
+yiibai@ubuntu:~/docker/php-docker-app$
+</code></pre> 
+ <p>上面的输出结果中，它显示了所有创建的可用映像中，包函了<code>php-app</code>。</p> 
+ <ol> 
+  <li>运行Docker映像</li>
+ </ol> 
+ <p>现在运行Docker映像，以下命令用于运行Docker映像。</p>   
+ <pre><code class="lang-shell">$ sudo docker run php-app
+</code></pre> 
+ <p>可以看到我们的Docker映像正在运行。此映像正在IP为<code>172.17.0.2</code>上运行,现在打开浏览器或使用<code>curl 172.17.0.2</code> 访问测试。</p> 
+ <pre><code class="lang-shell">yiibai@ubuntu:~/docker/php-docker-app$ sudo docker build -t php-app .
+Sending build context to Docker daemon  4.096kB
+Step 1/3 : FROM php:7.0-apache
+ ---&gt; a4322279ced1
+Step 2/3 : COPY . /var/www/html
+ ---&gt; 67b4cdd58ecc
+Removing intermediate container 506cd5be7ef3
+Step 3/3 : RUN rm -rf /etc/apache2/sites-enabled/000-default.conf
+ ---&gt; Running in 3e0751150765
+ ---&gt; 7bd0234c2184
+Removing intermediate container 3e0751150765
+Successfully built 7bd0234c2184
+Successfully tagged php-app:latest
+yiibai@ubuntu:~/docker/php-docker-app$ sudo docker run php-app
+AH00558: apache2: Could not reliably determine the server's fully qualified domain name, using 172.17.0.2. Set the 'ServerName' directive globally to suppress this message
+AH00558: apache2: Could not reliably determine the server's fully qualified domain name, using 172.17.0.2. Set the 'ServerName' directive globally to suppress this message
+[Sun Jun 04 04:28:11.305554 2017] [mpm_prefork:notice] [pid 1] AH00163: Apache/2.4.10 (Debian) PHP/7.0.19 configured -- resuming normal operations
+[Sun Jun 04 04:28:11.305706 2017] [core:notice] [pid 1] AH00094: Command line: 'apache2 -D FOREGROUND'
+172.17.0.2:80 172.17.0.1 - - [04/Jun/2017:04:28:23 +0000] "GET / HTTP/1.1" 200 216 "-" "curl/7.47.0"
+</code></pre> 
+ <p>打开另一个终端，访问：<code>curl 172.17.0.2</code> 输出结果如下 - </p> 
+ <pre><code>yiibai@ubuntu:~$ curl 172.17.0.2
+This is first PHP Script build by docker.
+yiibai@ubuntu:~$
+</code></pre>
+ <br>      
+</div></body></html>

@@ -1,0 +1,114 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Java泛型通配符使用指南</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>通配符有三种使用方式 -</p> 
+ <ul> 
+  <li>上限通配符 - <code>? extends</code>扩展类型。</li>
+  <li>下限通配符 - <code>? super</code>超级类型。</li>
+  <li>无限通配符 - <code>?</code></li>
+ </ul> 
+ <p>要确定哪种类型的通配符最适合条件，我们首先将传递给方法的参数类型作为<code>in</code>和<code>out</code>参数进行分类。</p> 
+ <ul> 
+  <li><code>in</code>变量 - <code>in</code>变量为代码提供数据。例如，<code>copy(src，dest)</code>。 这里<code>src</code>作为要复制的数据的变量。</li>
+  <li><code>out</code>变量 - <code>out</code>变量保存由代码更新的数据。例如，<code>copy(src，dest)</code>。 这里的<code>dest</code>作为具有复制数据的变量。</li>
+ </ul> 
+ <h2 id="h2-u901Au914Du7B26u6307u5357"><a name="通配符指南" class="reference-link"></a><span class="header-link octicon octicon-link"></span>通配符指南</h2>
+ <ul> 
+  <li><strong>上限通配符</strong> - 如果变量属于类别，请使用带有通配符的<code>extends</code>关键字。</li>
+  <li><strong>下界通配符</strong> - 如果一个变量是外部类别，请使用带有通配符的<code>super</code>关键字。</li>
+  <li><strong>无界通配符</strong> - 如果可以使用<code>Object</code>类方法访问变量，则使用未绑定的通配符。</li>
+  <li><strong>无通配符</strong> - 如果代码访问进/出类别中的变量，那么不要使用通配符。</li>
+ </ul> 
+ <h2 id="h2-u793Au4F8B"><a name="示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例</h2>
+ <p>以下示例说明了上述概念。</p> 
+ <p>使用您喜欢的编辑器创建以下java程序，并保存到文件：<em>GuidelinesForWildcardUse.java</em> 中，代码如下所示 -</p> 
+ <pre><code class="lang-java">package com.yiibai.demo;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class GuidelinesForWildcardUse {
+
+    // Upper bound wildcard
+    // in category
+    public static void deleteCat(List&lt;? extends Cat&gt; catList, Cat cat) {
+        catList.remove(cat);
+        System.out.println("Cat Removed");
+    }
+
+    // Lower bound wildcard
+    // out category
+    public static void addCat(List&lt;? super RedCat&gt; catList) {
+        catList.add(new RedCat("Red Cat"));
+        System.out.println("Cat Added");
+    }
+
+    // Unbounded wildcard
+    // Using Object method toString()
+    public static void printAll(List&lt;?&gt; list) {
+        for (Object item : list)
+            System.out.println(item + " ");
+    }
+
+    public static void main(String[] args) {
+
+        List&lt;Animal&gt; animalList = new ArrayList&lt;Animal&gt;();
+        List&lt;RedCat&gt; redCatList = new ArrayList&lt;RedCat&gt;();
+
+        // add list of super class Animal of Cat class
+        addCat(animalList);
+        // add list of Cat class
+        addCat(redCatList);
+        addCat(redCatList);
+
+        // print all animals
+        printAll(animalList);
+        printAll(redCatList);
+
+        Cat cat = redCatList.get(0);
+        // delete cat
+        deleteCat(redCatList, cat);
+        printAll(redCatList);
+    }
+}
+
+class Animal {
+    String name;
+
+    Animal(String name) {
+        this.name = name;
+    }
+
+    public String toString() {
+        return name;
+    }
+}
+
+class Cat extends Animal {
+    Cat(String name) {
+        super(name);
+    }
+}
+
+class RedCat extends Cat {
+    RedCat(String name) {
+        super(name);
+    }
+}
+
+class Dog extends Animal {
+    Dog(String name) {
+        super(name);
+    }
+}
+</code></pre> 
+ <p>执行上面代码，得到以下结果 - </p>   
+ <pre><code class="lang-shell">Cat Added
+Cat Added
+Cat Added
+Red Cat 
+Red Cat 
+Red Cat 
+Cat Removed
+Red Cat
+</code></pre>
+ <br>      
+</div></body></html>

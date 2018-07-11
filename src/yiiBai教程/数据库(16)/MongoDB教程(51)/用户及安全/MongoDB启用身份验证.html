@@ -1,0 +1,97 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">MongoDB启用身份验证</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>对MongoDB部署启用访问控制会强制执行用户身份验证，要求在登录MongoDB系统用户识别自己。 当访问启用了访问控制的MongoDB部署时，用户只能执行由其角色确定的操作。</p> 
+ <p>对于认证，MongoDB支持各种认证机制。</p> 
+ <p>以下教程启用独立 mongod 实例的访问控制，并使用默认身份验证机制。</p> 
+ <h2 id="h2-u7528u6237u7BA1u7406u5458"><a name="用户管理员" class="reference-link"></a><span class="header-link octicon octicon-link"></span>用户管理员</h2>
+ <p>启用访问控制后，请确保在 <code>admin</code> 数据库中拥有 <code>userAdmin</code> 或 <code>userAdminAnyDatabase</code> 角色的用户。该用户可以管理用户和角色，例如：创建用户，授予或撤销用户角色，以及创建或修改定义角色。</p> 
+ <p>可以在启用访问控制之前或之后创建用户。如果在创建任何用户之前启用访问控制，MongoDB将提供本地主机异常，允许在管理数据库中创建用户管理员。创建后，必须作为用户管理员进行身份验证，以根据需要创建其他用户。</p> 
+ <h2 id="h2-u8FC7u7A0B"><a name="过程" class="reference-link"></a><span class="header-link octicon octicon-link"></span>过程</h2>
+ <p>以下过程首先将用户管理员添加到运行无访问控制的 MongoDB 实例，然后启用访问控制。</p> 
+ <p><strong>第一步：启动MongoDB无需访问控制</strong></p> 
+ <p>例如，以下启动不具有访问控制的独立 mongod 实例。</p> 
+ <pre><code class="lang-shell">mongod --port 27017 --dbpath /data/db1
+</code></pre> 
+ <p><strong>第二步：连接到实例</strong></p> 
+ <p>例如，使用<code>mongo shell</code>连接到实例。</p> 
+ <pre><code class="lang-shell">mongo --port 27017
+</code></pre> 
+ <p>根据需要指定其他命令行选项以将<code>mongo shell</code>连接到部署，例如<code>--host</code>。</p> 
+ <p><strong>第三步：创建用户管理员</strong></p> 
+ <p>在管理数据库中，添加具有 <code>userAdminAnyDatabase</code> 角色的用户。 例如，以下在 <code>admin</code> 数据库中创建用户 <code>myUserAdmin</code>：</p> 
+ <blockquote> 
+  <p>注意：创建用户的数据库(在此示例中为<code>admin</code>)是用户的身份验证数据库。用户将对该数据库进行身份验证，但用户可以在其他数据库中担任角色; 即用户的认证数据库不限制用户的权限。</p> 
+ </blockquote> 
+ <pre><code class="lang-shell">use admin
+db.createUser(
+  {
+    user: "myUserAdmin",
+    pwd: "abc123",
+    roles: [ { role: "userAdminAnyDatabase", db: "admin" } ]
+  }
+)
+</code></pre> 
+ <p>执行上面命令后，断开mongo shell。</p> 
+ <p><strong>第四步：重新启动具有访问控制的MongoDB实例</strong></p> 
+ <p>使用<code>--auth</code>命令行选项重新启动 <code>mongod</code> 实例，或者如果使用配置文件，则执行<code>security.authorization</code>设置。</p> 
+ <pre><code class="lang-shell">mongod --auth --port 27017 --dbpath /data/db1
+</code></pre> 
+ <p>连接到此实例的客户端现在必须以 <code>MongoDB</code> 用户身份进行身份验证。客户只能执行由其分配的角色确定的操作。</p> 
+ <p><strong>第五步：以用户管理员身份进行连接和验证</strong></p> 
+ <p>使用 mongo shell，可以：</p> 
+ <ul> 
+  <li>通过传递用户凭据或</li>
+  <li>连接第一个withouth身份验证，然后发出<code>db.auth()</code>方法进行身份验证。</li>
+ </ul> 
+ <p><strong>在连接期间进行身份验证</strong></p> 
+ <p>使用<code>-u &lt;username&gt;</code>，<code>-p &lt;password&gt;</code>和<code>--authenticationDatabase &lt;database&gt;</code>命令行选项启动一个<code>mongo shell</code>：</p> 
+ <pre><code class="lang-shell">$ mongo --port 27017 -u "myUserAdmin" -p "abc123" --authenticationDatabase "admin"
+</code></pre> 
+ <p><strong>连接后验证</strong></p> 
+ <p>将 <em>mongo shell</em> 连接到 <code>mongodb</code>，也就是先连接，后验证用户身份 ：</p> 
+ <pre><code class="lang-shell">mongo --port 27017
+</code></pre> 
+ <p>切换到身份验证数据库(在这种情况下为<code>admin</code>)，并使用<code>db.auth(&lt;username&gt;，&lt;pwd&gt;)</code>方法进行身份验证：</p> 
+ <pre><code class="lang-shell">use admin
+db.auth("myUserAdmin", "abc123" )
+</code></pre> 
+ <p><strong>第六步：根据需要创建其他用户</strong></p> 
+ <p>当管理员用户进行身份验证通过之后，可使用<code>db.createUser()</code>创建其他用户。可以为用户分配任何内置角色或用户定义的角色。</p> 
+ <p><code>myUserAdmin</code>用户只具有管理用户和角色的权限。如果使用<code>myUserAdmin</code>尝试执行任何其他操作，例如从<code>test</code>数据库中的<code>foo</code>集合读取数据，MongoDB将返回错误。</p> 
+ <p>以下操作将用户 <code>myTester</code> 添加到在<code>test</code>数据库中并给予<code>test</code>数据库的<code>readWrite</code>角色以及在<code>reporting</code>数据库中读取角色。</p> 
+ <blockquote> 
+  <p>注意：创建用户的数据库(在本示例中为<code>test</code>)是该用户的身份验证数据库。虽然用户将对该数据库进行身份验证，但用户可以在其他数据库中担任角色; 即用户的认证数据库不会限制用户的权限。</p> 
+ </blockquote>   
+ <pre><code class="lang-shell">use test
+db.createUser(
+  {
+    user: "myTester",
+    pwd: "xyz123",
+    roles: [ { role: "readWrite", db: "test" },
+             { role: "read", db: "reporting" } ]
+  }
+)
+</code></pre> 
+ <p><strong>第七步：连接并验证为myTester</strong></p> 
+ <p><strong>在连接期间进行身份验证</strong></p> 
+ <p>使用<code>-u &lt;username&gt;</code>，<code>-p &lt;password&gt;</code>和<code>--authenticationDatabase &lt;database&gt;</code>命令行选项启动一个<em>mongo shell</em>：</p> 
+ <pre><code class="lang-shell">$ mongo --port 27017 -u "myTester" -p "xyz123" --authenticationDatabase "test"
+</code></pre> 
+ <p><strong>连接后验证</strong></p> 
+ <p>将<em>mongo shell</em>连接到 mongodb：</p> 
+ <pre><code class="lang-shell">$ mongo --port 27017
+</code></pre> 
+ <p>切换到身份验证数据库(在这里为<code>test</code>)，并使用<code>db.auth(&lt;username&gt;，&lt;pwd&gt;)</code>方法进行身份验证：</p> 
+ <pre><code class="lang-shell">&gt; use test
+&gt; db.auth("myTester", "xyz123" )
+</code></pre> 
+ <p>使用用户 <code>myTester</code> 插入一个集合</p> 
+ <p>使用用户 <code>myTester</code>，此用户有权在<code>test</code>数据库中执行读写操作(以及在<code>reporting</code>数据库中执行读操作)。 例如，在<code>test</code>数据库中执行以下插入操作：</p> 
+ <pre><code class="lang-shell">&gt;  db.foo.insert( { x: 1, y: 1 } )
+</code></pre> 
+ <p>最后，使用用户 <code>myTester</code>，在<code>reporting</code>数据库中执行插入操作看看返回结果：</p> 
+ <pre><code class="lang-shell">&gt; use reporting
+db.auth("myTester", "xyz123" )
+db.product.insert( { x: 1, y: 1 } )
+</code></pre>
+ <br>      
+</div></body></html>

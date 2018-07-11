@@ -1,0 +1,49 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">ios::good()函数</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>它用于检查流的状态是否良好。</p> 
+ <h2 id="h2-u58F0u660E"><a name="声明" class="reference-link"></a><span class="header-link octicon octicon-link"></span>声明</h2>
+ <p>下面是<code>ios::good（）</code>函数的声明。</p> 
+ <pre><code class="lang-cpp">bool good() const;
+</code></pre> 
+ <h2 id="h2-u8FD4u56DEu503C"><a name="返回值" class="reference-link"></a><span class="header-link octicon octicon-link"></span>返回值</h2>
+ <ul> 
+  <li>返回 <code>true</code> ，如果没有设置流的状态标志。</li>
+  <li>返回 <code>false</code> ，如果设置了流的状态标志（<code>badbit</code>，<code>eofbit</code>或<code>failbit</code>）。</li>
+ </ul> 
+ <h2 id="h2-u793Au4F8B"><a name="示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例</h2>
+ <p>下面的例子解释了ios::good（）的使用。</p> 
+ <pre><code class="lang-cpp">#include &lt;iostream&gt;     
+#include &lt;sstream&gt;      
+
+void print_state (const std::ios&amp; stream) {
+   std::cout &lt;&lt; " good()=" &lt;&lt; stream.good();
+   std::cout &lt;&lt; " eof()=" &lt;&lt; stream.eof();
+   std::cout &lt;&lt; " fail()=" &lt;&lt; stream.fail();
+   std::cout &lt;&lt; " bad()=" &lt;&lt; stream.bad();
+}
+
+int main () {
+   std::stringstream stream;
+
+   stream.clear (stream.goodbit);
+   std::cout &lt;&lt; "goodbit:"; print_state(stream); std::cout &lt;&lt; '/n';
+
+   stream.clear (stream.eofbit);
+   std::cout &lt;&lt; " eofbit:"; print_state(stream); std::cout &lt;&lt; '/n';
+
+   stream.clear (stream.failbit);
+   std::cout &lt;&lt; "failbit:"; print_state(stream); std::cout &lt;&lt; '/n';
+
+   stream.clear (stream.badbit);
+   std::cout &lt;&lt; " badbit:"; print_state(stream); std::cout &lt;&lt; '/n';
+
+   return 0;
+}
+</code></pre> 
+ <p>编译和运行上面的程序，将产生以下结果 -</p>   
+ <pre><code class="lang-shell">goodbit: good()=1 eof()=0 fail()=0 bad()=0
+ eofbit: good()=0 eof()=1 fail()=0 bad()=0
+failbit: good()=0 eof()=0 fail()=1 bad()=0
+ badbit: good()=0 eof()=0 fail()=1 bad()=1
+</code></pre>
+ <br>      
+</div></body></html>

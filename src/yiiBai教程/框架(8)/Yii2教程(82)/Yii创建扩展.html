@@ -1,0 +1,144 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Yii创建扩展</h1><div style="width:100%;float:left;" class="article-content">   
+ <div> 
+  <div>
+    让我们创建一个简单的扩展来显示一个标准的“Hello&nbsp;World”消息。这个扩展将通过Packagist库进行分发。 
+  </div> 
+ </div> 
+ <div> 
+  <p style="text-align:justify;"> 第1步&nbsp;-&nbsp;在硬盘驱动器上创建一个名为&nbsp;yii2-exts-hello-world&nbsp;的文件夹，但不能在Yii基本的应用程序模板中)。在&nbsp;yii2-exts-hello-world&nbsp;目录下，创建一个名为 composer.json&nbsp;文件，并用下面的代码。 </p> 
+  <pre>{
+    "name": "yiibai/hello-world",
+    "authors": [
+        {
+            "name": "yiibai"
+        }
+    ],
+    "require": {},
+    "autoload": {
+        "psr-0": {
+            "HelloWorld": "src/"
+        }
+    }
+}</pre> 
+  <div>
+    我们已经声明要使用PSR-0标准，所有的扩展名的文件在 src 文件夹下。 
+  </div> 
+  <p> 第2步&nbsp;-&nbsp;创建下面的目录路径：&nbsp;yii-exts-hello-world/src/HelloWorld. </p> 
+  <div>
+    第3步&nbsp;-&nbsp;在&nbsp;HelloWorld&nbsp;文件夹中，创建一个名为SayHello.php&nbsp;的文件，并用下面的代码。 
+  </div> 
+  <pre>&lt;?php
+   namespace HelloWorld;
+   class SayHello {
+      public static function world() {
+         return 'Hello World, Composer from Yiibai!';
+      }
+   }
+?&gt;</pre> 
+  <div>
+    我们已经定义了一个SayHello&nbsp;类和一个&nbsp;world&nbsp;的静态函数，用于返回&nbsp;hello&nbsp;消息。 
+  </div> 
+  <div>
+    第4步&nbsp;-&nbsp;扩展已准备就绪。现在创建您的&nbsp;GitHub&nbsp;帐户的一个空仓库，并&nbsp;push&nbsp;这个扩展。 
+  </div> 
+  <div>
+    在&nbsp;hello-world&nbsp;文件夹中运行- 
+  </div> 
+  <ul> 
+   <li> git clone&nbsp;<a target="_blank" href="https://github.com/yiibai-com/yii2-exts-hello-world.git">https://github.com/yiibai-com/yii2-exts-hello-world.git</a> </li> 
+   <li> git add . </li> 
+   <li> git commit . -m 'add new files' </li> 
+   <li> git push -u origin master </li> 
+  </ul> 
+  <p> <img src="/uploads/tutorial/20160526/1-1605262221022G.png" width="669" height="640" title="Yii创建扩展" alt="Yii创建扩展"><br> 刚才就发送您的扩展到GitHub上。&nbsp;现在，打开&nbsp;<a target="_blank" href="https://packagist.org/">https://packagist.org</a>，在菜单顶部点击“提交”后登录。 </p> 
+  <div>
+    你会看到一个页面，现在进入你的 GitHub 存储库发布。 
+  </div> 
+  <div>
+    第5步&nbsp;-&nbsp;点击“check”按钮，您的扩展就被公布了。 
+  </div> 
+  <img src="/uploads/tutorial/20160526/1-160526222122V8.png" alt="">
+  <br> 
+  <div>
+    第6步&nbsp;-&nbsp;回到基本应用程序模板。添加此扩展到 composer.json。 
+  </div> 
+  <pre>{
+   "name": "yiisoft/yii2-app-basic",
+   "description": "Yii 2 Basic Project Template",
+   "keywords": ["yii2", "framework", "basic", "project template"],
+   "homepage": "http://www.yiiframework.com/",
+   "type": "project",
+   "license": "BSD-3-Clause",
+   "support": {
+      "issues": "https://github.com/yiisoft/yii2/issues?state=open",
+      "forum": "http://www.yiiframework.com/forum/",
+      "wiki": "http://www.yiiframework.com/wiki/",
+      "irc": "irc://irc.freenode.net/yii",
+      "source": "https://github.com/yiisoft/yii2"
+   },
+   "minimum-stability": "dev",
+   "prefer-stable" : true,
+   "require": {
+      "php": "&gt;=5.4.0",
+      "yiisoft/yii2": "&gt;=2.0.5",
+      "yiisoft/yii2-bootstrap": "*",
+      "yiisoft/yii2-swiftmailer": "*",
+      "kartik-v/yii2-widget-datetimepicker": "*",
+      "yiibai/hello-world": "*"
+   },
+   "require-dev": {
+      "yiisoft/yii2-codeception": "*",
+      "yiisoft/yii2-debug": "*",
+      "yiisoft/yii2-gii": "*",
+      "yiisoft/yii2-faker": "*"
+   },
+   "config": {
+      "process-timeout": 1800
+   },
+   "scripts": {
+      "post-create-project-cmd": [
+         "yii\\composer\\Installer::postCreateProject"
+      ]
+   },
+   "extra": {
+      "yii\\composer\\Installer::postCreateProject": {
+         "setPermission": [
+            {
+               "runtime": "0777",
+               "web/assets": "0777",
+               "yii": "0755"
+            }
+         ],
+         "generateCookieValidationKey": [
+            "config/web.php"
+         ]
+      },
+      "asset-installer-paths": {
+         "npm-asset-library": "vendor/npm",
+         "bower-asset-library": "vendor/bower"
+      }
+   }
+}&nbsp;</pre> 
+  <p> 第7步&nbsp;-&nbsp;在项目的根文件夹中，运行&nbsp;composer&nbsp;update&nbsp;来安装/更新所有的依赖关系。<br> <img src="/uploads/tutorial/20160526/1-160526222200V8.jpeg" alt=""> </p> 
+  <p> 第8步&nbsp;-&nbsp;输出扩展应安装。要使用它，修改 SiteController 的 actionAbout 方法的About&nbsp;视图。 </p>   
+  <pre>&lt;?php
+   /* @var $this yii\web\View */
+   use yii\helpers\Html;
+   $this-&gt;title = 'About';
+   $this-&gt;params['breadcrumbs'][] = $this-&gt;title;
+   $this-&gt;registerMetaTag(['name' =&gt; 'keywords', 'content' =&gt; 'yii, developing, views,
+      meta, tags']);
+   $this-&gt;registerMetaTag(['name' =&gt; 'description', 'content' =&gt; 'This is the
+      description of this page!'], 'description');
+?&gt;
+&lt;div class = "site-about"&gt;
+   &lt;h1&gt;&lt;?= Html::encode($this-&gt;title) ?&gt;&lt;/h1&gt;
+   &lt;p&gt;
+      This is the About page. You may modify the following file to customize its content:
+   &lt;/p&gt;
+   &lt;h1&gt;&lt;?= HelloWorld\SayHello::world();  ?&gt;&lt;/h1&gt;
+&lt;/div&gt;</pre> 
+  <p> 第9步&nbsp;− 在浏览器中输入URL=&gt;&nbsp;http://localhost:8080/index.php?r=site/about&nbsp;并访问，会看到从我们的扩展中显示的一个Hello&nbsp;World消息。 </p> 
+ </div> &lt;
+ <br>      
+</div></body></html>

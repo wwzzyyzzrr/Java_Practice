@@ -1,0 +1,299 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">JSP表达式语言(EL)</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>JSP表达式语言(EL)使得可以轻松访问存储在JavaBeans组件中的应用程序数据。JSP EL允许用来创建<em>算术</em>和<em>逻辑表达式</em>。 在JSP EL表达式中，可以使用整数，浮点数，字符串，布尔值的内置常量为<code>true</code>和<code>false</code>，以及<code>null</code>值。</p> 
+ <h2 id="h2-u7B80u5355u8BEDu6CD5"><a name="简单语法" class="reference-link"></a><span class="header-link octicon octicon-link"></span>简单语法</h2>
+ <p>通常，当在JSP标记中指定属性值时，只需使用字符串即可。 例如 -</p> 
+ <pre><code class="lang-jsp">&lt;jsp:setProperty name = "box" property = "perimeter" value = "100"/&gt;
+</code></pre> 
+ <p>JSP EL允许为这些属性值指定一个表达式。JSP EL的简单语法如下 -</p> 
+ <pre><code>${expr}
+</code></pre>
+ <p>这里<code>expr</code>指定表达式本身。JSP EL中最常见的操作符是：<code>.</code>和<code>[]</code>。 这两个运算符用来访问Java Beans和内置JSP对象的各种属性。</p> 
+ <p>例如，上面的语法<code>&lt;jsp:setProperty&gt;</code>标签可以写成一个表达式，如 -</p> 
+ <pre><code class="lang-jsp">&lt;jsp:setProperty name = "box" property = "perimeter" 
+   value = "${2*box.width+2*box.height}"/&gt;
+</code></pre> 
+ <p>当JSP编译器在属性中遇到<code>${}</code>形式时，它会生成代码以评估表达式并替换<code>expresson</code>的值。</p> 
+ <p>还可以在标签的模板文本中使用JSP EL表达式。 例如，<code>&lt;jsp:text&gt;</code>标签只是将其内容插入到JSP的正文内。以下<code>&lt;jsp:text&gt;</code>声明将<code>&lt;h1&gt; Hello JSP！&lt;/ h1&gt;</code>插入JSP输出 -</p> 
+ <pre><code class="lang-html">&lt;jsp:text&gt;
+   &lt;h1&gt;Hello JSP!&lt;/h1&gt;
+&lt;/jsp:text&gt;
+</code></pre> 
+ <p>现在，可以使用与属性相同的<code>${}</code>语法，将JSP EL表达式包含在<code>&lt;jsp:text&gt;</code>标签(或任何其他标记)的正文中。 例如 -</p> 
+ <pre><code class="lang-jsp">&lt;jsp:text&gt;
+   Box Perimeter is: ${2*box.width + 2*box.height}
+&lt;/jsp:text&gt;
+</code></pre> 
+ <p>EL表达式可以使用括号来分组子表达式。例如，<code>${(1 + 2) * 3}</code>等于<code>9</code>，但<code>${1 + (2 * 3)}</code>等于<code>7</code>。</p> 
+ <p>如要停用EL表达式的评估计算，可设置<code>page</code>指令的<code>isELIgnored</code>属性如下：</p> 
+ <pre><code class="lang-jsp">&lt;%@ page isELIgnored = "true" %&gt;
+</code></pre> 
+ <p>此属性的有效值为<code>true</code>和<code>false</code>。 如果设置为<code>true</code>，EL表达式在静态文本或标签属性中显示时将被忽略。 如果为<code>false</code>，EL表达式将由容器进行评估。</p> 
+ <h2 id="h2-el-"><a name="EL中的基本运算符" class="reference-link"></a><span class="header-link octicon octicon-link"></span>EL中的基本运算符</h2>
+ <p>JSP表达式语言(EL)支持Java支持的大多数算术和逻辑运算符。下表列出了最常用的运算符 -</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>编号</th> 
+    <th>运算符</th> 
+    <th>描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>1</td> 
+    <td><code>.</code></td> 
+    <td>访问一个bean属性或Map的项</td> 
+   </tr> 
+   <tr> 
+    <td>2</td> 
+    <td><code>[]</code></td> 
+    <td>访问数组或List元素</td> 
+   </tr> 
+   <tr> 
+    <td>3</td> 
+    <td><code>()</code></td> 
+    <td>组合子表达式以更改评估顺序</td> 
+   </tr> 
+   <tr> 
+    <td>4</td> 
+    <td><code>+</code></td> 
+    <td>相加</td> 
+   </tr> 
+   <tr> 
+    <td>5</td> 
+    <td><code>-</code></td> 
+    <td>减去或取反一个值</td> 
+   </tr> 
+   <tr> 
+    <td>6</td> 
+    <td><code>*</code></td> 
+    <td>乘法</td> 
+   </tr> 
+   <tr> 
+    <td>7</td> 
+    <td><code>/</code> 或 <code>div</code></td> 
+    <td>除法</td> 
+   </tr> 
+   <tr> 
+    <td>8</td> 
+    <td><code>%</code> 或 <code>mod</code></td> 
+    <td>求模</td> 
+   </tr> 
+   <tr> 
+    <td>9</td> 
+    <td><code>==</code> 或 <code>eq</code></td> 
+    <td>测试等于</td> 
+   </tr> 
+   <tr> 
+    <td>10</td> 
+    <td><code>!=</code> 或 <code>ne</code></td> 
+    <td>测试不等于</td> 
+   </tr> 
+   <tr> 
+    <td>11</td> 
+    <td><code>&lt;</code> 或 <code>lt</code></td> 
+    <td>测试小于</td> 
+   </tr> 
+   <tr> 
+    <td>12</td> 
+    <td><code>&gt;</code> 或 <code>gt</code></td> 
+    <td>测试大于</td> 
+   </tr> 
+   <tr> 
+    <td>13</td> 
+    <td><code>&lt;=</code> 或 <code>le</code></td> 
+    <td>测试小于或等于</td> 
+   </tr> 
+   <tr> 
+    <td>14</td> 
+    <td><code>&gt;=</code> 或 <code>ge</code></td> 
+    <td>测试大于或等于</td> 
+   </tr> 
+   <tr> 
+    <td>15</td> 
+    <td><code>&amp;&amp;</code> 或 <code>and</code></td> 
+    <td>测试逻辑与</td> 
+   </tr> 
+   <tr> 
+    <td>16</td> 
+    <td><code>or</code></td> 
+    <td>测试逻辑或</td> 
+   </tr> 
+   <tr> 
+    <td>17</td> 
+    <td><code>!</code> 或 <code>not</code></td> 
+    <td>一元布尔互补</td> 
+   </tr> 
+   <tr> 
+    <td>18</td> 
+    <td><code>empty</code></td> 
+    <td>测试空变量值</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h2 id="h2-jsp-el-"><a name="JSP EL函数" class="reference-link"></a><span class="header-link octicon octicon-link"></span>JSP EL函数</h2>
+ <p>JSP EL允许在表达式中使用函数。必须在自定义标签库中定义这些函数。函数用法具有以下语法 -</p> 
+ <pre><code class="lang-jsp">${ns:func(param1, param2, ...)}
+</code></pre> 
+ <p>其中<code>ns</code>是函数的命名空间，<code>func</code>是函数的名称，<code>param1</code>是第一个参数值。 例如，函数<code>fn:length</code>，它是JSTL库的一部分。 可以使用以下函数来获取字符串的长度。</p> 
+ <pre><code class="lang-jsp">${fn:length("Get my length")}
+</code></pre> 
+ <p>要使用任何标签库(标准或自定义)中的函数，必须在服务器上安装该库，并且必须使用JTAG代码中所述的<code>&lt;taglib&gt;</code>指令将库包含在JSP中。</p> 
+ <h2 id="h2-jsp-el-"><a name="JSP EL隐式对象" class="reference-link"></a><span class="header-link octicon octicon-link"></span>JSP EL隐式对象</h2>
+ <p>JSP表达式语言支持以下隐式对象 -</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>编号</th> 
+    <th>隐式对象</th> 
+    <th>描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>1</td> 
+    <td><code>pageScope</code></td> 
+    <td>来自页面范围的范围变量</td> 
+   </tr> 
+   <tr> 
+    <td>2</td> 
+    <td><code>requestScope</code></td> 
+    <td>来自请求范围的范围变量</td> 
+   </tr> 
+   <tr> 
+    <td>3</td> 
+    <td><code>sessionScope</code></td> 
+    <td>会话范围的范围变量</td> 
+   </tr> 
+   <tr> 
+    <td>4</td> 
+    <td><code>applicationScope</code></td> 
+    <td>应用范围的范围变量</td> 
+   </tr> 
+   <tr> 
+    <td>5</td> 
+    <td><code>param</code></td> 
+    <td>请求参数作为字符串</td> 
+   </tr> 
+   <tr> 
+    <td>6</td> 
+    <td><code>paramValues</code></td> 
+    <td>请求参数作为字符串集合</td> 
+   </tr> 
+   <tr> 
+    <td>7</td> 
+    <td><code>header</code></td> 
+    <td>HTTP请求标头作为字符串</td> 
+   </tr> 
+   <tr> 
+    <td>8</td> 
+    <td><code>headerValues</code></td> 
+    <td>HTTP请求标头作为字符串集合</td> 
+   </tr> 
+   <tr> 
+    <td>9</td> 
+    <td><code>initParam</code></td> 
+    <td>上下文初始化参数</td> 
+   </tr> 
+   <tr> 
+    <td>10</td> 
+    <td><code>cookie</code></td> 
+    <td>Cookie值</td> 
+   </tr> 
+   <tr> 
+    <td>11</td> 
+    <td><code>pageContext</code></td> 
+    <td>当前页面的JSP PageContext对象</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p>可以在表达式中使用这些对象，就像它们是变量一样。以下示例将帮助了解这些概念 -</p> 
+ <h2 id="h2-pagecontext-"><a name="pageContext对象" class="reference-link"></a><span class="header-link octicon octicon-link"></span>pageContext对象</h2>
+ <p><code>pageContext</code>对象可以访问pageContext JSP对象。 通过<code>pageContext</code>对象，可以访问请求对象。 例如，要访问请求的传入查询字符串，可以使用以下表达式 -</p>   
+ <pre><code class="lang-java">${pageContext.request.queryString}
+</code></pre> 
+ <h2 id="h2-u8303u56F4u5BF9u8C61"><a name="范围对象" class="reference-link"></a><span class="header-link octicon octicon-link"></span>范围对象</h2>
+ <p><code>pageScope</code>，<code>requestScope</code>，<code>sessionScope</code>和<code>applicationScope</code>变量提供对存储在每个范围级别的变量的访问。</p> 
+ <p>例如，如果需要显式访问应用程序范围中的变量，则可以通过<code>applicationScope</code>变量 - <code>applicationScope.box</code>来访问它。</p> 
+ <h2 id="h2-param-paramvalues-"><a name="param和paramValues对象" class="reference-link"></a><span class="header-link octicon octicon-link"></span>param和paramValues对象</h2>
+ <p>可以通过<code>param</code>和<code>paramValues</code>对象的<code>request.getParameter</code>和<code>request.getParameterValues</code>方法来访问参数值。</p> 
+ <p>例如，要访问<code>order</code>参数，请使用表达式<code>${param.order}</code>或<code>${param [“order”]}</code>。</p> 
+ <p>以下是访问<code>username</code>请求参数的示例。文件：<em>getParameter.jsp</em></p> 
+ <pre><code class="lang-html">&lt;%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%&gt;
+&lt;%@ page import="java.io.*,java.util.*"%&gt;
+&lt;%
+    String title = "Accessing Request Param";
+%&gt;
+&lt;!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;meta http-equiv="Content-Type" content="text/html; charset=UTF-8"&gt;
+&lt;title&gt;
+    &lt;%
+        out.print(title);
+    %&gt;
+&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div style="margin: auto; width: 100%"&gt;
+        &lt;center&gt;
+            &lt;h2&gt;
+                &lt;%
+                    out.print(title);
+                %&gt;
+            &lt;/h2&gt;
+        &lt;/center&gt;
+
+        &lt;div align="center"&gt;
+            &lt;p&gt;username参数值：${param["username"]}&lt;/p&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>在编写上面文件以后，部署项目文件，打开浏览器访问：<code>http://localhost:8080/jspEL/getParameter.jsp?username=maxsu</code>，得到以下结果 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/2910/388201042_59912.png" alt=""></p> 
+ <p><code>param</code>对象返回单个字符串值，而<code>paramValues</code>对象返回字符串数组。</p> 
+ <h2 id="h2-header-headervalues-"><a name="header和headerValues对象" class="reference-link"></a><span class="header-link octicon octicon-link"></span>header和headerValues对象</h2>
+ <p><code>header</code>和<code>headerValues</code>对象可以访问通过<code>request.getHeader</code>和<code>request.getHeaders</code>方法通常可用的头值。</p> 
+ <p>例如，要访问<code>user-agent</code>头，可使用<code>${header.user-agent}</code>或<code>${header [“user-agent”]}</code>表达式。</p> 
+ <p>以下是访问<code>user-agent</code>头参数的示例，文件：**</p> 
+ <pre><code class="lang-html">&lt;%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%&gt;
+&lt;%@ page import="java.io.*,java.util.*"%&gt;
+&lt;%
+    String title = "User Agent Example";
+%&gt;
+&lt;!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;meta http-equiv="Content-Type" content="text/html; charset=UTF-8"&gt;
+&lt;title&gt;
+    &lt;%
+        out.print(title);
+    %&gt;
+&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div style="margin: auto; width: 100%"&gt;
+        &lt;center&gt;
+            &lt;h1&gt;
+                &lt;%
+                    out.print(title);
+                %&gt;
+            &lt;/h1&gt;
+        &lt;/center&gt;
+
+        &lt;div align="center"&gt;
+            &lt;p&gt;${header["user-agent"]}&lt;/p&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>打开浏览器访问URL：<code>http://localhost:8080/jspEL/header.jsp</code>，输出以下结果 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/2910/846201045_95924.png" alt=""></p> 
+ <p><code>header</code>对象返回单个字符串值，而<code>headerValues</code>对象返回字符串数组。</p>
+ <br>      
+</div></body></html>

@@ -1,0 +1,255 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">JSP处理日期</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>在本章中，我们将讨论如何处理JSP中的数据。 使用JSP最重要的优点之一就是可以使用核心Java中的所有可用方法。我们将浏览java.util包中提供的<code>Date</code>类; 这个类封装了当前的日期和时间。</p> 
+ <p><code>Date</code>类支持两个构造函数。第一个构造函数使用当前日期和时间初始化对象。</p> 
+ <pre><code class="lang-java">Date( )
+</code></pre> 
+ <p>以下构造函数接受一个等于从1970年1月1日午夜以来经过的毫秒数的参数。</p> 
+ <pre><code class="lang-java">Date(long millisec)
+</code></pre> 
+ <p>当实现一个<code>Date</code>对象后，就可以调用以下任何支持方法来操作日期 -</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>编号</th> 
+    <th>方法</th> 
+    <th>描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>1</td> 
+    <td><code>boolean after(Date date)</code></td> 
+    <td>如果调用的<code>Date</code>对象包含的日期晚于<code>date</code>指定的日期，则返回<code>true</code>，否则返回<code>false</code>。</td> 
+   </tr> 
+   <tr> 
+    <td>2</td> 
+    <td><code>boolean before(Date date)</code></td> 
+    <td>如果调用的<code>Date</code>对象包含早于<code>date</code>指定的日期，则返回<code>true</code>，否则返回<code>false</code>。</td> 
+   </tr> 
+   <tr> 
+    <td>3</td> 
+    <td><code>Object clone( )</code></td> 
+    <td>复制调用<code>Date</code>对象。</td> 
+   </tr> 
+   <tr> 
+    <td>4</td> 
+    <td><code>int compareTo(Date date)</code></td> 
+    <td>将调用对象的值与<code>date</code>对应的值进行比较。 如果值相等，则返回<code>0</code>。 如果调用对象早于<code>date</code>，则返回负值。 如果调用对象晚于日期，则返回正值。</td> 
+   </tr> 
+   <tr> 
+    <td>5</td> 
+    <td><code>int compareTo(Object obj)</code></td> 
+    <td>如果<code>obj</code>是类<code>Date</code>的对象，则与<code>compareTo(Date)</code>的操作相同。 否则会引发<code>ClassCastException</code>。</td> 
+   </tr> 
+   <tr> 
+    <td>6</td> 
+    <td><code>boolean equals(Object date)</code></td> 
+    <td>如果调用的<code>Date</code>对象包含与<code>date</code>指定的时间和日期相同的时间和日期，则返回<code>true</code>，否则返回<code>false</code>。</td> 
+   </tr> 
+   <tr> 
+    <td>7</td> 
+    <td><code>long getTime( )</code></td> 
+    <td>返回从1970年1月1日起经过的毫秒数。</td> 
+   </tr> 
+   <tr> 
+    <td>8</td> 
+    <td><code>int hashCode( )</code></td> 
+    <td>返回调用对象的哈希码。</td> 
+   </tr> 
+   <tr> 
+    <td>9</td> 
+    <td><code>void setTime(long time)</code></td> 
+    <td>设置时间指定的时间和日期，表示从1970年1月1日午夜开始的以毫秒为单位的经过时间</td> 
+   </tr> 
+   <tr> 
+    <td>10</td> 
+    <td><code>String toString( )</code></td> 
+    <td>将调用的<code>Date</code>对象转换为字符串并返回结果。</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p>为了方便演示下面的示例，我们打开Eclipse创建一个动态Web项目：<em>HandlingDate</em>，并在这个项目中创建对应的示例JSP页面作为演示。</p> 
+ <h2 id="h2-u83B7u53D6u5F53u524Du65E5u671Fu548Cu65F6u95F4"><a name="获取当前日期和时间" class="reference-link"></a><span class="header-link octicon octicon-link"></span>获取当前日期和时间</h2>
+ <p>使用JSP程序，很容易得到当前日期和时间。 可以使用<code>Date</code>对象的<code>toString()</code>方法的来打印当前日期和时间，如下所示：</p> 
+ <p>文件：<em>curDatetime.jsp</em> - </p> 
+ <pre><code class="lang-html">&lt;%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%&gt;
+&lt;%@ page import="java.io.*,java.util.*, javax.servlet.*"%&gt;
+
+&lt;!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;meta http-equiv="Content-Type" content="text/html; charset=UTF-8"&gt;
+&lt;title&gt;JSP获取当前时间示例&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div style="margin: auto; width: 80%"&gt;
+        &lt;center&gt;
+            &lt;h1&gt;显示当前日期和时间&lt;/h1&gt;
+        &lt;/center&gt;
+        &lt;%
+            Date date = new Date();
+            out.print("&lt;h2 align = \"center\"&gt;" + date.toString() + "&lt;/h2&gt;");
+        %&gt;
+    &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>编写完成上面代码后，然后部署项目，打开浏览器访问URL： <em><a target="_blank" href="http://localhost:8080/HandlingDate/curDatetime.jsp">http://localhost:8080/HandlingDate/curDatetime.jsp</a></em> 调用此JSP。将收到以下结果 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/2210/589081056_97186.png" alt=""></p> 
+ <p>每次刷新时，您都会发现以秒为单位的有所变化。</p> 
+ <h2 id="h2-u65E5u671Fu6BD4u8F83"><a name="日期比较" class="reference-link"></a><span class="header-link octicon octicon-link"></span>日期比较</h2>
+ <p>如上一节所述，可以在JSP脚本中使用所有可用的Java方法。如果需要比较两个日期，请考虑以下方法 -</p> 
+ <ul> 
+  <li>使用<code>getTime()</code>方法来获取1970年1月1日午夜以后两个对象所经过的毫秒数，然后比较这两个值。</li>
+  <li>使用<code>before()</code>，<code>after()</code>和<code>equals()</code>方法，因为本月十二号是在18日之前; 例如，新的<code>Date(1999,2,12).before(new Date(1999,2,18))</code>返回<code>true</code>。</li>
+  <li>使用<code>compareTo()</code>方法; 该方法由<code>Comparable</code>接口定义，并由<code>Date</code>实现。</li>
+ </ul> 
+ <h2 id="h2--simpledateformat-"><a name="使用SimpleDateFormat格式化日期" class="reference-link"></a><span class="header-link octicon octicon-link"></span>使用SimpleDateFormat格式化日期</h2>
+ <p><code>SimpleDateFormat</code>是一个具体的类，用于以区域设置方式格式化和解析日期。<code>SimpleDateFormat</code>允许从选择任何用户定义的日期时间格式的模式开始。</p> 
+ <p>修改上面的例子如下 -</p> 
+ <p>文件：<em>DateFormatting.jsp</em> - </p>   
+ <pre><code class="lang-html">&lt;%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%&gt;
+&lt;%@ page import="java.io.*,java.util.*"%&gt;
+&lt;%@ page import="javax.servlet.*,java.text.*"%&gt;
+
+&lt;!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;meta http-equiv="Content-Type" content="text/html; charset=UTF-8"&gt;
+&lt;title&gt;格式化日期示例&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div style="margin: auto; width: 80%"&gt;
+
+        &lt;center&gt;
+            &lt;h1&gt;当前时间格式化&lt;/h1&gt;
+        &lt;/center&gt;
+        &lt;%
+            Date dNow = new Date();
+            SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss a zzz");
+            out.print("&lt;h2 align=\"center\"&gt;" + ft.format(dNow) + "&lt;/h2&gt;");
+        %&gt;
+    &lt;/div&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>编写完成上面代码后，然后部署项目，打开浏览器访问URL： <em><a target="_blank" href="http://localhost:8080/HandlingDate/DateFormatting.jsp">http://localhost:8080/HandlingDate/DateFormatting.jsp</a></em> 调用此JSP。将收到以下结果 -<br><img src="http://www.yiibai.com/uploads/images/201710/2210/510091006_16508.png" alt=""></p> 
+ <h2 id="h2-u7B80u5355u7684u65E5u671Fu683Cu5F0Fu683Cu5F0Fu4EE3u7801"><a name="简单的日期格式格式代码" class="reference-link"></a><span class="header-link octicon octicon-link"></span>简单的日期格式格式代码</h2>
+ <p>要指定时间格式，请使用时间模式字符串。 在这种模式中，所有ASCII字母都保留为模式字母，其定义如下：</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>字符</th> 
+    <th>描述</th> 
+    <th>示例</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td><code>G</code></td> 
+    <td>时代的标志</td> 
+    <td>AD</td> 
+   </tr> 
+   <tr> 
+    <td><code>y</code></td> 
+    <td>年份四位数</td> 
+    <td>2019</td> 
+   </tr> 
+   <tr> 
+    <td><code>M</code></td> 
+    <td>月份</td> 
+    <td><code>July</code> 或 <code>07</code></td> 
+   </tr> 
+   <tr> 
+    <td><code>d</code></td> 
+    <td>月份中的天</td> 
+    <td>0</td> 
+   </tr> 
+   <tr> 
+    <td><code>h</code></td> 
+    <td>A.M./P.M.(1~12)小时格式</td> 
+    <td>2</td> 
+   </tr> 
+   <tr> 
+    <td><code>H</code></td> 
+    <td>小时格式(0~23)</td> 
+    <td>22</td> 
+   </tr> 
+   <tr> 
+    <td><code>m</code></td> 
+    <td>分钟小时</td> 
+    <td>30</td> 
+   </tr> 
+   <tr> 
+    <td><code>s</code></td> 
+    <td>秒钟</td> 
+    <td>55</td> 
+   </tr> 
+   <tr> 
+    <td><code>S</code></td> 
+    <td>毫秒</td> 
+    <td>234</td> 
+   </tr> 
+   <tr> 
+    <td><code>E</code></td> 
+    <td>一周中的一天</td> 
+    <td>Tuesday</td> 
+   </tr> 
+   <tr> 
+    <td><code>D</code></td> 
+    <td>一年中的一天</td> 
+    <td>360</td> 
+   </tr> 
+   <tr> 
+    <td><code>F</code></td> 
+    <td>月份中的星期</td> 
+    <td>2(七月第2个周三)</td> 
+   </tr> 
+   <tr> 
+    <td><code>w</code></td> 
+    <td>一年中星期数</td> 
+    <td>40</td> 
+   </tr> 
+   <tr> 
+    <td><code>W</code></td> 
+    <td>一个月</td> 
+    <td></td> 
+   </tr> 
+   <tr> 
+    <td><code>a</code></td> 
+    <td>A.M./P.M.标记</td> 
+    <td>PM</td> 
+   </tr> 
+   <tr> 
+    <td><code>k</code></td> 
+    <td>小时(1~24)</td> 
+    <td><code>24</code></td> 
+   </tr> 
+   <tr> 
+    <td><code>K</code></td> 
+    <td>A.M./P.M.(0~11)小时形式</td> 
+    <td>0</td> 
+   </tr> 
+   <tr> 
+    <td><code>z</code></td> 
+    <td>时区</td> 
+    <td>东部标准时间</td> 
+   </tr> 
+   <tr> 
+    <td><code>'</code></td> 
+    <td>逃义文本</td> 
+    <td>分隔符</td> 
+   </tr> 
+   <tr> 
+    <td><code>"</code></td> 
+    <td>单引号</td> 
+    <td>`</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p>有关操作日期的常用可用方法的完整列表，可以参考标准Java文档。</p>
+ <br>      
+</div></body></html>

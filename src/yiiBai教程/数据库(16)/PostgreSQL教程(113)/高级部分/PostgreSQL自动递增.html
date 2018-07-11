@@ -1,0 +1,54 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">PostgreSQL自动递增</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>PostgreSQL具有数据类型<code>smallserial</code>，<code>serial</code>和<code>bigserial</code>; 这些不是真正的类型，而只是在创建唯一标识符列的标志以方便使用。 这些类似于一些其他数据库支持的<code>AUTO_INCREMENT</code>属性。</p> 
+ <p>如果您希望某列具有唯一的约束或是主键，则必须使用其他数据类型进行指定。</p> 
+ <p>类型名称<code>serial</code>用于创建整数列。 类型名称<code>bigserial</code>创建一个<code>bigint</code>类型的列。 如果您期望在表的使用期限内使用超过<code>2^31</code>个标识符，则应使用<code>bigserial</code>。 类型名称<code>smallserial</code>创建一个<code>smallint</code>列。</p> 
+ <p><strong>语法：</strong><br><code>SERIAL</code>数据类型的基本用法如下：</p> 
+ <pre><code class="lang-sql">CREATE TABLE tablename (
+    colname SERIAL
+);
+</code></pre> 
+ <p><strong>示例：</strong><br>考虑要创建的<code>COMPANY</code>表如下：</p> 
+ <pre><code class="lang-sql">yiibai_db=# CREATE TABLE COMPANY(
+   ID  SERIAL PRIMARY KEY,
+   NAME           TEXT      NOT NULL,
+   AGE            INT       NOT NULL,
+   ADDRESS        CHAR(50),
+   SALARY         REAL
+);
+</code></pre> 
+ <p>现在，将以下记录插入<code>COMPANY</code>表：</p> 
+ <pre><code class="lang-sql">INSERT INTO COMPANY (NAME,AGE,ADDRESS,SALARY)
+VALUES ( 'Paul', 32, 'California', 20000.00 );
+
+INSERT INTO COMPANY (NAME,AGE,ADDRESS,SALARY)
+VALUES ('Allen', 25, 'Texas', 15000.00 );
+
+INSERT INTO COMPANY (NAME,AGE,ADDRESS,SALARY)
+VALUES ('Teddy', 23, 'Norway', 20000.00 );
+
+INSERT INTO COMPANY (NAME,AGE,ADDRESS,SALARY)
+VALUES ( 'Mark', 25, 'Rich-Mond ', 65000.00 );
+
+INSERT INTO COMPANY (NAME,AGE,ADDRESS,SALARY)
+VALUES ( 'David', 27, 'Texas', 85000.00 );
+
+
+INSERT INTO COMPANY (NAME,AGE,ADDRESS,SALARY)
+VALUES ( 'Kim', 22, 'South-Hall', 45000.00 );
+
+INSERT INTO COMPANY (NAME,AGE,ADDRESS,SALARY)
+VALUES ( 'James', 24, 'Houston', 10000.00 );
+</code></pre> 
+ <p>这将在表中插入<code>7</code>个元组，<code>COMPANY</code>表将具有以下记录：</p>   
+ <pre><code class="lang-sql"> id | name  | age | address    | salary
+----+-------+-----+------------+--------
+  1 | Paul  |  32 | California |  20000
+  2 | Allen |  25 | Texas      |  15000
+  3 | Teddy |  23 | Norway     |  20000
+  4 | Mark  |  25 | Rich-Mond  |  65000
+  5 | David |  27 | Texas      |  85000
+  6 | Kim   |  22 | South-Hall |  45000
+  7 | James |  24 | Houston    |  10000
+</code></pre>
+ <br>      
+</div></body></html>

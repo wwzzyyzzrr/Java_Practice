@@ -1,0 +1,120 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Android JetPlayer实例</h1><div style="width:100%;float:left;" class="article-content">   
+ <p> Android平台包括JET引擎，可以在应用程序中添加JET音频内容的交互播放。 Android提供JetPlayer类来处理这些东西。</p> 
+ <p> 为了使用Jet内容，需要使用JetCreator工具自带的AndroidSDK。 jetCreator的使用已在实例中进行了讨论。以起到由JetCreator创建的内容，则需要通过的Android支持JetPlayer类。&nbsp;</p> 
+ <p> 为了使用JetPlayer，需要实例JetPlayer类的一个对象。它的语法如下：</p> 
+ <pre class="prettyprint prettyprinted" style="border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; font-size: 12px; overflow: auto;">
+<span class="typ" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">JetPlayer</span><span class="pln" style="margin: 0px; padding: 0px;"> jetPlayer </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">=</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="typ" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">JetPlayer</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">.</span><span class="pln" style="margin: 0px; padding: 0px;">getJetPlayer</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">();</span></pre> 
+ <p> 需要做的下一件事就是调用loadJetFile方法和传递Jet文件的路径。之后，必须添加到JetPlayer队列。它的语法如下：</p> 
+ <pre class="prettyprint prettyprinted" style="border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; font-size: 12px; overflow: auto;">
+<span class="pln" style="margin: 0px; padding: 0px;">jetPlayer</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">.</span><span class="pln" style="margin: 0px; padding: 0px;">loadJetFile</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="str" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"/sdcard/level1.jet"</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">);</span><span class="pln" style="margin: 0px; padding: 0px;">
+</span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">byte</span><span class="pln" style="margin: 0px; padding: 0px;"> segmentId </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">=</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">0</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">;</span><span class="pln" style="margin: 0px; padding: 0px;">
+</span><span class="com" style="margin: 0px; padding: 0px; color: rgb(136, 0, 0);">// queue segment 5, repeat once, use General MIDI, transpose by -1 octave</span><span class="pln" style="margin: 0px; padding: 0px;">
+jetPlayer</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">.</span><span class="pln" style="margin: 0px; padding: 0px;">queueJetSegment</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">5</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">,</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">-</span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">1</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">,</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">1</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">,</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">-</span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">1</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">,</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">0</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">,</span><span class="pln" style="margin: 0px; padding: 0px;"> segmentId</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">++);</span></pre> 
+ <p> 该方法queueJetSegment队列在JET队列指定段。最后一件事是调用play方法来开始播放音乐。它的语法如下：</p> 
+ <pre class="prettyprint prettyprinted" style="border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; font-size: 12px; overflow: auto;">
+<span class="pln" style="margin: 0px; padding: 0px;">jetPlayer</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">.</span><span class="pln" style="margin: 0px; padding: 0px;">play</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">();</span></pre> 
+ <p> 除了这些方法，也有在JetPlayer类中定义的其他方法。它们被定义如下：</p> 
+ <table class="src" style="margin: 8px 0px; padding: 0px;  border-color: rgb(214, 214, 214); width: 560px; border-collapse: collapse; vertical-align: top; color: rgb(0, 0, 0);  background-color: rgb(247, 247, 247);"> 
+  <tbody style="margin: 0px; padding: 0px;"> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <th style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214); background-color: rgb(238, 238, 238);"> Sr.No</th> 
+    <th style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214); background-color: rgb(238, 238, 238);"> 方法及说明</th> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 1</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> <b style="margin: 0px; padding: 0px;">clearQueue()</b><br style="margin: 0px; padding: 0px;"> 清空段队列，并清除预定播放的所有剪辑</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 2</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> <b style="margin: 0px; padding: 0px;">closeJetFile()</b><br style="margin: 0px; padding: 0px;"> 关闭包含内容JET资源</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 3</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> <b style="margin: 0px; padding: 0px;">getJetPlayer()</b><br style="margin: 0px; padding: 0px;"> JetPlayer类的工厂方法</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 4</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> <b style="margin: 0px; padding: 0px;">loadJetFile(String path)</b><br style="margin: 0px; padding: 0px;"> 从给定路径加载.jet文件</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 5</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> <b style="margin: 0px; padding: 0px;">pause()</b><br style="margin: 0px; padding: 0px;"> 暂停JET段队列的回放</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 6</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> <b style="margin: 0px; padding: 0px;">release()</b><br style="margin: 0px; padding: 0px;"> 停止当前播放JET，并释放所有相关的本地资源</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h2> 例子</h2> 
+ <p> 下面的例子演示了使用JetCreator工具来创建Jet内容。创建的内容之后可以通过JetPlayer播放</p> 
+ <p> 为了试验这个例子，需要在实际设备或模拟器运行此程序</p> 
+ <table class="src" style="margin: 8px 0px; padding: 0px;  border-color: rgb(214, 214, 214); width: 560px; border-collapse: collapse; vertical-align: top; color: rgb(0, 0, 0);  background-color: rgb(247, 247, 247);"> 
+  <tbody style="margin: 0px; padding: 0px;"> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <th style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214); background-color: rgb(238, 238, 238);"> Steps</th> 
+    <th style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214); background-color: rgb(238, 238, 238);"> 描述</th> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 1</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 使用Android Studio创建Android应用程序，并将其命名为JetPlayer。在创建这个项目，确保目标SDK并编译在Android SDK的最新版本或使用更高级别的API。</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 2</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 从互联网下载并在计算机上安装Python和wxPython</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 3</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 提示符下运行 jet&nbsp;creator&nbsp;命令</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 4</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 创建Jet内容，然后将其保存</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 5</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 运行应用程序并验证结果</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h2> 使用JetCreator</h2> 
+ <h3> 安装PYTHON</h3> 
+ <p> 需要使用JetCreator第一步是安装Python。Python可以从它的官方网站点击这里或在互联网上其他的地方下载安装。</p> 
+ <p> 请记住python版本号应该是2.6或2.7。</p> 
+ <p> 下载 Python 安装后，必须设置Python的路径。打开命令提示符然后输出以下命令。它显示如下图所示：</p> 
+ <img alt="Android Jet Player Tutorial" src="/uploads/allimg/150127/1P2504564-0.JPG" style="margin: auto; padding: 0px 0px 10px; border: 0px; max-width: 560px; height: auto; display: block; color: rgb(0, 0, 0); "> 
+ <p> 路径设置之后，可以通过输入入python验证它，并按下回车键。它如下所示：</p> 
+ <img alt="Android Jet Player Tutorial" src="/uploads/allimg/150127/1P2502154-1.JPG" style="margin: auto; padding: 0px 0px 10px; border: 0px; max-width: 560px; height: auto; display: block; color: rgb(0, 0, 0); "> 
+ <h3> 安装WXPYTHON</h3> 
+ <p> 需要做的下一件事就是安装wxPython，下载完成后安装它。它会自动安装在Python目录。</p> 
+ <h3> 运行JETCREATOR</h3> 
+ <p> 需要接下来的事情就是移动到JetCreator存在的路径。它是在Android的工具，SDK文件夹。它如下所示：</p> 
+ <img alt="Android Jet Player Tutorial" src="/uploads/allimg/150127/1P2503D6-2.JPG" style="margin: auto; padding: 0px 0px 10px; border: 0px; max-width: 560px; height: auto; display: block; color: rgb(0, 0, 0); "> 
+ <p> 在文件夹中键入以下命令并回车。</p> 
+ <div style="float:left;margin-bottom: 10px;">  
+ </div>
+ <div style="float:left;margin-bottom: 10px;">  
+ </div>  
+ <pre class="prettyprint prettyprinted" style="border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; font-size: 12px; overflow: auto;">
+<span class="pln" style="margin: 0px; padding: 0px;">python </span><span class="typ" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">JetCreator</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">.</span><span class="pln" style="margin: 0px; padding: 0px;">py</span></pre> 
+ <p> 它显示如下图：</p> 
+ <img alt="Android Jet Player Tutorial" src="/uploads/allimg/150127/1P2502D1-3.JPG" style="margin: auto; padding: 0px 0px 10px; border: 0px; max-width: 560px; height: auto; display: block; color: rgb(0, 0, 0); "> 
+ <p> 当按下回车键，Jet Creator&nbsp;主窗口将打开如下所示：</p> 
+ <img alt="Android Jet Player Tutorial" src="/uploads/allimg/150127/1P2501961-4.JPG" style="margin: auto; padding: 0px 0px 10px; border: 0px; max-width: 560px; height: auto; display: block; color: rgb(0, 0, 0); "> 
+ <h3> 创建JETCONTENT</h3> 
+ <p> 在上面Jet&nbsp;窗口，点击导入按钮。并从在Jet文件夹中的内容的演示文件夹中的JetFolder选择JetCreator_demo_1或2。这显示如下图：</p> 
+ <img alt="Android Jet Player Tutorial" src="/uploads/allimg/150127/1P2504134-5.JPG" style="margin: auto; padding: 0px 0px 10px; border: 0px; max-width: 560px; height: auto; display: block; color: rgb(0, 0, 0); "> 
+ <p> 输入的内容后，会看到在JetCreator窗口中的内容。它如下所示：</p> 
+ <img alt="Android Jet Player Tutorial" src="/uploads/allimg/150127/1P25029D-6.JPG" style="margin: auto; padding: 0px 0px 10px; border: 0px; max-width: 560px; height: auto; display: block; color: rgb(0, 0, 0); "> 
+ <p> 现在，可以通过这里访问JetCreator链接探索JetCreator不同的选择。最后创建.jet文件，需要从文件菜单中的内容保存。</p> 
+ <h2> 验证结果</h2> 
+ <p> 得到jet文件之后，可以使用 jet 播放器播放。它的主代码给出如下：</p> 
+ <pre class="prettyprint prettyprinted" style="border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; font-size: 12px; overflow: auto;">
+<span class="typ" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">JetPlayer</span><span class="pln" style="margin: 0px; padding: 0px;"> jetPlayer </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">=</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="typ" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">JetPlayer</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">.</span><span class="pln" style="margin: 0px; padding: 0px;">getJetPlayer</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">();</span><span class="pln" style="margin: 0px; padding: 0px;">
+jetPlayer</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">.</span><span class="pln" style="margin: 0px; padding: 0px;">loadJetFile</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="str" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"/sdcard/level1.jet"</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">);</span><span class="pln" style="margin: 0px; padding: 0px;">
+</span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">byte</span><span class="pln" style="margin: 0px; padding: 0px;"> segmentId </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">=</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">0</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">;</span><span class="pln" style="margin: 0px; padding: 0px;">
+</span><span class="com" style="margin: 0px; padding: 0px; color: rgb(136, 0, 0);">// queue segment 5, repeat once, use General MIDI, transpose by -1 octave</span><span class="pln" style="margin: 0px; padding: 0px;">
+jetPlayer</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">.</span><span class="pln" style="margin: 0px; padding: 0px;">queueJetSegment</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">5</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">,</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">-</span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">1</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">,</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">1</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">,</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">-</span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">1</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">,</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">0</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">,</span><span class="pln" style="margin: 0px; padding: 0px;"> segmentId</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">++);</span><span class="pln" style="margin: 0px; padding: 0px;">
+jetPlayer</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">.</span><span class="pln" style="margin: 0px; padding: 0px;">play</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">();</span></pre> 
+ <br>      
+</div></body></html>

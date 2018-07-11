@@ -1,0 +1,119 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Spring @PostConstruct和@PreDestroy实例</h1><div style="width:100%;float:left;" class="article-content">   
+ <div> 
+  <div>
+    在Spring中，既可以实现
+   <a target="_blank" href="http://www.yiibai.com/spring/spring-initializingbean-and-disposablebean-example.html">&nbsp;InitializingBean和DisposableBean接口</a>或在bean配置文件中指定&nbsp;
+   <a target="_blank" href="http://www.yiibai.com/spring/spring-init-method-and-destroy-method-example.html">init-method&nbsp;和&nbsp;destroy-method</a>&nbsp;在初始化和销毁回调函数。在这篇文章中，我们将介绍如何使用 @PostConstruct 和 @PreDestroy&nbsp;注解来做同样的事情。 
+  </div> 
+ </div> 
+ <div> 
+  <div> 
+   <h4> 注：<span style="font-weight:normal;line-height:1.5;">@PostConstruct和@PreDestroy 标注不属于 Spring，它是在J2EE库-&nbsp;common-annotations.jar。</span> </h4> 
+  </div> 
+  <h2> @PostConstruct 和 @PreDestroy </h2> 
+  <div>
+    一个 CustomerService&nbsp;Bean使用 @PostConstruct 和 @PreDestroy 注释 
+  </div> 
+  <pre>package com.yiibai.customer.services;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+
+public class CustomerService
+{
+	String message;
+	
+	public String getMessage() {
+	  return message;
+	}
+
+	public void setMessage(String message) {
+	  this.message = message;
+	}
+	
+	@PostConstruct
+	public void initIt() throws Exception {
+	  System.out.println("Init method after properties are set : " + message);
+	}
+	
+	@PreDestroy
+	public void cleanUp() throws Exception {
+	  System.out.println("Spring Container is destroy! Customer clean up");
+	}
+	
+}</pre> 
+  <div>
+    默认情况下，Spring不会意识到@PostConstruct和@PreDestroy注解。要启用它，要么注册“CommonAnnotationBeanPostProcessor”，要么在bean配置文件的&lt;context:annotation-config&nbsp;/&gt;‘&nbsp;指定， 
+  </div> 
+  <h2> 1. CommonAnnotationBeanPostProcessor </h2> 
+  <pre>&lt;beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-2.5.xsd"&gt;
+
+	&lt;bean class="org.springframework.context.annotation.CommonAnnotationBeanPostProcessor" /&gt;
+
+	&lt;bean id="customerService" class="com.yiibai.customer.services.CustomerService"&gt;
+		&lt;property name="message" value="i'm property message" /&gt;
+	&lt;/bean&gt;
+		
+&lt;/beans&gt;</pre> 
+  <h2> 2. &lt;context:annotation-config /&gt; </h2> 
+  <pre>&lt;beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context-2.5.xsd"&gt;
+
+	&lt;context:annotation-config /&gt;
+
+	&lt;bean id="customerService" class="com.yiibai.customer.services.CustomerService"&gt;
+		&lt;property name="message" value="i'm property message" /&gt;
+	&lt;/bean&gt;
+		
+&lt;/beans&gt;</pre> 
+  <p> 执行结果 </p>   
+  <pre>package com.yiibai.common;
+
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import com.yiibai.customer.services.CustomerService;
+
+public class App 
+{
+    public static void main( String[] args )
+    {
+    	ConfigurableApplicationContext context = 
+    	  new ClassPathXmlApplicationContext(new String[] {"Spring-Customer.xml"});
+	
+    	CustomerService cust = (CustomerService)context.getBean("customerService");
+    	
+    	System.out.println(cust);
+    	
+    	context.close();
+    }
+}</pre> 
+  <p> 输出结果 </p> 
+  <pre>Init method after properties are set : im property message
+com.yiibai.customer.services.CustomerService@47393f
+...
+INFO: Destroying singletons in org.springframework.beans.factory.
+support.DefaultListableBeanFactory@77158a: 
+defining beans [customerService]; root of factory hierarchy
+Spring Container is destroy! Customer clean up</pre> 
+  <div>
+    initIt()方法(@PostConstruct)被调用时，消息属性设置后&nbsp;cleanUp()&nbsp;方法(@PreDestroy)是在context.close()执行后被调用; 
+  </div> 
+  <div> 
+   <br> 
+  </div> 
+  <div>
+    下载源代码 –&nbsp;
+   <a target="_blank" href="http://pan.baidu.com/s/1qX2W6xI">http://pan.baidu.com/s/1qX2W6xI</a> 
+  </div> 
+ </div>
+ <br>      
+</div></body></html>

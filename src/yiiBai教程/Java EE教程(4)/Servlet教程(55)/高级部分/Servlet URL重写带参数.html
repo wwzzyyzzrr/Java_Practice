@@ -1,0 +1,156 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Servlet URL重写带参数</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>在URL重写中，我们将令牌或标识符附加到下一个Servlet或下一个资源的URL。可以使用以下格式发送参数名称/值对：</p> 
+ <pre><code class="lang-shell">http://localhost/myappurl?key1=value1&amp;key2=value2&amp;??...
+</code></pre> 
+ <p>使用<code>=</code>符号分隔名称和值，使用<code>&amp;</code>符号将参数名/值对与其他参数分开。当用户单击超链接时，参数名称/值对将被传递到服务器。 从Servlet中可以使用<code>getParameter()</code>方法获取指定参数的值。<br><img src="http://www.yiibai.com/uploads/images/201710/1210/723141008_29932.jpg" alt=""></p> 
+ <p><strong>网址重写的优点</strong></p> 
+ <ul> 
+  <li>无论Cookie是否被禁用(浏览器无关)，它将始终有效。</li>
+  <li>每个页页不需要额外的表单提交。</li>
+ </ul> 
+ <p><strong>URL重写的缺点</strong></p> 
+ <ul> 
+  <li>它只能在链接上工作。</li>
+  <li>它只能发送文本信息。</li>
+ </ul> 
+ <h2 id="h2--url-"><a name="使用URL重写的示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>使用URL重写的示例</h2>
+ <p>在这个例子中，我们使用链接来维护用户的状态。为此，在查询字符串中附加用户的名称，并从另一页面的查询字符串中获取该值。</p> 
+ <p>打开Eclipse，创建一个动态Web项目：<em>UrlRewriting</em>，其完整的结构如下所示 - </p> 
+ <p>下面是此项目中几个重要的文件代码。</p> 
+ <p>文件：<em>index.html</em></p> 
+ <pre><code class="lang-html">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;meta charset="UTF-8"&gt;
+&lt;title&gt;URL重写&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div style="text-algin: center; padding-top: 12px;"&gt;
+        &lt;form action="servlet1" method="get"&gt;
+            名字：&lt;input type="text" name="username" value="maxsu"/&gt;&lt;input type="submit"
+                value="提交" /&gt;
+        &lt;/form&gt;
+    &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>文件：<em>FirstServlet.java</em></p> 
+ <pre><code class="lang-java">package com.yiibai;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+/**
+ * Servlet implementation class FirstServlet
+ */
+public class FirstServlet extends HttpServlet {
+    private static final long serialVersionUID = 1L;
+
+    /**
+     * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
+     *      response)
+     */
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        // TODO Auto-generated method stub
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("text/html;charset=UTF-8");
+        PrintWriter out = response.getWriter();
+        String n = request.getParameter("username");
+
+        out.print("您好， " + n + "&lt;br/&gt;&lt;hr/&gt;");
+
+        // appending the username in the query string
+        out.print("&lt;a href='servlet2?uname=" + n + "'&gt;使用URL参数访问用户名&lt;/a&gt;");
+
+        out.close();
+    }
+
+}
+</code></pre> 
+ <p>文件：<em>SecondServlet.java</em></p> 
+ <pre><code class="lang-java">package com.yiibai;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+/**
+ * Servlet implementation class FirstServlet
+ */
+@WebServlet("/FirstServlet")
+public class SecondServlet extends HttpServlet {
+    private static final long serialVersionUID = 1L;
+
+    /**
+     * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
+     */
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        // TODO Auto-generated method stub
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("text/html;charset=UTF-8"); 
+        PrintWriter out = response.getWriter();  
+
+        //getting value from the query string  
+        String n=request.getParameter("uname");  
+        out.print("Hello "+n);  
+
+        out.close();  
+    }
+
+}
+</code></pre> 
+ <p>文件：<em>web.xml</em></p>   
+ <pre><code class="lang-xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+    xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
+    id="WebApp_ID" version="3.1"&gt;
+    &lt;display-name&gt;UrlRewriting&lt;/display-name&gt;
+    &lt;welcome-file-list&gt;
+        &lt;welcome-file&gt;index.html&lt;/welcome-file&gt;
+        &lt;welcome-file&gt;index.jsp&lt;/welcome-file&gt;
+    &lt;/welcome-file-list&gt;
+    &lt;servlet&gt;
+        &lt;servlet-name&gt;s1&lt;/servlet-name&gt;
+        &lt;servlet-class&gt;com.yiibai.FirstServlet&lt;/servlet-class&gt;
+    &lt;/servlet&gt;
+
+    &lt;servlet-mapping&gt;
+        &lt;servlet-name&gt;s1&lt;/servlet-name&gt;
+        &lt;url-pattern&gt;/servlet1&lt;/url-pattern&gt;
+    &lt;/servlet-mapping&gt;
+
+    &lt;servlet&gt;
+        &lt;servlet-name&gt;s2&lt;/servlet-name&gt;
+        &lt;servlet-class&gt;com.yiibai.SecondServlet&lt;/servlet-class&gt;
+    &lt;/servlet&gt;
+
+    &lt;servlet-mapping&gt;
+        &lt;servlet-name&gt;s2&lt;/servlet-name&gt;
+        &lt;url-pattern&gt;/servlet2&lt;/url-pattern&gt;
+    &lt;/servlet-mapping&gt;
+&lt;/web-app&gt;
+</code></pre> 
+ <p>在编写上面代码后，部署此Web应用程序，打开浏览器访问URL： <a target="_blank" href="http://localhost:8080/UrlRewriting">http://localhost:8080/UrlRewriting</a> ，如果没有错误，应该会看到以下结果 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/1210/498141027_44755.png" alt=""></p> 
+ <p>填写用户名后点击提交表单，应该会看到以下结果 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/1210/708141028_31367.png" alt=""></p> 
+ <blockquote> 
+  <p>注意： 在URL中，附加了参数”username=maxsu” 来区别用户。</p> 
+ </blockquote> 
+ <p>再次点击“使用URL参数访问用户名”链接，看到显示的用户名:<code>maxsu</code> -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/1210/285141031_58993.png" alt=""></p>
+ <br>      
+</div></body></html>

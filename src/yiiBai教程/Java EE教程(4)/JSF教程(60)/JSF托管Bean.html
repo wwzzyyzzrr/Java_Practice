@@ -1,0 +1,68 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">JSF托管Bean</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>托管bean它是一个纯Java类，它包含一组属性和一组<code>getter</code>，<code>setter</code>方法。</p> 
+ <p>以下是托管bean方法执行的常见功能：</p> 
+ <ul> 
+  <li>验证组件的数据</li>
+  <li>处理组件触发的事件</li>
+  <li>执行处理以确定应用程序必须导航的下一页</li>
+  <li>它也可以作为JFS框架的模型。</li>
+ </ul> 
+ <p><strong>JSF托管Bean示例</strong></p> 
+ <p>请看看下面一段示例代码 - </p> 
+ <pre><code class="lang-java">public class User {  
+    private String name;  
+    public String getName() {  
+        return name;  
+    }  
+    public void setName(String name) {  
+        this.name = name;  
+    }   
+}
+</code></pre> 
+ <p>您可以通过以下方式使用此<code>bean</code>。</p> 
+ <ul> 
+  <li>通过配置成XML文件。</li>
+  <li>通过使用注释。</li>
+ </ul> 
+ <h3 id="h3--xml-bean"><a name="通过XML文件配置托管Bean" class="reference-link"></a><span class="header-link octicon octicon-link"></span>通过XML文件配置托管Bean</h3>
+ <pre><code class="lang-xml">&lt;managed-bean&gt;  
+    &lt;managed-bean-name&gt;user&lt;/managed-bean-name&gt;  
+    &lt;managed-bean-class&gt;User&lt;/managed-bean-class&gt;  
+    &lt;managed-bean-scope&gt;session&lt;/managed-bean-scope&gt;  
+&lt;/managed-bean&gt;
+</code></pre> 
+ <p>在xml文件配置<code>bean</code>是比较旧方法。 在这种方法中，我们必须创建一个名为<code>faces-config.xml</code>的xml文件，JSF提供了配置<code>bean</code>的标签。</p> 
+ <p>在上面的例子中，我们列出了<code>bean-name</code>，<code>bean-class</code>和<code>bean-scope</code>。 所以，它可以在项目中访问。</p> 
+ <h3 id="h3--bean"><a name="使用注释配置托管Bean" class="reference-link"></a><span class="header-link octicon octicon-link"></span>使用注释配置托管Bean</h3>
+ <pre><code class="lang-java">import javax.faces.bean.ManagedBean;  
+import javax.faces.bean.RequestScoped;  
+
+@ManagedBean    // Using ManagedBean annotation  
+@RequestScoped  // Using Scope annotation  
+public class User {  
+    private String name;  
+    public String getName() {  
+        return name;  
+    }  
+    public void setName(String name) {  
+         this.name = name;  
+    }  
+}
+</code></pre> 
+ <p>类中的<code><a target="_blank" href="https://github.com/ManagedBean" title="@ManagedBean" class="at-link">@ManagedBean</a></code>注解自动将该类注册为JavaServer Faces的资源。 这种注册的托管bean在应用程序配置资源文件中不需要托管bean配置项。</p> 
+ <p>这是应用程序配置资源文件方法的替代方法，并减少配置托管bean的任务。<br><code><a target="_blank" href="https://github.com/RequestScoped" title="@RequestScoped" class="at-link">@RequestScoped</a></code>注释用于提供托管的范围。 您可以使用注解来定义bean将被存储的范围。</p> 
+ <p>您可以对bean类使用以下范围：</p> 
+ <ul> 
+  <li><strong>应用程序(<a target="_blank" href="https://github.com/ApplicationScoped" title="@ApplicationScoped" class="at-link">@ApplicationScoped</a>)</strong>：应用程序范围在所有用户中保持不变，与Web应用程序的交互。</li>
+  <li><strong>会话(<a target="_blank" href="https://github.com/SessionScoped" title="@SessionScoped" class="at-link">@SessionScoped</a>)</strong>：会话范围在Web应用程序中的多个HTTP请求中保持不变。</li>
+  <li><strong>视图(<a target="_blank" href="https://github.com/ViewScoped" title="@ViewScoped" class="at-link">@ViewScoped</a>)</strong>：在用户与Web应用程序的单个页面(视图)进行交互时，视图范围仍然存在。</li>
+  <li><strong>请求(<a target="_blank" href="https://github.com/RequestScoped" title="@RequestScoped" class="at-link">@RequestScoped</a>)</strong>：在Web应用程序中的单个HTTP请求期间，请求范围仍然存在。</li>
+  <li><strong>无(<a target="_blank" href="https://github.com/NoneScoped" title="@NoneScoped" class="at-link">@NoneScoped</a>)</strong>：表示未为应用程序定义作用域。</li>
+  <li><strong>自定义(<a target="_blank" href="https://github.com/CustomScoped" title="@CustomScoped" class="at-link">@CustomScoped</a>)</strong>：用户定义的非标准作用域。 其值必须配置为<code>java.util.Map</code>，自定义范围很少使用。</li>
+ </ul> 
+ <h3 id="h3--bean"><a name="急切管理Bean" class="reference-link"></a><span class="header-link octicon octicon-link"></span>急切管理Bean</h3>
+ <p>托管<code>bean</code>默认是懒惰的。 这意味着，只有在从应用程序发出请求时才会去实例化bean。<br>如果想自动提前强制将<code>bean</code>实例化，那么可在应用程序启动时，可以强制将<code>bean</code>实例化并放置在应用程序(<code><a target="_blank" href="https://github.com/ApplicationScoped" title="@ApplicationScoped" class="at-link">@ApplicationScoped</a></code>)范围内。您需要将托管 bean 的<code>eager</code>属性设置为<code>true</code>，如以下示例所示：</p>   
+ <pre><code class="lang-java">@ManagedBean(eager=true)
+</code></pre>
+ <br>      
+</div></body></html>

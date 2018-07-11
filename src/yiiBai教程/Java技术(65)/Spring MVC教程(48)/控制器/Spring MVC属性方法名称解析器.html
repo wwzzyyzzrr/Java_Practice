@@ -1,0 +1,147 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Spring MVC属性方法名称解析器</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>以下示例显示如何使用<strong>Spring Web MVC</strong>框架来实现多动作控制器的属性方法名称解析器。 <code>MultiActionController</code>类可在单个控制器中分别映射多个<code>URL</code>到对应的方法。</p> 
+ <p>所下所示配置 - </p> 
+ <pre><code class="lang-java">package com.yiibai.springmvc;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
+
+public class UserController extends MultiActionController{
+
+   public ModelAndView home(HttpServletRequest request,
+      HttpServletResponse response) throws Exception {
+      ModelAndView model = new ModelAndView("user");
+      model.addObject("message", "主页面(Home方法)");
+      return model;
+   }
+
+   public ModelAndView add(HttpServletRequest request,
+      HttpServletResponse response) throws Exception {
+      ModelAndView model = new ModelAndView("user");
+      model.addObject("message", "添加(Add方法)");
+      return model;
+   }
+
+   public ModelAndView remove(HttpServletRequest request,
+      HttpServletResponse response) throws Exception {
+      ModelAndView model = new ModelAndView("user");
+      model.addObject("message", "删除(Remove方法)");
+      return model;
+   }
+}
+</code></pre> 
+ <p>URL映射配置文件如下 - </p> 
+ <pre><code class="lang-xml">&lt;bean class="com.yiibai.springmvc.UserController"&gt;
+   &lt;property name="methodNameResolver"&gt;
+      &lt;bean class="org.springframework.web.servlet.mvc.multiaction.PropertiesMethodNameResolver"&gt;
+         &lt;property name="mappings"&gt;
+            &lt;props&gt;
+               &lt;prop key="/user/home.html"&gt;home&lt;/prop&gt;
+               &lt;prop key="/user/add.html"&gt;add&lt;/prop&gt;
+               &lt;prop key="/user/update.html"&gt;update&lt;/prop&gt;      
+            &lt;/props&gt;
+         &lt;/property&gt;
+      &lt;/bean&gt;
+   &lt;/property&gt;
+&lt;/bean&gt;
+</code></pre> 
+ <p>例如，使用上面的配置，如果URI：</p> 
+ <ul> 
+  <li>对于<code>/user/home.html</code>请求，<code>DispatcherServlet</code>将请求转发到<code>UserController</code>类的 <code>home()</code>方法。</li>
+  <li>对于<code>user/add.html</code>，<code>DispatcherServlet</code>将请求转发到<code>UserController</code>类的 <code>add()</code>方法。</li>
+  <li>对于<code>user/remove.html</code>，<code>DispatcherServlet</code>将请求转发到<code>UserController</code>类的 <code>remove()</code>方法。</li>
+ </ul> 
+ <p>首先，让我们使用Eclipse IDE，并按照以下步骤使用<strong>Spring Web Framework</strong>开发基于动态表单的Web应用程序：</p> 
+ <ol> 
+  <li>创建一个名称为 <strong>PropertiesMethodNameResolver</strong> 的动态WEB项目。</li>
+  <li>在 <code>com.yiibai.springmvc</code> 包下创建一个Java类<code>UserController</code>。</li>
+  <li>在<code>jsp</code>子文件夹下创建一个视图文件：<code>user.jsp</code>。</li>
+  <li>最后一步是创建所有源和配置文件的内容并运行应用程序，详细如下所述。</li>
+ </ol> 
+ <p>完整的项目文件目录结构如下所示 -<br><img src="http://www.yiibai.com/uploads/images/201701/2001/146160123_88750.png" alt=""></p> 
+ <p><strong>UserController.java</strong> 的代码如下所示 -</p> 
+ <pre><code class="lang-java">package com.yiibai.springmvc;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
+
+public class UserController extends MultiActionController{
+
+   public ModelAndView home(HttpServletRequest request,
+      HttpServletResponse response) throws Exception {
+      ModelAndView model = new ModelAndView("user");
+      model.addObject("message", "主页面(Home方法)");
+      return model;
+   }
+
+   public ModelAndView add(HttpServletRequest request,
+      HttpServletResponse response) throws Exception {
+      ModelAndView model = new ModelAndView("user");
+      model.addObject("message", "添加(Add方法)");
+      return model;
+   }
+
+   public ModelAndView remove(HttpServletRequest request,
+      HttpServletResponse response) throws Exception {
+      ModelAndView model = new ModelAndView("user");
+      model.addObject("message", "删除(Remove方法)");
+      return model;
+   }
+}
+</code></pre> 
+ <p><strong>PropertiesMethodNameResolver-servlet.xml</strong> 的代码如下所示 - </p>   
+ <pre><code class="lang-xml">&lt;beans xmlns="http://www.springframework.org/schema/beans"
+   xmlns:context="http://www.springframework.org/schema/context"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="
+   http://www.springframework.org/schema/beans     
+   http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+   http://www.springframework.org/schema/context 
+   http://www.springframework.org/schema/context/spring-context-3.0.xsd"&gt;
+
+   &lt;bean class="org.springframework.web.servlet.view.InternalResourceViewResolver"&gt;
+      &lt;property name="prefix" value="/WEB-INF/jsp/"/&gt;
+      &lt;property name="suffix" value=".jsp"/&gt;
+   &lt;/bean&gt;
+
+   &lt;bean class="org.springframework.web.servlet.mvc.support.ControllerClassNameHandlerMapping"&gt; 
+      &lt;property name="caseSensitive" value="true" /&gt;
+   &lt;/bean&gt;
+   &lt;bean class="com.yiibai.springmvc.UserController"&gt;
+      &lt;property name="methodNameResolver"&gt;
+      &lt;bean class="org.springframework.web.servlet.mvc.multiaction.PropertiesMethodNameResolver"&gt;
+         &lt;property name="mappings"&gt;
+            &lt;props&gt;
+               &lt;prop key="/user/home.html"&gt;home&lt;/prop&gt;
+               &lt;prop key="/user/add.html"&gt;add&lt;/prop&gt;
+               &lt;prop key="/user/remove.html"&gt;remove&lt;/prop&gt;
+            &lt;/props&gt;
+         &lt;/property&gt;
+      &lt;/bean&gt;
+      &lt;/property&gt;
+   &lt;/bean&gt;  
+&lt;/beans&gt;
+</code></pre> 
+ <p><strong>user.jsp</strong> 的代码如下所示 -</p> 
+ <pre><code class="lang-html">&lt;%@ page contentType="text/html; charset=UTF-8" %&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;User.jsp Page&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+   &lt;h2&gt;${message}&lt;/h2&gt;  
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>完成创建源和配置文件后，发布应用程序到Tomcat服务器。</p> 
+ <p>现在启动Tomcat服务器，当访问URL =&gt; <a target="_blank" href="http://localhost:8080/PropertiesMethodNameResolver/user/add.html">http://localhost:8080/PropertiesMethodNameResolver/user/add.html</a> ， 如果<strong>Spring Web</strong>应用程序没有问题，应该看到以下结果：</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201701/2001/849160115_94487.png" alt=""></p> 
+ <p>当访问URL =&gt; <a target="_blank" href="http://localhost:8080/PropertiesMethodNameResolver/user/remove.html">http://localhost:8080/PropertiesMethodNameResolver/user/remove.html</a> ， 如果<strong>Spring Web</strong>应用程序没有问题，应该看到以下结果：</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201701/2001/739160118_94313.png" alt=""></p>
+ <br>      
+</div></body></html>

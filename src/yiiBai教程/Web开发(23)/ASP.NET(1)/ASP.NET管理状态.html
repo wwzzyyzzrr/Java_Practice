@@ -1,0 +1,488 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">ASP.NET管理状态</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>超文本传输协议(HTTP)是一种无状态协议。 当客户端从服务器断开连接时，ASP.NET引擎将丢弃页面对象。 这样，每个Web应用程序都可以扩展以同时提供大量请求，而不会耗尽服务器内存。</p> 
+ <p>但是，需要一些技术来在请求之间存储信息并在需要时检索相关信息。即当前会话中当前用户的所有控制和变量的当前值被称为状态。</p> 
+ <p>ASP.NET管理四种类型的状态：</p> 
+ <ul> 
+  <li>视图状态</li>
+  <li>控件状态</li>
+  <li>会话状态</li>
+  <li>应用状态</li>
+ </ul> 
+ <h2 id="h2-u89C6u56FEu72B6u6001"><a name="视图状态" class="reference-link"></a><span class="header-link octicon octicon-link"></span>视图状态</h2>
+ <p>视图状态是页面及其所有控件的状态。 它由ASP.NET框架在发送之间自动维护。</p> 
+ <p>当页面被发送回客户端时，页面及其控件属性的改变被确定，并存储在名为<code>_VIEWSTATE</code>的隐藏输入字段的值中。当页面再次被回发时，<code>_VIEWSTATE</code>字段被发送到具有HTTP请求的服务器。</p> 
+ <p>视图状态可以被启用或禁用：</p> 
+ <ul> 
+  <li>整个应用程序通过在<code>Web.config</code>文件的<code>&lt;pages&gt;</code>部分中设置<code>EnableViewState</code>属性。</li>
+  <li>通过将<code>Page</code>指令的<code>EnableViewState</code>属性设置为<code>&lt;%@ Page Language="C#" EnableViewState="false" %&gt;</code></li>
+  <li>通过设置控件的<code>Control.EnableViewState</code>属性。</li>
+ </ul> 
+ <p>它使用由<code>StateBag</code>类定义的视图状态对象来实现，该类定义视图状态项的集合。状态包是一个包含属性值对的数据结构，存储为与对象关联的字符串。</p> 
+ <p><code>StateBag</code>类具有以下属性：</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>编号</th> 
+    <th>属性</th> 
+    <th>描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>1</td> 
+    <td><code>Item(name)</code></td> 
+    <td>具有指定名称的视图状态项目的值。这是<code>StateBag</code>类的默认属性。</td> 
+   </tr> 
+   <tr> 
+    <td>2</td> 
+    <td><code>Count</code></td> 
+    <td>视图状态集合中的项目数量。</td> 
+   </tr> 
+   <tr> 
+    <td>3</td> 
+    <td><code>Keys</code></td> 
+    <td>集合中所有项目的键集合。</td> 
+   </tr> 
+   <tr> 
+    <td>4</td> 
+    <td><code>Values</code></td> 
+    <td>集合中所有项目的值的集合。</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p><code>StateBag</code>类具有以下方法：</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>编号</th> 
+    <th>方法</th> 
+    <th>描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>1</td> 
+    <td><code>Add(name, value)</code></td> 
+    <td>将项目添加到视图状态集合，并更新现有项目。</td> 
+   </tr> 
+   <tr> 
+    <td>2</td> 
+    <td><code>Clear</code></td> 
+    <td>删除集合中的所有项目。</td> 
+   </tr> 
+   <tr> 
+    <td>3</td> 
+    <td><code>Equals(Object)</code></td> 
+    <td>确定指定的对象(<code>Object</code>)是否等于当前对象。</td> 
+   </tr> 
+   <tr> 
+    <td>4</td> 
+    <td><code>Finalize</code></td> 
+    <td>允许它释放资源并执行其他清理操作。</td> 
+   </tr> 
+   <tr> 
+    <td>5</td> 
+    <td><code>GetEnumerator</code></td> 
+    <td>返回一个枚举器，该枚举器遍历存储在<code>StateBag</code>对象中的<code>StateItem</code>对象的所有键/值对。</td> 
+   </tr> 
+   <tr> 
+    <td>6</td> 
+    <td><code>GetType</code></td> 
+    <td>获取当前实例的类型。</td> 
+   </tr> 
+   <tr> 
+    <td>7</td> 
+    <td><code>IsItemDirty</code></td> 
+    <td>检查存储在<code>StateBag</code>对象中的<code>StateItem</code>对象，以确定它是否已被修改。</td> 
+   </tr> 
+   <tr> 
+    <td>8</td> 
+    <td><code>Remove(name)</code></td> 
+    <td>删除指定的项目。</td> 
+   </tr> 
+   <tr> 
+    <td>9</td> 
+    <td><code>SetDirty</code></td> 
+    <td>设置<code>StateBag</code>对象的状态以及它包含的每个<code>StateItem</code>对象的<code>Dirty</code>属性。</td> 
+   </tr> 
+   <tr> 
+    <td>10</td> 
+    <td><code>SetItemDirty</code></td> 
+    <td>设置<code>StateBag</code>对象中指定的<code>StateItem</code>对象的<code>Dirty</code>属性。</td> 
+   </tr> 
+   <tr> 
+    <td>11</td> 
+    <td><code>ToString</code></td> 
+    <td>返回表示状态包对象的字符串。</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h2 id="h2-u793Au4F8B"><a name="示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例</h2>
+ <p>以下示例演示了存储视图状态的概念。使用一个计数器，通过单击页面上的按钮，每次页面被重新发送时，计数器都会增加。 另一个标签控件显示计数器中的值。</p> 
+ <p>首先启动<em>Visual Studio</em>，创建一个名称为：<em>ManagingState</em> 的空网站项目，如下所示 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201712/0512/607161202_99639.png" alt=""></p> 
+ <p>添加一个新的窗体页面 - <em>ViewState.aspx</em>，如下所示 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201712/0512/652161204_54439.png" alt=""></p> 
+ <p> <em>ViewState.aspx</em> 的代码实现如下 - </p> 
+ <pre><code class="lang-aspnet">&lt;%@ Page Language="C#" AutoEventWireup="true" CodeFile="ViewState.aspx.cs" Inherits="ViewState" %&gt;
+
+&lt;!DOCTYPE html&gt;
+
+&lt;html xmlns="http://www.w3.org/1999/xhtml"&gt;
+&lt;head runat="server"&gt;
+&lt;meta http-equiv="Content-Type" content="text/html; charset=utf-8"/&gt;
+    &lt;title&gt;视图状态&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;form id="form1" runat="server"&gt;
+        &lt;div&gt;
+            &lt;h3&gt;视图状态示例&lt;/h3&gt;
+
+            页面计数器:
+
+            &lt;asp:Label ID="lblCounter" runat="server" /&gt;
+            &lt;asp:Button ID="btnIncrement" runat="server" Text="添加计数" onclick="btnIncrement_Click" /&gt;
+         &lt;/div&gt;
+    &lt;/form&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>后端实现的<em>Default.aspx.cs</em> 如下 - </p> 
+ <pre><code class="lang-csharp">using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+
+public partial class ViewState : System.Web.UI.Page
+{
+    public int counter
+    {
+        get
+        {
+            if (ViewState["pcounter"] != null)
+            {
+                return ((int)ViewState["pcounter"]);
+            }
+            else
+            {
+                return 0;
+            }
+        }
+
+        set
+        {
+            ViewState["pcounter"] = value;
+        }
+    }
+
+    protected void Page_Load(object sender, EventArgs e)
+    {
+        counter = counter + 1;
+        lblCounter.Text = counter.ToString();        
+    }
+
+    protected void btnIncrement_Click(object sender, EventArgs e)
+    {        
+        //counter = counter + 1;
+        lblCounter.Text = counter.ToString();
+    }
+}
+</code></pre> 
+ <p>运行后，得到以下结果 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201712/0512/683161215_34920.png" alt=""></p> 
+ <h2 id="h2-u63A7u4EF6u72B6u6001"><a name="控件状态" class="reference-link"></a><span class="header-link octicon octicon-link"></span>控件状态</h2>
+ <p>控件状态不能修改，直接访问或禁用。</p> 
+ <h2 id="h2-u4F1Au8BDDu72B6u6001"><a name="会话状态" class="reference-link"></a><span class="header-link octicon octicon-link"></span>会话状态</h2>
+ <p>当用户连接到ASP.NET网站时，会创建一个新的会话对象。 当会话状态打开时，会为每个新请求创建一个新的会话状态对象。 此会话状态对象成为上下文的一部分，并通过该页面可用。</p> 
+ <p>会话状态通常用于存储应用程序数据，如库存，供应商列表，客户记录或购物车。 它还可以保存关于用户和他的偏好的信息，并保持未决操作的轨迹。</p> 
+ <p>会话使用<code>120</code>位长度的<code>SessionID</code>进行标识和跟踪，<code>SessionID</code>从客户端传递到服务器，并作为<code>cookie</code>或修改后的URL返回。 <code>SessionID</code>是全局唯一和随机的。</p> 
+ <p>会话状态对象是从<code>HttpSessionState</code>类创建的，该类定义了会话状态项的集合。</p> 
+ <p><code>HttpSessionState</code>类具有以下属性：</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>编号</th> 
+    <th>属性</th> 
+    <th>描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>1</td> 
+    <td><code>SessionID</code></td> 
+    <td>唯一的会话标识符。</td> 
+   </tr> 
+   <tr> 
+    <td>2</td> 
+    <td><code>Item(name)</code></td> 
+    <td>具有指定名称的会话状态项的值。这是<code>HttpSessionState</code>类的默认属性。</td> 
+   </tr> 
+   <tr> 
+    <td>3</td> 
+    <td><code>Count</code></td> 
+    <td>会话状态集合中的项目数量。</td> 
+   </tr> 
+   <tr> 
+    <td>4</td> 
+    <td><code>TimeOut</code></td> 
+    <td>获取并设置会话状态提供程序终止会话之前请求之间允许的时间量(以分钟为单位)。</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p><code>HttpSessionState</code>类具有以下方法：</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>编号</th> 
+    <th>方法</th> 
+    <th>描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>1</td> 
+    <td><code>Add(name, value)</code></td> 
+    <td>将项目添加到会话状态集合。</td> 
+   </tr> 
+   <tr> 
+    <td>2</td> 
+    <td><code>Clear</code></td> 
+    <td>从会话状态集合中删除所有项目。</td> 
+   </tr> 
+   <tr> 
+    <td>3</td> 
+    <td><code>Remove(name)</code></td> 
+    <td>从会话状态集合中删除指定的项目。</td> 
+   </tr> 
+   <tr> 
+    <td>4</td> 
+    <td><code>RemoveAll</code></td> 
+    <td>从会话状态集合中删除所有的键和值。</td> 
+   </tr> 
+   <tr> 
+    <td>5</td> 
+    <td><code>RemoveAt</code></td> 
+    <td>从会话状态集合中删除指定索引处的项目。</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p>会话状态对象是一个名称-值对，用于存储和检索会话状态对象的一些信息。可以使用下面的代码来做同样的事情：</p> 
+ <pre><code class="lang-csharp">void StoreSessionInfo()
+{
+   String fromuser = TextBox1.Text;
+   Session["fromuser"] = fromuser;
+}
+
+void RetrieveSessionInfo()
+{
+   String fromuser = Session["fromuser"];
+   Label1.Text = fromuser;
+}
+</code></pre> 
+ <p>上面的代码只存储Session字典对象中的字符串，但是它可以存储所有由基本数据类型组成的基本数据类型和数组，以及<code>DataSet</code>，<code>DataTable</code>，<code>HashTable</code>和<code>Image</code>对象， 定义的类从<code>ISerializable</code>对象继承。</p> 
+ <p><strong>示例</strong></p> 
+ <p>以下示例演示了存储会话状态的概念。 在页面上有两个按钮，一个输入字符串的文本框和一个标签来显示上次会话存储的文本。</p> 
+ <p>在项目：<em>ManagingState</em> 上创建一个新的窗体文件：<em>SessionState.aspx</em> ，如下所示 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201712/0512/580161222_30577.png" alt=""></p> 
+ <p>参考以下代码(<em>SessionState.aspx</em>) - </p>   
+ <pre><code class="lang-aspnet">&lt;%@ Page Language="C#" AutoEventWireup="true" CodeFile="SessionState.aspx.cs" Inherits="SessionState" %&gt;
+
+&lt;!DOCTYPE html&gt;
+&lt;html xmlns="http://www.w3.org/1999/xhtml"&gt;
+&lt;head runat="server"&gt;
+&lt;meta http-equiv="Content-Type" content="text/html; charset=utf-8"/&gt;
+    &lt;title&gt;Session状态&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;form id="form1" runat="server"&gt;
+         &lt;div&gt;
+            &amp;nbsp; &amp;nbsp; &amp;nbsp;
+
+            &lt;table style="width: 568px; height: 103px"&gt;
+
+               &lt;tr&gt;
+                  &lt;td style="width: 209px"&gt;
+                     &lt;asp:Label ID="lblstr" runat="server" Text="输入一个字符串："  style="width:94px"&gt;
+                     &lt;/asp:Label&gt;
+                  &lt;/td&gt;
+
+                  &lt;td style="width: 317px"&gt;
+                     &lt;asp:TextBox ID="txtstr" runat="server" style="width:227px"&gt;
+                     &lt;/asp:TextBox&gt;
+                  &lt;/td&gt;
+               &lt;/tr&gt;
+
+               &lt;tr&gt;
+                  &lt;td style="width: 209px"&gt; &lt;/td&gt;
+                  &lt;td style="width: 317px"&gt; &lt;/td&gt;
+               &lt;/tr&gt;
+
+               &lt;tr&gt;
+                  &lt;td style="width: 209px"&gt;
+                     &lt;asp:Button ID="btnnrm" runat="server" 
+                        Text="无动作按钮" style="width:128px" /&gt;
+                  &lt;/td&gt;
+
+                  &lt;td style="width: 317px"&gt;
+                     &lt;asp:Button ID="btnstr" runat="server" 
+                        OnClick="btnstr_Click" Text="提交" /&gt;
+                  &lt;/td&gt; 
+               &lt;/tr&gt;
+
+               &lt;tr&gt;
+                  &lt;td style="width: 209px"&gt;  &lt;/td&gt;
+
+                  &lt;td style="width: 317px"&gt;  &lt;/td&gt;  
+               &lt;/tr&gt;
+
+               &lt;tr&gt;
+                  &lt;td style="width: 209px"&gt;
+                     &lt;asp:Label ID="lblsession" runat="server"  style="width:231px"  &gt;
+                     &lt;/asp:Label&gt;
+                  &lt;/td&gt;
+
+                  &lt;td style="width: 317px"&gt;  &lt;/td&gt;
+               &lt;/tr&gt;
+
+               &lt;tr&gt;
+                  &lt;td style="width: 209px"&gt;
+                     &lt;asp:Label ID="lblshstr" runat="server"&gt;
+                     &lt;/asp:Label&gt;
+                  &lt;/td&gt;
+
+                  &lt;td style="width: 317px"&gt;  &lt;/td&gt;
+               &lt;/tr&gt;
+
+            &lt;/table&gt;
+
+         &lt;/div&gt;
+      &lt;/form&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>在设计视图中应该如下所示：</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201712/0512/725091204_35415.png" alt=""></p> 
+ <p>文件后端处理的代码(<code>SessionState.aspx.cs</code>)如下所示：</p> 
+ <pre><code class="lang-csharp">using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+
+public partial class SessionState : System.Web.UI.Page
+{
+    String mystr;
+    protected void Page_Load(object sender, EventArgs e)
+    {
+        this.lblshstr.Text = this.mystr;
+        this.lblsession.Text = (String)this.Session["str"];
+    }
+
+    protected void btnstr_Click(object sender, EventArgs e)
+    {
+        this.mystr = this.txtstr.Text;
+        this.Session["str"] = this.txtstr.Text;
+        this.lblshstr.Text = this.mystr;
+        this.lblsession.Text = (String)this.Session["str"];
+    }
+}
+</code></pre> 
+ <p>执行该文件并观察其结果和工作原理：</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201712/0512/595091205_28628.png" alt=""></p> 
+ <h2 id="h2-application-"><a name="Application状态" class="reference-link"></a><span class="header-link octicon octicon-link"></span>　Application状态</h2>
+ <p>ASP.NET应用程序是Web服务器上单个虚拟目录中的所有网页，代码和其他文件的集合。 信息以应用程序状态存储时，所有用户都可以使用。</p> 
+ <p>为了提供应用程序状态的使用，ASP.NET从<code>HTTPApplicationState</code>类为每个应用程序创建一个应用程序状态对象，并将此对象存储在服务器内存中。该对象由类文件<code>global.asax</code>表示。</p> 
+ <p>应用程序状态主要用于存储点击计数器和其他统计数据，全局应用程序数据(如税率，折扣率等)，并保持用户访问该网站的轨迹。</p> 
+ <p><code>HttpApplicationState</code>类具有以下属性：</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>编号</th> 
+    <th>属性</th> 
+    <th>描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>1</td> 
+    <td><code>Item(name)</code></td> 
+    <td>具有指定名称的应用程序状态项的值。 这是<code>HttpApplicationState</code>类的默认属性。</td> 
+   </tr> 
+   <tr> 
+    <td>2</td> 
+    <td><code>Count</code></td> 
+    <td>应用程序状态集合中的项目数。</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p><code>HttpApplicationState</code>类具有以下方法：</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>编号</th> 
+    <th>方法</th> 
+    <th>描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>1</td> 
+    <td><code>Add(name, value)</code></td> 
+    <td>将项目添加到应用程序状态集合。</td> 
+   </tr> 
+   <tr> 
+    <td>2</td> 
+    <td><code>Clear</code></td> 
+    <td>从应用程序状态集合中删除所有项目。</td> 
+   </tr> 
+   <tr> 
+    <td>3</td> 
+    <td><code>Remove(name)</code></td> 
+    <td>从应用程序状态集合中删除指定的项目。</td> 
+   </tr> 
+   <tr> 
+    <td>4</td> 
+    <td><code>RemoveAll</code></td> 
+    <td>从<code>HttpApplicationState</code>集合中删除所有对象。</td> 
+   </tr> 
+   <tr> 
+    <td>5</td> 
+    <td><code>RemoveAt</code></td> 
+    <td>通过索引从集合中删除<code>HttpApplicationState</code>对象。</td> 
+   </tr> 
+   <tr> 
+    <td>6</td> 
+    <td><code>Lock()</code></td> 
+    <td>锁定应用程序状态集合，以便只有当前用户可以访问它。</td> 
+   </tr> 
+   <tr> 
+    <td>7</td> 
+    <td><code>Unlock()</code></td> 
+    <td>解锁应用程序状态收集，以便所有用户都可以访问它。</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p>应用程序状态数据通常通过为事件编写处理程序来维护：</p> 
+ <ul> 
+  <li><em>Application_Start</em></li>
+  <li><em>Application_End</em></li>
+  <li><em>Application_Error</em></li>
+  <li><em>Session_Start</em></li>
+  <li><em>Session_End</em></li>
+ </ul> 
+ <p>以下代码片段显示了存储应用程序状态信息的基本语法：</p> 
+ <pre><code class="lang-aspnet">Void Application_Start(object sender, EventArgs e)
+{
+   Application["startMessage"] = "The application has started.";
+}
+
+Void Application_End(object sender, EventArgs e)
+{
+   Application["endtMessage"] = "The application has ended.";
+}
+</code></pre>
+ <br>      
+</div></body></html>

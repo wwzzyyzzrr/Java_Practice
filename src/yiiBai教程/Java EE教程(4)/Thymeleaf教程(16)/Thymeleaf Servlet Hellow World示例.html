@@ -1,0 +1,175 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Thymeleaf Servlet Hellow World示例</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>Thymeleaf 2模板与Thymeleaf 3几乎100%兼容，因此只需在配置中进行一些修改即可。在这一小节中，我们将通过一个简单的示例(Hello World程序)，演示如何配置和使用Thymeleaf。</p> 
+ <p>首先，打开<em>Eclipse</em>，创建一个Maven项目，如下所示 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201802/0902/137140243_43428.png" alt=""></p> 
+ <p>设置工作目录(<em>F:\worksp\thymeleaf</em>)，如下图所示 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201802/0902/538140244_62748.png" alt=""></p> 
+ <p>选择一个原型(Archetype)，这里选择:<em>maven-archetype-webapp</em>，如下图所示 -<br><img src="http://www.yiibai.com/uploads/images/201802/0902/529140245_30654.png" alt=""></p> 
+ <p>创建成功后，完整的项目目录结构如下 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201802/0902/878160253_38256.png" alt=""></p> 
+ <p>Hello World示例使用以下组件库 - </p> 
+ <ul> 
+  <li>Thymeleaf 3</li>
+  <li>Servlet 3</li>
+ </ul> 
+ <p>Servlet3使用注解配置。</p> 
+ <p>下面分别来看看有关项目中的配置和代码 -</p> 
+ <p>文件:<em>pom.xml</em> - </p> 
+ <pre><code class="lang-xml">&lt;project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd"&gt;
+
+    &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
+    &lt;groupId&gt;com.yiibai&lt;/groupId&gt;
+    &lt;artifactId&gt;helloworld&lt;/artifactId&gt;
+    &lt;packaging&gt;war&lt;/packaging&gt;
+    &lt;version&gt;0.0.1-SNAPSHOT&lt;/version&gt;
+    &lt;name&gt;Thymeleaf helloworld Maven Webapp&lt;/name&gt;
+    &lt;url&gt;http://maven.apache.org&lt;/url&gt;
+    &lt;properties&gt;
+        &lt;project.build.sourceEncoding&gt;UTF-8&lt;/project.build.sourceEncoding&gt;
+    &lt;/properties&gt;
+
+    &lt;dependencies&gt;
+        &lt;!-- Provided dependencies --&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;javax&lt;/groupId&gt;
+            &lt;artifactId&gt;javaee-web-api&lt;/artifactId&gt;
+            &lt;version&gt;7.0&lt;/version&gt;
+            &lt;scope&gt;provided&lt;/scope&gt;
+        &lt;/dependency&gt; 
+        &lt;!-- Compile dependencies --&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.thymeleaf&lt;/groupId&gt;
+            &lt;artifactId&gt;thymeleaf&lt;/artifactId&gt;
+            &lt;version&gt;3.0.7.RELEASE&lt;/version&gt;
+        &lt;/dependency&gt;
+    &lt;/dependencies&gt;
+    &lt;build&gt;
+        &lt;finalName&gt;${project.artifactId}&lt;/finalName&gt;
+        &lt;plugins&gt;
+            &lt;plugin&gt;
+                &lt;groupId&gt;org.apache.tomcat.maven&lt;/groupId&gt;
+                &lt;artifactId&gt;tomcat7-maven-plugin&lt;/artifactId&gt;
+                &lt;version&gt;2.2&lt;/version&gt;
+            &lt;/plugin&gt;
+        &lt;/plugins&gt;
+        &lt;defaultGoal&gt;compile&lt;/defaultGoal&gt;
+    &lt;/build&gt;
+
+&lt;/project&gt;
+</code></pre> 
+ <p>文件:<em>TemplateEngineUtil.java</em> - </p> 
+ <pre><code class="lang-java">package com.yiibai.thymeleaf3.config;
+
+import javax.servlet.ServletContext;
+import javax.servlet.annotation.WebListener;
+import org.thymeleaf.TemplateEngine;
+
+/**
+ * Store and retrieves Thymeleaf TemplateEngine into the application servlet context.
+ */
+@WebListener
+public class TemplateEngineUtil {
+
+    private static final String TEMPLATE_ENGINE_ATTR = "com.yiibai.thymeleaf3.TemplateEngineInstance";
+
+    public static void storeTemplateEngine(ServletContext context, TemplateEngine engine) {
+        context.setAttribute(TEMPLATE_ENGINE_ATTR, engine);
+    }
+
+    public static TemplateEngine getTemplateEngine(ServletContext context) {
+        return (TemplateEngine) context.getAttribute(TEMPLATE_ENGINE_ATTR);
+    }
+
+}
+</code></pre> 
+ <p>配置文件:<em>ThymeleafConfig.java</em> - </p> 
+ <pre><code class="lang-java">package com.yiibai.thymeleaf3.config;
+
+import javax.servlet.ServletContext;
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
+import javax.servlet.annotation.WebListener;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.templatemode.TemplateMode;
+import org.thymeleaf.templateresolver.ITemplateResolver;
+import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
+
+/**
+ * Thymeleaf configuration.
+ */
+@WebListener
+public class ThymeleafConfig implements ServletContextListener {
+
+    public void contextInitialized(ServletContextEvent sce) {
+        TemplateEngine engine = templateEngine(sce.getServletContext());
+        TemplateEngineUtil.storeTemplateEngine(sce.getServletContext(), engine);
+    }
+
+    public void contextDestroyed(ServletContextEvent sce) {
+    }
+
+    private TemplateEngine templateEngine(ServletContext servletContext) {
+        TemplateEngine engine = new TemplateEngine();
+
+        engine.setTemplateResolver(templateResolver(servletContext));
+        return engine;
+    }
+
+    private ITemplateResolver templateResolver(ServletContext servletContext) {
+        ServletContextTemplateResolver resolver = new ServletContextTemplateResolver(servletContext);
+        resolver.setPrefix("/WEB-INF/templates/");
+        resolver.setCharacterEncoding("UTF-8");
+        resolver.setTemplateMode(TemplateMode.HTML);
+        return resolver;
+    }
+
+}
+</code></pre> 
+ <p>Servlet入口文件:<em>IndexServlet.java</em> - </p>   
+ <pre><code class="lang-java">package com.yiibai.thymeleaf3.web;
+
+import com.yiibai.thymeleaf3.config.TemplateEngineUtil;
+import java.io.IOException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.WebContext;
+
+
+@WebServlet("/")
+public class IndexServlet extends HttpServlet {
+
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        TemplateEngine engine = TemplateEngineUtil.getTemplateEngine(request.getServletContext());
+        WebContext context = new WebContext(request, response, request.getServletContext());        
+        response.setCharacterEncoding("utf-8");
+        context.setVariable("recipient", "Yiibai");
+        engine.process("index.html", context, response.getWriter());
+    }
+
+}
+</code></pre> 
+ <p>模板文件:<em>index.html</em> - </p> 
+ <pre><code class="lang-html">&lt;!DOCTYPE html&gt;
+&lt;html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"&gt;
+    &lt;head&gt;
+        &lt;meta charset="UTF-8" /&gt;
+        &lt;title&gt;Thymeleaf3 + Servlet3 示例&lt;/title&gt;
+    &lt;/head&gt; 
+    &lt;body&gt;
+        &lt;h1&gt;Thymeleaf 3 + Servlet 3 示例&lt;/h1&gt;
+        &lt;p&gt;
+            Hello &lt;span th:text="${recipient}"&gt;&lt;/span&gt;!
+        &lt;/p&gt;
+    &lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>使用Maven构建和运行应用程序的最简单方法是执行<code>mvn tomcat7:run</code>，或者如果按照本教程使用Eclipse创建Maven项目，那么可通过右键项目名称，选择:<em>Run As</em> -&gt; <em>Maven install</em>，构建安装生成后再右键项目名称，选择:<em>Run As</em> -&gt; <em>Run On Server</em>，并在浏览器中访问URL: <a target="_blank" href="http://localhost:8080/helloworld">http://localhost:8080/helloworld</a> ，得到以下结果 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201802/0902/603170230_24766.png" alt=""></p> 
+ <p>这样，我们的第一个Thymeleaf入门应用就完成了~！</p>
+ <br>      
+</div></body></html>

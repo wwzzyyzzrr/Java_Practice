@@ -1,0 +1,362 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Spark部署</h1><div style="width:100%;float:left;" class="article-content">   
+ <div class="__kindeditor_paste__"> 
+  <div> 
+   <div> 
+    <span style="line-height:1.5;">Spark应用程序使用spark-submit(shell命令)来部署在集群中的Spark应用程序。</span>
+    <span style="line-height:1.5;">它通过一个统一的接口采用全各自的集群管理器。</span>
+    <span style="line-height:1.5;">因此，您不必每一个应用程序配置。</span> 
+   </div> 
+  </div> 
+  <div> 
+   <h2> 示例 </h2> 
+   <p style="text-align:justify;"> 让我们同样以计算字数为例子，在使用之前，使用shell命令。&nbsp;在这里，我们考虑同样&nbsp;spark&nbsp;应用程序的例子。 </p> 
+   <h3> 简单输入 </h3> 
+   <p style="text-align:justify;"> 下面的文字是输入数据，并命名该文件为&nbsp;in.txt. </p> 
+   <pre>people are not as beautiful as they look, 
+as they walk or as they talk. 
+they are only as beautiful  as they love, 
+as they care as they share.&nbsp;</pre> 
+   <p style="text-align:justify;"> 请看下面的程序&nbsp;− </p> 
+   <h3> SparkWordCount.scala </h3> 
+   <pre>import org.apache.spark.SparkContext 
+import org.apache.spark.SparkContext._ 
+import org.apache.spark._  
+
+object SparkWordCount { 
+   def main(args: Array[String]) { 
+
+      val sc = new SparkContext( "local", "Word Count", "/usr/local/spark", Nil, Map(), Map()) 
+		
+      /* local = master URL; Word Count = application name; */  
+      /* /usr/local/spark = Spark Home; Nil = jars; Map = environment */ 
+      /* Map = variables to work nodes */ 
+      /*creating an inputRDD to read text file (in.txt) through Spark context*/ 
+      val input = sc.textFile("in.txt") 
+      /* Transform the inputRDD into countRDD */ 
+		
+      valcount = input.flatMap(line ⇒ line.split(" ")) 
+      .map(word ⇒ (word, 1)) 
+      .reduceByKey(_ + _) 
+       
+      /* saveAsTextFile method is an action that effects on the RDD */  
+      count.saveAsTextFile("outfile") 
+      System.out.println("OK"); 
+   } 
+} &nbsp;</pre> 
+   <p style="text-align:justify;"> 保存上述程序到指定的文件&nbsp;SparkWordCount.scala&nbsp;并将其放置在一个用户定义的目录名为&nbsp;spark-application. </p> 
+   <p style="text-align:justify;"> 注&nbsp;−&nbsp;虽然转化 inputRDD 成 countRDD&nbsp; 我们使用 flatMap()&nbsp;用于标记化(从文本文件)，行成单词，&nbsp;map()&nbsp;方法统计词频和&nbsp;reduceByKey()&nbsp;方法计算每个单词的重复。 </p> 
+   <p style="text-align:justify;"> 使用以下步骤来提交应用程序。通过终端在&nbsp;spark-application目录中执行所有步骤。 </p> 
+   <h3> 第1步：下载&nbsp;Spark Ja </h3> 
+   <p style="text-align:justify;"> Spark需要核心&nbsp;jar&nbsp;来编译，因此，从下面的链接<a target="_blank" href="http://mvnrepository.com/artifact/org.apache.spark/spark-core_2.10/1.3.0">下载spark-core_2.10-1.3.0.jar</a>&nbsp;移动下载&nbsp;jar&nbsp;的文件到&nbsp;spark-application&nbsp;应用程序目录。 </p> 
+   <h3> 
+    <div>
+      第2步：编译程序 
+    </div> </h3> 
+   <p style="text-align:justify;"> 使用下面给出的命令编译上述程序。这个命令应该在spark-application应用程序目录下执行。这里,/usr/local/spark/lib/spark-assembly-1.4.0-hadoop2.6.0.jar ，Spark&nbsp;采用了&nbsp;Hadoop&nbsp;的&nbsp;jar&nbsp;支持程序。 </p> 
+   <pre>$ scalac -classpath "spark-core_2.10-1.3.0.jar:/usr/local/spark/lib/spark-assembly-1.4.0-hadoop2.6.0.jar" SparkPi.scala&nbsp;</pre> 
+   <h3> 第3步：创建&nbsp;JAR </h3> 
+   <div>
+     使用以下&nbsp;spark&nbsp;命令应用程序创建&nbsp;jar&nbsp;文件。这里，wordcount 为 jar 文件的文件名。 
+   </div> 
+   <pre>jar -cvf wordcount.jar SparkWordCount*.class spark-core_2.10-1.3.0.jar/usr/local/spark/lib/spark-assembly-1.4.0-hadoop2.6.0.jar</pre> 
+   <h3> 
+    <div>
+      第4步：提交spark应用 
+    </div> </h3> 
+   <p style="text-align:justify;"> 使用以下命令提交&nbsp;spark&nbsp;应用&nbsp;− </p> 
+   <pre>spark-submit --class SparkWordCount --master local wordcount.jar&nbsp;</pre> 
+   <p style="text-align:justify;"> 如果成功执行，那么会发现有下面给出的输出。在下面输出的正常用户识别，这是程序的最后一行。如果仔细阅读下面的输出，会发现不同的东西，比如&nbsp;− </p> 
+   <ul> 
+    <li> 
+     <div>
+       在端口 42954 成功启动服务 “sparkDriver” 
+     </div> </li> 
+    <li> 
+     <div>
+       MemoryStore 启动使用容量267.3&nbsp;MB 
+     </div> </li> 
+    <li> 启动SparkUI在&nbsp;http://192.168.1.217:4040 </li> 
+    <li> 添加JAR文件:/home/hadoop/piapplication/count.jar </li> 
+    <li> ResultStage 1 (saveAsTextFile 在 SparkPi.scala:11) finished in 0.566 s </li> 
+    <li> 停止&nbsp;Spark&nbsp;web用户界面在&nbsp;http://192.168.1.217:4040 </li> 
+    <li> MemoryStore 清理 </li> 
+   </ul> 
+   <pre>15/07/08 13:56:04 INFO Slf4jLogger: Slf4jLogger started 
+15/07/08 13:56:04 INFO Utils: Successfully started service 'sparkDriver' on port 42954. 
+15/07/08 13:56:04 INFO Remoting: Remoting started; listening on addresses :[akka.tcp://sparkDriver@192.168.1.217:42954] 
+15/07/08 13:56:04 INFO MemoryStore: MemoryStore started with capacity 267.3 MB 
+15/07/08 13:56:05 INFO HttpServer: Starting HTTP Server 
+15/07/08 13:56:05 INFO Utils: Successfully started service 'HTTP file server' on port 56707. 
+15/07/08 13:56:06 INFO SparkUI: Started SparkUI at http://192.168.1.217:4040 
+15/07/08 13:56:07 INFO SparkContext: Added JAR file:/home/hadoop/piapplication/count.jar at http://192.168.1.217:56707/jars/count.jar with timestamp 1436343967029 
+15/07/08 13:56:11 INFO Executor: Adding file:/tmp/spark-45a07b83-42ed-42b3b2c2-823d8d99c5af/userFiles-df4f4c20-a368-4cdd-a2a7-39ed45eb30cf/count.jar to class loader 
+15/07/08 13:56:11 INFO HadoopRDD: Input split: file:/home/hadoop/piapplication/in.txt:0+54 
+15/07/08 13:56:12 INFO Executor: Finished task 0.0 in stage 0.0 (TID 0). 2001 bytes result sent to driver 
+ (MapPartitionsRDD[5] at saveAsTextFile at SparkPi.scala:11), which is now runnable 
+15/07/08 13:56:12 INFO DAGScheduler: Submitting 1 missing tasks from ResultStage 1 (MapPartitionsRDD[5] at saveAsTextFile at SparkPi.scala:11) 
+15/07/08 13:56:13 INFO DAGScheduler: ResultStage 1 (saveAsTextFile at SparkPi.scala:11) finished in 0.566 s 
+15/07/08 13:56:13 INFO DAGScheduler: Job 0 finished: saveAsTextFile at SparkPi.scala:11, took 2.892996 s
+OK 
+15/07/08 13:56:13 INFO SparkContext: Invoking stop() from shutdown hook 
+15/07/08 13:56:13 INFO SparkUI: Stopped Spark web UI at http://192.168.1.217:4040 
+15/07/08 13:56:13 INFO DAGScheduler: Stopping DAGScheduler 
+15/07/08 13:56:14 INFO MapOutputTrackerMasterEndpoint: MapOutputTrackerMasterEndpoint stopped! 
+15/07/08 13:56:14 INFO Utils: path = /tmp/spark-45a07b83-42ed-42b3-b2c2823d8d99c5af/blockmgr-ccdda9e3-24f6-491b-b509-3d15a9e05818, already present as root for deletion. 
+15/07/08 13:56:14 INFO MemoryStore: MemoryStore cleared 
+15/07/08 13:56:14 INFO BlockManager: BlockManager stopped 
+15/07/08 13:56:14 INFO BlockManagerMaster: BlockManagerMaster stopped 
+15/07/08 13:56:14 INFO SparkContext: Successfully stopped SparkContext 
+15/07/08 13:56:14 INFO Utils: Shutdown hook called 
+15/07/08 13:56:14 INFO Utils: Deleting directory /tmp/spark-45a07b83-42ed-42b3b2c2-823d8d99c5af 
+15/07/08 13:56:14 INFO OutputCommitCoordinator$OutputCommitCoordinatorEndpoint: OutputCommitCoordinator stopped!  </pre> 
+   <h3> 
+    <div>
+      第5步：检查输出 
+    </div> </h3> 
+   <div>
+     成功执行程序后，会发现一个名为outfile在spark-application应用程序目录。 
+   </div> 
+   <div>
+     下面的命令用于在outfile目录中打开和检查文件列表。 
+   </div> 
+   <pre>$ cd outfile 
+$ ls 
+Part-00000 part-00001 _SUCCESS&nbsp;</pre> 
+   <p style="text-align:justify;"> part-00000&nbsp;文件检查输出命令&nbsp;− </p> 
+   <pre>$ cat part-00000 
+(people,1) 
+(are,2) 
+(not,1) 
+(as,8) 
+(beautiful,2) 
+(they, 7) 
+(look,1)&nbsp;</pre> 
+   <p style="text-align:justify;"> part-00001文件查看输出命令&nbsp;− </p> 
+   <pre>$ cat part-00001 
+(walk, 1) 
+(or, 1) 
+(talk, 1) 
+(only, 1) 
+(love, 1) 
+(care, 1) 
+(share, 1)</pre> 
+   <div>
+     通过下面的部分更多地了解“spark-submit”命令。 
+   </div> 
+   <h2> Spark-submit 语法 </h2> 
+   <pre>spark-submit [options] &lt;app jar | python file&gt; [app arguments]</pre> 
+   <h3> 选项 </h3> 
+   <div>
+     下面给出描述选项列表&nbsp;− 
+   </div> 
+  </div> 
+  <div style="font-size:14px;color:#313131;font-family:Verdana, Geneva, Tahoma,  Helvetica, background-color:#FFFFFF;"> 
+   <table border="1" cellpadding="2" cellspacing="0" style="font-size:14px;color:#313131;background-color:#FFFFFF;"> 
+    <tbody> 
+     <tr> 
+      <th style="border:1px solid #999999;background-color:#EEEEEE;"> S.No </th> 
+      <th style="border:1px solid #999999;background-color:#EEEEEE;"> 选项 </th> 
+      <th style="border:1px solid #999999;background-color:#EEEEEE;"> 描述 </th> 
+     </tr> 
+     <tr> 
+      <td style="border:1px solid #999999;background-color:inherit;"> 1 </td> 
+      <td style="border:1px solid #999999;background-color:inherit;"> --master </td> 
+      <td style="border:1px solid #999999;background-color:inherit;"> spark://host:port, mesos://host:port, yarn, 或 local. </td> 
+     </tr> 
+     <tr> 
+      <td style="border:1px solid #999999;background-color:inherit;"> 2 </td> 
+      <td style="border:1px solid #999999;background-color:inherit;"> --deploy-mode </td> 
+      <td style="border:1px solid #999999;background-color:inherit;"> <span style="font-size:inherit;line-height:1.5;">无论是在本地启动驱动程序(client)，或在工作人员的机器中的一个集群内</span>&nbsp;("cluster") (默认: client) </td> 
+     </tr> 
+     <tr> 
+      <td style="border:1px solid #999999;background-color:inherit;"> 3 </td> 
+      <td style="border:1px solid #999999;background-color:inherit;"> --class </td> 
+      <td style="border:1px solid #999999;background-color:inherit;"> 
+       <div style="background-color:inherit;">
+         应用程序的主类(适用于 Java/Scala 的应用程序) 
+       </div> </td> 
+     </tr> 
+     <tr> 
+      <td style="border:1px solid #999999;background-color:inherit;"> 4 </td> 
+      <td style="border:1px solid #999999;background-color:inherit;"> --name </td> 
+      <td style="border:1px solid #999999;background-color:inherit;"> 
+       <div style="background-color:inherit;">
+         应用程序的名称 
+       </div> </td> 
+     </tr> 
+     <tr> 
+      <td style="border:1px solid #999999;background-color:inherit;"> 5 </td> 
+      <td style="border:1px solid #999999;background-color:inherit;"> --jars </td> 
+      <td style="border:1px solid #999999;background-color:inherit;"> 
+       <div style="background-color:inherit;">
+         以逗号分隔本地&nbsp;jar&nbsp;列表包括驱动器和执行者类路径 
+       </div> </td> 
+     </tr> 
+     <tr> 
+      <td style="border:1px solid #999999;background-color:inherit;"> 6 </td> 
+      <td style="border:1px solid #999999;background-color:inherit;"> --packages </td> 
+      <td style="border:1px solid #999999;background-color:inherit;"> 
+       <div style="background-color:inherit;">
+         逗号分隔&nbsp;jar&nbsp;的&nbsp;Maven&nbsp;坐标系列表，包括驱动器和执行者类路径 
+       </div> </td> 
+     </tr> 
+     <tr> 
+      <td style="border:1px solid #999999;background-color:inherit;"> 7 </td> 
+      <td style="border:1px solid #999999;background-color:inherit;"> --repositories </td> 
+      <td style="border:1px solid #999999;background-color:inherit;"> <span style="font-size:inherit;line-height:1.5;">逗号分隔额外远程存储库列表搜索Maven给定的坐标，使用</span>&nbsp;--packages </td> 
+     </tr> 
+     <tr> 
+      <td style="border:1px solid #999999;background-color:inherit;"> 8 </td> 
+      <td style="border:1px solid #999999;background-color:inherit;"> --py-files </td> 
+      <td style="border:1px solid #999999;background-color:inherit;"> 
+       <div style="background-color:inherit;">
+         用逗号分隔 .zip，.egg 或.py文件的列表放在Python路径中的 Python 应用程序 
+       </div> </td> 
+     </tr> 
+     <tr> 
+      <td style="border:1px solid #999999;background-color:inherit;"> 9 </td> 
+      <td style="border:1px solid #999999;background-color:inherit;"> --files </td> 
+      <td style="border:1px solid #999999;background-color:inherit;"> 
+       <div style="background-color:inherit;">
+         逗号分隔放置在每一个执行者的工作目录中的文件的列表 
+       </div> </td> 
+     </tr> 
+     <tr> 
+      <td style="border:1px solid #999999;background-color:inherit;"> 10 </td> 
+      <td style="border:1px solid #999999;background-color:inherit;"> --conf (prop=val) </td> 
+      <td style="border:1px solid #999999;background-color:inherit;"> 
+       <div style="background-color:inherit;">
+         任意&nbsp;Spark&nbsp;配置属性 
+       </div> </td> 
+     </tr> 
+     <tr> 
+      <td style="border:1px solid #999999;background-color:inherit;"> 11 </td> 
+      <td style="border:1px solid #999999;background-color:inherit;"> --properties-file </td> 
+      <td style="border:1px solid #999999;background-color:inherit;"> 
+       <div style="background-color:inherit;">
+         路径从一个文件来加载额外属性。如果没有指定，这将在&nbsp;conf/spark-defaults&nbsp;寻找默认值 
+       </div> </td> 
+     </tr> 
+     <tr> 
+      <td style="border:1px solid #999999;background-color:inherit;"> 12 </td> 
+      <td style="border:1px solid #999999;background-color:inherit;"> --driver-memory </td> 
+      <td style="border:1px solid #999999;background-color:inherit;"> <span style="font-size:inherit;line-height:1.5;">存储驱动程序&nbsp;</span>(e.g. 1000M, 2G) (默认: 512M) </td> 
+     </tr> 
+     <tr> 
+      <td style="border:1px solid #999999;background-color:inherit;"> 13 </td> 
+      <td style="border:1px solid #999999;background-color:inherit;"> --driver-java-options </td> 
+      <td style="border:1px solid #999999;background-color:inherit;"> 
+       <div style="background-color:inherit;">
+         额外的Java选项传递给驱动程序 
+       </div> </td> 
+     </tr> 
+     <tr> 
+      <td style="border:1px solid #999999;background-color:inherit;"> 14 </td> 
+      <td style="border:1px solid #999999;background-color:inherit;"> --driver-library-path </td> 
+      <td style="border:1px solid #999999;background-color:inherit;"> 
+       <div style="background-color:inherit;">
+         额外的库路径条目传递给驱动程序 
+       </div> </td> 
+     </tr> 
+     <tr> 
+      <td style="border:1px solid #999999;background-color:inherit;"> 15 </td> 
+      <td style="border:1px solid #999999;background-color:inherit;"> --driver-class-path </td> 
+      <td style="border:1px solid #999999;background-color:inherit;"> 
+       <div style="background-color:inherit;">
+         额外的类路径条目传递给驱动程序 
+       </div> 
+       <div style="background-color:inherit;">
+         需要注意的是使用&nbsp;--jars&nbsp;添加&nbsp;jar&nbsp;会自动包含在类路径中 
+       </div> </td> 
+     </tr> 
+     <tr> 
+      <td style="border:1px solid #999999;background-color:inherit;"> 16 </td> 
+      <td style="border:1px solid #999999;background-color:inherit;"> --executor-memory </td> 
+      <td style="border:1px solid #999999;background-color:inherit;"> <span style="font-size:inherit;line-height:1.5;">每个执行者的内存</span>(e.g. 1000M, 2G) (默认: 1G) </td> 
+     </tr> 
+     <tr> 
+      <td style="border:1px solid #999999;background-color:inherit;"> 17 </td> 
+      <td style="border:1px solid #999999;background-color:inherit;"> --proxy-user </td> 
+      <td style="border:1px solid #999999;background-color:inherit;"> 
+       <div style="background-color:inherit;">
+         用户在提交申请时模仿 
+       </div> </td> 
+     </tr> 
+     <tr> 
+      <td style="border:1px solid #999999;background-color:inherit;"> 18 </td> 
+      <td style="border:1px solid #999999;background-color:inherit;"> --help, -h </td> 
+      <td style="border:1px solid #999999;background-color:inherit;"> 
+       <div style="background-color:inherit;">
+         显示此帮助信息并退出 
+       </div> </td> 
+     </tr> 
+     <tr> 
+      <td style="border:1px solid #999999;background-color:inherit;"> 19 </td> 
+      <td style="border:1px solid #999999;background-color:inherit;"> --verbose, -v </td> 
+      <td style="border:1px solid #999999;background-color:inherit;"> 
+       <div style="background-color:inherit;">
+         打印额外的调试输出 
+       </div> </td> 
+     </tr> 
+     <tr> 
+      <td style="border:1px solid #999999;background-color:inherit;"> 20 </td> 
+      <td style="border:1px solid #999999;background-color:inherit;"> --version </td> 
+      <td style="border:1px solid #999999;background-color:inherit;"> 
+       <div style="background-color:inherit;">
+         打印当前&nbsp;Spark&nbsp;版本 
+       </div> </td> 
+     </tr> 
+     <tr> 
+      <td style="border:1px solid #999999;background-color:inherit;"> 21 </td> 
+      <td style="border:1px solid #999999;background-color:inherit;"> --driver-cores NUM </td> 
+      <td style="border:1px solid #999999;background-color:inherit;"> 
+       <div style="background-color:inherit;">
+         核心驱动程序(默认值：1) 
+       </div> </td> 
+     </tr> 
+     <tr> 
+      <td style="border:1px solid #999999;background-color:inherit;"> 22 </td> 
+      <td style="border:1px solid #999999;background-color:inherit;"> --supervise </td> 
+      <td style="border:1px solid #999999;background-color:inherit;"> 
+       <div style="background-color:inherit;">
+         如果给定，重新启动对故障的驱动程序 
+       </div> </td> 
+     </tr> 
+     <tr> 
+      <td style="border:1px solid #999999;background-color:inherit;"> 23 </td> 
+      <td style="border:1px solid #999999;background-color:inherit;"> --kill </td> 
+      <td style="border:1px solid #999999;background-color:inherit;"> 
+       <div style="background-color:inherit;">
+         如果给定，杀死指定的驱动程序 
+       </div> </td> 
+     </tr> 
+     <tr> 
+      <td style="border:1px solid #999999;background-color:inherit;"> 24 </td> 
+      <td style="border:1px solid #999999;background-color:inherit;"> --status </td> 
+      <td style="border:1px solid #999999;background-color:inherit;"> 
+       <div style="background-color:inherit;">
+         如果给定，请求指定的驱动程序的状态 
+       </div> </td> 
+     </tr> 
+     <tr> 
+      <td style="border:1px solid #999999;background-color:inherit;"> 25 </td> 
+      <td style="border:1px solid #999999;background-color:inherit;"> --total-executor-cores </td> 
+      <td style="border:1px solid #999999;background-color:inherit;"> 
+       <div style="background-color:inherit;">
+         为所有执行者的核心总数 
+       </div> </td> 
+     </tr> 
+     <tr> 
+      <td style="border:1px solid #999999;background-color:inherit;"> 26 </td> 
+      <td style="border:1px solid #999999;background-color:inherit;"> --executor-cores </td> 
+      <td style="border:1px solid #999999;background-color:inherit;"> 
+       <div style="background-color:inherit;">
+         每执行者内核的数量。&nbsp;(默认值：1是YARN模式，或在独立模式下，工人利用多内核) 
+       </div> </td> 
+     </tr> 
+    </tbody> 
+   </table> 
+  </div> 
+ </div>
+ <br>      
+</div></body></html>

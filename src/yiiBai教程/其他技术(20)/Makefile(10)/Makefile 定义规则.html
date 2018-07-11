@@ -1,0 +1,92 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Makefile 定义规则</h1><div style="width:100%;float:left;" class="article-content">   
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> 一个Makefile目标规则的一般语法</p> 
+ <table class="ex" style="font-family: verdana, helvetica, arial, sans-serif;  border-color: rgb(170, 170, 170); width: 552px; background-color: rgb(241, 241, 241); border-collapse: collapse; padding-left: 5px;" tr="" width="100%"> 
+  <tbody> 
+   <tr> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse;  border-color: rgb(170, 170, 170);"> <pre style="font-family: 'Courier New', monospace; font-size: 12px; margin-bottom: 0px;">
+    target [target...] : [dependent ....]
+    [ command ...]
+</pre> </td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p> 方括号中的项是可选的，省略号是指一个或多个。注意标签，每个命令前需要。</p> 
+ <pr>
+  下面给出一个简单的例子，定义了一个规则使您的目标从&nbsp;hello&nbsp;其他三个文件。
+  <br> 
+  <br> 
+  <table class="ex" style=" border-color: rgb(170, 170, 170); width: 552px; background-color: rgb(241, 241, 241); border-collapse: collapse; padding-left: 5px;" tr="" width="100%"> 
+   <tbody> 
+    <tr> 
+     <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse;  border-color: rgb(170, 170, 170);"> <pre style="font-family: 'Courier New', monospace; font-size: 12px; margin-bottom: 0px;">
+hello: main.o factorial.o hello.o
+	$(CC) main.o factorial.o hello.o -o hello
+</pre> </td> 
+    </tr> 
+   </tbody> 
+  </table> 
+  <p> 注：在这个例子中，你必须放弃规则，使所有对象从源文件的文件</p> 
+  <p> 语义是相当简单的。当"make target"发现目标规则适用，如有眷属的新目标，使执行的命令一次一个（后宏替换）。如果有任何依赖进行，即先发生（让您拥有一个递归）。</p> 
+  <p> 如果有任何命令返回一个失败状态，MAKE将终止。这就是为什么看到规则，如：</p> 
+  <table class="ex" style=" border-color: rgb(170, 170, 170); width: 552px; background-color: rgb(241, 241, 241); border-collapse: collapse; padding-left: 5px;" tr="" width="100%"> 
+   <tbody> 
+    <tr> 
+     <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse;  border-color: rgb(170, 170, 170);"> <pre style="font-family: 'Courier New', monospace; font-size: 12px; margin-bottom: 0px;">
+clean:
+        -rm *.o *~ core paper
+</pre> </td> 
+    </tr> 
+   </tbody> 
+  </table> 
+  <p style="text-align: justify;"> &nbsp;</p> Make忽略一个破折号开头的命令行返回的状态。例如。如果没有核心文件，谁在乎呢？ 
+  <p> Make 会 echo 宏字符串替换的命令后，告诉发生了什么事，因为它发生。有时可能想要把它们关掉。例如：</p> 
+  <table class="ex" style=" border-color: rgb(170, 170, 170); width: 552px; background-color: rgb(241, 241, 241); border-collapse: collapse; padding-left: 5px;" tr="" width="100%"> 
+   <tbody> 
+    <tr> 
+     <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse;  border-color: rgb(170, 170, 170);"> <pre style="font-family: 'Courier New', monospace; font-size: 12px; margin-bottom: 0px;">
+install:
+        @echo You must be root to install
+</pre> </td> 
+    </tr> 
+   </tbody> 
+  </table> 
+  <p> 大家所期望的Makefile的 某些目标。应该总是先浏览，但它的合理预期的目标（或只是做），安装，清洁，会发现。</p> 
+  <ul> 
+   <li> <p> make all&nbsp;- 编译一切，让你可以在本地测试，之前安装的东西。</p> </li> 
+   <li> <p> make install&nbsp;- 应安装在正确的地方的东西。但看出来的东西都安装在正确的地方为系统。</p> </li> 
+   <li> <p> make clean&nbsp;- 应该清理的东西。摆脱的可执行文件，任何临时文件，目标文件等。</p> </li> 
+  </ul> 
+  <br> 
+  <hr style="background-color: transparent; height: 1px;"> 
+  <h2> Makefile的隐含规则</h2> 
+  <p> 该命令应该在所有情况下，我们建立一个可执行x的的源代码x.cpp的作为一个隐含的规则，这可以说：</p> 
+  <table class="ex" style=" border-color: rgb(170, 170, 170); width: 552px; background-color: rgb(241, 241, 241); border-collapse: collapse; padding-left: 5px;" tr="" width="100%"> 
+   <tbody> 
+    <tr> 
+     <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse;  border-color: rgb(170, 170, 170);">   <pre style="font-family: 'Courier New', monospace; font-size: 12px; margin-bottom: 0px;">
+.cpp:
+        $(CC) $(CFLAGS) $@.cpp $(LDFLAGS) -o $@
+</pre> </td> 
+    </tr> 
+   </tbody> 
+  </table> 
+  <p> 这种隐含的规则说，如何make c, &nbsp;x.c- 运行x.c&nbsp;调用输出x。规则是隐式的，因为没有特定的目标提到。它可用于在所有的情况下。</p> 
+  <p> 另一种常见的隐含规则的构造 .o（对象）文件和 .cpp&nbsp;（源文件）。&nbsp;</p> 
+  <table class="ex" style=" border-color: rgb(170, 170, 170); width: 552px; background-color: rgb(241, 241, 241); border-collapse: collapse; padding-left: 5px;" tr="" width="100%"> 
+   <tbody> 
+    <tr> 
+     <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse;  border-color: rgb(170, 170, 170);"> <pre style="font-family: 'Courier New', monospace; font-size: 12px; margin-bottom: 0px;">
+.o.cpp:
+        $(CC) $(CFLAGS) -c $&lt;
+
+alternatively
+
+.o.cpp:
+        $(CC) $(CFLAGS) -c $*.cpp</pre> </td> 
+    </tr> 
+   </tbody> 
+  </table> 
+ </pr>
+ <br> 
+ <br>      
+</div></body></html>

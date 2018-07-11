@@ -1,0 +1,118 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">VB.Net子程序(Sub)</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>在前面的章节中提到：子程序是不返回任何值的程序。到目前为止，在前面所有的例子中一直使用子过程<code>Main</code>。 在这些教程中，我们一直在编写控制台应用程序。当这些应用程序启动时，控制权转移到Main Sub过程，然后运行构成程序主体的任何其他语句。</p> 
+ <h2 id="h2-u5B9Au4E49u5B50u7A0Bu5E8F"><a name="定义子程序" class="reference-link"></a><span class="header-link octicon octicon-link"></span>定义子程序</h2>
+ <p><code>Sub</code>语句用于声明子过程的名称，参数和过程主体。 <code>Sub</code>语句的语法是：</p> 
+ <pre><code class="lang-vbnet">[Modifiers] Sub SubName [(ParameterList)] 
+    [Statements]
+End Sub
+</code></pre> 
+ <p>其中，</p> 
+ <ul> 
+  <li><em>Modifiers</em>：指定过程的访问级别; 可能的值有：<code>Public</code>, <code>Private</code>, <code>Protected</code>, <code>Friend</code>, <code>Protected Friend</code>以及有关重载，覆盖，共享和投影的信息。</li>
+  <li><em>SubName</em> : 表示<code>Sub</code>的名称</li>
+  <li><em>ParameterList</em> : 指定参数的列表</li>
+ </ul> 
+ <h2 id="h2-u793Au4F8B"><a name="示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例</h2>
+ <p>下面的示例演示了一个<code>Sub</code>过程：<em>CalculatePay</em>，它带有两个参数：<code>hours</code> 和 <code>wages</code> ，并计算显示一个员工的总工资。</p> 
+ <pre><code class="lang-vbnet">Module mysub
+   Sub CalculatePay(ByRef hours As Double, ByRef wage As Decimal)
+      'local variable declaration'
+      Dim pay As Double
+      pay = hours * wage
+      Console.WriteLine("Total Pay: {0:C}", pay)
+   End Sub
+   Sub Main()
+      'calling the CalculatePay Sub Procedure'
+      CalculatePay(25, 100)
+      CalculatePay(40, 200)
+      CalculatePay(30, 275)
+      Console.ReadLine()
+   End Sub
+End Module
+</code></pre> 
+ <p>当上面的代码被编译并执行时，会产生以下结果：</p> 
+ <pre><code class="lang-shell">F:\worksp\vb.net\sub&gt;vbc mysub.vb
+Microsoft (R) Visual Basic Compiler version 14.0.1038
+for Visual Basic 2012
+Copyright (c) Microsoft Corporation.  All rights reserved.
+......
+F:\worksp\vb.net\sub&gt;mysub.exe
+Total Pay: ￥2,500.00
+Total Pay: ￥8,000.00
+Total Pay: ￥8,250.00
+</code></pre> 
+ <h2 id="h2-u6309u503Cu4F20u9012u53C2u6570"><a name="按值传递参数" class="reference-link"></a><span class="header-link octicon octicon-link"></span>按值传递参数</h2>
+ <p>这是将参数传递给方法的默认机制。在这种机制中，当一个方法被调用时，会为每个值参数创建一个新的存储位置。实际参数的值被复制到其中。 所以，对方法中的参数所做的更改对参数没有影响。</p> 
+ <p>在VB.Net中，使用<code>ByVal</code>关键字声明引用参数。 以下示例演示了这个概念：</p> 
+ <pre><code class="lang-vbnet">Module paramByval
+   Sub swap(ByVal x As Integer, ByVal y As Integer)
+      Dim temp As Integer
+      temp = x ' save the value of x '
+      x = y    ' put y into x '
+      y = temp 'put temp into y '
+   End Sub
+   Sub Main()
+      ' local variable definition '
+      Dim a As Integer = 100
+      Dim b As Integer = 200
+      Console.WriteLine("Before swap, value of a : {0}", a)
+      Console.WriteLine("Before swap, value of b : {0}", b)
+      ' calling a function to swap the values '
+      swap(a, b)
+      Console.WriteLine("After swap, value of a : {0}", a)
+      Console.WriteLine("After swap, value of b : {0}", b)
+      Console.ReadLine()
+   End Sub
+End Module
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 - </p>   
+ <pre><code class="lang-shell">F:\worksp\vb.net\sub&gt;vbc paramByval.vb
+Microsoft (R) Visual Basic Compiler version 14.0.1038
+for Visual Basic 2012
+Copyright (c) Microsoft Corporation.  All rights reserved.
+......
+F:\worksp\vb.net\sub&gt;paramByval.exe
+Before swap, value of a : 100
+Before swap, value of b : 200
+After swap, value of a : 100
+After swap, value of b : 200
+</code></pre> 
+ <p>它表明，虽然在函数内部进行了更改，但参数的值没有变化。</p> 
+ <h2 id="h2-u6309u5F15u7528u4F20u9012u53C2u6570"><a name="按引用传递参数" class="reference-link"></a><span class="header-link octicon octicon-link"></span>按引用传递参数</h2>
+ <p>引用参数是对变量的内存位置的引用。当通过引用传递参数时，与值参数不同，不会为这些参数创建新的存储位置。引用参数表示与提供给方法的实际参数相同的存储位置。</p> 
+ <p>在VB.Net中，使用<code>ByRef</code>关键字声明引用参数。 以下示例演示了这一点：</p> 
+ <pre><code class="lang-vbnet">Module paramByref
+   Sub swap(ByRef x As Integer, ByRef y As Integer)
+      Dim temp As Integer
+      temp = x ' save the value of x '
+      x = y    ' put y into x '
+      y = temp 'put temp into y' 
+   End Sub
+   Sub Main()
+      ' local variable definition '
+      Dim a As Integer = 100
+      Dim b As Integer = 200
+      Console.WriteLine("Before swap, value of a : {0}", a)
+      Console.WriteLine("Before swap, value of b : {0}", b)
+      ' calling a function to swap the values '
+      swap(a, b)
+      Console.WriteLine("After swap, value of a : {0}", a)
+      Console.WriteLine("After swap, value of b : {0}", b)
+      Console.ReadLine()
+   End Sub
+End Module
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 - </p> 
+ <pre><code class="lang-shell">F:\worksp\vb.net\sub&gt;vbc paramByref.vb
+Microsoft (R) Visual Basic Compiler version 14.0.1038
+for Visual Basic 2012
+Copyright (c) Microsoft Corporation.  All rights reserved.
+......
+F:\worksp\vb.net\sub&gt;paramByref.exe
+Before swap, value of a : 100
+Before swap, value of b : 200
+After swap, value of a : 200
+After swap, value of b : 100
+</code></pre>
+ <br>      
+</div></body></html>

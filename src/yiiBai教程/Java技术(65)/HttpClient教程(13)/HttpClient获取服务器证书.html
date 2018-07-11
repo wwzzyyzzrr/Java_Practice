@@ -1,0 +1,147 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">HttpClient获取服务器证书</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>以下教程演示了如何使用Apache HttpClient 4.5从资源服务器获取证书。 证书用于通过使用SSL / TLS的HTTPS保护客户端和服务器之间的连接。 当您需要有关证书的详细信息时，例如:证书何时到期？谁颁发证书？等等。或者在某些情况下需要读取服务器证书。 在下面的例子中，我们将详细解释如何实现。</p> 
+ <h2 id="h2-maven-"><a name="Maven依赖关系" class="reference-link"></a><span class="header-link octicon octicon-link"></span>Maven依赖关系</h2>
+ <p>我们使用maven来管理依赖关系，并使用Apache <code>HttpClient 4.5</code>版本。 将以下依赖项添加到您的项目中，以便创建HTTP <code>DELETE</code>请求方法。</p> 
+ <p><em>pom.xml</em> 文件的内容如下 - </p> 
+ <pre><code class="lang-xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                             http://maven.apache.org/xsd/maven-4.0.0.xsd"&gt;
+
+    &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
+    &lt;groupId&gt;com.yiibai.httpclient.httmethods&lt;/groupId&gt;
+    &lt;artifactId&gt;http-get&lt;/artifactId&gt;
+    &lt;version&gt;1.0.0-SNAPSHOT&lt;/version&gt;
+    &lt;url&gt;https://memorynotfound.com&lt;/url&gt;
+    &lt;name&gt;httpclient - ${project.artifactId}&lt;/name&gt;
+
+    &lt;dependencies&gt;
+        &lt;!-- Apache Commons IO --&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.apache.httpcomponents&lt;/groupId&gt;
+            &lt;artifactId&gt;httpclient&lt;/artifactId&gt;
+            &lt;version&gt;4.5.2&lt;/version&gt;
+        &lt;/dependency&gt;
+    &lt;/dependencies&gt;
+
+    &lt;build&gt;
+        &lt;plugins&gt;
+            &lt;plugin&gt;
+                &lt;artifactId&gt;maven-compiler-plugin&lt;/artifactId&gt;
+                &lt;version&gt;3.5.1&lt;/version&gt;
+                &lt;configuration&gt;
+                    &lt;source&gt;1.8&lt;/source&gt;
+                    &lt;target&gt;1.8&lt;/target&gt;
+                &lt;/configuration&gt;
+            &lt;/plugin&gt;
+        &lt;/plugins&gt;
+    &lt;/build&gt;
+
+&lt;/project&gt;
+</code></pre> 
+ <h2 id="h2-http-"><a name="HTTP获取服务器证书示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>HTTP获取服务器证书示例</h2>
+ <p>在以下示例中，我们向<code>https://www.baidu.com</code>发出请求以获取服务器证书。 首先，我们创建一个<code>HttpResponseInterceptor</code>，它将从<code>SSLSession</code>中读取证书(如果存在)，并将证书添加到<code>HttpContext</code>中，以便稍后用于处理。</p> 
+ <p>接下来，创建一个自定义的<code>HttpClient</code>并使用<code>addInterceptorLast()</code>工厂方法添加拦截器。</p> 
+ <p>最后，向资源服务器发出一个HttpGet请求，并从HttpContext获取服务器证书，我们之前将它们放在这里。 现在拥有了证书，然后遍历集合并将一些数据打印到控制台。</p> 
+ <p>文件:<em>HttpClientGetServerCertificate.java</em> - </p> 
+ <pre><code class="lang-java">package com.yiibai.httpdemo;
+
+import org.apache.http.HttpResponseInterceptor;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.utils.DateUtils;
+import org.apache.http.conn.ManagedHttpClientConnection;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.protocol.BasicHttpContext;
+import org.apache.http.protocol.HttpContext;
+import org.apache.http.protocol.HttpCoreContext;
+import javax.net.ssl.SSLSession;
+import java.io.IOException;
+import java.security.cert.Certificate;
+import java.security.cert.X509Certificate;
+
+/**
+ * This example demonstrates how to obtain server certificates {@link X509Certificate}.
+ */
+public class HttpClientGetServerCertificate {
+
+    public static final String PEER_CERTIFICATES = "PEER_CERTIFICATES";
+
+    public static void main(String... args) throws IOException {
+
+        // create http response certificate interceptor
+        HttpResponseInterceptor certificateInterceptor = (httpResponse, context) -&gt; {
+            ManagedHttpClientConnection routedConnection = (ManagedHttpClientConnection)context.getAttribute(HttpCoreContext.HTTP_CONNECTION);
+            SSLSession sslSession = routedConnection.getSSLSession();
+            if (sslSession != null) {
+
+                // get the server certificates from the {@Link SSLSession}
+                Certificate[] certificates = sslSession.getPeerCertificates();
+
+                // add the certificates to the context, where we can later grab it from
+                context.setAttribute(PEER_CERTIFICATES, certificates);
+            }
+        };
+
+        // create closable http client and assign the certificate interceptor
+        CloseableHttpClient httpClient = HttpClients.custom().addInterceptorLast(certificateInterceptor).build();
+
+        try {
+
+            // make HTTP GET request to resource server
+            HttpGet httpget = new HttpGet("https://www.baidu.com");
+            System.out.println("Executing request " + httpget.getRequestLine());
+
+            // create http context where the certificate will be added
+            HttpContext context = new BasicHttpContext();
+            httpClient.execute(httpget, context);
+
+            // obtain the server certificates from the context
+            Certificate[] peerCertificates = (Certificate[])context.getAttribute(PEER_CERTIFICATES);
+
+            // loop over certificates and print meta-data
+            for (Certificate certificate : peerCertificates){
+                X509Certificate real = (X509Certificate) certificate;
+                System.out.println("----------------------------------------");
+                System.out.println("Type: " + real.getType());
+                System.out.println("Signing Algorithm: " + real.getSigAlgName());
+                System.out.println("IssuerDN Principal: " + real.getIssuerX500Principal());
+                System.out.println("SubjectDN Principal: " + real.getSubjectX500Principal());
+                System.out.println("Not After: " + DateUtils.formatDate(real.getNotAfter(), "dd-MM-yyyy"));
+                System.out.println("Not Before: " + DateUtils.formatDate(real.getNotBefore(), "dd-MM-yyyy"));
+            }
+
+        } finally {
+            // close httpclient
+            httpClient.close();
+        }
+    }
+}
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 - </p>   
+ <pre><code class="lang-shell">Executing request GET https://www.baidu.com HTTP/1.1
+----------------------------------------
+Type: X.509
+Signing Algorithm: SHA256withRSA
+IssuerDN Principal: CN=Symantec Class 3 Secure Server CA - G4, OU=Symantec Trust Network, O=Symantec Corporation, C=US
+SubjectDN Principal: CN=baidu.com, OU=service operation department., O="BeiJing Baidu Netcom Science Technology Co., Ltd", L=beijing, ST=beijing, C=CN
+Not After: 17-08-2018
+Not Before: 29-06-2017
+----------------------------------------
+Type: X.509
+Signing Algorithm: SHA256withRSA
+IssuerDN Principal: CN=VeriSign Class 3 Public Primary Certification Authority - G5, OU="(c) 2006 VeriSign, Inc. - For authorized use only", OU=VeriSign Trust Network, O="VeriSign, Inc.", C=US
+SubjectDN Principal: CN=Symantec Class 3 Secure Server CA - G4, OU=Symantec Trust Network, O=Symantec Corporation, C=US
+Not After: 30-10-2023
+Not Before: 31-10-2013
+----------------------------------------
+Type: X.509
+Signing Algorithm: SHA1withRSA
+IssuerDN Principal: OU=Class 3 Public Primary Certification Authority, O="VeriSign, Inc.", C=US
+SubjectDN Principal: CN=VeriSign Class 3 Public Primary Certification Authority - G5, OU="(c) 2006 VeriSign, Inc. - For authorized use only", OU=VeriSign Trust Network, O="VeriSign, Inc.", C=US
+Not After: 07-11-2021
+Not Before: 08-11-2006
+</code></pre>
+ <br>      
+</div></body></html>

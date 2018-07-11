@@ -1,0 +1,277 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Java9私有接口方法</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>在java 8之前，接口可以有以下类型的变量/方法。</p> 
+ <ul> 
+  <li>常量变量</li>
+  <li>抽象方法</li>
+ </ul> 
+ <p>所以我们不能在接口中编写方法的实现，或者更确切地说，在Java 8之前实现默认实现。请参阅下面示例。</p> 
+ <pre><code class="lang-java">// 接口
+interface Logging {
+   String ORACLE = "Oracle_Database";
+   String MYSQL = "MySql_Database";
+
+   void logInfo(String message);
+   void logWarn(String message);
+   void logError(String message);
+   void logFatal(String message);
+
+   void getConnection();
+   void closeConnection();
+}
+
+// 接口实现
+final class LogOracle implements Logging {
+   @Override
+   public void logInfo(String message) {
+      getConnection();
+      System.out.println("Log Message : " + "INFO");
+      closeConnection();
+   }
+   @Override
+   public void logWarn(String message) {
+      getConnection();
+      System.out.println("Log Message : " + "WARN");
+      closeConnection();
+   }
+   @Override
+   public void logError(String message) {
+      getConnection();
+      System.out.println("Log Message : " + "ERROR");
+      closeConnection();
+   }
+   @Override
+   public void logFatal(String message) {
+      getConnection();
+      System.out.println("Log Message : " + "FATAL");
+      closeConnection();
+   }
+   @Override
+   public void getConnection() {
+      System.out.println("Open Database connection");
+   }
+   @Override
+   public void closeConnection() {
+      System.out.println("Close Database connection");
+   }
+}
+// 接口实现
+final class LogMySql implements Logging {
+   @Override
+   public void logInfo(String message) {
+      getConnection();
+      System.out.println("Log Message : " + "INFO");
+      closeConnection();
+   }
+   @Override
+   public void logWarn(String message) {
+      getConnection();
+      System.out.println("Log Message : " + "WARN");
+      closeConnection();
+   }
+   @Override
+   public void logError(String message) {
+      getConnection();
+      System.out.println("Log Message : " + "ERROR");
+      closeConnection();
+   }
+   @Override
+   public void logFatal(String message) {
+      getConnection();
+      System.out.println("Log Message : " + "FATAL");
+      closeConnection();
+   }
+   @Override
+   public void getConnection() {
+      System.out.println("Open Database connection");
+   }
+   @Override
+   public void closeConnection() {
+      System.out.println("Close Database connection");
+   }
+}
+
+// 测试类
+public class Tester {
+   public static void main(String []args) {
+      LogOracle log = new LogOracle();
+      log.logInfo("");
+      log.logWarn("");
+      log.logError("");
+      log.logFatal("");
+      LogMySql log1 = new LogMySql();
+      log1.logInfo("");
+      log1.logWarn("");
+      log1.logError("");
+      log1.logFatal("");
+   }
+}
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 - </p> 
+ <pre><code class="lang-shell">Open Database connection
+Log Message : INFO
+Close Database connection
+Open Database connection
+Log Message : WARN
+Close Database connection
+Open Database connection
+Log Message : ERROR
+Close Database connection
+Open Database connection
+Log Message : FATAL
+Close Database connection
+</code></pre> 
+ <p>在上面的例子中，每个日志方法都有自己的实现。 使用Java 8接口可以有以下类型的变量/方法。</p> 
+ <ul> 
+  <li>常量变量</li>
+  <li>抽象方法</li>
+  <li>默认方法</li>
+  <li>静态方法</li>
+ </ul> 
+ <p>让我们使用Java 8在接口中使用默认实现和静态方法。参考以下代码 - </p> 
+ <pre><code class="lang-java">// 接口
+interface Logging {
+   String ORACLE = "Oracle_Database";
+   String MYSQL = "MySql_Database";
+
+   default void logInfo(String message) {
+      getConnection();
+      System.out.println("Log Message : " + "INFO");
+      closeConnection();
+   }
+   default void logWarn(String message) {
+      getConnection();
+      System.out.println("Log Message : " + "WARN");
+      closeConnection();
+   }
+   default void logError(String message) {
+      getConnection();
+      System.out.println("Log Message : " + "ERROR");
+      closeConnection();
+   }
+   default void logFatal(String message) {
+      getConnection();
+      System.out.println("Log Message : " + "FATAL");
+      closeConnection();
+   }
+   static void getConnection() {
+      System.out.println("Open Database connection");
+   }
+   static void closeConnection() {
+      System.out.println("Close Database connection");
+   }
+}
+// 接口的实现
+final class LogOracle implements Logging { 
+}
+final class LogMySql implements Logging { 
+}
+
+// 测试类
+public class Tester {
+   public static void main(String []args) {
+      LogOracle log = new LogOracle();
+      log.logInfo("");
+      log.logWarn("");
+      log.logError("");
+      log.logFatal("");
+
+      LogMySql log1 = new LogMySql();
+      log1.logInfo("");
+      log1.logWarn("");
+      log1.logError("");
+      log1.logFatal("");
+   }
+}
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 - </p>   
+ <pre><code class="lang-shell">Open Database connection
+Log Message : INFO
+Close Database connection
+Open Database connection
+Log Message : WARN
+Close Database connection
+Open Database connection
+Log Message : ERROR
+Close Database connection
+Open Database connection
+Log Message : FATAL
+Close Database connection
+</code></pre> 
+ <p>在上面的例子中，我们再次使用Java9来重复实现。 使用Java 9接口可以有以下类型的变量/方法。</p> 
+ <ul> 
+  <li>常量变量</li>
+  <li>抽象方法</li>
+  <li>默认方法</li>
+  <li>静态方法</li>
+  <li>私有方法</li>
+  <li>私有静态方法</li>
+ </ul> 
+ <p>在Java 9中实现私有方法使用它们，参考以下代码实现 - </p> 
+ <pre><code class="lang-java">// 接口
+interface Logging {
+   String ORACLE = "Oracle_Database";
+   String MYSQL = "MySql_Database";
+
+   private void log(String message, String prefix) {
+      getConnection();
+      System.out.println("Log Message : " + prefix);
+      closeConnection();
+   }
+   default void logInfo(String message) {
+      log(message, "INFO");
+   }
+   default void logWarn(String message) {
+      log(message, "WARN");
+   }
+   default void logError(String message) {
+      log(message, "ERROR");
+   }
+   default void logFatal(String message) {
+      log(message, "FATAL");
+   }
+   private static void getConnection() {
+      System.out.println("Open Database connection");
+   }
+   private static void closeConnection() {
+      System.out.println("Close Database connection");
+   }
+}
+
+// 实现
+final class LogOracle implements Logging { 
+}
+final class LogMySql implements Logging { 
+}
+// 测试
+public class Tester {
+   public static void main(String []args) {
+      LogOracle log = new LogOracle();
+      log.logInfo("");
+      log.logWarn("");
+      log.logError("");
+      log.logFatal("");
+
+      LogMySql log1 = new LogMySql();
+      log1.logInfo("");
+      log1.logWarn("");
+      log1.logError("");
+      log1.logFatal("");
+   }
+}
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 - </p> 
+ <pre><code class="lang-shell">Open Database connection
+Log Message : INFO
+Close Database connection
+Open Database connection
+Log Message : WARN
+Close Database connection
+Open Database connection
+Log Message : ERROR
+Close Database connection
+Open Database connection
+Log Message : FATAL
+Close Database connection
+</code></pre>
+ <br>      
+</div></body></html>

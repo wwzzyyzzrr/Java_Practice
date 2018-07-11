@@ -1,0 +1,107 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Struts2命名空间配置和解释</h1><div style="width:100%;float:left;" class="article-content">   
+ <div>
+   Struts&nbsp;2的命名空间是一个新的概念，用来处理多个模块。由下式给出一个命名空间的每个模块。此外，它还可以用来避免位于不同的模块相同的操作名称之间的冲突。 
+ </div> 
+ <p> 看下面的一张图来了解一个URL匹配Struts&nbsp;2的动作命名空间。 </p> 
+ <p> <img src="/uploads/tutorial/20151111/1-151111202R5S6.png" alt=""> </p> 
+ <div style="text-align:center;"> 
+  <img title="namespace-example" src="file://E:/data/youdao/qq24B39E2329F08D9F4C3146A571A415EF/0f43e953826f44f8b7a42febbb8f1875/ace-example.jpeg" alt="namespace map url" style="height:auto;"> 
+ </div> 
+ <h2> 1. 命名空间配置 </h2> 
+ <div>
+   让我们通过一个Struts2的命名空间配置的例子来了解它是如何与URL和文件夹相匹配。 
+ </div> 
+ <p> P.S&nbsp;包中的“name”不会影响结果，只是给一个有意义的名字。 </p> 
+ <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  background-color:#FFFFFF;"> <strong>struts.xml</strong> </p> 
+ <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  background-color:#FFFFFF;"> <strong> </strong> </p> 
+ <pre class="prettyprint lang-xml"><strong>&lt;?xml version="1.0" encoding="UTF-8" ?&gt;
+&lt;!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.1//EN" "http://struts.apache.org/dtds/struts-2.1.dtd"&gt;
+&lt;struts&gt;
+	&lt;package name="default" namespace="/" extends="struts-default"&gt;
+		&lt;action name="SayWelcome"&gt;
+			&lt;result&gt;/pages/welcome.jsp&lt;/result&gt;
+		&lt;/action&gt;
+	&lt;/package&gt;
+
+	&lt;package name="common" namespace="/common" extends="struts-default"&gt;
+		&lt;action name="SayWelcome"&gt;
+			&lt;result&gt;/common/pages/welcome.jsp&lt;/result&gt;
+		&lt;/action&gt;
+	&lt;/package&gt;
+
+	&lt;package name="user" namespace="/user" extends="struts-default"&gt;
+		&lt;action name="SayWelcome"&gt;
+			&lt;result&gt;/common/user/welcome.jsp&lt;/result&gt;
+		&lt;/action&gt;
+	&lt;/package&gt;
+&lt;/struts&gt; </strong></pre> 
+ <p> Struts&nbsp;2的动作命名空间映射到文件夹结构。 </p> 
+ <p> <img src="/uploads/tutorial/20151111/1-151111203155R9.png" alt=""> </p> 
+ <div style="text-align:center;"> 
+  <img title="namespace-example-folder" src="file://E:/data/youdao/qq24B39E2329F08D9F4C3146A571A415EF/ad5c689f1f3e41d09332f033a370dfe8/mple-folder.jpeg" alt="namespace map folder" style="height:auto;"> 
+ </div> 
+ <h2> 2. JSP视图页面 </h2> 
+ <p> 3&nbsp;JSP页面视图具有相同的文件名，但是在不同的模块位置。 </p> 
+ <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  background-color:#FFFFFF;"> 根 – &nbsp;pages/welcome.jsp </p> 
+ <pre class="prettyprint lang-html">&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;Struts2命名空间示例 - yiibai.com&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+	&lt;h1&gt;Struts2命名空间示例&lt;/h1&gt;
+	&lt;h4&gt;Welcome - namespace = "root"&lt;/h4&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre> 
+ <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  background-color:#FFFFFF;"> Common 模块 – &nbsp;common/pages/welcome.jsp </p> 
+ <pre class="prettyprint lang-html">&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;Struts2命名空间示例 - yiibai.com&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+	&lt;h1&gt;Struts2命名空间示例&lt;/h1&gt;
+	&lt;h4&gt;Welcome - namespace = "common"&lt;/h4&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre> 
+ <p> User 模块 – &nbsp;user/pages/welcome.jsp </p>   
+ <pre class="prettyprint lang-html">&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;Struts2命名空间示例 - yiibai.com&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+	&lt;h1&gt;Struts2命名空间示例&lt;/h1&gt;
+
+	&lt;h4&gt;Welcome - namespace = "user"&lt;/h4&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre> 
+ <h2> 3. 映射 – 如何工作? </h2> 
+ <p> <strong>示例 1</strong><br> URL :&nbsp;http://localhost:8080/Struts2Example/SayWelcome.action </p> 
+ <p> 将匹配根命名空间。 </p> 
+ <pre class="prettyprint lang-xml">	&lt;package name="default" namespace="/" extends="struts-default"&gt;
+		&lt;action name="SayWelcome"&gt;
+			&lt;result&gt;/pages/welcome.jsp&lt;/result&gt;
+		&lt;/action&gt;
+	&lt;/package&gt;</pre> 
+ <p> 这会显示&nbsp;pages/welcome.jsp 页面的内容 </p> 
+ <p> <strong>示例 2</strong><br> URL :&nbsp;http://localhost:8080/Struts2Example/common/SayWelcome.action<br> 这会匹配&nbsp;common 命名空间的内容： </p> 
+ <pre class="prettyprint lang-xml">	&lt;package name="common" namespace="/common" extends="struts-default"&gt;
+		&lt;action name="SayWelcome"&gt;
+			&lt;result&gt;/common/pages/welcome.jsp&lt;/result&gt;
+		&lt;/action&gt;
+	&lt;/package&gt;</pre> 
+ <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  background-color:#FFFFFF;"> 这会显示&nbsp;<strong><strong>common/pages/welcome.jsp</strong>&nbsp;</strong>页面的内容 </p> 
+ <p> <strong>示例 3</strong><br> URL :&nbsp;http://localhost:8080/Struts2Example/user/SayWelcome.action<br> 这会匹配 common 命名空间的内容： </p> 
+ <pre class="prettyprint lang-xml">&lt;package name="user" namespace="/user" extends="struts-default"&gt;
+	&lt;action name="SayWelcome"&gt;
+		&lt;result&gt;/common/user/welcome.jsp&lt;/result&gt;
+	&lt;/action&gt;
+&lt;/package&gt;</pre> 
+ <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  background-color:#FFFFFF;"> 这会显示&nbsp;<strong>user/pages/welcome.jsp</strong>&nbsp;页面的内容. </p> 
+ <h2> 参考 </h2> 
+ <p> </p>
+ <ol> 
+  <li> <a target="_blank" href="http://struts.apache.org/2.0.14/docs/namespace-configuration.html">Struts2命名空间配置参考</a> </li> 
+ </ol> 
+ <p> 代码下载：<a target="_blank" href="http://pan.baidu.com/s/1hqe1nZe">http://pan.baidu.com/s/1hqe1nZe</a> </p> 
+ <p></p>
+ <br>      
+</div></body></html>

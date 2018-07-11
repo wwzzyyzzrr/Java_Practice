@@ -1,0 +1,200 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">AWK内置变量</h1><div style="width:100%;float:left;" class="article-content">   
+ <p> AWK提供了几个内置变量。他们发挥着重要的作用，同时编写AWK脚本。本章说明了内置变量的使用。</p> 
+ <h2> 标准AWK变量</h2> 
+ <p> 以下是标准AWK变量：</p> 
+ <h3> ARGC</h3> 
+ <p> 这意味着在命令行提供参数的个数。</p> 
+ <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 496.1875px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+<span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">jerry</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">$ awk </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">'BEGIN {print "Arguments =", ARGC}'</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">One</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">Two</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">Three</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">Four</span></pre> 
+ <p> 在执行上面的代码后，得到以下结果：</p> 
+ <pre class="result" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 496.1875px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+Arguments = 5</pre> 
+ <p> 这程序有什么问题？为什么AWK是显示5时，只传过4个参数。只要看看下面的例子就清楚了。</p> 
+ <h3> ARGV</h3> 
+ <p> 它是存储在命令行参数的数组。数组的有效索引范围是从0到ARGC- 1。</p> 
+ <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 496.1875px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+<span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">jerry</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">$ awk </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">'BEGIN { for (i = 0; i &lt; ARGC - 1; ++i) { printf "ARGV[%d] = %s\n", i, ARGV[i] } }'</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> one two three four</span></pre> 
+ <p> 在执行上面的代码后，得到以下结果：</p> 
+ <pre class="result" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 496.1875px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+ARGV[0] = awk
+ARGV[1] = one
+ARGV[2] = two
+ARGV[3] = three</pre> 
+ <h3> CONVFMT</h3> 
+ <p> 它代表了数字转换的格式和它的默认值是&nbsp;%.6g.</p> 
+ <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 496.1875px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+<span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">jerry</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">$ awk </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">'BEGIN { print "Conversion Format =", CONVFMT }'</span></pre> 
+ <p> 在执行上面的代码后，得到以下结果：</p> 
+ <pre class="result" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 496.1875px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+Conversion Format = %.6g</pre> 
+ <h3> ENVIRON</h3> 
+ <p> 这是环境变量的关联数组。</p> 
+ <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 496.1875px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+<span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">jerry</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">$ awk </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">'BEGIN { print ENVIRON["USER"] }'</span></pre> 
+ <p> 在执行上面的代码后，得到以下结果：</p> 
+ <pre class="result" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 496.1875px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+jerry</pre> 
+ <p> 要找到其他的环境变量名称，使用GNU/Linux的env命令。</p> 
+ <h3> FILENAME</h3> 
+ <p> 它代表了当前的文件名。</p> 
+ <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 496.1875px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+<span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">jerry</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">$ awk </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">'END {print FILENAME}'</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> marks</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">txt</span></pre> 
+ <p> 在执行上面的代码后，得到以下结果：</p> 
+ <pre class="result" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 496.1875px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+marks.txt</pre> 
+ <p> 请注意，FILENAME在BEGIN块中是未定义的。</p> 
+ <h3> FS</h3> 
+ <p> 它代表了（输入）字段分隔符以及它的默认值是空格。也可以通过-F命令行选项进行更改。</p> 
+ <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 496.1875px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+<span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">jerry</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">$ awk </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">'BEGIN {print "FS = " FS}'</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">|</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> cat </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">-</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">vte</span></pre> 
+ <p> 在执行上面的代码后，得到以下结果：</p> 
+ <pre class="result" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 496.1875px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+FS =  $</pre> 
+ <h3> NF</h3> 
+ <p> 它代表在当前记录的字段的数量。例如其中包含两个以上的字段，例如只打印下面那些行。</p> 
+ <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 496.1875px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+<span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">jerry</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">$ echo </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">-</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">e </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"One Two\nOne Two Three\nOne Two Three Four"</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">|</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> awk </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">'NF &gt; 2'</span></pre> 
+ <p> 在执行上面的代码后，得到以下结果：</p> 
+ <pre class="result" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 496.1875px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+One Two Three
+One Two Three Four</pre> 
+ <h3> NR</h3> 
+ <p> 它表示当前记录的编号。比如下面的例子打印记录，如果当前记录包含少于三个字段</p> 
+ <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 496.1875px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+<span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">jerry</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">$ echo </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">-</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">e </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"One Two\nOne Two Three\nOne Two Three Four"</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">|</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> awk </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">'NR &lt; 3'</span></pre> 
+ <p> 在执行上面的代码后，得到以下结果：</p> 
+ <pre class="result" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 496.1875px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+One Two
+One Two Three</pre> 
+ <h3> FNR</h3> 
+ <p> 它类似于NR，但相对于当前文件。这是当AWK工作在多个文件非常有用。 FNR的值将重置使用新的文件。</p> 
+ <h3> OFMT</h3> 
+ <p> 它代表的输出格式数量和它的默认值是&nbsp;%.6g.</p> 
+ <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 496.1875px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+<span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">jerry</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">$ awk </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">'BEGIN {print "OFMT = " OFMT}'</span></pre> 
+ <p> 在执行上面的代码后，得到以下结果：</p> 
+ <pre class="result" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 496.1875px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+OFMT = %.6g</pre> 
+ <h3> OFS</h3> 
+ <p> 它代表输出字段分隔符以及它的默认值是空格。</p> 
+ <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 496.1875px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+<span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">jerry</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">$ awk </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">'BEGIN {print "OFS = " OFS}'</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">|</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> cat </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">-</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">vte</span></pre> 
+ <p> 在执行上面的代码后，得到以下结果：</p> 
+ <pre class="result" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 496.1875px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+OFS =  $</pre> 
+ <h3> ORS</h3> 
+ <p> 它代表输出记录分隔符以及它的默认值是换行。</p> 
+ <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 496.1875px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+<span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">jerry</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">$ awk </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">'BEGIN {print "ORS = " ORS}'</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">|</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> cat </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">-</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">vte</span></pre> 
+ <p> 在执行上面的代码后，得到以下结果：</p> 
+ <pre class="result" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 496.1875px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+ORS = $
+$</pre> 
+ <h3> RLENGTH</h3> 
+ <p> 它表示匹配match函数字符串的长度。 AWK的匹配功能搜索输入字符串。</p> 
+ <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 496.1875px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+<span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">jerry</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">$ awk </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">'BEGIN { if (match("One Two Three", "re")) { print RLENGTH } }'</span></pre> 
+ <p> 在执行上面的代码后，得到以下结果：</p> 
+ <pre class="result" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 496.1875px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+2</pre> 
+ <h3> RS</h3> 
+ <p> 它表示（输入）记录分隔符以及它的默认值是换行。</p> 
+ <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 496.1875px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+<span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">jerry</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">$ awk </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">'BEGIN {print "RS = " RS}'</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">|</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> cat </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">-</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">vte</span></pre> 
+ <p> 在执行上面的代码后，得到以下结果：</p> 
+ <pre class="result" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 496.1875px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+RS = $
+$</pre> 
+ <h3> RSTART</h3> 
+ <p> 它表示匹配match函数字符串中的第一个位置。</p> 
+ <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 496.1875px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+<span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">jerry</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">$ awk </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">'BEGIN { if (match("One Two Three", "Thre")) { print RSTART } }'</span></pre> 
+ <p> 在执行上面的代码后，得到以下结果：</p> 
+ <pre class="result" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 496.1875px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+9</pre> 
+ <h3> SUBSEP</h3> 
+ <p> 它代表了数组下标分隔符，它的默认值是&nbsp;\034.</p>   
+ <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 496.1875px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+<span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">jerry</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">$ awk </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">'BEGIN { print "SUBSEP = " SUBSEP }'</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">|</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> cat </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">-</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">vte</span></pre> 
+ <p> 在执行上面的代码后，得到以下结果：</p> 
+ <pre class="result" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 496.1875px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+SUBSEP = ^\$</pre> 
+ <h3> $0</h3> 
+ <p> 它代表了整个输入记录。</p> 
+ <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 496.1875px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+<span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">jerry</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">$ awk </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">'{print $0}'</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> marks</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">txt</span></pre> 
+ <p> 在执行上面的代码后，得到以下结果：</p> 
+ <pre class="result" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 496.1875px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+1)&nbsp;&nbsp;&nbsp;&nbsp;Amit&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Physics&nbsp;&nbsp;&nbsp;&nbsp;80
+2)&nbsp;&nbsp;&nbsp;&nbsp;Rahul&nbsp;&nbsp;&nbsp;&nbsp;Maths&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;90
+3)&nbsp;&nbsp;&nbsp;&nbsp;Shyam&nbsp;&nbsp;&nbsp;&nbsp;Biology&nbsp;&nbsp;&nbsp;&nbsp;87
+4)&nbsp;&nbsp;&nbsp;&nbsp;Kedar&nbsp;&nbsp;&nbsp;&nbsp;English&nbsp;&nbsp;&nbsp;&nbsp;85
+5)&nbsp;&nbsp;&nbsp;&nbsp;Hari&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;History&nbsp;&nbsp;&nbsp;&nbsp;89</pre> 
+ <h3> $n</h3> 
+ <p> 它代表了当前记录，其中字段由FS分隔的第n个字段。</p> 
+ <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 496.1875px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+<span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">jerry</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">$ awk </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">'{print $3 "\t" $4}'</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> marks</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">txt</span></pre> 
+ <p> 在执行上面的代码后，得到以下结果：</p> 
+ <pre class="result" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 496.1875px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+Physics&nbsp;&nbsp;&nbsp;&nbsp;80
+Maths&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;90
+Biology&nbsp;&nbsp;&nbsp;&nbsp;87
+English&nbsp;&nbsp;&nbsp;&nbsp;85
+History&nbsp;&nbsp;&nbsp;&nbsp;89</pre> 
+ <h2> GNU AWK specific variables</h2> 
+ <p> 以下是GNU AWK特定变量：</p> 
+ <h3> ARGIND</h3> 
+ <p> 它表示索引在当前文件的ARGV将在处理。</p> 
+ <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 496.1875px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+<span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">jerry</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">$ awk </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">'{ print "ARGIND   = ", ARGIND; print "Filename = ", ARGV[ARGIND] }'</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> junk1 junk2 junk3</span></pre> 
+ <p> 在执行上面的代码后，得到以下结果：</p> 
+ <pre class="result" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 496.1875px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+ARGIND   =  1
+Filename =  junk1
+ARGIND   =  2
+Filename =  junk2
+ARGIND   =  3
+Filename =  junk3</pre> 
+ <h3> BINMODE</h3> 
+ <p> 它是用来指定二进制模式对所有文件I/O在非POSIX系统。 1，2，或3个数值，指定输入文件，输出文件或所有文件，分别应该使用二进制的I/O。字符串值r或w指定输入文件或输出文件，分别应该使用二进制的I/O。对rw orwr字符串值指定所有文件应使用二进制I/O。</p> 
+ <h3> ERRNO</h3> 
+ <p> 一个字符串，指示错误时重定向失败函数getline或者接近调用失败。</p> 
+ <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 496.1875px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+<span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">jerry</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">$ awk </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">'BEGIN { ret = getline &lt; "junk.txt"; if (ret == -1) print "Error:", ERRNO }'</span></pre> 
+ <p> 在执行上面的代码后，得到以下结果：</p> 
+ <pre class="result" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 496.1875px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+Error: No such file or directory</pre> 
+ <h3> FIELDWIDTHS</h3> 
+ <p> 用空格分隔字段宽度列表。当此变量设置，GAWK解析而不是使用FS变量作为字段分隔符的值输入到固定宽度的字段。</p> 
+ <h3> IGNORECASE</h3> 
+ <p> 当此变量设置GAWK变成不区分大小写。下面简单的例子说明了这一点：</p> 
+ <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 496.1875px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+<span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">jerry</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">$ awk </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">'BEGIN{IGNORECASE=1} /amit/'</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> marks</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">txt</span></pre> 
+ <p> 在执行上面的代码后，得到以下结果：</p> 
+ <pre class="result" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 496.1875px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+1)&nbsp;&nbsp;&nbsp;&nbsp;Amit&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Physics&nbsp;&nbsp;&nbsp;&nbsp;80</pre> 
+ <h3> LINT</h3> 
+ <p> 它提供了从GAWK程序--lint选项的动态控制。当此变量设置GAWK打印lint警告。当指定的字符串值是致命的，lint警告成为致命错误，类似--lint=致命的。</p> 
+ <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 496.1875px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+<span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">jerry</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">$ awk </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">'BEGIN {LINT=1; a}'</span></pre> 
+ <p> 在执行上面的代码后，得到以下结果：</p> 
+ <pre class="result" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 496.1875px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+awk: cmd. line:1: warning: reference to uninitialized variable `a'
+awk: cmd. line:1: warning: statement has no effect</pre> 
+ <h3> PROCINFO</h3> 
+ <p> 这是包含有关进程的信息，如真实有效的UID号，进程ID号等关联数组。</p> 
+ <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 496.1875px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+<span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">jerry</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">$ awk </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">'BEGIN { print PROCINFO["pid"] }'</span></pre> 
+ <p> 在执行上面的代码后，得到以下结果：</p> 
+ <pre class="result" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 496.1875px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+4316</pre> 
+ <h3> TEXTDOMAIN</h3> 
+ <p> 它代表着AWK程序的文本域。它是用来寻找用于该程序的字符串本地化翻译。</p> 
+ <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 496.1875px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+<span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">jerry</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">$ awk </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">'BEGIN { print TEXTDOMAIN }'</span></pre> 
+ <p> 在执行上面的代码后，得到以下结果：</p> 
+ <pre class="result" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 496.1875px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+messages</pre> 
+ <p> 上面的输出显示，因为en_IN是语言环境的英文文本。</p> 
+ <br>      
+</div></body></html>

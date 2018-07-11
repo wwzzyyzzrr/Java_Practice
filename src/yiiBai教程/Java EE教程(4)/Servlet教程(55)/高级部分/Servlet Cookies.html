@@ -1,0 +1,243 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Servlet Cookies</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>Cookie是在多个客户端请求之间持久存储的一小段信息。</p> 
+ <p>Cookie具有名称，单个值和可选属性，例如注释，路径和域限定符，生存周期和版本号。</p> 
+ <h2 id="h2-cookie-"><a name="Cookie工作原理" class="reference-link"></a><span class="header-link octicon octicon-link"></span>Cookie工作原理</h2>
+ <p>默认情况下，每个请求都被视为新的请求。在cookie技术中，servlet响应可以添加cookie。 所以cookie存储在浏览器的缓存中。之后，如果用户发出请求，默认情况下会带上cookie。 因此，我们就可以知道用户旧用户。</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/1110/305091001_95303.png" alt=""></p> 
+ <h2 id="h2-cookie-"><a name="Cookie类型" class="reference-link"></a><span class="header-link octicon octicon-link"></span>Cookie类型</h2>
+ <p>Servlet中有<code>2</code>种类型的Cookie。</p> 
+ <ul> 
+  <li>非持久性cookie</li>
+  <li>持久性Cookie</li>
+ </ul> 
+ <p><strong>非持久性cookie</strong></p> 
+ <ul> 
+  <li>它仅适用于单个会话。当用户关闭浏览器时都会删除它。</li>
+ </ul> 
+ <p><strong>持久性Cookie</strong></p> 
+ <ul> 
+  <li>它对多个会话有效。当用户关闭浏览器时也不会删除它。只有在用户注销或注销时才被删除。</li>
+ </ul> 
+ <h2 id="h2-cookie-"><a name="Cookie的优点" class="reference-link"></a><span class="header-link octicon octicon-link"></span>Cookie的优点</h2>
+ <ul> 
+  <li>维持状态最简单的技术。</li>
+  <li>Cookie在客户端维护。</li>
+ </ul> 
+ <h2 id="h2-cookie-"><a name="Cookie的缺点" class="reference-link"></a><span class="header-link octicon octicon-link"></span>Cookie的缺点</h2>
+ <ul> 
+  <li>如果从浏览器中禁用Cookie，则无法正常工作。</li>
+  <li>只能在Cookie对象中设置文本信息。</li>
+ </ul> 
+ <h2 id="h2-cookie-"><a name="Cookie类" class="reference-link"></a><span class="header-link octicon octicon-link"></span>Cookie类</h2>
+ <p><code>javax.servlet.http.Cookie</code>类提供了使用Cookie的功能。它为Cookie提供了很多有用的方法。</p> 
+ <p><strong>Cookie类的构造方法</strong></p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>构造方法</th> 
+    <th>描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td><code>Cookie()</code></td> 
+    <td>构建一个cookie。</td> 
+   </tr> 
+   <tr> 
+    <td><code>Cookie(String name, String value)</code></td> 
+    <td>构造具有指定名称和值的cookie。</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p><strong>Cookie类的方法</strong></p> 
+ <p>下面中给出了一些常用的Cookie类方法。</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>方法</th> 
+    <th>描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td><code>public void setMaxAge(int expiry)</code></td> 
+    <td>设置cookie的最大生命周期(以秒为单位)。</td> 
+   </tr> 
+   <tr> 
+    <td><code>public String getName()</code></td> 
+    <td>返回cookie的名称。创建后无法更改名称。</td> 
+   </tr> 
+   <tr> 
+    <td><code>public String getValue()</code></td> 
+    <td>返回cookie的值。</td> 
+   </tr> 
+   <tr> 
+    <td><code>public void setName(String name)</code></td> 
+    <td>更改cookie的名称。</td> 
+   </tr> 
+   <tr> 
+    <td><code>public void setValue(String value)</code></td> 
+    <td>更改cookie的值。</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h2 id="h2--cookies-"><a name="使用Cookies所需的其他方法" class="reference-link"></a><span class="header-link octicon octicon-link"></span>使用Cookies所需的其他方法</h2>
+ <p>要添加cookie或从cookie获取值，需要其他接口提供的一些方法。它们分别是：</p> 
+ <ul> 
+  <li><code>public void addCookie(Cookie ck)</code>：<code>HttpServletResponse</code>接口的方法用于在响应对象中添加cookie。</li>
+  <li><code>public Cookie[] getCookies()</code>：<code>HttpServletRequest</code>接口的方法用于从浏览器返回所有的cookie。</li>
+ </ul> 
+ <h2 id="h2--cookie-"><a name="如何创建Cookie？" class="reference-link"></a><span class="header-link octicon octicon-link"></span>如何创建Cookie？</h2>
+ <p>下面来看看创建cookie的简单代码。</p> 
+ <pre><code class="lang-java">Cookie ck=new Cookie("user","maxsu jaiswal");//creating cookie object  
+response.addCookie(ck);//adding cookie in the response
+</code></pre> 
+ <p><strong>如何删除Cookie？</strong></p> 
+ <p>下面来看看删除cookie的简单代码。它主要用于注销或注销用户。</p> 
+ <pre><code class="lang-java">Cookie ck=new Cookie("user","");//deleting value of cookie  
+ck.setMaxAge(0);//changing the maximum age to 0 seconds  
+response.addCookie(ck);//adding cookie in the response
+</code></pre> 
+ <h2 id="h2--cookie-"><a name="如何获取Cookie？" class="reference-link"></a><span class="header-link octicon octicon-link"></span>如何获取Cookie？</h2>
+ <p>下面来看看简单的代码用来获取所有的cookies。</p> 
+ <pre><code class="lang-java">Cookie ck[]=request.getCookies();  
+for(int i=0;i&lt;ck.length;i++){  
+    out.print("&lt;br&gt;"+ck[i].getName()+" "+ck[i].getValue());//printing name and value of cookie  
+}
+</code></pre> 
+ <h2 id="h2-servlet-cookie-"><a name="Servlet Cookie的应用示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>Servlet Cookie的应用示例</h2>
+ <p>在这个例子中，我们将用户名称(<code>username</code>)存储在cookie对象中，并在另一个servlet中访问它，会话对应于特定用户。所以如果从多个浏览器访问指定cookie名称，那么将得到不同的值。</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/1110/411091029_18560.jpg" alt=""></p> 
+ <p>打开Eclipse，创建一个动态Web项目：<em>CookieServlet</em>，其完整的项目结构如下 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/1110/271101005_24808.png" alt=""></p> 
+ <p>以下是几个主要代码文件。</p> 
+ <p>文件：<em>index.html</em> - </p> 
+ <pre><code class="lang-html">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;meta charset="UTF-8"&gt;
+&lt;title&gt;Cookies In Servlet&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div style="text-align:center;"&gt;
+        &lt;form action="servlet1" method="post"&gt;
+            用户名：&lt;input type="text" name="username" value="Maxsu"/&gt;&lt;input
+                type="submit" value="提交" /&gt;
+        &lt;/form&gt;
+    &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>文件：<em>FirstServlet.java</em> - </p> 
+ <pre><code class="lang-java">package com.yiibai;
+
+import java.io.*;
+import javax.servlet.*;
+import javax.servlet.http.*;
+
+public class FirstServlet extends HttpServlet {
+
+    public void doPost(HttpServletRequest request, HttpServletResponse response) {
+        try {
+            response.setCharacterEncoding("UTF-8");
+            response.setContentType("text/html");
+            PrintWriter out = response.getWriter();
+
+            String name = request.getParameter("username");
+            String username = new String(name.getBytes("ISO-8859-1"),"utf-8");
+
+            out.print("&lt;!DOCTYPE html&gt;\r\n" + 
+                    "&lt;html&gt;\r\n" + 
+                    "&lt;head&gt;\r\n" + 
+                    "&lt;meta charset=\"UTF-8\"&gt;&lt;body&gt;");
+            out.print("欢迎您, " + username);
+
+            Cookie ck = new Cookie("uname", username);// creating cookie object
+            response.addCookie(ck);// adding cookie in the response
+
+            // creating submit button
+
+            out.print("&lt;form action='servlet2' method='post'&gt;");
+            out.print("&lt;p&gt;Cookies已在浏览器中设置，现在跳转到第二个Servlet中读取Cookies的值。&lt;/p&gt;");
+            out.print("&lt;input type='submit' value='提交到第二个Servlet'&gt;");
+            out.print("&lt;/form&gt;");
+
+            out.close();
+
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
+}
+</code></pre> 
+ <p>文件：<em>SecondServlet.java</em> - </p>   
+ <pre><code class="lang-java">package com.yiibai;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+/**
+ * Servlet implementation class SecondServlet
+ */
+public class SecondServlet extends HttpServlet {
+    private static final long serialVersionUID = 1L;
+
+    /**
+     * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
+     *      response)
+     */
+    public void doPost(HttpServletRequest request, HttpServletResponse response) {
+        try {
+            response.setCharacterEncoding("UTF-8");
+            response.setContentType("text/html");
+            PrintWriter out = response.getWriter();
+            Cookie ck[] = request.getCookies();
+            out.print("Hello " + ck[0].getValue());
+            out.close();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
+
+}
+</code></pre> 
+ <p>文件：<em>web.xml</em> - </p> 
+ <pre><code class="lang-xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd" id="WebApp_ID" version="3.1"&gt;
+  &lt;display-name&gt;CookieServlet&lt;/display-name&gt;
+  &lt;welcome-file-list&gt;
+    &lt;welcome-file&gt;index.html&lt;/welcome-file&gt;
+  &lt;/welcome-file-list&gt;
+  &lt;servlet&gt;
+    &lt;servlet-name&gt;FServlet&lt;/servlet-name&gt;
+    &lt;servlet-class&gt;com.yiibai.FirstServlet&lt;/servlet-class&gt;
+  &lt;/servlet&gt;
+  &lt;servlet-mapping&gt;
+    &lt;servlet-name&gt;FServlet&lt;/servlet-name&gt;
+    &lt;url-pattern&gt;/servlet1&lt;/url-pattern&gt;
+  &lt;/servlet-mapping&gt;
+  &lt;servlet&gt;
+    &lt;servlet-name&gt;SServlet&lt;/servlet-name&gt;
+    &lt;servlet-class&gt;com.yiibai.SecondServlet&lt;/servlet-class&gt;
+  &lt;/servlet&gt;
+  &lt;servlet-mapping&gt;
+    &lt;servlet-name&gt;SServlet&lt;/servlet-name&gt;
+    &lt;url-pattern&gt;/servlet2&lt;/url-pattern&gt;
+  &lt;/servlet-mapping&gt;
+&lt;/web-app&gt;
+</code></pre> 
+ <p>在完成上面代码编写后，部署这个Web应用程序，打开浏览器访问URL： <a target="_blank" href="http://localhost:8080/CookieServlet">http://localhost:8080/CookieServlet</a> ， 如是程序没有错误，应该会看到以下结果 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/1110/609101002_27017.png" alt=""></p> 
+ <p>提交后，看到以下界面 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/1110/898101003_92468.png" alt=""></p> 
+ <p>在第二个Servlet中读取的Cookies值如下 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/1110/625101003_48342.png" alt=""></p>
+ <br>      
+</div></body></html>

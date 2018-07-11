@@ -1,0 +1,151 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Shiro快速入门教程</h1><div style="width:100%;float:left;" class="article-content">   
+ <div class="markdown-toc editormd-markdown-toc">
+  [TOC]
+ </div>
+ <p>通过这个快速和简单的教程，理解开发人员如何在他们的应用程序中使用<code>Shiro</code>。这个教程应该能在<code>10</code>分钟内完成。</p> 
+ <p>Apache Shiro是一个功能强大且易于使用的Java安全框架，为开发人员提供一个直观而全面的身份验证，授权，加密和会话管理解决方案。</p> 
+ <p>Apache Shiro它实现了管理应用程序的安全性的所有方面，同时尽可能地避免错误。 它是建立在声音接口驱动的设计和OO原则，使您能够自定义行为。对于一切都有明智的默认，它是拿来即用的，因为应用程序的安全性可以得到保证。</p> 
+ <p><strong>Apache Shiro能做什么？</strong></p> 
+ <p>Shiro能做的很多。但这里我们不想把<code>QuickStart</code>搞复杂了。如果想了解如何开始和为什么存在感到好奇，请参阅Shiro历史和任务页面。</p> 
+ <blockquote> 
+  <p>注意：Shiro可以在任何环境中运行，从最简单的命令行应用程序到最大的企业Web和集群应用程序，但是这里我们将使用一个简单的“main”方法中的最简单的例子来为这个QuickStart提供一个第一次的感觉。</p> 
+ </blockquote> 
+ <h2 id="h2--shiro"><a name="下载Shiro" class="reference-link"></a><span class="header-link octicon octicon-link"></span>下载Shiro</h2>
+ <p>确保您已安装<code>JDK 1.6+</code>和<code>Maven 3.0.3+</code>。</p> 
+ <p>准备工作：</p> 
+ <ul> 
+  <li>JDK安装请参考：<a target="_blank" href="http://www.yiibai.com/java/java_environment_setup.html">http://www.yiibai.com/java/java_environment_setup.html</a></li>
+  <li>Maven安装请参考：<a target="_blank" href="http://www.yiibai.com/maven/maven_environment_setup.html">http://www.yiibai.com/maven/maven_environment_setup.html</a></li>
+ </ul> 
+ <ol> 
+  <li>从<a target="_blank" href="http://shiro.apache.org/download.html" title="下载页面">下载页面</a>下载最新的“源代码分发”(<code>Source Code Distribution</code>)。 在这个例子中使用<code>1.3.2</code>发布版本。这里我把把它下载并保存为：<code>F:\worksp\shiro\shiro-root-1.3.2-source-release.zip</code>。</li>
+ </ol> 
+ <ol> 
+  <li><p>解压缩源包，目录如下所示：</p> <pre><code>F:\worksp\shiro\shiro-root-1.3.2
+</code></pre><p><img src="http://www.yiibai.com/uploads/images/201703/1503/275100358_39550.png" alt=""></p> </li>
+  <li><p>进入<code>quickstart</code>目录：<code>F:\worksp\shiro\shiro-root-1.3.2\samples\quickstart</code>：</p> </li>
+  <li><p>运行<code>QuickStart</code>示例程序，执行以下命令：</p> <pre><code>mvn compile exec:java
+</code></pre>
+   <blockquote> 
+    <p><strong>提示</strong>：执行上面命令，Maven会自动下载一些依懒包，根据你的网络状况决定完成的时间。</p> 
+   </blockquote> </li>
+ </ol> 
+ <p>这个示例只打印出一些日志消息，让你知道发生了什么，然后退出。 在阅读这个快速入门的时候，请随时查看<code>samples/quickstart/src/main/java/Quickstart.java</code>下的代码。 更改该文件并运行上面的<code>mvn compile exec：java</code>命令，应该会与您所愿那样执行。</p> 
+ <p>第4步中，得到的结果(重点看日志输出的<code>INFO</code>)如下-</p> 
+ <pre><code class="lang-bash">...... 
+2017-03-14 23:32:37,357 INFO [Quickstart] - User [lonestarr] logged in successfully.
+2017-03-14 23:32:37,357 TRACE [org.apache.shiro.subject.support.DelegatingSubject] - attempting to get session; create = false; session is null = false; session has id = true
+2017-03-14 23:32:37,357 TRACE [org.apache.shiro.session.mgt.AbstractValidatingSessionManager] - Attempting to retrieve session with key org.apache.shiro.session.mgt.DefaultSessionKey@2bfc7259
+2017-03-14 23:32:37,357 TRACE [org.apache.shiro.subject.support.DelegatingSubject] - attempting to get session; create = false; session is null = false; session has id = true
+2017-03-14 23:32:37,357 TRACE [org.apache.shiro.session.mgt.AbstractValidatingSessionManager] - Attempting to retrieve session with key org.apache.shiro.session.mgt.DefaultSessionKey@2bfc7259
+2017-03-14 23:32:37,373 TRACE [org.apache.shiro.realm.AuthorizingRealm] - Retrieving AuthorizationInfo for principals [lonestarr]
+2017-03-14 23:32:37,373 INFO [Quickstart] - May the Schwartz be with you!
+2017-03-14 23:32:37,373 TRACE [org.apache.shiro.subject.support.DelegatingSubject] - attempting to get session; create = false; session is null = false; session has id = true
+2017-03-14 23:32:37,373 TRACE [org.apache.shiro.session.mgt.AbstractValidatingSessionManager] - Attempting to retrieve session with key org.apache.shiro.session.mgt.DefaultSessionKey@2bfc7259
+2017-03-14 23:32:37,373 TRACE [org.apache.shiro.subject.support.DelegatingSubject] - attempting to get session; create = false; session is null = false; session has id = true
+2017-03-14 23:32:37,373 TRACE [org.apache.shiro.session.mgt.AbstractValidatingSessionManager] - Attempting to retrieve session with key org.apache.shiro.session.mgt.DefaultSessionKey@2bfc7259
+2017-03-14 23:32:37,388 TRACE [org.apache.shiro.realm.AuthorizingRealm] - Retrieving AuthorizationInfo for principals [lonestarr]
+2017-03-14 23:32:37,388 INFO [Quickstart] - You may use a lightsaber ring.  Use it wisely.
+2017-03-14 23:32:37,388 TRACE [org.apache.shiro.subject.support.DelegatingSubject] - attempting to get session; create = false; session is null = false; session has id = true
+2017-03-14 23:32:37,388 TRACE [org.apache.shiro.session.mgt.AbstractValidatingSessionManager] - Attempting to retrieve session with key org.apache.shiro.session.mgt.DefaultSessionKey@2bfc7259
+2017-03-14 23:32:37,388 TRACE [org.apache.shiro.subject.support.DelegatingSubject] - attempting to get session; create = false; session is null = false; session has id = true
+2017-03-14 23:32:37,388 TRACE [org.apache.shiro.session.mgt.AbstractValidatingSessionManager] - Attempting to retrieve session with key org.apache.shiro.session.mgt.DefaultSessionKey@2bfc7259
+2017-03-14 23:32:37,404 TRACE [org.apache.shiro.realm.AuthorizingRealm] - Retrieving AuthorizationInfo for principals [lonestarr]
+2017-03-14 23:32:37,404 INFO [Quickstart] - You are permitted to 'drive' the winnebago with license plate (id) 'eagle5'.  Here are the keys - have fun!
+2017-03-14 23:32:37,404 TRACE [org.apache.shiro.subject.support.DelegatingSubject] - attempting to get session; create = false; session is null = false; session has id = true
+2017-03-14 23:32:37,404 TRACE [org.apache.shiro.session.mgt.AbstractValidatingSessionManager] - Attempting to retrieve session with key org.apache.shiro.session.mgt.DefaultSessionKey@2bfc7259
+2017-03-14 23:32:37,404 TRACE [org.apache.shiro.subject.support.DelegatingSubject] - attempting to get session; create = false; session is null = false; session has id = true
+2017-03-14 23:32:37,419 TRACE [org.apache.shiro.session.mgt.AbstractValidatingSessionManager] - Attempting to retrieve session with key org.apache.shiro.session.mgt.DefaultSessionKey@2bfc7259
+2017-03-14 23:32:37,419 DEBUG [org.apache.shiro.mgt.DefaultSecurityManager] - Logging out subject with primary principal lonestarr
+2017-03-14 23:32:37,419 TRACE [org.apache.shiro.realm.CachingRealm] - Cleared cache entries for account with principals [lonestarr]
+2017-03-14 23:32:37,419 TRACE [org.apache.shiro.subject.support.DelegatingSubject] - attempting to get session; create = false; session is null = false; session has id = true
+2017-03-14 23:32:37,419 TRACE [org.apache.shiro.session.mgt.AbstractValidatingSessionManager] - Attempting to retrieve session with key org.apache.shiro.session.mgt.DefaultSessionKey@2bfc7259
+2017-03-14 23:32:37,435 TRACE [org.apache.shiro.session.mgt.AbstractValidatingSessionManager] - Attempting to retrieve session with key org.apache.shiro.session.mgt.DefaultSessionKey@2bfc7259
+2017-03-14 23:32:37,435 TRACE [org.apache.shiro.subject.support.DelegatingSubject] - attempting to get session; create = false; session is null = false; session has id = true
+2017-03-14 23:32:37,435 TRACE [org.apache.shiro.session.mgt.AbstractValidatingSessionManager] - Attempting to retrieve session with key org.apache.shiro.session.mgt.DefaultSessionKey@2bfc7259
+2017-03-14 23:32:37,435 DEBUG [org.apache.shiro.session.mgt.AbstractSessionManager] - Stopping session with id [21659e1a-05b2-4b0e-9745-996a825bdbff]
+
+F:\worksp\shiro\shiro-root-1.3.2\samples\quickstart&gt;
+</code></pre> 
+ <h2 id="h2-quickstart-java"><a name="Quickstart.java" class="reference-link"></a><span class="header-link octicon octicon-link"></span>Quickstart.java</h2>
+ <p>上面引用的<code>Quickstart.java</code>文件包含了您熟悉API的所有代码。 现在让我们在这里分块说明，这样你就可以很容易地理解发生了什么。</p> 
+ <p>在几乎所有环境中，您可以通过以下调用获取当前正在执行的用户：</p> 
+ <pre><code class="lang-java">Subject currentUser = SecurityUtils.getSubject();
+</code></pre> 
+ <p>使用<code>SecurityUtils.[getSubject()](static/current/apidocs/org/apache/shiro/SecurityUtils.html#getSubject())</code>, 获得当前正在执行的主题(<code>Subject</code>)。 主题仅仅是应用程序用户的安全特定的“视图”。 我们实际上想把它称为“<code>User</code>”，因为有太多的应用程序自己的用户类/框架与有现有的API会有些冲突，Shiro尽可能地排除这些冲突。 此外，在安全世界中，术语主题(<code>Subject</code>)实际上是公认的命名。</p> 
+ <p>独立应用程序中的<code>getSubject()</code>调用可能会返回基于应用程序特定位置中的用户数据的主题，并且在服务器环境(例如：Web应用程序)中，它基于与当前线程或传入请求相关联的用户数据获取主题。</p> 
+ <p><strong>现在有一个主题，你能用它做什么？</strong></p> 
+ <p>如果您想要用户在应用程序的当前会话期间使用户可用，那么可以获取其会话：</p>   
+ <pre><code class="lang-cpp">Session session = currentUser.getSession();
+session.setAttribute( "someKey", "aValue" );
+</code></pre> 
+ <p><code>Session</code>是一个Shiro特定的实例，它提供了大多数开发人员习惯的常规<code>HttpSession</code>，但有一些额外的好处和一些的区别：它不需要HTTP环境！</p> 
+ <p>如果在Web应用程序中部署，默认情况下会话将基于<code>HttpSession</code>。 但是，在非Web环境中，像这个简单的<code>Quickstart</code>，Shiro将默认自动使用其企业会话管理。无论部署环境如何，您都可以在任何层次的应用程序中使用相同的API。这是一个全新的应用程序世界，因为任何需要会话的应用程序不需要强制使用<code>HttpSession</code>或EJB有状态会话Bean。 而且，任何客户端技术现在都可以共享会话数据。</p> 
+ <p>现在可以获得一个主题和会话。真正有用的东西是检查他们是否允许执行某项操作，检查角色和权限。</p> 
+ <p>我们只能为已知用户执行这些检查。上面的主题(<code>Subject</code>)实例代表当前用户，但是谁是当前用户？ 好吧，这里他们是匿名的 - 也就是说，他们至少登录一次。可以这样做：</p> 
+ <pre><code class="lang-java">if ( !currentUser.isAuthenticated() ) {
+    //collect user principals and credentials in a gui specific manner
+    //such as username/password html form, X509 certificate, OpenID, etc.
+    //We'll use the username/password example here since it is the most common.
+    //(do you know what movie this is from? ;)
+    UsernamePasswordToken token = new UsernamePasswordToken("lonestarr", "vespa");
+    //this is all you have to do to support 'remember me' (no config - built in!):
+    token.setRememberMe(true);
+    currentUser.login(token);
+}
+</code></pre> 
+ <p>但是，如果他们的登录尝试失败怎么办？ 您可以捕获各种特定的异常，异常中告诉发生了什么，并允许您处理做出相应的反应：</p> 
+ <pre><code class="lang-java">try {
+    currentUser.login( token );
+    //if no exception, that's it, we're done!
+} catch ( UnknownAccountException uae ) {
+    //username wasn't in the system, show them an error message?
+} catch ( IncorrectCredentialsException ice ) {
+    //password didn't match, try again?
+} catch ( LockedAccountException lae ) {
+    //account for that username is locked - can't login.  Show them a message?
+}
+    ... more types exceptions to check if you want ...
+} catch ( AuthenticationException ae ) {
+    //unexpected condition - error?
+}
+</code></pre> 
+ <p>有很多不同类型的异常可根据需要检查匹配，或抛出自己的自定义的异常。 有关更多信息，请参阅：<a target="_blank" href="http://shiro.apache.org/static/current/apidocs/org/apache/shiro/authc/AuthenticationException.html" title="AuthenticationException JavaDoc">AuthenticationException JavaDoc</a>。</p> 
+ <blockquote> 
+  <p><strong>提示：</strong>安全最佳做法是向用户提供通用登录失败消息，因为我们不想帮助攻击者试图进入系统。</p> 
+ </blockquote> 
+ <p>好的，所以到现在为止，我们有一个登录用户。接下来能做什么？</p> 
+ <p>让登录用户说他们是谁(获取用户身份)：</p> 
+ <pre><code class="lang-java">//print their identifying principal (in this case, a username): 
+log.info( "User [" + currentUser.getPrincipal() + "] logged in successfully." );
+</code></pre> 
+ <p>我们还可以测试他们是否有特定的作用：</p> 
+ <pre><code class="lang-java">if ( currentUser.hasRole( "schwartz" ) ) {
+    log.info("May the Schwartz be with you!" );
+} else {
+    log.info( "Hello, mere mortal." );
+}
+</code></pre> 
+ <p>还可以查看他们是否有权对某种类型的实体执行操作：</p> 
+ <pre><code class="lang-java">if ( currentUser.isPermitted( "lightsaber:weild" ) ) {
+    log.info("You may use a lightsaber ring.  Use it wisely.");
+} else {
+    log.info("Sorry, lightsaber rings are for schwartz masters only.");
+}
+</code></pre> 
+ <p>此外，我们可以执行非常强大的实例级别权限检查 - 查看用户是否能够访问类型的特定实例：</p> 
+ <pre><code class="lang-java">if ( currentUser.isPermitted( "winnebago:drive:eagle5" ) ) {
+    log.info("You are permitted to 'drive' the 'winnebago' with license plate (id) 'eagle5'.  " +
+                "Here are the keys - have fun!");
+} else {
+    log.info("Sorry, you aren't allowed to drive the 'eagle5' winnebago!");
+}
+</code></pre> 
+ <p>最后，当用户完成使用应用程序时，他们可以执行注销：</p> 
+ <pre><code class="lang-java">currentUser.logout(); //removes all identifying information and invalidates their session too.
+</code></pre> 
+ <p>上面这些是在应用程序开发人员级别使用Apache Shiro的核心。 虽然有一些非常复杂的东西在Shiro掩盖下使这项工作如此优雅。</p> 
+ <p>但是你可能会问：“谁负责在登录期间获取用户数据(用户名和密码，角色和权限等)，以及谁在运行期间实际执行这些安全检查？”嗯， Shiro调用Realm并将该Realm插入Shiro的配置。</p> 
+ <p>但是，如何配置<code>Realm</code>主要取决于运行时环境。 例如，如果您运行独立应用程序，或者您有基于Web的应用程序，或基于Spring或JEE容器的应用程序或其组合。 这种类型的配置不在本<code>QuickStart</code>的范围之内，因为<code>QuickStart</code>的目的是让您轻松使用API和理解Shiro的基本概念。</p>
+ <br>      
+</div></body></html>

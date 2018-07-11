@@ -1,0 +1,97 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Maven构建自动化</h1><div style="width:100%;float:left;" class="article-content">   
+ <p> 构建自动化定义相关工程项目构建过程中，在当项目构建成功完成启动的情况下，来确保所依赖的项目是稳定的。 </p> 
+ <h2> 实例 </h2> 
+ <p> 考虑一个团队正在开发一个项目总线核心API上的其他两个项目的应用程序：网页UI和应用程序的桌面UI的依赖。 </p> 
+ <p> <strong>app-web-ui&nbsp;</strong>项目使用<strong>1.0-SNAPSHOT</strong>总线核心API项目 </p> 
+ <pre class="prettyprint lang-xml">&lt;project xmlns="http://maven.apache.org/POM/4.0.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"&gt;
+   &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
+   &lt;groupId&gt;app_web_ui&lt;/groupId&gt;
+   &lt;artifactId&gt;app_web_ui&lt;/artifactId&gt;
+   &lt;version&gt;1.0&lt;/version&gt;
+   &lt;packaging&gt;jar&lt;/packaging&gt;
+   &lt;name&gt;app_web_ui&lt;/name&gt;
+   &lt;url&gt;http://maven.apache.org&lt;/url&gt;
+   &lt;properties&gt;
+      &lt;project.build.sourceEncoding&gt;UTF-8&lt;/project.build.sourceEncoding&gt;
+   &lt;/properties&gt;
+   &lt;dependencies&gt;
+      &lt;dependency&gt;
+         &lt;groupId&gt;junit&lt;/groupId&gt;
+         &lt;artifactId&gt;junit&lt;/artifactId&gt;
+         &lt;version&gt;3.8.1&lt;/version&gt;
+         &lt;scope&gt;test&lt;/scope&gt;
+      &lt;/dependency&gt;
+	  &lt;dependency&gt;
+         &lt;groupId&gt;bus_core_api&lt;/groupId&gt;
+         &lt;artifactId&gt;bus_core_api&lt;/artifactId&gt;
+         &lt;version&gt;1.0-SNAPSHOT&lt;/version&gt;
+		 &lt;scope&gt;system&lt;/scope&gt;
+		 &lt;systemPath&gt;C:\MVN\bus_core_api\target\bus_core_api-1.0-SNAPSHOT.jar&lt;/systemPath&gt;
+      &lt;/dependency&gt;
+   &lt;/dependencies&gt;
+&lt;/project&gt;</pre> 
+ <p> <br> </p> 
+ <p> app-desktop-ui 项目使用总线核心API项目 <strong>1.0-SNAPSHOT</strong> </p> 
+ <pre class="prettyprint prettyprinted"><span class="tag" style="color:#000088;">&lt;project</span><span class="pln"> </span><span class="atn" style="color:#7F0055;">xmlns</span><span class="pun" style="color:#666600;">=</span><span class="atv" style="color:#008800;">"http://maven.apache.org/POM/4.0.0"</span><span class="pln"> </span><span class="atn" style="color:#7F0055;">xmlns:xsi</span><span class="pun" style="color:#666600;">=</span><span class="atv" style="color:#008800;">"http://www.w3.org/2001/XMLSchema-instance"</span><span class="pln"> </span><span class="atn" style="color:#7F0055;">xsi:schemaLocation</span><span class="pun" style="color:#666600;">=</span><span class="atv" style="color:#008800;">"http://maven.apache.org/POM/4.0.0 
+   http://maven.apache.org/xsd/maven-4.0.0.xsd"</span><span class="tag" style="color:#000088;">&gt;</span><span class="pln"> </span><span class="tag" style="color:#000088;">&lt;modelVersion&gt;</span><span class="pln">4.0.0</span><span class="tag" style="color:#000088;">&lt;/modelVersion&gt;</span><span class="pln"> </span><span class="tag" style="color:#000088;">&lt;groupId&gt;</span><span class="pln">app-desktop-ui</span><span class="tag" style="color:#000088;">&lt;/groupId&gt;</span><span class="pln"> </span><span class="tag" style="color:#000088;">&lt;artifactId&gt;</span><span class="pln">app-desktop-ui</span><span class="tag" style="color:#000088;">&lt;/artifactId&gt;</span><span class="pln"> </span><span class="tag" style="color:#000088;">&lt;version&gt;</span><span class="pln">1.0</span><span class="tag" style="color:#000088;">&lt;/version&gt;</span><span class="pln"> </span><span class="tag" style="color:#000088;">&lt;packaging&gt;</span><span class="pln">jar</span><span class="tag" style="color:#000088;">&lt;/packaging&gt;</span><span class="pln"> </span><span class="tag" style="color:#000088;">&lt;dependencies&gt;</span><span class="pln"> </span><span class="tag" style="color:#000088;">&lt;dependency&gt;</span><span class="pln"> </span><span class="tag" style="color:#000088;">&lt;groupId&gt;</span><span class="pln">bus-core-api</span><span class="tag" style="color:#000088;">&lt;/groupId&gt;</span><span class="pln"> </span><span class="tag" style="color:#000088;">&lt;artifactId&gt;</span><span class="pln">bus-core-api</span><span class="tag" style="color:#000088;">&lt;/artifactId&gt;</span><span class="pln"> </span><span class="tag" style="color:#000088;">&lt;version&gt;</span><span class="pln">1.0-SNAPSHOT</span><span class="tag" style="color:#000088;">&lt;/version&gt;</span><span class="pln"> </span><span class="tag" style="color:#000088;">&lt;/dependency&gt;</span><span class="pln"> </span><span class="tag" style="color:#000088;">&lt;/dependencies&gt;</span><span class="pln"> </span><span class="tag" style="color:#000088;">&lt;/project&gt;</span></pre> 
+ <p> bus-core-api 项目 </p> 
+ <pre class="prettyprint prettyprinted"><span class="tag" style="color:#000088;">&lt;project</span><span class="pln"> </span><span class="atn" style="color:#7F0055;">xmlns</span><span class="pun" style="color:#666600;">=</span><span class="atv" style="color:#008800;">"http://maven.apache.org/POM/4.0.0"</span><span class="pln"> </span><span class="atn" style="color:#7F0055;">xmlns:xsi</span><span class="pun" style="color:#666600;">=</span><span class="atv" style="color:#008800;">"http://www.w3.org/2001/XMLSchema-instance"</span><span class="pln"> </span><span class="atn" style="color:#7F0055;">xsi:schemaLocation</span><span class="pun" style="color:#666600;">=</span><span class="atv" style="color:#008800;">"http://maven.apache.org/POM/4.0.0 
+   http://maven.apache.org/xsd/maven-4.0.0.xsd"</span><span class="tag" style="color:#000088;">&gt;</span><span class="pln"> </span><span class="tag" style="color:#000088;">&lt;modelVersion&gt;</span><span class="pln">4.0.0</span><span class="tag" style="color:#000088;">&lt;/modelVersion&gt;</span><span class="pln"> </span><span class="tag" style="color:#000088;">&lt;groupId&gt;</span><span class="pln">bus-core-api</span><span class="tag" style="color:#000088;">&lt;/groupId&gt;</span><span class="pln"> </span><span class="tag" style="color:#000088;">&lt;artifactId&gt;</span><span class="pln">bus-core-api</span><span class="tag" style="color:#000088;">&lt;/artifactId&gt;</span><span class="pln"> </span><span class="tag" style="color:#000088;">&lt;version&gt;</span><span class="pln">1.0-SNAPSHOT</span><span class="tag" style="color:#000088;">&lt;/version&gt;</span><span class="pln"> </span><span class="tag" style="color:#000088;">&lt;packaging&gt;</span><span class="pln">jar</span><span class="tag" style="color:#000088;">&lt;/packaging&gt;</span><span class="pln"> </span><span class="tag" style="color:#000088;">&lt;/project&gt;</span></pre> 
+ <p> 现在，<span>每当bus-core-api项目的变化时，</span>app-web-ui和app-desktop-ui项目团队需要自己编译过程。 </p> 
+ <p> 使用快照确保可以使用最新的 <strong>bus-core-api&nbsp;</strong>项目，但要满足上面我们需要做一些额外的要求。 </p> 
+ <ul> 
+  <li> <p> 添加一个生成后的目标 bus-core-api&nbsp;POM的应用程序是在&nbsp;app-web-ui&nbsp;和 app-desktop-ui&nbsp;的基础之上。 </p> </li> 
+  <li> <p> 使用持续集成（CI）的服务器自动管理构建自动化。 </p> </li> 
+ </ul> 
+ <h2> 使用Maven </h2> 
+ <p> 更新总线核心API项目pom.xml </p> 
+ <pre class="prettyprint prettyprinted"><span class="tag" style="color:#000088;">&lt;project</span><span class="pln"> </span><span class="atn" style="color:#7F0055;">xmlns</span><span class="pun" style="color:#666600;">=</span><span class="atv" style="color:#008800;">"http://maven.apache.org/POM/4.0.0"</span><span class="pln"> </span><span class="atn" style="color:#7F0055;">xmlns:xsi</span><span class="pun" style="color:#666600;">=</span><span class="atv" style="color:#008800;">"http://www.w3.org/2001/XMLSchema-instance"</span><span class="pln"> </span><span class="atn" style="color:#7F0055;">xsi:schemaLocation</span><span class="pun" style="color:#666600;">=</span><span class="atv" style="color:#008800;">"http://maven.apache.org/POM/4.0.0 
+   http://maven.apache.org/xsd/maven-4.0.0.xsd"</span><span class="tag" style="color:#000088;">&gt;</span><span class="pln"> </span><span class="tag" style="color:#000088;">&lt;modelVersion&gt;</span><span class="pln">4.0.0</span><span class="tag" style="color:#000088;">&lt;/modelVersion&gt;</span><span class="pln"> </span><span class="tag" style="color:#000088;">&lt;groupId&gt;</span><span class="pln">bus-core-api</span><span class="tag" style="color:#000088;">&lt;/groupId&gt;</span><span class="pln"> </span><span class="tag" style="color:#000088;">&lt;artifactId&gt;</span><span class="pln">bus-core-api</span><span class="tag" style="color:#000088;">&lt;/artifactId&gt;</span><span class="pln"> </span><span class="tag" style="color:#000088;">&lt;version&gt;</span><span class="pln">1.0-SNAPSHOT</span><span class="tag" style="color:#000088;">&lt;/version&gt;</span><span class="pln"> </span><span class="tag" style="color:#000088;">&lt;packaging&gt;</span><span class="pln">jar</span><span class="tag" style="color:#000088;">&lt;/packaging&gt;</span><span class="pln"> </span><span class="tag" style="color:#000088;">&lt;build&gt;</span><span class="pln"> </span><span class="tag" style="color:#000088;">&lt;plugins&gt;</span><span class="pln"> </span><span class="tag" style="color:#000088;">&lt;plugin&gt;</span><span class="pln"> </span><span class="tag" style="color:#000088;">&lt;artifactId&gt;</span><span class="pln">maven-invoker-plugin</span><span class="tag" style="color:#000088;">&lt;/artifactId&gt;</span><span class="pln"> </span><span class="tag" style="color:#000088;">&lt;version&gt;</span><span class="pln">1.6</span><span class="tag" style="color:#000088;">&lt;/version&gt;</span><span class="pln"> </span><span class="tag" style="color:#000088;">&lt;configuration&gt;</span><span class="pln"> </span><span class="tag" style="color:#000088;">&lt;debug&gt;</span><span class="pln">true</span><span class="tag" style="color:#000088;">&lt;/debug&gt;</span><span class="pln"> </span><span class="tag" style="color:#000088;">&lt;pomIncludes&gt;</span><span class="pln"> </span><span class="tag" style="color:#000088;">&lt;pomInclude&gt;</span><span class="pln">app-web-ui/pom.xml</span><span class="tag" style="color:#000088;">&lt;/pomInclude&gt;</span><span class="pln"> </span><span class="tag" style="color:#000088;">&lt;pomInclude&gt;</span><span class="pln">app-desktop-ui/pom.xml</span><span class="tag" style="color:#000088;">&lt;/pomInclude&gt;</span><span class="pln"> </span><span class="tag" style="color:#000088;">&lt;/pomIncludes&gt;</span><span class="pln"> </span><span class="tag" style="color:#000088;">&lt;/configuration&gt;</span><span class="pln"> </span><span class="tag" style="color:#000088;">&lt;executions&gt;</span><span class="pln"> </span><span class="tag" style="color:#000088;">&lt;execution&gt;</span><span class="pln"> </span><span class="tag" style="color:#000088;">&lt;id&gt;</span><span class="pln">build</span><span class="tag" style="color:#000088;">&lt;/id&gt;</span><span class="pln"> </span><span class="tag" style="color:#000088;">&lt;goals&gt;</span><span class="pln"> </span><span class="tag" style="color:#000088;">&lt;goal&gt;</span><span class="pln">run</span><span class="tag" style="color:#000088;">&lt;/goal&gt;</span><span class="pln"> </span><span class="tag" style="color:#000088;">&lt;/goals&gt;</span><span class="pln"> </span><span class="tag" style="color:#000088;">&lt;/execution&gt;</span><span class="pln"> </span><span class="tag" style="color:#000088;">&lt;/executions&gt;</span><span class="pln"> </span><span class="tag" style="color:#000088;">&lt;/plugin&gt;</span><span class="pln"> </span><span class="tag" style="color:#000088;">&lt;/plugins&gt;</span><span class="pln"> </span><span class="tag" style="color:#000088;">&lt;build&gt;</span><span class="pln"> </span><span class="tag" style="color:#000088;">&lt;/project&gt;</span></pre> 
+ <p> 让我们打开命令控制台，进入到C: /&gt; MVN &gt; bus-core-api目录，然后执行以下命令mvn命令。 </p>   
+ <pre class="result">C:/MVN/us-core-api&gt;mvn clean package -U</pre> 
+ <p> Maven将开始构建项目bus-core-api。 </p> 
+ <pre class="result">[INFO] Scanning for projects...
+[INFO] ------------------------------------------------------------------
+[INFO] Building bus-core-api
+[INFO]    task-segment: [clean, package]
+[INFO] ------------------------------------------------------------------
+...
+[INFO] [jar:jar {execution: default-jar}]
+[INFO] Building jar: C:MVNus-core-ui	arget
+bus-core-ui-1.0-SNAPSHOT.jar
+[INFO] ------------------------------------------------------------------
+[INFO] BUILD SUCCESSFUL
+[INFO] ------------------------------------------------------------------</pre> 
+ <p style="text-align:justify;"> 当 bus-core-api 构建成功，Maven将开始构建应用程序 app-web-ui </p> 
+ <pre class="result">[INFO] ------------------------------------------------------------------
+[INFO] Building app-web-ui 
+[INFO]    task-segment: [package]
+[INFO] ------------------------------------------------------------------
+...
+[INFO] [jar:jar {execution: default-jar}]
+[INFO] Building jar: C:MVNapp-web-ui	arget
+app-web-ui-1.0-SNAPSHOT.jar
+[INFO] ------------------------------------------------------------------
+[INFO] BUILD SUCCESSFUL
+[INFO] ------------------------------------------------------------------</pre> 
+ <p style="text-align:justify;"> 当 app-web-ui&nbsp;构建成功，Maven将开始构建 app-desktop-ui 项目 </p> 
+ <pre class="result">[INFO] ------------------------------------------------------------------
+[INFO] Building app-desktop-ui 
+[INFO]    task-segment: [package]
+[INFO] ------------------------------------------------------------------
+...
+[INFO] [jar:jar {execution: default-jar}]
+[INFO] Building jar: C:/MVN/app-desktop-ui	arget
+app-desktop-ui-1.0-SNAPSHOT.jar
+[INFO] -------------------------------------------------------------------
+[INFO] BUILD SUCCESSFUL
+[INFO] -------------------------------------------------------------------</pre> 
+ <h2> 使用Maven持续集成服务 </h2> 
+ <p> 使用CI服务器更适合作为开发人员，<span>每次创建一个新的项目</span>不需要更新 bus-core-api 项目的 POM，例如&nbsp;app-mobile-ui 添加作为 bus-core-api&nbsp;项目相关的项目。Hudson 自动管理使用 Maven 依赖管理构建自动化。&nbsp; </p> 
+ <img alt="automated build" src="/uploads/allimg/131227/0I10S147-0.jpg" style="border:0px;height:auto;"> 
+ <p> Hudson 认每个项目生成的工作。一旦一个项目的代码签入到SVN（或映射到哈德森任何源管理工具），哈德森开始它的构建工作，一旦这项工作得到完成，它会自动启动其他相关工作（其他相关项目）。 </p> 
+ <p> 在上面的例子中，当bus-core-ui&nbsp;源代码SVN更新，<span>Hudson&nbsp;</span>开始它的构建。当构建成功，<span>Hudson&nbsp;</span>自动查找相关的项目，并开始构建 app-web-ui&nbsp;和app-desktop-ui&nbsp;项目。 </p>
+ <br>      
+</div></body></html>

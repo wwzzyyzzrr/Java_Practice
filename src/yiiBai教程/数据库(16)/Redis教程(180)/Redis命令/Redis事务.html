@@ -1,0 +1,68 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Redis事务</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>Redis事务允许在单个步骤中执行一组命令。以下是事务的两个属性：</p> 
+ <ul> 
+  <li>事务中的所有命令作为单个隔离操作并按顺序执行。不可以在执行Redis事务的中间向另一个客户端发出的请求。</li>
+  <li>Redis事务也是原子的。原子意味着要么处理所有命令，要么都不处理。</li>
+ </ul> 
+ <h2 id="h2-u8BEDu6CD5u793Au4F8B"><a name="语法示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>语法示例</h2>
+ <p>Redis事务由命令<code>MULTI</code>命令启动，然后需要传递一个应该在事务中执行的命令列表，然后整个事务由<code>EXEC</code>命令执行。</p> 
+ <pre><code class="lang-shell">redis 127.0.0.1:6379&gt; MULTI 
+OK 
+List of commands here 
+redis 127.0.0.1:6379&gt; EXEC
+</code></pre> 
+ <h2 id="h2-u793Au4F8B"><a name="示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例</h2>
+ <p>以下示例说明了如何启动和执行Redis事务。</p> 
+ <pre><code class="lang-shell">redis 127.0.0.1:6379&gt; MULTI 
+OK 
+redis 127.0.0.1:6379&gt; SET mykey "redis" 
+QUEUED 
+redis 127.0.0.1:6379&gt; GET mykey 
+QUEUED 
+redis 127.0.0.1:6379&gt; INCR visitors 
+QUEUED 
+redis 127.0.0.1:6379&gt; EXEC  
+1) OK 
+2) "redis" 
+3) (integer) 1
+</code></pre> 
+ <h2 id="h2-redis-"><a name="Redis事务命令" class="reference-link"></a><span class="header-link octicon octicon-link"></span>Redis事务命令</h2>
+ <p>下表列出了与Redis事务相关的一些基本命令。</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>序号</th> 
+    <th>命令</th> 
+    <th>说明</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>1</td> 
+    <td><a target="_blank" href="http://www.yiibai.com/transactions_discard.html" title="DISCARD">DISCARD</a></td> 
+    <td>丢弃在MULTI之后发出的所有命令</td> 
+   </tr> 
+   <tr> 
+    <td>2</td> 
+    <td><a target="_blank" href="http://www.yiibai.com/redis/transactions_exec.html" title="EXEC">EXEC</a></td> 
+    <td>执行MULTI后发出的所有命令</td> 
+   </tr> 
+   <tr> 
+    <td>3</td> 
+    <td><a target="_blank" href="http://www.yiibai.com/redis/transactions_multi.html" title="MULTI">MULTI</a></td> 
+    <td>标记事务块的开始</td> 
+   </tr> 
+   <tr> 
+    <td>4</td> 
+    <td><a target="_blank" href="http://www.yiibai.com/redis/transactions_unwatch.html" title="UNWATCH">UNWATCH</a></td> 
+    <td>取消 WATCH 命令对所有 key 的监视。</td> 
+   </tr> 
+   <tr> 
+    <td>5</td> 
+    <td><a target="_blank" href="http://www.yiibai.com/redis/transactions_watch.html" title="WATCH key [key ...]">WATCH key [key …]</a></td> 
+    <td>监视给定的键以确定MULTI / EXEC块的执行</td> 
+   </tr> 
+  </tbody> 
+ </table>
+ <br>      
+</div></body></html>

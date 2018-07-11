@@ -1,0 +1,70 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">AWK数组</h1><div style="width:100%;float:left;" class="article-content">   
+ <p> AWK关联数组最好的事情之一就是 - 索引不必是连续的设定的数; 我们可以使用字符串或数字作为数组的索引。也没有需要事先声明数组的大小- 数组可以在运行时扩展/收缩。本教程介绍AWK数组的例子。</p> 
+ <p> 下面是数组的语法：</p> 
+ <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+<span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">array_name</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">index</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]=</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">value</span></pre> 
+ <p> 其中，array_name是数组的名称，index是数组索引，value是任意值分配给数组的元素。</p> 
+ <h3> 创建</h3> 
+ <p> 要获得有关数组的详细信息，我们来创建和访问数组的元素。</p> 
+ <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+<span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">jerry</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">$ awk </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">'BEGIN {
+fruits["mango"]="yellow";
+fruits["orange"]="orange"
+print fruits["orange"] "\n" fruits["mango"]
+}'</span></pre> 
+ <p> 在执行上面的代码后，得到以下结果：</p> 
+ <pre class="result" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+orange
+yellow</pre> 
+ <p> 在上面的例子中，已经声明数组即fruits，其索引是水果的名称并且值是水果颜色。要访问数组元素，使用array_name[index]格式。</p> 
+ <h3> 删除</h3> 
+ <p> 为了插入我们使用赋值运算符。同样，可以使用delete语句从数组中删除元素。下面是 delete 语句的语法：</p> 
+ <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+<span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">delete</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> array_name</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">index</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span></pre> 
+ <p> 下面的示例显示删除 orange 元素因此命令没有显示任何输出。</p> 
+ <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+<span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">jerry</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">$ awk </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">'BEGIN {
+fruits["mango"]="yellow";
+fruits["orange"]="orange";
+delete fruits["orange"];
+print fruits["orange"]
+}'</span></pre> 
+ <h3> 多维数组</h3> 
+ <p> AWK只支持一维数组。但是我们可以很容易地模拟使用一维阵列本身的多维阵列。</p> 
+ <p> 例如下面是3×3的三维阵列：</p> 
+ <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+<span class="lit" style="box-sizing: border-box; color: rgb(0, 102, 102);">100</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="lit" style="box-sizing: border-box; color: rgb(0, 102, 102);">200</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="lit" style="box-sizing: border-box; color: rgb(0, 102, 102);">300</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+</span><span class="lit" style="box-sizing: border-box; color: rgb(0, 102, 102);">400</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="lit" style="box-sizing: border-box; color: rgb(0, 102, 102);">500</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="lit" style="box-sizing: border-box; color: rgb(0, 102, 102);">600</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+</span><span class="lit" style="box-sizing: border-box; color: rgb(0, 102, 102);">700</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="lit" style="box-sizing: border-box; color: rgb(0, 102, 102);">800</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="lit" style="box-sizing: border-box; color: rgb(0, 102, 102);">900</span></pre> 
+ <p> 另外，在上述示例array[0] [0]存储100，array[0][1]存储200等。要在位置array[0] [0]存储100，我们可以使用下面的语法：</p>   
+ <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+<span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">array</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"0,0"</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">=</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="lit" style="box-sizing: border-box; color: rgb(0, 102, 102);">100</span></pre> 
+ <p> 虽然我们已经给定0,0为索引，这些都不是两个索引。在现实中，它只是一个索引以字符串0,0。</p> 
+ <p> 下面简单的例子模拟2-D数组：</p> 
+ <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+<span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">jerry</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">$ awk </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">'BEGIN {
+array["0,0"] = 100;
+array["0,1"] = 200;
+array["0,2"] = 300;
+array["1,0"] = 400;
+array["1,1"] = 500;
+array["1,2"] = 600;
+# print array elements
+print "array[0,0] = " array["0,0"];
+print "array[0,1] = " array["0,1"];
+print "array[0,2] = " array["0,2"];
+print "array[1,0] = " array["1,0"];
+print "array[1,1] = " array["1,1"];
+print "array[1,2] = " array["1,2"];
+}'</span></pre> 
+ <p> 在执行上面的代码后，得到以下结果：</p> 
+ <pre class="result" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+array[0,0] = 100
+array[0,1] = 200
+array[0,2] = 300
+array[1,0] = 400
+array[1,1] = 500
+array[1,2] = 600</pre> 
+ <p> 我们还可以在排序其元素/索引于阵列执行各种操作。为了达到这个目的，可以使用AWK的asort以及asorti函数。我们将看到在后面的章节这些函数的使用。</p> 
+ <br>      
+</div></body></html>

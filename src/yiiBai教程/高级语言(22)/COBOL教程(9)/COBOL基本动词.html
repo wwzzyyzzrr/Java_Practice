@@ -1,0 +1,390 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">COBOL基本动词</h1><div style="width:100%;float:left;" class="article-content">   
+ <p> COBOL动词用在程序划分进行数据处理。声明总是以一个COBOL动词。有几种COBOL动词使用不同类型，如下面的操作：</p> 
+ <h2> 输入/输出动词</h2> 
+ <p> 输入和输出动词用于从用户获取数据并显示COBOL程序的输出。下面两个动词用于此进程：</p> 
+ <h3> 接受动词</h3> 
+ <p> 从操作系统接受动词，比如日期，从用户的时间和日期，或直接获取数据。如果程序从用户接收数据，然后它需要通过JCL通过。同时由操作系统获得，然后数据选项包括如图下面的例子：</p> 
+ <pre class="prettyprint" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+ACCEPT WS-STUDENT-NAME.
+ACCEPT WS-DATE FROM SYSTEM-DATE.</pre> 
+ <h3> 显示动词</h3> 
+ <p> 显示动词是用来显示COBOL程序的输出。</p> 
+ <pre class="prettyprint" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+DISPLAY WS-STUDENT-NAME.
+DISPLAY "System date is : " WS-DATE.</pre> 
+ <p> COBOL程序</p> 
+ <pre class="prettyprint" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+IDENTIFICATION DIVISION.
+PROGRAM-ID. HELLO.
+DATA DIVISION.
+WORKING-STORAGE SECTION.
+01 WS-STUDENT-NAME PIC X(25).
+01 WS-DATE PIC X(10).
+PROCEDURE DIVISION.
+ACCEPT WS-STUDENT_NAME.
+ACCEPT WS-DATE FROM DATE.
+DISPLAY "Name :  " WS-STUDENT_NAME.
+DISPLAY "Date : " WS-DATE.
+STOP RUN.</pre> 
+ <p> JCL以上COBOL程序执行。</p> 
+ <pre class="prettyprint" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+//SAMPLE JOB(TESTJCL,XXXXXX),CLASS=A,MSGCLASS=C
+//STEP1 EXEC PGM=HELLO
+//INPUT DD DSN=PROGRAM.DIRECTORY,DISP=SHR
+//SYSIN DD *
+YiiBai
+/*</pre> 
+ <p> 当编译并执行上面的程序它会产生以下结果：</p> 
+ <pre class="result" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+Name : YiiBai
+Date : 2014-08-30</pre> 
+ <h2> 初始化动词</h2> 
+ <p> 初始化动词被用来初始化组项目或基本事项。用RENAME子句中的数据名称不能被初始化。数值数据项都受到ZEROES取代。字母数字或字母数据项之间用SPACES代替。如果包括REPLACING期限后的数据项可以被初始化，如图下面的例子给出的替换值：</p> 
+ <pre class="prettyprint tryit" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); cursor: default; background-image: url(http://www.yiibai.com/images/link.png) !important; background-attachment: initial !important; background-size: initial !important; background-origin: initial !important; background-clip: initial !important; background-position: 100% 0%; background-repeat: no-repeat !important;">
+IDENTIFICATION DIVISION.
+PROGRAM-ID. HELLO.
+DATA DIVISION.
+WORKING-STORAGE SECTION.
+01 WS-NAME PIC A(30) VALUE 'ABCDEF'.
+01 WS-ID PIC 9(5).
+01 WS-ADDRESS. 
+05 WS-HOUSE-NUMBER PIC 9(3).
+05 WS-COUNTRY PIC X(15).
+05 WS-PINCODE PIC 9(6) VALUE 123456.
+PROCEDURE DIVISION.
+A000-FIRST-PARA.
+INITIALIZE WS-NAME, WS-ADDRESS.
+INITIALIZE WS-ID REPLACING NUMERIC DATA BY 12345.
+DISPLAY "My name is   : "WS-NAME.
+DISPLAY "My ID is     : "WS-ID.
+DISPLAY "Address      : "WS-ADDRESS.
+DISPLAY "House Number : "WS-HOUSE-NUMBER.
+DISPLAY "Country      : "WS-COUNTRY.
+DISPLAY "Pincode      : "WS-PINCODE.
+STOP RUN.</pre> 
+ <p> JCL以上COBOL程序执行。</p> 
+ <pre class="prettyprint" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+//SAMPLE JOB(TESTJCL,XXXXXX),CLASS=A,MSGCLASS=C
+//STEP1 EXEC PGM=HELLO</pre> 
+ <p> 当编译并执行上面的程序它会产生以下结果：</p> 
+ <pre class="result" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+My name is   :                               
+My ID is     : 12345
+Address      : 000               000000
+House Number : 000
+Country      :                
+Pincode      : 000000</pre> 
+ <h2> 移动动词</h2> 
+ <p> 移动动词被用来从源数据的数据复制到目标数据。它可用于在两个初级和组数据项。对于组数据项对应MOVE/ CORR使用。在尝试，选择MOVE CORR无法正常工作，但主机服务器上它会工作。用于从一个字符串移动数据MOVE（x：l）用于其中x是起始位置和l是长度。如果目标数据项的PIC子句小于源数据项的PIC子句中的数据将被截断。此外，如果目标数据项的PIC子句多于源数据项的PIC子句则零或空间将额外的字节增加。这将是通过查看下面的例子更清楚：</p> 
+ <pre class="prettyprint tryit" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); cursor: default; background-image: url(http://www.yiibai.com/images/link.png) !important; background-attachment: initial !important; background-size: initial !important; background-origin: initial !important; background-clip: initial !important; background-position: 100% 0%; background-repeat: no-repeat !important;">
+IDENTIFICATION DIVISION.
+PROGRAM-ID. HELLO.
+DATA DIVISION.
+WORKING-STORAGE SECTION.
+01 WS-NUM1 PIC 9(9).
+01 WS-NUM2 PIC 9(9).
+01 WS-NUM3 PIC 9(5).
+01 WS-NUM4 PIC 9(6).
+01 WS-ADDRESS. 
+05 WS-HOUSE-NUMBER PIC 9(3).
+05 WS-COUNTRY PIC X(5).
+05 WS-PINCODE PIC 9(6).
+01 WS-ADDRESS1. 
+05 WS-HOUSE-NUMBER1 PIC 9(3).
+05 WS-COUNTRY1 PIC X(5).
+05 WS-PINCODE1 PIC 9(6).
+PROCEDURE DIVISION.
+A000-FIRST-PARA.
+MOVE 123456789 TO WS-NUM1.
+MOVE WS-NUM1 TO WS-NUM2 WS-NUM3.
+MOVE WS-NUM1(3:6) TO WS-NUM4.
+MOVE 123 TO WS-HOUSE-NUMBER.
+MOVE 'INDIA' TO WS-COUNTRY.
+MOVE 112233 TO WS-PINCODE.
+MOVE WS-ADDRESS TO WS-ADDRESS1.
+DISPLAY "WS-NUM1     : " WS-NUM1
+DISPLAY "WS-NUM2     : " WS-NUM2
+DISPLAY "WS-NUM3     : " WS-NUM3
+DISPLAY "WS-NUM4     : " WS-NUM4
+DISPLAY "WS-ADDRESS  : " WS-ADDRESS
+DISPLAY "WS-ADDRESS1 : " WS-ADDRESS1
+STOP RUN.</pre> 
+ <p> JCL以上COBOL程序执行。</p> 
+ <pre class="prettyprint" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+//SAMPLE JOB(TESTJCL,XXXXXX),CLASS=A,MSGCLASS=C
+//STEP1 EXEC PGM=HELLO</pre> 
+ <p> 当编译并执行上面的程序它会产生以下结果：</p> 
+ <pre class="result" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+WS-NUM1     : 123456789
+WS-NUM2     : 123456789
+WS-NUM3     : 56789
+WS-NUM4     : 345678
+WS-ADDRESS  : 123INDIA112233
+WS-ADDRESS1 : 123INDIA112233</pre> 
+ <h3> 合法移动</h3> 
+ <p> 下表给出了关于合法的移动信息：</p> 
+ <table class="table table-bordered" style="box-sizing: border-box; border-collapse: collapse; border-spacing: 0px; width: 604px; max-width: 100%; margin-bottom: 20px;  border-color: rgb(221, 221, 221); color: rgb(49, 49, 49); font-family: 'Open Sans', Arial, sans-serif; font-size: 14px; line-height: 22px; background-color: transparent;"> 
+  <tbody style="box-sizing: border-box;"> 
+   <tr style="box-sizing: border-box;"> 
+    <th style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221); background: rgb(238, 238, 238);"> &nbsp;</th> 
+    <th style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221); background: rgb(238, 238, 238);"> 字母</th> 
+    <th style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221); background: rgb(238, 238, 238);"> 字母数字</th> 
+    <th style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221); background: rgb(238, 238, 238);"> 数字</th> 
+   </tr> 
+   <tr style="box-sizing: border-box;"> 
+    <th style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221); background: rgb(238, 238, 238);"> 字母</th> 
+    <td style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221);"> Possible</td> 
+    <td style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221);"> Possible</td> 
+    <td style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221);"> Not Possible</td> 
+   </tr> 
+   <tr style="box-sizing: border-box;"> 
+    <th style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221); background: rgb(238, 238, 238);"> 字母数字</th> 
+    <td style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221);"> Possible</td> 
+    <td style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221);"> Possible</td> 
+    <td style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221);"> Possible</td> 
+   </tr> 
+   <tr style="box-sizing: border-box;"> 
+    <th style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221); background: rgb(238, 238, 238);"> 数字</th> 
+    <td style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221);"> Not Possible</td> 
+    <td style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221);"> Possible</td> 
+    <td style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221);"> Possible</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h2> 添加动词</h2> 
+ <p> 添加动词是用来将两个或多个数字和结果存储在目标操作数。以下是其中可以使用的语法：</p> 
+ <p> 语法</p> 
+ <p> 以下是语法来将两个或多个数字：</p> 
+ <pre class="prettyprint" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+ADD A B TO C D
+
+ADD A B C TO D GIVING E
+
+ADD CORR WS-GROUP1 TO WS-GROUP2</pre> 
+ <p> 在语法-1，A，B，C添加和结果存储在C（C = A+ B + C）。 A，B，D补充和结果保存在D（D = A + B+ D）。</p> 
+ <p> 在语法2中，A，B，C，D添加和结果存储在E（E = A + B + C + D）</p> 
+ <p> 在语法3，附属小组项目中WS-Group1和WS_GROUP2相加，结果存储在WS-GROUP2。</p> 
+ <p> 例子</p> 
+ <pre class="prettyprint tryit" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); cursor: default; background-image: url(http://www.yiibai.com/images/link.png) !important; background-attachment: initial !important; background-size: initial !important; background-origin: initial !important; background-clip: initial !important; background-position: 100% 0%; background-repeat: no-repeat !important;">
+IDENTIFICATION DIVISION.
+PROGRAM-ID. HELLO.
+DATA DIVISION.
+WORKING-STORAGE SECTION.
+01 WS-NUM1 PIC 9(9) VALUE 10 .
+01 WS-NUM2 PIC 9(9) VALUE 10.
+01 WS-NUM3 PIC 9(9) VALUE 10.
+01 WS-NUM4 PIC 9(9) VALUE 10.
+01 WS-NUMA PIC 9(9) VALUE 10.
+01 WS-NUMB PIC 9(9) VALUE 10.
+01 WS-NUMC PIC 9(9) VALUE 10.
+01 WS-NUMD PIC 9(9) VALUE 10.
+01 WS-NUME PIC 9(9) VALUE 10.
+PROCEDURE DIVISION.
+ADD WS-NUM1 WS-NUM2 TO WS-NUM3 WS-NUM4.
+ADD WS-NUMA WS-NUMB WS-NUMC TO WS-NUMD GIVING WS-NUME.
+DISPLAY "WS-NUM1     : " WS-NUM1
+DISPLAY "WS-NUM2     : " WS-NUM2
+DISPLAY "WS-NUM3     : " WS-NUM3
+DISPLAY "WS-NUM4     : " WS-NUM4
+DISPLAY "WS-NUMA     : " WS-NUMA
+DISPLAY "WS-NUMB     : " WS-NUMB
+DISPLAY "WS-NUMC     : " WS-NUMC
+DISPLAY "WS-NUMD     : " WS-NUMD
+DISPLAY "WS-NUME     : " WS-NUME
+STOP RUN.</pre> 
+ <p> JCL以上COBOL程序执行。</p> 
+ <pre class="prettyprint" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+//SAMPLE JOB(TESTJCL,XXXXXX),CLASS=A,MSGCLASS=C
+//STEP1 EXEC PGM=HELLO</pre> 
+ <p> 当编译并执行上面的程序它会产生以下结果：</p> 
+ <pre class="result" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+WS-NUM1     : 000000010
+WS-NUM2     : 000000010
+WS-NUM3     : 000000030
+WS-NUM4     : 000000030
+WS-NUMA     : 000000010
+WS-NUMB     : 000000010
+WS-NUMC     : 000000010
+WS-NUMD     : 000000010
+WS-NUME     : 000000040</pre> 
+ <h2> 减法动词</h2> 
+ <p> 减法动词用于减法运算。以下是其中可以使用的语法：</p> 
+ <p> 语法</p> 
+ <p> 以下是语法减法运算：</p> 
+ <pre class="prettyprint" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+SUBTRACT A B FROM C D
+
+SUBTRACT A B C FROM D GIVING E
+
+SUBTRACT CORR WS-GROUP1 TO WS-GROUP2</pre> 
+ <p> 在语法-1，A，B相加，并从C结果中减去存储在C（C = C-（A + B））。 A，B被添加，并从D.结果减去存放在D（D = D-（A + B））。</p> 
+ <p> 在语法-2，A，B，C添加，并从D结果中减去存储在E（E = D-（A + B+ C））</p> 
+ <p> 在语法3，附属小组项目，在WS-Group1和WS_GROUP2被减去结果存储在WS-GROUP2。</p> 
+ <p> 例子</p>   
+ <pre class="prettyprint tryit" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); cursor: default; background-image: url(http://www.yiibai.com/images/link.png) !important; background-attachment: initial !important; background-size: initial !important; background-origin: initial !important; background-clip: initial !important; background-position: 100% 0%; background-repeat: no-repeat !important;">
+IDENTIFICATION DIVISION.
+PROGRAM-ID. HELLO.
+DATA DIVISION.
+WORKING-STORAGE SECTION.
+01 WS-NUM1 PIC 9(9) VALUE 10 .
+01 WS-NUM2 PIC 9(9) VALUE 10.
+01 WS-NUM3 PIC 9(9) VALUE 100.
+01 WS-NUM4 PIC 9(9) VALUE 100.
+01 WS-NUMA PIC 9(9) VALUE 10.
+01 WS-NUMB PIC 9(9) VALUE 10.
+01 WS-NUMC PIC 9(9) VALUE 10.
+01 WS-NUMD PIC 9(9) VALUE 100.
+01 WS-NUME PIC 9(9) VALUE 10.
+PROCEDURE DIVISION.
+SUBTRACT WS-NUM1 WS-NUM2 FROM WS-NUM3 WS-NUM4.
+SUBTRACT WS-NUMA WS-NUMB WS-NUMC FROM WS-NUMD GIVING WS-NUME.
+DISPLAY "WS-NUM1     : " WS-NUM1
+DISPLAY "WS-NUM2     : " WS-NUM2
+DISPLAY "WS-NUM3     : " WS-NUM3
+DISPLAY "WS-NUM4     : " WS-NUM4
+DISPLAY "WS-NUMA     : " WS-NUMA
+DISPLAY "WS-NUMB     : " WS-NUMB
+DISPLAY "WS-NUMC     : " WS-NUMC
+DISPLAY "WS-NUMD     : " WS-NUMD
+DISPLAY "WS-NUME     : " WS-NUME
+STOP RUN.</pre> 
+ <p> JCL以上COBOL程序执行。</p> 
+ <pre class="prettyprint" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+//SAMPLE JOB(TESTJCL,XXXXXX),CLASS=A,MSGCLASS=C
+//STEP1 EXEC PGM=HELLO</pre> 
+ <p> 当编译并执行上面的程序它会产生以下结果：</p> 
+ <pre class="result" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+WS-NUM1     : 000000010
+WS-NUM2     : 000000010
+WS-NUM3     : 000000080
+WS-NUM4     : 000000080
+WS-NUMA     : 000000010
+WS-NUMB     : 000000010
+WS-NUMC     : 000000010
+WS-NUMD     : 000000100
+WS-NUME     : 000000070</pre> 
+ <h2> 乘法动词</h2> 
+ <p> 乘法动词用于乘法运算。以下是其中可以使用的语法：</p> 
+ <p> 语法</p> 
+ <p> 以下是语法来将两个或多个数字相乘：</p> 
+ <pre class="prettyprint" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+MULTIPLY A BY B C
+
+MULTIPLY A BY B GIVING E</pre> 
+ <p> 在语法-1，相乘A，B和存储结果B（B = A * B）。相乘由C和存储结果C（C = A* C）。</p> 
+ <p> 在语法2，相乘A，B和存储结果E（E = A * B）。</p> 
+ <p> 例子</p> 
+ <pre class="prettyprint tryit" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); cursor: default; background-image: url(http://www.yiibai.com/images/link.png) !important; background-attachment: initial !important; background-size: initial !important; background-origin: initial !important; background-clip: initial !important; background-position: 100% 0%; background-repeat: no-repeat !important;">
+IDENTIFICATION DIVISION.
+PROGRAM-ID. HELLO.
+DATA DIVISION.
+WORKING-STORAGE SECTION.
+01 WS-NUM1 PIC 9(9) VALUE 10 .
+01 WS-NUM2 PIC 9(9) VALUE 10.
+01 WS-NUM3 PIC 9(9) VALUE 10.
+01 WS-NUMA PIC 9(9) VALUE 10.
+01 WS-NUMB PIC 9(9) VALUE 10.
+01 WS-NUMC PIC 9(9) VALUE 10.
+PROCEDURE DIVISION.
+MULTIPLY WS-NUM1 BY WS-NUM2 WS-NUM3.
+MULTIPLY WS-NUMA BY WS-NUMB GIVING WS-NUMC.
+DISPLAY "WS-NUM1     : " WS-NUM1
+DISPLAY "WS-NUM2     : " WS-NUM2
+DISPLAY "WS-NUM3     : " WS-NUM3
+DISPLAY "WS-NUMA     : " WS-NUMA
+DISPLAY "WS-NUMB     : " WS-NUMB
+DISPLAY "WS-NUMC     : " WS-NUMC
+STOP RUN.</pre> 
+ <p> JCL以上COBOL程序执行。</p> 
+ <pre class="prettyprint" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+//SAMPLE JOB(TESTJCL,XXXXXX),CLASS=A,MSGCLASS=C
+//STEP1 EXEC PGM=HELLO</pre> 
+ <p> 当编译并执行上面的程序它会产生以下结果：</p> 
+ <pre class="result" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+WS-NUM1     : 000000010
+WS-NUM2     : 000000100
+WS-NUM3     : 000000100
+WS-NUMA     : 000000010
+WS-NUMB     : 000000010
+WS-NUMC     : 000000100</pre> 
+ <h2> 除法动词</h2> 
+ <p> 除以动词用于除法运算。以下是其中可以使用的语法：</p> 
+ <p> 语法</p> 
+ <p> 以下是除法运算的语法：</p> 
+ <pre class="prettyprint" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+DIVIDE A INTO B
+
+DIVIDE A BY B GIVING C REMAINDER R</pre> 
+ <p> 在语法-1，B除以A和结果存储在B（B= B / A）。</p> 
+ <p> 在语法-2，A除以B和结果除以存放在C（C = A/ B）和余数被存储在R。</p> 
+ <p> 例子</p> 
+ <pre class="prettyprint tryit" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); cursor: default; background-image: url(http://www.yiibai.com/images/link.png) !important; background-attachment: initial !important; background-size: initial !important; background-origin: initial !important; background-clip: initial !important; background-position: 100% 0%; background-repeat: no-repeat !important;">
+IDENTIFICATION DIVISION.
+PROGRAM-ID. HELLO.
+DATA DIVISION.
+WORKING-STORAGE SECTION.
+01 WS-NUM1 PIC 9(9) VALUE 5.
+01 WS-NUM2 PIC 9(9) VALUE 250.
+01 WS-NUMA PIC 9(9) VALUE 100.
+01 WS-NUMB PIC 9(9) VALUE 15.
+01 WS-NUMC PIC 9(9).
+01 WS-REM PIC 9(9). 
+PROCEDURE DIVISION.
+DIVIDE WS-NUM1 INTO WS-NUM2.
+DIVIDE WS-NUMA BY WS-NUMB GIVING WS-NUMC REMAINDER WS-REM.
+DISPLAY "WS-NUM1     : " WS-NUM1
+DISPLAY "WS-NUM2     : " WS-NUM2
+DISPLAY "WS-NUMA     : " WS-NUMA
+DISPLAY "WS-NUMB     : " WS-NUMB
+DISPLAY "WS-NUMC     : " WS-NUMC
+DISPLAY "WS-REM      : " WS-REM
+STOP RUN.</pre> 
+ <p> JCL以上COBOL程序执行。</p> 
+ <pre class="prettyprint" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+//SAMPLE JOB(TESTJCL,XXXXXX),CLASS=A,MSGCLASS=C
+//STEP1 EXEC PGM=HELLO</pre> 
+ <p> 当编译并执行上面的程序它会产生以下结果：</p> 
+ <pre class="result" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+WS-NUM1     : 000000005
+WS-NUM2     : 000000050
+WS-NUMA     : 000000100
+WS-NUMB     : 000000015
+WS-NUMC     : 000000006
+WS-REM      : 000000010</pre> 
+ <h2> 计算表</h2> 
+ <p> 计算语句用来写COBOL的算术表达式。这是一个替代加，减，乘，除。</p> 
+ <p> 例子</p> 
+ <pre class="prettyprint tryit" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); cursor: default; background-image: url(http://www.yiibai.com/images/link.png) !important; background-attachment: initial !important; background-size: initial !important; background-origin: initial !important; background-clip: initial !important; background-position: 100% 0%; background-repeat: no-repeat !important;">
+IDENTIFICATION DIVISION.
+PROGRAM-ID. HELLO.
+DATA DIVISION.
+WORKING-STORAGE SECTION.
+01 WS-NUM1 PIC 9(9) VALUE 10 .
+01 WS-NUM2 PIC 9(9) VALUE 10.
+01 WS-NUM3 PIC 9(9) VALUE 10.
+01 WS-NUMA PIC 9(9) VALUE 50.
+01 WS-NUMB PIC 9(9) VALUE 10.
+01 WS-NUMC PIC 9(9).
+PROCEDURE DIVISION.
+COMPUTE WS-NUMC= (WS-NUM1 * WS-NUM2) - (WS-NUMA / WS-NUMB) + WS-NUM3.
+DISPLAY "WS-NUM1     : " WS-NUM1
+DISPLAY "WS-NUM2     : " WS-NUM2
+DISPLAY "WS-NUM3     : " WS-NUM3
+DISPLAY "WS-NUMA     : " WS-NUMA
+DISPLAY "WS-NUMB     : " WS-NUMB
+DISPLAY "WS-NUMC     : " WS-NUMC
+STOP RUN.</pre> 
+ <p> JCL以上COBOL程序执行。</p> 
+ <pre class="prettyprint" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+//SAMPLE JOB(TESTJCL,XXXXXX),CLASS=A,MSGCLASS=C
+//STEP1 EXEC PGM=HELLO</pre> 
+ <p> 当编译并执行上面的程序它会产生以下结果：</p> 
+ <pre class="result" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+WS-NUM1     : 000000010
+WS-NUM2     : 000000010
+WS-NUM3     : 000000010
+WS-NUMA     : 000000050
+WS-NUMB     : 000000010
+WS-NUMC     : 000000105</pre> 
+ <br>      
+</div></body></html>

@@ -1,0 +1,42 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Java9多版本Jar( Multirelease JAR)</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>在java 9中，引入了一个新特性，其中jar格式得到了增强，可以根据平台维护和使用不同版本的java类或资源。 在JAR中，文件<code>MANIFEST.MF</code>文件的<code>main</code>部分中有一个条目<code>Multi-Release:true</code>。 <code>META-INF</code>目录还包含版本子目录，其子目录(从9开始，用于Java 9)存储版本特定的类和资源文件。</p> 
+ <p>在这个例子中，我们将使用多版本的jar来创建两个版本的<code>Tester.java</code>文件，一个用于jdk 7，另一个用于jdk 9，并在不同的jdk版本上运行。</p> 
+ <p><strong>第1步</strong> - 创建一个文件夹<code>c:/test/java7/com/yiibai</code>。 用以下内容创建<code>Test.java</code> - </p> 
+ <p>文件:<em>Tester.java</em> 的代码如下 - </p> 
+ <pre><code class="lang-java">package com.yiibai;
+
+public class Tester {
+   public static void main(String[] args) {
+      System.out.println("Inside java 7");
+   }
+}
+</code></pre> 
+ <p><strong>第2步</strong> - 创建一个文件夹<code>c:/test/java9/com/yiibai</code>。 用以下内容创建:<em>Test.java</em> -</p> 
+ <pre><code class="lang-java">package com.yiibai;
+
+public class Tester {
+   public static void main(String[] args) {
+      System.out.println("Inside java 9");
+   }
+}
+</code></pre> 
+ <p>编译源代码，分别执行以下命令 - </p>   
+ <pre><code class="lang-shell">C:\test &gt; javac --release 9 java9/com/yiibai/Tester.java
+
+C:\JAVA &gt; javac --release 7 java7/com/yiibai/Tester.java
+</code></pre> 
+ <p>创建多版本的jar，执行以下命令 - </p> 
+ <pre><code class="lang-shell">C:\JAVA &gt; jar -c -f test.jar -C java7 . --release 9 -C java9.
+Warning: entry META-INF/versions/9/com/yiibai/Tester.java, 
+   multiple resources with same name
+</code></pre> 
+ <p>使用JDK 7运行，如下所示 - </p> 
+ <pre><code class="lang-shell">C:\JAVA &gt; java -cp test.jar com.yiibai.Tester
+Inside Java 7
+</code></pre> 
+ <p>使用JDK 9运行，如下所示 - </p> 
+ <pre><code class="lang-shell">C:\JAVA &gt; java -cp test.jar com.yiibai.Tester
+Inside Java 9
+</code></pre>
+ <br>      
+</div></body></html>

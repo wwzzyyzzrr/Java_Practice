@@ -1,0 +1,241 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Lua Web编程</h1><div style="width:100%;float:left;" class="article-content">   
+ <p> Lua是高度灵活的语言，它往往是在多个平台，包括Web应用程序中使用。成立2004年的Kepler社区提供Lua的Web组件开放源码。</p> 
+ <p> 虽然，也有使用Lua已经开发了其他的web框架，我们将主要集中在Kepler社区提供的组件。</p> 
+ <h2> 应用程序和框架</h2> 
+ <ul> 
+  <li> <p> Orbit 是一个lua的MVC Web框架，它是基于WSAPI。</p> </li> 
+  <li> <p> WSAPI是从Lua的Web应用程序抽象的Web主机服务器，是基于许多项目的API。</p> </li> 
+  <li> <p> Xavante是一个Lua的Web服务器，提供了一个WSAPI接口。</p> </li> 
+  <li> <p> Sputnik是一个wiki/CMS开发过WSAPI的Kepler项目用于娱乐和搞笑。</p> </li> 
+  <li> <p> CGILua提供LuaPages和LuaScripts网页制作的基础上的WSAPI，但不再支持。使用Orbit, Sputnik 或WSAPI 代替。</p> </li> 
+ </ul> 
+ <p> 在本教程中，我们会尽量让你可以做更多地了解Lua，它的安装和使用方法，请参考<a target="_blank" href="http://www.keplerproject.org/">kepler网站</a></p> 
+ <h2> Orbit</h2> 
+ <p> Orbit是lua一个MVC Web框架。它彻底抛弃CGILua 的应用，每个应用程序Orbit可以容纳一个单一文件“脚本”的CGILua模式，但是如果想让它分割成多个文件也可以。</p> 
+ <p> 所有Orbit应用程序遵循WSAPI协议，所以他们目前正在与Xavante，CGI和FastCGI的一起结合工作。它包括一个发射器，可以很容易推出Xavante实例进行开发。</p> 
+ <p> 安装Orbit的最简单方法是使用LuaRocks。 luarocks安装Orbit的安装命令。对于这一点，首先需要先<a target="_blank" href="http://luarocks.org/en/Download">安装LuaRocks</a>。</p> 
+ <p> 如果还没有安装所有的依赖，这是应遵循在的Unix / Linux环境设置Orbit的步骤。</p> 
+ <h3> 安装Apache</h3> 
+ <p> 连接到服务器。安装Apache2，它支持的模块和能使用所需的Apache2模块：</p> 
+ <pre class="prettyprint" style="border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; font-size: 12px; overflow: auto;">
+$ sudo apt-get install apache2 libapache2-mod-fcgid libfcgi-dev build-essential
+$ sudo a2enmod rewrite
+$ sudo a2enmod fcgid
+$ sudo /etc/init.d/apache2 force-reload</pre> 
+ <h3> 安装 LUAROCKS</h3> 
+ <pre class="prettyprint" style="border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; font-size: 12px; overflow: auto;">
+$ sudo apt-get install luarocks</pre> 
+ <h3> 安装WSAPI, FCGI, ORBIT, AND XAVANTE</h3> 
+ <pre class="prettyprint" style="border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; font-size: 12px; overflow: auto;">
+$ sudo luarocks install orbit
+$ sudo luarocks install wsapi-xavante
+$ sudo luarocks install wsapi-fcgi</pre> 
+ <h3> 建立APACHE2</h3> 
+ <pre class="prettyprint" style="border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; font-size: 12px; overflow: auto;">
+$ sudo raj /etc/apache2/sites-available/default</pre> 
+ <p> 添加下面的 &lt;Directory /var/www/&gt;部分配置文件的这些内容。如果这个部分有一个“AllowOverride None”，那么需要的“None”改为“All”，这样htaccess文件可以覆盖配置。</p> 
+ <pre class="prettyprint" style="border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; font-size: 12px; overflow: auto;">
+&lt;IfModule mod_fcgid.c&gt;
+    AddHandler fcgid-script .lua
+    AddHandler fcgid-script .ws
+    AddHandler fcgid-script .op
+    FCGIWrapper "/usr/local/bin/wsapi.fcgi" .ws
+    FCGIWrapper "/usr/local/bin/wsapi.fcgi" .lua
+    FCGIWrapper "/usr/local/bin/op.fcgi" .op
+    #FCGIServer "/usr/local/bin/wsapi.fcgi" -idle-timeout 60 -processes 1
+    #IdleTimeout 60
+    #ProcessLifeTime 60
+&lt;/IfModule&gt;</pre> 
+ <p> 重新启动服务器，以确保变化生效。</p> 
+ <p> 为了使可以访问应用程序，需要+ ExecCGI添加到htaccess文件中的Orbit 应用程序的根- 在这种情况下，设置为 /var/www。</p> 
+ <pre class="prettyprint" style="border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; font-size: 12px; overflow: auto;">
+Options +ExecCGI
+DirectoryIndex index.ws</pre> 
+ <h2> 简单的例子- Orbit</h2> 
+ <pre class="prettyprint" style="border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; font-size: 12px; overflow: auto;">
+#!/usr/bin/env index.lua
+-- index.lua
+require"orbit"
+
+-- declaration
+ module("myorbit", package.seeall, orbit.new)
+
+-- handler
+function index(web)
+  return my_home_page()
+end
+
+-- dispatch
+myorbit:dispatch_get(index, "/", "/index")
+
+-- Sample page
+function my_home_page()
+   return [[
+    &lt;head&gt;&lt;/head&gt;
+    &lt;html&gt;
+    &lt;h2&gt;First Page&lt;/h2&gt;
+    &lt;/html&gt;
+    ]]
+end</pre> 
+ <p> 现在，应该可以启动Web浏览器并转到http://localhost:8080/ ，应该看到</p> 
+ <pre class="result" style="margin-bottom: 0px; font-size: 12px; overflow: auto; background-color: rgb(241, 241, 241);">
+First Page</pre> 
+ <p> Orbit 提供了另一种选择，那就是Lua代码可以生成html。</p> 
+ <pre class="prettyprint" style="border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; font-size: 12px; overflow: auto;">
+#!/usr/bin/env index.lua
+-- index.lua
+require"orbit"
+
+function generate()
+    return html {
+        head{title "HTML Example"},
+        body{
+            h2{"Here we go again!"}
+        }
+    }
+end
+
+orbit.htmllify(generate)
+
+print(generate())</pre> 
+ <h2> 创建表单</h2> 
+ <p> 一种简单形式的例子如下所示。</p> 
+ <pre class="prettyprint" style="border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; font-size: 12px; overflow: auto;">
+#!/usr/bin/env index.lua
+require"orbit"
+
+function wrap (inner)
+    return html{ head(), body(inner) }
+end
+
+function test ()
+    return wrap(form (H'table' {
+        tr{td"First name",td( input{type='text', name='first'})},
+        tr{td"Second name",td(input{type='text', name='second'})},
+        tr{ td(input{type='submit', value='Submit!'}),
+            td(input{type='submit',value='Cancel'})
+        },
+    }))
+end
+
+orbit.htmllify(wrap,test)
+
+print(test())</pre> 
+ <p> 你可以在官方网站上找到一个很长的orbit教程</p> 
+ <h2> WSAPI</h2> 
+ <p> 如前面提到的，WSAPI充当基础由许多项目嵌入其中的多个特征。可以使用WASAPI并支持以下平台，</p> 
+ <ul> 
+  <li> <p> Windows</p> </li> 
+  <li> <p> UNIX-based systems</p> </li> 
+ </ul> 
+ <p> 支持的服务器和接口由WSAPI包括：</p> 
+ <ul> 
+  <li> <p> CGI</p> </li> 
+  <li> <p> FastCGI</p> </li> 
+  <li> <p> Xavante</p> </li> 
+ </ul> 
+ <p> WSAPI提供了大量的使用Lua库，这使得我们更容易在网络编程。一些支持的功能在Lua包括，</p> 
+ <ul> 
+  <li> <p> Request processing</p> </li> 
+  <li> <p> Output buffering</p> </li> 
+  <li> <p> Authentication</p> </li> 
+  <li> <p> File uploads</p> </li> 
+  <li> <p> Request isolation</p> </li> 
+  <li> <p> Multiplexing</p> </li> 
+ </ul> 
+ <p> WSAPI一个简单的例子如下所示。</p> 
+ <pre class="prettyprint" style="border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; font-size: 12px; overflow: auto;">
+#!/usr/bin/env wsapi.cgi
+
+module(..., package.seeall)
+function run(wsapi_env)
+   local headers = { ["Content-type"] = "text/html" }
+   
+   local function hello_text()
+      coroutine.yield("&lt;html&gt;&lt;body&gt;")
+      coroutine.yield("&lt;p&gt;Hello Wsapi!&lt;/p&gt;")
+      coroutine.yield("&lt;p&gt;PATH_INFO: " .. wsapi_env.PATH_INFO .. "&lt;/p&gt;")
+      coroutine.yield("&lt;p&gt;SCRIPT_NAME: " .. wsapi_env.SCRIPT_NAME .. "&lt;/p&gt;")
+      coroutine.yield("&lt;/body&gt;&lt;/html&gt;")
+   end
+
+   return 200, headers, coroutine.wrap(hello_text)
+end</pre> 
+ <p> 你可以在一个简单的HTML页面组成，回到上面的代码中看到。可以看到协程的使用，使得它可以通过语句返回语句来调用函数。最后HTML状态码（200），头和HTML页面返回。</p> 
+ <h2> Xavante</h2> 
+ <p> Xavante是使用基于URI的模块化架构一个Lua1.1的HTTP Web服务器映射处理程序。 Xavante目前提供，</p> 
+ <ul> 
+  <li> <p> File handler</p> </li> 
+  <li> <p> Redirect handler</p> </li> 
+  <li> <p> WSAPI handler</p> </li> 
+ </ul> 
+ <p> 文件处理程序是用于一般文件。重定向处理enabes的URI重新映射和WSAPI处理与WSAPI申请。</p> 
+ <p> 一个简单的例子如下所示。</p> 
+ <div style="float:left;margin-bottom: 10px;">  
+ </div>
+ <div style="float:left;margin-bottom: 10px;">  
+ </div>  
+ <pre class="prettyprint" style="border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; font-size: 12px; overflow: auto;">
+require "xavante.filehandler"
+require "xavante.cgiluahandler"
+require "xavante.redirecthandler"
+
+-- Define here where Xavante HTTP documents scripts are located
+local webDir = XAVANTE_WEB
+
+local simplerules = {
+
+    { -- URI remapping example
+      match = "^[^%./]*/$",
+      with = xavante.redirecthandler,
+      params = {"index.lp"}
+    }, 
+
+    { -- cgiluahandler example
+      match = {"%.lp$", "%.lp/.*$", "%.lua$", "%.lua/.*$" },
+      with = xavante.cgiluahandler.makeHandler (webDir)
+    },
+    
+    { -- filehandler example
+      match = ".",
+      with = xavante.filehandler,
+      params = {baseDir = webDir}
+    },
+} 
+
+xavante.HTTP{
+    server = {host = "*", port = 8080},
+    
+    defaultHost = {
+    	rules = simplerules
+    },
+}</pre> 
+ <p> 若要使用Xavante虚拟主机，调用xavante.HTTP将改为类似。</p> 
+ <pre class="prettyprint" style="border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; font-size: 12px; overflow: auto;">
+xavante.HTTP{
+    server = {host = "*", port = 8080},
+    
+    defaultHost = {},
+    
+    virtualhosts = {
+        ["www.sitename.com"] = simplerules
+    }
+}</pre> 
+ <h2> Lua Web组件</h2> 
+ <ul> 
+  <li> <p> Copas,基于协程调度器可以使用通过TCP/IP协议的服务器。</p> </li> 
+  <li> <p> Cosmo, “安全模板”引擎，它可以防止在模板中任意代码的应用程序。</p> </li> 
+  <li> <p> Coxpcall&nbsp;Lua封装原生pcall和xpcall与协程相容的。</p> </li> 
+  <li> <p> LuaFileSystem, 可移植的方式来访问底层的目录结构和文件属性。</p> </li> 
+  <li> <p> Rings, 一个库，它提供了一种从内Lua创建新的Lua状态。</p> </li> 
+ </ul> 
+ <h2> 截至注意</h2> 
+ <p> 有这么多Lua基于web框架，并提供给我们，并根据需要组成部分，它可以作为选件。还有包括其他可用的Web框架，</p> 
+ <ul> 
+  <li> <p> Moonstalk&nbsp;能够有效地开发和托管建成Lua语言动态生成基于网络的项目;从基本的网页到复杂的应用程序</p> </li> 
+  <li> <p> Lapis, 构建用MoonScript（或LUA）Web应用程序的框架运行的Nginx的定制版名为OpenResty。</p> </li> 
+  <li> <p> Lua Server Pages, 一个Lua脚本引擎插件任何其他方法，以嵌入式网络的发展，提供了一个戏剧性的捷径传统的C服务器页面。</p> </li> 
+ </ul> 
+ <p> 这些Web框架可以利用Web应用程序，并帮助在做强大的操作。</p> 
+ <br>      
+</div></body></html>

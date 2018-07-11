@@ -1,0 +1,85 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Java FileOutputStream</h1><div style="width:100%;float:left;" class="article-content">   
+ <h2 id="h2-u521Bu5EFAu8F93u51FAu6D41"><a name="创建输出流" class="reference-link"></a><span class="header-link octicon octicon-link"></span>创建输出流</h2>
+ <p>要写入文件，需要创建一个<code>FileOutputStream</code>类的对象，它将表示输出流。</p> 
+ <pre><code class="lang-java">// Create a  file  output stream
+String destFile = "test.txt";
+FileOutputStream fos   = new FileOutputStream(destFile);
+</code></pre> 
+ <p>当写入文件时，如果文件不存在，Java会尝试创建文件。但必须要处理这个异常，将代码放在<code>try-catch</code>块中，如下所示：</p> 
+ <pre><code class="lang-java">try  {
+    FileOutputStream fos   = new FileOutputStream(srcFile);
+}catch  (FileNotFoundException e){
+    // Error handling code  goes  here
+}
+</code></pre> 
+ <p>如果文件包含数据，数据将被擦除。 为了保留现有数据并将新数据追加到文件，需要使用<code>FileOutputStream</code>类的另一个构造函数，它接受一个布尔标志，用于将新数据附加到文件。<br>要将数据追加到文件，请在第二个参数中传递<code>true</code>，使用以下代码。</p> 
+ <pre><code class="lang-java">FileOutputStream fos   = new FileOutputStream(destFile, true);
+</code></pre> 
+ <h2 id="h2-u5199u5165u6570u636E"><a name="写入数据" class="reference-link"></a><span class="header-link octicon octicon-link"></span>写入数据</h2>
+ <p><code>FileOutputStream</code>类有一个重载的<code>write()</code>方法将数据写入文件。可以使用不同版本的方法一次写入一个字节或多个字节。</p> 
+ <p>通常，使用<code>FileOutputStream</code>写入二进制数据。要向输出流中写入诸如<code>“Hello”</code>的字符串，请将字符串转换为字节。<br><code>String</code>类有一个<code>getBytes()</code>方法，该方法返回表示字符串的字节数组。使用<code>FileOutputStream</code>写一个字符串如下：</p> 
+ <pre><code class="lang-java">String destFile = "test.txt";
+FileOutputStream fos   = new FileOutputStream(destFile, true);
+String text = "Hello";
+byte[] textBytes = text.getBytes();
+fos.write(textBytes);
+</code></pre> 
+ <p>要插入一个新行，使用<code>line.separator</code>系统变量如下。</p> 
+ <pre><code class="lang-java">String lineSeparator = System.getProperty("line.separator");
+fos.write(lineSeparator.getBytes());
+</code></pre> 
+ <p>需要使用<code>flush()</code>方法刷新输出流。</p> 
+ <pre><code class="lang-java">fos.flush();
+</code></pre> 
+ <p>刷新输出流指示任何写入的字节缓冲清出，将数据可以写入目标处。关闭输出流类似于关闭输入流。需要使用<code>close()</code>方法关闭输出流。</p>   
+ <pre><code class="lang-java">// Close  the   output  stream 
+fos.close();
+</code></pre> 
+ <p><code>close()</code>方法可能抛出一个<code>IOException</code>异常。如果希望自动关闭，请使用<code>try-with-resources</code>创建输出流。</p> 
+ <p>以下代码显示如何将字节写入到文件输出流。</p> 
+ <pre><code class="lang-java">import java.io.File;
+import java.io.FileOutputStream;
+
+public class Main {
+  public static void main(String[] args) {
+    String destFile = "destfile.txt";
+
+    // Get the line separator for the current platform
+    String lineSeparator = System.getProperty("line.separator");
+
+    String line1 = "test";
+    String line2 = "test1";
+
+    String line3 = "test2";
+    String line4 = "test3";
+
+    try (FileOutputStream fos = new FileOutputStream(destFile)) {
+      fos.write(line1.getBytes()); 
+      fos.write(lineSeparator.getBytes());
+
+      fos.write(line2.getBytes());
+      fos.write(lineSeparator.getBytes());
+
+      fos.write(line3.getBytes());
+      fos.write(lineSeparator.getBytes());
+
+      fos.write(line4.getBytes());
+
+      // Flush the written bytes to the file 
+      fos.flush();
+
+      System.out.println("Text has  been  written to "
+          + (new File(destFile)).getAbsolutePath());
+    } catch (Exception e2) {
+      e2.printStackTrace();
+    }
+  }
+}
+</code></pre> 
+ <p>上面的代码生成以下结果。</p> 
+ <pre><code class="lang-java">Text has  been  written to F:\website\yiibai\worksp\destfile.txt
+</code></pre> 
+ <p><code>F:\website\yiibai\worksp\destfile.txt</code> 文件的内容如下：</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201612/23/985111250_31184.png" alt=""></p>
+ <br>      
+</div></body></html>

@@ -1,0 +1,64 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">dup2()函数 Unix/Linux</h1><div style="width:100%;float:left;" class="article-content">   
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> dup, dup2 - 复制一个文件描述符</p> 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> 内容简介</h1> 
+ <pre style="font-family: 'Courier New', monospace; font-size: 12px; margin-bottom: 0px;">
+#include 
+  <unistd.h>
+    
+
+int dup(int oldfd); 
+int dup2(int oldfd, int newfd); 
+
+  </unistd.h></pre> 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> 描述</h1> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> <b>dup</b>() 和&nbsp;<b>dup2</b>()&nbsp;<span style="color: rgb(34, 34, 34); font-family: Arial, Verdana, sans-serif;">创建副本文件描述符oldfd。</span></p> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> After a successful return from&nbsp;<b>dup</b>() or&nbsp;<b>dup2</b>(),the old and new file descriptors may be used interchangeably. They refer to the same open file description (see&nbsp;<b>open</b>(2)) and thus share file offset and file status flags; for example, if the file offset is modified by using&nbsp;<b>lseek</b>(2) on one of the descriptors, the offset is also changed for the other.</p> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> The two descriptors do not share file descriptor flags (the close-on-exec flag). The close-on-exec flag (<b>FD_CLOEXEC</b>; see&nbsp;<b>fcntl</b>(2)) for the duplicate descriptor is off.</p> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> <b>dup</b>() uses the lowest-numbered unused descriptor for the new descriptor.</p> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> <b>dup2</b>() makes&nbsp;<i>newfd</i>&nbsp;be the copy of&nbsp;<i>oldfd</i>, closing&nbsp;<i>newfd</i>&nbsp;first if necessary.</p> 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> 返回值</h1> 
+ <b style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">dup</b>
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">() and&nbsp;</span>
+ <b style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">dup2</b>
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">() return the new descriptor, or -1 if an error occurred (in which case,</span>
+ <i style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">errno</i>
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">&nbsp;is set appropriately).</span> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> &nbsp;</p> 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> 错误</h1> 
+ <table border="1" cellpadding="5" cellspacing="0" class="src" style="font-family: verdana, helvetica, arial, sans-serif; border: 1px solid rgb(170, 170, 170); width: 552px; background-color: rgb(241, 241, 241); border-collapse: collapse; padding-left: 5px; vertical-align: top; color: rgb(0, 0, 0);"> 
+  <tbody> 
+   <tr> 
+    <th style="background-color: rgb(205, 205, 205); border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" width="25%"> 标签</th> 
+    <th style="background-color: rgb(205, 205, 205); border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> 描述</th> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>EBADF</b></td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" valign="bottom"> <i>oldfd</i>&nbsp;isn’t an open file descriptor, or&nbsp;<i>newfd</i>&nbsp;is out of the allowed range for file descriptors.</td> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>EBUSY</b></td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" valign="bottom"> (Linux only) This may be returned by&nbsp;<b>dup2</b>() during a race condition with&nbsp;<b>open</b>() and&nbsp;<b>dup</b>().</td> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>EINTR</b></td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" valign="bottom"> The&nbsp;<b>dup2</b>() call was interrupted by a signal.</td> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>EMFILE</b></td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" valign="bottom"> The process already has the maximum number of file descriptors open and tried to open a new one.</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> WARNINGS</h1> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> The error returned by&nbsp;<b>dup2</b>() is different from that returned by&nbsp;<b>fcntl(</b>...,&nbsp;<b>F_DUPFD</b>, ...<b>)</b>when&nbsp;<i>newfd</i>&nbsp;is out of range. On some systems&nbsp;<b>dup2</b>() also sometimes returns&nbsp;<b>EINVAL&nbsp;</b>like&nbsp;<b>F_DUPFD</b>.</p> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> If&nbsp;<i>newfd</i>&nbsp;was open, any errors that would have been reported at&nbsp;<b>close</b>() time, are lost. A careful programmer will not use&nbsp;<b>dup2</b>() without closing&nbsp;<i>newfd</i>&nbsp;first.</p> 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> 遵循于</h1> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> SVr4, 4.3BSD, POSIX.1-2001.</p> 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> 另请参阅</h1> 
+ <ul style="font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> 
+  <li> <p style="text-align: justify;"> <a target="_blank" href="http://www.yiibai.com/unix_system_calls/close.html" style="color: rgb(144, 11, 9); background-color: transparent;">close (2)</a></p> </li> 
+  <li> <p style="text-align: justify;"> <a target="_blank" href="http://www.yiibai.com/unix_system_calls/fcntl.html" style="color: rgb(144, 11, 9); background-color: transparent;">fcntl (2)</a></p> </li> 
+  <li> <p style="text-align: justify;"> <a target="_blank" href="http://www.yiibai.com/unix_system_calls/open.html" style="color: rgb(144, 11, 9); background-color: transparent;">open (2)</a></p> </li> 
+ </ul> 
+ <br>      
+</div></body></html>

@@ -1,0 +1,86 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Laravel Cookie</h1><div style="width:100%;float:left;" class="article-content">   
+ <h2> 创建Cookie </h2> 
+ <p style="text-align:justify;"> Cookie可以通过&nbsp;Laravel&nbsp;的全局&nbsp;cookie&nbsp;助手来创建。 </p> 
+ <p style="text-align:justify;"> 它是&nbsp;Symfony\Component\HttpFoundation\Cookie&nbsp;的一个实例，cookie可以附加到使用withCookie()方法的响应。&nbsp; </p> 
+ <p style="text-align:justify;"> 调用 withCookie()方法创建&nbsp;Illuminate\Http\Response&nbsp;类的一个实例。由Laravel生成的cookie经过加密并签名，并且不能由客户修改或读取。 </p> 
+ <div>
+   这里是示例代码的解释。 
+ </div> 
+ <pre>//Create a response instance
+$response = new Illuminate\Http\Response('Hello World');
+
+//Call the withCookie() method with the response method
+$response-&gt;withCookie(cookie('name', 'value', $minutes));
+
+//return the response
+return $response;&nbsp;</pre> 
+ <p style="text-align:justify;"> Cookie()&nbsp;方法带有3个参数。第一个参数是Cookie的名称，第二个参数是cookie的值，而第三个参数是在此之后自动删除cookie的值的持续时间。 </p> 
+ <div>
+   Cookie可以使用&nbsp;forever方法来来设置永远生效，如下面的代码所示。 
+ </div> 
+ <pre>$response-&gt;withCookie(cookie()-&gt;forever('name', 'value'));</pre> 
+ <h2> 检索Cookie </h2> 
+ <p> 当我们设置Cookie，可以通过&nbsp;cookie()方法检索cookie。cookie()方法只有一个参数，它是Cookie的名称。cookie方法可以用Illuminate\Http\Request&nbsp;的实例调用。 </p> 
+ <div>
+   这里是一个示例代码。 
+ </div> 
+ <pre>//’name’ is the name of the cookie to retrieve the value of
+$value = $request-&gt;cookie('name');</pre> 
+ <h3> 示例 </h3> 
+ <div>
+   第1步&nbsp;-&nbsp;执行下面的命令来创建一个控制器用来操作&nbsp;cookie。 
+ </div> 
+ <pre>php artisan make:controller CookieController</pre> 
+ <div>
+   第2步&nbsp;-&nbsp;成功执行后，您会得到以下输出-
+  <br> 
+  <img src="/uploads/tutorial/20160508/1-16050PP035434.png" alt="">
+  <br> 
+ </div> 
+ <div>
+   第3步&nbsp;-&nbsp;复制下面的代码到文件&nbsp;-&nbsp;app/Http/Controllers/CookieController.php。 
+ </div> 
+ <p> <strong>app/Http/Controllers/CookieController.php</strong> </p> 
+ <pre>&lt;?php
+namespace App\Http\Controllers;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use App\Http\Requests;
+use App\Http\Controllers\Controller;
+
+class CookieController extends Controller {
+   public function setCookie(Request $request){
+      $minutes = 1;
+      $response = new Response('Hello World');
+      $response-&gt;withCookie(cookie('name', 'virat', $minutes));
+      return $response;
+   }
+   public function getCookie(Request $request){
+      $value = $request-&gt;cookie('name');
+      echo $value;
+   }
+}</pre> 
+ <div>
+   第4步&nbsp;-&nbsp;添加下面一行到文件&nbsp;-&nbsp;app/Http/routes.php。 
+ </div> 
+ <p> <strong>app/Http/routes.php</strong> </p>   
+ <pre>Route::get('/cookie/set','CookieController@setCookie');
+Route::get('/cookie/get','CookieController@getCookie');</pre> 
+ <div>
+   第5步&nbsp;-&nbsp;访问以下网址设置cookie。 
+ </div> 
+ <p> <strong><em>http://localhost:8000/cookie/set</em></strong> </p> 
+ <p> 第6步&nbsp;-&nbsp;将显示如下所示的输出。在下面屏幕截图是火狐浏览器,但可根据你的浏览器情况可能有所不同，cookie也可以从cookie选项选中。<br> <img src="/uploads/tutorial/20160508/1-16050PR2023Y.png" alt=""> </p> 
+ <div>
+   第7步&nbsp;-&nbsp;请访问以下网址，从上面的URL得到 cookie。 
+ </div> 
+ <p> <em><strong>http://localhost:8000/cookie/get</strong></em> </p> 
+ <div>
+   第8步&nbsp;-&nbsp;得到的输出结果如下图所示。
+  <br> 
+  <img src="/uploads/tutorial/20160508/1-16050PR345221.png" alt="">
+  <br> 
+ </div> 
+ <p> <br> </p>
+ <br>      
+</div></body></html>

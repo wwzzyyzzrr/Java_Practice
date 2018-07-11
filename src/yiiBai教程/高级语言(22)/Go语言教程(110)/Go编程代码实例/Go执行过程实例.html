@@ -1,0 +1,51 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Go执行过程实例</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>在前面的例子中，我们看看产生外部进程。 当需要一个运行的Go进程可访问的外部进程时，我们就可以这样做。有时只是想用另一个(可能是非Go)完全替换当前的Go进程。可使用Go的经典<code>exec</code>函数来实现。<br>在下面的例子将执行<code>ls</code>命令。 Go需要一个我们想要执行的二进制的绝对路径，所以将使用<code>exec.LookPath</code>来找到它(可能是<code>/bin/ls</code>)。</p> 
+ <blockquote> 
+  <p>所有的示例代码，都放在 <code>F:\worksp\golang</code> 目录下。安装Go编程环境请参考：<a target="_blank" href="http://www.yiibai.com/go/go_environment.html">http://www.yiibai.com/go/go_environment.html</a> </p> 
+ </blockquote> 
+ <p><code>execing-processes.go</code>的完整代码如下所示 -</p> 
+ <pre><code class="lang-go">package main
+
+import "syscall"
+import "os"
+import "os/exec"
+
+func main() {
+
+    // For our example we'll exec `ls`. Go requires an
+    // absolute path to the binary we want to execute, so
+    // we'll use `exec.LookPath` to find it (probably
+    // `/bin/ls`).
+    binary, lookErr := exec.LookPath("ls")
+    if lookErr != nil {
+        panic(lookErr)
+    }
+
+    // `Exec` requires arguments in slice form (as
+    // apposed to one big string). We'll give `ls` a few
+    // common arguments. Note that the first argument should
+    // be the program name.
+    args := []string{"ls", "-a", "-l", "-h"}
+
+    // `Exec` also needs a set of [environment variables](environment-variables)
+    // to use. Here we just provide our current
+    // environment.
+    env := os.Environ()
+
+    // Here's the actual `syscall.Exec` call. If this call is
+    // successful, the execution of our process will end
+    // here and be replaced by the `/bin/ls -a -l -h`
+    // process. If there is an error we'll get a return
+    // value.
+    execErr := syscall.Exec(binary, args, env)
+    if execErr != nil {
+        panic(execErr)
+    }
+}
+</code></pre> 
+ <p>执行上面代码，将得到以下输出结果 - </p> 
+ <blockquote> 
+  <p>此程序仅限在 Linux 类系统上执行。</p> 
+ </blockquote>
+ <br>      
+</div></body></html>

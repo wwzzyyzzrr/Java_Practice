@@ -1,0 +1,49 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Git重命名操作</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>到目前为止，我们前面已经存建了一个 <em>Python</em> 的源代码文件，现在，要修改 <em>main.py</em> 文件的名称把它作为一个新的模块，假设这里要文件<em>main.py</em>的新名称为：<em>module.py</em>。</p> 
+ <pre><code class="lang-python">$ pwd
+/D/worksp/sample
+
+Administrator@MY-PC /D/worksp/sample (master)
+$ cd src/
+
+Administrator@MY-PC /D/worksp/sample/src (master)
+$ pwd
+/D/worksp/sample/src
+
+Administrator@MY-PC /D/worksp/sample/src (master)
+$ ls
+main.py
+
+Administrator@MY-PC /D/worksp/sample/src (master)
+$ git mv main.py module.py
+
+Administrator@MY-PC /D/worksp/sample/src (master)
+$ git status -s
+R  main.py -&gt; module.py
+</code></pre> 
+ <p>Git在文件名之前显示<code>R</code>，表示文件已被重命名。</p> 
+ <p>对于提交操作，需要使用<code>-a</code>标志，这使<code>git commit</code>自动检测修改的文件。</p> 
+ <pre><code class="lang-shell">Administrator@MY-PC /D/worksp/sample/src (master)
+$ git commit -a -m 'renamed main.py to module.py'
+[master 6bdbf82] renamed main.py to module.py
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+ rename src/{main.py =&gt; module.py} (100%)
+</code></pre> 
+ <p>提交后，新文件将更改推送到远程存储库。</p>   
+ <pre><code class="lang-shell">$ git push origin master
+</code></pre> 
+ <p>上述命令将产生以下结果：</p> 
+ <pre><code class="lang-shell">$ git push origin master
+Username for 'http://git.oschina.net': 769728683@qq.com
+Password for 'http://769728683@qq.com@git.oschina.net':
+Counting objects: 5, done.
+Delta compression using up to 4 threads.
+Compressing objects: 100% (2/2), done.
+Writing objects: 100% (3/3), 318 bytes | 0 bytes/s, done.
+Total 3 (delta 0), reused 0 (delta 0)
+To http://git.oschina.net/yiibai/sample.git
+   186df84..6bdbf82  master -&gt; master
+</code></pre> 
+ <p>现在，其他开发人员可以通过使用<code>git pull</code>命令更新本地存储库来查看这些修改。</p>
+ <br>      
+</div></body></html>

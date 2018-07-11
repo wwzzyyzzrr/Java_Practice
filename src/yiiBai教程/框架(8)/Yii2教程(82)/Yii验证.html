@@ -1,0 +1,138 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Yii验证</h1><div style="width:100%;float:left;" class="article-content">   
+ <div> 
+  <div>
+    在开发应用程序时，永远不要相信从用户接收到的数据。为了使用模式来验证用户的输入，应该调用&nbsp;yii\base\Model::validate()&nbsp;方法。如果验证成功，它返回一个布尔值。如果有错误发生，可以从&nbsp;yii\base\Model::$errors&nbsp;得到它们。 
+  </div> 
+ </div> 
+ <div> 
+  <h2> 
+   <div>
+     使用规则 
+   </div> </h2> 
+  <div>
+    为了使&nbsp;validate()函数工作，应该重写&nbsp;yii\base\Model::rules()&nbsp;方法。 
+  </div> 
+  <div>
+    第1步-&nbsp;rules()&nbsp;方法返回以下格式的数组。 
+  </div> 
+  <pre>[
+   // required, specifies which attributes should be validated
+   ['attr1', 'attr2', ...],
+   // required, specifies the type a rule.
+   'type_of_rule',
+   // optional, defines in which scenario(s) this rule should be applied
+   'on' =&gt; ['scenario1', 'scenario2', ...],
+   // optional, defines additional configurations
+   'property' =&gt; 'value', ...
+]</pre> 
+  <div>
+    对于每个规则，应该至少定义属性的规则，适用于应用规则的类型。 
+  </div> 
+  <p style="text-align:justify;"> 核心验证规则&nbsp;−&nbsp;boolean, captcha, compare, date, default, double, each, email, exist, file, filter, image, ip, in, integer, match, number, required, safe, string, trim, unique, url。 </p> 
+  <div>
+    第2步&nbsp;-&nbsp;创建一个新的模型&nbsp;RegistrationForm.php&nbsp;在 models 文件夹中。 
+  </div> 
+  <pre>&lt;?php
+   namespace app\models;
+   use Yii;
+   use yii\base\Model;
+   class RegistrationForm extends Model {
+      public $username;
+      public $password;
+      public $email;
+      public $phone;
+      public function rules() {
+         return [
+            // the username, password, email, country, city, and phone attributes are
+            //required
+            [['username' ,'password', 'email', 'phone'], 'required'],
+            // the email attribute should be a valid email address
+            ['email', 'email'],
+         ];
+      }
+   }
+?&gt;&nbsp;</pre> 
+  <p> 我们已经声明&nbsp;registration&nbsp;表单模型。该模型有五个属性&nbsp;− username, password, email, country, city 和 phone。它们都必需的以及&nbsp;email&nbsp;属性必须是一个有效的电子邮件地址。 </p> 
+  <div>
+    第3步&nbsp;-&nbsp;添加&nbsp;actionRegistration() 方法，我们创建一个新的&nbsp;RegistrationForm&nbsp;模型在&nbsp;SiteController&nbsp;中，并把它传递给视图中。 
+  </div> 
+  <pre>public function actionRegistration() {
+   $model = new RegistrationForm();
+   return $this-&gt;render('registration', ['model' =&gt; $model]);
+}&nbsp;</pre> 
+  <p> 第4步&nbsp;-&nbsp;添加&nbsp;registration&nbsp;表视图。&nbsp;在&nbsp;views/site&nbsp;文件夹内部，创建一个&nbsp;registration.php&nbsp;文件并使用下面的代码。 </p> 
+  <pre>&lt;?php
+   use yii\bootstrap\ActiveForm;
+   use yii\bootstrap\Html;
+?&gt;
+
+&lt;div class = "row"&gt;
+   &lt;div class = "col-lg-5"&gt;
+      &lt;?php $form = ActiveForm::begin(['id' =&gt; 'registration-form']); ?&gt;
+         &lt;?= $form-&gt;field($model, 'username') ?&gt;
+         &lt;?= $form-&gt;field($model, 'password')-&gt;passwordInput() ?&gt;
+         &lt;?= $form-&gt;field($model, 'email')-&gt;input('email') ?&gt;
+         &lt;?= $form-&gt;field($model, 'phone') ?&gt;
+         &lt;div class = "form-group"&gt;
+            &lt;?= Html::submitButton('提交', ['class' =&gt; 'btn btn-primary',
+               'name' =&gt; 'registration-button']) ?&gt;
+         &lt;/div&gt;
+      &lt;?php ActiveForm::end(); ?&gt;
+   &lt;/div&gt;
+&lt;/div&gt;</pre> 
+  <div>
+    使用&nbsp;ActiveForm&nbsp;widget&nbsp;来显示登记表单。 
+  </div> 
+  <div>
+    第5步&nbsp;-&nbsp;在浏览器中打开URL：
+   <a target="_blank" href="http://localhost:8080/index.php?r=site/registration">http://localhost:8080/index.php?r=site/registration</a>，什么都不输入，然后单击提交按钮，会看到在动作的验证规则。 
+  </div> 
+  <img src="/uploads/tutorial/20160531/1-1605310GTCQ.png" width="804" height="602" title="Yii验证" alt="Yii验证">
+  <br> 
+  <div>
+    第6步&nbsp;-&nbsp;要自定义&nbsp;username&nbsp;属性的错误信息，RegistrationForm&nbsp;修改&nbsp;rules()&nbsp;方法，以下列方式。 
+  </div>   
+  <pre>public function rules() {
+   return [
+      // the username, password, email, country, city, and phone attributes are required
+      [['password', 'email', 'country', 'city', 'phone'], 'required'], <b>['username', 'required', 'message' =&gt; 'Username is required'],</b> // the email attribute should be a valid email address
+      ['email', 'email'],
+   ];
+}&nbsp;</pre> 
+  <p> 第7步-&nbsp;打开转到&nbsp;<a target="_blank" href="http://localhost:8080/index.php?r=site/registration">http://localhost:8080/index.php?r=site/registration</a>&nbsp;，然后单击提交按钮。你会发现，username&nbsp;属性的错误信息发生了变化。<br> <img src="/uploads/tutorial/20160531/1-1605310G915922.png" alt="Yii验证 2"> </p> 
+  <div>
+    第8步&nbsp;- 在自定义的验证过程中，可以覆盖这些方法。 
+  </div> 
+  <ul> 
+   <li> <p style="text-align:justify;"> yii\base\Model::beforeValidate(): 触发一个 </p> <p style="text-align:justify;"> yii\base\Model::EVENT_BEFORE_VALIDATE 事件. </p> </li> 
+   <li> <p style="text-align:justify;"> yii\base\Model::afterValidate():&nbsp;触发一个 </p> <p style="text-align:justify;"> yii\base\Model::EVENT_AFTER_VALIDATE 事件. </p> </li> 
+  </ul> 
+  <div>
+    第9步&nbsp;-&nbsp;要修整去除&nbsp;country&nbsp;属性的空格，把&nbsp;city&nbsp;空输入转换为null，可以修剪和默认验证器。 
+  </div> 
+  <pre>public function rules() {
+   return [
+      // the username, password, email, country, city, and phone attributes are required
+      [['password', 'email', 'country', 'city', 'phone'], 'required'],
+      ['username', 'required', 'message' =&gt; 'Username is required'], <b>['country', 'trim'],
+      ['city', 'default'],</b> // the email attribute should be a valid email address
+      ['email', 'email'],
+   ];
+}</pre> 
+  <div>
+    第10步&nbsp;-&nbsp;如果输入是空的，可以设置它的默认值。 
+  </div> 
+  <pre>public function rules() {
+   return [
+      ['city', 'default', 'value' =&gt; 'Haikou'],
+   ];
+}</pre> 
+  <div>
+    如果&nbsp;city&nbsp;属性为空，那么将使用默认的&nbsp;“Haikou”&nbsp;值。 
+  </div> 
+  <div> 
+   <br> 
+  </div> 
+ </div>
+ <br>      
+</div></body></html>

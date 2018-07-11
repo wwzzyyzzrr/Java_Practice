@@ -1,0 +1,114 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Java Zip字节数组</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>Java Zip字节数组</p> 
+ <p>Java在<code>java.util.zip</code>包中提供了一个<code>Adler-32</code>类来计算数据字节的<code>Adler-32</code>校验和。需要调用这个类的<code>update()</code>方法将字节传递给它。</p> 
+ <p>在同一个包中还有另一个名为<code>CRC32</code>的类，它允许使用<code>CRC32</code>算法计算校验和。以下代码演示如何使用<code>Adler32</code>和<code>CRC32</code>类来计算校验和。</p> 
+ <pre><code class="lang-java">import java.util.zip.Adler32;
+import java.util.zip.CRC32;
+
+public class Main {
+  public static void main(String[] args) throws Exception {
+    String str = "HELLO";
+    byte[] data = str.getBytes("UTF-8");
+    System.out.println("Adler32 and  CRC32  checksums  for " + str);
+
+    // Compute Adler32 checksum
+    Adler32 ad = new Adler32();
+    ad.update(data);
+    long adler32Checksum = ad.getValue();
+    System.out.println("Adler32: " + adler32Checksum);
+
+    // Compute CRC32 checksum
+    CRC32 crc = new CRC32();
+    crc.update(data);
+    long crc32Checksum = crc.getValue();
+    System.out.println("CRC32: " + crc32Checksum);
+  }
+}
+</code></pre> 
+ <p>上面的代码生成以下结果。</p> 
+ <pre><code class="lang-java">Adler32 and  CRC32  checksums  for HELLO
+Adler32: 72089973
+CRC32: 3242484790
+</code></pre> 
+ <h2 id="h2-u538Bu7F29u5B57u8282u6570u7EC4"><a name="压缩字节数组" class="reference-link"></a><span class="header-link octicon octicon-link"></span>压缩字节数组</h2>
+ <p>可以使用<code>java.util.zip</code>包中的<code>Deflater</code>和<code>Inflater</code>类来分别压缩和解压缩字节数组中的数据。</p> 
+ <p>可以使用<code>Deflater</code>类中的一个常量来指定压缩级别。这些常数是<code>BEST_COMPRESSION</code>，<code>BEST_SPEED</code>，<code>DEFAULT_COMPRESSION</code> 和 <code>NO_COMPRESSION</code>。<br>最快速度意味着较低的压缩比，最好的压缩意味着较慢的压缩速度。</p> 
+ <pre><code class="lang-java">Deflater  compressor = new Deflater(Deflater.BEST_COMPRESSION);
+</code></pre> 
+ <p>默认情况下，使用<code>Deflater</code>对象的压缩数据将采用<code>ZLIB</code>格式。要以<code>GZIP</code>或<code>PKZIP</code>格式压缩数据，请通过在构造函数中使用布尔标志为<code>true</code>来指定。</p> 
+ <pre><code class="lang-java">// Uses  the   best speed  compression and  GZIP format
+Deflater  compressor = new Deflater(Deflater.BEST_SPEED, true);
+</code></pre> 
+ <p>以下代码显示如何使用<code>Deflater</code>和<code>Inflater</code>类压缩和解压缩字节数组。</p> 
+ <pre><code class="lang-java">import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.zip.DataFormatException;
+import java.util.zip.Deflater;
+import java.util.zip.Inflater;
+
+public class Main {
+  public static void main(String[] args) throws Exception {
+    String input = "Hello world!";
+    byte[] uncompressedData = input.getBytes("UTF-8");
+
+    byte[] compressedData = compress(uncompressedData,
+        Deflater.BEST_COMPRESSION, false);
+
+    byte[] decompressedData = decompress(compressedData, false);
+
+    String output = new String(decompressedData, "UTF-8");
+
+    System.out.println("Uncompressed data length: " + uncompressedData.length);
+    System.out.println("Compressed data length:  " + compressedData.length);
+    System.out.println("Decompressed data length:  " + decompressedData.length);
+  }
+
+  public static byte[] compress(byte[] input, int compressionLevel,
+      boolean GZIPFormat) throws IOException {
+    Deflater compressor = new Deflater(compressionLevel, GZIPFormat);
+
+    compressor.setInput(input);
+
+    compressor.finish();
+
+    ByteArrayOutputStream bao = new ByteArrayOutputStream();
+    byte[] readBuffer = new byte[1024];
+    int readCount = 0;
+
+    while (!compressor.finished()) {
+      readCount = compressor.deflate(readBuffer);
+      if (readCount &gt; 0) {
+        bao.write(readBuffer, 0, readCount);
+      }
+    }
+
+    compressor.end();
+    return bao.toByteArray();
+  }
+
+  public static byte[] decompress(byte[] input, boolean GZIPFormat)
+      throws IOException, DataFormatException {
+    Inflater decompressor = new Inflater(GZIPFormat);
+    decompressor.setInput(input);
+    ByteArrayOutputStream bao = new ByteArrayOutputStream();
+    byte[] readBuffer = new byte[1024];
+    int readCount = 0;
+
+    while (!decompressor.finished()) {
+      readCount = decompressor.inflate(readBuffer);
+      if (readCount &gt; 0) {
+        bao.write(readBuffer, 0, readCount);
+      }
+    }
+    decompressor.end();
+    return bao.toByteArray();
+  }
+}
+</code></pre> 
+ <p>执行上面的代码，得到以下结果 - </p>   
+ <pre><code class="lang-java">Uncompressed data length: 12
+Compressed data length:  20
+Decompressed data length:  12
+</code></pre>
+ <br>      
+</div></body></html>

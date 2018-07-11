@@ -1,0 +1,69 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">log4j Logger方法</h1><div style="width:100%;float:left;" class="article-content">   
+ <p> Logger类提供了多种方法来处理日志活动。 Logger类不允许实例化一个新的记录器实例，但它提供了两个静态方法获得一个 Logger 对象：</p> 
+ <ul> 
+  <li> <p> <strong>public static Logger getRootLogger();</strong></p> </li> 
+  <li> <p> <strong>public static Logger getLogger(String name);</strong></p> </li> 
+ </ul> 
+ <p> 此处两种方法的第一个返回应用程序实例根记录器并没有名字。任何其他命名的Logger对象实例是通过第二种方法通过记录器的名称获得。记录器名称是可以传递任何字符串，通常是类或包的名称，因为我们已经使用在最后一章。</p> 
+ <pre class="prettyprint" style="border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; font-size: 12px; overflow: auto;">
+static Logger log = Logger.getLogger(log4jExample.class.getName());</pre> 
+ <h2> Logging 方法:</h2> 
+ <p> 我们得到了一个名为记录器的实例之后，可以使用记录的几种方法来记录消息。 Logger类有专门用于打印日志信息下面的方法如下。</p> 
+ <table class="src" style="margin: 8px 0px; padding: 0px;  border-color: rgb(214, 214, 214); width: 560px; border-collapse: collapse; vertical-align: top; color: rgb(0, 0, 0);  background-color: rgb(247, 247, 247);"> 
+  <tbody style="margin: 0px; padding: 0px;"> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <th style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214); width: 17px; background-color: rgb(238, 238, 238);"> SN</th> 
+    <th style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214); background-color: rgb(238, 238, 238);"> 方法及描述</th> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 1</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> <b style="margin: 0px; padding: 0px;">public void debug(Object message)</b><br style="margin: 0px; padding: 0px;"> 这种方法打印使用 Level.DEBUG&nbsp;消息级别</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 2</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> <b style="margin: 0px; padding: 0px;">public void error(Object message)</b><br style="margin: 0px; padding: 0px;"> 这种方法打印使用 Level.ERROR&nbsp;消息级别</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 3</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> <b style="margin: 0px; padding: 0px;">public void fatal(Object message);</b><br style="margin: 0px; padding: 0px;"> 这种方法打印使用 Level.FATAL&nbsp;消息级别</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 4</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> <b style="margin: 0px; padding: 0px;">public void info(Object message);</b><br style="margin: 0px; padding: 0px;"> 这种方法打印使用&nbsp;Level.INFO&nbsp;消息级别</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 5</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> <b style="margin: 0px; padding: 0px;">public void warn(Object message);</b><br style="margin: 0px; padding: 0px;"> 这种方法打印使用&nbsp;Level.WARN&nbsp;消息级别</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 6</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> <b style="margin: 0px; padding: 0px;">public void trace(Object message);</b><br style="margin: 0px; padding: 0px;"> 这种方法打印使用Level.TRACE消息级别</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p> 所有的级别定义在org.apache.log4j.Level类中，并且任何上述方法都可以调用如下：</p>   
+ <pre class="prettyprint" style="border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; font-size: 12px; overflow: auto;">
+import org.apache.log4j.Logger;
+
+public class LogClass {
+   private static org.apache.log4j.Logger log = Logger
+                                    .getLogger(LogClass.class);
+   public static void main(String[] args) {
+      log.trace("Trace Message!");
+      log.debug("Debug Message!");
+      log.info("Info Message!");
+      log.warn("Warn Message!");
+      log.error("Error Message!");
+      log.fatal("Fatal Message!");
+   }
+}</pre> 
+ <p> 当编译并运行LogClass程序会产生以下结果：</p> 
+ <pre class="prettyprint" style="border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; font-size: 12px; overflow: auto;">
+Debug Message!
+Info Message!
+Warn Message!
+Error Message!
+Fatal Message!</pre> 
+ <p style="margin: 0.8em 0px 1em; padding: 0px; text-align: justify; color: rgb(0, 0, 0); "> 所有的调试消息更有意义，当它们在级别组合使用。级别将在下一章介绍，那么在下一节会有一个很好的理解及如何使用这些方法在不同的级别调试。</p> 
+ <br>      
+</div></body></html>

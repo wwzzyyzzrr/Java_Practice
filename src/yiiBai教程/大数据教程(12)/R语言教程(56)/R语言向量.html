@@ -1,0 +1,166 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">R语言向量</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>向量是最基本的R数据对象，有六种类型的原子向量。它们分别是逻辑，整数，双重，复杂，字符和原始。</p> 
+ <h2 id="h2-u521Bu5EFAu77E2u91CF"><a name="创建矢量" class="reference-link"></a><span class="header-link octicon octicon-link"></span>创建矢量</h2>
+ <h3 id="h3-1-"><a name="1.单元素矢量" class="reference-link"></a><span class="header-link octicon octicon-link"></span>1.单元素矢量</h3>
+ <p>即使在R中只写入一个值，它也会被认为是一个长度为<code>1</code>的向量，属于上述向量类型之一。</p> 
+ <pre><code class="lang-r"># Atomic vector of type character.
+print("abc");
+
+# Atomic vector of type double.
+print(12.5)
+
+# Atomic vector of type integer.
+print(63L)
+
+# Atomic vector of type logical.
+print(TRUE)
+
+# Atomic vector of type complex.
+print(2+3i)
+
+# Atomic vector of type raw.
+print(charToRaw('hello'))
+</code></pre> 
+ <p>当我们执行上述代码时，会产生以下结果 -</p> 
+ <pre><code class="lang-shell">[1] "abc"
+[1] 12.5
+[1] 63
+[1] TRUE
+[1] 2+3i
+[1] 68 65 6c 6c 6f
+</code></pre> 
+ <h3 id="h3-2-"><a name="2.多元素向量" class="reference-link"></a><span class="header-link octicon octicon-link"></span>2.多元素向量</h3>
+ <p>使用冒号运算符与数字数据 - </p> 
+ <pre><code class="lang-r"># Creating a sequence from 5 to 13.
+v &lt;- 5:13
+print(v)
+
+# Creating a sequence from 6.6 to 12.6.
+v &lt;- 6.6:12.6
+print(v)
+
+# If the final element specified does not belong to the sequence then it is discarded.
+v &lt;- 3.8:11.4
+print(v)
+</code></pre> 
+ <p>当我们执行上述代码时，会产生以下结果 -</p> 
+ <pre><code class="lang-shell">[1]  5  6  7  8  9 10 11 12 13
+[1]  6.6  7.6  8.6  9.6 10.6 11.6 12.6
+[1]  3.8  4.8  5.8  6.8  7.8  8.8  9.8 10.8
+</code></pre> 
+ <p><strong>使用序列(Seq.)运算符</strong></p> 
+ <pre><code class="lang-r"># Create vector with elements from 5 to 9 incrementing by 0.4.
+print(seq(5, 9, by = 0.4))
+</code></pre> 
+ <p>当我们执行上述代码时，会产生以下结果 -</p> 
+ <pre><code class="lang-r">[1] 5.0 5.4 5.8 6.2 6.6 7.0 7.4 7.8 8.2 8.6 9.0
+</code></pre> 
+ <p><strong>使用c()函数</strong></p> 
+ <p>如果其中一个元素是字符，则非字符值被强制为字符类型。</p> 
+ <pre><code class="lang-r"># The logical and numeric values are converted to characters.
+s &lt;- c('apple','red',5,TRUE)
+print(s)
+</code></pre> 
+ <p>当我们执行上述代码时，会产生以下结果 -</p> 
+ <pre><code class="lang-shell">[1] "apple" "red"   "5"     "TRUE"
+</code></pre> 
+ <h2 id="h2-u8BBFu95EEu5411u91CFu5143u7D20"><a name="访问向量元素" class="reference-link"></a><span class="header-link octicon octicon-link"></span>访问向量元素</h2>
+ <p>使用索引访问向量的元素。<code>[]</code>括号用于指定索引。索引从位置<code>1</code>开始。在索引中赋予负值会从结果中删除该元素。<code>TRUE</code>，<code>FALSE</code>或<code>0</code>和<code>1</code>也可用于索引。</p> 
+ <pre><code class="lang-r"># Accessing vector elements using position.
+t &lt;- c("Sun","Mon","Tue","Wed","Thurs","Fri","Sat")
+u &lt;- t[c(2,3,6)]
+print(u)
+
+# Accessing vector elements using logical indexing.
+v &lt;- t[c(TRUE,FALSE,FALSE,FALSE,FALSE,TRUE,FALSE)]
+print(v)
+
+# Accessing vector elements using negative indexing.
+x &lt;- t[c(-2,-5)]
+print(x)
+
+# Accessing vector elements using 0/1 indexing.
+y &lt;- t[c(0,0,0,0,0,0,1)]
+print(y)
+</code></pre> 
+ <p>当我们执行上述代码时，会产生以下结果 -</p> 
+ <pre><code class="lang-shell">[1] "Mon" "Tue" "Fri"
+[1] "Sun" "Fri"
+[1] "Sun" "Tue" "Wed" "Fri" "Sat"
+[1] "Sun"
+`
+</code></pre> 
+ <h2 id="h2-u5411u91CFu64CDu4F5C"><a name="向量操作" class="reference-link"></a><span class="header-link octicon octicon-link"></span>向量操作</h2>
+ <p><strong>向量算术</strong></p> 
+ <p>可以将相同长度的两个向量相加，减去，相乘或相除，给出结果作为向量输出。如下示例 - </p>   
+ <pre><code class="lang-r"># Create two vectors.
+v1 &lt;- c(3,8,4,5,0,11)
+v2 &lt;- c(4,11,0,8,1,2)
+
+# Vector addition.
+add.result &lt;- v1+v2
+print(add.result)
+
+# Vector substraction.
+sub.result &lt;- v1-v2
+print(sub.result)
+
+# Vector multiplication.
+multi.result &lt;- v1*v2
+print(multi.result)
+
+# Vector division.
+divi.result &lt;- v1/v2
+print(divi.result)
+</code></pre> 
+ <p>当我们执行上述代码时，会产生以下结果 -</p> 
+ <pre><code class="lang-shell">[1]  7 19  4 13  1 13
+[1] -1 -3  4 -3 -1  9
+[1] 12 88  0 40  0 22
+[1] 0.7500000 0.7272727       Inf 0.6250000 0.0000000 5.5000000
+</code></pre> 
+ <p><strong>向量元素回收</strong></p> 
+ <p>如果我们对两个不等长度的向量应用算术运算，则将循环使用较短向量的元素来完成操作。</p> 
+ <pre><code class="lang-r">v1 &lt;- c(3,8,4,5,0,11)
+v2 &lt;- c(4,11)
+# V2 becomes c(4,11,4,11,4,11)
+
+add.result &lt;- v1+v2
+print(add.result)
+
+sub.result &lt;- v1-v2
+print(sub.result)
+</code></pre> 
+ <p>当我们执行上述代码时，会产生以下结果 -</p> 
+ <pre><code class="lang-shell">[1]  7 19  8 16  4 22
+[1] -1 -3  0 -6 -4  0
+</code></pre> 
+ <p><strong>向量元素排序</strong></p> 
+ <p>可以使用<code>sort()</code>函数对向量中的元素进行排序。</p> 
+ <pre><code class="lang-r">v &lt;- c(3,8,4,5,0,11, -9, 304)
+
+# Sort the elements of the vector.
+sort.result &lt;- sort(v)
+print(sort.result)
+
+# Sort the elements in the reverse order.
+revsort.result &lt;- sort(v, decreasing = TRUE)
+print(revsort.result)
+
+# Sorting character vectors.
+v &lt;- c("Red","Blue","yellow","violet")
+sort.result &lt;- sort(v)
+print(sort.result)
+
+# Sorting character vectors in reverse order.
+revsort.result &lt;- sort(v, decreasing = TRUE)
+print(revsort.result)
+</code></pre> 
+ <p>当我们执行上述代码时，会产生以下结果 -</p> 
+ <pre><code class="lang-shell">[1]  -9   0   3   4   5   8  11 304
+[1] 304  11   8   5   4   3   0  -9
+[1] "Blue"   "Red"    "violet" "yellow"
+[1] "yellow" "violet" "Red"    "Blue"
+</code></pre>
+ <br>      
+</div></body></html>

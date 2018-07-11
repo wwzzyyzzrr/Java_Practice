@@ -1,0 +1,461 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Python+MySQL数据库操作（PyMySQL）</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>Python的数据库接口标准是Python DB-API。大多数Python数据库接口遵循这个标准。<br>可以为应用程序选择正确的数据库。Python数据库API支持广泛的数据库服务器，如 -</p> 
+ <ul> 
+  <li>GadFly</li>
+  <li>mSQL</li>
+  <li><a target="_blank" href="http://www.yiibai.com/mysql" title="MySQL">MySQL</a></li>
+  <li><a target="_blank" href="http://www.yiibai.com/postgresql" title="PostgreSQL">PostgreSQL</a></li>
+  <li>Microsoft SQL Server 2000</li>
+  <li>Informix</li>
+  <li>Interbase</li>
+  <li><a target="_blank" href="http://www.yiibai.com/oracle" title="Oracle">Oracle</a></li>
+  <li>Sybase</li>
+  <li><a target="_blank" href="http://www.yiibai.com/sqlite" title="SQLite">SQLite</a></li>
+ </ul> 
+ <p>以下是可用的Python数据库接口 - <a target="_blank" href="http://wiki.python.org/moin/DatabaseInterfaces" title="Python数据库接口和API">Python数据库接口和API</a>的列表。需要为要访问的每种数据库下载一个单独的DB API模块。 例如，如果需要访问Oracle数据库和MySQL数据库，则必须同时下载Oracle和MySQL数据库模块。</p> 
+ <p>DB API为尽可能使用Python结构和语法处理数据库提供了最低标准。API包括以下内容：</p> 
+ <ul> 
+  <li>导入API模块。</li>
+  <li>获取与数据库的连接。</li>
+  <li>发出SQL语句和存储过程。</li>
+  <li>关闭连接</li>
+ </ul> 
+ <p>Python具有内置的SQLite支持。 在本节中，我们将学习使用MySQL的相关概念和知识。 在早期Python版本一般都使用MySQLdb模块，但这个MySQL的流行接口与<em>Python 3</em>不兼容。因此，在教程中将使用<a target="_blank" href="http://github.com/PyMySQL/PyMySQL/" title="PyMySQL模块">PyMySQL模块</a>。</p> 
+ <h2 id="h2-1-pymysql-"><a name="1.什么是PyMySQL？" class="reference-link"></a><span class="header-link octicon octicon-link"></span>1.什么是PyMySQL？</h2>
+ <p>PyMySQL是从Python连接到MySQL数据库服务器的接口。 它实现了Python数据库API v2.0，并包含一个纯Python的MySQL客户端库。 PyMySQL的目标是成为MySQLdb的替代品。</p> 
+ <p>PyMySQL参考文档：<a target="_blank" href="http://pymysql.readthedocs.io/">http://pymysql.readthedocs.io/</a></p> 
+ <h2 id="h2-2-pymysql-"><a name="2.如何安装PyMySQL？" class="reference-link"></a><span class="header-link octicon octicon-link"></span>2.如何安装PyMySQL？</h2>
+ <p>在使用PyMySQL之前，请确保您的机器上安装了PyMySQL。只需在Python脚本中输入以下内容即可执行它 -</p> 
+ <pre><code class="lang-python">#!/usr/bin/python3
+
+import PyMySQL
+</code></pre> 
+ <p>在 Windows 系统上，打开命令提示符 - </p> 
+ <pre><code class="lang-shell">C:\Users\Administrator&gt;python
+Python 3.6.1 (v3.6.1:69c0db5, Mar 21 2017, 18:41:36) [MSC v.1900 64 bit (AMD64)] on win32
+Type "help", "copyright", "credits" or "license" for more information.
+&gt;&gt;&gt; import PyMySQL
+Traceback (most recent call last):
+  File "&lt;stdin&gt;", line 1, in &lt;module&gt;
+ModuleNotFoundError: No module named 'PyMySQL'
+&gt;&gt;&gt;
+</code></pre> 
+ <p>如果产生如上结果，则表示<code>PyMySQL</code>模块尚未安装。</p> 
+ <p>最后一个稳定版本可以在PyPI上使用，可以通过<code>pip</code>命令来安装-</p> 
+ <pre><code class="lang-shell">:\Users\Administrator&gt; pip install PyMySQL
+Collecting PyMySQL
+  Downloading PyMySQL-0.7.11-py2.py3-none-any.whl (78kB)
+    51% |████████████████▋               | 
+    40kB 109kB/s eta 0:0    64% |████████████████████▊       
+    | 51kB 112kB/s eta    77% |█████████████████████████      | 61kB 135kB/s    90% |█████████████████████████████
+    | 71kB 152    100% |████████████████████████████████| 81kB 163kB/s
+
+Installing collected packages: PyMySQL
+Successfully installed PyMySQL-0.7.11
+
+C:\Users\Administrator&gt;
+</code></pre> 
+ <p>或者(例如，如果pip不可用)，可以从GitHub下载tarball，并按照以下方式安装：</p> 
+ <pre><code class="lang-shell">$ # X.X is the desired PyMySQL version (e.g. 0.5 or 0.6).
+$ curl -L http://github.com/PyMySQL/PyMySQL/tarball/pymysql-X.X | tar xz
+$ cd PyMySQL*
+$ python setup.py install
+$ # The folder PyMySQL* can be safely removed now.
+</code></pre> 
+ <blockquote> 
+  <p>注意 - 确保具有root权限来安装上述模块。</p> 
+ </blockquote> 
+ <h2 id="h2-3-"><a name="3.数据库连接" class="reference-link"></a><span class="header-link octicon octicon-link"></span>3.数据库连接</h2>
+ <p>在连接到MySQL数据库之前，请确保以下几点：</p> 
+ <ul> 
+  <li>已经创建了一个数据库：<code>test</code>。</li>
+  <li>已经在<code>test</code>中创建了一个表:<code>employee</code>。</li>
+  <li><code>employee</code>表格包含:<code>fist_name</code>，<code>last_name</code>，<code>age</code>，<code>sex</code>和<code>income</code>字段。</li>
+  <li>MySQL用户“root”和密码“123456”可以访问：<code>test</code>。</li>
+  <li>Python模块PyMySQL已正确安装在您的计算机上。</li>
+  <li>已经通过<a target="_blank" href="http://www.yiibai.com/mysql" title="MySQL教程">MySQL教程</a>了解MySQL基础知识。</li>
+ </ul> 
+ <p>创建表<code>employee</code>的语句为：</p> 
+ <pre><code class="lang-sql">CREATE TABLE `employee` (
+  `id` int(10) NOT NULL AUTO_INCREMENT,
+  `first_name` char(20) NOT NULL,
+  `last_name` char(20) DEFAULT NULL,
+  `age` int(11) DEFAULT NULL,
+  `sex` char(1) DEFAULT NULL,
+  `income` float DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+</code></pre> 
+ <p><strong>实例</strong></p> 
+ <p>以下是Python通过PyMySQL模块接口连接MySQL数据库“<code>test</code>”的示例 -</p> 
+ <blockquote> 
+  <p>注意：在 Windows 系统上，<code>import PyMySQL</code> 和 <code>import pymysql</code> 有区别。</p> 
+ </blockquote> 
+ <pre><code class="lang-python">#!/usr/bin/python3
+#coding=utf-8
+
+import pymysql
+
+# Open database connection
+db = pymysql.connect("localhost","root","123456","test" )
+
+# prepare a cursor object using cursor() method
+cursor = db.cursor()
+
+# execute SQL query using execute() method.
+cursor.execute("SELECT VERSION()")
+
+# Fetch a single row using fetchone() method.
+data = cursor.fetchone()
+
+print ("Database version : %s " % data)
+
+# disconnect from server
+db.close()
+</code></pre> 
+ <p>运行此脚本时，会产生以下结果 - </p> 
+ <pre><code class="lang-shell">Database version : 5.7.14-log
+</code></pre> 
+ <p>如果使用数据源建立连接，则会返回连接对象并将其保存到<code>db</code>中以供进一步使用，否则将<code>db</code>设置为<code>None</code>。 接下来，<code>db</code>对象用于创建一个游标对象，用于执行SQL查询。 最后，在结果打印出来之前，它确保数据库连接关闭并释放资源。</p> 
+ <h2 id="h2-4-"><a name="4.创建数据库表" class="reference-link"></a><span class="header-link octicon octicon-link"></span>4.创建数据库表</h2>
+ <p>建立数据库连接后，可以使用创建的游标的<code>execute</code>方法将数据库表或记录创建到数据库表中。</p> 
+ <p><strong>示例</strong></p> 
+ <p>下面演示如何在数据库：<code>test</code>中创建一张数据库表：<code>employee</code> -</p> 
+ <pre><code class="lang-python">#!/usr/bin/python3
+#coding=utf-8
+
+import pymysql
+
+# Open database connection
+db = pymysql.connect("localhost","root","123456","test" )
+
+# prepare a cursor object using cursor() method
+cursor = db.cursor()
+
+# Drop table if it already exist using execute() method.
+cursor.execute("DROP TABLE IF EXISTS employee")
+
+# Create table as per requirement
+sql = """CREATE TABLE `employee` (
+  `id` int(10) NOT NULL AUTO_INCREMENT,
+  `first_name` char(20) NOT NULL,
+  `last_name` char(20) DEFAULT NULL,
+  `age` int(11) DEFAULT NULL,
+  `sex` char(1) DEFAULT NULL,
+  `income` float DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;"""
+
+cursor.execute(sql)
+print("Created table Successfull.")
+# disconnect from server
+db.close()
+</code></pre> 
+ <p>运行此脚本时，会产生以下结果 - </p> 
+ <pre><code class="lang-shell">Created table Successfull.
+</code></pre> 
+ <h2 id="h2-5-"><a name="5.插入操作" class="reference-link"></a><span class="header-link octicon octicon-link"></span>5.插入操作</h2>
+ <p>当要将记录创建到数据库表中时，需要执行<code>INSERT</code>操作。</p> 
+ <p><strong>示例</strong></p> 
+ <p>以下示例执行SQL的<code>INSERT</code>语句以在<code>EMPLOYEE</code>表中创建一条(多条)记录 -</p> 
+ <pre><code class="lang-python">#!/usr/bin/python3
+#coding=utf-8
+
+import pymysql
+
+# Open database connection
+db = pymysql.connect("localhost","root","123456","test" )
+
+# prepare a cursor object using cursor() method
+cursor = db.cursor()
+
+# Prepare SQL query to INSERT a record into the database.
+sql = """INSERT INTO EMPLOYEE(FIRST_NAME,
+   LAST_NAME, AGE, SEX, INCOME)
+   VALUES ('Mac', 'Su', 20, 'M', 5000)"""
+try:
+   # Execute the SQL command
+   cursor.execute(sql)
+   # Commit your changes in the database
+   db.commit()
+except:
+   # Rollback in case there is any error
+   db.rollback()
+
+## 再次插入一条记录
+# Prepare SQL query to INSERT a record into the database.
+sql = """INSERT INTO EMPLOYEE(FIRST_NAME,
+   LAST_NAME, AGE, SEX, INCOME)
+   VALUES ('Kobe', 'Bryant', 40, 'M', 8000)"""
+try:
+   # Execute the SQL command
+   cursor.execute(sql)
+   # Commit your changes in the database
+   db.commit()
+except:
+   # Rollback in case there is any error
+   db.rollback()
+print (sql)
+print('Yes, Insert Successfull.')
+# disconnect from server
+db.close()
+</code></pre> 
+ <p>运行此脚本时，会产生以下结果 - </p> 
+ <pre><code class="lang-shell">Yes, Insert Successfull.
+</code></pre> 
+ <p>上述插入示例可以写成如下动态创建SQL查询 -</p> 
+ <pre><code class="lang-python">#!/usr/bin/python3
+#coding=utf-8
+
+import pymysql
+
+# Open database connection
+db = pymysql.connect("localhost","root","123456","test" )
+
+# prepare a cursor object using cursor() method
+cursor = db.cursor()
+
+# Prepare SQL query to INSERT a record into the database.
+sql = "INSERT INTO EMPLOYEE(FIRST_NAME, \
+   LAST_NAME, AGE, SEX, INCOME) \
+   VALUES ('%s', '%s', '%d', '%c', '%d' )" % \
+   ('Max', 'Su', 25, 'F', 2800)
+try:
+   # Execute the SQL command
+   cursor.execute(sql)
+   # Commit your changes in the database
+   db.commit()
+except:
+   # Rollback in case there is any error
+   db.rollback()
+
+# disconnect from server
+db.close()
+</code></pre> 
+ <p><strong>示例</strong></p> 
+ <p>以下代码段是另一种执行方式，可以直接传递参数 -</p> 
+ <pre><code class="lang-python">..................................
+user_id = "test123"
+password = "password"
+
+con.execute('insert into Login values("%s", "%s")' % \
+             (user_id, password))
+..................................
+</code></pre> 
+ <h2 id="h2-6-"><a name="6.读取操作" class="reference-link"></a><span class="header-link octicon octicon-link"></span>6.读取操作</h2>
+ <p>任何数据库上的读操作表示要从数据库中读取获取一些有用的信息。</p> 
+ <p>在建立数据库连接后，就可以对此数据库进行查询了。 可以使用<code>fetchone()</code>方法获取单条记录或<code>fetchall()</code>方法从数据库表中获取多个值。</p> 
+ <ul> 
+  <li><p><code>fetchone()</code> - 它获取查询结果集的下一行。 结果集是当使用游标对象来查询表时返回的对象。</p> </li>
+  <li><p><code>fetchall()</code> - 它获取结果集中的所有行。 如果已经从结果集中提取了一些行，则从结果集中检索剩余的行。</p> </li>
+  <li><p><code>rowcount</code> - 这是一个只读属性，并返回受<code>execute()</code>方法影响的行数。</p> </li>
+ </ul> 
+ <p><strong>示例</strong></p> 
+ <p>以下过程查询<code>EMPLOYEE</code>表中所有记录的工资超过<code>1000</code>员工记录信息 -</p>   
+ <pre><code class="lang-python">#!/usr/bin/python3
+#coding=utf-8
+
+import pymysql
+
+# Open database connection
+db = pymysql.connect("localhost","root","123456","test" )
+
+# prepare a cursor object using cursor() method
+cursor = db.cursor()
+# 按字典返回 
+# cursor = db.cursor(pymysql.cursors.DictCursor)
+
+# Prepare SQL query to select a record from the table.
+sql = "SELECT * FROM EMPLOYEE \
+       WHERE INCOME &gt; %d" % (1000)
+#print (sql)
+try:
+   # Execute the SQL command
+   cursor.execute(sql)
+   # Fetch all the rows in a list of lists.
+   results = cursor.fetchall()
+   for row in results:
+      #print (row)
+      fname = row[1]
+      lname = row[2]
+      age = row[3]
+      sex = row[4]
+      income = row[5]
+      # Now print fetched result
+      print ("name = %s %s,age = %s,sex = %s,income = %s" % \
+             (fname, lname, age, sex, income ))
+except:
+   import traceback
+   traceback.print_exc()
+
+   print ("Error: unable to fetch data")
+
+# disconnect from server
+db.close()
+</code></pre> 
+ <pre><code class="lang-shell">name = Mac Su,age = 20,sex = M,income = 5000.0
+name = Kobe Bryant,age = 40,sex = M,income = 8000.0
+</code></pre> 
+ <h2 id="h2-7-"><a name="7.更新操作" class="reference-link"></a><span class="header-link octicon octicon-link"></span>7.更新操作</h2>
+ <p>UPDATE语句可对任何数据库中的数据进行更新操作，它可用于更新数据库中已有的一个或多个记录。</p> 
+ <p>以下程序将所有<code>SEX</code>字段的值为“<code>M</code>”的记录的年龄(<code>age</code>字段)更新为增加一年。</p> 
+ <pre><code class="lang-python">#!/usr/bin/python3
+#coding=utf-8
+
+import pymysql
+
+# Open database connection
+db = pymysql.connect("localhost","root","123456","test" )
+
+# prepare a cursor object using cursor() method
+#cursor = db.cursor()
+cursor = db.cursor(pymysql.cursors.DictCursor)
+# prepare a cursor object using cursor() method
+cursor = db.cursor()
+
+# Prepare SQL query to UPDATE required records
+sql = "UPDATE EMPLOYEE SET AGE = AGE + 1 \
+                          WHERE SEX = '%c'" % ('M')
+try:
+   # Execute the SQL command
+   cursor.execute(sql)
+   # Commit your changes in the database
+   db.commit()
+except:
+   # Rollback in case there is any error
+   db.rollback()
+
+# disconnect from server
+db.close()
+</code></pre> 
+ <h2 id="h2-8-"><a name="8.删除操作" class="reference-link"></a><span class="header-link octicon octicon-link"></span>8.删除操作</h2>
+ <p>当要从数据库中删除一些记录时，那么可以执行<code>DELETE</code>操作。 以下是删除<code>EMPLOYEE</code>中<code>AGE</code>超过<code>40</code>的所有记录的程序 -</p> 
+ <pre><code class="lang-python">#!/usr/bin/python3
+#coding=utf-8
+
+import pymysql
+
+# Open database connection
+db = pymysql.connect("localhost","root","123456","test" )
+
+# prepare a cursor object using cursor() method
+cursor = db.cursor()
+
+# Prepare SQL query to DELETE required records
+sql = "DELETE FROM EMPLOYEE WHERE AGE &gt; '%d'" % (40)
+try:
+   # Execute the SQL command
+   cursor.execute(sql)
+   # Commit your changes in the database
+   db.commit()
+except:
+   # Rollback in case there is any error
+   db.rollback()
+
+# disconnect from server
+db.close()
+</code></pre> 
+ <h2 id="h2-9-"><a name="9.执行事务" class="reference-link"></a><span class="header-link octicon octicon-link"></span>9.执行事务</h2>
+ <p>事务是确保数据一致性的一种机制。事务具有以下四个属性 -</p> 
+ <ul> 
+  <li><strong>原子性</strong> - 事务要么完成，要么完全没有发生。</li>
+  <li><strong>一致性</strong> - 事务必须以一致的状态开始，并使系统保持一致状态。</li>
+  <li><strong>隔离性</strong> - 事务的中间结果在当前事务外部不可见。</li>
+  <li><strong>持久性</strong> - 当提交了一个事务，即使系统出现故障，效果也是持久的。</li>
+ </ul> 
+ <p>Python DB API 2.0提供了两种提交或回滚事务的方法。</p> 
+ <p><strong>示例</strong></p> 
+ <p>已经知道如何执行事务。 这是一个类似的例子 -</p> 
+ <pre><code class="lang-python"># Prepare SQL query to DELETE required records
+sql = "DELETE FROM EMPLOYEE WHERE AGE &gt; '%d'" % (20)
+try:
+   # Execute the SQL command
+   cursor.execute(sql)
+   # Commit your changes in the database
+   db.commit()
+except:
+   # Rollback in case there is any error
+   db.rollback()
+</code></pre> 
+ <h3 id="h3-9-1-commit-"><a name="9.1.COMMIT操作" class="reference-link"></a><span class="header-link octicon octicon-link"></span>9.1.COMMIT操作</h3>
+ <p>提交是一种操作，它向数据库发出信号以完成更改，并且在此操作之后，不会更改任何更改。</p> 
+ <p>下面是一个简单的例子演示如何调用<code>commit()</code>方法。</p> 
+ <pre><code class="lang-python">db.commit()
+</code></pre> 
+ <h3 id="h3-9-2-"><a name="9.2.回滚操作" class="reference-link"></a><span class="header-link octicon octicon-link"></span>9.2.回滚操作</h3>
+ <p>如果您对一个或多个更改不满意，并且要完全还原这些更改，请使用<code>rollback()</code>方法。</p> 
+ <p>下面是一个简单的例子演示如何调用<code>rollback()</code>方法。</p> 
+ <pre><code class="lang-python">db.rollback()
+</code></pre> 
+ <h2 id="h2-10-"><a name="10.断开数据库连接" class="reference-link"></a><span class="header-link octicon octicon-link"></span>10.断开数据库连接</h2>
+ <p>要断开数据库连接，请使用<code>close()</code>方法。</p> 
+ <pre><code class="lang-python">db.close()
+</code></pre> 
+ <p>如果用户使用<code>close()</code>方法关闭与数据库的连接，则任何未完成的事务都将被数据库回滚。 但是，您的应用程序不会依赖于数据级别的实现细节，而是明确地调用提交或回滚。</p> 
+ <h2 id="h2-11-"><a name="11.处理错误" class="reference-link"></a><span class="header-link octicon octicon-link"></span>11.处理错误</h2>
+ <p>错误有很多来源。一些示例是执行的SQL语句中的语法错误，连接失败或为已取消或已完成语句句柄调用<code>fetch</code>方法等等。</p> 
+ <p>DB API定义了每个数据库模块中必须存在的许多错误。下表列出了这些异常和错误 - </p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>编号</th> 
+    <th>异常</th> 
+    <th>描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>1</td> 
+    <td><em>Warning</em></td> 
+    <td>用于非致命问题，是<em>StandardError</em>的子类。</td> 
+   </tr> 
+   <tr> 
+    <td>2</td> 
+    <td><em>Error</em></td> 
+    <td>错误的基类，是<em>StandardError</em>的子类。</td> 
+   </tr> 
+   <tr> 
+    <td>3</td> 
+    <td><em>InterfaceError</em></td> 
+    <td>用于数据库模块中的错误，但不是数据库本身，是<em>Error</em>的子类。</td> 
+   </tr> 
+   <tr> 
+    <td>4</td> 
+    <td><em>DatabaseError</em></td> 
+    <td>用于数据库中的错误，是<em>Error</em>的子类。</td> 
+   </tr> 
+   <tr> 
+    <td>5</td> 
+    <td><em>DataError</em></td> 
+    <td><em>DatabaseError</em>的子类引用数据中的错误。</td> 
+   </tr> 
+   <tr> 
+    <td>6</td> 
+    <td><em>OperationalError</em></td> 
+    <td><em>DatabaseError</em>的子类，涉及如丢失与数据库的连接等错误。 这些错误通常不在Python脚本程序的控制之内。</td> 
+   </tr> 
+   <tr> 
+    <td>7</td> 
+    <td><em>IntegrityError</em></td> 
+    <td><em>DatabaseError </em>子类错误，可能会损害关系完整性，例如唯一性约束和外键。</td> 
+   </tr> 
+   <tr> 
+    <td>8</td> 
+    <td><em>InternalError</em></td> 
+    <td><em>DatabaseError</em>的子类，指的是数据库模块内部的错误，例如游标不再活动。</td> 
+   </tr> 
+   <tr> 
+    <td>9</td> 
+    <td><em>ProgrammingError</em></td> 
+    <td><em>DatabaseError</em>的子类，它引用错误，如错误的表名和其他安全。</td> 
+   </tr> 
+   <tr> 
+    <td>10</td> 
+    <td><em>NotSupportedError</em></td> 
+    <td><em>DatabaseError</em>的子类，用于尝试调用不支持的功能。</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p>Python脚本应该处理这些错误，但在使用任何上述异常之前，请确保您的PyMySQL支持该异常。 可以通过阅读DB API 2.0规范获得更多关于它们的信息。</p>
+ <br>      
+</div></body></html>

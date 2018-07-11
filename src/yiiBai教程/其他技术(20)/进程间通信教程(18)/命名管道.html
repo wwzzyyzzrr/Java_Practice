@@ -1,0 +1,359 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">命名管道</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>管道是用于相关过程之间的通信。 我们是否可以使用管道进行不相关的进程通信，比方说，我们要从一个终端执行客户端程序，从另一个终端执行服务器程序？ 答案是否定的。那么怎样才能实现不相关的进程通信，简单的答案就是使用 <em>命名管道</em>。 即使这适用于相关的进程，但是使用命名管道进行相关的进程通信没有任何意义。</p> 
+ <p>我们使用一个管道进行单向通信，两个管道进行双向通信。 命名管道是否适用相同的条件。 答案是否定的，我们可以使用单一命名管道作为命名管道支持双向通信(服务器和客户端之间的通信，同时还有客户端和服务器之间的通信)。</p> 
+ <p>命名管道的另一个名称是FIFO(先进先出)。 让我们看看系统调用(<code>mknod()</code>)来创建一个命名管道，这是一种特殊的文件。</p> 
+ <pre><code class="lang-cpp">#include &lt;sys/types.h&gt;
+#include &lt;sys/stat.h&gt;
+#include &lt;fcntl.h&gt;
+#include &lt;unistd.h&gt;
+
+int mknod(const char *pathname, mode_t mode, dev_t dev);
+</code></pre> 
+ <p>这个系统调用将创建一个特殊的文件或文件系统节点，如普通文件，设备文件或FIFO。 系统调用的参数是路径名，模式和dev。 路径名以及模式和设备信息的属性。 路径名是相对的，如果没有指定目录，它将在当前目录中创建。 指定的模式是指定文件类型的文件模式，如下表中所述的文件类型和文件模式。 开发领域是指定设备信息，如主要和次要设备号码。</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>文件类型</th> 
+    <th>描述</th> 
+    <th>文件类型</th> 
+    <th>描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>S_IFBLK</td> 
+    <td>指定块</td> 
+    <td>S_IFREG</td> 
+    <td>普通文件</td> 
+   </tr> 
+   <tr> 
+    <td>S_IFCHR</td> 
+    <td>指定字符</td> 
+    <td>S_IFDIR</td> 
+    <td>目录</td> 
+   </tr> 
+   <tr> 
+    <td>S_IFIFO</td> 
+    <td>指定FIFO</td> 
+    <td>S_IFLNK</td> 
+    <td>符号链接</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p><strong>文件模式</strong></p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>文件模式</th> 
+    <th>描述</th> 
+    <th>文件模式</th> 
+    <th>描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>S_IRWXU</td> 
+    <td>所有者读，写，执行/搜索</td> 
+    <td>S_IWGRP</td> 
+    <td>写入权限，组</td> 
+   </tr> 
+   <tr> 
+    <td>S_IRUSR</td> 
+    <td>读取权限，所有者</td> 
+    <td>S_IXGRP</td> 
+    <td>执行/搜索权限，组</td> 
+   </tr> 
+   <tr> 
+    <td>S_IWUSR</td> 
+    <td>写入权限，所有者</td> 
+    <td>S_IRWXO</td> 
+    <td>读，写，执行/由他人搜索</td> 
+   </tr> 
+   <tr> 
+    <td>S_IXUSR</td> 
+    <td>执行/搜索权限，所有者</td> 
+    <td>S_IROTH</td> 
+    <td>读取权限，其他</td> 
+   </tr> 
+   <tr> 
+    <td>S_IRWXG</td> 
+    <td>读，写，执行/按组搜索</td> 
+    <td>S_IWOTH</td> 
+    <td>写权限，其他</td> 
+   </tr> 
+   <tr> 
+    <td>S_IRGRP</td> 
+    <td>读取权限，组</td> 
+    <td>S_IXOTH</td> 
+    <td>执行/搜索权限，其他</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p>文件模式也可以用八进制表示法表示，如<code>0XYZ</code>，其中<code>X</code>表示所有者，<code>Y</code>表示组，<code>Z</code>表示其他。 <code>X</code>，<code>Y</code>或<code>Z</code>的取值范围为<code>0〜7</code>，读，写，执行的取值分别为<code>4</code>,<code>2</code>,<code>1</code>。 如果需要结合读取，写入和执行，则相应地添加值。</p> 
+ <p>如果使用的是<code>0640</code>，那么这意味着对所有者的读写(<code>4 + 2 = 6</code>)，对于组读取(4)和对其他人没有权限(0)。</p> 
+ <p>这个调用在成功时将返回<code>0</code>，在失败的情况下为<code>-1</code>。 要知道失败的原因，请检查<code>errno</code>变量或<code>perror()</code>函数。</p> 
+ <pre><code class="lang-cpp">#include &lt;sys/types.h&gt;
+#include &lt;sys/stat.h&gt;
+
+int mkfifo(const char *pathname, mode_t mode)
+</code></pre> 
+ <p>这个库函数创建一个FIFO专用文件，用于命名管道。 这个函数的参数是文件名和模式。 文件名可以是绝对路径或相对路径。 如果未提供完整路径名(或绝对路径)，则将在执行过程的当前文件夹中创建该文件。 文件模式信息如<code>mknod()</code>系统调用中所述。</p> 
+ <p>这个调用在成功时将返回<code>0</code>，在失败的情况下为<code>-1</code>。 要知道失败的原因，请检查<code>errno</code>变量或<code>perror()</code>函数。</p> 
+ <p>让我们考虑在一个终端上运行服务器并在另一个终端上运行客户端的程序。 该方案只会进行单向沟通。 客户端接受用户输入并将消息发送到服务器，服务器在输出上打印消息。 这个过程一直持续到用户输入字符串“end”。</p> 
+ <p>让我们通过一个例子来理解这一点 -</p> 
+ <p><strong>第1步 </strong>- 创建两个进程，一个是<code>fifoserver</code>，另一个是<code>fifoclient</code>。<br><strong>第2步</strong> - 服务器进程执行以下操作 -</p> 
+ <ul> 
+  <li>创建一个名为<code>“MYFIFO”</code>的命名管道(使用系统调用<code>mknod()</code>)。</li>
+  <li>打开命名管道为只读目的。</li>
+  <li>在这里，创建了具有对所有者的读写权限的FIFO。读取群组，没有其他人的权限。</li>
+  <li>等待客户的消息。</li>
+  <li>如果从客户端收到的消息不是<code>“end”</code>，则打印该消息。 如果消息是<code>“end”</code>，则关闭<code>fifo</code>并结束该进程。</li>
+ </ul> 
+ <p><strong>第3步</strong> - 客户端进程执行以下操作 - </p> 
+ <ul> 
+  <li>打开命名管道仅用于写入目的。</li>
+  <li>接受来自用户的字符串。</li>
+  <li>
+   <ul> 
+    <li>检查如果用户输入是否为<code>"end"</code>。如果字符串是<code>“end”</code>，则会关闭FIFO并结束进程。</li>
+   </ul> </li>
+  <li>无限重复，直到用户输入字符串<code>“end”</code>。</li>
+ </ul> 
+ <p>现在我们来看看FIFO服务器文件的实现 - </p> 
+ <pre><code class="lang-cpp">/* Filename: fifoserver.c */
+#include &lt;stdio.h&gt;
+#include &lt;sys/stat.h&gt;
+#include &lt;sys/types.h&gt;
+#include &lt;fcntl.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;string.h&gt;
+
+#define FIFO_FILE "MYFIFO"
+int main() {
+   int fd;
+   char readbuf[80];
+   char end[10];
+   int to_end;
+   int read_bytes;
+
+   /* Create the FIFO if it does not exist */
+   mknod(FIFO_FILE, S_IFIFO|0640, 0);
+   strcpy(end, "end");
+   while(1) {
+      fd = open(FIFO_FILE, O_RDONLY);
+      read_bytes = read(fd, readbuf, sizeof(readbuf));
+      readbuf[read_bytes] = '\0';
+      printf("Received string: \"%s\" and length is %d\n", readbuf, (int)strlen(readbuf));
+      to_end = strcmp(readbuf, end);
+      if (to_end == 0) {
+         close(fd);
+         break;
+      }
+   }
+   return 0;
+}
+</code></pre> 
+ <p><strong>编译和执行步骤</strong></p> 
+ <pre><code class="lang-cpp">Received string: "this is string 1" and length is 16
+Received string: "fifo test" and length is 9
+Received string: "fifo client and server" and length is 22
+Received string: "end" and length is 3
+</code></pre> 
+ <p>现在，来看看FIFO客户端示例代码。</p> 
+ <pre><code class="lang-cpp">/* Filename: fifoclient.c */
+#include &lt;stdio.h&gt;
+#include &lt;sys/stat.h&gt;
+#include &lt;sys/types.h&gt;
+#include &lt;fcntl.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;string.h&gt;
+
+#define FIFO_FILE "MYFIFO"
+int main() {
+   int fd;
+   int end_process;
+   int stringlen;
+   char readbuf[80];
+   char end_str[5];
+   printf("FIFO_CLIENT: Send messages, infinitely, to end enter \"end\"\n");
+   fd = open(FIFO_FILE, O_CREAT|O_WRONLY);
+   strcpy(end_str, "end");
+
+   while (1) {
+      printf("Enter string: ");
+      fgets(readbuf, sizeof(readbuf), stdin);
+      stringlen = strlen(readbuf);
+      readbuf[stringlen - 1] = '\0';
+      end_process = strcmp(readbuf, end_str);
+
+      //printf("end_process is %d\n", end_process);
+      if (end_process != 0) {
+         write(fd, readbuf, strlen(readbuf));
+         printf("Sent string: \"%s\" and string length is %d\n", readbuf, (int)strlen(readbuf));
+      } else {
+         write(fd, readbuf, strlen(readbuf));
+         printf("Sent string: \"%s\" and string length is %d\n", readbuf, (int)strlen(readbuf));
+         close(fd);
+         break;
+      }
+   }
+   return 0;
+}
+</code></pre> 
+ <p>我们来看一下收到的输出。编译和执行输出结果如下 - </p> 
+ <pre><code class="lang-shell">FIFO_CLIENT: Send messages, infinitely, to end enter "end"
+Enter string: this is string 1
+Sent string: "this is string 1" and string length is 16
+Enter string: fifo test
+Sent string: "fifo test" and string length is 9
+Enter string: fifo client and server
+Sent string: "fifo client and server" and string length is 22
+Enter string: end
+Sent string: "end" and string length is 3
+</code></pre> 
+ <h2 id="h2-u4F7Fu7528u547Du540Du7BA1u9053u53CCu5411u901Au4FE1"><a name="使用命名管道双向通信" class="reference-link"></a><span class="header-link octicon octicon-link"></span>使用命名管道双向通信</h2>
+ <p>管道之间的通信意味着是单向的。 一般情况下，管道仅限于单向通信，至少需要两根管道进行双向通信。 管道仅用于相关的进程。 管道不能用于不相关的进程通信，例如，如果想从一个终端执行一个进程，而从另一个终端执行另一个进程，那么管道是不可能的。 我们是否有任何简单的方法在两个进程之间进行通信，用简单的方式实现不相关的进程间的通信？ 答案是肯定的。 命名管道是用于两个或更多不相关进程之间的通信，也可以是双向通信。</p> 
+ <p>我们已经看到了命名管道之间的单向通信，即从客户端到服务器的消息。 现在看看双向通信，即客户端向服务器发送消息，接收消息的服务器使用相同的命名管道向客户端发送另一条消息。</p> 
+ <p>以下是一个例子 -</p> 
+ <p><strong>第1步</strong> - 创建两个进程，一个是<code>fifoserver_twoway</code>，另一个是<code>fifoclient_twoway</code>。<br><strong>第2步</strong> - 服务器进程执行以下操作 -</p> 
+ <ul> 
+  <li>如果未创建，则在<code>/tmp</code>目录中创建名为<code>“fifo_twoway”</code>的命名管道(使用库函数<code>mkfifo()</code>)。</li>
+  <li>为读写目的打开命名管道。</li>
+  <li>在这里，创建了具有对所有者的读写权限的<code>FIFO</code>。读取群组，没有其他人的权限。</li>
+  <li>等待来自客户的消息。</li>
+  <li>如果从客户端收到的消息不是<code>"end"</code>字符串，则打印消息并反转字符串。 反转的字符串被发送回客户端。 如果消息是<code>"end"</code>，则关闭fifo并结束该过程。</li>
+ </ul> 
+ <p><strong>第3步</strong> - 客户端进程执行以下操作 - </p> 
+ <ul> 
+  <li>为读写目的打开命名管道。</li>
+  <li>接受来自用户的字符串。</li>
+  <li>检查如果用户输入是否为<code>"end"</code>。它发送一条消息到服务器。 但是，如果字符串是<code>"end"</code>，则会关闭FIFO并结束进程。</li>
+  <li>如果消息发送不是<code>"end"</code>，则等待来自客户端的消息(反向字符串)并打印反向字符串。</li>
+  <li>无限重复，直到用户输入字符串<code>"end"</code>。</li>
+ </ul> 
+ <p>现在，让我们来看看FIFO服务器示例代码。</p>   
+ <pre><code class="lang-cpp">/* Filename: fifoserver_twoway.c */
+#include &lt;stdio.h&gt;
+#include &lt;sys/stat.h&gt;
+#include &lt;sys/types.h&gt;
+#include &lt;fcntl.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;string.h&gt;
+
+#define FIFO_FILE "/tmp/fifo_twoway"
+void reverse_string(char *);
+int main() {
+   int fd;
+   char readbuf[80];
+   char end[10];
+   int to_end;
+   int read_bytes;
+
+   /* Create the FIFO if it does not exist */
+   mkfifo(FIFO_FILE, S_IFIFO|0640);
+   strcpy(end, "end");
+   fd = open(FIFO_FILE, O_RDWR);
+   while(1) {
+      read_bytes = read(fd, readbuf, sizeof(readbuf));
+      readbuf[read_bytes] = '\0';
+      printf("FIFOSERVER: Received string: \"%s\" and length is %d\n", readbuf, (int)strlen(readbuf));
+      to_end = strcmp(readbuf, end);
+
+      if (to_end == 0) {
+         close(fd);
+         break;
+      }
+      reverse_string(readbuf);
+      printf("FIFOSERVER: Sending Reversed String: \"%s\" and length is %d\n", readbuf, (int) strlen(readbuf));
+      write(fd, readbuf, strlen(readbuf));
+      /*
+      sleep - This is to make sure other process reads this, otherwise this
+      process would retrieve the message
+      */
+      sleep(2);
+   }
+   return 0;
+}
+
+void reverse_string(char *str) {
+   int last, limit, first;
+   char temp;
+   last = strlen(str) - 1;
+   limit = last/2;
+   first = 0;
+
+   while (first &lt; last) {
+      temp = str[first];
+      str[first] = str[last];
+      str[last] = temp;
+      first++;
+      last--;
+   }
+   return;
+}
+</code></pre> 
+ <p>编译和执行输出结果 - </p> 
+ <pre><code class="lang-shell">FIFOSERVER: Received string: "LINUX IPCs" and length is 10
+FIFOSERVER: Sending Reversed String: "sCPI XUNIL" and length is 10
+FIFOSERVER: Received string: "Inter Process Communication" and length is 27
+FIFOSERVER: Sending Reversed String: "noitacinummoC ssecorP retnI" and length is 27
+FIFOSERVER: Received string: "end" and length is 3
+</code></pre> 
+ <p>现在，我们来看看FIFO客户端示例代码。</p> 
+ <pre><code class="lang-cpp">/* Filename: fifoclient_twoway.c */
+#include &lt;stdio.h&gt;
+#include &lt;sys/stat.h&gt;
+#include &lt;sys/types.h&gt;
+#include &lt;fcntl.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;string.h&gt;
+
+#define FIFO_FILE "/tmp/fifo_twoway"
+int main() {
+   int fd;
+   int end_process;
+   int stringlen;
+   int read_bytes;
+   char readbuf[80];
+   char end_str[5];
+   printf("FIFO_CLIENT: Send messages, infinitely, to end enter \"end\"\n");
+   fd = open(FIFO_FILE, O_CREAT|O_RDWR);
+   strcpy(end_str, "end");
+
+   while (1) {
+      printf("Enter string: ");
+      fgets(readbuf, sizeof(readbuf), stdin);
+      stringlen = strlen(readbuf);
+      readbuf[stringlen - 1] = '\0';
+      end_process = strcmp(readbuf, end_str);
+
+      //printf("end_process is %d\n", end_process);
+      if (end_process != 0) {
+         write(fd, readbuf, strlen(readbuf));
+         printf("FIFOCLIENT: Sent string: \"%s\" and string length is %d\n", readbuf, (int)strlen(readbuf));
+         read_bytes = read(fd, readbuf, sizeof(readbuf));
+         readbuf[read_bytes] = '\0';
+         printf("FIFOCLIENT: Received string: \"%s\" and length is %d\n", readbuf, (int)strlen(readbuf));
+      } else {
+         write(fd, readbuf, strlen(readbuf));
+         printf("FIFOCLIENT: Sent string: \"%s\" and string length is %d\n", readbuf, (int)strlen(readbuf));
+         close(fd);
+         break;
+      }
+   }
+   return 0;
+}
+</code></pre> 
+ <p>编译和执行输出结果 - </p> 
+ <pre><code class="lang-shell">FIFO_CLIENT: Send messages, infinitely, to end enter "end"
+Enter string: LINUX IPCs
+FIFOCLIENT: Sent string: "LINUX IPCs" and string length is 10
+FIFOCLIENT: Received string: "sCPI XUNIL" and length is 10
+Enter string: Inter Process Communication
+FIFOCLIENT: Sent string: "Inter Process Communication" and string length is 27
+FIFOCLIENT: Received string: "noitacinummoC ssecorP retnI" and length is 27
+Enter string: end
+FIFOCLIENT: Sent string: "end" and string length is 3
+</code></pre>
+ <br>      
+</div></body></html>

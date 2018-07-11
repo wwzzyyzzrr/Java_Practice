@@ -1,0 +1,162 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Matlab微积分</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>MATLAB提供了解决微分和积分微积分的各种方法，求解任何程度的微分方程和极限计算。可以轻松绘制复杂功能的图形，并通过求解原始功能以及其衍生来检查图形上的最大值，最小值和其他固定点。</p> 
+ <p>本章将介绍微积分问题。在本章中，将讨论预演算法，即计算功能限制和验证限制属性。</p> 
+ <p>在下一章微分中，将计表达式的导数，并找到一个图的局部最大值和最小值。我们还将讨论求解微分方程。</p> 
+ <p>最后，在“整合/集成”一章中，我们将讨论积分微积分。</p> 
+ <h2 id="h2-u8BA1u7B97u6781u9650"><a name="计算极限" class="reference-link"></a><span class="header-link octicon octicon-link"></span>计算极限</h2>
+ <p>MATLAB提供计算极限的<code>limit</code>函数。在其最基本的形式中，<code>limit</code>函数将表达式作为参数，并在独立变量为零时找到表达式的极限。</p> 
+ <p>例如，要计算函数<code>f(x)=(x^3 + 5)/(x^4 + 7)</code>的极限，因为<code>x</code>趋向于零。</p> 
+ <pre><code class="lang-matlab">syms x
+limit((x^3 + 5)/(x^4 + 7))
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 - </p> 
+ <pre><code class="lang-shell">Trial&gt;&gt; syms x
+limit((x^3 + 5)/(x^4 + 7))
+
+ans =
+
+5/7
+</code></pre> 
+ <p><code>limit</code>函数落在符号计算域; 需要使用<code>syms</code>函数来告诉MATLAB正在使用的符号变量。还可以计算函数的极限，因为变量趋向于除零之外的某个数字。要计算 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/0810/321151027_85786.png" alt=""></p> 
+ <p>可使用带有参数的<code>limit</code>命令。第一个是表达式，第二个是数字 - <code>x</code>表示接近，这里它是<code>a</code>。</p> 
+ <p>例如，要计算函数<code>f(x)=(x-3)/(x-1)</code>的极限，因为<code>x</code>倾向于<code>1</code>。</p> 
+ <pre><code class="lang-matlab">limit((x - 3)/(x-1),1)
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 - </p> 
+ <pre><code class="lang-shell">ans =
+ NaN
+</code></pre> 
+ <p>下面再看另外一个例子，</p> 
+ <pre><code class="lang-shell">limit(x^2 + 5, 3)
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 - </p> 
+ <pre><code class="lang-shell">ans =
+ 14
+</code></pre> 
+ <h2 id="h2--octave-"><a name="使用Octave计算极限" class="reference-link"></a><span class="header-link octicon octicon-link"></span>使用Octave计算极限</h2>
+ <p>以下是Octave版本的上述示例使用<code>symbolic</code>包，尝试执行并比较结果 -</p> 
+ <pre><code class="lang-matlab">pkg load symbolic
+symbols
+x=sym("x");
+
+subs((x^3+5)/(x^4+7),x,0)
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 - </p> 
+ <pre><code class="lang-shell">ans =
+0.7142857142857142857
+</code></pre> 
+ <h2 id="h2-u9A8Cu8BC1u6781u9650u7684u57FAu672Cu5C5Eu6027"><a name="验证极限的基本属性" class="reference-link"></a><span class="header-link octicon octicon-link"></span>验证极限的基本属性</h2>
+ <p>代数极限定理提供了极限的一些基本属性。这些属性如下 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/0810/367151035_44567.jpg" alt=""></p> 
+ <p>下面来考虑两个函数 -</p> 
+ <pre><code>f(x) = (3x + 5)/(x - 3)
+g(x) = x^2 + 1.
+</code></pre>
+ <p>下面计算函数的极限，这两个函数的<code>x</code>趋向于<code>5</code>，并使用这两个函数和MATLAB验证极限的基本属性。</p> 
+ <p><strong>例子</strong></p> 
+ <p>创建脚本文件并在其中键入以下代码 -</p> 
+ <pre><code class="lang-matlab">syms x
+f = (3*x + 5)/(x-3);
+g = x^2 + 1;
+l1 = limit(f, 4)
+l2 = limit (g, 4)
+lAdd = limit(f + g, 4)
+lSub = limit(f - g, 4)
+lMult = limit(f*g, 4)
+lDiv = limit (f/g, 4)
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 - </p> 
+ <pre><code class="lang-shell">l1 =
+ 17
+
+l2 =
+17
+
+lAdd =
+ 34
+
+lSub =
+ 0
+
+lMult =
+289
+
+lDiv =
+1
+</code></pre> 
+ <h2 id="h2--octave-"><a name="使用Octave验证极限的基本属性" class="reference-link"></a><span class="header-link octicon octicon-link"></span>使用Octave验证极限的基本属性</h2>
+ <p>以下是<code>Octave</code>版本的上述示例使用<code>symbolic</code>包，尝试执行并比较结果 -</p>   
+ <pre><code class="lang-matlab">pkg load symbolic
+symbols
+
+x = sym("x");
+f = (3*x + 5)/(x-3);
+g = x^2 + 1;
+
+l1=subs(f, x, 4)
+l2 = subs (g, x, 4)
+lAdd = subs (f+g, x, 4)
+lSub = subs (f-g, x, 4)
+lMult = subs (f*g, x, 4)
+lDiv = subs (f/g, x, 4)
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 - </p> 
+ <pre><code class="lang-shell">l1 =
+
+17.0
+l2 =
+
+17.0
+lAdd =
+
+34.0
+lSub =
+
+0.0
+lMult =
+
+289.0
+lDiv =
+
+1.0
+</code></pre> 
+ <h2 id="h2-u5DE6u53F3u8FB9u754Cu6781u9650"><a name="左右边界极限" class="reference-link"></a><span class="header-link octicon octicon-link"></span>左右边界极限</h2>
+ <p>当函数对变量的某个特定值具有不连续性时，该点不存在极限。 换句话说，当<code>x = a</code>时，函数<code>f(x)</code>的极限具有不连续性，当<code>x</code>的值从左侧接近<code>x</code>时，<code>x</code>的值不等于<code>x</code>从右侧接近的极限值。</p> 
+ <p>对于<code>x &lt;a</code>的值，左极限被定义为<code>x - &gt; a</code>的极限，从左侧即<code>x</code>接近<code>a</code>。 对于<code>x&gt; a</code>的值，右极限被定义为<code>x - &gt; a</code>的极限，从右边，即<code>x</code>接近<code>a</code>。 当左极限和右极限不相等时，极限不存在。</p> 
+ <p>下面来看看一个函数 -</p> 
+ <pre><code>f(x) = (x - 3)/|x - 3|
+</code></pre>
+ <p>下面将显示<img src="http://www.yiibai.com/uploads/images/201710/0810/849161007_78088.png" alt="">不存在。MATLAB帮助我们以两种方式说明事实 -</p> 
+ <ul> 
+  <li>通过绘制函数图并显示不连续性。</li>
+  <li>通过计算极限并显示两者都不同。</li>
+ </ul> 
+ <p>通过将字符串<code>“left”</code>和<code>“right”</code>作为最后一个参数传递给<code>limit</code>命令来计算左侧和右侧的极限。</p> 
+ <p><strong>例子</strong></p> 
+ <p>创建脚本文件并在其中键入以下代码 -</p> 
+ <pre><code class="lang-matlab">f = (x - 3)/abs(x-3);
+ezplot(f,[-1,5])
+l = limit(f,x,3,'left')
+r = limit(f,x,3,'right')
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/0810/654161010_45287.png" alt=""></p> 
+ <p>显示以下输出结果 -</p> 
+ <pre><code class="lang-shell">Trial&gt;&gt; 
+Trial&gt;&gt; f = (x - 3)/abs(x-3);
+ezplot(f,[-1,5])
+l = limit(f,x,3,'left')
+r = limit(f,x,3,'right')
+
+l =
+
+-1
+
+
+r =
+
+1
+</code></pre>
+ <br>      
+</div></body></html>

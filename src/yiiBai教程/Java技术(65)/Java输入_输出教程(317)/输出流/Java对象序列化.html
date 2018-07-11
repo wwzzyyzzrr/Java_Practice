@@ -1,0 +1,229 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Java对象序列化</h1><div style="width:100%;float:left;" class="article-content">   
+ <p><code>ObjectOutputStream</code>类的对象用于序列化对象。<code>ObjectInputStream</code>类的对象用于反序列化一个对象。<code>ObjectOutputStream</code>继承自<code>OutputStream</code>。<code>ObjectInputStream</code>继承自<code>InputStream</code>。</p> 
+ <p>类必须实现<code>Serializable</code>或<code>Externalizable</code>接口以便序列化或反序列化。<code>Serializable</code>接口是一个标记接口。如果想要一个<code>Person</code>类的对象被序列化，需要声明<code>Person</code>类如下：</p> 
+ <pre><code class="lang-java">public class Person   implements Serializable  {
+
+}
+</code></pre> 
+ <p>Java负责处理从/向流读取/写入<code>Serializable</code>对象的细节。只需要将对象传到流流类的<code>write/read</code>方法之一。实现<code>Externalizable</code>接口能够更好地控制从流中读取对象和向对象写入对象。</p> 
+ <p>它继承<code>Serializable</code>接口，声明如下：</p> 
+ <pre><code class="lang-java">public interface  Externalizable extends Serializable  {
+    void  readExternal(ObjectInput in)  throws   IOException,  ClassNotFoundException;
+    void  writeExternal(ObjectOutput out) throws   IOException;
+}
+</code></pre> 
+ <p>当从流中读取一个对象时，Java调用<code>readExternal()</code>方法。当向一个流写一个对象时，它调用<code>writeExternal()</code>方法。</p> 
+ <p>必须编写逻辑来分别读取和写入<code>readExternal()</code>和<code>writeExternal()</code>方法中的对象的字段。</p> 
+ <p>实现<code>Externalizable</code>接口的类如下所示：</p> 
+ <pre><code class="lang-java">public class Person  implements Externalizable  {
+    public void  readExternal(ObjectInput in)  throws   IOException,  ClassNotFoundException {
+        // Write the logic to read the Person object fields  from  the   stream
+    }    
+    public void  writeExternal(ObjectOutput out) throws   IOException  {
+        // Write  the   logic to write Person   object fields  to the   stream
+    }
+}
+</code></pre> 
+ <h2 id="h2-u5E8Fu5217u5316u5BF9u8C61"><a name="序列化对象" class="reference-link"></a><span class="header-link octicon octicon-link"></span>序列化对象</h2>
+ <p>以下代码创建<code>ObjectOutputStream</code>类的对象，并将对象保存到<code>person.ser</code>文件。</p> 
+ <pre><code class="lang-java">ObjectOutputStream oos  = new ObjectOutputStream(new FileOutputStream("person.ser"));
+</code></pre> 
+ <p>要将对象保存到<code>ByteArrayOutputStream</code>，构造一个对象输出流如下：</p> 
+ <pre><code class="lang-java">ByteArrayOutputStream baos  = new ByteArrayOutputStream();
+
+// Creates an  object output stream to write objects to the   byte   array  output stream
+ObjectOutputStream oos  = new ObjectOutputStream(baos);
+</code></pre> 
+ <p>使用<code>ObjectOutputStream</code>类的<code>writeObject()</code>方法通过将对象引用作为参数传递来序列化对象，如下所示：</p> 
+ <pre><code class="lang-java">oos.writeObject(p1);
+</code></pre> 
+ <p>最后，当完成将所有对象写入时，使用<code>close()</code>方法关闭对象输出流：</p> 
+ <pre><code class="lang-java">oos.close();
+</code></pre> 
+ <p>以下代码显示<code>Person</code>类如何序列化,它实现可序列化接口(<code>Serializable</code> )。</p> 
+ <pre><code class="lang-java">import java.io.Serializable;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+
+class Person implements Serializable {
+  private String name = "Unknown";
+  private String gender = "Unknown";
+  private double height = Double.NaN;
+
+  public Person(String name, String gender, double height) {
+    this.name = name;
+    this.gender = gender;
+    this.height = height;
+  }
+
+  @Override
+  public String toString() {
+    return "Name: " + this.name + ", Gender:   " + this.gender + ",  Height: "
+        + this.height;
+  }
+}
+
+public class Main {
+  public static void main(String[] args) {
+    Person p1 = new Person("John", "Male", 1.7);
+    Person p2 = new Person("Wally", "Male", 1.7);
+    Person p3 = new Person("Katrina", "Female", 1.4);
+
+    File fileObject = new File("person.ser");
+
+    try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(
+        fileObject))) {
+
+      oos.writeObject(p1);
+      oos.writeObject(p2);
+      oos.writeObject(p3);
+
+      // Display the serialized objects on the standard output
+      System.out.println(p1);
+      System.out.println(p2);
+      System.out.println(p3);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
+}
+</code></pre> 
+ <p>上面的代码生成以下结果。</p> 
+ <pre><code class="lang-java">Name: John, Gender:   Male,  Height: 1.7
+Name: Wally, Gender:   Male,  Height: 1.7
+Name: Katrina, Gender:   Female,  Height: 1.4
+</code></pre> 
+ <h2 id="h2-u53CDu5E8Fu5217u5316u5BF9u8C61"><a name="反序列化对象" class="reference-link"></a><span class="header-link octicon octicon-link"></span>反序列化对象</h2>
+ <p>以下代码显示如何创建<code>ObjectInputStream</code>类的对象，并从<code>person.ser</code>文件读取对象。</p> 
+ <pre><code class="lang-java">ObjectInputStream ois  = new ObjectInputStream(new FileInputStream("person.ser"));
+</code></pre> 
+ <p>要从<code>ByteArrayInputStream</code>读取对象，请按如下所示创建对象输出流：</p> 
+ <pre><code class="lang-java">ObjectInputStream ois  = new ObjectInputStream(Byte-Array-Input-Stream-Reference);
+</code></pre> 
+ <p>使用<code>ObjectInputStream</code>类的<code>readObject()</code>方法来反序列化对象。</p> 
+ <pre><code class="lang-java">Object obj  = oos.readObject();
+</code></pre> 
+ <p>最后，关闭对象输入流如下：</p> 
+ <pre><code class="lang-java">ois.close();
+</code></pre> 
+ <p>以下代码显示如何从文件读取对象。</p> 
+ <pre><code class="lang-java">import java.io.File;
+import java.io.FileInputStream;
+import java.io.ObjectInputStream;
+
+public class Main {
+  public static void main(String[] args) {
+    File fileObject = new File("person.ser");
+
+    try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(
+        fileObject))) {
+
+      Person p1 = (Person) ois.readObject();
+      Person p2 = (Person) ois.readObject();
+      Person p3 = (Person) ois.readObject();
+
+      System.out.println(p1);
+      System.out.println(p2);
+      System.out.println(p3);
+
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+}
+</code></pre> 
+ <h2 id="h2-u5916u90E8u5316u5BF9u8C61u5E8Fu5217u5316"><a name="外部化对象序列化" class="reference-link"></a><span class="header-link octicon octicon-link"></span>外部化对象序列化</h2>
+ <p>要序列化和反序列化可外部化对象，请实现<code>Externalizable</code>接口。</p>   
+ <pre><code class="lang-java">import java.io.Externalizable;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutput;
+import java.io.ObjectOutputStream;
+
+class PersonExt implements Externalizable {
+    private String name = "Unknown";
+    private String gender = "Unknown";
+    private double height = Double.NaN;
+
+    public PersonExt() {
+    }
+
+    public PersonExt(String name, String gender, double height) {
+        this.name = name;
+        this.gender = gender;
+        this.height = height;
+    }
+
+    public String toString() {
+        return "Name: " + this.name + ", Gender:   " + this.gender + ",  Height: " + this.height;
+    }
+
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+        this.name = in.readUTF();
+        this.gender = in.readUTF();
+    }
+
+    public void writeExternal(ObjectOutput out) throws IOException {
+        out.writeUTF(this.name);
+        out.writeUTF(this.gender);
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        PersonExt p1 = new PersonExt("John", "Male", 6.7);
+        PersonExt p2 = new PersonExt("Wally", "Male", 5.7);
+        PersonExt p3 = new PersonExt("Katrina", "Female", 5.4);
+
+        File fileObject = new File("personext.ser");
+
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(fileObject))) {
+            oos.writeObject(p1);
+            oos.writeObject(p2);
+            oos.writeObject(p3);
+
+            System.out.println(p1);
+            System.out.println(p2);
+            System.out.println(p3);
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }
+
+        fileObject = new File("personext.ser");
+
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(fileObject))) {
+
+            p1 = (PersonExt) ois.readObject();
+            p2 = (PersonExt) ois.readObject();
+            p3 = (PersonExt) ois.readObject();
+
+            // Let's display the objects that are read
+            System.out.println(p1);
+            System.out.println(p2);
+            System.out.println(p3);
+
+            // Print the input path
+            System.out.println("Objects were  read   from  " + fileObject.getAbsolutePath());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
+</code></pre> 
+ <p>上面的代码生成以下结果。</p> 
+ <pre><code class="lang-java">Name: John, Gender:   Male,  Height: 6.7
+Name: Wally, Gender:   Male,  Height: 5.7
+Name: Katrina, Gender:   Female,  Height: 5.4
+Name: John, Gender:   Male,  Height: NaN
+Name: Wally, Gender:   Male,  Height: NaN
+Name: Katrina, Gender:   Female,  Height: NaN
+Objects were  read   from  F:\website\yiibai\worksp\personext.ser
+</code></pre>
+ <br>      
+</div></body></html>

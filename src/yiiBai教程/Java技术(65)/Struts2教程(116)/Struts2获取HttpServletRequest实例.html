@@ -1,0 +1,63 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Struts2获取HttpServletRequest实例</h1><div style="width:100%;float:left;" class="article-content">   
+ <div> 
+  <div>
+    在Struts2中，可以使用以下两种方法来获取HttpServletRequest对象。 
+  </div> 
+ </div> 
+ <div> 
+  <h2> 1. ServletActionContext </h2> 
+  <div>
+    直接从 org.apache.struts2.ServletActionContext 获取 HttpServletRequest 对象。 
+  </div> 
+  <pre>import javax.servlet.http.HttpServletRequest;
+import org.apache.struts2.ServletActionContext;
+
+public class LocaleAction{
+	//business logic
+	public String execute() {
+		HttpServletRequest request = ServletActionContext.getRequest();
+		return "SUCCESS";
+	}
+}</pre> 
+  <h2> 2. ServletRequestAware </h2> 
+  <div>
+    让你的类实现org.apache.struts2.interceptor.ServletRequestAware。 
+  </div> 
+  <div>
+    当&nbsp;Struts2&nbsp;的&nbsp;“servlet-config”&nbsp;拦截器的一个Action类实现ServletRequestAware接口，它会通过一个&nbsp;HttpServletRequest&nbsp;的引用请求，通过Action类的setServletRequest()方法完成。 
+  </div> 
+  <pre>import javax.servlet.http.HttpServletRequest;
+import org.apache.struts2.interceptor.ServletRequestAware;
+
+public class LocaleAction implements ServletRequestAware{
+
+	HttpServletRequest request;
+	
+	//business logic
+	public String execute() {
+		String param = getServletRequest().getParameter("param");
+		return "SUCCESS";
+
+	}
+
+	public void setServletRequest(HttpServletRequest request) {
+		this.request = request;
+	}
+
+	public HttpServletRequest getServletRequest() {
+		return this.request;
+	}
+}</pre> 
+  <div> 
+   <div>
+     Struts2&nbsp;文档中建议使用&nbsp;ServletRequestAware&nbsp;代替&nbsp;ServletActionContext。 
+   </div> 
+  </div> 
+  <h2> 参考 </h2> 
+  <ol> 
+   <li> <a target="_blank" href="http://struts.apache.org/2.x/docs/how-can-we-access-the-httpservletrequest.htmll">http://struts.apache.org/2.x/docs/how-can-we-access-the-httpservletrequest.htmll</a> </li> 
+   <li> <a target="_blank" href="http://struts.apache.org/2.0.6/struts2-core/apidocs/org/apache/struts2/interceptor/ServletRequestAware.htmll">http://struts.apache.org/2.0.6/struts2-core/apidocs/org/apache/struts2/interceptor/ServletRequestAware.htmll</a> </li> 
+  </ol> 
+ </div>
+ <br>      
+</div></body></html>

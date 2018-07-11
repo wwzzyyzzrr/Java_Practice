@@ -1,0 +1,93 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">SQLite LIKE子句</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>SQLite <code>LIKE</code>运算符用于使用通配符将文本值与模式进行匹配。 在搜索表达式与模式表达式匹配的情况下，<code>LIKE</code>运算符将返回真，即：<code>1</code>。</p> 
+ <p>与<code>LIKE</code>操作符一起使用的两个通配符：</p> 
+ <ul> 
+  <li>百分号(<code>％</code>)</li>
+  <li>下划线(<code>_</code>)</li>
+ </ul> 
+ <p>百分号(<code>％</code>)表示零个，一个或多个数字或字符。 下划线(<code>_</code>)表示一个数字或字符。</p> 
+ <p><strong>语法</strong></p> 
+ <pre><code class="lang-sql">SELECT FROM table_name  
+WHERE column LIKE 'XXXX%'
+</code></pre> 
+ <p>或者</p> 
+ <pre><code class="lang-sql">SELECT FROM table_name  
+WHERE column LIKE '%XXXX%'
+</code></pre> 
+ <p>或者</p> 
+ <pre><code class="lang-sql">SELECT FROM table_name  
+WHERE column LIKE 'XXXX_'
+</code></pre> 
+ <p>或者</p> 
+ <pre><code class="lang-sql">SELECT FROM table_name  
+WHERE column LIKE '_XXXX'
+</code></pre> 
+ <p>或者</p> 
+ <pre><code class="lang-sql">SELECT FROM table_name  
+WHERE column LIKE '_XXXX_'
+</code></pre> 
+ <p>这里，<code>XXXX</code>可以是任何数字或字符串值。</p> 
+ <p><strong>示例：</strong></p> 
+ <p>假设有一个名为<code>STUDENT</code>的表，并具有以下数据：</p> 
+ <pre><code class="lang-sql">sqlite&gt; SELECT * FROM STUDENT ;
+1|Maxsu|27|Shengzheng|20000.0
+2|Minsu|25|Beijing|15000.0
+3|Avgsu|23|Shanghai|2000.0
+4|Linsu|25|Guangzhou|65000.0
+5|Sqlsu|26|Hainan|25000.0
+6|Javasu|21|Shengzheng|18000.0
+sqlite&gt;
+</code></pre> 
+ <p>在这些示例中，在WHERE语句的LIKE子句中，在’<code>FEES</code>‘字段上使用’<code>％</code>‘和’<code>_</code>‘运算符，对应结果如下：</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>语句</th> 
+    <th>结果说明</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td><code>Where FEES like '200%'</code></td> 
+    <td>查找以<code>200</code>开头的任何值</td> 
+   </tr> 
+   <tr> 
+    <td><code>Where FEES like '%200%'</code></td> 
+    <td>查找包含<code>200</code>开头的任何值</td> 
+   </tr> 
+   <tr> 
+    <td><code>Where FEES like '_00%'</code></td> 
+    <td>查找第二个位置和第三个位置是<code>0</code>的任何值</td> 
+   </tr> 
+   <tr> 
+    <td><code>Where FEES like '2_%_%'</code></td> 
+    <td>查找以<code>2</code>开头并且长度至少为<code>3</code>个字符的值</td> 
+   </tr> 
+   <tr> 
+    <td><code>Where FEES like '%2'</code></td> 
+    <td>查找以<code>2</code>结尾的任何值</td> 
+   </tr> 
+   <tr> 
+    <td><code>Where FEES like '_2%3'</code></td> 
+    <td>查找任何在第二个位置值为<code>2</code>，并以<code>3</code>结尾的值</td> 
+   </tr> 
+   <tr> 
+    <td><code>Where FEES like '2___3'</code></td> 
+    <td>查找以<code>2</code>开头，以<code>3</code>结尾的一个五位数字值</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p><strong>示例1：</strong></p> 
+ <p>从<code>STUDENT</code>表中查询<code>age</code>以<code>5</code>结尾的所有记录。</p>   
+ <pre><code class="lang-sql">SELECT * FROM STUDENT WHERE AGE  LIKE '%5';
+</code></pre> 
+ <p>执行上面语句，得到以下结果 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201705/2305/746140554_70433.png" alt=""></p> 
+ <p><strong>示例2：</strong></p> 
+ <p>从<code>STUDENT</code>表中查询地址值具有“<code>an</code>”字符的所有记录：</p> 
+ <pre><code class="lang-sql">SELECT * FROM STUDENT WHERE ADDRESS LIKE '%an%';
+</code></pre> 
+ <p>执行上面语句，得到以下结果 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201705/2305/537140557_41539.png" alt=""></p>
+ <br>      
+</div></body></html>

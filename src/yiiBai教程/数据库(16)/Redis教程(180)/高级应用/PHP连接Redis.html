@@ -1,0 +1,88 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">PHP连接Redis</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>在php程序中使用Redis之前，需要确保在机器上安装了Redis的PHP驱动程序和PHP环境。可以先在将PHP电脑上并配置好环境。</p> 
+ <h2 id="h2-u5B89u88C5"><a name="安装" class="reference-link"></a><span class="header-link octicon octicon-link"></span>安装</h2>
+ <p>现在，让我们看看如何设置Redis PHP驱动程序。<br>从github库下载<code>phpredis</code>=&gt; <a target="_blank" href="http://github.com/nicolasff/phpredis。">http://github.com/nicolasff/phpredis。</a> 当下载它之后，提取文件到<code>phpredis</code>目录。在Ubuntu上，安装以下扩展。</p> 
+ <pre><code class="lang-shell">cd phpredis 
+sudo phpize 
+sudo ./configure 
+sudo make 
+sudo make install
+</code></pre> 
+ <p>现在，将“<code>modules</code>”文件夹的内容复制并粘贴到PHP扩展目录中，并在<code>php.ini</code>中添加以下行。</p> 
+ <pre><code class="lang-shell">extension = redis.so
+</code></pre> 
+ <p>现在，Redis PHP安装完成！</p> 
+ <h2 id="h2--redis-"><a name="使用连接到Redis服务器" class="reference-link"></a><span class="header-link octicon octicon-link"></span>使用连接到Redis服务器</h2>
+ <pre><code class="lang-php">&lt;?php 
+   //Connecting to Redis server on localhost 
+   $redis = new Redis(); 
+   $redis-&gt;connect('127.0.0.1', 6379); 
+   echo "Connection to server sucessfully"; 
+   //check whether server is running or not 
+   echo "Server is running: ".$redis-&gt;ping(); 
+?&gt;
+</code></pre> 
+ <p>当程序执行时，将产生以下结果。</p> 
+ <pre><code class="lang-shell">Connection to server sucessfully 
+Server is running: PONG
+</code></pre> 
+ <h2 id="h2-redis-php-"><a name="Redis PHP字符串示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>Redis PHP字符串示例</h2>
+ <pre><code class="lang-php">&lt;?php 
+   //Connecting to Redis server on localhost 
+   $redis = new Redis(); 
+   $redis-&gt;connect('127.0.0.1', 6379); 
+   echo "Connection to server sucessfully"; 
+   //set the data in redis string 
+   $redis-&gt;set("tutorial-name", "Redis tutorial"); 
+   // Get the stored data and print it 
+   echo "Stored string in redis:: " .$redis→get("tutorial-name"); 
+?&gt;
+</code></pre> 
+ <p>执行上面代码，将生成以下结果 - </p> 
+ <pre><code class="lang-java">Connection to server sucessfully 
+Stored string in redis:: Redis tutorial
+</code></pre> 
+ <h2 id="h2-redis-php-"><a name="Redis php列表示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>Redis php列表示例</h2>  
+ <pre><code class="lang-php">&lt;?php 
+   //Connecting to Redis server on localhost 
+   $redis = new Redis(); 
+   $redis-&gt;connect('127.0.0.1', 6379); 
+   echo "Connection to server sucessfully"; 
+   //store data in redis list 
+   $redis-&gt;lpush("tutorial-list", "Redis"); 
+   $redis-&gt;lpush("tutorial-list", "Mongodb"); 
+   $redis-&gt;lpush("tutorial-list", "Mysql");  
+
+   // Get the stored data and print it 
+   $arList = $redis-&gt;lrange("tutorial-list", 0 ,5); 
+   echo "Stored string in redis:: "; 
+   print_r($arList); 
+?&gt;
+</code></pre> 
+ <p>执行上面代码，将生成以下结果 - </p> 
+ <pre><code class="lang-php">Connection to server sucessfully 
+Stored string in redis:: 
+Redis 
+Mongodb 
+Mysql
+</code></pre> 
+ <h2 id="h2-redis-php-"><a name="Redis php键示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>Redis php键示例</h2>
+ <pre><code class="lang-php">&lt;?php 
+   //Connecting to Redis server on localhost 
+   $redis = new Redis(); 
+   $redis-&gt;connect('127.0.0.1', 6379); 
+   echo "Connection to server sucessfully"; 
+   // Get the stored keys and print it 
+   $arList = $redis-&gt;keys("*"); 
+   echo "Stored keys in redis:: " 
+   print_r($arList); 
+?&gt;
+</code></pre> 
+ <p>执行上面代码，将生成以下结果 - </p> 
+ <pre><code class="lang-php">Connection to server sucessfully 
+Stored string in redis:: 
+tutorial-name 
+tutorial-list
+</code></pre>
+ <br>      
+</div></body></html>

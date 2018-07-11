@@ -1,0 +1,56 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">JSP点击量(访问量)统计实例</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>在本章中，我们将在JSP中讨论如何实现点击量统计。 点击计数器用于统计有关网站的特定页面上的访问次数。假设人们首先登陆网站主页，通常是<code>index.jsp</code>页面中有点击计数器。</p> 
+ <p>要实现一个点击计数器，可使用Application隐式对象和关联的<code>getAttribute()</code>和<code>setAttribute()</code>方法。</p> 
+ <p>该对象是JSP页面在其整个生命周期中的表示。 当JSP页面被初始化时，将创建此对象，并且在JSP页面被<code>jspDestroy()</code>方法删除时将被删除。</p> 
+ <p>以下是在应用程序级别设置变量的语法 -</p> 
+ <pre><code class="lang-java">application.setAttribute(String Key, Object Value);
+</code></pre> 
+ <p>可以使用上述方法设置命中计数器变量并重置相同的变量。以下是读取以前方法设置的变量的方法 -</p> 
+ <pre><code class="lang-java">application.getAttribute(String Key);
+</code></pre> 
+ <p>每当用户访问页面时，可以读取点击计数器的当前值并将其添加<code>1</code>，并再次设置它以供将来使用。</p> 
+ <h2 id="h2-u793Au4F8B"><a name="示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例</h2>
+ <p>此示例显示如何使用JSP来计算特定页面上的匹配总数。如果想计算网站的总点击次数，那么需要在所有JSP页面中包含相同的代码。</p> 
+ <p>打开 Eclipse 创建一个动态Web项目：<em>HitsCounter</em> ，其项目中的JSP文件如下所示 - </p> 
+ <p>文件：<em>index.jsp</em> - </p> 
+ <pre><code class="lang-html">&lt;%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%&gt;
+&lt;!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;meta http-equiv="Content-Type" content="text/html; charset=UTF-8"&gt;
+&lt;title&gt;页面点击统计&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div style="margin: auto; width: 80%"&gt;
+        &lt;%
+            Integer hitsCount = (Integer) application.getAttribute("hitCounter");
+            if (hitsCount == null || hitsCount == 0) {
+                /* First visit */
+                out.println("欢迎您来到我的网站!");
+                hitsCount = 1;
+            } else {
+                /* return visit */
+                out.println("欢迎您再次访问我的网站!");
+                hitsCount += 1;
+            }
+            application.setAttribute("hitCounter", hitsCount);
+        %&gt;
+        &lt;center&gt;
+            &lt;p&gt;
+                访问总数：&lt;%=hitsCount%&gt;&lt;/p&gt;
+
+        &lt;/center&gt;
+    &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>在编写完成以上代码后，部署项目并访问以下URL： <code>http://localhost:8080/HitsCounter/index.jsp</code> ，应该会看到以下结果 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/2210/775101001_14364.png" alt=""></p> 
+ <p>再次刷新上面的网址，应该会看到以下结果- </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/2210/557101002_83315.png" alt=""></p> 
+ <p>复制以上<em>index.jsp</em>中的代码，放到另一个JSP文件：<em>index2.jsp</em>文件中，然后访问： <code>http://localhost:8080/HitsCounter/index2.jsp</code> ，应该会看到以下结果 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/2210/327101003_11049.png" alt=""></p> 
+ <p>可以看到访问总数为：<code>3</code></p>
+ <br>      
+</div></body></html>

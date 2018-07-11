@@ -1,0 +1,61 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Git补丁操作</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>补丁是一个文本文件，其内容类似于<code>git diff</code>，但与代码一样，它也有关于提交的元数据; 例如提交ID，日期，提交消息等。我们可以从提交创建一个补丁，而其他人可以将它们应用到他们的存储库。</p> 
+ <p>假设我们在项目实现了一个<code>strcat</code>函数。并将编写的代码的路径并发送给其他开发人员。 然后，其他开发人员可以将接收的补丁应用到自己的代码中。</p> 
+ <p>我们使用<code>git format-patch</code>命令创建最新提交的修补程序。 如果要为特定提交创建修补程序，请在<code>format-patch</code>命令后面指定 <code>COMMIT_ID</code> 。</p> 
+ <pre><code class="lang-shell">$ pwd
+/D/worksp/sample
+
+Administrator@MY-PC /D/worksp/sample (master)
+$ git status
+On branch master
+Your branch is up-to-date with 'origin/master'.
+
+Changes not staged for commit:
+  (use "git add &lt;file&gt;..." to update what will be committed)
+  (use "git checkout -- &lt;file&gt;..." to discard changes in working directory)
+
+        modified:   src/string.py
+
+no changes added to commit (use "git add" and/or "git commit -a")
+
+Administrator@MY-PC /D/worksp/sample (master)
+$ git add src/string.py
+
+Administrator@MY-PC /D/worksp/sample (master)
+$ git commit -m "Added my_strcat function"
+[master cea49f4] Added my_strcat function
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+Administrator@MY-PC /D/worksp/sample (master)
+$ git format-patch -1
+0001-Added-my_strcat-function.patch
+</code></pre> 
+ <p>上述命令在当前工作目录中创建<code>.patch</code>文件。 其他开发人员可以使用这个补丁来修改他的文件。 Git分别提供两个命令：<code>git am</code> 和 <code>git apply</code> 来应用补丁。 <code>git apply</code>修改本地文件而不创建提交，而<code>git am</code>会修改文件并创建提交。</p> 
+ <p>要应用补丁并创建提交，请使用以下命令：</p>   
+ <pre><code class="lang-shell">yiibai@ubuntu:~/git/sample$ pwd
+/home/yiibai/git/sample/src
+
+yiibai@ubuntu:~/git/sample$ git diff
+
+yiibai@ubuntu:~/git/sample$ git status –s
+
+yiibai@ubuntu:~/git/sample$ git apply 0001-Added-my_strcat-function.patch
+
+yiibai@ubuntu:~/git/sample$ git status -s
+</code></pre> 
+ <p>修补程序成功应用，现在我们可以使用<code>git diff</code>命令查看修改。</p> 
+ <pre><code class="lang-shell">$ git diff
+diff --git a/src/string.py b/src/string.py
+index ab42b94..18f165f 100644
+--- a/src/string.py
++++ b/src/string.py
+@@ -6,4 +6,5 @@ var2 = "Python Programming"
+ print ("var1[0]: ", var1[0])
+ print ("var2[1:5]: ", var2[1:5]) #   切片 加索引
+
+-
++def my_strcat(str1, str2):
++       return (str1+str2)
+</code></pre>
+ <br>      
+</div></body></html>

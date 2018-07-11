@@ -1,0 +1,88 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Laravel重定向</h1><div style="width:100%;float:left;" class="article-content">   
+ <h2> 重定向至命名路由 </h2> 
+ <div> 
+  <p style="text-align:justify;"> 命名路由用于给出具体的名字命名到一个路由。名称可以使用“作为”数组键来被分配。 </p> 
+  <pre>Route::get('user/profile', ['as' =&gt; 'profile', function () {
+   //
+}]);</pre> 
+  <div>
+    注&nbsp;-&nbsp;在这里，我们命名为“profile”到路由“user/profile”。 
+  </div> 
+  <h3> 示例 </h3> 
+  <div>
+    第1步&nbsp;-&nbsp;创建一个名为&nbsp;test.php&nbsp;的视图，并将其保存在resources/views/test.php。 
+  </div> 
+  <pre>&lt;html&gt;
+   &lt;body&gt;
+      &lt;h2&gt;Example of Redirecting to Named Routes&lt;/h2&gt;
+   &lt;/body&gt;
+&lt;/html&gt;&nbsp;</pre> 
+  <p> 第2步&nbsp;-&nbsp;在 routes.php 文件中，我们已经创建了 test.php 文件的路由，把它重新命名为&nbsp;“testing”。我们还建立了一个路由&nbsp;“redirect”，这将请求重定向到指定路由“testing”。 </p> 
+  <p> <strong>app/Http/routes.php</strong> </p> 
+  <pre>Route::get('/test', ['as'=&gt;'testing',function(){
+   return view('test');
+}]);
+Route::get('redirect',function(){
+   return redirect()-&gt;route('testing');
+});</pre> 
+  <div>
+    第3步&nbsp;-&nbsp;访问以下网址测试命名的路由例子。 
+  </div> 
+  <p> http://localhost:8000/redirect </p> 
+  <p> 第4步&nbsp;-&nbsp;上面的URL执行后，因为我们重定向到&nbsp;<a target="_blank" href="http://localhost:8000/test">http://localhost:8000/test</a>&nbsp;同时你会被重定向到命名路由&nbsp;"testing"。 </p> 
+  <div>
+    第5步&nbsp;-&nbsp;URL的成功执行后原来的URL会跳转到&nbsp;&nbsp;
+   <a target="_blank" href="http://localhost:8000/test">http://localhost:8000/test</a>，您会收到以下输出&nbsp;-
+   <br> 
+   <img src="/uploads/tutorial/20160508/1-16050Q25405644.png" alt="">
+   <br> 
+  </div> 
+  <h2> 
+   <div>
+     重定向到控制器动作 
+   </div> </h2> 
+  <p> 不仅命名的路由，但我们也可以重定向到控制器动作。我们只需要简单将控制器和动作名称传递给动作方法，如下面的例子所示。如果想传递一个参数，那可以把它作为操作方法的第二个参数传递。 </p> 
+  <pre>return redirect()-&gt;action(‘NameOfController@methodName’,[parameters]);</pre> 
+  <h3> 示例 </h3> 
+  <div>
+    第1步-&nbsp;执行以下命令来创建一个名为&nbsp;RedirectController。 
+  </div>   
+  <pre>php artisan make:controller RedirectController</pre> 
+  <div>
+    第2步&nbsp;-&nbsp;成功执行后，您会收到以下输出&nbsp;-
+   <br> 
+   <img src="/uploads/tutorial/20160508/1-16050Q25500C5.png" alt="">
+   <br> 
+  </div> 
+  <p> 第3步&nbsp;-&nbsp;将以下代码复制到文件：app/Http/Controllers/RedirectController.php. </p> 
+  <p> <strong>app/Http/Controllers/RedirectController.php</strong> </p> 
+  <pre>&lt;?php
+namespace App\Http\Controllers;
+use Illuminate\Http\Request;
+use App\Http\Requests;
+use App\Http\Controllers\Controller;
+
+class RedirectController extends Controller {
+   public function index(){
+      echo "Redirecting to controller's action.";
+   }
+}&nbsp;</pre> 
+  <p> 第4步&nbsp;-&nbsp;添加以下行到文件：&nbsp;app/Http/routes.php. </p> 
+  <p> <strong>app/Http/routes.php</strong> </p> 
+  <pre>Route::get('reindex','RedirectController@index');
+Route::get('/redirectcontroller',function(){
+   return redirect()-&gt;action('RedirectController@index');
+});</pre> 
+  <div>
+    第5步&nbsp;-&nbsp;请访问以下网址进行测试例子。 
+  </div> 
+  <p> <em>http://localhost:8000/redirectcontroller</em> </p> 
+  <div>
+    第6步&nbsp;-&nbsp;输出结果如下图所示。
+   <br> 
+   <img src="/uploads/tutorial/20160508/1-16050Q25441641.png" alt="">
+   <br> 
+  </div> 
+ </div>
+ <br>      
+</div></body></html>

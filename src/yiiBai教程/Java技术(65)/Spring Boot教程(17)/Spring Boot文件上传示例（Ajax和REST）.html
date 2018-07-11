@@ -1,0 +1,375 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Spring Boot文件上传示例（Ajax和REST）</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>本文介绍如何使用Ajax请求在Spring Boot Web应用程序(REST结构)中上传文件。</p> 
+ <p>本文中使用的工具：</p> 
+ <ul> 
+  <li>Spring Boot 1.4.3.RELEASE</li>
+  <li>Spring 4.3.5.RELEASE</li>
+  <li>Thymeleaf</li>
+  <li>jQuery (webjars)</li>
+  <li>Maven</li>
+  <li>Embedded Tomcat 8.5.6</li>
+  <li>Google Chrome浏览器</li>
+ </ul> 
+ <h2 id="h2-1-"><a name="1. 项目结构" class="reference-link"></a><span class="header-link octicon octicon-link"></span>1. 项目结构</h2>
+ <p>一个标准的Maven项目结构。如下图所示 -<br><img src="http://www.yiibai.com/uploads/images/201703/2903/751170315_84174.png" alt=""></p> 
+ <h2 id="h2-2-"><a name="2. 项目依赖" class="reference-link"></a><span class="header-link octicon octicon-link"></span>2. 项目依赖</h2>
+ <p>声明一个额外的jQuery webjar依赖关系，适用于HTML格式的Ajax请求。</p> 
+ <p><em>文件：pom.xml</em><br>```xml
+  <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemalocation="http://maven.apache.org/POM/4.0.0
+  http://maven.apache.org/maven-v4_0_0.xsd">
+   <br> 
+   <modelversion>
+    4.0.0
+   </modelversion>
+  </project></p> 
+ <pre><code>&lt;groupId&gt;com.yiibai&lt;/groupId&gt;
+&lt;artifactId&gt;spring-boot-file-upload&lt;/artifactId&gt;
+&lt;packaging&gt;jar&lt;/packaging&gt;
+&lt;version&gt;1.0&lt;/version&gt;
+
+&lt;parent&gt;
+    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-boot-starter-parent&lt;/artifactId&gt;
+    &lt;version&gt;1.4.3.RELEASE&lt;/version&gt;
+&lt;/parent&gt;
+
+&lt;properties&gt;
+    &lt;java.version&gt;1.8&lt;/java.version&gt;
+&lt;/properties&gt;
+
+&lt;dependencies&gt;
+
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-boot-starter-thymeleaf&lt;/artifactId&gt;
+    &lt;/dependency&gt;
+
+    &lt;!-- hot swapping, disable cache for template, enable live reload --&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-boot-devtools&lt;/artifactId&gt;
+        &lt;optional&gt;true&lt;/optional&gt;
+    &lt;/dependency&gt;
+
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.webjars&lt;/groupId&gt;
+        &lt;artifactId&gt;jquery&lt;/artifactId&gt;
+        &lt;version&gt;2.2.4&lt;/version&gt;
+    &lt;/dependency&gt;
+
+&lt;/dependencies&gt;
+
+&lt;build&gt;
+    &lt;plugins&gt;
+        &lt;!-- Package as an executable jar/war --&gt;
+        &lt;plugin&gt;
+            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-boot-maven-plugin&lt;/artifactId&gt;
+        &lt;/plugin&gt;
+    &lt;/plugins&gt;
+&lt;/build&gt;
+</code></pre>
+ <p></p> 
+ <pre><code>
+## 3.文件上传
+为了支持Ajax请求和响应，最简单的解决方案返回一个ResponseEntity。
+以下示例演示了上传文件的三种可能方式：
+1. 单文件上传 - `MultipartFile`
+2. 多文件上传 - `MultipartFile []`
+3. 将文件上传到模型 - `@ModelAttribute`
+
+*文件：RestUploadController.java*
+
+```java
+package com.yiibai.controller;
+
+import com.yiibai.model.UploadModel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
+@RestController
+public class RestUploadController {
+
+    private final Logger logger = LoggerFactory.getLogger(RestUploadController.class);
+
+    //Save the uploaded file to this folder
+    private static String UPLOADED_FOLDER = "D://temp//";
+
+    //Single file upload
+    @PostMapping("/api/upload")
+    // If not @RestController, uncomment this
+    //@ResponseBody
+    public ResponseEntity&lt;?&gt; uploadFile(
+            @RequestParam("file") MultipartFile uploadfile) {
+
+        logger.debug("Single file upload!");
+
+        if (uploadfile.isEmpty()) {
+            return new ResponseEntity("please select a file!", HttpStatus.OK);
+        }
+
+        try {
+
+            saveUploadedFiles(Arrays.asList(uploadfile));
+
+        } catch (IOException e) {
+            return new ResponseEntity&lt;&gt;(HttpStatus.BAD_REQUEST);
+        }
+
+        return new ResponseEntity("Successfully uploaded - " +
+                uploadfile.getOriginalFilename(), new HttpHeaders(), HttpStatus.OK);
+
+    }
+
+    // Multiple file upload
+    @PostMapping("/api/upload/multi")
+    public ResponseEntity&lt;?&gt; uploadFileMulti(
+            @RequestParam("extraField") String extraField,
+            @RequestParam("files") MultipartFile[] uploadfiles) {
+
+        logger.debug("Multiple file upload!");
+
+        String uploadedFileName = Arrays.stream(uploadfiles).map(x -&gt; x.getOriginalFilename())
+                .filter(x -&gt; !StringUtils.isEmpty(x)).collect(Collectors.joining(" , "));
+
+        if (StringUtils.isEmpty(uploadedFileName)) {
+            return new ResponseEntity("please select a file!", HttpStatus.OK);
+        }
+
+        try {
+
+            saveUploadedFiles(Arrays.asList(uploadfiles));
+
+        } catch (IOException e) {
+            return new ResponseEntity&lt;&gt;(HttpStatus.BAD_REQUEST);
+        }
+
+        return new ResponseEntity("Successfully uploaded - "
+                + uploadedFileName, HttpStatus.OK);
+
+    }
+
+    // maps html form to a Model
+    @PostMapping("/api/upload/multi/model")
+    public ResponseEntity&lt;?&gt; multiUploadFileModel(@ModelAttribute UploadModel model) {
+
+        logger.debug("Multiple file upload! With UploadModel");
+
+        try {
+
+            saveUploadedFiles(Arrays.asList(model.getFiles()));
+
+        } catch (IOException e) {
+            return new ResponseEntity&lt;&gt;(HttpStatus.BAD_REQUEST);
+        }
+
+        return new ResponseEntity("Successfully uploaded!", HttpStatus.OK);
+
+    }
+
+    //save file
+    private void saveUploadedFiles(List&lt;MultipartFile&gt; files) throws IOException {
+
+        for (MultipartFile file : files) {
+
+            if (file.isEmpty()) {
+                continue; //next pls
+            }
+
+            byte[] bytes = file.getBytes();
+            Path path = Paths.get(UPLOADED_FOLDER + file.getOriginalFilename());
+            Files.write(path, bytes);
+
+        }
+
+    }
+}
+</code></pre>
+ <p>以上示例的简单模型 - <code><a target="_blank" href="https://github.com/ModelAttribute" title="@ModelAttribute" class="at-link">@ModelAttribute</a></code>，<em>文件：UploadModel.java</em> -</p> 
+ <pre><code class="lang-java">package com.yiibai.model;
+
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.Arrays;
+
+public class UploadModel {
+
+    private String extraField;
+
+    private MultipartFile[] files;
+
+    public String getExtraField() {
+        return extraField;
+    }
+
+    public void setExtraField(String extraField) {
+        this.extraField = extraField;
+    }
+
+    public MultipartFile[] getFiles() {
+        return files;
+    }
+
+    public void setFiles(MultipartFile[] files) {
+        this.files = files;
+    }
+
+    @Override
+    public String toString() {
+        return "UploadModel{" +
+                "extraField='" + extraField + '\'' +
+                ", files=" + Arrays.toString(files) +
+                '}';
+    }
+}
+</code></pre> 
+ <h2 id="h2-u89C6u56FEu6587u4EF6"><a name="视图文件" class="reference-link"></a><span class="header-link octicon octicon-link"></span>视图文件</h2>
+ <p>多个文件上传的HTML表单。文件：<em>upload.html</em> - </p> 
+ <pre><code class="lang-html">&lt;!DOCTYPE html&gt;
+&lt;html xmlns:th="http://www.thymeleaf.org"&gt;
+&lt;body&gt;
+
+&lt;h2&gt;Spring Boot多文件上传示例(使用AJAX)&lt;/h2&gt;
+
+&lt;form method="POST" enctype="multipart/form-data" id="fileUploadForm"&gt;
+    &lt;input type="text" name="extraField"/&gt;&lt;br/&gt;&lt;br/&gt;
+    &lt;input type="file" name="files"/&gt;&lt;br/&gt;&lt;br/&gt;
+    &lt;input type="file" name="files"/&gt;&lt;br/&gt;&lt;br/&gt;
+    &lt;input type="submit" value="提交" id="btnSubmit"/&gt;
+&lt;/form&gt;
+
+&lt;h1&gt;Ajax提交结果：&lt;/h1&gt;
+&lt;pre&gt;
+    &lt;span id="result"&gt;&lt;/span&gt;
+&lt;/pre&gt;
+
+&lt;script type="text/javascript" src="webjars/jquery/2.2.4/jquery.min.js"&gt;&lt;/script&gt;
+&lt;script type="text/javascript" src="js/main.js"&gt;&lt;/script&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <h2 id="h2-5-jquery-ajax-"><a name="5. jQuery - Ajax请求" class="reference-link"></a><span class="header-link octicon octicon-link"></span>5. jQuery - Ajax请求</h2>
+ <p>jQuery通过表单<code>#id</code>获取表单，并通过Ajax请求发送多部分(<code>multipart</code>)表单数据。文件：<em>resources/static/js/main.js</em> - </p>   
+ <pre><code class="lang-js">$(document).ready(function () {
+
+    $("#btnSubmit").click(function (event) {
+
+        //stop submit the form, we will post it manually.
+        event.preventDefault();
+
+        fire_ajax_submit();
+
+    });
+
+});
+
+function fire_ajax_submit() {
+
+    // Get form
+    var form = $('#fileUploadForm')[0];
+
+    var data = new FormData(form);
+
+    data.append("CustomField", "This is some extra data, testing");
+
+    $("#btnSubmit").prop("disabled", true);
+
+    $.ajax({
+        type: "POST",
+        enctype: 'multipart/form-data',
+        url: "/api/upload/multi",
+        data: data,
+        //http://api.jquery.com/jQuery.ajax/
+        //http://developer.mozilla.org/en-US/docs/Web/API/FormData/Using_FormData_Objects
+        processData: false, //prevent jQuery from automatically transforming the data into a query string
+        contentType: false,
+        cache: false,
+        timeout: 600000,
+        success: function (data) {
+
+            $("#result").text(data);
+            console.log("SUCCESS : ", data);
+            $("#btnSubmit").prop("disabled", false);
+
+        },
+        error: function (e) {
+
+            $("#result").text(e.responseText);
+            console.log("ERROR : ", e);
+            $("#btnSubmit").prop("disabled", false);
+
+        }
+    });
+
+}
+</code></pre> 
+ <h2 id="h2-6-"><a name="6. 异常处理程序" class="reference-link"></a><span class="header-link octicon octicon-link"></span>6. 异常处理程序</h2>
+ <p>要处理来自Ajax请求的异常，只需扩展<code>ResponseEntityExceptionHandler</code>并返回一个<code>ResponseEntity</code>。文件：<em>RestGlobalExceptionHandler.java</em> -</p> 
+ <pre><code class="lang-java">package com.yiibai.exception;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartException;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+
+import javax.servlet.http.HttpServletRequest;
+
+//http://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#boot-features-error-handling
+@ControllerAdvice
+public class RestGlobalExceptionHandler extends ResponseEntityExceptionHandler {
+
+    @ExceptionHandler(MultipartException.class)
+    @ResponseBody
+    ResponseEntity&lt;?&gt; handleControllerException(HttpServletRequest request, Throwable ex) {
+
+        HttpStatus status = getStatus(request);
+
+        return new ResponseEntity(new CustomError("0x000123", "Attachment size exceeds the allowable limit! (10MB)"), status);
+
+        //return new ResponseEntity("Attachment size exceeds the allowable limit! (10MB)", status);
+
+        // example
+        //return new ResponseEntity(ex.getMessage(), status);
+        //return new ResponseEntity("success", responseHeaders, HttpStatus.OK);
+
+    }
+
+    private HttpStatus getStatus(HttpServletRequest request) {
+        Integer statusCode = (Integer) request.getAttribute("javax.servlet.error.status_code");
+        if (statusCode == null) {
+            return HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+        return HttpStatus.valueOf(statusCode);
+    }
+
+}
+</code></pre> 
+ <h2 id="h2-7-"><a name="7. 运行演示" class="reference-link"></a><span class="header-link octicon octicon-link"></span>7. 运行演示</h2>
+ <p>使用默认的嵌入式Tomcat的启动Spring Boot命令：<code>mvn spring-boot:run.</code>。<br>访问：<code>http://localhost:8080/</code> ，选择几个文件并单击提交以触发ajax请求。</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201703/2903/986170326_36405.png" alt=""></p> 
+ <blockquote> 
+  <p>提示：打开目录：<code>F:/temp</code> 应该能看到上传的文件。</p> 
+ </blockquote>
+ <br>      
+</div></body></html>

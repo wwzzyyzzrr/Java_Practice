@@ -1,0 +1,102 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">sed模式缓冲区</h1><div style="width:100%;float:left;" class="article-content">   
+ <p> 我们对任何文件进行基本操作，显示其内容。为了达到这个目的，我们可以用打印的模式缓冲区的打印命令。本教程将介绍更多的模式缓冲区，以及如何打印使用相关模式缓冲区不同运算符的文件的内容。</p> 
+ <p> 考虑一下我们有一个文本文件books.txt待处理，它有以下内容：</p> 
+ <pre class="result" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 539.828125px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+1) A Storm of Swords, George R. R. Martin, 1216 
+2) The Two Towers, J. R. R. Tolkien, 352 
+3) The Alchemist, Paulo Coelho, 197 
+4) The Fellowship of the Ring, J. R. R. Tolkien, 432 
+5) The Pilgrimage, Paulo Coelho, 288 
+6) A Game of Thrones, George R. R. Martin, 864</pre> 
+ <h2> Sed p 命令</h2> 
+ <p> 我们可以用Sed 'p'命令来打印指定文件的内容。下面是一个简单的命令来打印文件 books.txt 的内容。</p> 
+ <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 539.828125px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+<span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">jerry</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">$ sed </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">'p'</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> books</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">txt</span></pre> 
+ <p> 当执行上面的代码，就会产生下面的结果。</p> 
+ <pre class="result" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 539.828125px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+1) A Storm of Swords, George R. R. Martin, 1216 
+1) A Storm of Swords, George R. R. Martin, 1216 
+2) The Two Towers, J. R. R. Tolkien, 352 
+2) The Two Towers, J. R. R. Tolkien, 352 
+3) The Alchemist, Paulo Coelho, 197 
+3) The Alchemist, Paulo Coelho, 197 
+4) The Fellowship of the Ring, J. R. R. Tolkien, 432 
+4) The Fellowship of the Ring, J. R. R. Tolkien, 432 
+5) The Pilgrimage, Paulo Coelho, 288 
+5) The Pilgrimage, Paulo Coelho, 288 
+6) A Game of Thrones, George R. R. Martin, 864 
+6) A Game of Thrones, George R. R. Martin, 864</pre> 
+ <p> 让我们找出为什么每个行被打印两次。实际上，在默认情况下，sed打印模式缓冲区的内容。此外，我们已明确地接入命令部分&nbsp;print &nbsp;命令。因此，每行打印了两次。Sed有一个-n选项来抑制模式缓冲区的默认打印。让我们试试下面的命令：</p> 
+ <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 539.828125px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+<span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">jerry</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">$ sed </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">-</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">n </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">'p'</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> books</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">txt </span></pre> 
+ <p> 当执行上面的代码，就会产生下面的结果。</p> 
+ <pre class="result" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 539.828125px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+1) A Storm of Swords, George R. R. Martin, 1216 
+2) The Two Towers, J. R. R. Tolkien, 352 
+3) The Alchemist, Paulo Coelho, 197 
+4) The Fellowship of the Ring, J. R. R. Tolkien, 432 
+5) The Pilgrimage, Paulo Coelho, 288 
+6) A Game of Thrones, George R. R. Martin, 864 </pre> 
+ <h2> Sed 地址范围</h2> 
+ <p> 默认情况下，sed在所有行上操作。但是，可以强制sed只在某些行上使用。例如，在下面的例子中，sed只运行在第三行。在这个例子中，我们指定 sed 命令前一个地址范围。</p> 
+ <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 539.828125px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+<span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">jerry</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">$ sed </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">-</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">n </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">'3p'</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> books</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">txt </span></pre> 
+ <p> 当执行上面的代码，就会产生下面的结果。</p> 
+ <pre class="result" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 539.828125px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+3) The Alchemist, Paulo Coelho, 197 </pre> 
+ <h2> Sed comma 命令</h2> 
+ <p> 下面的代码打印2〜5。这里我们使用了逗号（，）运算符指定的地址范围内的所有行：</p> 
+ <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 539.828125px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+<span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">jerry</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">$ sed </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">-</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">n </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">'2,5 p'</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> books</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">txt </span></pre> 
+ <p> 当执行上面的代码，就会产生下面的结果。</p> 
+ <pre class="result" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 539.828125px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+2) The Two Towers, J. R. R. Tolkien, 352 
+3) The Alchemist, Paulo Coelho, 197 
+4) The Fellowship of the Ring, J. R. R. Tolkien, 432 
+5) The Pilgrimage, Paulo Coelho, 288</pre> 
+ <h2> Sed $ 运算符</h2> 
+ <p> 我们可以使用美元符号$运算符来打印该文件的最后一行，如下所示：</p> 
+ <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 539.828125px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+<span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">jerry</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">$ sed </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">-</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">n </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">'$ p'</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> books</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">txt </span></pre> 
+ <p> 当执行上面的代码，就会产生下面的结果。</p> 
+ <pre class="result" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 539.828125px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+6) A Game of Thrones, George R. R. Martin, 864 </pre> 
+ <p> 但是，我们也可以使用美元符号（$）来指定一个地址范围。下面的例子打印通过第3行到最后一行。</p> 
+ <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 539.828125px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+<span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">jerry</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">$ sed </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">-</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">n </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">'3,$ p'</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> books</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">txt </span></pre> 
+ <p> 当执行上面的代码，就会产生下面的结果。</p>   
+ <pre class="result" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 539.828125px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+3) The Alchemist, Paulo Coelho, 197
+4) The Fellowship of the Ring, J. R. R. Tolkien, 432
+5) The Pilgrimage, Paulo Coelho, 288
+6) A Game of Thrones, George R. R. Martin, 864</pre> 
+ <h2> Sed 加操作</h2> 
+ <p> sed的加号（+）运算符可以用来与逗号（，）运算符。例如M，+ n将打印的行数M，以下示例开始打印从第2行开始到下一个4行：</p> 
+ <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 539.828125px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+<span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">jerry</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">$ sed </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">-</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">n </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">'2,+4 p'</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> books</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">txt </span></pre> 
+ <p> 当执行上面的代码，就会产生下面的结果。</p> 
+ <pre class="result" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 539.828125px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+2) The Two Towers, J. R. R. Tolkien, 352 
+3) The Alchemist, Paulo Coelho, 197 
+4) The Fellowship of the Ring, J. R. R. Tolkien, 432 
+5) The Pilgrimage, Paulo Coelho, 288 
+6) A Game of Thrones, George R. R. Martin, 864 </pre> 
+ <h2> Sed 波浪线运算符</h2> 
+ <p> 或者，我们也可以使用波浪符号（〜）运算符指定的地址范围。它采用M〜n形式。这表明 sed 应该开始行数M和处理每n（次）行。例如，50〜5行号50，55，60，65，等等。让我们从打印的文件只有奇数行。</p> 
+ <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 539.828125px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+<span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">jerry</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">$ sed </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">-</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">n </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">'1~2 p'</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> books</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">txt </span></pre> 
+ <p> 当执行上面的代码，就会产生下面的结果。</p> 
+ <pre class="result" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 539.828125px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+1) A Storm of Swords, George R. R. Martin, 1216 
+3) The Alchemist, Paulo Coelho, 197 
+5) The Pilgrimage, Paulo Coelho, 288</pre> 
+ <p> 下面的代码仅打印偶数行的文件。</p> 
+ <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 539.828125px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+<span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">jerry</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">$ sed </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">-</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">n </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">'2~2 p'</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> books</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">txt </span></pre> 
+ <p> 当执行上面的代码，就会产生下面的结果。</p> 
+ <pre class="result" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 539.828125px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+2) The Two Towers, J. R. R. Tolkien, 352 
+4) The Fellowship of the Ring, J. R. R. Tolkien, 432 
+6) A Game of Thrones, George R. R. Martin, 864 </pre> 
+ <br>      
+</div></body></html>

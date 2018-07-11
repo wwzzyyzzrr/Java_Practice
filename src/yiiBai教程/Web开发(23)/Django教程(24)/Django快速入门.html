@@ -1,0 +1,333 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Django快速入门</h1><div style="width:100%;float:left;" class="article-content">   
+ <h2> 快速安装 </h2> 
+ <p> 在使用Django之前，我们需要把它先安装好。我们这里有一个完整的安装指南，涵盖了所有的可能性;&nbsp;本指南将引导您通过简单的，最小化安装。 </p> 
+ <p> Windows 安装参考：<a target="_blank" href="https://docs.djangoproject.com/en/1.9/howto/windows/">https://docs.djangoproject.com/en/1.9/howto/windows/</a> </p> 
+ <div> 
+  <h2> 安装Python </h2> 
+  <p> 作为一个Python&nbsp;Web框架，Django 需要 Python 环境的支持。Python中包括一个轻量级的数据库：SQLite，所以我们不会需要建立数据库。 </p> 
+  <div>
+    获得 Python 的最新版本在以下网址：
+   <a target="_blank" href="https://www.python.org/download/">https://www.python.org/download/</a>&nbsp;或选择你对应操作系统的软件包管理器。 
+  </div> 
+  <div>
+    可以验证Python是否安装，通过从shell&nbsp;键入python;&nbsp;应该看到类似这样输出结果： 
+  </div> 
+  <div style="background-color:#F8F8F8;"> 
+   <pre>Python 3.4.x
+[GCC 4.x] on linux
+Type "help", "copyright", "credits" or "license" for more information.
+&gt;&gt;&gt;<span style="background-color:inherit;font-size:1em;"></span></pre> 
+  </div> 
+ </div> 
+ <div> 
+  <h2> 配置数据库 </h2> 
+  <p> 如果想使用像PostgreSQL，MySQL和Oracle这些一个“大”数据库引擎工作。要安装这样的数据库，请查阅<a target="_blank" href="https://docs.djangoproject.com/en/1.9/topics/install/#database-installation">数据库的安装信息</a>。 </p> 
+ </div> 
+ <div> 
+  <h2> </h2> 
+  <h2> 删除所有旧版本的Django </h2> 
+  <p> 如果您是从旧版本升级安装Django的等方面，需要<a target="_blank" href="https://docs.djangoproject.com/en/1.9/topics/install/#removing-old-versions-of-django">安装新版本前卸载旧版本的Django</a>。 </p> 
+ </div> 
+ <div> 
+  <h2> 安装Django </h2> 
+  <div>
+    一般使用三个简单的选项来安装Django： 
+  </div> 
+  <ul> 
+   <li> 安装由<a target="_blank" href="https://docs.djangoproject.com/en/1.9/misc/distributions/">操作系统分配提供的一个Django版本</a>。&nbsp;这是最快的选择对于那些有分发Django的操作系统。 </li> 
+   <li> 
+    <div>
+      安装
+     <a target="_blank" href="https://docs.djangoproject.com/en/1.9/topics/install/#installing-official-release">官方发布版本</a>。这是大多数用户的最佳方法。 
+    </div> </li> 
+   <li> 安装最新开发版本。此选项是那些想要最新的，并且不怕新代码有BUG的爱好者。您可能会遇到在开发新版本遇到bug，并报告给他们以帮助Django的发展。另外，第三方软件包版本在开发版本不太可能比最新的稳定版本兼容。 </li> 
+  </ul> 
+  <div> 
+   <h3> 安装Windows </h3> 
+   <div>
+     我们假设你的 Django 存档并且&nbsp;Python&nbsp;安装在计算机上，当前的最新版本是：1.9.1，可通过以下网址下载：
+    <a target="_blank" href="https://www.djangoproject.com/download/">https://www.djangoproject.com/download/</a> 
+   </div> 
+   <div>
+     首先，路径验证。 
+   </div> 
+   <p> 在某些版本的Windows(Windows&nbsp;7)中，需要确保 Path 系统变量的路径如下：C:\Python27\;C:\Python27\Lib\site-packages\django\bin\&nbsp;在里面，当然这取决于你的Python版本。 </p> 
+   <div>
+     然后，提取和安装Django，这里我们把解压到&nbsp;C:\Python27\ 
+   </div> 
+   <div style="background-color:inherit;"> 
+    <img src="/uploads/tutorial/20160131/1-160131102304455.png" alt=""> 
+   </div> 
+   <p> 接下来，通过运行以下命令，在windows&nbsp;shell&nbsp;“cmd”&nbsp;可能需要管理权限来安装Django&nbsp;− </p> 
+   <pre><span style="font-family:Monaco, Consolas, Courier, 'Lucida Console', monospace;line-height:1.5;">C:\Python27\Django-1.9.1</span><span style="font-family:Monaco, Consolas, Courier, 'Lucida Console', monospace;line-height:1.5;">&gt;python setup.py install&nbsp;</span></pre> 
+   <p> 要测试你的安装，打开命令提示符，从 shell 输入Python可以看到。然后在Python提示符，尝试导入Django： </p> 
+  </div> 
+ </div> 
+ <div> 
+  <pre>&gt;&gt;&gt; import django
+&gt;&gt;&gt; print(django.get_version())
+1.9.1<span style="background-color:inherit;font-size:1.4rem;"></span></pre> 
+  <div>
+    这就算安装完成了。接下来我们要进入开发的第一步。 
+  </div> 
+  <p> </p>
+  <h2> 开发第一个Django app </h2> 
+  <div>
+    让我们开始创建一个Web应用程序并一步步地学习。 
+  </div> 
+  <div>
+    在本教程中，将引导您完成创建一个基本的民意调查 (poll) 的应用。 
+  </div> 
+  <div>
+    这将包括两部分： 
+  </div> 
+  <ul> 
+   <li> 
+    <div>
+      一个公共网站，让人们在上面查看投票和投票。 
+    </div> </li> 
+   <li> 
+    <div>
+      一个网站管理，您可以添加，更改和删除投票。 
+    </div> </li> 
+  </ul> 
+  <div>
+    假设你的 Django 已经安装完成。可以确认 Django&nbsp;安装和版本，运行以下命令： 
+  </div> 
+  <div style="font-size:14px;color:#0C3C26;"> 
+   <div style="background-color:#F8F8F8;"> 
+    <pre><span style="background-color:inherit;color:#000080;font-weight:bold;">$</span> python -c <span style="background-color:inherit;color:#BA2121;">"import django; print(django.get_version())"&nbsp;&nbsp;</span><span style="background-color:inherit;font-size:1em;"></span></pre> 
+   </div> 
+  </div> 
+  <p> 如果安装 Django，你应该看到安装的版本。如果还未安装会得到一个错误提示：&nbsp;“No module named django”。 </p> 
+  <p> 本教程是使用 Django1.9和Python2.7或更高版本编写的。如果Django的版本不匹配，您可以通过使用版本切换 Django 版本，或者 Django 更新到最新版本。如果还在使用Python2.7，则需要稍微调整代码，如在注释中描述。 </p> 
+  <h2> 创建一个项目 </h2> 
+  <p> 如果第一次使用Django，必须采取一些初始设置。也就是说，需要自动生成一些代码，建立一个Django项目&nbsp;-&nbsp;设置Django实例的集合，包括数据库配置，Django 特定选项和特定应用程序设置。 </p> 
+  <div>
+    在命令行，cd 到你想要存储代码目录，比如，这里我创建项目的地方是：C:\Python7\ ，然后运行以下命令： 
+  </div> 
+  <div style="font-size:14px;"> 
+   <div style="background-color:#F8F8F8;"> 
+    <pre><span style="background-color:inherit;"><b>C:\python27&gt; </b></span><span style="color:#0C4B33;background-color:inherit;">django-admin startproject mysite<span style="background-color:inherit;font-size:1em;"></span></span></pre> 
+   </div> 
+  </div> 
+  <div>
+    这将在 C:\python17下创建 mysite 目录。如下图： 
+  </div> 
+  <div> 
+   <img src="/uploads/tutorial/20160131/1-16013110233E04.png" alt="">
+   <br> 
+  </div> 
+  <div>
+    让我们来看看 startproject 命令创建的目录结构： 
+  </div> 
+  <div> 
+   <div> 
+    <div style="background-color:#F8F8F8;"> 
+     <pre>mysite/
+    manage.py
+    mysite/
+        __init__.py
+        settings.py
+        urls.py
+        wsgi.py<span style="background-color:inherit;font-size:1em;"></span></pre> 
+    </div> 
+   </div> 
+   <p> 对上面这些文件的简要说明： </p> 
+   <ul> 
+    <li> 
+     <div>
+       在&nbsp;mysite/ 根目录上级仅仅是一个容器项目。对于Django它的名字随意，可以将其重命名为任何你喜欢的。 
+     </div> </li> 
+    <li> manage.py:&nbsp;一个命令行工具，可以让您以各种方式与Django项目进行交互。你可以阅读所有关于manage.py 在&nbsp;<a target="_blank" href="https://docs.djangoproject.com/en/1.9/ref/django-admin/">django-admin和manage.py 的细节</a>。 </li> 
+    <li> 内部&nbsp;mysite/目录是实际项目的Python包。它的名字是你需要使用导入里面的任何Python包的名称(例如mysite.urls)。 </li> 
+    <li> mysite/__init__.py:&nbsp;一个空文件，该文件告诉Python这个目录应该作为一个Python包。 </li> 
+    <li> mysite/settings.py:&nbsp;设置/配置这个Django项目。&nbsp;Django的设置，会告诉你如何设置工作。 </li> 
+    <li> mysite/urls.py:&nbsp;该 URL 声明这个Django项目; 类似Django网站的一个“表的内容”。 </li> 
+    <li> mysite/wsgi.py:&nbsp;一个WSGI兼容Web服务器的入口点，以满足您的项目需要。 </li> 
+   </ul> 
+  </div> 
+  <div>
+    开发服务器 
+  </div> 
+  <h2> </h2> 
+  <div>
+    让我们来验证你的Django项目工程。更改到外mysite的目录，如果你有没有准备好，并运行以下命令： 
+  </div> 
+  <div style="font-size:14px;"> 
+   <div style="background-color:#F8F8F8;"> 
+    <pre><span style="background-color:inherit;"><b>C:\python27\mysite&gt;</b></span><span style="color:#0C4B33;background-color:inherit;"> python manage.py runserver<span style="background-color:inherit;font-size:1em;"></span></span></pre> 
+   </div> 
+  </div> 
+  <div style="font-size:14px;">
+    你会看到在命令行下面的输出： 
+  </div> 
+  <pre>Performing system checks...
+
+System check identified no issues (0 silenced).
+
+You have unapplied migrations; your app may not work properly until they are applied.
+Run 'python manage.py migrate' to apply them.
+
+January 24, 2016 - 15:50:53
+Django version 1.9, using settings 'mysite.settings'
+Starting development server at <a target="_blank" href="http://127.0.0.1:8000/">http://127.0.0.1:8000/</a> Quit the server with CONTROL-C.</pre> 
+  <p> 你已经启动Django开发服务器，它是用Python写的纯粹一个轻量级的Web服务器。我们已经包含在 Django 中了，所以你可以很快开发东西了，而不必处理配置生产服务器&nbsp;-&nbsp;如：Apache 。 </p> 
+  <p> 需要注意的是：不要在任何类似生产环境中使用此服务器。它的目的只是用于开发(我们是在使用Web框架，而不是Web服务器的业务。) </p> 
+  <div>
+    现在，服务器的运行，请使用Web浏览器访问：
+   <a target="_blank" href="http://127.0.0.1:8000/">http://127.0.0.1:8000/</a>。会看到一个“Welcome&nbsp;to&nbsp;Django”页面。这表示它安装成功了！
+   <br> 
+   <img src="/uploads/tutorial/20160131/1-160131102413259.png" alt="">
+   <br> 
+  </div> 
+  <div> 
+   <div>
+     默认情况下 runserver 命令启动就在内部IP开发服务器的端口 8000。 
+   </div> 
+   <div>
+     如果你想改变服务器的端口，将它作为命令行参数。例如，下面这个命令会在服务器8080端口运行： 
+   </div> 
+   <div style="background-color:#F8F8F8;"> 
+    <pre><span style="background-color:inherit;color:#000080;font-weight:bold;">$</span> python manage.py runserver 8080<span style="background-color:inherit;font-size:1em;"></span></pre> 
+   </div> 
+   <div>
+     如果想改变服务器的IP，传递给它端口。(如果你想暴露在其他计算机或网络上工作)所有公网IP听，使用以下方法： 
+   </div> 
+   <div style="background-color:#F8F8F8;"> 
+    <pre><span style="background-color:inherit;color:#000080;font-weight:bold;">$</span> python manage.py runserver 0.0.0.0:8000</pre> 
+   </div> 
+  </div> 
+  <h2> 创建Polls app </h2> 
+  <div>
+    现在的“project”&nbsp;-&nbsp;设置完毕后就开始可以工作了。 
+  </div> 
+  <p> 在Django写的每个应用程序包含一个Python包，遵循一定的约定。&nbsp;Django提供了一个实用程序，自动生成一个应用程序的基本目录结构，这样就可以专注于写代码而不是建立目录。 </p> 
+  <div>
+    应用程序可以在Python路径中的任何地方。在本教程中，我们将创建投票程序在 manage.py 文件同级目录中，以便它可以被导入作为自己的顶层模块，而不是 mysite 的一个子模块。 
+  </div> 
+  <div>
+    在创建应用程序前，确保你在 manage.py&nbsp;同一个目录中并键入以下命令： 
+  </div> 
+  <div style="font-size:14px;"> 
+   <div style="background-color:#F8F8F8;"> 
+    <pre><span style="background-color:inherit;"><b>C:\python27\mysite&gt;</b></span><span style="color:#0C4B33;background-color:inherit;"> python manage.py startapp polls<span style="background-color:inherit;font-size:1em;"></span></span></pre> 
+   </div> 
+  </div> 
+  <div>
+    这将创建一个目录polls，这是目录结构是这样的： 
+  </div> 
+  <div style="font-size:14px;color:#0C3C26;"> 
+   <div style="background-color:#F8F8F8;"> 
+    <pre>polls/
+    __init__.py
+    admin.py
+    apps.py
+    migrations/
+        __init__.py
+    models.py
+    tests.py
+    views.py<span style="background-color:inherit;font-size:1em;"></span></pre> 
+   </div> 
+  </div> 
+  <div>
+    这个目录结构中的&nbsp;poll&nbsp;应用程序。 
+  </div> 
+  <h2> 编写视图代码 </h2> 
+  <div>
+    现在我们来编写的第一个视图。打开文件polls/views.py，把下面的Python代码放入里面： 
+  </div> 
+  <div style="font-size:14px;color:#0C3C26;"> 
+   <div style="background-color:#C9F0DD;font-size:1em;color:#0C4B33;font-family:'Fira Mono', Consolas, Menlo, Monaco, 'Courier New', Courier, monospace;">
+     polls/views.py 
+   </div> 
+   <div style="background-color:#F8F8F8;">   
+    <pre><span style="background-color:inherit;color:#008000;font-weight:bold;">from </span><span style="background-color:inherit;color:#0000FF;font-weight:bold;">django.http </span><span style="background-color:inherit;color:#008000;font-weight:bold;">import</span> HttpResponse <span style="background-color:inherit;color:#008000;font-weight:bold;">def </span><span style="background-color:inherit;color:#0000FF;">index</span>(request): <span style="background-color:inherit;color:#008000;font-weight:bold;">return</span> HttpResponse(<span style="background-color:inherit;color:#BA2121;">"Hello, world. You're at the polls index."</span>)</pre> 
+   </div> 
+  </div> 
+  <div>
+    这是 Django 最简单的视图。要调用这个视图还需要把它映射到一个URL&nbsp;-&nbsp;对于这一点，我们需要 URL 配置。 
+  </div> 
+  <div>
+    要在polls&nbsp;目录创建URL配置，创建一个名为&nbsp;urls.py&nbsp;文件，现在您的应用程序目录应该是这样的： 
+  </div> 
+  <div style="font-size:14px;color:#0C3C26;"> 
+   <div style="background-color:#F8F8F8;"> 
+    <pre>polls/
+    __init__.py
+    admin.py
+    apps.py
+    migrations/
+        __init__.py
+    models.py
+    tests.py
+    urls.py
+    views.py<span style="background-color:inherit;font-size:1em;"></span></pre> 
+   </div> 
+  </div> 
+  <div>
+    polls/urls.py文件包含以下代码： 
+  </div> 
+  <div style="font-size:14px;color:#0C3C26;"> 
+   <div style="background-color:#C9F0DD;font-size:1em;color:#0C4B33;font-family:'Fira Mono', Consolas, Menlo, Monaco, 'Courier New', Courier, monospace;">
+     polls/urls.py 
+   </div> 
+   <div style="background-color:#F8F8F8;"> 
+    <pre><span style="background-color:inherit;color:#008000;font-weight:bold;">from </span><span style="background-color:inherit;color:#0000FF;font-weight:bold;">django.conf.urls </span><span style="background-color:inherit;color:#008000;font-weight:bold;">import</span> url <span style="background-color:inherit;color:#008000;font-weight:bold;">from </span><span style="background-color:inherit;color:#0000FF;font-weight:bold;">. </span><span style="background-color:inherit;color:#008000;font-weight:bold;">import</span> views
+
+urlpatterns <span style="background-color:inherit;color:#666666;">=</span> [
+    url(<span style="background-color:inherit;color:#BA2121;">r'^$'</span>, views<span style="background-color:inherit;color:#666666;">.</span>index, name<span style="background-color:inherit;color:#666666;">=</span><span style="background-color:inherit;color:#BA2121;">'index'</span>),
+]</pre> 
+   </div> 
+  </div> 
+  <p> 下一步骤是让 polls.urls 模块指向该ROOT_URLCONF。在&nbsp;mysite/urls.py 中,&nbsp;增加导入&nbsp;django.conf.urls.include&nbsp;并插入&nbsp;include()&nbsp;在URL模式列表中，所以这里有： </p> 
+  <div style="font-size:14px;color:#0C3C26;"> 
+   <div style="background-color:#C9F0DD;font-size:1em;color:#0C4B33;font-family:'Fira Mono', Consolas, Menlo, Monaco, 'Courier New', Courier, monospace;">
+     mysite/urls.py 
+   </div> 
+   <div style="background-color:#F8F8F8;"> 
+    <pre><span style="background-color:inherit;color:#008000;font-weight:bold;">from </span><span style="background-color:inherit;color:#0000FF;font-weight:bold;">django.conf.urls </span><span style="background-color:inherit;color:#008000;font-weight:bold;">import</span> include, url <span style="background-color:inherit;color:#008000;font-weight:bold;">from </span><span style="background-color:inherit;color:#0000FF;font-weight:bold;">django.contrib </span><span style="background-color:inherit;color:#008000;font-weight:bold;">import</span> admin
+
+urlpatterns <span style="background-color:inherit;color:#666666;">=</span> [
+    url(<span style="background-color:inherit;color:#BA2121;">r'^polls/'</span>, include(<span style="background-color:inherit;color:#BA2121;">'polls.urls'</span>)),
+    url(<span style="background-color:inherit;color:#BA2121;">r'^admin/'</span>, admin<span style="background-color:inherit;color:#666666;">.</span>site<span style="background-color:inherit;color:#666666;">.</span>urls),
+]</pre> 
+   </div> 
+  </div> 
+  <div>
+    现在已经连接索引视图到URL配置。让我们来验证它结果，运行以下命令： 
+  </div> 
+  <div style="font-size:14px;color:#0C3C26;"> 
+   <div style="background-color:#F8F8F8;"> 
+    <pre><span style="color:#0C3C26;font-family:Roboto, Corbel, Avenir, 'Lucida Grande', 'Lucida Sans', line-height:1.5;">C:\Python27\mysite&gt;</span> python manage.py runserver&nbsp;&nbsp;<span style="background-color:inherit;font-size:1em;"></span></pre> 
+   </div> 
+  </div> 
+  <p> 在浏览器中打开<a target="_blank" href="http://localhost:8000/polls/">http://localhost:8000/polls/</a>，应该看到如下文字显示:&nbsp;“Hello, world. You’re at the polls index.”,&nbsp;在&nbsp;index&nbsp;视图中所定义。<br> <img src="/uploads/tutorial/20160131/1-160131102444a2.png" alt=""> </p> 
+  <p> url()函数传递四个参数，两个必需的：regex&nbsp;和&nbsp;view，以及两个可选：kwargs&nbsp;和&nbsp;name。 </p> 
+  <div> 
+   <h3> <a target="_blank" href="https://docs.djangoproject.com/en/1.9/ref/urls/#django.conf.urls.url">url()</a>&nbsp;参数: regex </h3> 
+   <p> 术语“regex”是一种常用的缩写形式，意思是“正则表达式”，这是一个语法字符串匹配模式，或在我们的示例中是URL模式。Django从第一个正则表达式开始，并使得其遍历列表，比对每一个正则表达式的请求的URL，直到它找到一个匹配。 </p> 
+   <p> 请注意，这些正则表达式不搜索GET和POST参数，或者域名。例如，在一个请求https://www.example.com/myapp/,&nbsp;URLconf 会寻找myapp/.在一个请求&nbsp;https://www.example.com/myapp/?page=3,&nbsp;URLconf 还将寻找&nbsp;myapp/. </p> 
+   <p> 如果需要使用正则表达式的帮助，请参见维基百科的条目和&nbsp;<a target="_blank" href="https://docs.python.org/3/library/re.html#module-re">re&nbsp;</a>模块的文档。&nbsp;然而在实践中，你并不需要成为正则表达式的专家，因为只需要知道如何捕捉简单的模式。事实上，复杂的正则表达式可以查找性能较差，所以你可能不依赖于正则表达式的全部功能。 </p> 
+   <p> 最后，一个关于性能的事项需要了解：这些正则表达式编译首次URL配置模块被加载。它们是超级的快(只要查找东西不是太复杂 - 如上所述)。 </p> 
+  </div> 
+  <div> 
+   <h3> <a target="_blank" href="https://docs.djangoproject.com/en/1.9/ref/urls/#django.conf.urls.url">url()</a>&nbsp;参数: view </h3> 
+   <p> 当 Django 找到正则表达式匹配，Django调用指定的视图函数，使用&nbsp;HTTP 请求对象作为第一个参数，从正则表达式“捕获”的其他参数作为其它的值。&nbsp;正则表达式使用简单的捕捉，值传递是通过位置参数；如果使用名为捕捉，值传递关键字参数。我们将给出一个例子。 </p> 
+  </div> 
+  <div> 
+   <h3> <a target="_blank" href="https://docs.djangoproject.com/en/1.9/ref/urls/#django.conf.urls.url">url()</a>&nbsp;参数: kwargs </h3> 
+   <div>
+     任意关键字参数可以通过在字典中的目标视图。在本教程我们不打算使用Django的这一特点。 
+   </div> 
+  </div> 
+  <p> <br> </p> 
+  <h3> <a target="_blank" href="https://docs.djangoproject.com/en/1.9/ref/urls/#django.conf.urls.url">url()</a>&nbsp;argument: name </h3> 
+  <p> 命名网址可以参考它，明确地从其他地方在Django&nbsp;-&nbsp;尤其是模板。&nbsp;这种强大的功能可让您进行全局更改到项目的URL模式，而只需要修改一个文件。接下来我们学习如何在 Django 使用数据功能。<br> <br> 快速入门系列教程： </p> 
+  <p> 2 - <a target="_blank" href="http://www.yiibai.com/django/quick_start_django_model.html">Django快速入门-数据库模型</a> </p> 
+  <p> <span>3 -&nbsp;</span><a target="_blank" href="http://www.yiibai.com/django/quick_start_django_view.html">Django快速入门-视图</a><br> <span id="__kindeditor_bookmark_end_25__"></span><span>4 -&nbsp;</span><a target="_blank" href="http://www.yiibai.com/django/quick_start_django_form.html">Django快速入门-表单</a><br> <span id="__kindeditor_bookmark_end_63__"></span> </p> 
+  <p> <br> </p> 
+  <p></p> 
+ </div>
+ <br>      
+</div></body></html>

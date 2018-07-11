@@ -1,0 +1,249 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">VueJS应用示例</h1><div style="width:100%;float:left;" class="article-content">   
+ <h4 id="h4--strong-1-strong-"><a name="<strong>示例1：</strong> 货币转换器" class="reference-link"></a><span class="header-link octicon octicon-link"></span><strong>示例1：</strong> 货币转换器</h4>
+ <p>将输入的原货币按结算汇率转为目标货币，参考以下代码实现(<em>currency-converter.html</em>) - </p> 
+ <pre><code class="lang-html">&lt;html&gt;
+   &lt;head&gt;
+      &lt;meta charset="utf-8" /&gt;
+      &lt;title&gt;VueJs货币转换器示例&lt;/title&gt;
+      &lt;script type = "text/javascript" src = "js/vue.js"&gt;&lt;/script&gt;
+   &lt;/head&gt;
+   &lt;body&gt;
+      &lt;style&gt;
+         #databinding{
+            padding: 20px 15px 15px 15px;
+            margin: 0 0 25px 0;
+            width: auto;
+            background-color: #e7e7e7;
+         }
+         span, option, input {
+            font-size:25px;
+         }
+      &lt;/style&gt;
+
+      &lt;div id = "databinding" style = ""&gt;
+         &lt;h2&gt;货币转换器&lt;/h2&gt;
+         &lt;span&gt;输入金额:&lt;/span&gt;&lt;input type = "number" v-model.number = "amount" placeholder = "输入金额..." /&gt;&lt;br/&gt;&lt;br/&gt;
+         &lt;span&gt;原货币:&lt;/span&gt;
+         &lt;select v-model = "convertfrom" style = "width:300px;font-size:25px;"&gt;
+            &lt;option v-for = "(a, index) in currencyfrom"  v-bind:value = "a.name"&gt;{{a.desc}}&lt;/option&gt;
+         &lt;/select&gt;
+         &lt;span&gt;转换成:&lt;/span&gt;
+         &lt;select v-model = "convertto" style = "width:300px;font-size:25px;"&gt;
+            &lt;option v-for = "(a, index) in currencyfrom" v-bind:value = "a.name"&gt;{{a.desc}}&lt;/option&gt;
+         &lt;/select&gt;&lt;br/&gt;&lt;br/&gt;
+         &lt;span&gt; {{amount}} {{convertfrom}} 相当于 {{finalamount}} {{convertto}}&lt;/span&gt;
+      &lt;/div&gt;
+
+      &lt;script type = "text/javascript"&gt;
+         var vm = new Vue({
+            el: '#databinding',
+            data: {
+               name:'',
+               currencyfrom : [
+                  {name : "USD", desc:"美元"},
+                  {name:"EUR", desc:"欧元"},
+                  {name:"RMB", desc:"人民币"},
+                  {name:"HKD", desc:"港币"}
+               ],
+               convertfrom: "RMB",
+               convertto:"USD",
+               amount :""
+            },
+            computed :{
+               finalamount:function() {
+                  var to = this.convertto;
+                  var from = this.convertfrom;
+                  var final;
+                  switch(from) {
+                     case "RMB":
+                     if (to == "USD") {
+                        final = this.amount * 0.152;
+                     }
+                     if (to == "EUR") {
+                        final = this.amount * 0.013;
+                     }
+                     if (to == "RMB") {
+                        final = this.amount;
+                     }
+                     if (to == "HKD") {
+                        final = this.amount * 0.0059;
+                     }
+                     break;
+                     case "USD":
+                     if (to == "RMB") {
+                        final = this.amount * 6.58;
+                     }
+                     if (to == "EUR") {
+                        final = this.amount * 0.84;
+                     }
+                     if (to == "USD") {
+                        final = this.amount;
+                     }
+                     if (to == "HKD") {
+                        final = this.amount * 0.38;
+                     }
+                     break;
+                     case "EUR":
+                     if (to == "RMB") {
+                        final = this.amount * 76.22;
+                     }
+                     if (to == "USD") {
+                        final = this.amount * 1.19;
+                     }
+                     if (to == "EUR") {
+                        final = this.amount;
+                     }
+                     if (to == "HKD") {
+                        final = this.amount * 0.45;
+                     }
+                     break;
+                     case "HKD":
+                     if (to == "RMB") {
+                        final = this.amount *169.44;
+                     }
+                     if (to == "USD") {
+                        final = this.amount * 2.65;
+                     }
+                     if (to == "EUR") {
+                        final = this.amount * 2.22;
+                     }
+                     if (to == "HKD") {
+                        final = this.amount;
+                     }
+                     break
+                  }
+                  return final;
+               }
+            }
+         });
+      &lt;/script&gt;
+   &lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201712/2412/124111240_43076.png" alt=""></p> 
+ <p>说明 - 在上面的例子中，我们创建了一种货币转换器，将货币的一个值转换为其他货币的选定值。示例中创建了两个货币下拉框。 当在文本框中输入转换的数量时，转换后显示如下。使用计算属性来进行货币转换的必要计算。</p> 
+ <h4 id="h4--2-"><a name="示例2：客户详细信息" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例2：客户详细信息</h4>
+ <p>下面示例演示一个客户管理的界面设计，参考以下文件(<em>customer-details.html</em>)代码 - </p> 
+ <pre><code class="lang-html">&lt;html&gt;
+   &lt;head&gt;
+      &lt;meta charset="utf-8" /&gt;
+      &lt;title&gt;示例2：客户详细信息&lt;/title&gt;
+      &lt;script type = "text/javascript" src = "js/vue.js"&gt;&lt;/script&gt;
+   &lt;/head&gt;
+   &lt;body&gt;
+      &lt;style&gt;
+         #databinding{
+            padding: 20px 15px 15px 15px;
+            margin: 0 0 25px 0;
+            width: auto;
+         }
+         span, option, input {
+            font-size:20px;
+         }
+         .Table{
+            display: table;
+            width:80%;
+         }
+         .Title{
+            display: table-caption;
+            text-align: center;
+            font-weight: bold;
+            font-size: larger;
+         }
+         .Heading{
+            display: table-row;
+            font-weight: bold;
+            text-align: center;
+         }
+         .Row{
+            display: table-row;
+         }
+         .Cell{
+            display: table-cell;
+            border: solid;
+            border-width: thin;
+            padding-left: 5px;
+            padding-right: 5px;
+            width:30%;
+         }
+      &lt;/style&gt;
+
+      &lt;div id = "databinding" style = ""&gt;
+         &lt;h1&gt;客户详细信息&lt;/h1&gt;
+         &lt;span&gt;名字：&lt;/span&gt;
+         &lt;input type = "text" placeholder = "Enter Name" v-model = "name"/&gt;&lt;br/&gt;
+         &lt;span&gt;电话：&lt;/span&gt;
+         &lt;input type = "text" placeholder = "Enter Phone" v-model = "phone"/&gt;&lt;br/&gt;
+         &lt;span&gt;地址：&lt;/span&gt;
+         &lt;input type = "text" placeholder = "Enter Address" v-model = "addr"/&gt;
+         &lt;button v-on:click = "showdata" v-bind:style = "styleobj"&gt;添加&lt;/button&gt;
+         &lt;br/&gt;
+         &lt;br/&gt;
+         &lt;customercomponent
+            v-for = "(item, index) in custdet"
+            v-bind:item = "item"
+            v-bind:index = "index"
+            v-bind:itr = "item"
+            v-bind:key = "item.name"
+            v-on:removeelement = "custdet.splice(index, 1)"&gt;
+         &lt;/customercomponent&gt;
+      &lt;/div&gt;
+
+      &lt;script type = "text/javascript"&gt;
+         Vue.component('customercomponent',{
+            template : '&lt;div class = "Table"&gt;&lt;div class = "Row"  v-bind:style = "styleobj"&gt;&lt;div class = "Cell"&gt;&lt;p&gt;{{itr.name}}&lt;/p&gt;&lt;/div&gt;&lt;div class = "Cell"&gt;&lt;p&gt;{{itr.phone}}&lt;/p&gt;&lt;/div&gt;&lt;div class = "Cell"&gt;&lt;p&gt;{{itr.addr}}&lt;/p&gt;&lt;/div&gt;&lt;div class = "Cell"&gt;&lt;p&gt;&lt;button v-on:click = "$emit(\'removeelement\')"&gt;X&lt;/button&gt;&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;',
+            props: ['itr', 'index'],
+            data: function() {
+               return {
+                  styleobj : {
+                     backgroundColor:this.getcolor(),
+                     fontSize : 20
+                  }
+               }
+            },
+            methods:{
+               getcolor : function() {
+                  if (this.index % 2) {
+                     return "#FFE633";
+                  } else {
+                     return "#D4CA87";
+                  }
+               }
+            }
+         });
+         var vm = new Vue({
+            el: '#databinding',
+            data: {
+               fname:'',
+               lname:'',
+               addr : '',
+               custdet:[],
+               styleobj: {
+                  backgroundColor: '#2196F3!important',
+                  cursor: 'pointer',
+                  padding: '8px 16px',
+                  verticalAlign: 'middle',
+               }
+            },
+            methods :{
+               showdata : function() {
+                  this.custdet.push({
+                     name: this.name,
+                     phone: this.phone,
+                     addr : this.addr
+                  });
+                  this.name = "";
+                  this.phone = "";
+                  this.addr = "";
+               }
+            }
+         });
+      &lt;/script&gt;
+   &lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>说明 - 在上面的例子中，我们有三个文本框输入 - 名字，电话和地址。 有一个添加按钮，它将在表格格式中输入的值添加到文本框中，并带有删除按钮。</p> 
+ <p>表格式是使用组件创建的。 单击按钮使用<code>emit</code>事件与父组件进行交互，以从数组中删除元素。输入的值存储在数组中，并使用<code>prop</code>属性与子组件共享。</p>
+ <br>      
+</div></body></html>

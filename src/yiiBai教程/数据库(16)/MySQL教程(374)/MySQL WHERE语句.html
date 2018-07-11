@@ -1,0 +1,177 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">MySQL WHERE语句</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>在本教程中，我们将学习如何在<code>SELECT</code>语句中使用MySQL <code>WHERE</code>子句来过滤结果集中的行记录。</p> 
+ <h2 id="h2-1-mysql-where-"><a name="1. MySQL WHERE子句简介" class="reference-link"></a><span class="header-link octicon octicon-link"></span>1. MySQL WHERE子句简介</h2>
+ <p>如果使用<a target="_blank" href="http://www.yiibai.com/mysql/select-statement-query-data.html" title="SELECT语句">SELECT语句</a>但不使用WHERE子句在表中查询数据，则会获取表中的所有行记录，这些行记录中大部分是不想要的行记录。例如，在一些表中存放商业交易中的数据。 从这些表中获取所有行，尤其是对于诸如员工，销售订单，采购订单，生产订单等的大型表格来说，这是没有意义的，因为我们经常想要的是一些特定的数据，例如本季度的销售额 ，今年销量比去年同期的销量等等。</p> 
+ <p><code>WHERE</code>子句允许根据指定的过滤表达式或条件来指定要选择的行。</p> 
+ <blockquote> 
+  <p>您还将学习如何使用<a target="_blank" href="http://www.yiibai.com/mysql/limit.html" title="LIMIT子句">LIMIT子句</a>来限制<code>SELECT</code>语句返回的行数。</p> 
+ </blockquote> 
+ <h2 id="h2-2-mysql-where-"><a name="2. MySQL WHERE子句示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>2. MySQL WHERE子句示例</h2>
+ <p>我们将继续使用<a target="_blank" href="http://www.yiibai.com/mysql/sample-database.html" title="示例数据库(yiibaidb)">示例数据库(yiibaidb)</a>中<code>employees</code>表中的数据，如下图所示。</p> 
+ <p>假设只想从<code>employees</code>表中获取销售代表员工，可使用以下查询：</p> 
+ <pre><code class="lang-sql">SELECT 
+    lastname, firstname, jobtitle
+FROM
+    employees
+WHERE
+    jobtitle = 'Sales Rep';
+</code></pre> 
+ <p>执行上面查询，得到以下结果 - </p> 
+ <pre><code class="lang-shell">mysql&gt; SELECT lastname, firstname, jobtitle FROM employees WHERE jobtitle = 'Sales Rep';
++-----------+-----------+-----------+
+| lastname  | firstname | jobtitle  |
++-----------+-----------+-----------+
+| Jennings  | Leslie    | Sales Rep |
+| Thompson  | Leslie    | Sales Rep |
+| Firrelli  | Julie     | Sales Rep |
+| Patterson | Steve     | Sales Rep |
+| Tseng     | Foon Yue  | Sales Rep |
+| Vanauf    | George    | Sales Rep |
+| Bondur    | Loui      | Sales Rep |
+| Hernandez | Gerard    | Sales Rep |
+| Castillo  | Pamela    | Sales Rep |
+| Bott      | Larry     | Sales Rep |
+| Jones     | Barry     | Sales Rep |
+| Fixter    | Andy      | Sales Rep |
+| Marsh     | Peter     | Sales Rep |
+| King      | Tom       | Sales Rep |
+| Nishi     | Mami      | Sales Rep |
+| Kato      | Yoshimi   | Sales Rep |
+| Gerard    | Martin    | Sales Rep |
++-----------+-----------+-----------+
+17 rows in set
+</code></pre> 
+ <p>即使<code>WHERE</code>子句出现在语句的末尾，但MySQL会首先使用<code>WHERE</code>子句中的表达式来选择匹配的行。它选择具有职位名称为销售代表的行记录。</p> 
+ <pre><code class="lang-shell">jobtitle = 'Sales Rep';
+</code></pre> 
+ <p>MySQL从<code>SELECT</code>子句中的选择列表中选择列。</p> 
+ <p>可以像上面的查询一样形成一个简单的条件，或者是将多个表达式与逻辑运算符(如AND，OR等)组合在一起的一个非常复杂的例子。例如，要在办公室代码(<code>officeCode</code>)等于<code>1</code>中查找所有销售代表，请使用以下查询：</p> 
+ <pre><code class="lang-sql">SELECT 
+    lastname, firstname, jobtitle
+FROM
+    employees
+WHERE
+    jobtitle = 'Sales Rep' AND officeCode = 1;
+</code></pre> 
+ <p>执行上面查询后，得到以下结果 - </p> 
+ <pre><code class="lang-shell">mysql&gt; SELECT lastname, firstname, jobtitle FROM employees WHERE jobtitle = 'Sales Rep' AND officeCode = 1;
++----------+-----------+-----------+
+| lastname | firstname | jobtitle  |
++----------+-----------+-----------+
+| Jennings | Leslie    | Sales Rep |
+| Thompson | Leslie    | Sales Rep |
++----------+-----------+-----------+
+2 rows in set
+</code></pre> 
+ <p>下表列出了可用于在<code>WHERE</code>子句中形成过滤表达式的比较运算符。</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>操作符</th> 
+    <th>描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td><code>=</code></td> 
+    <td>等于，几乎任何数据类型都可以使用它。</td> 
+   </tr> 
+   <tr> 
+    <td><code>&lt;&gt;</code> 或 <code>!=</code></td> 
+    <td>不等于</td> 
+   </tr> 
+   <tr> 
+    <td><code>&lt;</code></td> 
+    <td>小于，通常使用数字和日期/时间数据类型。</td> 
+   </tr> 
+   <tr> 
+    <td><code>&gt;</code></td> 
+    <td>大于，</td> 
+   </tr> 
+   <tr> 
+    <td><code>&lt;=</code></td> 
+    <td>小于或等于</td> 
+   </tr> 
+   <tr> 
+    <td><code>&gt;=</code></td> 
+    <td>大于或等于</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p>以下查询使用不等于(<code>!=</code>)运算符来获取不是销售代表的其它所有员工：</p> 
+ <pre><code class="lang-shell">SELECT 
+    lastname, firstname, jobtitle
+FROM
+    employees
+WHERE
+    jobtitle &lt;&gt; 'Sales Rep';
+</code></pre> 
+ <p>执行上面查询语句， 得到以下结果 - </p>   
+ <pre><code class="lang-shell">mysql&gt; SELECT lastname, firstname, jobtitle FROM employees WHERE jobtitle &lt;&gt; 'Sales Rep';
++-----------+-----------+----------------------+
+| lastname  | firstname | jobtitle             |
++-----------+-----------+----------------------+
+| Murphy    | Diane     | President            |
+| Patterson | Mary      | VP Sales             |
+| Firrelli  | Jeff      | VP Marketing         |
+| Patterson | William   | Sales Manager (APAC) |
+| Bondur    | Gerard    | Sale Manager (EMEA)  |
+| Bow       | Anthony   | Sales Manager (NA)   |
++-----------+-----------+----------------------+
+6 rows in set
+</code></pre> 
+ <p>以下查询将获得办公室代码大于<code>5</code>的每位员工：</p> 
+ <pre><code class="lang-sql">mysql&gt; SELECT lastname, firstname, officeCode FROM employees WHERE officecode &gt; 5;
++-----------+-----------+------------+
+| lastname  | firstname | officeCode |
++-----------+-----------+------------+
+| Patterson | William   | 6          |
+| Bott      | Larry     | 7          |
+| Jones     | Barry     | 7          |
+| Fixter    | Andy      | 6          |
+| Marsh     | Peter     | 6          |
+| King      | Tom       | 6          |
++-----------+-----------+------------+
+6 rows in set
+</code></pre> 
+ <p>办公室代码小于或等于<code>4</code>(<code>&lt;= 4</code>)的员工呢？</p> 
+ <pre><code class="lang-sql">SELECT 
+    lastname, firstname, officeCode
+FROM
+    employees
+WHERE officecode &lt;= 4;
+</code></pre> 
+ <p>执行上面查询语句， 得到以下结果 - </p> 
+ <pre><code class="lang-shell">mysql&gt; SELECT lastname, firstname, officeCode FROM employees WHERE officecode &lt;= 4;
++-----------+-----------+------------+
+| lastname  | firstname | officeCode |
++-----------+-----------+------------+
+| Murphy    | Diane     | 1          |
+| Patterson | Mary      | 1          |
+| Firrelli  | Jeff      | 1          |
+| Bondur    | Gerard    | 4          |
+| Bow       | Anthony   | 1          |
+| Jennings  | Leslie    | 1          |
+| Thompson  | Leslie    | 1          |
+| Firrelli  | Julie     | 2          |
+| Patterson | Steve     | 2          |
+| Tseng     | Foon Yue  | 3          |
+| Vanauf    | George    | 3          |
+| Bondur    | Loui      | 4          |
+| Hernandez | Gerard    | 4          |
+| Castillo  | Pamela    | 4          |
+| Gerard    | Martin    | 4          |
++-----------+-----------+------------+
+15 rows in set
+</code></pre> 
+ <p><strong>更多关于MySQL WHERE子句…</strong></p> 
+ <p>还有一些有用的运算符可以在<code>WHERE</code>子句中使用来形成复杂的条件，例如：</p> 
+ <ul> 
+  <li><a target="_blank" href="http://www.yiibai.com/mysql/between.html" title="BETWEEN">BETWEEN</a>选择在给定范围值内的值。</li>
+  <li><a target="_blank" href="http://www.yiibai.com/mysql/like.html" title="LIKE">LIKE</a>匹配基于模式匹配的值。</li>
+  <li><a target="_blank" href="http://www.yiibai.com/sql-in.html" title="IN">IN</a>指定值是否匹配列表中的任何值。</li>
+  <li><code>IS NULL</code>检查该值是否为<code>NULL</code>。</li>
+ </ul> 
+ <p>在本教程中，我们学习了如何使用MySQL <code>WHERE</code>子句来根据条件过滤行记录。</p>
+ <br>      
+</div></body></html>

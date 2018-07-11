@@ -1,0 +1,101 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Javascript Array.lastIndexOf()方法</h1><div style="width:100%;float:left;" class="article-content">   
+ <p> JavaScript 数组lastIndexOf()方法返回在该给定元素可以数组找到的最后一个索引，或如果它不存在则返回-1。该数组搜索向后，从fromIndex开始。</p> 
+ <h2> 语法</h2> 
+ <pre style="'Courier New', monospace; font-size: 12px; ">
+<i>array</i>.lastIndexOf(searchElement[, fromIndex]);</pre> 
+ <p> 下面是参数的详细信息：</p> 
+ <ul> 
+  <li> <p> <strong>searchElement&nbsp;:</strong> 定位数组中的元素</p> </li> 
+  <li> <p> <strong>fromIndex&nbsp;: </strong>索引在 start 倒退搜索。默认为数组的长度，即整个数组将被搜索。如果该指数大于或等于该数组的长度，整个数组将被搜索。如果为负，它被作为从数组的端部的偏移量。</p> </li> 
+ </ul> 
+ <h2> 返回值:</h2> 
+ <p> 返回从最后找到元素的索引</p> 
+ <h2> 兼容性：</h2> 
+ <p> 这种方法是一个JavaScript扩展到ECMA-262标准;因此它可能不存在在标准的其他实现。为了使它工作，你需要添加下面的脚本代码在顶部：</p> 
+ <pre style="'Courier New', monospace; font-size: 12px; ">
+if (!Array.prototype.lastIndexOf)
+{
+  Array.prototype.lastIndexOf = function(elt /*, from*/)
+  {
+    var len = this.length;
+
+    var from = Number(arguments[1]);
+    if (isNaN(from))
+    {
+      from = len - 1;
+    }
+    else
+    {
+      from = (from &lt; 0)
+           ? Math.ceil(from)
+           : Math.floor(from);
+      if (from &lt; 0)
+        from += len;
+      else if (from &gt;= len)
+        from = len - 1;
+    }
+
+    for (; from &gt; -1; from--)
+    {
+      if (from in this &amp;&amp;
+          this[from] === elt)
+        return from;
+    }
+    return -1;
+  };
+}</pre> 
+ <h2> 例子：</h2> 
+ <pre style="'Courier New', monospace; font-size: 12px; ">
+&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;JavaScript Array lastIndexOf Method&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;script type="text/javascript"&gt;
+if (!Array.prototype.lastIndexOf)
+{
+  Array.prototype.lastIndexOf = function(elt /*, from*/)
+  {
+    var len = this.length;
+
+    var from = Number(arguments[1]);
+    if (isNaN(from))
+    {
+      from = len - 1;
+    }
+    else
+    {
+      from = (from &lt; 0)
+           ? Math.ceil(from)
+           : Math.floor(from);
+      if (from &lt; 0)
+        from += len;
+      else if (from &gt;= len)
+        from = len - 1;
+    }
+
+    for (; from &gt; -1; from--)
+    {
+      if (from in this &amp;&amp;
+          this[from] === elt)
+        return from;
+    }
+    return -1;
+  };
+}
+
+var index = [12, 5, 8, 130, 44].lastIndexOf(8);
+document.write("index is : " + index ); 
+
+var index = [12, 5, 8, 130, 44, 5].lastIndexOf(5);
+document.write("&lt;br /&gt;index is : " + index ); 
+&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre> 
+ <p> 这将产生以下结果：</p>   
+ <pre style="'Courier New', monospace; font-size: 12px; ">
+index is : 2
+index is : 5  </pre> 
+ <p style="text-align: justify; verdana, helvetica, arial,  color: rgb(0, 0, 0);"> &nbsp;</p> 
+ <br>      
+</div></body></html>

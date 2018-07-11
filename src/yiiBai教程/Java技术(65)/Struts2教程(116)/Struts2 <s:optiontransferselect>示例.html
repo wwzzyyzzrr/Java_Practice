@@ -1,0 +1,319 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Struts2 &lt;s:optiontransferselect&gt;示例</h1><div style="width:100%;float:left;" class="article-content">   
+ <p> 在Struts2中，选项选择组件是两个“updownselect”选择部件在左，右侧对齐，在它们中间，包含按钮来移动自己的选择选项。通过&lt;s:optiontransferselect&gt;标签这可以创建。 </p> 
+ <p> 这里创建一个Web工程：strut2updownselect，来演示在多个复选框如何设置的默认值，整个项目的结构如下图所示： </p> 
+ <p> <img src="/uploads/tutorial/20151115/1-1511151I546494.png" alt=""> </p> 
+ <pre>&lt;s:optiontransferselect
+     label="Lucky Numbers"
+     name="leftNumber"
+     list="{'1 - One ', '2 - Two', '3 - Three', '4 - Four', '5 - Five'}"
+     doubleName="rightNumber"
+     doubleList="{'10 - Ten','20 - Twenty','30 - Thirty','40 - Forty','50 - Fifty'}"
+ /&gt;</pre> 
+ <div class="note" style="border:1px solid #D1D1E8;padding:20px;margin:20px 0px;color:#333333;font-family:'Helvetica Neue', Helvetica,  background-color:#E6E6FC;">
+   “name”和“list”是指向左选择组件;而“doubleName”和“doubleList”是指在正确的选择组。 
+ </div> 
+ <p> 产生下面的HTML，两个“updownselect”组件，按钮和JavaScript来自己动(默认的XHTML主题)之间的选择选项。 </p> 
+ <pre>&lt;tr&gt; 
+&lt;td class="tdLabel"&gt;
+&lt;label for="resultAction_leftNumber" class="label"&gt;Lucky Numbers:&lt;/label&gt;
+&lt;/td&gt; 
+&lt;td&gt;
+&lt;script type="text/javascript" src="/Struts2Example/struts/optiontransferselect.js"&gt;
+&lt;/script&gt; 
+&lt;table border="0"&gt; 
+&lt;tr&gt; 
+&lt;td&gt; 
+&lt;select name="leftNumber" size="15" 
+id="resultAction_leftNumber" multiple="multiple"&gt; 
+    &lt;option value="1 - One "&gt;1 - One &lt;/option&gt; 
+    &lt;option value="2 - Two"&gt;2 - Two&lt;/option&gt; 
+    &lt;option value="3 - Three"&gt;3 - Three&lt;/option&gt; 
+    &lt;option value="4 - Four"&gt;4 - Four&lt;/option&gt; 
+    &lt;option value="5 - Five"&gt;5 - Five&lt;/option&gt; 
+&lt;/select&gt; 
+&lt;input type="hidden" id="__multiselect_resultAction_leftNumber" 
+name="__multiselect_leftNumber" value="" /&gt; 
+&lt;input type="button"
+	onclick="moveOptionDown(
+        document.getElementById('resultAction_leftNumber'), 'key', '');"
+	value="v"
+/&gt; 
+&lt;input type="button"
+	onclick="moveOptionUp(
+        document.getElementById('resultAction_leftNumber'), 'key', '');"
+	value="^"
+/&gt; 
+&lt;/td&gt; 
+&lt;td valign="middle" align="center"&gt; 
+&lt;input type="button"
+    value="&lt;-" onclick="moveSelectedOptions(
+    document.getElementById('resultAction_rightNumber'), 
+    document.getElementById('resultAction_leftNumber'), false, '');" /&gt;
+&lt;input type="button"
+    value="-&gt;" onclick="moveSelectedOptions(
+    document.getElementById('resultAction_leftNumber'), 
+    document.getElementById('resultAction_rightNumber'), false, '');" /&gt; 
+&lt;input type="button"
+    value="&lt;&lt;--" onclick="moveAllOptions(
+    document.getElementById('resultAction_rightNumber'), 
+    document.getElementById('resultAction_leftNumber'), false, '');" /&gt;
+&lt;input type="button"
+    value="--&gt;&gt;" onclick="moveAllOptions(
+    document.getElementById('resultAction_leftNumber'), 
+    document.getElementById('resultAction_rightNumber'), false, '');" /&gt;
+&lt;input type="button"
+    value="&lt;*&gt;" onclick="selectAllOptions(
+    document.getElementById('resultAction_leftNumber'));
+    selectAllOptions(document.getElementById('resultAction_rightNumber'));" /&gt;
+&lt;/td&gt; 
+&lt;td&gt; 
+&lt;select 
+	name="rightNumber"
+	size="15"
+	multiple="multiple"
+	id="resultAction_rightNumber"
+&gt; 
+    	&lt;option value="10 - Ten"&gt;10 - Ten&lt;/option&gt; 
+    	&lt;option value="20 - Twenty"&gt;20 - Twenty&lt;/option&gt; 
+    	&lt;option value="30 - Thirty"&gt;30 - Thirty&lt;/option&gt; 
+    	&lt;option value="40 - Forty"&gt;40 - Forty&lt;/option&gt; 
+    	&lt;option value="50 - Fifty"&gt;50 - Fifty&lt;/option&gt; 
+&lt;/select&gt; 
+&lt;input type="hidden" id="__multiselect_resultAction_rightNumber" 
+name="__multiselect_rightNumber" value="" /&gt; 
+&lt;input type="button"
+   onclick="moveOptionDown(
+   document.getElementById('resultAction_rightNumber'), 'key', '');"
+   value="v"
+/&gt; 
+&lt;input type="button"
+   onclick="moveOptionUp(
+   document.getElementById('resultAction_rightNumber'), 'key', '');"
+   value="^"
+/&gt; 
+&lt;/td&gt; 
+&lt;/tr&gt; 
+&lt;/table&gt; 
+
+&lt;script type="text/javascript"&gt; 
+var containingForm = document.getElementById("resultAction");
+StrutsUtils.addEventListener(containingForm, "submit", 
+  function(evt) {
+	var selectObj = document.getElementById("resultAction_leftNumber");
+		selectAllOptionsExceptSome(selectObj, "key", "");
+  }, true);
+var containingForm = document.getElementById("resultAction");
+StrutsUtils.addEventListener(containingForm, "submit", 
+  function(evt) {
+	var selectObj = document.getElementById("resultAction_rightNumber");
+		selectAllOptionsExceptSome(selectObj, "key", "");
+	}, true);
+&lt;/script&gt;</pre> 
+ <h2> Struts2 &lt;s:optiontransferselect&gt; 示例 </h2> 
+ <p> 一个完整的全面的 &lt;s:optiontransferselect&gt; 标签例子，表明使用OGNL和Java列出来填充数据到“选项中选择转移”的组件。 </p> 
+ <h2> 1. 动作类 </h2> 
+ <p> Action类来生成并存储左右选择选项。 </p> 
+ <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  background-color:#FFFFFF;"> <strong>OptionTransferSelectAction.java</strong> </p> 
+ <pre>package com.yiibai.common.action;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import com.opensymphony.xwork2.ActionSupport;
+
+public class OptionTransferSelectAction extends ActionSupport{
+
+	private List&lt;String&gt; leftAntivirusList = new ArrayList&lt;String&gt;();
+	private List&lt;String&gt; rightAntivirusList = new ArrayList&lt;String&gt;();
+
+	private String leftAntivirus;
+	private String rightAntivirus;
+
+	private String leftNumber;
+	private String rightNumber;
+	
+	public OptionTransferSelectAction(){
+		
+		leftAntivirusList.add("Norton 360 Version 4.0");
+		leftAntivirusList.add("McAfee Total Protection 2010");
+		leftAntivirusList.add("Trend Micro IS Pro 2010");
+		leftAntivirusList.add("BitDefender Total Security 2010");
+
+		rightAntivirusList.add("Norton Internet Security 2010");
+		rightAntivirusList.add("Kaspersky Internet Security 2010");
+		rightAntivirusList.add("McAfee Internet Security 2010");
+		rightAntivirusList.add("AVG Internet Security 2010");
+		rightAntivirusList.add("Trend Micro Internet Security 2010");
+		rightAntivirusList.add("F-Secure Internet Security 2010");
+		
+	}
+	
+	public String getLeftNumber() {
+		return leftNumber;
+	}
+
+	public void setLeftNumber(String leftNumber) {
+		this.leftNumber = leftNumber;
+	}
+
+	public String getRightNumber() {
+		return rightNumber;
+	}
+
+	public void setRightNumber(String rightNumber) {
+		this.rightNumber = rightNumber;
+	}
+
+	public List&lt;String&gt; getLeftAntivirusList() {
+		return leftAntivirusList;
+	}
+
+	public void setLeftAntivirusList(List&lt;String&gt; leftAntivirusList) {
+		this.leftAntivirusList = leftAntivirusList;
+	}
+
+	public List&lt;String&gt; getRightAntivirusList() {
+		return rightAntivirusList;
+	}
+
+	public void setRightAntivirusList(List&lt;String&gt; rightAntivirusList) {
+		this.rightAntivirusList = rightAntivirusList;
+	}
+
+	public String getLeftAntivirus() {
+		return leftAntivirus;
+	}
+
+	public void setLeftAntivirus(String leftAntivirus) {
+		this.leftAntivirus = leftAntivirus;
+	}
+
+	public String getRightAntivirus() {
+		return rightAntivirus;
+	}
+
+	public void setRightAntivirus(String rightAntivirus) {
+		this.rightAntivirus = rightAntivirus;
+	}
+
+	public String execute() throws Exception{
+		
+		return SUCCESS;
+	}
+
+	public String display() {
+		return NONE;
+	}
+	
+}</pre> 
+ <h2> 2. 结果页面 </h2> 
+ <p> 通过“&lt;s:optiontransferselect&gt;”选项转移选择组件标签渲染，并通过Java和OGNL列表产生左侧和右侧选择选项。 </p> 
+ <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  background-color:#FFFFFF;"> <strong>optiontransferselect.jsp</strong> </p>   
+ <pre>&lt;%@ taglib prefix="s" uri="/struts-tags" %&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;s:head /&gt;
+&lt;/head&gt;
+
+&lt;body&gt;
+&lt;h1&gt;Struts 2 optiontransferselect 示例&lt;/h1&gt;
+
+&lt;s:form action="resultAction" namespace="/" method="POST" &gt;
+
+&lt;s:optiontransferselect
+     label="Lucky Numbers"
+     name="leftNumber"
+     list="{'1 - One ', '2 - Two', '3 - Three', '4 - Four', '5 - Five'}"
+     doubleName="rightNumber"
+     doubleList="{'10 - Ten','20 - Twenty','30 - Thirty','40 - Forty','50 - Fifty'}"
+ /&gt;
+	
+&lt;s:optiontransferselect
+     label="Favourite Antivirus"
+     name="leftAntivirus"
+     leftTitle="Left Antivirus Title"
+     rightTitle="Right Antivirus Title"
+     list="leftAntivirusList"
+     multiple="true"
+     headerKey="-1"
+     headerValue="--- Please Select ---"
+     doubleList="rightAntivirusList"
+     doubleName="rightAntivirus"
+     doubleHeaderKey="-1"
+     doubleHeaderValue="--- Please Select ---"
+ /&gt;
+ 
+&lt;s:submit value="submit" name="submit" /&gt;
+	
+&lt;/s:form&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;</pre> 
+ <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  background-color:#FFFFFF;"> <strong>result.jsp</strong> </p> 
+ <pre>&lt;%@ taglib prefix="s" uri="/struts-tags" %&gt;
+&lt;html&gt;
+
+&lt;body&gt;
+&lt;h1&gt;Struts 2 optiontransferselect example&lt;/h1&gt;
+
+&lt;h2&gt;
+   Left AntiVirus : &lt;s:property value="leftAntivirus"/&gt; 
+&lt;/h2&gt; 
+
+&lt;h2&gt;
+   Right AntiVirus : &lt;s:property value="rightAntivirus"/&gt; 
+&lt;/h2&gt; 
+
+&lt;h2&gt;
+   Left Numbers : &lt;s:property value="leftNumber"/&gt; 
+&lt;/h2&gt; 
+
+&lt;h2&gt;
+   Right Numbers : &lt;s:property value="rightNumber"/&gt; 
+&lt;/h2&gt; 
+	
+&lt;/body&gt;
+&lt;/html&gt;</pre> 
+ <h2 style="font-family:'Helvetica Neue', Helvetica,  font-weight:500;color:#333333;font-size:24px;background-color:#FFFFFF;"> 3. struts.xml </h2> 
+ <pre>&lt;?xml version="1.0" encoding="UTF-8" ?&gt;
+&lt;!DOCTYPE struts PUBLIC
+"-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+"http://struts.apache.org/dtds/struts-2.0.dtd"&gt;
+ 
+&lt;struts&gt;
+
+ &lt;constant name="struts.devMode" value="true" /&gt;
+	
+&lt;package name="default" namespace="/" extends="struts-default"&gt;
+		
+  &lt;action name="optionTransferSelectAction" 
+	class="com.yiibai.common.action.OptionTransferSelectAction" 
+        method="display"&gt;
+	&lt;result name="none"&gt;/pages/optiontransferselect.jsp&lt;/result&gt;
+  &lt;/action&gt;
+		
+  &lt;action name="resultAction" 
+        class="com.yiibai.common.action.OptionTransferSelectAction" &gt;
+	&lt;result name="success"&gt;/pages/result.jsp&lt;/result&gt;
+  &lt;/action&gt;
+&lt;/package&gt;
+	
+&lt;/struts&gt;</pre> 
+ <h2 style="font-family:'Helvetica Neue', Helvetica,  font-weight:500;color:#333333;font-size:24px;background-color:#FFFFFF;"> 4. 实例 </h2> 
+ <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  background-color:#FFFFFF;"> <em>http://localhost:8080/struts2optiontransferselect/optionTransferSelectAction.action</em> </p> 
+ <div class="pic" style="border:1px solid #DDDDDD;margin:20px 0px;padding:20px;text-align:center;color:#333333;font-family:'Helvetica Neue', Helvetica,  background-color:#F9F9F9;"> 
+  <img src="/uploads/tutorial/20151115/1-1511151I350492.png" alt=""> 
+ </div> 
+ <div class="pic" style="border:1px solid #DDDDDD;margin:20px 0px;padding:20px;text-align:center;color:#333333;font-family:'Helvetica Neue', Helvetica,  background-color:#F9F9F9;"> 
+  <img src="/uploads/tutorial/20151115/1-1511151I513T8.png" alt=""> 
+ </div> 
+ <h2> 参考 </h2> 
+ <ol> 
+  <li> <a target="_blank" href="http://struts.apache.org/2.0.14/docs/updownselect.html">Struts 2 updownselect 文档</a> </li> 
+  <li> <a target="_blank" href="http://www.yiibai.com/struts_2/struts-2-updownselect-example.html">Struts 2 updownselect 示例</a> </li> 
+  <li> <a target="_blank" href="http://www.yiibai.com/struts_2/struts-2-sdoubleselect-example.html">Struts 2 doubleselect 示例</a> </li> 
+ </ol> 
+ <br> 代码下载：
+ <a target="_blank" href="http://pan.baidu.com/s/1qW5p8lu">http://pan.baidu.com/s/1qW5p8lu</a>
+ <br>      
+</div></body></html>

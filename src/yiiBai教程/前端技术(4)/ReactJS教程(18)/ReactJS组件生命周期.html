@@ -1,0 +1,85 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">ReactJS组件生命周期</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>在本章中，我们来了解组件生命周期方法。</p> 
+ <h2 id="h2-u751Fu547Du5468u671Fu65B9u6CD5"><a name="生命周期方法" class="reference-link"></a><span class="header-link octicon octicon-link"></span>生命周期方法</h2>
+ <ul> 
+  <li><em>componentWillMount</em> - 在渲染之前在服务器端和客户端执行。</li>
+  <li><em>componentDidMount</em> - 仅在客户端的第一次渲染之后执行。 这是AJAX请求和DOM或状态更新应该发生的地方。此方法也用于与其他JavaScript框架以及任何延迟执行的函数(如<code>setTimeout</code>或<code>setInterval</code>)进行集成，在这里使用它来更新状态，以便我们可以触发其他生命周期方法。</li>
+  <li><em>componentWillReceiveProps</em> - 只要在另一个渲染被调用之前更新<code>props</code>就被调用。 当我们更新状态时，从<code>setNewNumber</code>触发它。</li>
+  <li><em>shouldComponentUpdate</em> - 应该返回<code>true</code>或<code>false</code>值。 这将决定组件是否将被更新。 默认设置为<code>true</code>。 如果确定组件在<code>state</code>或<code>props</code>更新后不需要渲染，则可以返回<code>false</code>值。</li>
+  <li><em>componentWillUpdate</em> - 在渲染之前被调用。</li>
+  <li><em>componentDidUpdate</em> - 在渲染之后被调用。</li>
+  <li><em>componentWillUnmount</em> - 在从dom卸载组件后被调用，也就是卸载<code>main.js</code>中的组件。</li>
+ </ul> 
+ <p>在下面的例子中，将在构造函数中设置初始状态。 <code>setNewnumber</code>用于更新状态。 所有生命周期方法都在内容组件中。</p> 
+ <p>文件：<em>App.jsx</em> - </p> 
+ <pre><code class="lang-js">import React from 'react';
+
+class App extends React.Component {
+   constructor(props) {
+      super(props);
+
+      this.state = {
+         data: 0
+      }
+      this.setNewNumber = this.setNewNumber.bind(this)
+   };
+   setNewNumber() {
+      this.setState({data: this.state.data + 1})
+   }
+   render() {
+      return (
+         &lt;div&gt;
+            &lt;button onClick = {this.setNewNumber}&gt;INCREMENT&lt;/button&gt;
+            &lt;Content myNumber = {this.state.data}&gt;&lt;/Content&gt;
+         &lt;/div&gt;
+      );
+   }
+}
+class Content extends React.Component {
+   componentWillMount() {
+      console.log('Component WILL MOUNT!')
+   }
+   componentDidMount() {
+      console.log('Component DID MOUNT!')
+   }
+   componentWillReceiveProps(newProps) {    
+      console.log('Component WILL RECIEVE PROPS!')
+   }
+   shouldComponentUpdate(newProps, newState) {
+      return true;
+   }
+   componentWillUpdate(nextProps, nextState) {
+      console.log('Component WILL UPDATE!');
+   }
+   componentDidUpdate(prevProps, prevState) {
+      console.log('Component DID UPDATE!')
+   }
+   componentWillUnmount() {
+      console.log('Component WILL UNMOUNT!')
+   }
+   render() {
+      return (
+         &lt;div&gt;
+            &lt;h3&gt;{this.props.myNumber}&lt;/h3&gt;
+         &lt;/div&gt;
+      );
+   }
+}
+export default App;
+</code></pre> 
+ <p>文件：<em>main.js</em> -</p>   
+ <pre><code class="lang-js">import React from 'react';
+import ReactDOM from 'react-dom';
+import App from './App.jsx';
+
+ReactDOM.render(&lt;App/&gt;, document.getElementById('app'));
+
+setTimeout(() =&gt; {
+   ReactDOM.unmountComponentAtNode(document.getElementById('app'));}, 10000);
+</code></pre> 
+ <p>初始渲染之后，应该会得到如下演示效果 -<br><img src="http://www.yiibai.com/uploads/images/201801/0201/919100117_47318.png" alt=""></p> 
+ <p>只有<code>componentWillMount</code>和<code>componentDidMount</code>将被记录在控制台中，因为还没有更新任何东西。<br><img src="http://www.yiibai.com/uploads/images/201801/0201/441100119_10956.png" alt=""></p> 
+ <p>当点击<strong>INCREMENT</strong>按钮时，将发生更新，并触发其他生命周期方法。<br><img src="http://www.yiibai.com/uploads/images/201801/0201/605100120_96941.png" alt=""></p> 
+ <p>十秒钟后，组件将被卸载，最后一个事件将被记录在控制台中。<br><img src="http://www.yiibai.com/uploads/images/201801/0201/522100121_31031.png" alt=""><br>注 - 生命周期方法将始终以相同的顺序调用，因此按照示例中所示的正确顺序编写生命周期方法是一种很好的做法。</p>
+ <br>      
+</div></body></html>

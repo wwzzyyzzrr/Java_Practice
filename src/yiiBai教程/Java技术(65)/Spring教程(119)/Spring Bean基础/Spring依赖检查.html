@@ -1,0 +1,193 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Spring依赖检查</h1><div style="width:100%;float:left;" class="article-content">   
+ <div> 
+  <div>
+    在Spring中，可以使用依赖检查功能，以确保所要求的属性可设置或者注入。 
+  </div> 
+ </div> 
+ <div> 
+  <h2> 
+   <div>
+     依赖检查模式 
+   </div> </h2> 
+  <div>
+    4个依赖检查支持的模式： 
+  </div> 
+  <ul> 
+   <li> none –&nbsp;没有依赖检查，这是默认的模式。 </li> 
+   <li> simple –&nbsp;如果基本类型(int,&nbsp;long,double…)和集合类型(map,&nbsp;list..)的任何属性都没有设置，UnsatisfiedDependencyException将被抛出。 </li> 
+   <li> objects –&nbsp;如果对象类型的任何属性都没有设置，UnsatisfiedDependencyException将被抛出。 </li> 
+   <li> all –&nbsp;如果任何类型的任何属性都没有被设置，UnsatisfiedDependencyException将被抛出。 </li> 
+  </ul> 
+  <p> 注：默认模式是 none </p> 
+  <h2> 示例 </h2> 
+  <div>
+    Customer和Person对象的示例。 
+  </div> 
+  <pre>package com.yiibai.common;
+
+public class Customer 
+{
+	private Person person;
+	private int type;
+	private String action;
+
+	//getter and setter methods
+}</pre> 
+  <pre>package com.yiibai.common;
+
+public class Person 
+{
+	private String name;
+	private String address;
+	private int age;
+	
+	//getter and setter methods	
+}</pre> 
+  <h2> 1. none&nbsp;依赖检查 </h2> 
+  <div>
+    Spring&nbsp;bean配置文件使用&nbsp;“none”&nbsp;依赖检查模式。 
+  </div> 
+  <pre>&lt;beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-2.5.xsd"&gt;
+
+	&lt;bean id="CustomerBean" class="com.yiibai.common.Customer" &gt;
+		&lt;property name="action" value="buy" /&gt;
+	&lt;/bean&gt;
+
+	&lt;bean id="PersonBean" class="com.yiibai.common.Person"&gt;
+		&lt;property name="name" value="yiibai" /&gt;
+		&lt;property name="address" value="address ABC" /&gt;
+		&lt;property name="age" value="29" /&gt;
+	&lt;/bean&gt;
+
+&lt;/beans&gt;</pre> 
+  <div>
+    如果没有明确定义的依赖检查模式，其默认为“none”。没有依赖检查将执行。 
+  </div> 
+  <h2> 2. simple&nbsp;依赖检查 </h2> 
+  <div>
+    Spring&nbsp;bean的配置文件使用“simple”依赖检查模式。 
+  </div> 
+  <pre>&lt;beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-2.5.xsd"&gt;
+
+	&lt;bean id="CustomerBean" class="com.yiibai.common.Customer" 
+         dependency-check="simple"&gt;
+
+		&lt;property name="person" ref="PersonBean" /&gt;
+		&lt;property name="action" value="buy" /&gt;
+	&lt;/bean&gt;
+
+	&lt;bean id="PersonBean" class="com.yiibai.common.Person"&gt;
+		&lt;property name="name" value="yiibai" /&gt;
+		&lt;property name="address" value="address ABC" /&gt;
+		&lt;property name="age" value="29" /&gt;
+	&lt;/bean&gt;
+
+&lt;/beans&gt;</pre> 
+  <div>
+    在“type”属性(基本类型或集合类型)，如尚未设置，UnsatisfiedDependencyException将抛出。 
+  </div> 
+  <pre>org.springframework.beans.factory.UnsatisfiedDependencyException: 
+Error creating bean with name 'CustomerBean' 
+defined in class path resource [config/Spring-Customer.xml]: 
+Unsatisfied dependency expressed through bean property 'type': 
+Set this property value or disable dependency checking for this bean.</pre> 
+  <h2> 3. objects&nbsp;依赖检查 </h2> 
+  <div>
+    Spring&nbsp;bean配置文件的&nbsp;“objects”依赖检查模式。 
+  </div> 
+  <pre>&lt;beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-2.5.xsd"&gt;
+
+	&lt;bean id="CustomerBean" class="com.yiibai.common.Customer" 
+         dependency-check="objects"&gt;
+
+		&lt;property name="action" value="buy" /&gt;
+		&lt;property name="type" value="1" /&gt;
+	&lt;/bean&gt;
+
+	&lt;bean id="PersonBean" class="com.yiibai.common.Person"&gt;
+		&lt;property name="name" value="yiibai" /&gt;
+		&lt;property name="address" value="address ABC" /&gt;
+		&lt;property name="age" value="29" /&gt;
+	&lt;/bean&gt;
+	
+&lt;/beans&gt;</pre> 
+  <div>
+    在'person'属性(对象类型)，尚未设置，一个UnsatisfiedDependencyException将抛出。 
+  </div>   
+  <pre>org.springframework.beans.factory.UnsatisfiedDependencyException: 
+Error creating bean with name 'CustomerBean' 
+defined in class path resource [config/Spring-Customer.xml]: 
+Unsatisfied dependency expressed through bean property 'person': 
+Set this property value or disable dependency checking for this bean.</pre> 
+  <h2> 4. all&nbsp;依赖检查 </h2> 
+  <div>
+    Spring&nbsp;bean配置文件的“all”依赖检查模式。 
+  </div> 
+  <pre>&lt;beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-2.5.xsd"&gt;
+
+	&lt;bean id="CustomerBean" class="com.yiibai.common.Customer" 
+         dependency-check="all"&gt;
+
+		&lt;property name="action" value="buy" /&gt;
+	&lt;/bean&gt;
+
+	&lt;bean id="PersonBean" class="com.yiibai.common.Person"&gt;
+		&lt;property name="name" value="yiibai" /&gt;
+		&lt;property name="address" value="address ABC" /&gt;
+		&lt;property name="age" value="29" /&gt;
+	&lt;/bean&gt;
+
+&lt;/beans&gt;</pre> 
+  <div>
+    对“simple”和“objects”模式的组合，如果有的话类型(原型，集合和对象)的任何属性都没有设置，一个UnsatisfiedDependencyException将被抛出。 
+  </div> 
+  <h2> 
+   <div>
+     全局默认的依赖检查 
+   </div> </h2> 
+  <div>
+    明确定义的依赖检查模式，每个Bean配置繁琐且容易出错，可以在&lt;beans&gt;根元素设置一个默认的依赖性检查属性强制&lt;beans&gt;根元素内声明的整个bean类适用此规则。然而，这根默认模式将通过一个bean自己指定的模式下可覆盖。 
+  </div> 
+  <pre>&lt;beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-2.5.xsd" 
+	default-dependency-check="all"&gt;
+
+	&lt;bean id="CustomerBean" class="com.yiibai.common.Customer"&gt;
+		&lt;property name="action" value="buy" /&gt;
+		&lt;property name="type" value="1" /&gt;
+	&lt;/bean&gt;
+
+	&lt;bean id="PersonBean" class="com.yiibai.common.Person"&gt;
+		&lt;property name="name" value="yiibai" /&gt;
+		&lt;property name="address" value="address ABC" /&gt;
+		&lt;property name="age" value="29" /&gt;
+	&lt;/bean&gt;
+	
+&lt;/beans&gt;</pre> 
+  <div>
+    在这个配置文件中声明所有的Bean类默都是“all”依赖检查模式。 
+  </div> 
+  <div> 
+   <strong>@Required 注解</strong>
+   <br> 
+   <div>
+     在大多数情况下，你只需要确保特定属性已经设置，但有一定是所有的类型(原始，集合或对象)属性。 
+   </div> 
+  </div> 
+ </div>
+ <br>      
+</div></body></html>

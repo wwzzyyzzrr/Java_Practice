@@ -1,0 +1,75 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Access关联数据</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>在这一章中，我们将了解学习相关数据的基础知识。 在讨论和创建不同数据之间的关系之前，让我们来看看为什么需要关联数据。 这一切都回归规范化。</p> 
+ <h2 id="h2-u89C4u8303u5316"><a name="规范化" class="reference-link"></a><span class="header-link octicon octicon-link"></span>规范化</h2>
+ <p>数据库规范化或简单规范化是组织关系数据库的列(属性)和表(关系)以最小化数据冗余的过程。 这是将数据分解到多个表格以提高整体性能，完整性和持久性的过程。</p> 
+ <ul> 
+  <li>规范化是在数据库中组织数据的过程。</li>
+  <li>这包括创建表并根据设计的规则在这些表之间建立关系，以保护数据并通过消除冗余和不一致的依赖性来使数据库更加灵活。</li>
+ </ul> 
+ <p>下面来看看下面的包含数据的表格，但问题是这个数据是相当多余的，这增加了输入数据时输入错误和不一致的机会。</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>客户编号</th> 
+    <th>名字</th> 
+    <th>地址</th> 
+    <th>饼干</th> 
+    <th>数量</th> 
+    <th>价格</th> 
+    <th>总计</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>1</td> 
+    <td>Ethel Minsu</td> 
+    <td>12 Main St, Arlington, VA 22201 S</td> 
+    <td>巧克力片</td> 
+    <td>5</td> 
+    <td>￥2.00</td> 
+    <td>￥10.00</td> 
+   </tr> 
+   <tr> 
+    <td>2</td> 
+    <td>Tom Wilber</td> 
+    <td>1234 Oak Dr., Pekin, IL 61555</td> 
+    <td>巧克力片</td> 
+    <td>3</td> 
+    <td>￥2.00</td> 
+    <td>￥6.00</td> 
+   </tr> 
+   <tr> 
+    <td>3</td> 
+    <td>Ethil Minsuy</td> 
+    <td>12 Main St., Arlington, VA 22201</td> 
+    <td>巧克力片</td> 
+    <td>5</td> 
+    <td>￥2.00</td> 
+    <td>￥10.00</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p>为了解决这个问题，需要重构数据并将其分解成多个表格，以消除一些冗余，如下三个表格所示。<br><img src="http://www.yiibai.com/uploads/images/201712/2712/161141234_90812.jpg" alt=""></p> 
+ <p>在这里，有三个表：第一个是：<code>tblCustomers</code>表，第二个是:<code>tblOrders</code>表，第三个是：<code>Cookies</code>表。</p> 
+ <p>这里的问题是，仅仅通过拆分多个表中的数据将无助于告诉某个表中的数据如何与另一个表中的数据相关联。要连接多个表中的数据，我们必须将外键添加到<code>tblOrders</code>表中。</p> 
+ <h2 id="h2-u5B9Au4E49u5173u7CFB"><a name="定义关系" class="reference-link"></a><span class="header-link octicon octicon-link"></span>定义关系</h2>
+ <p>关系通过匹配主键列中的数据来工作，通常是两个表中具有相同名称的列。 在大多数情况下，该关系与一个表中的主键相匹配，该表为每行提供一个唯一的标识符，在另一个表中的外键中包含一个条目。 表格之间有三种类型的关系。 所创建关系的类型取决于相关列的定义方式。</p> 
+ <p>下面来看看这三种关系 -</p> 
+ <h4 id="h4-1-"><a name="1. 一对多的关系" class="reference-link"></a><span class="header-link octicon octicon-link"></span>1. 一对多的关系</h4>
+ <p>一对多的关系是最常见的关系类型。 在这种类型的关系中，表<code>A</code>中的行可以在表<code>B</code>中具有许多匹配的行，但是表<code>B</code>中的行在表<code>A</code>中只能有一个匹配的行。</p> 
+ <p>例如，客户和订单表具有一对多的关系：每个客户可以有很多订单，但每个订单仅来自(或属于)一个客户。</p> 
+ <h4 id="h4-2-"><a name="2. 多对多的关系" class="reference-link"></a><span class="header-link octicon octicon-link"></span>2. 多对多的关系</h4>
+ <p>在多对多关系中，表<code>A</code>中的一行可以在表<code>B</code>中具有多个匹配的行，反之亦然。</p> 
+ <p>可以通过定义第三个表(称为连接表)来创建这样的关系，该连接表的主键由来自表<code>A</code>和表<code>B</code>的外键组成。</p> 
+ <p>例如，<code>Customers</code>表和<code>Cookies</code>表具有多对多的关系，这些关系由从这些表中的每个表到<code>Orders</code>表的一对多关系定义。</p> 
+ <h4 id="h4-3-"><a name="3. 一对一的关系" class="reference-link"></a><span class="header-link octicon octicon-link"></span>3. 一对一的关系</h4>
+ <p>在一对一的关系中，表<code>A</code>中的一行可以在表<code>B</code>中不超过一个匹配的行，反之亦然。 如果相关列是主键或者具有唯一约束，则创建一对一关系。</p> 
+ <p>这种类型的关系并不常见，因为大多数以这种方式相关的信息将全部在一个表中。可以使用一对一的关系来做以下工作 -</p> 
+ <ul> 
+  <li>将表分成许多列。</li>
+  <li>出于安全原因隔离表的一部分。</li>
+  <li>存储短暂的数据，只需删除该表即可轻松删除。</li>
+  <li>存储仅适用于主表的子集的信息。</li>
+ </ul>
+ <br>      
+</div></body></html>

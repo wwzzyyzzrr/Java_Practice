@@ -1,0 +1,123 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Spring AOP基于XML的After Returning Advice</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>之后(<code>After</code>)是一种通知类型，只有在方法成功完成后，确保方法执行后才能运行通知。 以下是之后通知(<code>after advice</code>)的语法：</p> 
+ <h2 id="h2-u8BEDu6CD5"><a name="语法" class="reference-link"></a><span class="header-link octicon octicon-link"></span>语法</h2>
+ <pre><code class="lang-sql">  &lt;aop:config&gt;
+   &lt;aop:aspect id="log" ref="logging"&gt;
+      &lt;aop:pointcut id="pointcut-id" expression="execution( expression )"/&gt;    
+      &lt;aop:after-returning pointcut-ref="pointcut-id" returning="retVal" method="methodName"/&gt;
+   &lt;/aop:aspect&gt;
+   &lt;/aop:config&gt;
+</code></pre> 
+ <p>在上面配置中，</p> 
+ <ul> 
+  <li><code>pointcut-id</code> - 切入点的id。</li>
+  <li><code>methodName</code> - 在调用函数之前调用的函数的方法名称。</li>
+ </ul> 
+ <p>要了解上述与<strong>之后返回通知(After Returning Advice)</strong>相关的概念，写一个在实现<strong>之后返回通知(After Returning Advice)</strong>的示例。为了简单，可直接复制之前上一篇文章中的例子，打开并使用Eclipse IDE，并按照以下步骤创建一个Spring应用程序：</p> 
+ <ol> 
+  <li>更新在<a target="_blank" href="http://www.yiibai.com/springaop/springaop_application.html" title="Spring AOP应用实例">Spring AOP应用实例</a>中创建过的<code>Student</code>项目。</li>
+  <li>更新bean配置并运行应用程序，如下所述。</li>
+ </ol> 
+ <p>整个项目的目录结构如下所示 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201704/1204/283100453_65709.png" alt=""></p> 
+ <p>下面是<code>Logging.java</code>文件的内容。 这实际上是一个<code>Aspect</code>模块的样本，它定义了在各个点被调用的方法。</p> 
+ <pre><code class="lang-java">package com.yiibai;
+
+public class Logging {
+
+    /** 
+    * This is the method which I would like to execute
+    * when any method returns.
+    */
+   public void afterReturningAdvice(Object retVal){
+      System.out.println("[afterReturningAdvice] Returning: " + retVal.toString());
+   }
+}
+</code></pre> 
+ <p>以下是<em>Student.java</em>文件的内容：</p> 
+ <pre><code class="lang-java">package com.yiibai;
+
+public class Student {
+   private Integer age;
+   private String name;
+
+   public void setAge(Integer age) {
+      this.age = age;
+   }
+   public Integer getAge() {
+      System.out.println("Age : " + age );
+      System.out.println("Exception raised");
+      throw new IllegalArgumentException();
+      return age;
+   }
+
+   public void setName(String name) {
+      this.name = name;
+   }
+   public String getName() {
+      System.out.println("Name : " + name );
+      return name;
+   }
+
+   public void printThrowException(){
+       System.out.println("Exception raised");
+       throw new IllegalArgumentException();
+   }
+}
+</code></pre> 
+ <p>以下是<code>MainApp.java</code>文件的内容：</p> 
+ <pre><code class="lang-java">package com.yiibai;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+public class MainApp {
+   public static void main(String[] args) {
+      ApplicationContext context = 
+             new ClassPathXmlApplicationContext("Beans.xml");
+
+      Student student = (Student) context.getBean("student");
+
+      student.getName();
+      student.getAge();     
+   }
+}
+</code></pre> 
+ <p>以下是配置文件<em>Beans.xml</em>文件的内容：</p>   
+ <pre><code class="lang-xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xmlns:aop="http://www.springframework.org/schema/aop"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans-3.0.xsd 
+    http://www.springframework.org/schema/aop 
+    http://www.springframework.org/schema/aop/spring-aop-3.0.xsd "&gt;
+
+   &lt;aop:config&gt;
+      &lt;aop:aspect id="log" ref="logging"&gt;
+         &lt;aop:pointcut id="selectAll" 
+         expression="execution(* com.yiibai.*.*(..))"/&gt;
+         &lt;aop:after-returning pointcut-ref="selectAll" method="afterReturningAdvice" returning="retVal"/&gt;         
+      &lt;/aop:aspect&gt;
+   &lt;/aop:config&gt;
+
+   &lt;!-- Definition for student bean --&gt;
+   &lt;bean id="student" class="com.yiibai.Student"&gt;
+      &lt;property name="name"  value="Zara" /&gt;
+      &lt;property name="age"  value="11"/&gt;      
+   &lt;/bean&gt;
+
+   &lt;!-- Definition for logging aspect --&gt;
+   &lt;bean id="logging" class="com.yiibai.Logging"/&gt; 
+
+&lt;/beans&gt;
+</code></pre> 
+ <h2 id="h2-u8FD0u884Cu9879u76EE"><a name="运行项目" class="reference-link"></a><span class="header-link octicon octicon-link"></span>运行项目</h2>
+ <p>完成创建源代码和配置文件后，运行应用程序。右键单击应用程序中的<code>MainApp.java</code>，并使用运行方式作为<strong>Java应用程序命令</strong>。 如果您的应用程序一切正常，这将打印以下消息：</p> 
+ <pre><code class="lang-shell">Name : Maxsu
+[afterReturningAdvice] Returning: Maxsu
+Age : 26
+[afterReturningAdvice] Returning: 26
+</code></pre>
+ <br>      
+</div></body></html>

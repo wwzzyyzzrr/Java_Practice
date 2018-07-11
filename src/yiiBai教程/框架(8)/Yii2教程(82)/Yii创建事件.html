@@ -1,0 +1,159 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Yii创建事件</h1><div style="width:100%;float:left;" class="article-content">   
+ <div> 
+  <div>
+    在本章中，我们将学习在Yii中创建事件。要显示操作事件，需要准备一些原始数据。
+   <br> 
+   <h2> 
+    <div>
+      准备数据库 
+    </div> </h2> 
+   <div>
+     第1步&nbsp;-&nbsp;创建一个新的数据库。数据库可以通过以下两种方式进行。 
+   </div> 
+   <ul> 
+    <li> <p style="text-align:justify;"> 在终端运行&nbsp;mysql -u root –p </p> </li> 
+    <li> <p style="text-align:justify;"> 登录数据后，通过执行&nbsp;CREATE DATABASE mystudy CHARACTER SET utf8 COLLATE utf8_general_ci;&nbsp;创建一个新的数据库; </p> </li> 
+   </ul> 
+   <div>
+     第2步&nbsp;-&nbsp;在&nbsp;config/db.php&nbsp;文件中配置数据库连接。下面的配置可根据自己的实际情况配置。 
+   </div> 
+   <pre>&lt;?php
+   return [
+      'class' =&gt; 'yii\db\Connection',
+      'dsn' =&gt; 'mysql:host = localhost;dbname = mystudy',
+      'username' =&gt; 'root',
+      'password' =&gt; '',
+      'charset' =&gt; 'utf8',
+   ];
+?&gt;</pre> 
+   <p> 第3步&nbsp;-&nbsp;在项目根文件夹执行：yii migrate/create test_table 。此命令将用于创建管理数据库数据库迁移。&nbsp;migrations文件会出现在项目的根的&nbsp;migrations&nbsp;文件夹中。<br> <img src="http://www.yiibai.com/uploads/tutorial/20160602/1-160602230AQ34.png" alt="Yii数据Widgets"> </p> 
+   <div>
+     第4步&nbsp;-&nbsp;修改迁移文件(在本示例中生成的是：m160529_014611_test_table.php)，并使用以下这些代码。 
+   </div> 
+   <pre>&lt;?php
+   use yii\db\Schema;
+   use yii\db\Migration;
+   class m160529_014611_test_table extends Migration {
+      public function up() {
+         $this-&gt;createTable("user", [
+            "id" =&gt; Schema::TYPE_PK,
+            "name" =&gt; Schema::TYPE_STRING,
+            "email" =&gt; Schema::TYPE_STRING,
+         ]);
+         $this-&gt;batchInsert("user", ["name", "email"], [
+            ["User1", "user11@gmail.com"],
+            ["User2", "user22@gmail.com"],
+            ["User3", "user33@gmail.com"],
+            ["User4", "user44@gmail.com"],
+            ["User5", "user55@gmail.com"],
+            ["User6", "user66@gmail.com"],
+            ["User7", "user77@gmail.com"],
+            ["User8", "user88@gmail.com"],
+            ["User9", "user99@gmail.com"],
+            ["User10", "user1010@gmail.com"],
+            ["User11", "user1111@gmail.com"],
+         ]);
+      }
+      public function down() {
+         //$this-&gt;dropTable('user');
+      }
+   }
+?&gt;</pre> 
+   <div>
+     上述迁移创建用户表，它包含了以下这些字段：id,&nbsp;name,&nbsp;和&nbsp;email。它还增加了一些演示用户帐号。 
+   </div> 
+   <div>
+     第5步&nbsp;-&nbsp;在项目的根目录内运行：&nbsp;yii&nbsp;migrate&nbsp; 来迁移应用到数据库。执行结果如下图所示：
+    <br> 
+   </div> 
+   <img src="http://www.yiibai.com/uploads/tutorial/20160602/1-160602230J42A.png" alt="">
+   <br> 
+   <p> 第6步-现在，我们需要为user表创建模型。为了简便起见，我们将使用GII代码生成工具。在浏览器中打开&nbsp;url:&nbsp;<a target="_blank" href="http://localhost:8080/index.php?r=gii">http://localhost:8080/index.php?r=gii</a>&nbsp;。<br> 然后，点击&nbsp;“Model&nbsp;generator”&nbsp;下的&nbsp;“Start”按钮。&nbsp;填写表名(“user”)和模型类(“MyUser”)，单击“Preview”按钮，最后点击&nbsp;“Generate”&nbsp;按钮。 </p> 
+   <img src="http://www.yiibai.com/uploads/tutorial/20160602/1-160602230R6155.png" alt="">
+   <br> 
+   <div> 
+    <img src="http://www.yiibai.com/uploads/tutorial/20160602/1-160602230T3554.png" alt="">
+    <br> MyUser 文件忆经生成在&nbsp;models&nbsp;目录。 
+   </div> 
+  </div> 
+ </div> 
+ <div> 
+  <h2> 
+   <div>
+     创建一个事件 
+   </div> </h2> 
+  <div>
+    假设每当一个新用户在网站注册后，要发送一封电子邮件通知管理员。 
+  </div> 
+  <div>
+    第1步&nbsp;-&nbsp;修改&nbsp;models/MyUser.php&nbsp;文件如下代码所示： 
+  </div>   
+  <pre>&lt;?php
+   namespace app\models;
+   use Yii;
+   /**
+   * This is the model class for table "user".
+   *
+   * @property integer $id
+   * @property string $name
+   * @property string $email
+   */
+   class MyUser extends \yii\db\ActiveRecord {
+      const EVENT_NEW_USER = 'new-user';
+      public function init() {
+         // first parameter is the name of the event and second is the handler.
+         $this-&gt;on(self::EVENT_NEW_USER, [$this, 'sendMailToAdmin']);
+      }
+      /**
+      * @inheritdoc
+      */
+      public static function tableName() {
+         return 'user';
+      }
+      /**
+      * @inheritdoc
+      */
+      public function rules() {
+         return [
+            [['name', 'email'], 'string', 'max' =&gt; 255]
+         ];
+      }
+      /**
+      * @inheritdoc
+      */
+      public function attributeLabels() {
+         return [
+            'id' =&gt; 'ID',
+            'name' =&gt; 'Name',
+            'email' =&gt; 'Email',
+         ];
+      }
+      public function sendMailToAdmin($event) {
+         echo 'mail sent to admin using the event';
+      }
+   }
+?&gt;</pre> 
+  <div style="background-color:inherit;">
+    在上面的代码中，我们定义一个“new-user”事件。然后在&nbsp;init()方法附加&nbsp;sendMailToAdmin()&nbsp;函数到&nbsp;“new-user”&nbsp;事件。现在就可以触发此事件。 
+  </div> 
+  <div style="background-color:inherit;">
+    第2步&nbsp;-&nbsp;在SiteController控制器中创建一个&nbsp;actionTestEvent()&nbsp;方法。 
+  </div> 
+  <pre>public function actionTestEvent() {
+   $model = new MyUser();
+   $model-&gt;name = "John";
+   $model-&gt;email = "john@gmail.com";
+   if($model-&gt;save()) {
+      $model-&gt;trigger(MyUser::EVENT_NEW_USER);
+   }
+}</pre> 
+  <div style="background-color:inherit;">
+    第3步&nbsp;-&nbsp;现在访问：
+   <a target="_blank" href="http://localhost:8080/index.php?r=site/test-event">http://localhost:8080/index.php?r=site/test-event</a>&nbsp;，会看到以下输出结果：
+   <br> 
+   <img src="/uploads/tutorial/20160604/1-160604142139124.png" alt="Yii创建事件">
+   <br> 
+  </div> 
+ </div>
+ <br>      
+</div></body></html>

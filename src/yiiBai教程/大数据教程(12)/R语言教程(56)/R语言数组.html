@@ -1,0 +1,160 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">R语言数组</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>数组是可以在二维及以上存储数据的R数据对象。 例如 - 如果创建一个维数组<code>(2,3,4)</code>，那么它将创建<code>4</code>个矩形矩阵，每个矩阵具有<code>2</code>行和<code>3</code>列。数组只能存储数据类型。</p> 
+ <p>数组可通过使用<code>array()</code>函数来创建。 它将向量作为输入，并使用<code>dim</code>参数中的值来创建数组。</p> 
+ <h2 id="h2-u4F8Bu5B50"><a name="例子" class="reference-link"></a><span class="header-link octicon octicon-link"></span>例子</h2>
+ <p>以下示例创建两个<code>3x3</code>矩阵的数组，每个矩阵具有<code>3</code>行和<code>3</code>列。</p> 
+ <pre><code class="lang-r"># Create two vectors of different lengths.
+vector1 &lt;- c(5,9,3)
+vector2 &lt;- c(10,11,12,13,14,15)
+
+# Take these vectors as input to the array.
+result &lt;- array(c(vector1,vector2),dim = c(3,3,2))
+print(result)
+</code></pre> 
+ <p>当我们执行上述代码时，会产生以下结果 -</p> 
+ <pre><code class="lang-shell">, , 1
+
+     [,1] [,2] [,3]
+[1,]    5   10   13
+[2,]    9   11   14
+[3,]    3   12   15
+
+, , 2
+
+     [,1] [,2] [,3]
+[1,]    5   10   13
+[2,]    9   11   14
+[3,]    3   12   15
+</code></pre> 
+ <h2 id="h2-u547Du540Du5217u548Cu884C"><a name="命名列和行" class="reference-link"></a><span class="header-link octicon octicon-link"></span>命名列和行</h2>
+ <p>可以使用<code>dimnames</code>参数为数组中的行，列和矩阵命名。</p> 
+ <pre><code class="lang-r"># Create two vectors of different lengths.
+vector1 &lt;- c(5,9,3)
+vector2 &lt;- c(10,11,12,13,14,15)
+column.names &lt;- c("COL1","COL2","COL3")
+row.names &lt;- c("ROW1","ROW2","ROW3")
+matrix.names &lt;- c("Matrix1","Matrix2")
+
+# Take these vectors as input to the array.
+result &lt;- array(c(vector1,vector2),dim = c(3,3,2),dimnames = list(row.names,column.names,
+   matrix.names))
+print(result)
+</code></pre> 
+ <p>当我们执行上述代码时，会产生以下结果 -</p> 
+ <pre><code class="lang-shell">, , Matrix1
+
+     COL1 COL2 COL3
+ROW1    5   10   13
+ROW2    9   11   14
+ROW3    3   12   15
+
+, , Matrix2
+
+     COL1 COL2 COL3
+ROW1    5   10   13
+ROW2    9   11   14
+ROW3    3   12   15
+</code></pre> 
+ <h2 id="h2-u8BBFu95EEu6570u7EC4u5143u7D20"><a name="访问数组元素" class="reference-link"></a><span class="header-link octicon octicon-link"></span>访问数组元素</h2>
+ <p>有关如何访问数组元素，请参考以下代码实现 - </p> 
+ <pre><code class="lang-r"># Create two vectors of different lengths.
+vector1 &lt;- c(5,9,3)
+vector2 &lt;- c(10,11,12,13,14,15)
+column.names &lt;- c("COL1","COL2","COL3")
+row.names &lt;- c("ROW1","ROW2","ROW3")
+matrix.names &lt;- c("Matrix1","Matrix2")
+
+# Take these vectors as input to the array.
+result &lt;- array(c(vector1,vector2),dim = c(3,3,2),dimnames = list(row.names,
+   column.names, matrix.names))
+
+# Print the third row of the second matrix of the array.
+print(result[3,,2])
+
+# Print the element in the 1st row and 3rd column of the 1st matrix.
+print(result[1,3,1])
+
+# Print the 2nd Matrix.
+print(result[,,2])
+</code></pre> 
+ <p>当我们执行上述代码时，会产生以下结果 -</p> 
+ <pre><code class="lang-shell">COL1 COL2 COL3 
+   3   12   15 
+[1] 13
+     COL1 COL2 COL3
+ROW1    5   10   13
+ROW2    9   11   14
+ROW3    3   12   15
+</code></pre> 
+ <h2 id="h2-u64CDu7EB5u6570u7EC4u5143u7D20"><a name="操纵数组元素" class="reference-link"></a><span class="header-link octicon octicon-link"></span>操纵数组元素</h2>
+ <p>由于数组是由多个维度组成的矩阵，通过访问矩阵的元素来执行数组元素的相关操作。</p>   
+ <pre><code class="lang-r"># Create two vectors of different lengths.
+vector1 &lt;- c(5,9,3)
+vector2 &lt;- c(10,11,12,13,14,15)
+
+# Take these vectors as input to the array.
+array1 &lt;- array(c(vector1,vector2),dim = c(3,3,2))
+
+# Create two vectors of different lengths.
+vector3 &lt;- c(9,1,0)
+vector4 &lt;- c(6,0,11,3,14,1,2,6,9)
+array2 &lt;- array(c(vector1,vector2),dim = c(3,3,2))
+
+# create matrices from these arrays.
+matrix1 &lt;- array1[,,2]
+matrix2 &lt;- array2[,,2]
+
+# Add the matrices.
+result &lt;- matrix1+matrix2
+print(result)
+</code></pre> 
+ <p>当我们执行上述代码时，会产生以下结果 -</p> 
+ <pre><code class="lang-shell">     [,1] [,2] [,3]
+[1,]   10   20   26
+[2,]   18   22   28
+[3,]    6   24   30
+</code></pre> 
+ <h2 id="h2-u8DE8u6570u7EC4u5143u7D20u7684u8BA1u7B97"><a name="跨数组元素的计算" class="reference-link"></a><span class="header-link octicon octicon-link"></span>跨数组元素的计算</h2>
+ <p>我们可以使用<code>apply()</code>函数对数组中的元素进行计算。</p> 
+ <p><strong>语法</strong></p> 
+ <pre><code class="lang-shell">apply(x, margin, fun)
+</code></pre> 
+ <p>以下是使用的参数的描述 - </p> 
+ <ul> 
+  <li><em>x</em> - 是一个数组。</li>
+  <li><em>margin</em> - 是使用的数据集的名称。</li>
+  <li><em>fun</em> - 是应用于数组元素的函数。</li>
+ </ul> 
+ <p><strong>例子</strong></p> 
+ <p>使用下面的<code>apply()</code>函数来计算所有矩阵中数组的行中的元素的总和。</p> 
+ <pre><code class="lang-r"># Create two vectors of different lengths.
+vector1 &lt;- c(5,9,3)
+vector2 &lt;- c(10,11,12,13,14,15)
+
+# Take these vectors as input to the array.
+new.array &lt;- array(c(vector1,vector2),dim = c(3,3,2))
+print(new.array)
+
+# Use apply to calculate the sum of the rows across all the matrices.
+result &lt;- apply(new.array, c(1), sum)
+print(result)
+</code></pre> 
+ <p>当我们执行上述代码时，会产生以下结果 -</p> 
+ <pre><code class="lang-shell">, , 1
+
+     [,1] [,2] [,3]
+[1,]    5   10   13
+[2,]    9   11   14
+[3,]    3   12   15
+
+, , 2
+
+     [,1] [,2] [,3]
+[1,]    5   10   13
+[2,]    9   11   14
+[3,]    3   12   15
+
+[1] 56 68 60
+</code></pre>
+ <br>      
+</div></body></html>

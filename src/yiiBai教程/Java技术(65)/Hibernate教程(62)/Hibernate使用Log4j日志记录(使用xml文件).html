@@ -1,0 +1,67 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Hibernate使用Log4j日志记录(使用xml文件)</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>日志记录使程序员能够将日志详细信息永久写入文件。 <a target="_blank" href="http://www.yiibai.com/log4j/" title="Log4j">Log4j</a>和Logback框架可以在hibernate框架中使用来支持日志记录。</p> 
+ <p>使用<code>log4j</code>执行日志记录有两种方法：</p> 
+ <ul> 
+  <li>通过<code>log4j.xml</code>文件(或)</li>
+  <li>通过<code>log4j.properties</code>文件</li>
+ </ul> 
+ <h2 id="h2--xml-log4j-hibernate-"><a name="使用xml文件执行Log4j执行Hibernate日志记录的步骤" class="reference-link"></a><span class="header-link octicon octicon-link"></span>使用xml文件执行Log4j执行Hibernate日志记录的步骤</h2>
+ <p>使用xml文件使用log4j执行日志记录有两种方法：</p> 
+ <ol> 
+  <li>使用hibernate加载log4j的<code>jar</code>文件</li>
+  <li>在<code>src</code>文件夹内创建<code>log4j.xml</code>文件(与<code>hibernate.cfg.xml</code>文件同个目录)</li>
+ </ol> 
+ <h2 id="h2--xml-log4j-hibernate-"><a name="使用xml文件的Log4j进行Hibernate日志记录的示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>使用xml文件的Log4j进行Hibernate日志记录的示例</h2>
+ <p>您可以通过在hibernate示例中执行两个步骤来在hibernate中启用日志记录。 这是使用log4j进行日志记录支持的hibernate应用程序的第一个例子。</p> 
+ <h2 id="h2--jar-"><a name="加载所需的jar文件" class="reference-link"></a><span class="header-link octicon octicon-link"></span>加载所需的jar文件</h2>
+ <p>您需要使用hibernate的jar文件和加载<code>slf4j.jar</code>和<code>log4j.jar</code>文件(<a target="_blank" href="http://logging.apache.org/log4j/1.2/)。">http://logging.apache.org/log4j/1.2/)。</a></p> 
+ <h2 id="h2--log4j-xml-"><a name="创建log4j.xml文件" class="reference-link"></a><span class="header-link octicon octicon-link"></span>创建log4j.xml文件</h2>
+ <p>现在您需要创建<code>log4j.xml</code>文件。 在此示例中，所有日志详细信息将被写入当前项目的<code>log4j_hn.log</code>文件。</p> 
+ <p><em>log4j.xml</em>文件的内容如下 </p> 
+ <pre><code class="lang-xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;!DOCTYPE log4j:configuration SYSTEM "log4j.dtd"&gt;
+&lt;log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/"
+    debug="false"&gt;
+
+    &lt;appender name="CONSOLE" class="org.apache.log4j.ConsoleAppender"&gt;
+        &lt;layout class="org.apache.log4j.PatternLayout"&gt;
+            &lt;param name="ConversionPattern" value="[%d{dd/MM/yy hh:mm:ss:sss z}] %5p %c{2}: %m%n" /&gt;
+        &lt;/layout&gt;
+    &lt;/appender&gt;
+
+    &lt;appender name="ASYNC" class="org.apache.log4j.AsyncAppender"&gt;
+        &lt;appender-ref ref="CONSOLE" /&gt;
+        &lt;appender-ref ref="FILE" /&gt;
+    &lt;/appender&gt;
+
+    &lt;appender name="FILE" class="org.apache.log4j.RollingFileAppender"&gt;
+
+        &lt;param name="File" value="log4j_hn.log" /&gt;
+        &lt;param name="MaxBackupIndex" value="100" /&gt;
+
+        &lt;layout class="org.apache.log4j.PatternLayout"&gt;
+            &lt;param name="ConversionPattern" value="[%d{dd/MM/yy hh:mm:ss:sss z}] %5p %c{2}: %m%n" /&gt;
+        &lt;/layout&gt;
+
+    &lt;/appender&gt;
+
+    &lt;category name="org.hibernate"&gt;
+        &lt;priority value="DEBUG" /&gt;
+    &lt;/category&gt;
+
+    &lt;category name="java.sql"&gt;
+        &lt;priority value="debug" /&gt;
+    &lt;/category&gt;
+
+    &lt;root&gt;
+        &lt;priority value="INFO" /&gt;
+        &lt;appender-ref ref="FILE" /&gt;
+    &lt;/root&gt;
+
+&lt;/log4j:configuration&gt;
+</code></pre> 
+ <p>此示例的项目名称：<code>hibernate-logging-by-log4j-using-xml-file</code>，请到下面的下载页面中下载代码。</p> 
+ <p>完整的项目目录结构如下 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201703/2503/487160351_86788.png" alt=""></p>
+ <br>      
+</div></body></html>

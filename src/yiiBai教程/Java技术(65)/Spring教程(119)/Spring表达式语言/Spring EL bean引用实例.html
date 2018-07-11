@@ -1,0 +1,118 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Spring EL bean引用实例</h1><div style="width:100%;float:left;" class="article-content">   
+ <div style="font-family:微软雅黑;font-size:14px;background-color:#FFFFFF;"> 
+  <div style="background-color:inherit;"> 
+   <span style="font-family:'Microsoft Yahei',  Helvetica, font-size:16px;line-height:1.5;">在Spring&nbsp;EL，可以使用点(.)符号嵌套属性参考一个bean。例如，“bean.property_name”。</span> 
+  </div> 
+ </div> 
+ <div> 
+  <pre>public class Customer {
+	
+	@Value("#{addressBean.country}")
+	private String country;</pre> 
+  <div>
+    在上面的代码片段，它从“addressBean”&nbsp;bean注入了“country”属性到现在的“customer”类的“country”属性的值。 
+  </div> 
+  <h2> Spring EL以注解的形式 </h2> 
+  <div>
+    请参阅下面的例子，演示如何使用使用 SpEL 引用一个bean，bean属性也它的方法。 
+  </div> 
+  <pre>package com.yiibai.core;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+@Component("customerBean")
+public class Customer {
+
+	@Value("#{addressBean}")
+	private Address address;
+
+	@Value("#{addressBean.country}")
+	private String country;
+	
+	@Value("#{addressBean.getFullAddress('yiibai')}")
+	private String fullAddress;
+
+	//getter and setter methods
+	
+	@Override
+	public String toString() {
+		return "Customer [address=" + address + "\n, country=" + country
+				+ "\n, fullAddress=" + fullAddress + "]";
+	}
+
+}</pre> 
+  <pre>package com.yiibai.core;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+@Component("addressBean")
+public class Address {
+
+	@Value("GaoDeng, QiongShang")
+	private String street;
+
+	@Value("571100")
+	private int postcode;
+
+	@Value("CN")
+	private String country;
+
+	public String getFullAddress(String prefix) {
+
+		return prefix + " : " + street + " " + postcode + " " + country;
+	}
+
+	//getter and setter methods
+
+	public void setCountry(String country) {
+		this.country = country;
+	}
+
+	@Override
+	public String toString() {
+		return "Address [street=" + street + ", postcode=" + postcode
+				+ ", country=" + country + "]";
+	}
+
+}</pre> 
+  <p> 执行结果 </p> 
+  <pre>Customer obj = (Customer) context.getBean("customerBean");
+System.out.println(obj);</pre> 
+  <p> 输出结果 </p>   
+  <pre class="prettyprint lang-bsh">Customer [address=Address [street=GaoDeng, QiongShang, postcode=571100, country=CN]
+, country=CN
+, fullAddress=yiibai : GaoDeng, QiongShang 571100 CN]</pre> 
+  <p> <br> </p> 
+  <h2 style="color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:24px;font-weight:500;"> Spring EL以XML的形式 </h2> 
+  <div style="background-color:inherit;"> 
+   <div style="background-color:inherit;">
+     请参阅在XML文件定义bean的等效版本。 
+   </div> 
+  </div> 
+  <pre>&lt;beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd"&gt;
+
+	&lt;bean id="customerBean" class="com.yiibai.core.Customer"&gt;
+		&lt;property name="address" value="#{addressBean}" /&gt;
+		&lt;property name="country" value="#{addressBean.country}" /&gt;
+		&lt;property name="fullAddress" value="#{addressBean.getFullAddress('yiibai')}" /&gt;
+	&lt;/bean&gt;
+
+	&lt;bean id="addressBean" class="com.yiibai.core.Address"&gt;
+		&lt;property name="street" value="GaoDeng, QiongShang" /&gt;
+		&lt;property name="postcode" value="571100" /&gt;
+		&lt;property name="country" value="CN" /&gt;
+	&lt;/bean&gt;
+
+&lt;/beans&gt;</pre> 
+  <div>
+    下载代码 –&nbsp;
+   <a target="_blank" href="http://pan.baidu.com/s/1pJTgLUN">http://pan.baidu.com/s/1pJTgLUN</a> 
+  </div> 
+ </div>
+ <br>      
+</div></body></html>

@@ -1,0 +1,76 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Spring MVC静态页面</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>以下示例显示如何使用<strong>Spring MVC Framework</strong>编写一个简单的基于Web的应用程序，它可以使用<code>&lt;mvc:resources&gt;</code>标记访问静态页面和动态页面。首先使用Eclipse IDE创建一个动态WEB项目，并按照以下步骤使用<strong>Spring Web Framework</strong>开发基于动态表单的Web应用程序：</p> 
+ <ol> 
+  <li>创建一个简单的动态Web项目：<strong>StaticPages</strong>，并在 <code>src</code> 目录下创建一个 <code>com.yiibai.springmvc</code> 包。</li>
+  <li>在<code>com.yiibai.springmvc</code>包下创建一个Java类<code>WebController</code>。</li>
+  <li>在<code>jsp</code>子文件夹下创建一个静态文件<code>final.html</code>。</li>
+  <li>在<code>WebContent/WEB-INF</code>文件夹下创建一个Spring配置文件 <code>StaticPages-servlet.xml</code>，如下所述。</li>
+  <li>最后一步是创建所有源和配置文件的内容并运行应用程序，如下所述。</li>
+ </ol> 
+ <p>完整的项目文件结构如下所示 - </p> 
+ <p><strong>WebController.java</strong> 的代码如下所示 -</p> 
+ <pre><code class="lang-java">package com.yiibai.springmvc;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+
+@Controller
+public class WebController {
+
+   @RequestMapping(value = "/index", method = RequestMethod.GET)
+   public String index() {
+       return "index";
+   }
+
+   @RequestMapping(value = "/staticPage", method = RequestMethod.GET)
+   public String redirect() {
+
+      return "redirect:/pages/final.html";
+   }
+}
+</code></pre> 
+ <p><strong>StaticPages-servlet.xml</strong> 的代码如下所示 -</p> 
+ <p>这里使用<code>&lt;mvc:resources ..../&gt;</code>标记来映射静态页面。映射属性必须是指定<code>http</code>请求的URL模式的<code>Ant</code>模式。<code>location</code>属性必须指定一个或多个有效的资源目录位置，其中包含静态页面，包括图片，样式表，<code>JavaScript</code>和其他静态内容。可以使用逗号分隔的值列表指定多个资源位置。</p> 
+ <p>下面是Spring视图文件<code>WEB-INF/jsp/index.jsp</code>的内容。这将是一个登录页面，此页面将发送一个请求访问<code>staticPage</code>服务方法，该方法将此请求重定向到<code>WEB-INF/pages</code>文件夹中的静态页面。</p> 
+ <p><strong>index.jsp</strong> 页面的代码如下 - </p> 
+ <pre><code class="lang-html">&lt;%@ page contentType="text/html; charset=UTF-8"%&gt;
+&lt;%@taglib uri="http://www.springframework.org/tags/form" prefix="form"%&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;title&gt;Spring Landing Page&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;h2&gt;Spring Landing Page&lt;/h2&gt;
+&lt;p&gt;点击下面的按钮获得一个简单的HTML页面&lt;/p&gt;
+&lt;form:form method="GET" action="/StaticPages/staticPage"&gt;
+&lt;table&gt;
+    &lt;tr&gt;
+    &lt;td&gt;
+    &lt;input type="submit" value="获取HTML页面"/&gt;
+    &lt;/td&gt;
+    &lt;/tr&gt;
+&lt;/table&gt;  
+&lt;/form:form&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p><strong>final.html</strong> 的完整代码如下 - </p>   
+ <pre><code class="lang-html">&lt;html&gt;
+&lt;head&gt;
+    &lt;title&gt;Spring Static Page&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;h2&gt;A simple HTML page&lt;/h2&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>完成创建源和配置文件后，导出应用程序。右键单击应用程序，并使用<strong>导出&gt; WAR文件</strong>选项，并将文件保存为<code>HelloWeb.war</code> 在Tomcat的<code>webapps</code>文件夹中。</p> 
+ <p>现在启动Tomcat服务器，现在尝试访问URL =&gt; <a target="_blank" href="http://localhost:8080/HelloWeb/index">http://localhost:8080/HelloWeb/index</a> 。 如果<strong>Spring Web</strong>应用程序没有问题，应该看到以下结果：</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201701/18/193180144_60187.png" alt=""></p> 
+ <p>单击“<strong>获取HTML页面</strong>”按钮访问<code>staticPage</code>服务方法中提到的静态页面。如果<strong>Spring Web</strong>应用程序没有问题，应该看到以下结果：</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201701/18/331180145_82060.png" alt=""></p>
+ <br>      
+</div></body></html>

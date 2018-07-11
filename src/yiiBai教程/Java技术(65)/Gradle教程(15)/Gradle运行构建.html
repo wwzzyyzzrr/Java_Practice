@@ -1,0 +1,171 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Gradle运行构建</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>Gradle提供了一个命令行来执行构建脚本。 它可以一次执行多个任务。在这里将介绍如何使用不同的选项来执行多个任务。</p> 
+ <h2 id="h2-u6267u884Cu591Au4E2Au4EFBu52A1"><a name="执行多个任务" class="reference-link"></a><span class="header-link octicon octicon-link"></span>执行多个任务</h2>
+ <p><code>Gradle</code>可以从单个构建文件执行多个任务。使用<code>gradle</code>命令处理构建文件。此命令将按列出的顺序编译每个任务，并使用不同的选项执行每个任务以及依赖关系。</p> 
+ <p><strong>示例</strong> - 假设有四个任务 - <code>task1</code>，<code>task2</code>，<code>task3</code>和<code>task4</code>。<code>task3</code>和<code>task4</code>取决于<code>task1</code>和<code>task2</code>。 看看下面的图表。</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201610/24/24151031_61170.png" alt=""></p> 
+ <p>在上面的四个任务是相互依赖的，用一个箭头符号表示。 看看下面的代码。 将其复制并粘贴到<code>build.gradle</code>文件中。</p> 
+ <pre><code class="lang-groovy">task task1 &lt;&lt; {
+   println 'compiling source #1'
+}
+
+task task2(dependsOn: task1) &lt;&lt; {
+   println 'compiling unit tests #2'
+}
+
+task task3(dependsOn: [task1, task2]) &lt;&lt; {
+   println 'running unit tests #3'
+}
+
+task task4(dependsOn: [task1, task3]) &lt;&lt; {
+   println 'building the distribution #4'
+}
+</code></pre> 
+ <p>使用以下代码来编译和执行上述任务。如果命令执行成功，将获得以下输出 - </p> 
+ <pre><code class="lang-groovy">D:/worksp/yiibai.com/gradle-3.1/study/script&gt;gradle task4 task1
+:task1
+compiling source #1
+:task2
+compiling unit tests #2
+:task3
+running unit tests #3
+:task4
+building the distribution #4
+
+BUILD SUCCESSFUL
+
+Total time: 1.265 secs
+</code></pre> 
+ <h2 id="h2-u6392u9664u4EFBu52A1"><a name="排除任务" class="reference-link"></a><span class="header-link octicon octicon-link"></span>排除任务</h2>
+ <p>要执行中排除某个任务时，可以在<code>gradle</code>命令中使用<code>-x</code>选项，并指出要排除的任务的名称。<br>使用以下命令用于从上面的脚本中排除 <code>task1</code> 这个任务。<br>使用以下代码来编译和执行上述任务。如果命令执行成功，将获得以下输出 - </p> 
+ <pre><code class="lang-groovy">D:/worksp/yiibai.com/gradle-3.1/study/script&gt;gradle task4 -x task1
+:task2
+compiling unit tests #2
+:task3
+running unit tests #3
+:task4
+building the distribution #4
+
+BUILD SUCCESSFUL
+
+Total time: 1.272 secs
+</code></pre> 
+ <h2 id="h2-u53D1u751Fu6545u969Cu65F6u7EE7u7EEDu6784u5EFA"><a name="发生故障时继续构建" class="reference-link"></a><span class="header-link octicon octicon-link"></span>发生故障时继续构建</h2>
+ <p>Gradle将在任何任务失败时立即中止执行。但是有时我们希望即使发生故障，也可以继续执行。 为此，要在<code>gradle</code>命令使用<code>-continue</code>选项。它分别处理每个任务及其依赖关系。 重要的是，它将捕获每个遇到的故障，并在构建的执行结束时生成报告。 假设一个任务失败，那么相关的后续依懒任务也不会被执行。</p> 
+ <h2 id="h2-u9009u62E9u6267u884Cu54EAu4E9Bu6784u5EFA"><a name="选择执行哪些构建" class="reference-link"></a><span class="header-link octicon octicon-link"></span>选择执行哪些构建</h2>
+ <p>当运行gradle命令时，它在当前目录中查找构建文件。我们也可以使用<code>-b</code>选项选择指定的构建文件的路径。以下示例显示在<code>subdir/</code> 子目录中创建一个新文件 <code>newbuild.gradle</code>，并创建一个名称为 <code>hello</code> 项目。创建的<code>newbuild.gradle</code>文件的代码内容如下 - </p> 
+ <pre><code class="lang-groovy">task hello &lt;&lt; {
+   println "Use File：$buildFile.name in '$buildFile.parentFile.name'."
+}
+</code></pre> 
+ <p>使用以下代码来编译和执行上述任务。如果命令执行成功，将获得以下输出 - </p> 
+ <pre><code class="lang-groovy">D:/worksp/yiibai.com/gradle-3.1/study/script&gt; gradle -q -b subdir/newbuild.gradle hello
+Use File：newbuild.gradle in 'subdir'.
+</code></pre> 
+ <h2 id="h2-u83B7u53D6u6784u5EFAu4FE1u606F"><a name="获取构建信息" class="reference-link"></a><span class="header-link octicon octicon-link"></span>获取构建信息</h2>
+ <p>Gradle提供了几个内置任务来检索有关任务和项目的详细信息。这对理解构建的结构和依赖性以及调试一些问题很有用。可使用项目报告插件向项目中添加任务，来生成这些报告。</p> 
+ <h3 id="h3-u5217u51FAu9879u76EE"><a name="列出项目" class="reference-link"></a><span class="header-link octicon octicon-link"></span>列出项目</h3>
+ <p>可以使用<code>gradle -q projects</code>命令来列出所选项目及其子项目的项目层次结构。下面是一个列出构建文件中的所有项目的示例 - </p> 
+ <pre><code class="lang-groovy">D:/worksp/yiibai.com/gradle-3.1/study/script&gt;gradle -q projects
+
+------------------------------------------------------------
+Root project
+------------------------------------------------------------
+
+Root project 'script'
+No sub-projects
+
+To see a list of the tasks of a project, run gradle &lt;project-path&gt;:tasks
+For example, try running gradle :tasks
+</code></pre> 
+ <p>报告显示每个项目的描述（如果有指定的话）。可以使用以下命令指定描述。将其粘贴到<code>build.gradle</code>文件中。<br>再一次执行命令，得到以下结果 - </p>   
+ <pre><code class="lang-groovy">D:/worksp/yiibai.com/gradle-3.1/study/script&gt;gradle -q projects
+
+------------------------------------------------------------
+Root project - The shared API for the application
+------------------------------------------------------------
+
+Root project 'script' - The shared API for the application
+No sub-projects
+
+To see a list of the tasks of a project, run gradle &lt;project-path&gt;:tasks
+For example, try running gradle :tasks
+</code></pre> 
+ <h3 id="h3-u5217u51FAu4EFBu52A1"><a name="列出任务" class="reference-link"></a><span class="header-link octicon octicon-link"></span>列出任务</h3>
+ <p>使用以下命令列出属于多个项目的所有任务。如下所示 - </p> 
+ <pre><code class="lang-groovy">D:/worksp/yiibai.com/gradle-3.1/study/script&gt;gradle -q tasks --all
+
+------------------------------------------------------------
+All tasks runnable from root project - The shared API for the application
+------------------------------------------------------------
+
+Build Setup tasks
+-----------------
+init - Initializes a new Gradle build. [incubating]
+wrapper - Generates Gradle wrapper files. [incubating]
+
+Help tasks
+----------
+buildEnvironment - Displays all buildscript dependencies declared in root project 'script'.
+components - Displays the components produced by root project 'script'. [incubating]
+dependencies - Displays all dependencies declared in root project 'script'.
+dependencyInsight - Displays the insight into a specific dependency in root project 'script'.
+help - Displays a help message.
+model - Displays the configuration model of root project 'script'. [incubating]
+projects - Displays the sub-projects of root project 'script'.
+properties - Displays the properties of root project 'script'.
+tasks - Displays the tasks runnable from root project 'script'.
+
+Other tasks
+-----------
+task4
+    task1
+    task2
+    task3
+</code></pre> 
+ <p>以下是其它一些命令及其说明的列表。</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>编号</th> 
+    <th>命令</th> 
+    <th>描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>1</td> 
+    <td>gradle –q help –task 
+     <task name></task></td> 
+    <td>提供有关指定任务或多个任务的使用信息（如路径，类型，描述，组）。</td> 
+   </tr> 
+   <tr> 
+    <td>2</td> 
+    <td>gradle –q dependencies</td> 
+    <td>提供所选项目的依赖关系的列表。</td> 
+   </tr> 
+   <tr> 
+    <td>3</td> 
+    <td>gradle -q api:dependencies —configuration 
+     <task name></task></td> 
+    <td>提供有关配置的有限依赖项的列表。</td> 
+   </tr> 
+   <tr> 
+    <td>4</td> 
+    <td>gradle –q buildEnvironment</td> 
+    <td>提供构建脚本依赖项的列表</td> 
+   </tr> 
+   <tr> 
+    <td>5</td> 
+    <td>gradle –q dependencyInsight</td> 
+    <td>提供了一个洞察到一个特定的依赖</td> 
+   </tr> 
+   <tr> 
+    <td>6</td> 
+    <td>gradle –q properties</td> 
+    <td>提供所选项目的属性列表</td> 
+   </tr> 
+  </tbody> 
+ </table>
+ <br>      
+</div></body></html>

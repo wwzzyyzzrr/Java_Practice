@@ -1,0 +1,392 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Jstl教程</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>在本章中，我们将了解JSP中的不同标签。JSP标准标签库(JSTL)是一个有用的JSP标签的集合，它封装了许多JSP应用程序通用的核心功能。</p> 
+ <p>JSTL支持常见的结构性任务，如迭代和条件，用于处理XML文档的标签，国际化标签和SQL标签。 它还提供了一个框架，用于将现有的自定义标签与JSTL标签集成。</p> 
+ <h2 id="h2--jstl-"><a name="安装JSTL库" class="reference-link"></a><span class="header-link octicon octicon-link"></span>安装JSTL库</h2>
+ <p>要开始使用JSP标签，需要先安装JSTL库。如果使用的是Apache Tomcat容器，请按照以下两个步骤进行操作：</p> 
+ <p><em>步骤1</em> - 从Apache Standard Taglib下载二进制文件并解压缩压缩文件。<br><em>步骤2</em> - 要从<em>Jakarta Taglibs</em>发行版中使用标准Taglib，只需将发行版<code>“lib”</code>目录中的JAR文件复制到应用程序的`webapps\ROOT\WEB-INF\lib目录中即可。</p> 
+ <p>要使用JSTL的任何库，必须在使用该库的每个JSP的顶部包含一个<code>&lt;taglib&gt;</code>指令。例如 - </p> 
+ <pre><code class="lang-html">&lt;%@ taglib prefix = "c" uri = "http://java.sun.com/jsp/jstl/core" %&gt;
+</code></pre> 
+ <h2 id="h2-jstl-"><a name="JSTL标签的分类" class="reference-link"></a><span class="header-link octicon octicon-link"></span>JSTL标签的分类</h2>
+ <p>根据JSTL标签的功能，JSTL标签可以分为以下JSTL标签库组，可以在创建JSP页面中使用 -</p> 
+ <ul> 
+  <li>核心标签</li>
+  <li>格式化标签</li>
+  <li>SQL标签</li>
+  <li>XML标签</li>
+  <li>JSTL函数</li>
+ </ul> 
+ <h2 id="h2-1-"><a name="1. 核心标签" class="reference-link"></a><span class="header-link octicon octicon-link"></span>1. 核心标签</h2>
+ <p>核心组标签是最常用的JSTL标签。 以下是在JSP中包含JSTL Core库的声明(导入)语法 -</p> 
+ <pre><code class="lang-html">&lt;%@ taglib prefix = "c" uri = "http://java.sun.com/jsp/jstl/core" %&gt;
+</code></pre> 
+ <p>下表列出了核心JSTL标签使用示例 -</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>编号</th> 
+    <th>标签</th> 
+    <th>描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>1</td> 
+    <td><a target="_blank" href="http://www.yiibai.com/jsp/jstl_core_out_tag.html" title="<c:out>">&lt;c:out</a></td> 
+    <td>类似<code>&lt;%= ...&gt;</code>，但仅对于表达式使用。</td> 
+   </tr> 
+   <tr> 
+    <td>2</td> 
+    <td><a target="_blank" href="http://www.yiibai.com/jsp/jstl_core_set_tag.html" title="<c:set>">&lt;c:set</a></td> 
+    <td>在“范围”中设置表达式求值的结果</td> 
+   </tr> 
+   <tr> 
+    <td>3</td> 
+    <td><a target="_blank" href="http://www.yiibai.com/jsp/jstl_core_remove_tag.html" title="<c:remove>">&lt;c:remove</a></td> 
+    <td>删除范围变量(从指定的特定范围中)。</td> 
+   </tr> 
+   <tr> 
+    <td>4</td> 
+    <td><a target="_blank" href="http://www.yiibai.com/jsp/jstl_core_catch_tag.html" title="<c:catch>">&lt;c:catch</a></td> 
+    <td>捕捉发生在其主体中的任何可抛出对象，并可选地暴露它。</td> 
+   </tr> 
+   <tr> 
+    <td>5</td> 
+    <td><a target="_blank" href="http://www.yiibai.com/jsp/jstl_core_if_tag.html" title="<c:if>">&lt;c:if</a></td> 
+    <td>简单的条件标签，如果提供的条件为真，则对其主体进行评估。</td> 
+   </tr> 
+   <tr> 
+    <td>6</td> 
+    <td><a target="_blank" href="http://www.yiibai.com/jsp/jstl_core_choose_tag.html" title="<c:choose>">&lt;c:choose</a></td> 
+    <td>简单的条件标签，用于建立互斥条件操作的上下文，标记为<code>&lt;when&gt;</code>和<code>&lt;otherwise&gt;</code>。</td> 
+   </tr> 
+   <tr> 
+    <td>7</td> 
+    <td><a target="_blank" href="http://www.yiibai.com/jsp/jstl_core_choose_tag.html" title="<c:when">&lt;c:when</a></td> 
+    <td>如果条件评估为<code>true</code>，则包含<code>&lt;choose&gt;</code>的子标签。</td> 
+   </tr> 
+   <tr> 
+    <td>8</td> 
+    <td><a target="_blank" href="http://www.yiibai.com/jsp/jstl_core_choose_tag.html" title="<c:otherwise>">&lt;c:otherwise</a></td> 
+    <td><code>&lt;when&gt;</code>标签之后的<code>&lt;choose&gt;</code>子标签，只有当所有先前条件都被评估为<code>false</code>时才运行。</td> 
+   </tr> 
+   <tr> 
+    <td>9</td> 
+    <td><a target="_blank" href="http://www.yiibai.com/jsp/jstl_core_import_tag.html" title="<c:import>">&lt;c:import</a></td> 
+    <td>检索绝对或相对URL，并将其内容公开到页面，<code>"var"</code>中的字符串或<code>"varReader"</code>中的<code>"Reader"</code>。</td> 
+   </tr> 
+   <tr> 
+    <td>10</td> 
+    <td><a target="_blank" href="http://www.yiibai.com/jsp/jstl_core_foreach_tag.html" title="<c:forEach>">&lt;c:forEach</a></td> 
+    <td>基本的迭代标签，接受许多不同的集合类型，并支持子集和其他功能。</td> 
+   </tr> 
+   <tr> 
+    <td>11</td> 
+    <td><a target="_blank" href="http://www.yiibai.com/jsp/jstl_core_foreach_tag.html" title="<c:forTokens>">&lt;c:forTokens</a></td> 
+    <td>迭代令牌，由指定的分隔符来分隔。</td> 
+   </tr> 
+   <tr> 
+    <td>12</td> 
+    <td><a target="_blank" href="http://www.yiibai.com/jsp/jstl_core_param_tag.html" title="<c:param>">&lt;c:param</a></td> 
+    <td>将参数添加到包含<code>“import”</code>标签的URL。</td> 
+   </tr> 
+   <tr> 
+    <td>13</td> 
+    <td><a target="_blank" href="http://www.yiibai.com/jsp/jstl_core_redirect_tag.html" title="<c:redirect>">&lt;c:redirect</a></td> 
+    <td>重定向到新的URL。</td> 
+   </tr> 
+   <tr> 
+    <td>14</td> 
+    <td><a target="_blank" href="http://www.yiibai.com/jsp/jstl_core_url_tag.html" title="<c:url>">&lt;c:url</a></td> 
+    <td>创建可选查询参数的URL</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h2 id="h2-2-"><a name="2. 格式化标签" class="reference-link"></a><span class="header-link octicon octicon-link"></span>2. 格式化标签</h2>
+ <p>JSTL格式化标签用于格式化和显示国际化网站的文本，日期，时间和数字。 以下是在JSP中包含格式化库的语法 -</p> 
+ <pre><code class="lang-html">&lt;%@ taglib prefix = "fmt" uri = "http://java.sun.com/jsp/jstl/fmt" %&gt;
+</code></pre> 
+ <p>下表列出了格式化JSTL标签 -</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>编号</th> 
+    <th>标签</th> 
+    <th>描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>1</td> 
+    <td><a target="_blank" href="http://www.yiibai.com/jsp/jstl_format_formatnumber_tag.html" title="<fmt:formatNumber>">&lt;fmt:formatNumber</a></td> 
+    <td>以特定精度或格式呈现数值。</td> 
+   </tr> 
+   <tr> 
+    <td>2</td> 
+    <td><a target="_blank" href="http://www.yiibai.com/jsp/jstl_format_parsenumber_tag.html" title="<fmt:parseNumber>">&lt;fmt:parseNumber</a></td> 
+    <td>解析数字，货币或百分比的字符串表示形式。</td> 
+   </tr> 
+   <tr> 
+    <td>3</td> 
+    <td><a target="_blank" href="http://www.yiibai.com/jsp/jstl_format_formatdate_tag.html" title="<fmt:formatDate">&lt;fmt:formatDate</a></td> 
+    <td>使用提供的样式和模式格式化日期和/或时间。</td> 
+   </tr> 
+   <tr> 
+    <td>4</td> 
+    <td><a target="_blank" href="http://www.yiibai.com/jsp/jstl_format_parsedate_tag.html" title="<fmt:parseDate">&lt;fmt:parseDate</a></td> 
+    <td>解析日期和/或时间的字符串表示形式</td> 
+   </tr> 
+   <tr> 
+    <td>5</td> 
+    <td><a target="_blank" href="http://www.yiibai.com/jsp/jstl_format_bundle_tag.html" title="<fmt:bundle>">&lt;fmt:bundle</a></td> 
+    <td>加载到其标签体中使用资源包。</td> 
+   </tr> 
+   <tr> 
+    <td>6</td> 
+    <td><a target="_blank" href="http://www.yiibai.com/jsp/jstl_format_setlocale_tag.html" title="<fmt:setLocale>">&lt;fmt:setLocale</a></td> 
+    <td>在locale配置变量中存储给定的区域设置。</td> 
+   </tr> 
+   <tr> 
+    <td>7</td> 
+    <td><a target="_blank" href="http://www.yiibai.com/jsp/jstl_format_setbundle_tag.html" title="<fmt:setBundle>">&lt;fmt:setBundle</a></td> 
+    <td>加载资源包并将其存储在命名作用域变量或包配置变量中。</td> 
+   </tr> 
+   <tr> 
+    <td>8</td> 
+    <td><a target="_blank" href="http://www.yiibai.com/jsp/jstl_format_timezone_tag.html" title="<fmt:timeZone">&lt;fmt:timeZone</a></td> 
+    <td>指定嵌套在其正文中的任何时间格式化或解析操作的时区。</td> 
+   </tr> 
+   <tr> 
+    <td>9</td> 
+    <td><a target="_blank" href="http://www.yiibai.com/jsp/jstl_format_settimezone_tag.html" title="<fmt:setTimeZone>">&lt;fmt:setTimeZone</a></td> 
+    <td>在时区配置变量中存储给定的时区</td> 
+   </tr> 
+   <tr> 
+    <td>10</td> 
+    <td><a target="_blank" href="http://www.yiibai.com/jsp/jstl_format_message_tag.html" title="<fmt:message>">&lt;fmt:message</a></td> 
+    <td>显示国际化消息。</td> 
+   </tr> 
+   <tr> 
+    <td>11</td> 
+    <td><a target="_blank" href="http://www.yiibai.com/jsp/jstl_format_requestencoding_tag.html" title="<fmt:requestEncoding">&lt;fmt:requestEncoding</a></td> 
+    <td>设置请求字符编码</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h2 id="h2-3-sql-"><a name="3. SQL标签" class="reference-link"></a><span class="header-link octicon octicon-link"></span>3. SQL标签</h2>
+ <p>JSTL SQL标签库提供与关系数据库(RDBMS)进行交互的标记，如：<a target="_blank" href="http://www.oraok.com" title="Oracle">Oracle</a>，MySQL或Microsoft SQL Server。</p> 
+ <p>以下是在JSP中包含JSTL SQL库的语法 -</p> 
+ <pre><code class="lang-html">&lt;%@ taglib prefix = "sql" uri = "http://java.sun.com/jsp/jstl/sql" %&gt;
+</code></pre> 
+ <p>下表列出了JSTL的SQL标签 -</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>编号</th> 
+    <th>标签</th> 
+    <th>描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>1</td> 
+    <td><a target="_blank" href="http://www.yiibai.com/jsp/jstl_sql_setdatasource_tag.html" title="<sql:setDataSource>">&lt;sql:setDataSource</a></td> 
+    <td>创建一个仅适用于原型设计的简单DataSource</td> 
+   </tr> 
+   <tr> 
+    <td>2</td> 
+    <td><a target="_blank" href="http://www.yiibai.com/jsp/jstl_sql_query_tag.html" title="<sql:query>">&lt;sql:query</a></td> 
+    <td>执行在其正文中或通过sql属性定义的SQL查询。</td> 
+   </tr> 
+   <tr> 
+    <td>3</td> 
+    <td><a target="_blank" href="http://www.yiibai.com/jsp/jstl_sql_update_tag.html" title="<sql:update>">&lt;sql:update</a></td> 
+    <td>执行在其正文中或通过sql属性来定义SQL更新。</td> 
+   </tr> 
+   <tr> 
+    <td>4</td> 
+    <td><a target="_blank" href="http://www.yiibai.com/jsp/jstl_sql_param_tag.html" title="<sql:param>">&lt;sql:param</a></td> 
+    <td>将SQL语句中的参数设置为指定的值。</td> 
+   </tr> 
+   <tr> 
+    <td>5</td> 
+    <td><a target="_blank" href="http://www.yiibai.com/jsp/jstl_sql_dateparam_tag.html" title="<sql:dateParam>">&lt;sql:dateParam</a></td> 
+    <td>将SQL语句中的参数设置为指定的<code>java.util.Date</code>值。</td> 
+   </tr> 
+   <tr> 
+    <td>6</td> 
+    <td><a target="_blank" href="http://www.yiibai.com/jsp/jstl_sql_transaction_tag.html" title="<sql:transaction>">&lt;sql:transaction</a></td> 
+    <td>提供了一个共享的连接，设置为执行所有语句作为一个事务嵌套数据库动作要素。</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h2 id="h2-4-xml-"><a name="4. XML标签" class="reference-link"></a><span class="header-link octicon octicon-link"></span>4. XML标签</h2>
+ <p>JSTL XML标签提供了一种以JSP为中心的创建和操作<a target="_blank" href="http://www.yiibai.com/xml/" title="XML">XML</a>文档的方法。 以下是在JSP中包含JSTL XML库的语法。</p> 
+ <p>JSTL XML标记库具有与XML数据交互的自定义标签。 这包括解析XML，转换XML数据以及基于XPath表达式的流控制。语法如下所示 - </p>   
+ <pre><code class="lang-html">&lt;%@ taglib prefix = "x" uri = "http://java.sun.com/jsp/jstl/xml" %&gt;
+</code></pre> 
+ <p>在继续执行示例之前，需要将以下两个XML和XPath相关的库复制到<code>&lt;Tomcat安装目录&gt;\lib</code>中 -</p> 
+ <ul> 
+  <li>XercesImpl.jar − 下载地址： <a target="_blank" href="http://www.apache.org/dist/xerces/j/">http://www.apache.org/dist/xerces/j/</a></li>
+  <li>xalan.jar − 下载地址： <a target="_blank" href="http://xml.apache.org/xalan-j/index.html">http://xml.apache.org/xalan-j/index.html</a> </li>
+ </ul> 
+ <p>以下是关于XML的JSTL标签的列表 -</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>编号</th> 
+    <th>标签</th> 
+    <th>描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>1</td> 
+    <td><a target="_blank" href="http://www.yiibai.com/jsp/jstl_xml_out_tag.html" title="<x:out>">&lt;x:out</a></td> 
+    <td>类似于<code>&lt;%=...&gt;</code>，但对于XPath表达式。</td> 
+   </tr> 
+   <tr> 
+    <td>2</td> 
+    <td><a target="_blank" href="http://www.yiibai.com/jsp/jstl_xml_parse_tag.html" title="<x:parse>">&lt;x:parse</a></td> 
+    <td>用于解析通过属性或标签体指定的XML数据。</td> 
+   </tr> 
+   <tr> 
+    <td>3</td> 
+    <td><a target="_blank" href="http://www.yiibai.com/jsp/jstl_xml_set_tag.html" title="<x:set>">&lt;x:set</a></td> 
+    <td>将一个变量设置为XPath表达式的值。</td> 
+   </tr> 
+   <tr> 
+    <td>4</td> 
+    <td><a target="_blank" href="http://www.yiibai.com/jsp/jstl_xml_if_tag.html" title="<x:if>">&lt;x:if</a></td> 
+    <td>评估一个测试XPath表达式，如果结果为<code>true</code>，它处理其主体。如果测试条件为<code>false</code>，则主体被忽略。</td> 
+   </tr> 
+   <tr> 
+    <td>5</td> 
+    <td><a target="_blank" href="http://www.yiibai.com/jsp/jstl_xml_foreach_tag.html" title="<x:forEach>">&lt;x:forEach</a></td> 
+    <td>循环XML文档中的节点。</td> 
+   </tr> 
+   <tr> 
+    <td>6</td> 
+    <td><a target="_blank" href="http://www.yiibai.com/jsp/jstl_xml_choose_tag.html" title="<x:choose>">&lt;x:choose</a></td> 
+    <td>简单的条件标签，用于为相互排斥的条件操作建立上下文，由<code>&lt;when&gt;</code>和<code>&lt;otherwise&gt;</code>标签标记。</td> 
+   </tr> 
+   <tr> 
+    <td>7</td> 
+    <td><a target="_blank" href="http://www.yiibai.com/jsp/jstl_xml_choose_tag.html" title="<x:when>">&lt;x:when</a></td> 
+    <td>如果<code>&lt;select&gt;</code>的表达式计算为<code>true</code>，则包含其主体的子标签。</td> 
+   </tr> 
+   <tr> 
+    <td>8</td> 
+    <td><a target="_blank" href="http://www.yiibai.com/jsp/jstl_xml_choose_tag.html" title="<x:otherwise>">&lt;x:otherwise</a></td> 
+    <td>只有当所有先前的条件评估为<code>true</code>时，<code>&lt;choose&gt;</code>标签才能跟随<code>&lt;when&gt;</code>标签。</td> 
+   </tr> 
+   <tr> 
+    <td>9</td> 
+    <td><a target="_blank" href="http://www.yiibai.com/jsp/jstl_xml_transform_tag.html" title="<x:transform>">&lt;x:transform</a></td> 
+    <td>在XML文档上应用XSL转换</td> 
+   </tr> 
+   <tr> 
+    <td>10</td> 
+    <td><a target="_blank" href="http://www.yiibai.com/jsp/jstl_xml_param_tag.html" title="<x:param>">&lt;x:param</a></td> 
+    <td>与变形标签一起使用，以在XSLT样式表中设置参数</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h2 id="h2-5-jstl-"><a name="5. JSTL函数" class="reference-link"></a><span class="header-link octicon octicon-link"></span>5. JSTL函数</h2>
+ <p>JSTL包括许多标准函数，其中大部分是常见的字符串操作功能。 以下是在JSP中包含JSTL函数库的语法 -</p> 
+ <pre><code class="lang-html">&lt;%@ taglib prefix = "fn" uri = "http://java.sun.com/jsp/jstl/functions" %&gt;
+</code></pre> 
+ <p>下表列出了各种JSTL函数 -</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>编号</th> 
+    <th>标签</th> 
+    <th>描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>1</td> 
+    <td><a target="_blank" href="http://www.yiibai.com/jsp/jstl_function_contains.html" title="fn:contains()">fn:contains()</a></td> 
+    <td>测试输入字符串是否包含指定的子字符串。</td> 
+   </tr> 
+   <tr> 
+    <td>2</td> 
+    <td><a target="_blank" href="http://www.yiibai.com/jsp/jstl_function_containsignorecase.html" title="fn:containsIgnoreCase()">fn:containsIgnoreCase()</a></td> 
+    <td>测试输入字符串是否以不区分大小写的方式包含指定的子字符串。</td> 
+   </tr> 
+   <tr> 
+    <td>3</td> 
+    <td><a target="_blank" href="http://www.yiibai.com/jsp/jstl_function_escapexml.html" title="fn:escapeXml()">fn:escapeXml()</a></td> 
+    <td>转义可解释为XML标记的字符。</td> 
+   </tr> 
+   <tr> 
+    <td>4</td> 
+    <td><a target="_blank" href="http://www.yiibai.com/jsp/jstl_function_indexof.html" title="fn:indexOf()">fn:indexOf()</a></td> 
+    <td>返回指定子字符串第一次出现在字符串中的索引。</td> 
+   </tr> 
+   <tr> 
+    <td>5</td> 
+    <td><a target="_blank" href="http://www.yiibai.com/jsp/jstl_function_endswith.html" title="fn:endsWith()">fn:endsWith()</a></td> 
+    <td>测试输入字符串是否以指定的后缀结尾。</td> 
+   </tr> 
+   <tr> 
+    <td>6</td> 
+    <td><a target="_blank" href="http://www.yiibai.com/jsp/jstl_function_join.html" title="fn:join()">fn:join()</a></td> 
+    <td>将数组的所有元素连接到字符串中。</td> 
+   </tr> 
+   <tr> 
+    <td>7</td> 
+    <td><a target="_blank" href="http://www.yiibai.com/jsp/jstl_function_length.html" title="fn:length()">fn:length()</a></td> 
+    <td>返回集合中的项目数，或字符串中的字符数。</td> 
+   </tr> 
+   <tr> 
+    <td>8</td> 
+    <td><a target="_blank" href="http://www.yiibai.com/jsp/jstl_function_replace.html" title="fn:replace()">fn:replace()</a></td> 
+    <td>返回一个由输入字符串替换所有出现的字符串所引起的字符串。</td> 
+   </tr> 
+   <tr> 
+    <td>9</td> 
+    <td><a target="_blank" href="http://www.yiibai.com/jsp/jstl_function_split.html" title="fn:split()">fn:split()</a></td> 
+    <td>将一个字符串拆分成一个子字符串数组</td> 
+   </tr> 
+   <tr> 
+    <td>10</td> 
+    <td><a target="_blank" href="http://www.yiibai.com/jsp/jstl_function_startswith.html" title="fn:startsWith()">fn:startsWith()</a></td> 
+    <td>测试输入字符串是否以指定的前缀开头。</td> 
+   </tr> 
+   <tr> 
+    <td>11</td> 
+    <td><a target="_blank" href="http://www.yiibai.com/jsp/jstl_function_substring.html" title="fn:substring()">fn:substring()</a></td> 
+    <td>返回字符串的一个子集。</td> 
+   </tr> 
+   <tr> 
+    <td>12</td> 
+    <td><a target="_blank" href="http://www.yiibai.com/jsp/jstl_function_substringafter.html" title="fn:substringAfter()">fn:substringAfter()</a></td> 
+    <td>返回特定子字符串后面的字符串的子集。</td> 
+   </tr> 
+   <tr> 
+    <td>13</td> 
+    <td><a target="_blank" href="http://www.yiibai.com/jsp/jstl_function_substringbefore.html" title="fn:substringBefore()">fn:substringBefore()</a></td> 
+    <td>返回字符串在特定子字符串之前的子集。</td> 
+   </tr> 
+   <tr> 
+    <td>14</td> 
+    <td><a target="_blank" href="http://www.yiibai.com/jsp/jstl_function_tolowercase.html" title="fn:toLowerCase()">fn:toLowerCase()</a></td> 
+    <td>将字符串的所有字符转换为小写。</td> 
+   </tr> 
+   <tr> 
+    <td>15</td> 
+    <td><a target="_blank" href="http://www.yiibai.com/jsp/jstl_function_touppercase.html" title="fn:toUpperCase()">fn:toUpperCase()</a></td> 
+    <td>将字符串的所有字符转换为大写。</td> 
+   </tr> 
+   <tr> 
+    <td>16</td> 
+    <td><a target="_blank" href="http://www.yiibai.com/jsp/jstl_function_trim.html" title="fn:trim()">fn:trim()</a></td> 
+    <td>从字符串的两端删除空格。</td> 
+   </tr> 
+  </tbody> 
+ </table>
+ <br>      
+</div></body></html>

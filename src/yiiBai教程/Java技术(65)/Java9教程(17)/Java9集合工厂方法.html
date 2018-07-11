@@ -1,0 +1,89 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Java9集合工厂方法</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>在Java 9中，新的工厂方法被添加到<code>List</code>，<code>Set</code>和<code>Map</code>接口来创建不可变的实例。 这些工厂方法是便捷的工厂方法，以较简洁的方式创建集合。</p> 
+ <p><strong>旧的方式创建集合</strong></p> 
+ <pre><code class="lang-java">import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+public class Tester {
+   public static void main(String []args) {
+      Set&lt;String&gt; set = new HashSet&lt;&gt;();
+      set.add("A");
+      set.add("B");
+      set.add("C");
+      set = Collections.unmodifiableSet(set);
+      System.out.println(set);
+      List&lt;String&gt; list = new ArrayList&lt;&gt;();
+
+      list.add("A");
+      list.add("B");
+      list.add("C");
+      list = Collections.unmodifiableList(list);
+      System.out.println(list);
+      Map&lt;String, String&gt; map = new HashMap&lt;&gt;();
+
+      map.put("A","Apple");
+      map.put("B","Boy");
+      map.put("C","Cat");
+      map = Collections.unmodifiableMap(map);
+      System.out.println(map);
+   }
+}
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 - </p> 
+ <pre><code class="lang-shell">[A, B, C]
+[A, B, C]
+{A=Apple, B=Boy, C=Cat}
+</code></pre> 
+ <p><strong>新方法</strong><br>使用java 9，以下方法将被添加到<code>List</code>，<code>Set</code>和<code>Map</code>接口以及它们的重载对象。</p> 
+ <pre><code class="lang-java">static &lt;E&gt; List&lt;E&gt; of(E e1, E e2, E e3);
+static &lt;E&gt; Set&lt;E&gt;  of(E e1, E e2, E e3);
+static &lt;K,V&gt; Map&lt;K,V&gt; of(K k1, V v1, K k2, V v2, K k3, V v3);
+static &lt;K,V&gt; Map&lt;K,V&gt; ofEntries(Map.Entry&lt;? extends K,? extends V&gt;... entries)
+</code></pre> 
+ <p><strong>注意事项</strong></p> 
+ <ul> 
+  <li>对于<code>List</code>和<code>Set</code>接口，<code>of(...)</code>方法重载为<code>0</code>到<code>10</code>个参数，另一个使用<code>var args</code>参数。</li>
+  <li>对于<code>Map</code>接口，<code>of(...)</code>方法重载为有<code>0</code>到<code>10</code>个参数。</li>
+  <li>如果<code>Map</code>接口的参数超过<code>10</code>个，则可以使用<code>Entries(...)</code>方法接受<code>var args</code>参数。</li>
+ </ul> 
+ <p><strong>创建集合的新方法</strong></p>   
+ <pre><code class="lang-java">import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.AbstractMap;
+import java.util.Map;
+import java.util.Set;
+
+public class Tester {
+
+   public static void main(String []args) {
+      Set&lt;String&gt; set = Set.of("A", "B", "C");      
+      System.out.println(set);
+      List&lt;String&gt; list = List.of("A", "B", "C");
+      System.out.println(list);
+      Map&lt;String, String&gt; map = Map.of("A","Apple","B","Boy","C","Cat");
+      System.out.println(map);
+
+      Map&lt;String, String&gt; map1 = Map.ofEntries (
+         new AbstractMap.SimpleEntry&lt;&gt;("A","Apple"),
+         new AbstractMap.SimpleEntry&lt;&gt;("B","Boy"),
+         new AbstractMap.SimpleEntry&lt;&gt;("C","Cat"));
+      System.out.println(map1);
+   }
+}
+</code></pre> 
+ <p>执行上面示例代码，它将得到以下结果 - </p> 
+ <pre><code class="lang-shell">[A, B, C]
+[A, B, C]
+{A=Apple, B=Boy, C=Cat}
+{A=Apple, B=Boy, C=Cat}
+</code></pre>
+ <br>      
+</div></body></html>

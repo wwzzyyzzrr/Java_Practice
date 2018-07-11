@@ -1,0 +1,109 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Spring Bean InitializingBean和DisposableBean实例</h1><div style="width:100%;float:left;" class="article-content">   
+ <div> 
+  <div>
+    在Spring中，InitializingBean和DisposableBean是两个标记接口，为Spring执行时bean的初始化和销毁某些行为时的有用方法。 
+  </div> 
+ </div> 
+ <div> 
+  <ol> 
+   <li> 
+    <div>
+      对于Bean实现 InitializingBean，它将运行 afterPropertiesSet()在所有的 bean 属性被设置之后。 
+    </div> </li> 
+   <li> 
+    <div>
+      对于&nbsp;Bean&nbsp;实现了DisposableBean，它将运行&nbsp;destroy()在&nbsp;Spring&nbsp;容器释放该&nbsp;bean&nbsp;之后。 
+    </div> </li> 
+  </ol> 
+  <h2> 示例 </h2> 
+  <div>
+    下面是一个例子，向您展示如何使用 InitializingBean 和 DisposableBean。一个 CustomerService&nbsp;bean来实现 InitializingBean和DisposableBean 接口，并有一个消息(message)属性。 
+  </div> 
+  <pre>package com.yiibai.customer.services;
+
+import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.InitializingBean;
+
+public class CustomerService implements InitializingBean, DisposableBean
+{
+	String message;
+	
+	public String getMessage() {
+	  return message;
+	}
+
+	public void setMessage(String message) {
+	  this.message = message;
+	}
+	
+	public void afterPropertiesSet() throws Exception {
+	  System.out.println("Init method after properties are set : " + message);
+	}
+	
+	public void destroy() throws Exception {
+	  System.out.println("Spring Container is destroy! Customer clean up");
+	}
+	
+}</pre> 
+  <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:16px;"> <em>File : applicationContext.xml</em> </p> 
+  <pre>&lt;beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-2.5.xsd"&gt;
+
+       &lt;bean id="customerService" class="com.yiibai.customer.services.CustomerService"&gt;
+		&lt;property name="message" value="I'm property message" /&gt;
+       &lt;/bean&gt;
+		
+&lt;/beans&gt;</pre> 
+  <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:16px;"> 执行它 </p> 
+  <pre>package com.yiibai.common;
+
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import com.yiibai.customer.services.CustomerService;
+
+public class App 
+{
+    public static void main( String[] args )
+    {
+    	ConfigurableApplicationContext context = 
+			new ClassPathXmlApplicationContext(new String[] {"applicationContext.xml"});
+	
+    	CustomerService cust = (CustomerService)context.getBean("customerService");
+    	
+    	System.out.println(cust);
+    	
+    	context.close();
+    }
+}</pre> 
+  <div>
+    该ConfigurableApplicationContext.close()将关闭该应用程序的上下文，释放所有资源，并销毁所有缓存的单例bean。它是只用于&nbsp;destroy()&nbsp;方的演示目的。 
+  </div> 
+  <p> 输出结果<br>   </p>
+  <pre class="prettyprint lang-bsh">Init method after properties are set : I'm property message 
+com.yiibai.customer.services.CustomerService@4090c06f 
+Spring Container is destroy! Customer clean up</pre> 
+  <p></p> 
+  <div>
+    afterPropertiesSet()方法被调用在 message 属性设置后，而 destroy()方法是在调用 context.close()之后; 
+  </div> 
+  <div> 
+   <br> 
+  </div> 
+  <div> 
+   <strong>建议：</strong>
+   <br> 不建议使用InitializingBean和DisposableBean的接口，因为它将你的代码紧耦合到 Spring 代码中。&nbsp;一个更好的做法应该是在bean的配置文件属性指定
+   <a target="_blank" href="http://www.yiibai.com/spring/spring-init-method-and-destroy-method-example.html">&nbsp;init-method和destroy-method</a>。 
+  </div> 
+  <div style="background-color:inherit;color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:16px;"> 
+   <br> 
+  </div> 
+  <div style="background-color:inherit;color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:16px;">
+    下载代码 – 
+   <a target="_blank" href="http://pan.baidu.com/s/1nu3cEXN">http://pan.baidu.com/s/1nu3cEXN</a> 
+  </div> 
+ </div>
+ <br>      
+</div></body></html>

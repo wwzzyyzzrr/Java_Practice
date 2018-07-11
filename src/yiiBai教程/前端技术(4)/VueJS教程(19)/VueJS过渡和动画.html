@@ -1,0 +1,379 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">VueJS过渡和动画</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>在本章中，我们将讨论VueJS中可用的过渡和动画功能。</p> 
+ <h2 id="h2-u8FC7u6E21"><a name="过渡" class="reference-link"></a><span class="header-link octicon octicon-link"></span>过渡</h2>
+ <p>当在DOM中添加/更新HTML元素时，VueJS提供了各种方法来将转换应用到HTML元素。 VueJS有一个内置的转换组件，可将其包装转换到元素中。</p> 
+ <p><strong>语法</strong></p> 
+ <pre><code class="lang-html">&lt;transition name = "nameoftransition"&gt;
+   &lt;div&gt;&lt;/div&gt;
+&lt;/transition&gt;
+</code></pre> 
+ <p>下面通过一个例子来理解过渡的工作。</p> 
+ <h4 id="h4-u793Au4F8B"><a name="示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例</h4>
+ <p>创建一个文件：<em>transition.html</em> -</p> 
+ <pre><code class="lang-html">&lt;html&gt;
+   &lt;head&gt;
+      &lt;meta charset="UTF-8"&gt;
+      &lt;title&gt;VueJS过渡示例&lt;/title&gt;
+      &lt;script type = "text/javascript" src = "js/vue.js"&gt;&lt;/script&gt;
+   &lt;/head&gt;
+   &lt;body&gt;
+      &lt;style&gt;
+         .fade-enter-active, .fade-leave-active {
+            transition: opacity 2s
+         }
+         .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+            opacity: 0
+         }
+      &lt;/style&gt;
+      &lt;div id = "databinding"&gt;
+         &lt;button v-on:click = "show = !show"&gt;点击我&lt;/button&gt;
+         &lt;transition name = "fade"&gt;
+            &lt;p v-show = "show" v-bind:style = "styleobj"&gt;VueJS过渡示例&lt;/p&gt;
+         &lt;/transition&gt;
+      &lt;/div&gt;
+      &lt;script type = "text/javascript"&gt;
+         var vm = new Vue({
+            el: '#databinding',
+            data: {
+               show:true,
+               styleobj :{
+                  fontSize:'20px',
+                  color:'red'
+               }
+            },
+            methods : {
+            }
+         });
+      &lt;/script&gt;
+   &lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>有一个<code>"点击我"</code>的按钮，使用它可以将变量<code>show</code>的值更改为<code>false</code>，反之亦然。 只有当变量为<code>true</code>时，才有一个<code>p</code>标签显示文本元素。下面的一段代码所示的过渡元素包装了<code>p</code>标签。</p> 
+ <pre><code class="lang-html">&lt;transition name = "fade"&gt;
+    &lt;p v-show = "show" v-bind:style = "styleobj"&gt;VueJS过渡示例&lt;/p&gt;
+&lt;/transition&gt;
+</code></pre> 
+ <p>过渡的名称是<code>fade</code>。 VueJS为转换提供了一些标准类，并且类以转换的名称作为前缀。</p> 
+ <p>以下是一些转换的标准类 -</p> 
+ <ul> 
+  <li><code>v-enter</code> - 这个类在元素被更新/添加之前被初始调用。它为开始状态。</li>
+  <li><code>v-enter-active</code> - 此类用于定义进入转换阶段的延迟，持续时间和缓动曲线。这是整个活动状态，并且整个进入阶段都是可用的。</li>
+  <li><code>v-leave</code> - 在离开转换被触发时添加，删除。</li>
+  <li><code>v-leave-active</code> - 在离开阶段应用。转换完成后将被删除。这个类用于在离开阶段应用延迟，持续时间和缓和曲线。</li>
+ </ul> 
+ <p>上述每个类都将以转换的名称作为前缀。将过渡的名称作为<code>fade</code>，因此类的名称变为<code>.fade_enter</code>，<code>.fade_enter_active</code>，<code>.fade_leave</code>，<code>.fade_leave_active</code>。</p> 
+ <p>它们在下面的代码中定义 - </p> 
+ <pre><code class="lang-html">&lt;style&gt;
+   .fade-enter-active, .fade-leave-active {
+      transition: opacity 2s
+   }
+   .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+      opacity: 0
+   }
+&lt;/style&gt;
+</code></pre> 
+ <p><code>.fade_enter_active</code>和<code>.fade_leave_active</code>一起定义，并在开始和离开阶段应用转换。 不透明属性在<code>2</code>秒内变为<code>0</code>。</p> 
+ <p>持续时间在<code>.fade_enter_active</code>和<code>.fade_leave_active</code>中定义。 最后一个阶段是在<code>.fade_enter</code>，<code>.fade_leave_to</code>中定义的。</p> 
+ <p>在浏览器显示如下所示 -<br><img src="http://www.yiibai.com/uploads/images/201712/2212/638141222_54525.gif" alt=""></p> 
+ <p>下面再来看看另外一个例子，其中有一个图像，当点击按钮时，它在<code>x</code>轴上移动。创建一个文件：<em>transition-image.html</em> - </p> 
+ <pre><code class="lang-html">&lt;html&gt;
+   &lt;head&gt;
+      &lt;meta charset="UTF-8"&gt;
+      &lt;title&gt;VueJS过渡示例&lt;/title&gt;
+      &lt;script type = "text/javascript" src = "js/vue.js"&gt;&lt;/script&gt;
+   &lt;/head&gt;
+   &lt;body&gt;
+      &lt;style&gt;
+         .shiftx-enter-active, .shiftx-leave-active {
+            transition: all 2s ease-in-out;
+         }
+         .shiftx-enter, .shiftx-leave-to /* .fade-leave-active below version 2.1.8 */ {
+            transform :  translateX(100px);
+         }
+      &lt;/style&gt;
+      &lt;div id = "databinding"&gt;
+         &lt;button v-on:click = "show = !show"&gt;点击我&lt;/button&gt;
+         &lt;transition name = "shiftx"&gt;
+            &lt;p v-show = "show"&gt;
+               &lt;img src = "images/mydog.jpg" style = "width:100px;height:100px;" /&gt;
+            &lt;/p&gt;
+         &lt;/transition&gt;
+      &lt;/div&gt;
+      &lt;script type = "text/javascript"&gt;
+         var vm = new Vue({
+            el: '#databinding',
+            data: {
+               show:true
+            },
+            methods : {
+            }
+         });
+      &lt;/script&gt;
+   &lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>过渡的名字是<code>shiftx</code>。 <code>transform</code>属性用于使用下面的一段代码将<code>x</code>轴上的图像移动<code>100px</code>。</p> 
+ <pre><code class="lang-html">&lt;style&gt;
+   .shiftx-enter-active, .shiftx-leave-active {
+      transition: all 2s ease-in-out;
+   }
+   .shiftx-enter, .shiftx-leave-to /* .fade-leave-active below version 2.1.8 */ {
+      transform :  translateX(100px);
+   }
+&lt;/style&gt;
+</code></pre> 
+ <p>点击按钮，图像将向右移动<code>100px</code>，如下图所示 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201712/2212/257141228_32903.gif" alt=""></p> 
+ <h2 id="h2-u52A8u753B"><a name="动画" class="reference-link"></a><span class="header-link octicon octicon-link"></span>动画</h2>
+ <p>动画以与转换完成相同的方式应用。动画也有类需要声明效果发生。</p> 
+ <p>下面来看看一个例子，演示如何动画是如何工作的。创建一个文件：<em>animations.html</em> -</p> 
+ <pre><code class="lang-html">&lt;html&gt;
+   &lt;head&gt;
+   &lt;meta charset="utf-8" /&gt;
+      &lt;title&gt;VueJS动画示例&lt;/title&gt;
+      &lt;script type = "text/javascript" src = "js/vue.js"&gt;&lt;/script&gt;
+   &lt;/head&gt;
+   &lt;body&gt;
+      &lt;style&gt;
+         .shiftx-enter-active {
+            animation: shift-in 2s;
+         }
+         .shiftx-leave-active {
+            animation: shift-in 2s reverse;
+         }
+         @keyframes shift-in {
+            0%   {transform:rotateX(0deg);}
+            25%  {transform:rotateX(90deg);}
+            50%  {transform:rotateX(120deg);}
+            75%  {transform:rotateX(180deg);}
+            100% {transform:rotateX(360deg);}
+         }
+      &lt;/style&gt;
+      &lt;div id = "databinding"&gt;
+         &lt;button v-on:click = "show = !show"&gt;点击我&lt;/button&gt;
+         &lt;transition name = "shiftx"&gt;
+            &lt;p v-show = "show"&gt;
+               &lt;img src = "images/mydog.jpg" style = "width:100px;height:100px;" /&gt;
+            &lt;/p&gt;
+         &lt;/transition&gt;
+      &lt;/div&gt;
+      &lt;script type = "text/javascript"&gt;
+         var vm = new Vue({
+            el: '#databinding',
+            data: {
+               show:true
+            },
+            methods : {
+            }
+         });
+      &lt;/script&gt;
+   &lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>要应用动画，类与转换相同。 在上面的代码中，有一个以<code>p</code>标签封装的图像，如下面的一段代码所示 - </p> 
+ <pre><code class="lang-html">&lt;transition name = "shiftx"&gt;
+   &lt;p v-show = "show"&gt;&lt;img src = "images/img.jpg" style = "width:100px;height:100px;" /&gt;&lt;/p&gt;
+&lt;/transition&gt;
+</code></pre> 
+ <p>过渡的名字是<code>shiftx</code>。 所声明的类如下 -</p> 
+ <pre><code class="lang-html">&lt;style&gt;
+   .shiftx-enter-active {
+      animation: shift-in 2s;
+   }
+   .shiftx-leave-active {
+      animation: shift-in 2s reverse;
+   }
+   @keyframes shift-in {
+      0%   {transform:rotateX(0deg);}
+      25%  {transform:rotateX(90deg);}
+      50%  {transform:rotateX(120deg);}
+      75%  {transform:rotateX(180deg);}
+      100% {transform:rotateX(360deg);}
+   }
+&lt;/style&gt;
+</code></pre> 
+ <p>该类以转换名称作为前缀，即<code>shiftx-enter-active</code>和<code>.shiftx-leave-active</code>。 动画是使用从<code>0％</code>到<code>100％</code>的关键帧定义的。 在每个关键帧处定义的变换如下面的一段代码所示。</p> 
+ <pre><code class="lang-html">@keyframes shift-in {
+   0%   {transform:rotateX(0deg);}
+   25%  {transform:rotateX(90deg);}
+   50%  {transform:rotateX(120deg);}
+   75%  {transform:rotateX(180deg);}
+   100% {transform:rotateX(360deg);}
+}
+</code></pre> 
+ <p>在浏览器中显示效果如下 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201712/2212/422141236_89755.gif" alt=""></p> 
+ <h2 id="h2-u81EAu5B9Au4E49u8F6Cu6362u7C7B"><a name="自定义转换类" class="reference-link"></a><span class="header-link octicon octicon-link"></span>自定义转换类</h2>
+ <p>VueJS提供了自定义类的列表，可以将其作为属性添加到过渡元素。</p> 
+ <ul> 
+  <li><em>enter-class</em></li>
+  <li><em>enter-active-class</em></li>
+  <li><em>leave-class</em></li>
+  <li><em>leave-active-class</em></li>
+ </ul> 
+ <p>自定义类基本上是想要使用外部CSS库(如：<code>animate.css</code>)时发挥作用。</p> 
+ <p>创建一个文件：<em>animations-custom.html</em> - </p> 
+ <pre><code class="lang-html">&lt;html&gt;
+   &lt;head&gt;
+   &lt;meta charset="utf-8" /&gt;
+      &lt;title&gt;VueJs自动定义过渡类&lt;/title&gt;
+      &lt;link href = "http://cdn.jsdelivr.net/npm/animate.css@3.5.1" rel = "stylesheet" type = "text/css"&gt;
+      &lt;script type = "text/javascript" src = "js/vue.js"&gt;&lt;/script&gt;
+   &lt;/head&gt;
+   &lt;body&gt;
+      &lt;div id = "animate" style = "text-align:center"&gt;
+         &lt;button @click = "show = !show"&gt;&lt;span style = "font-size:25px;"&gt;Animate&lt;/span&gt;&lt;/button&gt;
+         &lt;transition
+            name = "custom-classes-transition"
+            enter-active-class = "animated swing"
+            leave-active-class = "animated bounceIn"&gt;
+            &lt;p v-if = "show"&gt;&lt;span style = "font-size:25px;"&gt;Example&lt;/span&gt;&lt;/p&gt;
+         &lt;/transition&gt;
+      &lt;/div&gt;
+      &lt;script type = "text/javascript"&gt;
+         var vm =  new Vue({
+            el: '#animate',
+            data: {
+               show: true
+            }
+         });
+      &lt;/script&gt;
+   &lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>在浏览器中输出结果如下 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201712/2212/661151203_33536.gif" alt=""></p> 
+ <p><strong>显式转换时间</strong></p> 
+ <p>可以使用VueJS在元素上应用过渡和动画。Vue等待<code>transionend</code>和<code>animationend</code>事件来检测动画或转换是否完成。</p> 
+ <p>有时候过渡可能会导致延迟。在这种情况下，可以明确地应用这个持续时间如下 - </p>   
+ <pre><code class="lang-html">&lt;transition :duration = "1000"&gt;&lt;/transition&gt;
+&lt;transition :duration = "{ enter: 500, leave: 800 }"&gt;...&lt;/transition&gt;
+</code></pre> 
+ <p>如上所示，可以在转换元素上使用<code>duration</code>属性。如果需要分别指定进入和离开的持续时间，可以按照上面的代码所示完成。</p> 
+ <h2 id="h2-javascript-"><a name="JavaScript挂钩" class="reference-link"></a><span class="header-link octicon octicon-link"></span>JavaScript挂钩</h2>
+ <p>可以使用JavaScript事件将过渡类称为方法。来看下以下一个更好理解的例子。创建一个文件：<em>javascript-hooks.html</em> - </p> 
+ <pre><code class="lang-html">&lt;html&gt;
+   &lt;head&gt;
+      &lt;meta charset="utf-8" /&gt;
+      &lt;title&gt;VueJs Javascript挂钩&lt;/title&gt;
+      &lt;script type = "text/javascript" src = "js/vue.js"&gt;&lt;/script&gt;
+   &lt;/head&gt;
+   &lt;body&gt;
+      &lt;script src = "http://cdnjs.cloudflare.com/ajax/libs/velocity/1.2.3/velocity.min.js"&gt;&lt;/script&gt;
+      &lt;div id = "example-4"&gt;
+         &lt;button @click = "show = !show"&gt;
+            &lt;span style = "font-size:25px;"&gt;Toggle&lt;/span&gt;
+         &lt;/button&gt;
+         &lt;transition  v-on:before-enter = "beforeEnter"
+            v-on:enter = "enter"
+            v-on:leave = "leave"
+            v-bind:css = "false"&gt;
+            &lt;p v-if = "show" style = "font-size:25px;"&gt;Animation Example with velocity&lt;/p&gt;
+         &lt;/transition&gt;
+      &lt;/div&gt;
+      &lt;script type = "text/javascript"&gt;
+         var vm = new Vue({
+            el: '#example-4',
+            data: {
+               show: false
+            },
+            methods: {
+               beforeEnter: function (el) {
+                  el.style.opacity = 0
+               },
+               enter: function (el, done) {
+                  Velocity(el, { opacity: 1, fontSize: '25px' }, { duration: 1000 })
+                  Velocity(el, { fontSize: '10px' }, { complete: done })
+               },
+               leave: function (el, done) {
+                  Velocity(el, { translateX: '15px', rotateZ: '50deg' }, { duration: 1500 })
+                  Velocity(el, { rotateZ: '100deg' }, { loop: 2 })
+                  Velocity(el, {
+                     rotateZ: '45deg',
+                     translateY: '30px',
+                     translateX: '30px',
+                     opacity: 0
+                  }, { complete: done })
+               }
+            }
+         });
+      &lt;/script&gt;
+   &lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>在浏览器中，查看上面代码运行结果如下 -<br><img src="http://www.yiibai.com/uploads/images/201712/2212/794151214_22728.gif" alt=""></p> 
+ <p>在上面的例子中，使用js方法在转换元素上执行动画。转换的方法应用如下 -</p> 
+ <pre><code class="lang-html">&lt;transition  v-on:before-enter = "beforeEnter"
+   v-on:enter = "enter"
+   v-on:leave = "leave"
+   v-bind:css = "false"&gt;
+   &lt;p v-if = "show" style = "font-size:25px;"&gt;Animation Example with velocity&lt;/p&gt;
+&lt;/transition&gt;
+</code></pre> 
+ <p>有一个前缀添加<code>v-on</code>和该方法被调用的事件的名称。这些方法在Vue实例中定义如下 -</p> 
+ <pre><code class="lang-html">methods: {
+   beforeEnter: function (el) {
+      el.style.opacity = 0
+   },
+   enter: function (el, done) {
+      Velocity(el, { opacity: 1, fontSize: '25px' }, { duration: 1000 })
+      Velocity(el, { fontSize: '10px' }, { complete: done })
+   },
+   leave: function (el, done) {
+      Velocity(el, { translateX: '15px', rotateZ: '50deg' }, { duration: 1500 })
+      Velocity(el, { rotateZ: '100deg' }, { loop: 2 })
+      Velocity(el, {
+         rotateZ: '45deg',
+         translateY: '30px',
+         translateX: '30px',
+         opacity: 0
+      }, { complete: done })
+   }
+}
+</code></pre> 
+ <h2 id="h2-u521Du59CBu6E32u67D3u8FC7u6E21"><a name="初始渲染过渡" class="reference-link"></a><span class="header-link octicon octicon-link"></span>初始渲染过渡</h2>
+ <p>在在开始时添加动画，需要为过渡元素添加“出现”属性。</p> 
+ <p>我们来看一个例子以更好地理解它。创建一个文件：<em>initial-render.html</em> - </p> 
+ <pre><code class="lang-html">&lt;html&gt;
+   &lt;head&gt;
+      &lt;meta charset="utf-8" /&gt;
+      &lt;title&gt;VueJs初始化渲染&lt;/title&gt;
+      &lt;link href = "http://cdn.jsdelivr.net/npm/animate.css@3.5.1" rel = "stylesheet" type = "text/css"&gt;
+      &lt;script type = "text/javascript" src = "js/vue.js"&gt;&lt;/script&gt;
+   &lt;/head&gt;
+   &lt;body&gt;
+      &lt;div id = "animate" style = "text-align:center"&gt;
+         &lt;transition
+            appear
+            appear-class = "custom-appear-class"
+            appear-active-class = "animated bounceIn"&gt;
+            &lt;h2&gt;BounceIn - Animation Example&lt;/h2&gt;
+         &lt;/transition&gt;
+         &lt;transition
+            appear
+            appear-class = "custom-appear-class"
+            appear-active-class = "animated swing"&gt;
+            &lt;h2&gt;Swing - Animation Example&lt;/h2&gt;
+         &lt;/transition&gt;
+         &lt;transition
+            appear
+            appear-class = "custom-appear-class"
+            appear-active-class = "animated rubberBand"&gt;
+            &lt;h2&gt;RubberBand - Animation Example&lt;/h2&gt;
+         &lt;/transition&gt;
+      &lt;/div&gt;
+      &lt;script type = "text/javascript"&gt;
+         var vm =  new Vue({
+            el: '#animate',
+            data: {
+               show: true
+            }
+         });
+      &lt;/script&gt;
+   &lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>在上面的例子中，使用了<code>animate.css</code>库中的三个不同的动画。并且已经添加到过渡元素。<br>在执行上面的代码时，浏览器中的输出效果是 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201712/2212/384151221_22204.gif" alt=""></p>
+ <br>      
+</div></body></html>

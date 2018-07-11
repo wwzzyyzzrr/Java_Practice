@@ -1,0 +1,42 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Hadoop HDFS操作</h1><div style="width:100%;float:left;" class="article-content">   
+ <h2> 启动HDFS</h2> 
+ <p> 首先，格式化配置HDFS文件系统，打开NameNode(HDFS服务器)，然后执行以下命令。</p> 
+ <pre class="prettyprint notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 14px; overflow: auto; color: rgb(49, 49, 49);">
+$ hadoop namenode -format </pre> 
+ <p> 格式化HDFS后，启动分布式文件系统。以下命令将启动名称节点和数据节点的集群。</p> 
+ <pre class="prettyprint notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 14px; overflow: auto; color: rgb(49, 49, 49);">
+$ start-dfs.sh </pre> 
+ <h2> HDFS的文件列表</h2> 
+ <p> 加载服务器信息后，使用'ls' 可以找出文件列表中的目录，文件状态。下面给出的是ls，可以传递一个目录或文件名作为参数的语法。</p> 
+ <pre class="prettyprint notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 14px; overflow: auto; color: rgb(49, 49, 49);">
+$ $HADOOP_HOME/bin/hadoop fs -ls &lt;args&gt;</pre> 
+ <h2> 将数据插入到HDFS</h2> 
+ <p> 假设在本地系统，这是所谓的file.txt文件中的数据,应当保存在HDFS文件系统。按照下面给出插入在Hadoop的文件系统所需要的文件的步骤。</p> 
+ <h3> 第1步</h3> 
+ <p> 必须创建一个输入目录。</p> 
+ <pre class="prettyprint notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 14px; overflow: auto; color: rgb(49, 49, 49);">
+$ $HADOOP_HOME/bin/hadoop fs -mkdir /user/input </pre> 
+ <h3> 第2步</h3> 
+ <p> 传输并使用本地系统put命令，Hadoop文件系统中存储的数据文件。</p> 
+ <pre class="prettyprint notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 14px; overflow: auto; color: rgb(49, 49, 49);">
+$ $HADOOP_HOME/bin/hadoop fs -put /home/file.txt /user/input </pre> 
+ <h3> 第3步</h3> 
+ <p> 可以使用ls命令验证文件。</p> 
+ <pre class="prettyprint notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 14px; overflow: auto; color: rgb(49, 49, 49);">
+$ $HADOOP_HOME/bin/hadoop fs -ls /user/input </pre> 
+ <h2> 从HDFS中检索数据</h2> 
+ <p> 假设在HDFS文件名为outfile。下面给出的是一个简单的演示用于检索从Hadoop文件系统所需的文件。</p> 
+ <h3> 第1步</h3> 
+ <p> 最初，使用cat命令来查看来自HDFS的数据。</p>   
+ <pre class="prettyprint notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 14px; overflow: auto; color: rgb(49, 49, 49);">
+$ $HADOOP_HOME/bin/hadoop fs -cat /user/output/outfile </pre> 
+ <h3> 第2步</h3> 
+ <p> 从HDFS得到文件使用get命令在本地文件系统。</p> 
+ <pre class="prettyprint notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 14px; overflow: auto; color: rgb(49, 49, 49);">
+$ $HADOOP_HOME/bin/hadoop fs -get /user/output/ /home/hadoop_tp/ </pre> 
+ <h2> 关闭HDFS</h2> 
+ <p> 可以使用下面的命令关闭HDFS。</p> 
+ <pre class="prettyprint notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 14px; overflow: auto; color: rgb(49, 49, 49);">
+$ stop-dfs.sh </pre> 
+ <br>      
+</div></body></html>

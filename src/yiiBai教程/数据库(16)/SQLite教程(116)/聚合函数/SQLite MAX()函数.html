@@ -1,0 +1,54 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">SQLite MAX()函数</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>SQLite <code>MAX()</code>函数用于获取表达式或给定列的最大值。</p> 
+ <p><strong>语法</strong></p> 
+ <pre><code class="lang-sql">SELECT MAX(aggregate_expression)  
+FROM tables  
+[WHERE conditions];
+</code></pre> 
+ <p>在<code>GROUP BY</code>子句中使用<code>Max()</code>函数时的语法：</p> 
+ <pre><code class="lang-sql">SELECT expression1, expression2, ... expression_n  
+MAX(aggregate_expression)  
+FROM tables  
+[WHERE conditions]  
+GROUP BY expression1, expression2, ... expression_n;
+</code></pre> 
+ <p><strong>示例1：</strong></p> 
+ <p>假设有一个名为<code>student</code>的表，具有以下数据：</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201705/2405/877110548_33452.png" alt=""></p> 
+ <p>从<code>student</code>表中检索学生的最高费用(<code>fees</code>)：</p> 
+ <pre><code class="lang-sql">SELECT MAX(FEES) AS "Highest Fees"  FROM STUDENT; 
+
+-- 最大年龄
+SELECT MAX(age) AS "Highest age"  FROM STUDENT;
+</code></pre> 
+ <p>执行上面查询代码，得到以下结果 - </p> 
+ <pre><code class="lang-sql">sqlite&gt; SELECT MAX(FEES) AS "Highest Fees"  FROM STUDENT;
+65000.0
+sqlite&gt;
+sqlite&gt; -- 最大年龄
+sqlite&gt; SELECT MAX(age) AS "Highest age"  FROM STUDENT;
+27
+sqlite&gt;
+</code></pre> 
+ <p><strong>示例2：</strong></p> 
+ <p>使用具有的<code>GROUP BY</code>子句的<code>MAX()</code>函数：</p> 
+ <p>从<code>student</code>表中检索<code>NAME</code>,<code>ADDRESS</code>和<code>MAX(FEES)</code>，并按<code>ADDRESS</code>的数据排序：</p>   
+ <pre><code class="lang-sql">SELECT NAME, ADDRESS, MAX(FEES) AS "Highest FEES"  
+FROM STUDENT  
+WHERE ID &lt;= 8  
+GROUP BY ADDRESS;
+</code></pre> 
+ <p>执行上面代码，得到以下结果 -</p> 
+ <pre><code class="lang-sql">sqlite&gt; SELECT NAME, ADDRESS, MAX(FEES) AS "Highest FEES"
+   ...&gt; FROM STUDENT
+   ...&gt; WHERE ID &lt;= 8
+   ...&gt; GROUP BY ADDRESS;
+Minsu|Beijing|15000.0
+Linsu|Guangzhou|65000.0
+Sqlsu|Haikou|25000.0
+Avgsu|Shanghai|2000.0
+Maxsu|Shengzhen|20000.0
+sqlite&gt;
+</code></pre>
+ <br>      
+</div></body></html>

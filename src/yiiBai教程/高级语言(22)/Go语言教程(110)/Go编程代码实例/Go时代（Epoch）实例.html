@@ -1,0 +1,49 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Go时代（Epoch）实例</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>程序中的一个常见要求是获取自Unix纪元以来的秒数，毫秒或纳秒数。这里是如何在Go编程中做。<br>使用Unix或UnixNano的<code>time.Now</code>，分别以秒或纳秒为单位获得自Unix纪元起的耗用时间。</p> 
+ <p>注意，没有<code>UnixMillis</code>，所以要获取从纪元开始的毫秒数，需要手动除以纳秒。</p> 
+ <p>还可以将整数秒或纳秒从历元转换为相应的时间。</p> 
+ <p>具体的 <code>epoch</code> 用法，可参考示例中的代码 -</p> 
+ <blockquote> 
+  <p>所有的示例代码，都放在 <code>F:\worksp\golang</code> 目录下。安装Go编程环境请参考：<a target="_blank" href="http://www.yiibai.com/go/go_environment.html">http://www.yiibai.com/go/go_environment.html</a> </p> 
+ </blockquote> 
+ <p><code>json.go</code>的完整代码如下所示 -</p> 
+ <pre><code class="lang-go">package main
+
+import "fmt"
+import "time"
+
+func main() {
+
+    // Use `time.Now` with `Unix` or `UnixNano` to get
+    // elapsed time since the Unix epoch in seconds or
+    // nanoseconds, respectively.
+    now := time.Now()
+    secs := now.Unix()
+    nanos := now.UnixNano()
+    fmt.Println(now)
+
+    // Note that there is no `UnixMillis`, so to get the
+    // milliseconds since epoch you'll need to manually
+    // divide from nanoseconds.
+    millis := nanos / 1000000
+    fmt.Println(secs)
+    fmt.Println(millis)
+    fmt.Println(nanos)
+
+    // You can also convert integer seconds or nanoseconds
+    // since the epoch into the corresponding `time`.
+    fmt.Println(time.Unix(secs, 0))
+    fmt.Println(time.Unix(0, nanos))
+}
+</code></pre> 
+ <p>执行上面代码，将得到以下输出结果 - </p>   
+ <pre><code class="lang-go">F:\worksp\golang&gt;go run epoch.go
+2017-01-22 09:16:32.2002635 +0800 CST
+1485047792
+1485047792200
+1485047792200263500
+2017-01-22 09:16:32 +0800 CST
+2017-01-22 09:16:32.2002635 +0800 CST
+</code></pre>
+ <br>      
+</div></body></html>

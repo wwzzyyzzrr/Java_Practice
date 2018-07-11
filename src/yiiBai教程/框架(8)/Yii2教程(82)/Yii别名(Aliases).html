@@ -1,0 +1,71 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Yii别名(Aliases)</h1><div style="width:100%;float:left;" class="article-content">   
+ <div> 
+  <div>
+    别名帮助你不要在项目硬编码绝对路径或URL。别名以&nbsp;@&nbsp;字符开始。 
+  </div> 
+ </div> 
+ <div> 
+  <div>
+    要定义别名应该调用&nbsp;Yii::setAlias()&nbsp;方法&nbsp;- 
+  </div> 
+  <pre>// an alias of a file path
+Yii::setAlias('@alias', '/path/to/alias');
+// an alias of a URL
+Yii::setAlias('@urlAlias', 'http://www.google.com');</pre> 
+  <div>
+    还可以从现有的别名得到一个新的别名&nbsp;- 
+  </div> 
+  <pre>Yii::setAlias('@pathToSomewhere', '@alias/path/to/somewhere');</pre> 
+  <div>
+    可以调用&nbsp;Yii::setAlias()方法在入口脚本&nbsp;设置或者在应用程序配置别名调用一个可写属性&nbsp;- 
+  </div> 
+  <pre>$config = [
+   'id' =&gt; 'basic',
+   'basePath' =&gt; dirname(__DIR__),
+   'bootstrap' =&gt; ['log'],
+   'components' =&gt; [
+      'aliases' =&gt; [
+         '@alias' =&gt; '/path/to/somewhere',
+         '@urlAlias' =&gt; 'http://www.yiibai.com',
+      ],
+      //other components...
+   ]
+]</pre> 
+  <div>
+    要解决别名，应该调用&nbsp;Yii::getAlias()方法。 
+  </div> 
+  <div>
+    Yii&nbsp;预定义以下别名&nbsp;- 
+  </div> 
+  <ul> 
+   <li> <p style="text-align:justify;"> @app&nbsp;−&nbsp;应用程序的基本路径 </p> </li> 
+   <li> <p style="text-align:justify;"> @yii&nbsp;−&nbsp;BaseYii.php&nbsp;文件所在的文件夹 </p> </li> 
+   <li> <p style="text-align:justify;"> @webroot&nbsp;−&nbsp;应用程序的Web根目录 </p> </li> 
+   <li> <p style="text-align:justify;"> @web&nbsp;−&nbsp;应用程序的基本URL </p> </li> 
+   <li> <p style="text-align:justify;"> @runtime&nbsp;−&nbsp;应用程序的运行时的路径，默认为&nbsp;@app/runtime. </p> </li> 
+   <li> <p style="text-align:justify;"> @vendor&nbsp;−&nbsp;Composer&nbsp;vendor 目录，默认为&nbsp;@app/vendor. </p> </li> 
+   <li> <p style="text-align:justify;"> @npm&nbsp;−&nbsp;npm包的根目录&nbsp;默认为&nbsp;@vendor/npm. </p> </li> 
+   <li> <p style="text-align:justify;"> @bower&nbsp;−&nbsp;bower包的根目录，默认为&nbsp;@vendor/bower. </p> </li> 
+  </ul> 
+  <div>
+    现在，添加一个&nbsp;actionAliases()新方法到&nbsp;SiteController&nbsp;&nbsp;- 
+  </div>   
+  <pre>public function actionAliases() {
+   Yii::setAlias("@components", "@app/components");
+   Yii::setAlias("@imagesUrl", "@web/images");
+   var_dump(Yii::getAlias("@components"));
+   var_dump(Yii::getAlias("@imagesUrl"));
+}</pre> 
+  <div>
+    在上面的代码中，我们创建了两个别名：@components&nbsp;是存储的所有应用程序组件，@imagesUrl 是应用程序图片的URL。 
+  </div> 
+  <div>
+    打开&nbsp;
+   <a target="_blank" href="http://localhost:8080/index.php?r=site/aliases">http://localhost:8080/index.php?r=site/aliases</a>，&nbsp;会看到下面的输出&nbsp;-
+   <br> 
+   <img src="/uploads/tutorial/20160605/1-16060522312W15.png" width="538" height="220" title="Yii别名(Aliases)" alt="Yii别名(Aliases)">
+   <br> 
+  </div> 
+ </div>
+ <br>      
+</div></body></html>

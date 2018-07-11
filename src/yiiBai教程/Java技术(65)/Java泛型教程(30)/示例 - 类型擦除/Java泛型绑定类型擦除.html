@@ -1,0 +1,37 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Java泛型绑定类型擦除</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>Java编译器用通用类型的类型参数替换其绑定的有界类型参数。</p> 
+ <h2 id="h2-u793Au4F8B"><a name="示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例</h2>
+ <p>创建一个名称为：<em>BoundTypesErasure.java</em> 文件，并编写以下代码 - </p> 
+ <pre><code class="lang-java">package com.yiibai.demo;
+
+public class BoundTypesErasure {
+    public static void main(String[] args) {
+        Box&lt;Integer&gt; integerBox = new Box&lt;Integer&gt;();
+        Box&lt;Double&gt; doubleBox = new Box&lt;Double&gt;();
+
+        integerBox.add(new Integer(130));
+        doubleBox.add(new Double(134.99));
+
+        System.out.printf("Integer Value :%d\n", integerBox.get());
+        System.out.printf("Double Value :%s\n", doubleBox.get());
+    }
+}
+
+class Box&lt;T extends Number&gt; {
+    private T t;
+
+    public void add(T t) {
+        this.t = t;
+    }
+
+    public T get() {
+        return t;
+    }
+}
+</code></pre> 
+ <p>执行上面代码，得到以下结果 - </p>   
+ <pre><code class="lang-shell">Integer Value :130
+Double Value :134.99
+</code></pre>
+ <br>      
+</div></body></html>

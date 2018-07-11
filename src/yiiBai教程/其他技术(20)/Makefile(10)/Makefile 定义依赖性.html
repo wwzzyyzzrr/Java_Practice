@@ -1,0 +1,32 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Makefile 定义依赖性</h1><div style="width:100%;float:left;" class="article-content">   
+ <p style="text-align: justify;"> 这是很常见的，最终的二进制文件将依赖于各种源代码和源代码的头文件。依存关系是重要的，因为他们告诉对任何目标的源。请看下面的例子</p> 
+ <table class="ex" style=" border-color: rgb(170, 170, 170); width: 552px; background-color: rgb(241, 241, 241); border-collapse: collapse; padding-left: 5px;" tr="" width="100%"> 
+  <tbody> 
+   <tr> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse;  border-color: rgb(170, 170, 170);"> <pre style="font-family: 'Courier New', monospace; font-size: 12px; margin-bottom: 0px;">
+hello: main.o factorial.o hello.o
+	$(CC) main.o factorial.o hello.o -o hello
+</pre> </td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p> 在这里，我们告诉hello&nbsp;依赖main.o，factorial.o和hello.o，所以每当有任何变化，这些目标文件将采取行动。</p> 
+ <p> 同时我们会告诉如何准备 .o文件，所以我们必须定义这些依赖也如下</p> 
+ <table class="ex" style=" border-color: rgb(170, 170, 170); width: 552px; background-color: rgb(241, 241, 241); border-collapse: collapse; padding-left: 5px;" tr="" width="100%"> 
+  <tbody> 
+   <tr> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse;  border-color: rgb(170, 170, 170);">   <pre style="font-family: 'Courier New', monospace; font-size: 12px; margin-bottom: 0px;">
+main.o: main.cpp functions.h
+	$(CC) -c main.cpp
+
+factorial.o: factorial.cpp functions.h
+	$(CC) -c factorial.cpp
+
+hello.o: hello.cpp functions.h
+	$(CC) -c hello.cpp</pre> </td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <br> 
+ <br>      
+</div></body></html>

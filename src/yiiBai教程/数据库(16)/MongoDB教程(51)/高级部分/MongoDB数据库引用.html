@@ -1,0 +1,40 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">MongoDB数据库引用</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>如MongoDB关系的最后一章所示，要在MongoDB中实现规范化的数据库结构，我们使用引用关系的概念，也称为手动引用，将引用的文档的<code>id</code>手动存储在其他文档中。 但是，如果文档包含来自不同集合的引用，可以使用MongoDB DBRefs。</p> 
+ <h2 id="h2-dbrefs-vs-"><a name="DBRefs vs 手动参考" class="reference-link"></a><span class="header-link octicon octicon-link"></span>DBRefs vs 手动参考</h2>
+ <p>考虑一个示例场景，在这个场景中将使用DBRefs而不是手动引用，设计有一个数据库中将不同类型的地址(家庭，办公室，邮件等)存储在不同的集合(<code>address_home</code>，<code>address_office</code>，<code>address_mailing</code>等)中。 现在，当用户集合的文档引用地址时，还需要根据地址类型指定要查找的集合。 在这种情况下，文档引用了多个集合中的文档，则应该使用DBRefs。</p> 
+ <h2 id="h2--dbrefs"><a name="使用DBRefs" class="reference-link"></a><span class="header-link octicon octicon-link"></span>使用DBRefs</h2>
+ <p>DBRefs中有三个字段 -</p> 
+ <ul> 
+  <li><code>$ref</code> - 此字段指定引用文档的集合</li>
+  <li><code>$id</code> - 此字段指定引用文档的<code>_id</code>字段</li>
+  <li><code>$db</code> - 这是一个可选字段，并包含引用文档所在的数据库的名称</li>
+ </ul> 
+ <p>假设一个具有DBRef字段<code>address</code>的示例用户文档，如代码片段所示 -</p> 
+ <pre><code class="lang-shell">{
+   "_id":ObjectId("348362491fjaskdlf2314"),
+   "address": {
+   "$ref": "address_home",
+   "$id": ObjectId("sfaafdf4137832149fssa"),
+   "$db": "yiibai"},
+   "contact": "13800138000",
+   "dob": "1991-12-12",
+   "name": "Maxsu"
+}
+</code></pre> 
+ <p>这里的 DBRef 字段 <code>address</code>指定引用的地址文件位于<code>yiibai</code>数据库中的<code>address_home</code>集合中，其ID为<code>sfaafdf4137832149fssa</code>。</p> 
+ <p>以下代码由<code>$ref</code>参数(在示例中为<code>address_home</code>)指定的集合中动态地查找ID为DBRef中的<code>$id</code>参数指定的文档。</p>   
+ <pre><code class="lang-shell">&gt;var user = db.users.findOne({"name":"Maxsu"})
+&gt;var dbRef = user.address
+&gt;db[dbRef.$ref].findOne({"_id":(dbRef.$id)})
+</code></pre> 
+ <p>以上代码返回<code>address_home</code>集合中存在的以下<code>address</code>文档中 -</p> 
+ <pre><code class="lang-shell">{
+   "_id" : ObjectId("sfaafdf4137832149fssa"),
+   "building" : "Hainan Apt No.2100",
+   "pincode" : 571100,
+   "city" : "Haikou",
+   "province" : "Hainan"
+}
+</code></pre>
+ <br>      
+</div></body></html>

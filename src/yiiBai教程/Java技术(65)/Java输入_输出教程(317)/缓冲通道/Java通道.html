@@ -1,0 +1,129 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Java通道</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>通道(<code>Channel</code>)是数据源和Java程序之间的开放连接，用于执行<code>I/O</code>操作。<code>Channel</code>接口在<code>java.nio.channels</code>包中。通道(<code>Channel</code>)接口只声明了两个方法：<code>close()</code>和<code>isOpen()</code>。</p> 
+ <h2 id="h2-u5404u79CDu6E20u9053"><a name="各种渠道" class="reference-link"></a><span class="header-link octicon octicon-link"></span>各种渠道</h2>
+ <p><code>ReadableByteChannel</code>用于使用<code>read()</code>方法将数据从数据源读取到字节缓冲区中。<code>WritableByteChannel</code>用于使用<code>write()</code>方法将数据从字节缓冲区写入数据宿。</p> 
+ <p><code>ByteChannel</code>能够分别使用<code>read()</code>和<code>write()</code>方法读取和写入字节数据。<code>ScatteringByteChannel</code>将数据从数据源读取到多个字节缓冲区中。 从已知的文件格式或类似的数据源读取数据是有用的，其中在一些固定长度的报头中提供数据，随后是可变长度的主体。</p> 
+ <p><code>GatheringByteChannel</code>从多个字节缓冲区中写出数据。</p> 
+ <h2 id="h2-u521Bu5EFAu901Au9053"><a name="创建通道" class="reference-link"></a><span class="header-link octicon octicon-link"></span>创建通道</h2>
+ <p>要获得一个通道，旧的方式使用<code>java.io</code>包中的类<code>I/O</code>来创建<code>InputStream</code>和<code>OutputStream</code>的对象。<br><code>java.nio.channels</code>包中的<code>Channels</code>类是一个实用程序类，它有许多静态方法将流转换为通道，反之亦然。</p> 
+ <p><code>Channels</code>类还提供了将读写器转换为通道的方法，反之亦然。例如，如果有一个名为<code>myInputStream</code>的输入流对象，获得一个<code>ReadableByteChannel</code>如下：</p> 
+ <pre><code class="lang-java">ReadableByteChannel rbc  = Channels.newChannel(myInputStream);
+</code></pre> 
+ <p>如果有一个名为<code>rbc</code>的<code>ReadableByteChannel</code>，可以获得如下的基本<code>InputStream</code>对象：</p> 
+ <pre><code class="lang-java">InputStream myInputStream  = Channels.newInputStream(rbc);
+</code></pre> 
+ <p><code>FileInputStream</code>和<code>FileOutputStream</code>类有一个称为<code>getChannel()</code>的新方法来返回一个<code>FileChannel</code>对象。<code>FileChannel</code>用于读取和写入数据到文件。从<code>FileInputStream</code>获取的<code>FileChannel</code>对象以只读模式打开。</p> 
+ <pre><code class="lang-java">FileInputStream fis  = new FileInputStream("test1.txt"); 
+FileChannel fcReadOnly  = fis.getChannel(); // A  read-only  channel
+</code></pre> 
+ <p>从<code>FileOutputStream</code>对象获取的<code>FileChannel</code>对象以只写模式打开。</p> 
+ <pre><code class="lang-java">FileOutputStream fos   = new FileOutputStream("test1.txt"); 
+FileChannel  fcWriteOnly = fos.getChannel(); // A  write-only  channel
+</code></pre> 
+ <p>如果从<code>RandomAccessFile</code>获取一个<code>FileChannel</code>，它将以只读，只写或读写模式打开，这取决于创建<code>RandomAccessFile</code>对象的方式。<br>以下代码为不同种类的文件流获取<code>FileChannel</code>对象：</p> 
+ <pre><code class="lang-java">// read-only mode
+RandomAccessFile  raf1 = new RandomAccessFile("test1.txt", "r"); 
+FileChannel  rafReadOnly = raf1.getChannel(); // A  read-only  channel
+
+// read-write mode
+RandomAccessFile  raf2 = new RandomAccessFile("test1.txt", "rw"); 
+FileChannel rafReadWrite = raf2.getChannel(); // A  read-write channel
+</code></pre> 
+ <h2 id="h2--"><a name="读/写文件" class="reference-link"></a><span class="header-link octicon octicon-link"></span>读/写文件</h2>
+ <p><code>FileChannel</code>对象维护位置变量作为缓冲区。<code>FileChannel</code>的<code>read()</code>和<code>write()</code>方法有两种类型：相对位置读/写和绝对位置读/写。</p> 
+ <p>当打开一个<code>FileChannel</code>时，它的位置设置为<code>0</code>，这是文件的开始。当使用相对<code>read()</code>方法从<code>FileChannel</code>读取时，它的位置增加读取的字节数。<br>从<code>FileChannel</code>读取的绝对位置不会影响其位置。可以使用<code>position()</code>方法获取<code>FileChannel</code>对象的当前位置值。使用<code>position(int newPosition)</code>方法将其位置设置为新位置。</p> 
+ <p>通道也是可自动关闭的。如果使用<code>try-with-resources</code>语句来获得一个通道，通道将被自动关闭，这样就不用显示地调用通道的<code>close()</code>方法。</p> 
+ <p>以下代码从名为<code>test1.txt</code>的文件中读取文本。</p> 
+ <pre><code class="lang-java">import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
+
+public class Main {
+  public static void main(String[] args) {
+    File inputFile = new File("test1.txt");
+    if (!inputFile.exists()) {
+      System.out.println("The input file " + inputFile.getAbsolutePath()
+          + "  does  not  exist.");
+      System.out.println("Aborted the   file reading process.");
+      return;
+    }
+    try (FileChannel fileChannel = new FileInputStream(inputFile).getChannel()) {
+      ByteBuffer buffer = ByteBuffer.allocate(1024);
+      while (fileChannel.read(buffer) &gt; 0) {
+        buffer.flip();
+        while (buffer.hasRemaining()) {
+          byte b = buffer.get();
+          System.out.print((char) b);
+        }
+        buffer.clear();
+      }
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
+}
+</code></pre> 
+ <p>上面的代码生成以下结果。</p>   
+ <pre><code class="lang-java">The input file F:\website\yiibai\worksp\test1.txt  does  not  exist.
+Aborted the   file reading process.
+</code></pre> 
+ <h2 id="h2-u793Au4F8B"><a name="示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例</h2>
+ <p>以下代码显示如何使用缓冲区和通道写入文件。</p> 
+ <pre><code class="lang-java">import java.io.File;
+import java.nio.channels.FileChannel;
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.io.FileOutputStream;
+
+public class Main {
+  public static void main(String[] args) {
+    File outputFile = new File("test.txt");
+
+    try (FileChannel fileChannel = new FileOutputStream(outputFile)
+        .getChannel()) {
+      String text = getText();
+      byte[] byteData = text.toString().getBytes("UTF-8");
+      ByteBuffer buffer = ByteBuffer.wrap(byteData);
+      fileChannel.write(buffer);
+    } catch (IOException e1) {
+      e1.printStackTrace();
+    }
+  }
+
+  public static String getText() {
+    String lineSeparator = System.getProperty("line.separator");
+    StringBuilder sb = new StringBuilder();
+    sb.append("test");
+    sb.append(lineSeparator);
+    sb.append("test");
+    sb.append(lineSeparator);
+
+    sb.append("test");
+    sb.append(lineSeparator);
+    sb.append("test");
+
+    return sb.toString();
+  }
+}
+</code></pre> 
+ <h2 id="h2-u590Du5236u6587u4EF6u7684u5185u5BB9"><a name="复制文件的内容" class="reference-link"></a><span class="header-link octicon octicon-link"></span>复制文件的内容</h2>
+ <p>可以使用缓冲区和通道来复制文件。获取源文件和目标文件的<code>FileChannel</code>对象，并对源<code>FileChannel</code>对象调用<code>transferTo()</code>方法或调用目标<code>FileChannel</code>对象上的<code>transferFrom()</code>方法。<br>以下代码显示如何复制文件。</p> 
+ <pre><code class="lang-java">import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.nio.channels.FileChannel;
+
+public class Main {
+  public static void main(String[] args) throws Exception {
+
+    FileChannel sourceChannel = new FileInputStream("sourceFile").getChannel();
+    FileChannel sinkChannel = new FileOutputStream("newFile").getChannel();
+
+    // Copy source file contents to the sink file
+    sourceChannel.transferTo(0, sourceChannel.size(), sinkChannel);
+  }
+}
+</code></pre>
+ <br>      
+</div></body></html>

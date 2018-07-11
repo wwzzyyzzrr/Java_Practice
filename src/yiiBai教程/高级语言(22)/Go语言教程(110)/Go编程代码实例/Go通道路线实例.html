@@ -1,0 +1,39 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Go通道路线实例</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>当使用通道作为函数参数时，可以指定通道是否仅用于发送或接收值。这种特殊性增加了程序的类型安全性。</p> 
+ <p>此<code>ping</code>功能只接受用于发送值的通道。尝试在此频道上接收将是一个编译时错误。<code>ping</code>函数接受一个通道接收(<code>ping</code>)，一个接收发送(<code>ping</code>)。</p> 
+ <blockquote> 
+  <p>所有的示例代码，都放在 <code>F:\worksp\golang</code> 目录下。安装Go编程环境请参考：<a target="_blank" href="http://www.yiibai.com/go/go_environment.html">http://www.yiibai.com/go/go_environment.html</a> </p> 
+ </blockquote> 
+ <p><code>channel-synchronization.go</code>的完整代码如下所示 -</p> 
+ <pre><code class="lang-go">package main
+
+import "fmt"
+
+// This `ping` function only accepts a channel for sending
+// values. It would be a compile-time error to try to
+// receive on this channel.
+func ping(pings chan&lt;- string, msg string) {
+    pings &lt;- msg
+}
+
+// The `pong` function accepts one channel for receives
+// (`pings`) and a second for sends (`pongs`).
+func pong(pings &lt;-chan string, pongs chan&lt;- string) {
+    msg := &lt;-pings
+    pongs &lt;- msg
+}
+
+func main() {
+    pings := make(chan string, 1)
+    pongs := make(chan string, 1)
+    ping(pings, "passed message")
+    pong(pings, pongs)
+    fmt.Println(&lt;-pongs)
+}
+</code></pre> 
+ <p>执行上面代码，将得到以下输出结果 - </p>   
+ <pre><code class="lang-go">F:\worksp\golang&gt;go run channel-directions.go
+passed message
+</code></pre>
+ <br>      
+</div></body></html>

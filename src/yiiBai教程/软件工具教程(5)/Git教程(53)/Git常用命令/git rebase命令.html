@@ -1,0 +1,45 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">git rebase命令</h1><div style="width:100%;float:left;" class="article-content">   
+ <p><code>git rebase</code>命令在另一个分支基础之上重新应用，用于把一个分支的修改合并到当前分支。</p> 
+ <p><strong>使用语法</strong></p> 
+ <pre><code class="lang-shell">git rebase [-i | --interactive] [options] [--exec &lt;cmd&gt;] [--onto &lt;newbase&gt;]
+    [&lt;upstream&gt; [&lt;branch&gt;]]
+git rebase [-i | --interactive] [options] [--exec &lt;cmd&gt;] [--onto &lt;newbase&gt;]
+    --root [&lt;branch&gt;]
+git rebase --continue | --skip | --abort | --quit | --edit-todo
+</code></pre> 
+ <h2 id="h2-u793Au4F8B"><a name="示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例</h2>
+ <p>假设你现在基于远程分支”<code>origin</code>“，创建一个叫”<code>mywork</code>“的分支。</p> 
+ <pre><code class="lang-shell">$ git checkout -b mywork origin
+</code></pre> 
+ <p>结果如下所示 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201707/1307/842100748_44775.png" alt=""></p> 
+ <p>现在我们在这个分支(<em>mywork</em>)做一些修改，然后生成两个提交(commit).</p> 
+ <pre><code class="lang-shell">$ vi file.txt
+$ git commit
+$ vi otherfile.txt
+$ git commit
+... ...
+</code></pre> 
+ <p>但是与此同时，有些人也在”<code>origin</code>“分支上做了一些修改并且做了提交了，这就意味着”<code>origin</code>“和”<code>mywork</code>“这两个分支各自”前进”了，它们之间”分叉”了。</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201707/1307/810100749_17109.png" alt=""></p> 
+ <p>在这里，你可以用”<code>pull</code>“命令把”<code>origin</code>“分支上的修改拉下来并且和你的修改合并； 结果看起来就像一个新的”合并的提交”(merge commit):</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201707/1307/350100750_71786.png" alt=""></p> 
+ <p>但是，如果你想让”<code>mywork</code>“分支历史看起来像没有经过任何合并一样，也可以用 <code>git rebase</code>，如下所示:</p> 
+ <pre><code class="lang-shell">$ git checkout mywork
+$ git rebase origin
+</code></pre> 
+ <p>这些命令会把你的”<code>mywork</code>“分支里的每个提交(commit)取消掉，并且把它们临时 保存为补丁(patch)(这些补丁放到”<code>.git/rebase</code>“目录中),然后把”<code>mywork</code>“分支更新 到最新的”<code>origin</code>“分支，最后把保存的这些补丁应用到”<code>mywork</code>“分支上。</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201707/1307/845100751_76810.png" alt=""></p> 
+ <p>当’<code>mywork</code>‘分支更新之后，它会指向这些新创建的提交(commit),而那些老的提交会被丢弃。 如果运行垃圾收集命令(pruning garbage collection), 这些被丢弃的提交就会删除. </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201707/1307/141100752_31232.png" alt=""></p> 
+ <p>现在我们可以看一下用合并(merge)和用<code>rebase</code>所产生的历史的区别：</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201707/1307/645100753_82870.png" alt=""></p> 
+ <p>在<code>rebase</code>的过程中，也许会出现冲突(conflict)。在这种情况，Git会停止<code>rebase</code>并会让你去解决冲突；在解决完冲突后，用”<code>git add</code>“命令去更新这些内容的索引(index), 然后，你无需执行 <code>git commit</code>,只要执行:</p>   
+ <pre><code class="lang-shell">$ git rebase --continue
+</code></pre> 
+ <p>这样git会继续应用(apply)余下的补丁。</p> 
+ <p>在任何时候，可以用<code>--abort</code>参数来终止<code>rebase</code>的操作，并且”<code>mywork</code>“ 分支会回到<code>rebase</code>开始前的状态。</p> 
+ <pre><code class="lang-shell">$ git rebase --abort
+</code></pre>
+ <br>      
+</div></body></html>

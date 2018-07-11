@@ -1,0 +1,266 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Hibernate二级缓存</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>Hibernate第二级缓存是会话工厂的所有会话(Session)对象所使用的公共缓存。 如果您有来自会话工厂的多个会话(Session)对象，就可以操作会话工厂中的第二级缓存的数据。</p> 
+ <p><code>SessionFactory</code>类用于保存二级缓存数据。 它是所有会话对象的全局，默认情况下是不启用的。</p> 
+ <p>不同厂商提供了二级缓存的实现。</p> 
+ <ol> 
+  <li>EH二级缓存</li>
+  <li>OS二级缓存</li>
+  <li>Swarm二级缓存</li>
+  <li>JBoss二级缓存</li>
+ </ol> 
+ <p>每个实现提供不同的缓存使用功能。 有四种方法可以使用二级缓存。</p> 
+ <ol> 
+  <li>只读：缓存将适用于只读操作。</li>
+  <li>非严格读写：缓存可用于读写，但一次只能读写。</li>
+  <li>读写：缓存将用于读写，可以同时使用。</li>
+  <li>事务处理：缓存将用于事务处理。<br>缓存使用属性可以应用于<code>hbm.xml</code>文件中的类或集合级别。 下面给出了定义缓存使用情况的例子：<pre><code class="lang-xml">&lt;cache usage="read-only" /&gt;
+</code></pre> 下面来看看看二级缓存实现和缓存使用情况。</li>
+ </ol> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>实现</th> 
+    <th>只读</th> 
+    <th>非限制读写</th> 
+    <th>读写</th> 
+    <th>操作</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>EH二级缓存</td> 
+    <td>Yes</td> 
+    <td>Yes</td> 
+    <td>Yes</td> 
+    <td>No</td> 
+   </tr> 
+   <tr> 
+    <td>OS二级缓存</td> 
+    <td>Yes</td> 
+    <td>Yes</td> 
+    <td>Yes</td> 
+    <td>No</td> 
+   </tr> 
+   <tr> 
+    <td>Swarm二级缓存</td> 
+    <td>Yes</td> 
+    <td>Yes</td> 
+    <td>No</td> 
+    <td>No</td> 
+   </tr> 
+   <tr> 
+    <td>JBoss二级缓存</td> 
+    <td>No</td> 
+    <td>No</td> 
+    <td>No</td> 
+    <td>Yes</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p><strong>使用EH缓存的二级缓存示例的额外步骤</strong></p> 
+ <p>1)在<code>hibernate.cfg.xml</code>文件中添加<code>2</code>个配置设置</p> 
+ <pre><code class="lang-xml">&lt;property name="cache.provider_class"&gt;org.hibernate.cache.EhCacheProvider&lt;/property&gt;  
+&lt;property name="hibernate.cache.use_second_level_cache"&gt;true&lt;/property&gt;
+</code></pre> 
+ <p>2) 在<code>hbm</code>文件中添加缓存使用情况设置</p> 
+ <pre><code class="lang-xml">&lt;cache usage="read-only" /&gt;
+</code></pre> 
+ <p>3) 创建<code>ehcache.xml</code>文件</p> 
+ <pre><code class="lang-xml">&lt;?xml version="1.0"?&gt;  
+&lt;ehcache&gt;  
+    &lt;defaultCache maxElementsInMemory="100"  eternal="true"/&gt;  
+&lt;/ehcache&gt;
+</code></pre> 
+ <h2 id="h2-hibernate-"><a name="Hibernate二级缓存示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>Hibernate二级缓存示例</h2>
+ <p>要通过下面示例了解二级缓存，我们需要创建一个Java项目：<code>secondlevel</code>， 其完整的目录结构如下所示 -<br><img src="http://www.yiibai.com/uploads/images/201703/2903/559090342_42334.png" alt=""></p> 
+ <p><strong>创建以下页面：</strong></p> 
+ <ol> 
+  <li>Employee.java</li>
+  <li>employee.hbm.xml</li>
+  <li>hibernate.cfg.xml</li>
+  <li>ehcache.xml</li>
+  <li>MainTest.java</li>
+ </ol> 
+ <blockquote> 
+  <p>注意：在这里，我们假设，在MySQL数据库中有一个<code>emp_cache2</code>表并包含一些记录。</p> 
+ </blockquote> 
+ <p><em>文件： Employee.java</em></p> 
+ <pre><code class="lang-java">package com.yiibai;
+
+public class Employee {
+    private int id;
+    private String name;
+    private float salary;
+
+    public Employee() {
+        super();
+    }
+
+    public Employee(String name, float salary) {
+        super();
+        this.name = name;
+        this.salary = salary;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public float getSalary() {
+        return salary;
+    }
+
+    public void setSalary(float salary) {
+        this.salary = salary;
+    }
+
+}
+</code></pre> 
+ <p><em>文件： employee.hbm.xml</em></p> 
+ <pre><code class="lang-xml">&lt;?xml version='1.0' encoding='UTF-8'?&gt;
+&lt;!DOCTYPE hibernate-mapping PUBLIC
+          "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+          "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd"&gt;
+
+&lt;hibernate-mapping&gt;
+    &lt;class name="com.yiibai.Employee" table="emp_cache"&gt;
+        &lt;cache usage="read-only" /&gt;
+        &lt;id name="id"&gt;
+            &lt;generator class="native"&gt;&lt;/generator&gt;
+        &lt;/id&gt;
+        &lt;property name="name"&gt;&lt;/property&gt;
+        &lt;property name="salary"&gt;&lt;/property&gt;
+    &lt;/class&gt;
+
+&lt;/hibernate-mapping&gt;
+</code></pre> 
+ <p>在这里，我们使用只读(read-only)高速缓存来使用该类。缓存使用情况也可用于集合。</p> 
+ <p><em>文件: hibernate.cfg.xml</em></p> 
+ <pre><code class="lang-xml">
+
+</code></pre> 
+ <p>要实现二级缓存，我们需要在配置文件中定义<code>cache.provider_class</code>属性。</p> 
+ <p>文件：<em>ehcache.xml</em></p> 
+ <pre><code class="lang-xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="ehcache.xsd" updateCheck="true"
+    monitoring="autodetect" dynamicConfig="true"&gt;
+
+    &lt;diskStore path="java.io.tmpdir/ehcache" /&gt;
+
+    &lt;defaultCache maxEntriesLocalHeap="10000" eternal="false"
+        timeToIdleSeconds="120" timeToLiveSeconds="120" diskSpoolBufferSizeMB="30"
+        maxEntriesLocalDisk="10000000" diskExpiryThreadIntervalSeconds="120"
+        memoryStoreEvictionPolicy="LRU" statistics="true"&gt;
+        &lt;persistence strategy="localTempSwap" /&gt;
+    &lt;/defaultCache&gt;
+
+    &lt;cache name="org.hibernate.cache.internal.StandardQueryCache"
+        maxEntriesLocalHeap="5" eternal="false" timeToLiveSeconds="120"&gt;
+        &lt;persistence strategy="localTempSwap" /&gt;
+    &lt;/cache&gt;
+
+    &lt;cache name="org.hibernate.cache.spi.UpdateTimestampsCache"
+        maxEntriesLocalHeap="5000" eternal="true"&gt;
+        &lt;persistence strategy="localTempSwap" /&gt;
+    &lt;/cache&gt;
+    &lt;cache name="com.yiibai.Employee" maxElementsInMemory="100"
+        eternal="false" timeToIdleSeconds="5" timeToLiveSeconds="200" /&gt;
+&lt;/ehcache&gt;
+</code></pre> 
+ <p>我们需要创建<code>ehcache.xml</code>文件来定义缓存属性。</p> 
+ <p><code>defaultCache</code>将用于所有持久化类。 我们还可以通过使用 <code>cache</code> 元素来明确定义持久化类。<br><code>eternal</code> 如果我们指定<code>eternal =“true”</code>，则不需要定义<code>timeToIdleSeconds</code>和<code>timeToLiveSeconds</code>属性，因为它将由<code>hibernate</code>内部处理。 指定<code>eternal =“false”</code>给程序员控制，但是我们需要定义<code>timeToIdleSeconds</code>和<code>timeToLiveSeconds</code>属性<br><code>timeToIdleSeconds</code>它定义了二级缓存中对象可以空闲多少秒。<br><code>timeToLiveSeconds</code>它定义了在第二级缓存中对象可以存储多少秒，无论它是否空闲。</p> 
+ <p>文件：<code>MainTest.java</code></p> 
+ <pre><code class="lang-java">package com.yiibai;
+
+import org.hibernate.*;
+import org.hibernate.boot.MetadataSources;
+import org.hibernate.boot.registry.StandardServiceRegistry;
+import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
+import org.hibernate.cfg.*;
+import org.hibernate.stat.Statistics;
+
+public class MainTest {
+    public static void main(String[] args) {
+        // 在5.1.0版本汇总，hibernate则采用如下新方式获取：
+        // 1. 配置类型安全的准服务注册类，这是当前应用的单例对象，不作修改，所以声明为final
+        // 在configure("cfg/hibernate.cfg.xml")方法中，如果不指定资源路径，默认在类路径下寻找名为hibernate.cfg.xml的文件
+        final StandardServiceRegistry registry = new StandardServiceRegistryBuilder()
+                .configure("hibernate.cfg.xml").build();
+        // 2. 根据服务注册类创建一个元数据资源集，同时构建元数据并生成应用一般唯一的的session工厂
+        SessionFactory sessionFactory = new MetadataSources(registry)
+                .buildMetadata().buildSessionFactory();
+
+        /**** 上面是配置准备，下面开始我们的数据库操作 ******/
+        Session session = sessionFactory.openSession();// 从会话工厂获取一个session
+
+        // creating transaction object
+        Transaction tx = session.beginTransaction();
+
+        Statistics stats = sessionFactory.getStatistics();
+        System.out.println("Stats enabled="+stats.isStatisticsEnabled());
+
+        stats.setStatisticsEnabled(true);
+        System.out.println("Stats enabled="+stats.isStatisticsEnabled());
+
+        session.save(new Employee("苏小牛", 12000));
+        session.save(new Employee("库日天", 19000));
+
+        Session session1 = sessionFactory.openSession();
+        Employee emp1 = (Employee) session1.load(Employee.class, 1);
+        System.out.println(emp1.getId() + " " + emp1.getName() + " "
+                + emp1.getSalary());
+        session1.close();
+
+        //再次查询ID=1的员工信息，因为使用了缓存，这里不会再发出查询语句...
+        Session session11 = sessionFactory.openSession();
+        Employee emp11 = (Employee) session11.load(Employee.class, 1);
+        System.out.println(emp11.getId() + " " + emp11.getName() + " "
+                + emp11.getSalary());
+        session11.close();
+
+
+        Session session2 = sessionFactory.openSession();
+        Employee emp2 = (Employee) session2.load(Employee.class, 2);
+        System.out.println(emp2.getId() + " " + emp2.getName() + " "
+                + emp2.getSalary());
+        session2.close();
+
+        tx.commit();
+        session.close();
+        sessionFactory.close();
+    }
+}
+</code></pre> 
+ <p>我们可以看到，hibernate不会发出两次查询。 如果不使用二级缓存，hibernate将会发出两次查询，因为这两个查询都使用不同的会话对象。</p> 
+ <h2 id="h2-u8FD0u884Cu5B9Eu4F8B"><a name="运行实例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>运行实例</h2>
+ <p>首先运行 <code>MainTest.java</code> 插入数据，然后再读取数据。<br>执行 <code>MainTest.java</code> 得到以下结果，</p>   
+ <pre><code class="lang-shell">log4j:WARN No appenders could be found for logger (org.jboss.logging).
+log4j:WARN Please initialize the log4j system properly.
+log4j:WARN See http://logging.apache.org/log4j/1.2/faq.html#noconfig for more info.
+Wed Mar 29 21:38:06 CST 2017 WARN: Establishing SSL connection without server's identity verification is not recommended. According to MySQL 5.5.45+, 5.6.26+ and 5.7.6+ requirements SSL connection must be established by default if explicit option isn't set. For compliance with existing applications not using SSL the verifyServerCertificate property is set to 'false'. You need either to explicitly disable SSL by setting useSSL=false, or set useSSL=true and provide truststore for server certificate verification.
+Stats enabled=false
+Stats enabled=true
+Hibernate: insert into emp_cache (name, salary) values (?, ?)
+Hibernate: insert into emp_cache (name, salary) values (?, ?)
+Hibernate: select employee0_.id as id1_0_0_, employee0_.name as name2_0_0_, employee0_.salary as salary3_0_0_ from emp_cache employee0_ where employee0_.id=?
+Wed Mar 29 21:38:08 CST 2017 WARN: Establishing SSL connection without server's identity verification is not recommended. According to MySQL 5.5.45+, 5.6.26+ and 5.7.6+ requirements SSL connection must be established by default if explicit option isn't set. For compliance with existing applications not using SSL the verifyServerCertificate property is set to 'false'. You need either to explicitly disable SSL by setting useSSL=false, or set useSSL=true and provide truststore for server certificate verification.
+1 苏小牛 12000.0
+1 苏小牛 12000.0
+Hibernate: select employee0_.id as id1_0_0_, employee0_.name as name2_0_0_, employee0_.salary as salary3_0_0_ from emp_cache employee0_ where employee0_.id=?
+2 库日天 19000.0
+</code></pre>
+ <br>      
+</div></body></html>

@@ -1,0 +1,139 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">PostgreSQL日期和时间函数</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>所有重要的日期和时间相关函数如下列表所示：</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>函数</th> 
+    <th>描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td><code>AGE()</code></td> 
+    <td>减去参数</td> 
+   </tr> 
+   <tr> 
+    <td><code>CURRENT DATE/TIME()</code></td> 
+    <td>它指定当前日期和时间。</td> 
+   </tr> 
+   <tr> 
+    <td><code>DATE_PART()</code></td> 
+    <td>获取子字段(相当于提取)</td> 
+   </tr> 
+   <tr> 
+    <td><code>EXTRACT()</code></td> 
+    <td>获得子字段</td> 
+   </tr> 
+   <tr> 
+    <td><code>ISFINITE()</code></td> 
+    <td>测试有限的日期，时间和间隔(非+/-无穷大)</td> 
+   </tr> 
+   <tr> 
+    <td><code>JUSTIFY</code></td> 
+    <td>调整间隔</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h2 id="h2-age-timestamp-timestamp-age-timestamp-"><a name="AGE(timestamp，timestamp)＆AGE(timestamp)：" class="reference-link"></a><span class="header-link octicon octicon-link"></span>AGE(timestamp，timestamp)＆AGE(timestamp)：</h2>
+ <table> 
+  <thead> 
+   <tr> 
+    <th>函数</th> 
+    <th>描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td><code>age(timestamp, timestamp)</code></td> 
+    <td>当使用第二个参数的时间戳形式调用时，<code>age()</code>减去参数，产生使用年数和月份的类型为“<code>interval</code>”的“符号”结果。</td> 
+   </tr> 
+   <tr> 
+    <td><code>age(timestamp)</code></td> 
+    <td>当仅使用时间戳作为参数调用时，<code>age()</code>从<code>current_date(午夜)</code>减去。</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h3 id="h3-age-"><a name="AGE()函数例子" class="reference-link"></a><span class="header-link octicon octicon-link"></span>AGE()函数例子</h3>
+ <p>按Ctrl + E打开查询编辑器，执行此查询示例：</p> 
+ <pre><code class="lang-sql">SELECT AGE(timestamp '2017-01-26', timestamp '1951-08-15');
+</code></pre> 
+ <p>执行上面语句得到以下结果 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201704/1004/122230402_22803.png" alt=""></p> 
+ <h3 id="h3--age-timestamp-"><a name="函数AGE(timestamp)的示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>函数AGE(timestamp)的示例</h3>
+ <p>它用于生产当前年龄。</p> 
+ <p>执行上面语句得到以下结果 -</p> 
+ <pre><code class="lang-sql">SELECT AGE(timestamp '1990-08-15');
+</code></pre> 
+ <p>执行上面语句得到以下结果 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201704/1004/917230404_27745.png" alt=""></p> 
+ <h3 id="h3--date-time-"><a name="当前DATE/TIME()" class="reference-link"></a><span class="header-link octicon octicon-link"></span>当前DATE/TIME()</h3>
+ <p>以下是返回与当前日期和时间相关的值的函数的列表。</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>函数</th> 
+    <th>描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>CURRENT_DATE</td> 
+    <td>提供当前日期</td> 
+   </tr> 
+   <tr> 
+    <td>CURRENT_TIME</td> 
+    <td>提供带时区的值</td> 
+   </tr> 
+   <tr> 
+    <td>CURRENT_TIMESTAMP</td> 
+    <td>提供带时区的值</td> 
+   </tr> 
+   <tr> 
+    <td>CURRENT_TIME(precision)</td> 
+    <td>可以选择使用<code>precision</code>参数，这将使结果在四分之一秒的范围内四舍五入到数位数。</td> 
+   </tr> 
+   <tr> 
+    <td>CURRENT_TIMESTAMP(precision)</td> 
+    <td>可以选择使用精度参数，这将使结果在四分之一秒的范围内四舍五入到数位数。</td> 
+   </tr> 
+   <tr> 
+    <td>LOCALTIME</td> 
+    <td>提供没有时区的值。</td> 
+   </tr> 
+   <tr> 
+    <td>LOCALTIMESTAMP</td> 
+    <td>提供没有时区的值。</td> 
+   </tr> 
+   <tr> 
+    <td>LOCALTIME(precision)</td> 
+    <td>可以选择使用精度参数，这将使结果在四分之一秒的范围内四舍五入到数位数。</td> 
+   </tr> 
+   <tr> 
+    <td>LOCALTIMESTAMP(precision)</td> 
+    <td>可以选择使用精度参数，这将使结果在四分之一秒的范围内四舍五入到数位数。</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p>现在，您可以来看看以下命令：</p> 
+ <p>获取当前时间：</p>   
+ <pre><code class="lang-sql">SELECT CURRENT_TIME;
+</code></pre> 
+ <p><img src="http://www.yiibai.com/uploads/images/201704/1004/326080435_32087.png" alt=""></p> 
+ <p>获取当前日期：</p> 
+ <pre><code class="lang-sql">SELECT CURRENT_DATE;
+</code></pre> 
+ <p><img src="http://www.yiibai.com/uploads/images/201704/1004/293080436_89192.png" alt=""></p> 
+ <p>获取当前时间戳(两者的日期和时间)</p> 
+ <pre><code class="lang-sql">SELECT CURRENT_TIMESTAMP;
+</code></pre> 
+ <p><img src="http://www.yiibai.com/uploads/images/201704/1004/574080438_71269.png" alt=""></p> 
+ <p>当前时间戳更精确：</p> 
+ <pre><code class="lang-sql">SELECT CURRENT_TIMESTAMP(2);
+</code></pre> 
+ <p><img src="http://www.yiibai.com/uploads/images/201704/1004/417080439_26770.png" alt=""></p> 
+ <p>本地时间戳：</p> 
+ <pre><code class="lang-sql">SELECT LOCALTIMESTAMP;
+</code></pre> 
+ <p><img src="http://www.yiibai.com/uploads/images/201704/1004/679080440_11839.png" alt=""></p>
+ <br>      
+</div></body></html>

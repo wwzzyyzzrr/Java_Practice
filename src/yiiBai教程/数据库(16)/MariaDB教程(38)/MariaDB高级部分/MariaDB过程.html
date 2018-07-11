@@ -1,0 +1,93 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">MariaDB过程</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>MariaDB程序是一个存储的程序，用来传递参数。它不像函数那样需要返回一个值(当然也不用返回)。</p> 
+ <p>可以创建和删除像函数一样的过程。</p> 
+ <h4 id="h4-1-"><a name="1. 创建过程" class="reference-link"></a><span class="header-link octicon octicon-link"></span>1. 创建过程</h4>
+ <p>可以像创建MariaDB中的函数一样创建过程。</p> 
+ <p><strong>语法：</strong></p> 
+ <pre><code class="lang-sql">CREATE   
+[ DEFINER = { CURRENT_USER | user_name } ]   
+PROCEDURE procedure_name [ (parameter datatype [, parameter datatype]) ]  
+[ LANGUAGE SQL  
+| DETERMINISTIC  
+| NOT DETERMINISTIC  
+| { CONTAINS SQL   
+  | NO SQL  
+  | READS SQL DATA  
+  | MODIFIES SQL DATA }  
+| SQL SECURITY { DEFINER | INVOKER }  
+| COMMENT 'comment_value'  
+BEGIN  
+   declaration_section  
+   executable_section  
+END;
+</code></pre> 
+ <p><strong>参数说明</strong></p> 
+ <ul> 
+  <li><em>DEFINER</em>：可选。</li>
+  <li><em>procedure_name</em>：在MariaDB中分配给此过程的名称。</li>
+  <li><em>Parameter</em>：传入过程的一个或多个参数。创建过程时，可以声明三种类型的参数：
+   <ul> 
+    <li><em>IN</em>：参数可以被程序引用。 该参数的值不能被程序覆盖。</li>
+    <li><em>OUT</em>：参数不能被程序引用，但参数的值可以被程序覆盖。</li>
+    <li><em>IN OUT</em>：参数可以被程序引用，参数的值可以被程序覆盖。</li>
+   </ul> </li>
+  <li><em>LANGUAGE SQL</em>：语法为可移植语法，但不会影响函数。</li>
+  <li><em>DETERMINISTIC</em>：表示该函数将始终返回给定一组输入参数的一个结果。</li>
+  <li><em>NOT DETERMINISTIC</em>：表示给定一组输入参数，该函数可能会返回不同的结果。 结果可能受到表格数据，随机数字或服务器变量的影响。</li>
+  <li><em>CONTAINS SQL</em>：这是默认的。这是一个告知MariaDB该函数包含SQL的信息性子句，但数据库不验证它是真的。</li>
+  <li><em>NO SQL</em>：这是一个信息性子句，不使用也不会影响功能。</li>
+  <li><em>READS SQL DATA</em>：这是一个告知MariaDB的函数，它将使用<code>SELECT</code>语句读取数据，但不会修改任何数据。</li>
+  <li><em>MODIFIES SQL DATA</em>：这是一个告知MariaDB的信息子句，该函数将使用<code>INSERT</code>，<code>UPDATE</code>，<code>DELETE</code>或其他DDL语句修改SQL数据。</li>
+  <li><em>declaration_section</em>：声明局部变量的过程中的位置。</li>
+  <li><em>executable_section</em>：输入过程代码的过程中的位置。</li>
+ </ul> 
+ <h4 id="h4-u793Au4F8B"><a name="示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例</h4>
+ <p>在MariaDB数据库中创建一个名为<code>“CalcValue”</code>的过程。参考以下实现代码 - </p> 
+ <pre><code class="lang-sql">DELIMITER //  
+CREATE procedure CalcValue ( OUT ending_value INT )  
+DETERMINISTIC  
+BEGIN  
+   DECLARE total_value INT;  
+   SET total_value = 50;  
+   label1: WHILE total_value &lt;= 3000 DO  
+     SET total_value = total_value * 2;  
+   END WHILE label1;  
+   SET ending_value = total_value;  
+END; //  
+DELIMITER ;
+</code></pre> 
+ <p>打开HeidiSQL，执行上面创建语句 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201711/2911/557101108_75535.png" alt=""></p> 
+ <p>现在刷新左侧的<em>testdb</em>数据库，可以看到名为“CalcValue”的过程已创建。</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201711/2911/333101111_94799.png" alt=""></p> 
+ <p>编辑或查看这个过程，如下图所示 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201711/2911/679101117_25095.png" alt=""></p> 
+ <h4 id="h4-2-"><a name="2. 调用过程" class="reference-link"></a><span class="header-link octicon octicon-link"></span>2. 调用过程</h4>
+ <p>现在可以看到名为<em>“CalcValue”</em>的过程已创建。可以参考如下方式来调用过程：</p>   
+ <pre><code class="lang-sql">MariaDB [testdb]&gt; CALL CalcValue(@salary);
+Query OK, 0 rows affected (0.00 sec)
+
+MariaDB [testdb]&gt; select @salary;
++---------+
+| @salary |
++---------+
+|    3200 |
++---------+
+1 row in set (0.00 sec)
+</code></pre> 
+ <h4 id="h4-3-"><a name="3. 删除过程" class="reference-link"></a><span class="header-link octicon octicon-link"></span>3. 删除过程</h4>
+ <p>可以使用以下命令删除过程：</p> 
+ <p><strong>语法：</strong></p> 
+ <pre><code class="lang-sql">DROP procedure [ IF EXISTS ] procedure_name;
+</code></pre> 
+ <p><strong>参数说明：</strong></p> 
+ <ul> 
+  <li><em>procedure_name</em>：它指定要删除的过程的名称。</li>
+ </ul> 
+ <p><strong>示例：</strong></p> 
+ <pre><code class="lang-sql">DROP procedure CalcValue;
+</code></pre> 
+ <p>可以看到现在过程已经被删除，并且在列表中不可见。</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201711/2911/880101122_81156.png" alt=""></p>
+ <br>      
+</div></body></html>

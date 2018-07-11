@@ -1,0 +1,86 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Java继承和构造函数</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>构造函数不是类的成员，它们不是由子类继承的。它们用于初始化实例变量。</p> 
+ <pre><code class="lang-java">class CSuper {
+  public CSuper() {
+    System.out.println("Inside CSuper() constructor.");
+  }
+}
+
+class CSub extends CSuper {
+  public CSub() {
+    System.out.println("Inside CSub()  constructor.");
+  }
+}
+
+public class Main {
+  public static void main(String[] args) {
+    CSub cs = new CSub();
+  }
+}
+</code></pre> 
+ <p>上面的代码生成以下结果。</p> 
+ <pre><code class="lang-java">Inside CSuper() constructor.
+Inside CSub()  constructor.
+</code></pre> 
+ <h2 id="h2-u793Au4F8B"><a name="示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例</h2>
+ <p>下面显示了编译器如何注入一个<code>super()</code>调用来调用父类的无参数构造函数</p> 
+ <pre><code class="lang-java">class CSuper {
+  public CSuper() {
+    super(); // Injected by the compiler
+    System.out.println("Inside CSuper() constructor.");
+  }
+}
+
+class CSub extends CSuper {
+  public CSub() {
+    super(); // Injected by the compiler
+    System.out.println("Inside CSub()  constructor.");
+  }
+}
+
+public class Main {
+  public static void main(String[] args) {
+    CSub cs = new CSub();
+  }
+}
+</code></pre> 
+ <p>上面的代码生成以下结果。</p> 
+ <p>关键字<code>super</code>指的是类的直接父类(超类)。可以调用超类构造函数，使用<code>super</code>关键字必须要放在构造函数中的第一个语句。</p> 
+ <h2 id="h2-u65E0u53C2u6570u6784u9020u51FDu6570"><a name="无参数构造函数" class="reference-link"></a><span class="header-link octicon octicon-link"></span>无参数构造函数</h2>
+ <p>可以将超类的无参数构造函数或任何其他构造函数显式地调用在类的构造函数中的第一个语句。只有在没有明确添加的情况下，编译器才会注入无参数构造函数调用。</p>   
+ <pre><code class="lang-java">class Employee {
+  private String name = "Unknown";
+
+  public Employee(String name) {
+    this.name = name;
+  }
+
+  public void setName(String name) {
+    this.name = name;
+  }
+
+  public String getName() {
+    return name;
+  }
+}
+
+class Manager extends Employee {
+  public Manager(String name) {
+    super(name);
+  }
+}
+
+public class Main {
+  public static void main(String[] args) {
+    Manager mgr = new Manager("李经理");
+    String name = mgr.getName();
+    System.out.println("Manager name:  " + name);
+  }
+}
+</code></pre> 
+ <p>上面的代码生成以下结果。</p> 
+ <pre><code class="lang-java">Manager name:  李经理
+</code></pre> 
+ <p>每个类都必须直接或间接地从其构造函数中调用其超类的构造函数。如果超类没有无参数构造函数，那么必须显式地调用超类的其他构造函数。</p>
+ <br>      
+</div></body></html>

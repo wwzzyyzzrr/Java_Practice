@@ -1,0 +1,77 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Cassandra删除索引</h1><div style="width:100%;float:left;" class="article-content">   
+ <p><code>DROP INDEX</code>命令用于删除指定的索引。 如果索引创建时未指定索引名称，则索引名称为<code>TableName_ColumnName_idx</code>。</p> 
+ <p><strong>语法</strong></p> 
+ <pre><code class="lang-sql">DROP INDEX &lt;identifier&gt;
+</code></pre> 
+ <p>或者 -</p> 
+ <pre><code class="lang-sql">Drop index IF EXISTS KeyspaceName.IndexName
+</code></pre> 
+ <p><strong>删除索引的规则</strong></p> 
+ <ul> 
+  <li>如果索引不存在，它将返回错误，除非您使用<code>IF EXISTS</code>，否则不返回任何操作。</li>
+  <li>在创建索引期间，您必须使用索引名称指定<code>keyspace</code>名称，否则将当前键空间中的索引删除。</li>
+ </ul> 
+ <p><strong>示例：</strong></p> 
+ <p>下面举个例子来演示如何删除某列上的索引。 在这里，我们将创建的索引放在表“<code>student</code>”中的“<code>student_name</code>”列中。键空间的名称是“<code>yiibai_ks</code>”。</p> 
+ <pre><code class="lang-sql">Drop index IF EXISTS yiibai_ks.student_name_index;
+</code></pre> 
+ <p>如下语句 -</p> 
+ <pre><code>## 首先创建一个索引： student_name_index
+cqlsh:yiibai_ks&gt; CREATE INDEX student_name_index ON student (student_name);
+cqlsh:yiibai_ks&gt; describe student;
+
+CREATE TABLE yiibai_ks.student (
+    student_id int PRIMARY KEY,
+    student_fees varint,
+    student_name text
+) WITH bloom_filter_fp_chance = 0.01
+    AND caching = {'keys': 'ALL', 'rows_per_partition': 'NONE'}
+    AND comment = ''
+    AND compaction = {'class': 'org.apache.cassandra.db.compaction.SizeTieredCompactionStrategy', 'max_threshold': '32', 'min_threshold': '4'}
+    AND compression = {'chunk_length_in_kb': '64', 'class': 'org.apache.cassandra.io.compress.LZ4Compressor'}
+    AND crc_check_chance = 1.0
+    AND dclocal_read_repair_chance = 0.1
+    AND default_time_to_live = 0
+    AND gc_grace_seconds = 864000
+    AND max_index_interval = 2048
+    AND memtable_flush_period_in_ms = 0
+    AND min_index_interval = 128
+    AND read_repair_chance = 0.0
+    AND speculative_retry = '99PERCENTILE';
+CREATE INDEX student_name_index ON yiibai_ks.student (student_name);
+
+## 删除索引 = student_name_index
+cqlsh:yiibai_ks&gt; Drop index IF EXISTS student_name_index;
+cqlsh:yiibai_ks&gt; describe student;
+
+CREATE TABLE yiibai_ks.student (
+    student_id int PRIMARY KEY,
+    student_fees varint,
+    student_name text
+) WITH bloom_filter_fp_chance = 0.01
+    AND caching = {'keys': 'ALL', 'rows_per_partition': 'NONE'}
+    AND comment = ''
+    AND compaction = {'class': 'org.apache.cassandra.db.compaction.SizeTieredCompactionStrategy', 'max_threshold': '32', 'min_threshold': '4'}
+    AND compression = {'chunk_length_in_kb': '64', 'class': 'org.apache.cassandra.io.compress.LZ4Compressor'}
+    AND crc_check_chance = 1.0
+    AND dclocal_read_repair_chance = 0.1
+    AND default_time_to_live = 0
+    AND gc_grace_seconds = 864000
+    AND max_index_interval = 2048
+    AND memtable_flush_period_in_ms = 0
+    AND min_index_interval = 128
+    AND read_repair_chance = 0.0
+    AND speculative_retry = '99PERCENTILE';
+
+cqlsh:yiibai_ks&gt;
+</code></pre>
+ <p>从“<code>student_name</code>”列中删除索引。</p> 
+ <blockquote> 
+  <p>注意：通过再次使用DROP索引命令，可以验证索引是否被删除。 它将显示一条消息，索引已经被删除。</p> 
+ </blockquote>   
+ <pre><code class="lang-sql">cqlsh:yiibai_ks&gt; Drop index student_name_index;
+InvalidRequest: Error from server: code=2200 [Invalid query] message="Index 'student_name_index' could not be found in any of the tables of keyspace 'yiibai_ks'"
+cqlsh:yiibai_ks&gt;
+</code></pre>
+ <br>      
+</div></body></html>

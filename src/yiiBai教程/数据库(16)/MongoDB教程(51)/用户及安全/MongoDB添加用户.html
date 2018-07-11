@@ -1,0 +1,138 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">MongoDB添加用户</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>MongoDB采用基于角色的访问控制(RBAC)来确定用户的访问。 授予用户一个或多个角色，确定用户对MongoDB资源的访问权限和用户可以执行哪些操作。 用户应该只有最小权限集才能确保最小权限的系统。</p> 
+ <p>MongoDB系统的每个应用程序和用户都应该映射到不同的用户。 这种访问隔离便于访问撤销和持续的用户维护。</p> 
+ <h2 id="h2-u524Du63D0u6761u4EF6"><a name="前提条件" class="reference-link"></a><span class="header-link octicon octicon-link"></span>前提条件</h2>
+ <p>如果启用了部署的访问控制，则可以使用<a target="_blank" href="http://docs.mongodb.com/manual/core/security-users/#localhost-exception" title="localhost异常">localhost异常</a>来创建系统中的第一个用户。 此第一个用户必须具有创建其他用户的权限。 对于MongoDB 3.0，使用localhost异常只能在<code>admin</code>数据库上创建用户。 创建第一个用户后，必须使用该用户进行身份验证以添加后续用户。 <a target="_blank" href="http://docs.mongodb.com/manual/tutorial/enable-authentication/" title="启用Auth">启用Auth</a>提供有关在启用部署访问控制时添加用户的更多详细信息。</p> 
+ <p>对于常规用户创建，必须拥有以下权限：</p> 
+ <ul> 
+  <li>要在数据库中创建新用户，必须在该数据库资源上具有<a target="_blank" href="http://docs.mongodb.com/manual/reference/privilege-actions/#createUser" title="createUser">createUser</a>操作。</li>
+  <li>要向用户授予角色，必须对角色的数据库执行<code>grantRole</code>操作。</li>
+ </ul> 
+ <p><a target="_blank" href="http://docs.mongodb.com/manual/reference/built-in-roles/#userAdmin" title="userAdmin">userAdmin</a>和<a target="_blank" href="http://docs.mongodb.com/manual/reference/built-in-roles/#userAdminAnyDatabase" title="userAdminAnyDatabase">userAdminAnyDatabase</a>内置角色在其各自的资源上提供<code>createUser</code>和<code>grantRole</code>操作。</p> 
+ <h2 id="h2-u4F8Bu5B50"><a name="例子" class="reference-link"></a><span class="header-link octicon octicon-link"></span>例子</h2>
+ <p>要在MongoDB部署中创建用户，请连接到部署，然后使用<code>db.createUser()</code>方法或<code>createUser</code>命令添加用户。</p> 
+ <p>MongoDB是一个nosql数据库服务器。 默认安装提供使用mongo命令通过命令行访问数据库而不进行身份验证。下面我们来学习如何在具有适当身份验证的Mongodb服务器中创建用户。</p> 
+ <p><strong>创建管理员用户</strong></p> 
+ <p>可以使用以下命令在MongoDB服务器中创建具有管理员权限的用户。</p> 
+ <pre><code class="lang-shell">$ mongo
+
+&gt; use admin
+
+&gt; db.createUser(
+     {
+       user:"maxsu",
+       pwd:"pwd123",
+       roles:[{role:"root",db:"admin"}]
+     }
+  )
+
+&gt; exit
+</code></pre> 
+ <p>现在尝试通过命令行使用上述用户凭据登录 - </p> 
+ <pre><code>D:\Program Files\MongoDB\Server\3.4\bin&gt;mongo -u maxsu -p  --authenticationDatabase admin
+MongoDB shell version v3.4.5
+Enter password:
+connecting to: mongodb://127.0.0.1:27017
+MongoDB server version: 3.4.5
+Server has startup warnings:
+2017-07-05T21:16:55.901+0800 I CONTROL  [initandlisten]
+2017-07-05T21:16:55.902+0800 I CONTROL  [initandlisten] ** WARNING: Access control is not enabled for the database.
+2017-07-05T21:16:55.905+0800 I CONTROL  [initandlisten] **          Read and write access to data and configuration is unrestricted.
+2017-07-05T21:16:55.908+0800 I CONTROL  [initandlisten]
+&gt;
+</code></pre>
+ <p><strong>添加数据库用户</strong></p> 
+ <p>您还可以创建指定数据库的用户，该用户只能访问该数据库。也可以为此数据库上的用户指定访问级别。 例如，创建一个在<code>mydb</code>数据库上具有读写访问权限的用户帐户。</p> 
+ <pre><code class="lang-shell">&gt; use mydb
+
+&gt; db.createUser(
+    {
+      user: "user01",
+      pwd: "pwd123",
+      roles: ["readWrite"]
+    }
+ ) 
+
+&gt; exit
+</code></pre> 
+ <p>验证身份验证使用以下命令。 返回结果为<code>1</code>，表示认证成功。</p> 
+ <pre><code class="lang-shell">&gt; db.auth('user01','pwd123')
+1
+&gt;
+</code></pre> 
+ <p>要列出数据库的所有用户，请使用以下命令。</p>   
+ <pre><code class="lang-shell"> &gt; db.getUsers()
+</code></pre> 
+ <p>上面语句，返回结果如下所示 - </p> 
+ <pre><code class="lang-shell">&gt; db.getUsers()
+[
+        {
+                "_id" : "mydb.user01",
+                "user" : "user01",
+                "db" : "mydb",
+                "roles" : [
+                        {
+                                "role" : "readWrite",
+                                "db" : "mydb"
+                        }
+                ]
+        },
+        {
+                "_id" : "mydb.user02",
+                "user" : "user02",
+                "db" : "mydb",
+                "roles" : [
+                        {
+                                "role" : "readWrite",
+                                "db" : "mydb"
+                        }
+                ]
+        }
+]
+&gt;
+</code></pre> 
+ <p><strong>删除数据库用户</strong></p> 
+ <p>也可以使用以下命令从数据库中删除用户。</p> 
+ <pre><code class="lang-shell">&gt; use mydb
+
+&gt; db.dropUser('user02')
+</code></pre> 
+ <p><strong>创建带角色的用户</strong></p> 
+ <p>以下操作在<code>test</code>数据库中创建用户：<code>mynewuser</code>，并向用户提供<code>readWrite</code>和<code>dbAdmin</code>角色。</p> 
+ <pre><code class="lang-shell">use test
+db.createUser(
+   {
+     user: "mynewuser",
+     pwd: "myuser123",
+     roles: [ "readWrite", "dbAdmin" ]
+   }
+);
+</code></pre> 
+ <p><strong>创建没有角色的用户</strong></p> 
+ <p>以下操作在<code>test</code>数据库中创建一个名为<code>mynewuser1</code>的用户，但尚未分配角色：</p> 
+ <pre><code class="lang-shell">use test
+db.createUser(
+   {
+     user: "mynewuser1",
+     pwd: "myuser1123",
+     roles: [ ]
+   }
+);
+</code></pre> 
+ <p><strong>创建具有角色的管理用户</strong></p> 
+ <p>以下操作在管理数据库中创建一个名为 <code>myadmin1</code> 的用户，并给予用户对<code>config</code>数据库的 <code>readWrite</code> 访问权限，这样可以让用户更改分片分区的某些设置，例如平衡器设置。</p> 
+ <pre><code class="lang-shell">use admin
+db.createUser(
+   {
+     user: "myadmin1",
+     pwd: "myadmin123",
+     roles:
+       [
+         { role: "readWrite", db: "config" },
+         "clusterAdmin"
+       ]
+   }
+);
+</code></pre>
+ <br>      
+</div></body></html>

@@ -1,0 +1,691 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Guava缓存工具</h1><div style="width:100%;float:left;" class="article-content">   
+ <p> Guava通过接口LoadingCache提供了一个非常强大的基于内存的LoadingCache&lt;K，V&gt;。在缓存中自动加载值，它提供了许多实用的方法，在有缓存需求时非常有用。</p> 
+ <h2> 接口声明</h2> 
+ <p> 以下是forcom.google.common.cache.LoadingCache&lt;K，V&gt;接口的声明：</p> 
+ <pre class="prettyprint prettyprinted" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 495.972229003906px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+<span class="lit" style="box-sizing: border-box; color: rgb(0, 102, 102);">@Beta</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+</span><span class="lit" style="box-sizing: border-box; color: rgb(0, 102, 102);">@GwtCompatible</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+</span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">public</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">interface</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">LoadingCache</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">&lt;</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">K</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">,</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">V</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">&gt;</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+   </span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">extends</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">Cache</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">&lt;</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">K</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">,</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">V</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">&gt;,</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">Function</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">&lt;</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">K</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">,</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">V</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">&gt;</span></pre> 
+ <h2> 接口方法</h2> 
+ <table class="src" style="box-sizing: border-box; border-collapse: collapse; border-spacing: 0px;  border-color: rgb(214, 214, 214); width: 495.555572509766px; vertical-align: top; margin-top: 8px; margin-bottom: 8px; color: rgb(49, 49, 49);    font-size: 14.4444446563721px; line-height: 22px; background-color: rgb(247, 247, 247);"> 
+  <tbody style="box-sizing: border-box;"> 
+   <tr style="box-sizing: border-box;"> 
+    <th style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px; width: 38.8888893127441px; background: rgb(238, 238, 238);"> S.N.</th> 
+    <th style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px; background: rgb(238, 238, 238);"> 方法及说明</th> 
+   </tr> 
+   <tr style="box-sizing: border-box;"> 
+    <td style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px;"> 1</td> 
+    <td style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px;"> <b style="box-sizing: border-box;">V apply(K key)</b><br style="box-sizing: border-box;"> 不推荐使用。提供满足功能接口;使用get(K)或getUnchecked(K)代替。</td> 
+   </tr> 
+   <tr style="box-sizing: border-box;"> 
+    <td style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px;"> 2</td> 
+    <td style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px;"> <b style="box-sizing: border-box;">ConcurrentMap&lt;K,V&gt; asMap()</b><br style="box-sizing: border-box;"> 返回存储在该缓存作为一个线程安全的映射条目的视图。</td> 
+   </tr> 
+   <tr style="box-sizing: border-box;"> 
+    <td style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px;"> 3</td> 
+    <td style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px;"> <b style="box-sizing: border-box;">V get(K key)</b><br style="box-sizing: border-box;"> 返回一个键在这个高速缓存中，首先装载如果需要该值相关联的值。</td> 
+   </tr> 
+   <tr style="box-sizing: border-box;"> 
+    <td style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px;"> 4</td> 
+    <td style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px;"> <b style="box-sizing: border-box;">ImmutableMap&lt;K,V&gt; getAll(Iterable&lt;? extends K&gt; keys)</b><br style="box-sizing: border-box;"> 返回一个键相关联的值的映射，创建或必要时检索这些值。</td> 
+   </tr> 
+   <tr style="box-sizing: border-box;"> 
+    <td style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px;"> 5</td> 
+    <td style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px;"> <b style="box-sizing: border-box;">V getUnchecked(K key)</b><br style="box-sizing: border-box;"> 返回一个键在这个高速缓存中，首先装载如果需要该值相关联的值。</td> 
+   </tr> 
+   <tr style="box-sizing: border-box;"> 
+    <td style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px;"> 6</td> 
+    <td style="box-sizing: border-box; border-collapse: collapse;  border-color: rgb(214, 214, 214); padding: 5px;"> <b style="box-sizing: border-box;">void refresh(K key)</b><br style="box-sizing: border-box;"> 加载键key，可能是异步的一个新值。</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h2> LoadingCache 示例</h2> 
+ <p> 使用所选择的编辑器创建下面的java程序&nbsp;<b style="box-sizing: border-box;">C:/&gt; Guava</b></p> 
+ <i style="box-sizing: border-box; color: rgb(49, 49, 49);    font-size: 14.4444446563721px; line-height: 22px;">GuavaTester.java</i> 
+ <pre class="prettyprint tryit prettyprinted" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 495.972229003906px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); cursor: default; background-image: url(http://www.yiibai.com/guava/images/try-it.jpg) !important; background-attachment: initial !important; background-size: initial !important; background-origin: initial !important; background-clip: initial !important; background-position: 100% 0%; background-repeat: no-repeat !important;">
+<span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">import</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> java</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">util</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">HashMap</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">;</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+</span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">import</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> java</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">util</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">Map</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">;</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+</span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">import</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> java</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">util</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">concurrent</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">ExecutionException</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">;</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+</span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">import</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> java</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">util</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">concurrent</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">TimeUnit</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">;</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+
+</span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">import</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> com</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">google</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">common</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">base</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">MoreObjects</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">;</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+</span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">import</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> com</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">google</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">common</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">cache</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">CacheBuilder</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">;</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+</span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">import</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> com</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">google</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">common</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">cache</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">CacheLoader</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">;</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+</span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">import</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> com</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">google</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">common</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">cache</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">LoadingCache</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">;</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+
+</span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">public</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">class</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">GuavaTester</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">{</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+   </span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">public</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">static</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">void</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> main</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span><span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">String</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> args</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[]){</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+      </span><span class="com" style="box-sizing: border-box; color: rgb(136, 0, 0);">//create a cache for employees based on their employee id</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+      </span><span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">LoadingCache</span>
+  <string, employee="" style="box-sizing: border-box;">
+   <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> employeeCache </span>
+   <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">=</span>
+   <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> 
+         </span>
+   <span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">CacheBuilder</span>
+   <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span>
+   <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">newBuilder</span>
+   <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">()</span>
+   <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+            </span>
+   <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span>
+   <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">maximumSize</span>
+   <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span>
+   <span class="lit" style="box-sizing: border-box; color: rgb(0, 102, 102);">100</span>
+   <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">)</span>
+   <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+   <span class="com" style="box-sizing: border-box; color: rgb(136, 0, 0);">// maximum 100 records can be cached</span>
+   <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+            </span>
+   <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span>
+   <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">expireAfterAccess</span>
+   <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span>
+   <span class="lit" style="box-sizing: border-box; color: rgb(0, 102, 102);">30</span>
+   <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">,</span>
+   <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+   <span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">TimeUnit</span>
+   <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span>
+   <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">MINUTES</span>
+   <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">)</span>
+   <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+   <span class="com" style="box-sizing: border-box; color: rgb(136, 0, 0);">// cache will expire after 30 minutes of access</span>
+   <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+            </span>
+   <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span>
+   <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">build</span>
+   <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span>
+   <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">new</span>
+   <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+   <span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">CacheLoader</span>
+   <string, employee="" style="box-sizing: border-box;">
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(){</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+    <span class="com" style="box-sizing: border-box; color: rgb(136, 0, 0);">// build the cacheloader</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+               </span>
+    <span class="lit" style="box-sizing: border-box; color: rgb(0, 102, 102);">@Override</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+               </span>
+    <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">public</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+    <span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">Employee</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> load</span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span>
+    <span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">String</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> empId</span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">)</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+    <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">throws</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+    <span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">Exception</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">{</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+                  </span>
+    <span class="com" style="box-sizing: border-box; color: rgb(136, 0, 0);">//make the expensive call</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+                  </span>
+    <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">return</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> getFromDatabase</span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">empId</span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">);</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+               </span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">}</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">							
+            </span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">});</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+
+      </span>
+    <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">try</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">{</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">			
+         </span>
+    <span class="com" style="box-sizing: border-box; color: rgb(136, 0, 0);">//on first invocation, cache will be populated with corresponding</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+         </span>
+    <span class="com" style="box-sizing: border-box; color: rgb(136, 0, 0);">//employee record</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+         </span>
+    <span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">System</span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span>
+    <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">out</span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">println</span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span>
+    <span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"Invocation #1"</span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">);</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+         </span>
+    <span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">System</span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span>
+    <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">out</span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">println</span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">employeeCache</span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span>
+    <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">get</span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span>
+    <span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"100"</span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">));</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+         </span>
+    <span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">System</span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span>
+    <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">out</span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">println</span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">employeeCache</span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span>
+    <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">get</span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span>
+    <span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"103"</span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">));</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+         </span>
+    <span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">System</span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span>
+    <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">out</span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">println</span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">employeeCache</span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span>
+    <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">get</span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span>
+    <span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"110"</span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">));</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+         </span>
+    <span class="com" style="box-sizing: border-box; color: rgb(136, 0, 0);">//second invocation, data will be returned from cache</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+         </span>
+    <span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">System</span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span>
+    <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">out</span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">println</span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span>
+    <span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"Invocation #2"</span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">);</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+         </span>
+    <span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">System</span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span>
+    <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">out</span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">println</span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">employeeCache</span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span>
+    <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">get</span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span>
+    <span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"100"</span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">));</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+         </span>
+    <span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">System</span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span>
+    <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">out</span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">println</span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">employeeCache</span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span>
+    <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">get</span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span>
+    <span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"103"</span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">));</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+         </span>
+    <span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">System</span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span>
+    <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">out</span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">println</span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">employeeCache</span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span>
+    <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">get</span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span>
+    <span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"110"</span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">));</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+
+      </span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">}</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+    <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">catch</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span>
+    <span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">ExecutionException</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> e</span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">)</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">{</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+         e</span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">printStackTrace</span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">();</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+      </span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">}</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+   </span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">}</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+
+   </span>
+    <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">private</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+    <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">static</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+    <span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">Employee</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> getFromDatabase</span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span>
+    <span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">String</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> empId</span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">){</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+      </span>
+    <span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">Employee</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> e1 </span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">=</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+    <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">new</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+    <span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">Employee</span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span>
+    <span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"Mahesh"</span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">,</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+    <span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"Finance"</span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">,</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+    <span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"100"</span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">);</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+      </span>
+    <span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">Employee</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> e2 </span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">=</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+    <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">new</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+    <span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">Employee</span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span>
+    <span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"Rohan"</span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">,</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+    <span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"IT"</span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">,</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+    <span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"103"</span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">);</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+      </span>
+    <span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">Employee</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> e3 </span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">=</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+    <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">new</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+    <span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">Employee</span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span>
+    <span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"Sohan"</span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">,</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+    <span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"Admin"</span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">,</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+    <span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"110"</span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">);</span>
+    <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+
+      </span>
+    <span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">Map</span>
+    <string, employee="" style="box-sizing: border-box;">
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> database </span>
+     <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">=</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+     <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">new</span>
+     <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+     <span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">HashMap</span>
+     <string, employee="" style="box-sizing: border-box;">
+      <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">();</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+      database</span>
+      <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">put</span>
+      <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span>
+      <span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"100"</span>
+      <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">,</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> e1</span>
+      <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">);</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+      database</span>
+      <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">put</span>
+      <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span>
+      <span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"103"</span>
+      <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">,</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> e2</span>
+      <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">);</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+      database</span>
+      <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">put</span>
+      <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span>
+      <span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"110"</span>
+      <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">,</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> e3</span>
+      <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">);</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+      </span>
+      <span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">System</span>
+      <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span>
+      <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">out</span>
+      <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">println</span>
+      <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span>
+      <span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"Database hit for"</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+      <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">+</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> empId</span>
+      <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">);</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+      </span>
+      <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">return</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> database</span>
+      <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span>
+      <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">get</span>
+      <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">empId</span>
+      <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">);</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">		
+   </span>
+      <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">}</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+</span>
+      <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">}</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+
+</span>
+      <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">class</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+      <span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">Employee</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+      <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">{</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+   </span>
+      <span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">String</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> name</span>
+      <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">;</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+   </span>
+      <span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">String</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> dept</span>
+      <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">;</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+   </span>
+      <span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">String</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> emplD</span>
+      <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">;</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+
+   </span>
+      <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">public</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+      <span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">Employee</span>
+      <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span>
+      <span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">String</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> name</span>
+      <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">,</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+      <span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">String</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> dept</span>
+      <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">,</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+      <span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">String</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> empID</span>
+      <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">){</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+      </span>
+      <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">this</span>
+      <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">name </span>
+      <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">=</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> name</span>
+      <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">;</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+      </span>
+      <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">this</span>
+      <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">dept </span>
+      <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">=</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> dept</span>
+      <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">;</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+      </span>
+      <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">this</span>
+      <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">emplD </span>
+      <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">=</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> empID</span>
+      <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">;</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+   </span>
+      <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">}</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+   </span>
+      <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">public</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+      <span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">String</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> getName</span>
+      <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">()</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+      <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">{</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+      </span>
+      <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">return</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> name</span>
+      <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">;</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+   </span>
+      <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">}</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+   </span>
+      <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">public</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+      <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">void</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> setName</span>
+      <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span>
+      <span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">String</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> name</span>
+      <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">)</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+      <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">{</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+      </span>
+      <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">this</span>
+      <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">name </span>
+      <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">=</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> name</span>
+      <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">;</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+   </span>
+      <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">}</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+   </span>
+      <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">public</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+      <span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">String</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> getDept</span>
+      <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">()</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+      <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">{</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+      </span>
+      <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">return</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> dept</span>
+      <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">;</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+   </span>
+      <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">}</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+   </span>
+      <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">public</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+      <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">void</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> setDept</span>
+      <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span>
+      <span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">String</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> dept</span>
+      <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">)</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+      <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">{</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+      </span>
+      <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">this</span>
+      <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">dept </span>
+      <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">=</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> dept</span>
+      <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">;</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+   </span>
+      <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">}</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+   </span>
+      <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">public</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+      <span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">String</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> getEmplD</span>
+      <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">()</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+      <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">{</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+      </span>
+      <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">return</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> emplD</span>
+      <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">;</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+   </span>
+      <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">}</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+   </span>
+      <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">public</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+      <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">void</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> setEmplD</span>
+      <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span>
+      <span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">String</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> emplD</span>
+      <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">)</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+      <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">{</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+      </span>
+      <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">this</span>
+      <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">emplD </span>
+      <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">=</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> emplD</span>
+      <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">;</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+   </span>
+      <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">}</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+
+   </span>
+      <span class="lit" style="box-sizing: border-box; color: rgb(0, 102, 102);">@Override</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+   </span>
+      <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">public</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+      <span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">String</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> toString</span>
+      <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">()</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+      <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">{</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+      </span>
+      <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">return</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span>
+      <span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">MoreObjects</span>
+      <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">toStringHelper</span>
+      <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span>
+      <span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">Employee</span>
+      <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span>
+      <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">class</span>
+      <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">)</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+      </span>
+      <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">add</span>
+      <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span>
+      <span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"Name"</span>
+      <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">,</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> name</span>
+      <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">)</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+      </span>
+      <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">add</span>
+      <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span>
+      <span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"Department"</span>
+      <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">,</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> dept</span>
+      <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">)</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+      </span>
+      <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">add</span>
+      <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span>
+      <span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"Emp Id"</span>
+      <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">,</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> emplD</span>
+      <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">).</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">toString</span>
+      <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">();</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+   </span>
+      <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">}</span>
+      <span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">	
+</span>
+      <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">}</span>
+     </string,>
+    </string,>
+   </string,>
+  </string,></pre> 
+ <h2> 验证结果</h2> 
+ <p> 使用javac编译器如下编译类</p>   
+ <pre class="result" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 495.972229003906px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+C:\Guava&gt;javac GuavaTester.java</pre> 
+ <p> 现在运行GuavaTester看到的结果</p> 
+ <pre class="result" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 495.972229003906px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+C:\Guava&gt;java GuavaTester</pre> 
+ <p> 看看结果：</p> 
+ <pre class="result" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 495.972229003906px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+Invocation #1
+Database hit for100
+Employee{Name=Mahesh, Department=Finance, Emp Id=100}
+Database hit for103
+Employee{Name=Rohan, Department=IT, Emp Id=103}
+Database hit for110
+Employee{Name=Sohan, Department=Admin, Emp Id=110}
+Invocation #2
+Employee{Name=Mahesh, Department=Finance, Emp Id=100}
+Employee{Name=Rohan, Department=IT, Emp Id=103}
+Employee{Name=Sohan, Department=Admin, Emp Id=110}</pre> 
+ <br>      
+</div></body></html>

@@ -1,0 +1,163 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Sed字符串</h1><div style="width:100%;float:left;" class="article-content">   
+ <p> 本教程将介绍一些字符串处理的重要sed命令。考虑我们有一个文本文件books.txt 要处理，它有以下内容：</p> 
+ <pre class="result notranslate" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+1) A Storm of Swords, George R. R. Martin, 1216 
+2) The Two Towers, J. R. R. Tolkien, 352 
+3) The Alchemist, Paulo Coelho, 197 
+4) The Fellowship of the Ring, J. R. R. Tolkien, 432 
+5) The Pilgrimage, Paulo Coelho, 288 
+6) A Game of Thrones, George R. R. Martin, 864</pre> 
+ <h2> 替换命令</h2> 
+ <p> “查找和替换”文本替换操作字符串最常见。下面给出的是替换命令的语法：</p> 
+ <pre class="prettyprint notranslate" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+[address1[,address2]]s/pattern/replacement/[flags]</pre> 
+ <p> 这里，address1 和 address2分别是起始和结束地址，它可以是行号或模式串。这两个地址是可选参数。</p> 
+ <p> 该模式是要替换的替换字符串的字符串。此外，也可以指定可选的标志，以增强功能。</p> 
+ <p> 以下是 sed 命令替换所有books.txt 用逗号与竖线(|)。</p> 
+ <pre class="prettyprint notranslate" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+[jerry]$ sed 's/,/ | /' books.txt</pre> 
+ <p> 执行上面的代码，得到如下结果：</p> 
+ <pre class="result notranslate" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+1) A Storm of Swords |  George R. R. Martin, 1216
+2) The Two Towers |  J. R. R. Tolkien, 352
+3) The Alchemist |  Paulo Coelho, 197
+4) The Fellowship of the Ring |  J. R. R. Tolkien, 432
+5) The Pilgrimage |  Paulo Coelho, 288
+6) A Game of Thrones |  George R. R. Martin, 864</pre> 
+ <p> 如果仔细观察，只有第一个逗号替换，第二保持原样。为什么呢？只要模式匹配，Sed 替换为替换字符串并且移动到下一行。默认情况下，它仅替换第一次出现。要替换所有出现的，使用Sed全局标志(g)如下：</p> 
+ <pre class="prettyprint notranslate" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+[jerry]$ sed 's/,/ | /g' books.txt</pre> 
+ <p> 执行上面的代码，得到如下结果：</p> 
+ <pre class="result notranslate" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+1) A Storm of Swords |  George R. R. Martin |  1216
+2) The Two Towers |  J. R. R. Tolkien |  352
+3) The Alchemist |  Paulo Coelho |  197
+4) The Fellowship of the Ring |  J. R. R. Tolkien |  432
+5) The Pilgrimage |  Paulo Coelho |  288
+6) A Game of Thrones |  George R. R. Martin |  864</pre> 
+ <p> 可以指示Sed执行文本替换，只有当一个模式匹配成功。下面的示例替换逗号(，)用竖线(|)仅当行包含模式。</p> 
+ <pre class="prettyprint notranslate" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+[jerry]$ sed '/The Pilgrimage/ s/,/ | /g' books.txt </pre> 
+ <p> 执行上面的代码，得到如下结果：</p> 
+ <pre class="result notranslate" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+1) A Storm of Swords, George R. R. Martin, 1216 
+2) The Two Towers, J. R. R. Tolkien, 352 
+3) The Alchemist, Paulo Coelho, 197 
+4) The Fellowship of the Ring, J. R. R. Tolkien, 432 
+5) The Pilgrimage | Paulo Coelho | 288 
+6) A Game of Thrones, George R. R. Martin, 864</pre> 
+ <p> Sed 也可以取代的模式发生的特定事件。替换逗号(，)以竖线的唯一的第二个实例(|)。下面是在sed命令(或标志的地方)，当前匹配的第二个出现的有多少。</p> 
+ <pre class="prettyprint notranslate" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+[jerry]$ sed 's/,/ | /2' books.txt</pre> 
+ <p> 执行上面的代码，得到如下结果：</p> 
+ <pre class="result notranslate" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+1) A Storm of Swords, George R. R. Martin | 1216 
+2) The Two Towers, J. R. R. Tolkien | 352 
+3) The Alchemist, Paulo Coelho | 197 
+4) The Fellowship of the Ring, J. R. R. Tolkien | 432 
+5) The Pilgrimage,Paulo Coelho | 288 
+6) A Game of Thrones, George R. R. Martin  | 864</pre> 
+ <p> 可以使用P标志，如下打印不仅改变的行：</p> 
+ <pre class="prettyprint notranslate" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+[jerry]$ sed -n 's/Paulo Coelho/PAULO COELHO/p' books.txt</pre> 
+ <p> 执行上面的代码，得到如下结果：</p> 
+ <pre class="result notranslate" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+3) The Alchemist, PAULO COELHO, 197 
+5) The Pilgrimage, PAULO COELHO, 288 </pre> 
+ <p> 可以在另一个文件中保存更改的行。为了实现这种结果，可以使用 w 标志如下所示：</p> 
+ <pre class="prettyprint notranslate" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+[jerry]$ sed -n 's/Paulo Coelho/PAULO COELHO/w junk.txt' books.txt</pre> 
+ <p> 现在 junk.txt 文件已全部更改的文件。让我们验证 junk.txt 文件的内容。</p> 
+ <pre class="prettyprint notranslate" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+[jerry]$ cat junk.txt</pre> 
+ <p> 执行上面的代码，得到如下结果：</p> 
+ <pre class="result notranslate" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+3) The Alchemist, PAULO COELHO, 197 
+5) The Pilgrimage, PAULO COELHO, 288</pre> 
+ <p> 执行不区分大小写的替换，可以使用i标志，这意味着忽略大小写。下面的例子执行不区分大小写的替换。</p> 
+ <pre class="prettyprint notranslate" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+[jerry]$ sed  -n 's/pAuLo CoElHo/PAULO COELHO/pi' books.txt</pre> 
+ <p> 执行上面的代码，得到如下结果：</p> 
+ <pre class="result notranslate" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+3) The Alchemist, PAULO COELHO, 197 
+5) The Pilgrimage, PAULO COELHO, 288</pre> 
+ <h2> 非标分隔符</h2> 
+ <p> 通常，反斜杠（/）作为分隔符，但有时是用其它支持定界符以用 sed 更方便。</p> 
+ <p> 到目前为止，我们已经使用了只有反斜杠（/）字符作为分隔符，但我们也可以使用竖线（|），at符号（@），插入符号（^），感叹号作为分隔符（！）。下面的示例演示了如何使用其他字符作为分隔符。</p> 
+ <p> 下面的例子使用竖线（|）作为分隔符：</p> 
+ <pre class="prettyprint notranslate" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+[jerry]$ echo "/bin/sed" | sed 's|/bin/sed|/home/jerry/src/sed/sed-4.2.2/sed|'</pre> 
+ <p style="box-sizing: border-box; color: rgb(0, 0, 0); line-height: 24px; margin: 0em 0.2em 1em; padding: 0px; text-align: justify; font-family: 'Open Sans', Arial, sans-serif; font-size: 14px;"> 执行上面的代码，得到如下结果：</p> 
+ <pre class="result notranslate" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+/home/jerry/src/sed/sed-4.2.2/sed</pre> 
+ <p> 同样，我们可以用“at”符号（@）使用作为分隔符，如下所示：</p> 
+ <pre class="prettyprint notranslate" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+[jerry]$ echo "/bin/sed" | sed 's@/bin/sed@/home/jerry/src/sed/sed-4.2.2/sed@'</pre> 
+ <p style="box-sizing: border-box; color: rgb(0, 0, 0); line-height: 24px; margin: 0em 0.2em 1em; padding: 0px; text-align: justify; font-family: 'Open Sans', Arial, sans-serif; font-size: 14px;"> 执行上面的代码，得到如下结果：</p> 
+ <pre class="result notranslate" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+/home/jerry/src/sed/sed-4.2.2/sed </pre> 
+ <p> 同样，我们可以使用插入符号（^）作为分隔符，如下所示：</p> 
+ <pre class="prettyprint notranslate" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+[jerry]$ echo "/bin/sed" | sed 's^/bin/sed^/home/jerry/src/sed/sed-4.2.2/sed^'</pre> 
+ <p> 执行上面的代码，得到如下结果：</p>   
+ <pre class="result notranslate" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+/home/jerry/src/sed/sed-4.2.2/sed </pre> 
+ <p> 同样，我们可以使用感叹号作为分隔符如下（！）：</p> 
+ <pre class="prettyprint notranslate" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+[jerry]$ echo "/bin/sed" | sed 's!/bin/sed!/home/jerry/src/sed/sed-4.2.2/sed!'</pre> 
+ <p> 执行上面的代码，得到如下结果：</p> 
+ <pre class="result notranslate" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+/home/jerry/src/sed/sed-4.2.2/sed </pre> 
+ <h2> 创建一个子串</h2> 
+ <p> 我们学到了强大的替换命令。看看是否可以找到一个匹配的文本字符串。了解如何用一个例子来说明。</p> 
+ <p> 看看下面的文字：</p> 
+ <pre class="prettyprint notranslate" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+[jerry]$ echo "Three One Two"</pre> 
+ <p> 假设我们要安排成一个序列。意味着，它应该打印一份，再两个，最后三个。下面的单行代码执行。</p> 
+ <pre class="prettyprint notranslate" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+[jerry]$ echo "Three One Two" | sed 's|\(\w\+\) \(\w\+\) \(\w\+\)|\2 \3 \1|'</pre> 
+ <p> sed 子串可以通过使用分组操作员指定，并且它必须以转义字符作为前缀，即\（和\）。</p> 
+ <p> 在这里，\ w是一个正则表达式匹配任何字母或下划线和“+”号来匹配多个字符。换句话说，正则表达式 \(\w\+\)从输入串中的单个字相匹配。</p> 
+ <p> 这个子串由\N，N是子串号转介。因此，\2打印第二子串，即一个; \3打印第三子串，即两种;和\1打印第一子，即Three</p> 
+ <p> 让我们分开这些话通过逗号（，）并相应修改则表达式。</p> 
+ <pre class="prettyprint notranslate" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+[jerry]$ echo "Three,One,Two" | sed 's|\(\w\+\),\(\w\+\),\(\w\+\)|\2,\3,\1|'</pre> 
+ <p style="box-sizing: border-box; color: rgb(0, 0, 0); line-height: 24px; margin: 0em 0.2em 1em; padding: 0px; text-align: justify; font-family: 'Open Sans', Arial, sans-serif; font-size: 14px;"> 执行上面的代码，得到如下结果：</p> 
+ <pre class="result notranslate" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+One,Two,Three</pre> 
+ <h2> 字符串替换标志</h2> 
+ <p> GNU Sed 提供可在替换字符串中使用一些特殊的转义序列。请注意，这些字符串替换标志是GNU具体指定，可能无法与Sed其他变种进行工作。在这里，我们将讨论的字符串替换标志。</p> 
+ <h3> &nbsp;\L 标识</h3> 
+ <p> 当在替换字符串中指定\L，它把该单词的所有剩余的字符，\L以小写字符。例如，字符“ULO”被视为小写字符。</p> 
+ <pre class="prettyprint notranslate" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+[jerry]$ sed -n 's/Paulo/PA\LULO/p' books.txt</pre> 
+ <p> 执行上面的代码，得到如下结果：</p> 
+ <pre class="result notranslate" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+3) The Alchemist, PAulo Coelho, 197
+5) The Pilgrimage, PAulo Coelho, 288</pre> 
+ <h3> \u 标识</h3> 
+ <p> \u被替换字符串指定，它把后\u，如大写字符前的字符。在下面的例子中，\u字符为'a'和'o'之前使用。因此，Sed将这些字符转为大写字母。</p> 
+ <pre class="prettyprint notranslate" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+[jerry]$ sed -n 's/Paulo/p\uaul\uo/p' books.txt</pre> 
+ <p style="box-sizing: border-box; color: rgb(0, 0, 0); line-height: 24px; margin: 0em 0.2em 1em; padding: 0px; text-align: justify; font-family: 'Open Sans', Arial, sans-serif; font-size: 14px;"> 执行上面的代码，得到如下结果：</p> 
+ <pre class="result notranslate" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+3) The Alchemist, pAulO Coelho, 197 
+5) The Pilgrimage, pAulO Coelho, 288</pre> 
+ <h3> \U 标识</h3> 
+ <p> 当\U在替换字符串中指定，把单词的所有剩余的字符\U后为大写字母。</p> 
+ <pre class="prettyprint notranslate" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+[jerry]$ sed -n 's/Paulo/\Upaulo/p' books.txt </pre> 
+ <p> 执行上面的代码，得到如下结果：</p> 
+ <pre class="result notranslate" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+3) The Alchemist, PAULO Coelho, 197 
+5) The Pilgrimage, PAULO Coelho, 288</pre> 
+ <h3> &nbsp;\E 标识</h3> 
+ <p> \E标志应使用\L或\U。它标志\L或\U开始停止转换。在下面的例子中，只有第一个字被替换为大写字母。</p> 
+ <pre class="prettyprint notranslate" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+[jerry]$ sed -n 's/Paulo Coelho/\Upaulo \Ecoelho/p' books.txt</pre> 
+ <p> 执行上面的代码，得到如下结果：</p> 
+ <pre class="result notranslate" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+3) The Alchemist, PAULO coelho, 197 
+5) The Pilgrimage, PAULO coelho, 288</pre> 
+ <br>      
+</div></body></html>

@@ -1,0 +1,229 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Struts2 &lt;sx:autocompleter&gt;自动提示例子</h1><div style="width:100%;float:left;" class="article-content">   
+ <p> 在Struts2，&lt;sx:autocompleter&gt;标记是一个组合框，当在用户输入文本框会自动提示下拉的提示菜单。 </p> 
+ <p> <span style="font-family:Arial, 'Hiragino Sans GB', 'Microsoft YaHei', 微软雅黑, STHeiti, 'WenQuanYi Micro Hei', SimSun, sans-serif, sans-serif;line-height:22px;color:#535B60;background-color:#FFFFFF;">这里创建一个Web工程：strut2<span style="font-family:Arial, 'Hiragino Sans GB', 'Microsoft YaHei', 微软雅黑, STHeiti, 'WenQuanYi Micro Hei', SimSun, sans-serif, sans-serif;color:#333333;">autocompleter</span>，来演示</span><span style="font-family:Arial, 'Hiragino Sans GB', 'Microsoft YaHei', 微软雅黑, STHeiti, 'WenQuanYi Micro Hei', SimSun, sans-serif, sans-serif;line-height:22px;color:#535B60;background-color:#FFFFFF;">在多个复选框</span><span style="font-family:Arial, 'Hiragino Sans GB', 'Microsoft YaHei', 微软雅黑, STHeiti, 'WenQuanYi Micro Hei', SimSun, sans-serif, sans-serif;line-height:22px;color:#535B60;background-color:#FFFFFF;">如何设置的默认值，整个项目的结构如下图所示：</span> </p> 
+ <p> <img src="/uploads/tutorial/20151115/1-1511151ZSKa.png" alt=""> </p> 
+ <div class="note" style="border:1px solid #D1D1E8;padding:20px;margin:20px 0px;color:#333333;font-family:'Helvetica Neue', Helvetica,  background-color:#E6E6FC;">
+   这个功能是通过Dojo库实现的，所以，一定要包含“struts2-dojo-plugin.jar”这个依赖库，把“struts-dojo-tags”标签上的页面，并通过 &lt;sx:head /&gt;输出其标题信息前。 
+ </div> 
+ <p> 例如， </p> 
+ <pre>&lt;%@ taglib prefix="sx" uri="/struts-dojo-tags" %&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;sx:head /&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;sx:autocompleter label="What's your lucky number?" 
+name="yourLuckyNumber" autoComplete="false"
+list="{'1','12','13','14'}" /&gt;</pre> 
+ <p> 产生下面的HTML </p> 
+ <pre>&lt;html&gt; 
+&lt;head&gt; 
+&lt;script language="JavaScript" type="text/javascript"&gt; 
+    // Dojo configuration
+    djConfig = {
+        isDebug: false,
+        bindEncoding: "UTF-8"
+          ,baseRelativePath: "/Struts2Example/struts/dojo/"
+          ,baseScriptUri: "/Struts2Example/struts/dojo/"
+         ,parseWidgets : false
+        
+    };
+&lt;/script&gt; 
+&lt;script language="JavaScript" type="text/javascript"
+        src="/Struts2Example/struts/dojo/struts_dojo.js"&gt;&lt;/script&gt; 
+		
+&lt;script language="JavaScript" type="text/javascript"
+        src="/Struts2Example/struts/ajax/dojoRequire.js"&gt;&lt;/script&gt; 
+		
+&lt;link rel="stylesheet" href="/Struts2Example/struts/xhtml/styles.css" 
+type="text/css"/&gt; 
+
+&lt;script language="JavaScript" src="/Struts2Example/struts/utils.js" 
+type="text/javascript"&gt;&lt;/script&gt; 
+
+&lt;script language="JavaScript" src="/Struts2Example/struts/xhtml/validation.js" 
+type="text/javascript"&gt;&lt;/script&gt; 
+
+&lt;script language="JavaScript" src="/Struts2Example/struts/css_xhtml/validation.js" 
+type="text/javascript"&gt;&lt;/script&gt; 
+&lt;/head&gt; 
+...
+&lt;tr&gt;
+&lt;td class="tdLabel"&gt;
+&lt;label for="resultAction_yourLuckyNumber" class="label"&gt;
+What's your lucky number?:&lt;/label&gt;&lt;/td&gt;
+&lt;td&gt;  
+&lt;select dojoType="struts:ComboBox" id="resultAction_yourLuckyNumber" 
+autoComplete="false" name="yourLuckyNumber" 
+keyName="yourLuckyNumberKey" visibleDownArrow="true" &gt;
+    &lt;option value="1"&gt;1&lt;/option&gt;
+    &lt;option value="12"&gt;12&lt;/option&gt;
+    &lt;option value="13"&gt;13&lt;/option&gt;
+    &lt;option value="14"&gt;14&lt;/option&gt;
+&lt;/select&gt;
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;script language="JavaScript" type="text/javascript"&gt;
+djConfig.searchIds.push("resultAction_yourLuckyNumber");&lt;/script&gt;</pre> 
+ <h2> Struts2 &lt;s:autocompleter&gt; 示例 </h2> 
+ <p> 在一个&lt;s:autocompleter&gt;标签的完整的例子，产生下拉的提示菜单，同时在相应的文本框的用户输入。 </p> 
+ <h2> 2. 动作类 </h2> 
+ <p> Action类生成的Web框架的选项列表的“autocompleter”组成部分。 </p> 
+ <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  background-color:#FFFFFF;"> <strong>AutoCompleterAction.java</strong> </p> 
+ <pre>package com.yiibai.common.action;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import com.opensymphony.xwork2.ActionSupport;
+
+public class AutoCompleterAction extends ActionSupport{
+
+	private List&lt;String&gt; webframeworks = new ArrayList&lt;String&gt;();
+	
+	private String yourFavWebFramework;
+	private String yourLuckyNumber;
+	
+	public AutoCompleterAction(){
+		webframeworks.add("Spring MVC");
+		webframeworks.add("Struts 1.x");
+		webframeworks.add("Struts 2.x");
+		webframeworks.add("JavaServer Faces (JSF)");
+		webframeworks.add("Google Web Toolkit (GWT)");
+		webframeworks.add("Apache Wicket");
+		webframeworks.add("Apache Click");
+		webframeworks.add("Apache Cocoon");
+		webframeworks.add("JBoss Seam");
+		webframeworks.add("Stripes");
+		webframeworks.add("Apache Tapestry");
+		webframeworks.add("Others");
+	}
+	
+	public String getYourLuckyNumber() {
+		return yourLuckyNumber;
+	}
+
+	public void setYourLuckyNumber(String yourLuckyNumber) {
+		this.yourLuckyNumber = yourLuckyNumber;
+	}
+
+	public String getYourFavWebFramework() {
+		return yourFavWebFramework;
+	}
+
+	public void setYourFavWebFramework(String yourFavWebFramework) {
+		this.yourFavWebFramework = yourFavWebFramework;
+	}
+
+	public List&lt;String&gt; getWebframeworks() {
+		return webframeworks;
+	}
+
+	public void setWebframeworks(List&lt;String&gt; webframeworks) {
+		this.webframeworks = webframeworks;
+	}
+
+	public String display() {
+		return NONE;
+	}
+	
+}</pre> 
+ <h2> 3. 结果页面 </h2> 
+ <p> 通过“&lt;s:autocompleter&gt;”渲染“autocompleter”组件标签，并产生通过Java列表和OGNL自动下拉提示菜单。 </p> 
+ <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  background-color:#FFFFFF;"> <strong>autocompleter.jsp</strong> </p> 
+ <pre>&lt;%@ taglib prefix="s" uri="/struts-tags" %&gt;
+&lt;%@ taglib prefix="sx" uri="/struts-dojo-tags" %&gt;
+
+&lt;html&gt;
+&lt;head&gt;
+&lt;sx:head /&gt;
+&lt;/head&gt;
+
+&lt;body&gt;
+&lt;h1&gt;Struts 2 autocompleter example&lt;/h1&gt;
+
+&lt;s:form action="resultAction" namespace="/" method="POST" &gt;
+
+&lt;sx:autocompleter label="What's your lucky number?" 
+name="yourLuckyNumber" autoComplete="false"
+list="{'1','12','13','14','21','22','23','24',
+'31','32','33','34','41','42','43','44'}" /&gt;
+
+&lt;sx:autocompleter label="What's your favorite web framework?" 
+list="webframeworks" name="yourFavWebFramework" /&gt;
+
+&lt;s:submit value="submit" name="submit" /&gt;
+	
+&lt;/s:form&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;</pre> 
+ <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  background-color:#FFFFFF;"> <strong>result.jsp</strong> </p>   
+ <pre>&lt;%@ taglib prefix="s" uri="/struts-tags" %&gt;
+&lt;html&gt;
+
+&lt;body&gt;
+&lt;h1&gt;Struts 2 autocompleter example&lt;/h1&gt;
+
+&lt;h2&gt;
+   Lucky Number : &lt;s:property value="yourLuckyNumber"/&gt; 
+&lt;/h2&gt; 
+
+&lt;h2&gt;
+   Web Appication Frameworks : &lt;s:property value="yourFavWebFramework"/&gt; 
+&lt;/h2&gt; 
+
+&lt;/body&gt;
+&lt;/html&gt;</pre> 
+ <h2 style="font-family:'Helvetica Neue', Helvetica,  font-weight:500;color:#333333;font-size:24px;background-color:#FFFFFF;"> 3. struts.xml </h2> 
+ <pre>&lt;?xml version="1.0" encoding="UTF-8" ?&gt;
+&lt;!DOCTYPE struts PUBLIC
+"-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+"http://struts.apache.org/dtds/struts-2.0.dtd"&gt;
+ 
+&lt;struts&gt;
+
+ &lt;constant name="struts.devMode" value="true" /&gt;
+	
+&lt;package name="default" namespace="/" extends="struts-default"&gt;
+		
+  &lt;action name="autoCompleterAction" 
+	class="com.yiibai.common.action.AutoCompleterAction" 
+        method="display"&gt;
+	&lt;result name="none"&gt;/pages/autocompleter.jsp&lt;/result&gt;
+  &lt;/action&gt;
+		
+  &lt;action name="resultAction" 
+        class="com.yiibai.common.action.AutoCompleterAction" &gt;
+	&lt;result name="success"&gt;/pages/result.jsp&lt;/result&gt;
+  &lt;/action&gt;
+&lt;/package&gt;
+	
+&lt;/struts&gt;</pre> 
+ <p> <span style="color:#E56600;font-family:Arial, 'Hiragino Sans GB', 'Microsoft YaHei', 微软雅黑, STHeiti, 'WenQuanYi Micro Hei', SimSun, sans-serif, sans-serif;line-height:22px;background-color:#FFFFFF;">注意：如果静态文件未找到，或是不能打日期选择，请下载代码并参考其中的web.xml配置。</span> </p> 
+ <p> <span style="color:#E56600;font-family:Arial, 'Hiragino Sans GB', 'Microsoft YaHei', 微软雅黑, STHeiti, 'WenQuanYi Micro Hei', SimSun, sans-serif, sans-serif;line-height:22px;background-color:#FFFFFF;"> </span> </p> 
+ <pre class="prettyprint lang-xml">  &lt;filter-mapping&gt;    
+       &lt;filter-name&gt;struts2&lt;/filter-name&gt;    
+       &lt;url-pattern&gt;/struts/*&lt;/url-pattern&gt;    
+   &lt;/filter-mapping&gt; </pre> 
+ <p> <br> </p> 
+ <h2 style="font-family:'Helvetica Neue', Helvetica,  font-weight:500;color:#333333;font-size:24px;background-color:#FFFFFF;"> 4. 示例 </h2> 
+ <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  background-color:#FFFFFF;"> <em>http://localhost:8080/Struts2Example/autoCompleterAction.action</em> </p> 
+ <div class="pic" style="border:1px solid #DDDDDD;margin:20px 0px;padding:20px;text-align:center;color:#333333;font-family:'Helvetica Neue', Helvetica,  background-color:#F9F9F9;"> 
+  <img src="/uploads/tutorial/20151115/1-1511151ZZA33.png" alt=""> 
+ </div> 
+ <div class="pic" style="border:1px solid #DDDDDD;margin:20px 0px;padding:20px;text-align:center;color:#333333;font-family:'Helvetica Neue', Helvetica,  background-color:#F9F9F9;"> 
+  <img src="/uploads/tutorial/20151115/1-1511151Z924443.png" alt=""> 
+ </div> 
+ <div class="note" style="border:1px solid #D1D1E8;padding:20px;margin:20px 0px;color:#333333;font-family:'Helvetica Neue', Helvetica,  background-color:#E6E6FC;">
+   下面是另一个例子，说明使用JSON数据，提供选择选项列表中的autocompleter组件 –&nbsp;
+  <a target="_blank" href="http://www.yiibai.com/struts_2/struts-2-autocompleter-json-example.html">Struts2 autocompleter + JSON 示例</a> 
+ </div> 
+ <h2 style="font-family:'Helvetica Neue', Helvetica,  font-weight:500;color:#333333;font-size:24px;background-color:#FFFFFF;"> 参考 </h2> 
+ <ol style="color:#333333;font-family:'Helvetica Neue', Helvetica,  background-color:#FFFFFF;"> 
+  <li> <a target="_blank" href="http://struts.apache.org/2.1.8/docs/autocompleter.html">Struts 2 autocompleter文档</a> </li> 
+  <li> <a target="_blank" href="http://struts.apache.org/2.0.14/docs/ajax-and-javascript-recipes.html">Struts 2 ajax and javascript recipes</a> </li> 
+  <li> <a target="_blank" href="http://www.yiibai.com/struts_2/struts-2-scombobox-combo-box-example.html">Struts2 combobox示例</a> </li> 
+ </ol>
+ <br>      
+</div></body></html>

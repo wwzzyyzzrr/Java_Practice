@@ -1,0 +1,103 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Spring由类型(Type)自动装配</h1><div style="width:100%;float:left;" class="article-content">   
+ <div> 
+  <div>
+    在Spring中，“类型自动装配”的意思是如果一个bean的数据类型与其它bean属性的数据类型相同，将自动兼容装配它。 
+  </div> 
+ </div> 
+ <div> 
+  <div>
+    例如，一个“persion”&nbsp;bean&nbsp;公开以“ability”类数据类型作为属性，Spring会找到ability类相同的数据类型，并自动装配它的Bean。如果没有匹配找到，它什么也不做。 
+  </div> 
+  <div>
+    可以通过自动装配&nbsp;autowire="byType"象下面这样： 
+  </div> 
+  <pre>&lt;!-- person has a property type of class "ability" --&gt;
+	&lt;bean id="person" class="com.yiibai.common.Person" autowire="byType" /&gt;
+		
+	&lt;bean id="invisible" class="com.yiibai.common.Ability" &gt;
+		&lt;property name="skill" value="Invisible" /&gt;
+	&lt;/bean&gt;</pre> 
+  <div>
+    看下面由Spring按类型自动装配的完整例子。 
+  </div> 
+  <h2> 1. Beans </h2> 
+  <div>
+    两个Bean，person&nbsp;和&nbsp;ability. 
+  </div> 
+  <pre>package com.yiibai.common;
+ 
+public class Person 
+{
+	private Ability ability;
+	//...
+}</pre> 
+  <pre>package com.yiibai.common;
+ 
+public class Ability 
+{
+	private String skill;
+	//...
+}</pre> 
+  <h2> 2. Spring Wiring </h2> 
+  <div>
+    通常情况下，明确地装配 bean： 
+  </div> 
+  <pre>&lt;bean id="person" class="com.yiibai.common.Person"&gt;
+		&lt;property name="ability" ref="invisible" /&gt;
+	&lt;/bean&gt;
+	
+	&lt;bean id="invisible" class="com.yiibai.common.Ability" &gt;
+		&lt;property name="skill" value="Invisible" /&gt;
+	&lt;/bean&gt;</pre> 
+  <p> 输出 </p> 
+  <pre>Person [ability=Ability [skill=Invisible]]</pre> 
+  <div>
+    随着自动装配按类型启用后，可以保留ability属性未设置。Spring会发现相同的数据类型并自动装配它。 
+  </div> 
+  <pre>&lt;bean id="person" class="com.yiibai.common.Person" autowire="byType" /&gt;
+	
+	&lt;bean id="invisible" class="com.yiibai.common.Ability" &gt;
+		&lt;property name="skill" value="Invisible" /&gt;
+	&lt;/bean&gt;</pre> 
+  <p> 输出 </p> 
+  <pre>Person [ability=Ability [skill=Invisible]]</pre> 
+  <div>
+    如果你有两个Bean，都是类“ability”相同的数据类型？ 
+  </div>   
+  <pre>&lt;bean id="person" class="com.yiibai.common.Person" autowire="byType" /&gt;
+	
+	&lt;bean id="steal" class="com.yiibai.common.Ability" &gt;
+		&lt;property name="skill" value="Steal" /&gt;
+	&lt;/bean&gt;
+	
+	&lt;bean id="invisible" class="com.yiibai.common.Ability" &gt;
+		&lt;property name="skill" value="Invisible" /&gt;
+	&lt;/bean&gt;</pre> 
+  <p> 输出 </p> 
+  <pre>Exception in thread "main" org.springframework.beans.factory.UnsatisfiedDependencyException: 
+...
+No unique bean of type [com.yiibai.common.Ability] is defined: 
+expected single matching bean but found 2: [steal, invisible]; nested exception is 
+org.springframework.beans.factory.NoSuchBeanDefinitionException: 
+No unique bean of type [com.yiibai.common.Ability] is defined: 
+expected single matching bean but found 2: [steal, invisible]</pre> 
+  <div>
+    在这种情况下，它会打出 UnsatisfiedDependencyException 的错误消息。 
+  </div> 
+  <div> 
+   <strong>注</strong>
+   <br> 
+   <div>
+     在类型的自动装配模式，就必须确保只有Bean 只有一个唯一的数据类型声明。 
+   </div> 
+  </div> 
+  <div> 
+   <br> 
+  </div> 
+  <div>
+    下载源代码 –&nbsp;
+   <a target="_blank" href="http://pan.baidu.com/s/1gdQFszD">http://pan.baidu.com/s/1gdQFszD</a> 
+  </div> 
+ </div>
+ <br>      
+</div></body></html>

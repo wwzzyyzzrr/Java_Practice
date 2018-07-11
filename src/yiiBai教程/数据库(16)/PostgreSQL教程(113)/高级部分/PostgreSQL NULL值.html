@@ -1,0 +1,71 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">PostgreSQL NULL值</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>PostgreSQL <code>NULL</code>是用于表示缺少值的术语。 表中的<code>NULL</code>值是一个字段中的值，显示为空白。</p> 
+ <p>具有<code>NULL</code>值的字段是没有值的字段。要知道一个<code>NULL</code>值与零值或包含空格的字段不同是非常重要的。</p> 
+ <p><strong>语法：</strong></p> 
+ <p>创建表时使用<code>NULL</code>的基本语法如下：</p> 
+ <pre><code class="lang-sql">CREATE TABLE COMPANY(
+   ID INT PRIMARY KEY     NOT NULL,
+   NAME           TEXT    NOT NULL,
+   AGE            INT     NOT NULL,
+   ADDRESS        CHAR(50),
+   SALARY         REAL
+);
+</code></pre> 
+ <p>这里，<code>NOT NULL</code>表示该列应该始终接受给定数据类型的显式值。有两列不使用<code>NOT NULL</code>。 因此这意味着这些列可以为<code>NULL</code>。</p> 
+ <p>具有<code>NULL</code>值的字段是在创建记录期间留空的字段。</p> 
+ <h2 id="h2-u793Au4F8B"><a name="示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例</h2>
+ <p>然而，当选择数据时，<code>NULL</code>值可能会导致问题，因为当将未知值与任何其他值进行比较时，结果始终是未知的，不包括在最终结果中。 考虑下表-<code>COMPANY</code>拥有以下记录：</p> 
+ <pre><code class="lang-sql">ID          NAME        AGE         ADDRESS     SALARY
+----------  ----------  ----------  ----------  ----------
+1           Paul        32          California  20000.0
+2           Allen       25          Texas       15000.0
+3           Teddy       23          Norway      20000.0
+4           Mark        25          Rich-Mond   65000.0
+5           David       27          Texas       85000.0
+6           Kim         22          South-Hall  45000.0
+7           James       24          Houston     10000.0
+</code></pre> 
+ <p>使用<code>UPDATE</code>语句将几个可空值设置为<code>NULL</code>，如下所示：</p> 
+ <pre><code class="lang-sql">yiibai_db=# UPDATE COMPANY SET ADDRESS = NULL, SALARY = NULL where ID IN(6,7);
+</code></pre> 
+ <p>现在，查询<code>COMPANY</code>表应该有以下记录：</p> 
+ <pre><code class="lang-sql"> id | name  | age | address     | salary
+----+-------+-----+-------------+--------
+  1 | Paul  |  32 | California  |  20000
+  2 | Allen |  25 | Texas       |  15000
+  3 | Teddy |  23 | Norway      |  20000
+  4 | Mark  |  25 | Rich-Mond   |  65000
+  5 | David |  27 | Texas       |  85000
+  6 | Kim   |  22 |             |
+  7 | James |  24 |             |
+(7 rows)
+</code></pre> 
+ <p>接下来，使用<code>IS NOT NULL</code>运算符列出<code>SALARY</code>不为<code>NULL</code>的所有记录：</p>   
+ <pre><code class="lang-sql">yiibai_db=#  SELECT  ID, NAME, AGE, ADDRESS, SALARY
+        FROM COMPANY
+        WHERE SALARY IS NOT NULL;
+</code></pre> 
+ <p>PostgreSQL上面的语句将产生以下结果：</p> 
+ <pre><code class="lang-sql">id | name  | age | address    | salary
+----+-------+-----+------------+--------
+  1 | Paul  |  32 | California |  20000
+  2 | Allen |  25 | Texas      |  15000
+  3 | Teddy |  23 | Norway     |  20000
+  4 | Mark  |  25 | Rich-Mond  |  65000
+  5 | David |  27 | Texas      |  85000
+(5 rows)
+</code></pre> 
+ <p>以下是使用<code>IS NULL</code>运算符，查询列出<code>SALARY</code>列的值为<code>NULL</code>的所有记录：</p> 
+ <pre><code class="lang-sql">yiibai_db=#  SELECT  ID, NAME, AGE, ADDRESS, SALARY
+        FROM COMPANY
+        WHERE SALARY IS NULL;
+</code></pre> 
+ <p>PostgreSQL上面的语句将产生以下结果：</p> 
+ <pre><code class="lang-sql"> id | name  | age | address | salary
+----+-------+-----+---------+--------
+  6 | Kim   |  22 |         |
+  7 | James |  24 |         |
+(2 rows)
+</code></pre>
+ <br>      
+</div></body></html>

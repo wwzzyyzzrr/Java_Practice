@@ -1,0 +1,258 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Java RMI数据库应用程序</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>在上一章中，我们创建了一个RMI图形用户界面应用程序的示例，客户端调用服务器端显示GUI窗口(JavaFX)的方法。</p> 
+ <p>在本章中，我们将以一个例子来看看客户端程序如何检索位于服务器上的MySQL数据库中的表的记录。</p> 
+ <p>假设在数据库：<code>testdb</code>中有一个名称为<code>student</code>的表，其表结构和数据如下所示 - </p> 
+ <pre><code class="lang-sql">+----+--------+--------+------------+---------------------+ 
+| ID | NAME   | BRANCH | PERCENTAGE | EMAIL               | 
++----+--------+--------+------------+---------------------+ 
+|  1 | Maxsu    | IT     |         85 | maxsu@yiibai.com    | 
+|  2 | Curry  | EEE    |         95 | curry123@gmail.com  | 
+|  3 | Alex | ECE    |         90 | alexs130@gmail.com | 
++----+--------+--------+------------+---------------------+
+</code></pre> 
+ <p>创建数据库和表如下语句 - </p> 
+ <pre><code class="lang-sql">CREATE DATABASE IF NOT EXISTS testdb DEFAULT CHARSET utf8 COLLATE utf8_general_ci;
+
+use testdb;
+
+-- ----------------------------
+-- Table structure for `student`
+-- ----------------------------
+DROP TABLE IF EXISTS `student`;
+CREATE TABLE `student` (
+  `id` int(10) NOT NULL AUTO_INCREMENT,
+  `name` varchar(32) NOT NULL DEFAULT '',
+  `branch` varchar(16) NOT NULL DEFAULT '',
+  `percentage` float unsigned DEFAULT '0',
+  `email` varchar(48) NOT NULL DEFAULT '',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of student
+-- ----------------------------
+INSERT INTO `student` VALUES ('1', 'Maxsu', 'IT', '85', 'maxsu@yiibai.com');
+INSERT INTO `student` VALUES ('2', 'Curry', 'EEE', '96', 'curry123@gmail.com');
+INSERT INTO `student` VALUES ('3', 'Alex', 'ECE', '92', 'alexs130@gmail.com');
+</code></pre> 
+ <p>假设所使用的MySQL服务器的用户名是:<em>root</em>，其密码是:<em>123456</em>。</p> 
+ <h2 id="h2--student-"><a name="创建 Student 类" class="reference-link"></a><span class="header-link octicon octicon-link"></span>创建 Student 类</h2>
+ <p>创建一个Student类,并创建<code>setter</code>和<code>getter</code>方法，创建一个Java源代码文件：<em>Student.java</em>，如下所示。</p> 
+ <pre><code class="lang-java">public class Student implements java.io.Serializable {   
+   private int id, percent;   
+   private String name, branch, email;    
+
+   public int getId() { 
+      return id; 
+   } 
+   public String getName() { 
+      return name; 
+   } 
+   public String getBranch() { 
+      return branch; 
+   } 
+   public int getPercent() { 
+      return percent; 
+   } 
+   public String getEmail() { 
+      return email; 
+   } 
+   public void setID(int id) { 
+      this.id = id; 
+   } 
+   public void setName(String name) { 
+      this.name = name; 
+   } 
+   public void setBranch(String branch) { 
+      this.branch = branch; 
+   } 
+   public void setPercent(int percent) { 
+      this.percent = percent; 
+   } 
+   public void setEmail(String email) { 
+      this.email = email; 
+   } 
+}
+</code></pre> 
+ <h2 id="h2-u5B9Au4E49u8FDCu7A0Bu63A5u53E3"><a name="定义远程接口" class="reference-link"></a><span class="header-link octicon octicon-link"></span>定义远程接口</h2>
+ <p>在这里，我们定义一个名为<code>Hello</code>的远程接口，<code>Hello</code>接口中有一个<code>getStudents()</code>方法。此方法返回一个包含<code>Student</code>类对象的列表。</p> 
+ <pre><code class="lang-java">import java.rmi.Remote; 
+import java.rmi.RemoteException; 
+import java.util.*;
+
+// Creating Remote interface for our application 
+public interface Hello extends Remote {  
+   public List&lt;Student&gt; getStudents() throws Exception;  
+}
+</code></pre> 
+ <h2 id="h2-u5F00u53D1u5B9Eu73B0u7C7B"><a name="开发实现类" class="reference-link"></a><span class="header-link octicon octicon-link"></span>开发实现类</h2>
+ <p>创建一个类并实现上面创建的<code>Hello</code>远程接口。</p> 
+ <p>这里我们实现远程接口的<code>getStudents()</code>方法。当调用此方法时，它将检索数据库：<code>students</code>表中的记录。使用Stud<code>ent</code>类的<code>setter</code>方法设置对象的值并返回该对象列表。创建一个JAVA源文件：<em>ImplExample.java</em> 如下所示 - </p> 
+ <pre><code class="lang-java">import java.sql.*; 
+import java.util.*;  
+
+// Implementing the remote interface 
+public class ImplExample implements Hello {  
+
+   // Implementing the interface method 
+   public List&lt;Student&gt; getStudents() throws Exception {  
+      List&lt;Student&gt; list = new ArrayList&lt;Student&gt;();   
+
+      // JDBC driver name and database URL 
+      String JDBC_DRIVER = "com.mysql.jdbc.Driver";   
+      String DB_URL = "jdbc:mysql://localhost:3306/testdb";  
+
+      // Database credentials 
+      String USER = "root"; 
+      String PASS = "123456";  
+
+      Connection conn = null; 
+      Statement stmt = null;  
+
+      //Register JDBC driver 
+      Class.forName("com.mysql.jdbc.Driver");   
+
+      //Open a connection
+      System.out.println("Connecting to a selected database..."); 
+      conn = DriverManager.getConnection(DB_URL, USER, PASS); 
+      System.out.println("Connected database successfully...");  
+
+      //Execute a query 
+      System.out.println("Creating statement..."); 
+
+      stmt = conn.createStatement();  
+      String sql = "SELECT * FROM student_data"; 
+      ResultSet rs = stmt.executeQuery(sql);  
+
+      //Extract data from result set 
+      while(rs.next()) { 
+         // Retrieve by column name 
+         int id  = rs.getInt("id"); 
+
+         String name = rs.getString("name"); 
+         String branch = rs.getString("branch"); 
+
+         int percent = rs.getInt("percentage"); 
+         String email = rs.getString("email");  
+
+         // Setting the values 
+         Student student = new Student(); 
+         student.setID(id); 
+         student.setName(name); 
+         student.setBranch(branch); 
+         student.setPercent(percent); 
+         student.setEmail(email); 
+         list.add(student); 
+      } 
+      rs.close(); 
+      return list;     
+   }  
+}
+</code></pre> 
+ <h2 id="h2-u670Du52A1u5668u7A0Bu5E8F"><a name="服务器程序" class="reference-link"></a><span class="header-link octicon octicon-link"></span>服务器程序</h2>
+ <p>RMI服务器程序应实现远程接口或扩展实现类。 在这里，我们将创建一个远程对象并将其绑定到RMI注册表。</p> 
+ <p>以下是本应用程序的服务器程序。 在这里，我们将扩展上述创建的类，创建一个远程对象并使用绑定名称为：<em>hello</em> ，将其注册到RMI注册表。创建一个JAVA源文件：<em>Server.java</em> 如下所示 - </p> 
+ <pre><code class="lang-java">import java.rmi.registry.Registry; 
+import java.rmi.registry.LocateRegistry; 
+import java.rmi.RemoteException; 
+import java.rmi.server.UnicastRemoteObject; 
+
+public class Server extends ImplExample { 
+   public Server() {} 
+   public static void main(String args[]) { 
+      try { 
+         // Instantiating the implementation class 
+         ImplExample obj = new ImplExample(); 
+
+         // Exporting the object of implementation class (
+         //   here we are exporting the remote object to the stub) 
+         Hello stub = (Hello) UnicastRemoteObject.exportObject(obj, 0);  
+
+         // Binding the remote object (stub) in the registry 
+         Registry registry = LocateRegistry.getRegistry(); 
+
+         registry.bind("Hello", stub);  
+         System.err.println("Server ready"); 
+      } catch (Exception e) { 
+         System.err.println("Server exception: " + e.toString()); 
+         e.printStackTrace(); 
+      } 
+   } 
+}
+</code></pre> 
+ <h2 id="h2-u5BA2u6237u7AEFu7A0Bu5E8F"><a name="客户端程序" class="reference-link"></a><span class="header-link octicon octicon-link"></span>客户端程序</h2>
+ <p>以下是本应用程序的客户端程序。 在这里，我们获取远程对象并调用<code>getStudents()</code>方法。它从列表对象中检索表 - <code>student</code>的行记录并显示它们。创建一个JAVA源文件：<em>Client.java</em> 如下所示 - </p>   
+ <pre><code class="lang-java">import java.rmi.registry.LocateRegistry; 
+import java.rmi.registry.Registry; 
+import java.util.*;  
+
+public class Client {  
+   private Client() {}  
+   public static void main(String[] args)throws Exception {  
+      try { 
+         // Getting the registry 
+         Registry registry = LocateRegistry.getRegistry(null); 
+
+         // Looking up the registry for the remote object 
+         Hello stub = (Hello) registry.lookup("Hello"); 
+
+         // Calling the remote method using the obtained object 
+         List&lt;Student&gt; list = (List)stub.getStudents(); 
+         for (Student s:list)v { 
+
+            // System.out.println("bc "+s.getBranch()); 
+            System.out.println("ID: " + s.getId()); 
+            System.out.println("name: " + s.getName()); 
+            System.out.println("branch: " + s.getBranch()); 
+            System.out.println("percent: " + s.getPercent()); 
+            System.out.println("email: " + s.getEmail()); 
+         }  
+      // System.out.println(list); 
+      } catch (Exception e) { 
+         System.err.println("Client exception: " + e.toString()); 
+         e.printStackTrace(); 
+      } 
+   } 
+}
+</code></pre> 
+ <h2 id="h2-u8FD0u884Cu793Au4F8Bu7684u6B65u9AA4"><a name="运行示例的步骤" class="reference-link"></a><span class="header-link octicon octicon-link"></span>运行示例的步骤</h2>
+ <p>以下是运行RMI示例的步骤。</p> 
+ <blockquote> 
+  <p>注意：如果手动编译，需要把上面代码存放到目录：<em>F:\worksp\java_rmi\java-dbapp</em>中，并创建一个目录：<em>F:\worksp\java_rmi\java-dbapp\libs</em>，把下载的 <code>mysql-connector-java-5.1.40-bin.jar</code> 库(下载地址：<a target="_blank" href="http://downloads.mysql.com/archives/c-j/">http://downloads.mysql.com/archives/c-j/</a> )放入到 <strong>F:\worksp\java_rmi\java-dbapp\libs</strong> 目录中。</p> 
+ </blockquote> 
+ <p><strong>第一步</strong> - 打开存储所有程序的文件夹，并编译所有Java文件，如下所示。</p> 
+ <pre><code class="lang-shell">F:\worksp\java_rmi\java-dbapp&gt; javac -Djava.ext.dirs=F:\worksp\java_rmi\java-dbapp\libs *.java
+</code></pre> 
+ <p><strong>第二步</strong> - 使用以下命令启动rmi注册表。</p> 
+ <pre><code class="lang-shell">F:\worksp\java_rmi\java-dbapp&gt; start rmiregistry
+</code></pre> 
+ <p>执行上面命令后，将在单独的窗口中启动一个rmi注册表。</p> 
+ <p><strong>第三步</strong> - 运行服务器类代码，如下所示。</p> 
+ <pre><code class="lang-shell">F:\worksp\java_rmi\java-dbapp&gt;java -Djava.ext.dirs=F:\worksp\java_rmi\java-dbapp\libs Server
+Server ready
+</code></pre> 
+ <p><strong>第三步</strong> - 运行客户端类文件，如下所示。</p> 
+ <pre><code class="lang-shell">F:\worksp\java_rmi\java-dbapp&gt;java -Djava.ext.dirs=F:\worksp\java_rmi\java-dbapp\libs Client
+</code></pre> 
+ <p>执行上面命令后，输出结果如下 - </p> 
+ <pre><code class="lang-shell">F:\worksp\java_rmi\java-dbapp&gt;java -Djava.ext.dirs=F:\worksp\java_rmi\java-dbapp\libs Client
+ID: 1
+name: Maxsu
+branch: IT
+percent: 85
+email: maxsu@yiibai.com
+ID: 2
+name: Curry
+branch: EEE
+percent: 96
+email: curry123@gmail.com
+ID: 3
+name: Alex
+branch: ECE
+percent: 92
+email: alexs130@gmail.com
+
+F:\worksp\java_rmi\java-dbapp&gt;
+</code></pre>
+ <br>      
+</div></body></html>

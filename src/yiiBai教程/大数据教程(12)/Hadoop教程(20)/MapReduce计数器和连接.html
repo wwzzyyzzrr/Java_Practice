@@ -1,0 +1,128 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">MapReduce计数器和连接</h1><div style="width:100%;float:left;" class="article-content">   
+ <p> <br> 在MapReduce的计数器是用于收集关于 MapReduce 工作的统计信息的机制。这个信息在MapReduce的作业处理的问题的诊断是很有用的。 计数器类似于将在 map 或 reduce 在代码日志信息中。</p> 
+ <p> 通常情况下，这些计数器在一个程序(map 或 reduce)中定义，当一个特定事件或条件(特定于该计数器)发生执行期间递增。计数器是一个很好的应用来从输入数据集跟踪有效和无效的记录。</p> 
+ <p> 有两种类型的计数器：</p> 
+ <p> 1.&nbsp;<a target="_blank" href="http://www.yiibai.com/hadoop/" title="Hadoop">Hadoop</a>&nbsp;内置计数器:&nbsp;有一些内置计数器存在每个作业中。下面是内置计数器组：</p> 
+ <ul> 
+  <li> MapReduce任务计数器&nbsp;- 收集任务的具体信息(例如，输入记录的数量)在它的执行期间。</li> 
+  <li> 文件系统计数器&nbsp;- 收集信息像由一个任务读取或写入的字节数</li> 
+  <li> FileInputFormat计数器&nbsp;- 收集通过FileInputFormat读取的字节数的信息</li> 
+  <li> FileOutputFormat计数器&nbsp;- 收集的字节数量的信息通过 FileOutputFormat 写入</li> 
+  <li> Job&nbsp;计数器-&nbsp;这些计数器使用 JobTracker。它们收集统计数据包括如，任务发起了作业的数量。</li> 
+ </ul> 
+ <p> 2. 用户定义的计数器</p> 
+ <p> 除了内置的计数器，用户可以定义自己的计数器，通过使用编程语言提供了类似的功能。 例如，在 Java 的枚举用于定义用户定义的计数器。</p> 
+ <p> 一个MapClass例子使用计数器计算缺失和无效值的数量：</p> 
+ <div style="widows: auto; color: rgb(52, 52, 52); 'Droid Sans'; font-size: 17px;"> 
+  <div style="font-size: 1em !important;"> 
+   <table border="1" cellpadding="2" cellspacing="0" style="border-collapse: collapse; margin-top: 10px; margin-bottom: 10px; font-size: 1em !important; Consolas, 'Bitstream Vera Sans Mono', 'Courier New', Courier, monospace !important; background-color: inherit;"> 
+    <tbody style="background-color: inherit; font-size: 1em !important;"> 
+     <tr style="background-color: inherit; font-size: 1em !important;"> 
+      <td style="word-break: break-all; border: 1px solid rgb(153, 153, 153); padding: 5px 16px 5px 14px; min-height: 25px; min-width: 25px; height: auto !important; background-color: inherit; color: rgb(175, 175, 175) !important; font-size: 1em !important; width: auto !important;"> 
+       <div style="min-width: 2px; background-color: inherit; font-size: 1em !important;">
+         &nbsp;
+       </div> </td> 
+      <td> 
+       <div> 
+        <div>
+          publicstaticclassMapClass
+        </div> 
+        <div>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;extendsMapReduceBase
+        </div> 
+        <div>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;implementsMapper&lt;LongWritable, Text, Text, Text&gt;
+        </div> 
+        <div>
+          {
+        </div> 
+        <div>
+          &nbsp;&nbsp;&nbsp;&nbsp;staticenumSalesCounters { MISSING, INVALID };
+        </div> 
+        <div>
+          &nbsp;&nbsp;&nbsp;&nbsp;publicvoidmap ( LongWritable key, Text value,
+        </div> 
+        <div>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OutputCollector&lt;Text, Text&gt; output,
+        </div> 
+        <div>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Reporter reporter)&nbsp;throwsIOException
+        </div> 
+        <div>
+          &nbsp;&nbsp;&nbsp;&nbsp;{
+        </div> 
+        <div>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        </div> 
+        <div>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//Input string is split using ',' and stored in 'fields' array
+        </div> 
+        <div>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;String fields[] = value.toString().split(",", -20);
+        </div> 
+        <div>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//Value at 4th index is country. It is stored in 'country' variable
+        </div> 
+        <div>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;String country = fields[4];
+        </div> 
+        <div>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        </div> 
+        <div>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//Value at 8th index is sales data. It is stored in 'sales' variable
+        </div> 
+        <div>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;String sales = fields[8];
+        </div> 
+        <div>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        </div> 
+        <div>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if(country.length() ==&nbsp;0) {
+        </div> 
+        <div>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;reporter.incrCounter(SalesCounters.MISSING,&nbsp;1);
+        </div> 
+        <div>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;elseif(sales.startsWith("\"")) {
+        </div> 
+        <div>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;reporter.incrCounter(SalesCounters.INVALID,&nbsp;1);
+        </div> 
+        <div>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;else{
+        </div> 
+        <div>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;output.collect(newText(country),&nbsp;newText(sales +&nbsp;",1"));
+        </div> 
+        <div>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}
+        </div> 
+        <div>
+          &nbsp;&nbsp;&nbsp;&nbsp;}
+        </div> 
+        <div>
+          }
+        </div> 
+       </div> </td> 
+     </tr> 
+    </tbody> 
+   </table> 
+  </div> 
+ </div> 
+ <p> 上面的代码片段显示在 Map Reduce 实现计数器的示例。</p> 
+ <p> 在这里，SalesCounters是用“枚举”定义的计数器。它被用来计算 MISSING 和 INVALID 的输入记录。</p> 
+ <p> 在代码段中，如果 “country” 字段的长度为零那么它的值丢失，因此相应的计数器 SalesCounters.MISSING 递增。</p> 
+ <p> 接下来，如果 “sales” 字段开头是符号 '' ，则记录被视为无效。这通过递增计数器 SalesCounters.INVALID 来表示。</p> 
+ <h3> MapReduce 连接</h3> 
+ <p> 连接两个大的数据集可以使用 MapReduce Join 来实现。然而，这个过程需要编写大量的代码来执行实际的连接操作。</p> 
+ <p> 连接两个数据集开始是通过比较每个数据集的大小。如果因为相比其他数据集一个数据集小，那么小数据集被分布到集群中的每个数据节点。一旦分散，无论是 Mapper 或 Reducer 使用更小的数据集进行查找匹配的大型数据集的记录，然后结合这些记录，形成输出记录。</p> 
+ <p> 这取决于在实际连接进行的地方，这个连接分为：</p> 
+ <p> 1. 映射端连接 -&nbsp;当该联接是由映射器执行的，它称为映射端链接。在这种类型中，联结前的数据由映射函数实际来消耗的处理。它是强制性的，输入到每个映射是在分区中的形式，并且是按排序顺序。另外，必须有一个相等数目的分区，它必须由连接键进行排序。</p> 
+ <p> 2. Reduce端连接-&nbsp;当连接是通过减速器进行的，称为reduce端连接。没有必要在此连接有数据集中在以结构化形式(或分区)。</p> 
+ <p> 在这里，映射端的处理发出连接这两个表的关键字和对应的元组。作为该处理的效果，所有的元组相同连接键都落在相同的 reducer，然后使用相同的连接键连接记录。</p> 
+ <p> 整体处理流程示于下图。</p> 
+ <p style="margin: 5px 0px; widows: auto; color: rgb(52, 52, 52); 'Droid Sans'; font-size: 17px;"> <img data-attr-org-img-file="file:///D:/Program%20Files/qq24B39E2329F08D9F4C3146A571A415EF/36c834fd936f4410a6dc11f6ab7bf7df/clipboard.png" data-attr-org-src-id="DF27EDCB43E048218AFA9234D52E962D" data-media-type="image" src="file:///D:/Program%20Files/qq24B39E2329F08D9F4C3146A571A415EF/36c834fd936f4410a6dc11f6ab7bf7df/clipboard.png" style="display: inline-block; margin-top: 8px; max-width: 800px; background-color: inherit;"></p> 
+ <br>      
+</div></body></html>

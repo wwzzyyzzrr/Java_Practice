@@ -1,0 +1,46 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">批处理日期时间</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>DOS脚本中的日期和时间具有以下两个用于检索系统日期和时间的基本命令。</p> 
+ <h2 id="h2-u65E5u671F"><a name="日期" class="reference-link"></a><span class="header-link octicon octicon-link"></span>日期</h2>
+ <p>该命令获取系统日期。</p> 
+ <p><strong>语法</strong></p> 
+ <pre><code class="lang-bat">DATE
+</code></pre> 
+ <p><strong>示例</strong></p> 
+ <pre><code class="lang-bat">@echo off 
+echo %DATE%
+</code></pre> 
+ <p>当前日期将显示在命令提示符下。 例如，</p> 
+ <pre><code class="lang-shell">C:\Users\Administrator&gt;echo %DATE%
+2018/01/24 周三
+</code></pre> 
+ <h2 id="h2-u65F6u95F4"><a name="时间" class="reference-link"></a><span class="header-link octicon octicon-link"></span>时间</h2>
+ <p>该命令设置或显示时间。</p> 
+ <p><strong>语法</strong></p> 
+ <pre><code class="lang-bat">TIME
+</code></pre> 
+ <p><strong>示例</strong></p> 
+ <pre><code class="lang-bat">@echo off 
+echo %TIME%
+</code></pre> 
+ <p>当前时间将显示在命令提示符下。 例如，</p> 
+ <pre><code class="lang-shell">21:16:52.81
+</code></pre> 
+ <p>以下是一些可用于以不同格式获取日期和时间的实现。</p> 
+ <h2 id="h2--"><a name="日期格式化：年-月-日" class="reference-link"></a><span class="header-link octicon octicon-link"></span>日期格式化：年-月-日</h2>
+ <p><strong>示例</strong></p>   
+ <pre><code class="lang-bat">@echo off 
+echo/Today is: %year%-%month%-%day% 
+goto :EOF 
+setlocal ENABLEEXTENSIONS 
+set t=2&amp;if "%date%z" LSS "A" set t=1 
+
+for /f "skip=1 tokens=2-4 delims=(-)" %%a in ('echo/^|date') do ( 
+   for /f "tokens=%t%-4 delims=.-/ " %%d in ('date/t') do ( 
+      set %%a=%%d&amp;set %%b=%%e&amp;set %%c=%%f)) 
+endlocal&amp;set %1=%yy%&amp;set %2=%mm%&amp;set %3=%dd%&amp;goto :EOF
+</code></pre> 
+ <p>以上命令产生以下输出 - </p> 
+ <pre><code class="lang-shell">Today is: 2017-12-30
+</code></pre>
+ <br>      
+</div></body></html>

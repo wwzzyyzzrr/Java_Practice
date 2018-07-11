@@ -1,0 +1,108 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Docker Compose安装配置和入门</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>Docker Compose是一种用于通过使用单个命令创建和启动Docker应用程序的工具。我们可以使用它来配置应用程序的服务。</p> 
+ <p>它是开发，测试和升级环境的好工具。</p> 
+ <p>它提供以下命令来管理应用程序的整个生命周期。</p> 
+ <ul> 
+  <li>启动，停止和重建服务</li>
+  <li>查看运行服务的状态</li>
+  <li>流式运行服务的日志输出</li>
+  <li>在服务上运行一次性命令</li>
+ </ul> 
+ <p>要实现compose，需要包括以下步骤。</p> 
+ <ul> 
+  <li>将应用程序环境变量放在Docker文件中以公开访问。</li>
+  <li>在<code>docker-compose.yml</code>文件中提供和配置服务名称，以便它们可以在隔离的环境中一起运行。</li>
+  <li>运行<code>docker-compose</code>，<code>Compose</code>将启动并运行整个应用程序。</li>
+ </ul> 
+ <p>一个典型的<code>docker-compose.yml</code>文件具有以下格式和参数。</p> 
+ <pre><code class="lang-yml">version: '3'  
+services:  
+web:  
+build: .  
+ports:  
+- "5000:5000"  
+volumes:  
+- .:/code  
+- logvolume01:/var/log  
+links:  
+- redis  
+redis:  
+image: redis  
+volumes:  
+logvolume01: {}
+</code></pre> 
+ <h2 id="h2-1-docker-compose"><a name="1. 安装Docker Compose" class="reference-link"></a><span class="header-link octicon octicon-link"></span>1. 安装Docker Compose</h2>
+ <p>以下是在Ubuntu系统中安装Docker Compose的说明。</p> 
+ <pre><code class="lang-shell">curl -L http://github.com/docker/compose/releases/download/1.12.0/docker-compose-`uname -s`-`uname -m` &gt; /usr/local/bin/docker-compose
+</code></pre> 
+ <p>查看Docker-compose版本</p> 
+ <pre><code class="lang-shell">$ docker-compose --version
+</code></pre> 
+ <p>提示说执行被拒绝。 所以要给文件添加执行权限。</p> 
+ <pre><code class="lang-shell">$ sudo chmod +x /usr/local/bin/docker-compose
+</code></pre> 
+ <p>再次查看Docker-compose版本 - </p> 
+ <pre><code class="lang-shell">$ docker-compose ?version
+</code></pre> 
+ <h2 id="h2-2-docker-compose-"><a name="2. 使用Docker Compose运行应用程序" class="reference-link"></a><span class="header-link octicon octicon-link"></span>2. 使用Docker Compose运行应用程序</h2>
+ <p>在这一小节，我们将能过一个示例，演示如何使用Docker Compose来运行应用程序。请参阅以下几个步骤 - </p> 
+ <ol> 
+  <li>创建一个目录，使用以下命令 -</li>
+ </ol> 
+ <pre><code class="lang-shell">$ mkdir -p /home/yiibai/docker/docker-compose-example
+$ cd /home/yiibai/docker/docker-composer-example
+</code></pre> 
+ <ol> 
+  <li>创建一个文件：<code>app.py</code>，代码内容如下 - </li>
+ </ol>   
+ <pre><code class="lang-python">from flask import Flask  
+from redis import Redis  
+app = Flask(__name__)  
+redis = Redis(host='redis', port=6379)  
+@app.route('/')  
+def hello():  
+count = redis.incr('hits')  
+return 'Hello World! I have been seen {} times.\n'.format(count)  
+if __name__ == "__main__":  
+app.run(host="0.0.0.0", debug=True)
+</code></pre> 
+ <ol> 
+  <li>创建另外一个文件：<code>requirements.txt</code>，其内容如下 -</li>
+ </ol> 
+ <pre><code class="lang-txt">flask  
+redis
+</code></pre> 
+ <ol> 
+  <li>创建 Dockerfile 文件，其内容如下 - </li>
+ </ol> 
+ <pre><code class="lang-shell">FROM python:3.4-alpine  
+ADD . /code  
+WORKDIR /code  
+RUN pip install -r requirements.txt  
+CMD ["python", "app.py"]
+</code></pre> 
+ <ol> 
+  <li>创建一个 Compose 文件： <code>docker-compose.yml</code></li>
+ </ol> 
+ <pre><code class="lang-yml">version: '2'  
+services:  
+web:  
+build: .  
+ports:  
+- "5000:5000"  
+volumes:  
+- .:/code  
+redis:  
+image: "redis:alpine"
+</code></pre> 
+ <ol> 
+  <li>使用Compose构建并运行Docker应用程序</li>
+ </ol> 
+ <pre><code class="lang-shell">$ docker-compose up
+</code></pre> 
+ <p>运行上述命令后，可以看到如下输出。</p> 
+ <p>现在，我们可以通过运行<code>http url</code>来查看输出。</p> 
+ <p>输出：</p> 
+ <p>每次刷新页面时。 它显示计数器递增<code>1</code>。</p>
+ <br>      
+</div></body></html>

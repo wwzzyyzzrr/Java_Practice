@@ -1,0 +1,168 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Servlet属性设置</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>Servlet中的属性是可以从以下范围之一设置，获取或删除的对象：</p> 
+ <ul> 
+  <li>请求范围</li>
+  <li>会话范围</li>
+  <li>应用范围</li>
+ </ul> 
+ <p>Servlet程序员可以使用属性将信息从一个servlet传递给另一个servlet。它就像将对象从一个类传递给另一个类一样，以便我们可以一次又一次地重用同一个对象。</p> 
+ <p><strong>ServletRequest，HttpSession和ServletContext接口的属性特定方法</strong></p> 
+ <p>Servlet中有以下<code>4</code>种属性方法，它们具体如下：</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>序号</th> 
+    <th>方法</th> 
+    <th>描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>1</td> 
+    <td><code>public void setAttribute(String name,Object object)</code></td> 
+    <td>在应用程序范围内设置给定的对象。</td> 
+   </tr> 
+   <tr> 
+    <td>2</td> 
+    <td><code>public Object getAttribute(String name)</code></td> 
+    <td>返回指定名称的属性。</td> 
+   </tr> 
+   <tr> 
+    <td>3</td> 
+    <td><code>public Enumeration getInitParameterNames()</code></td> 
+    <td>返回上下文的初始化参数的名称，转为<code>String</code>对象的枚举。</td> 
+   </tr> 
+   <tr> 
+    <td>4</td> 
+    <td><code>public void removeAttribute(String name)</code></td> 
+    <td>从servlet上下文中删除具有给定名称的属性。</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h2 id="h2-servletcontext-"><a name="ServletContext的示例设置和获取属性" class="reference-link"></a><span class="header-link octicon octicon-link"></span>ServletContext的示例设置和获取属性</h2>
+ <p>在这个例子中，在应用程序范围内设置属性，并从另一个servlet获取该值。</p> 
+ <p>打开Eclipse创建一个动态Web项目：<em>ServletAttribute</em> ，其完整的项目结构如下所示 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/1110/424181040_47800.png" alt=""></p> 
+ <p>以下是几个主要代码文件 - </p> 
+ <p>文件： <em>ServletAttr.java</em> - </p> 
+ <pre><code class="lang-java">package com.yiibai;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+/**
+ * Servlet implementation class ServletAttr
+ */
+
+public class ServletAttr extends HttpServlet {
+    private static final long serialVersionUID = 1L;
+
+    /**
+     * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
+     *      response)
+     */
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        // TODO Auto-generated method stub
+        try {
+            response.setCharacterEncoding("UTF-8");
+            response.setContentType("text/html");
+            PrintWriter out = response.getWriter();
+
+            ServletContext context = getServletContext();
+            context.setAttribute("company", "Lenovo");
+            out.println("Welcome to first servlet");
+            out.println("在第二个Servlet&lt;a href='servlet2'&gt;查看属性值&lt;/a&gt;");
+            out.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+}
+</code></pre> 
+ <p>文件： <em>ServletAttr2.java</em> - </p> 
+ <pre><code class="lang-java">package com.yiibai;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+/**
+ * Servlet implementation class ServletAttr
+ */
+
+public class ServletAttr2 extends HttpServlet {
+    private static final long serialVersionUID = 1L;
+
+    /**
+     * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
+     *      response)
+     */
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        // TODO Auto-generated method stub
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("text/html");
+        PrintWriter out = response.getWriter();
+
+        ServletContext context = getServletContext();
+        String n = (String) context.getAttribute("company");
+
+        out.println("Welcome to " + n);
+        out.close();
+    }
+
+}
+</code></pre> 
+ <p>文件： <em>web.xml</em> - </p>   
+ <pre><code class="lang-xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="http://java.sun.com/xml/ns/javaee"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+    id="WebApp_ID" version="3.0"&gt;
+    &lt;display-name&gt;ServletAttribute&lt;/display-name&gt;
+    &lt;welcome-file-list&gt;
+        &lt;welcome-file&gt;index.html&lt;/welcome-file&gt;
+    &lt;/welcome-file-list&gt;
+    &lt;servlet&gt;
+        &lt;servlet-name&gt;ServletAttr1&lt;/servlet-name&gt;
+        &lt;servlet-class&gt;com.yiibai.ServletAttr&lt;/servlet-class&gt;
+    &lt;/servlet&gt;
+
+    &lt;servlet-mapping&gt;
+        &lt;servlet-name&gt;ServletAttr1&lt;/servlet-name&gt;
+        &lt;url-pattern&gt;/servlet&lt;/url-pattern&gt;
+    &lt;/servlet-mapping&gt;
+
+    &lt;servlet&gt;
+        &lt;servlet-name&gt;ServletAttr2&lt;/servlet-name&gt;
+        &lt;servlet-class&gt;com.yiibai.ServletAttr2&lt;/servlet-class&gt;
+    &lt;/servlet&gt;
+
+    &lt;servlet-mapping&gt;
+        &lt;servlet-name&gt;ServletAttr2&lt;/servlet-name&gt;
+        &lt;url-pattern&gt;/servlet2&lt;/url-pattern&gt;
+    &lt;/servlet-mapping&gt;
+&lt;/web-app&gt;
+</code></pre> 
+ <p>在编写完成上面的代码后，部署此Web应用程序，打开浏览器访问URL：<a target="_blank" href="http://localhost:8080/ServletAttribute/servlet">http://localhost:8080/ServletAttribute/servlet</a> ，如果程序没有错误，应该会看到以下结果 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/1110/677181038_49810.png" alt=""></p> 
+ <p>点击<em>查看属性值</em>链接，应该会看到以下结果 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/1110/674181039_81249.png" alt=""></p> 
+ <h2 id="h2-servletconfig-servletcontext-"><a name="ServletConfig和ServletContext的区别" class="reference-link"></a><span class="header-link octicon octicon-link"></span>ServletConfig和ServletContext的区别</h2>
+ <p><code>servletconfig</code>对象引用单个servlet，而<code>servletcontext</code>对象引用整个Web应用程序。</p>
+ <br>      
+</div></body></html>

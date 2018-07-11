@@ -1,0 +1,62 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">MariaDB删除数据</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>MariaDB <code>DELETE</code>语句用于从MariaDB数据库的表中删除一个或多个记录。</p> 
+ <p><strong>语法：</strong></p> 
+ <pre><code class="lang-sql">DELETE FROM table  
+[WHERE conditions]  
+[ORDER BY expression [ ASC | DESC ]]  
+[LIMIT number_rows];
+</code></pre> 
+ <h4 id="h4-1-"><a name="1. 使用条件删除数据" class="reference-link"></a><span class="header-link octicon octicon-link"></span>1. 使用条件删除数据</h4>
+ <p>下面演示如何使用指定的一个条件来删除数据。</p> 
+ <p><strong>示例：</strong></p> 
+ <pre><code class="lang-sql">DELETE FROM Students  
+WHERE student_name = 'Blaba';
+</code></pre> 
+ <p>在执行上面删除语句后，现在查询表中的数据 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201711/2711/769101103_79201.png" alt=""></p> 
+ <h4 id="h4-2-"><a name="2. 使用多个条件删除数据" class="reference-link"></a><span class="header-link octicon octicon-link"></span>2. 使用多个条件删除数据</h4>
+ <p>假设数据库表<code>students</code>中的<code>student_name</code>有两个<code>Maxsu</code>值，现在想删除<code>student_id</code>不是<code>1</code>的所有<code>Maxsu</code>值，参考以下语句 - </p> 
+ <p>首先插入两条件记录 - </p> 
+ <pre><code class="lang-sql">INSERT INTO Students  
+(student_name, student_address, admission_date) 
+VALUES('Maxsu','Sanya','2016-03-09 00:00:00');
+-- 再插入另一条记录
+INSERT INTO Students  
+(student_name, student_address, admission_date) 
+VALUES('Ajeet','Sanya','2015-12-07 00:00:00');
+</code></pre> 
+ <p>查询当数据库中的记录 - </p> 
+ <pre><code class="lang-sql">MariaDB [testdb]&gt; select * from students;
++------------+--------------+-----------------+----------------+
+| student_id | student_name | student_address | admission_date |
++------------+--------------+-----------------+----------------+
+|          1 | Maxsu        | Haikou          | 2017-01-07     |
+|          3 | JMaster      | Beijing         | 2016-05-07     |
+|          4 | Mahesh       | Guangzhou       | 2016-06-07     |
+|          5 | 科比         | Haikou          | 2016-02-07     |
+|          7 | Maxsu        | Sanya           | 2016-03-09     |
+|          8 | Ajeet        | Sanya           | 2015-12-07     |
++------------+--------------+-----------------+----------------+
+6 rows in set (0.00 sec)
+</code></pre> 
+ <p>删除那些<code>student_id</code>大于<code>1</code>，并且<code>student_name</code>为<code>Maxsu</code>的记录 - </p>   
+ <pre><code class="lang-sql">DELETE FROM Students
+WHERE student_name = 'Maxsu'
+AND student_id &gt; 1;
+</code></pre> 
+ <p>执行上面删除语句以后，现在查询表中的记录 - </p> 
+ <pre><code class="lang-sql">MariaDB [testdb]&gt; select * from students;
++------------+--------------+-----------------+----------------+
+| student_id | student_name | student_address | admission_date |
++------------+--------------+-----------------+----------------+
+|          1 | Maxsu        | Haikou          | 2017-01-07     |
+|          3 | JMaster      | Beijing         | 2016-05-07     |
+|          4 | Mahesh       | Guangzhou       | 2016-06-07     |
+|          5 | 科比         | Haikou          | 2016-02-07     |
+|          8 | Ajeet        | Sanya           | 2015-12-07     |
++------------+--------------+-----------------+----------------+
+5 rows in set (0.00 sec)
+</code></pre> 
+ <p>可以看到，<code>student_id</code>为<code>7</code>，并且<code>student_name</code>值为<code>Maxsu</code>的记录被删除了。</p>
+ <br>      
+</div></body></html>

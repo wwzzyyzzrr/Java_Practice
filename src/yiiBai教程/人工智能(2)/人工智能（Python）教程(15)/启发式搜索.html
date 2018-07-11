@@ -1,0 +1,78 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">启发式搜索</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>启发式搜索在人工智能中起着关键作用。 在本章中，我们来详细地了解它。</p> 
+ <h2 id="h2-ai-"><a name="AI中启发式搜索的概念" class="reference-link"></a><span class="header-link octicon octicon-link"></span>AI中启发式搜索的概念</h2>
+ <p>启发式是一条经验法则，它将我们引向可能的解决方案。 人工智能中的大多数问题具有指数性，并且有许多可能的解决方案。并不确切知道哪些解决方案是正确的，检查所有解决方案会非常昂贵。</p> 
+ <p>因此，启发式的使用缩小了搜索解决方案的范围并消除了错误的选项。 启发式引导搜索空间中的搜索的方法称为启发式搜索。 启发式技术非常有用，因为使用它们时可以提高搜索效率。</p> 
+ <h2 id="h2-u4E0Du77E5u60C5u548Cu77E5u60C5u641Cu7D22u4E4Bu95F4u7684u533Au522B"><a name="不知情和知情搜索之间的区别" class="reference-link"></a><span class="header-link octicon octicon-link"></span>不知情和知情搜索之间的区别</h2>
+ <p>有两种控制策略或搜索技术:不知情和知情。这里给出的详细解释如下 - </p> 
+ <p><strong>不知情的搜索</strong><br>它也被称为盲搜索或盲控制策略。 它的命名是因为只有关于问题定义的信息，并且没有关于状态的其他额外信息。 这种搜索技术将搜索整个状态空间以获得解决方案。 广度优先搜索(BFS)和深度优先搜索(DFS)是非信息搜索的示例。</p> 
+ <p><strong>知情搜索</strong><br>它也被称为启发式搜索或启发式控制策略。 它的名字是因为有一些额外的状态信息。 这些额外的信息对计算子节点之间的偏好以便探索和扩展很有用。 将会有与每个节点相关的启发式功能。 Best First Search(BFS)，<code>A *</code>，Mean和Analysis是知情搜索的例子。</p> 
+ <p><strong>约束满足问题(CSP)</strong><br>约束意味着限制或限制。 在人工智能中，约束满足问题是一些约束条件下必须解决的问题。 重点必须是在解决这些问题时不要违反约束条件。 最后，当我们达成最终解决方案时，CSP必须遵守限制。</p> 
+ <h2 id="h2-u7EA6u675Fu6EE1u8DB3u89E3u51B3u7684u73B0u5B9Eu4E16u754Cu95EEu9898"><a name="约束满足解决的现实世界问题" class="reference-link"></a><span class="header-link octicon octicon-link"></span>约束满足解决的现实世界问题</h2>
+ <p>前面的部分涉及创建约束满足问题。 现在将它应用于现实世界的问题。 通过约束满足解决的现实世界问题的一些例子如下 - </p> 
+ <p><strong>解决代数关系</strong></p> 
+ <p>在约束满足问题的帮助下，可以求解代数关系。 在这个例子中，我们将尝试解决一个简单的代数关系<code>a * 2 = b</code>。 它会在我们定义的范围内返回<code>a</code>和<code>b</code>的值。</p> 
+ <p>完成此Python程序后，您将能够理解解决约束满足问题的基础知识。</p> 
+ <p>请注意，在编写程序之前，需要安装名为<code>python-constraint</code>的Python包。使用以下命令安装它 -</p> 
+ <pre><code class="lang-python">pip install python-constraint
+</code></pre> 
+ <p>以下步骤向您展示了一个使用约束满足来解决代数关系的Python程序。</p> 
+ <p>使用以下命令导入约束包 -</p> 
+ <pre><code class="lang-python">from constraint import *
+</code></pre> 
+ <p>现在，创建一个名为<code>problem()</code>的模块对象，如下所示 -</p> 
+ <pre><code class="lang-python">problem = Problem()
+</code></pre> 
+ <p>现在，定义变量。请注意，这里有两个变量<code>a</code>和<code>b</code>，并且将定义<code>10</code>为它们的范围，这意味着在前<code>10</code>个数字范围内得到解决。</p> 
+ <pre><code class="lang-python">problem.addVariable('a', range(10))
+problem.addVariable('b', range(10))
+</code></pre> 
+ <p>接下来，定义应用于这个问题的特定约束。 请注意，这里使用约束<code>a * 2 = b</code>。</p>   
+ <pre><code class="lang-python">problem.addConstraint(lambda a, b: a * 2 == b)
+</code></pre> 
+ <p>现在，使用以下命令创建<code>getSolution()</code>模块的对象 -</p> 
+ <pre><code class="lang-python">solutions = problem.getSolutions()
+</code></pre> 
+ <p>最后，使用以下命令打印输出 -</p> 
+ <pre><code class="lang-python">print (solutions)
+</code></pre> 
+ <p>可以观察上述程序的输出如下 -</p> 
+ <pre><code class="lang-python">[{'a': 4, 'b': 8}, {'a': 3, 'b': 6}, {'a': 2, 'b': 4}, {'a': 1, 'b': 2}, {'a': 0, 'b': 0}]
+</code></pre> 
+ <p><strong>魔幻正方形</strong><br>一个神奇的正方形是一个正方形网格中不同数字(通常是整数)的排列，其中每行和每列中的数字以及对角线上的数字加起来就是所谓的“魔术常数”。</p> 
+ <p>以下是用于生成幻方的简单Python代码的逐步执行 - </p> 
+ <p>定义一个名为<code>magic_square</code>的函数，如下所示 -</p> 
+ <pre><code class="lang-python">def magic_square(matrix_ms):
+   iSize = len(matrix_ms[0])
+   sum_list = []
+</code></pre> 
+ <p>以下代码显示了垂直方块的代码 -</p> 
+ <pre><code class="lang-python">for col in range(iSize):
+   sum_list.append(sum(row[col] for row in matrix_ms))
+</code></pre> 
+ <p>以下代码显示了水平方块的代码 -</p> 
+ <pre><code class="lang-python">sum_list.extend([sum (lines) for lines in matrix_ms])
+</code></pre> 
+ <p>水平方块的代码实现 -</p> 
+ <pre><code class="lang-python">dlResult = 0
+for i in range(0,iSize):
+   dlResult +=matrix_ms[i][i]
+sum_list.append(dlResult)
+drResult = 0
+for i in range(iSize-1,-1,-1):
+   drResult +=matrix_ms[i][i]
+sum_list.append(drResult)
+
+if len(set(sum_list))&gt;1:
+   return False
+return True
+</code></pre> 
+ <p>现在，给出矩阵的值并查看输出结果 -</p> 
+ <pre><code class="lang-python">print(magic_square([[1,2,3], [4,5,6], [7,8,9]]))
+</code></pre> 
+ <p>可以观察到由于总和未达到相同数字，输出将为<code>False</code>。</p> 
+ <pre><code class="lang-python">print(magic_square([[3,9,2], [3,5,7], [9,1,6]]))
+</code></pre> 
+ <p>可以观察到输出将为<code>True</code>，因为总和是相同的数字，即<code>15</code>。</p>
+ <br>      
+</div></body></html>

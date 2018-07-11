@@ -1,0 +1,88 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Cassandra修改表</h1><div style="width:100%;float:left;" class="article-content">   
+ <p><code>ALTER TABLE</code>命令用于在创建表后更改表。 您可以使用<code>ALTER</code>命令执行两种操作：</p> 
+ <ul> 
+  <li>添加一列</li>
+  <li>删除一列</li>
+ </ul> 
+ <p><strong>语法：</strong></p> 
+ <pre><code class="lang-sql">ALTER (TABLE | COLUMNFAMILY) &lt;tablename&gt; &lt;instruction&gt;
+</code></pre> 
+ <h2 id="h2-u6DFBu52A0u4E00u5217"><a name="添加一列" class="reference-link"></a><span class="header-link octicon octicon-link"></span>添加一列</h2>
+ <p>您可以使用<code>ALTER</code>命令在表中添加一列。 在添加列时，您必须知道列名称与现有列名称不冲突，并且表不使用紧凑存储选项进行定义。<br><strong>语法：</strong></p> 
+ <pre><code class="lang-sql">ALTER TABLE table name  
+ADD new column datatype;
+</code></pre> 
+ <p><strong>示例：</strong></p> 
+ <p>现在举个例子来说明在已经创建的名为“<code>student</code>”的表上使用<code>ALTER</code>命令。 这里我们在名为<code>student</code>的表中添加一个名为student_email的文本数据类型列。</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201704/1804/626090457_28503.png" alt=""></p> 
+ <p>使用以下命令后：</p> 
+ <pre><code class="lang-sql">ALTER TABLE student ADD student_email text;
+</code></pre> 
+ <p>执行上面命令添加一个新列。 您可以使用<code>SELECT</code>命令检查它。</p> 
+ <pre><code class="lang-sql">cqlsh&gt; use yiibai_ks;
+cqlsh:yiibai_ks&gt;
+cqlsh:yiibai_ks&gt; select * from student;
+
+ student_id | student_city | student_fees | student_name | student_phone
+------------+--------------+--------------+--------------+---------------
+
+(0 rows)
+cqlsh:yiibai_ks&gt; ALTER TABLE student ADD student_email text;
+cqlsh:yiibai_ks&gt; select * from student;
+
+ student_id | student_city | student_email | student_fees | student_name | student_phone
+------------+--------------+---------------+--------------+--------------+---------------
+
+(0 rows)
+cqlsh:yiibai_ks&gt;
+</code></pre> 
+ <p><strong>删除一列</strong></p> 
+ <p>您还可以使用<code>ALTER</code>命令从表中删除现有的列。 在从表中删除列之前，应该检查表是否没有使用紧凑存储选项进行定义。</p> 
+ <p><strong> 语法：</strong></p> 
+ <pre><code>ALTER table name  DROP column name;
+</code></pre>
+ <p><strong>示例：</strong></p> 
+ <p>让我们举个例子，从名为<code>student</code>的表中删除一个名为<code>student_email</code>的列。</p> 
+ <p>使用以下命令后：</p> 
+ <pre><code class="lang-sql">ALTER TABLE student DROP student_email;
+</code></pre> 
+ <p>现在，您可以看到<code>student</code>表中名为“<code>student_email</code>”的列现在已被删除。如果要删除多个列，请使用“<code>，</code>”分隔列名。</p>   
+ <pre><code class="lang-sql">cqlsh:yiibai_ks&gt; ALTER TABLE student ADD student_email text;
+cqlsh:yiibai_ks&gt; select * from student;
+
+ student_id | student_city | student_email | student_fees | student_name | student_phone
+------------+--------------+---------------+--------------+--------------+---------------
+
+(0 rows)
+cqlsh:yiibai_ks&gt; ALTER TABLE student DROP student_email;
+cqlsh:yiibai_ks&gt; select * from student;
+
+ student_id | student_city | student_fees | student_name | student_phone
+------------+--------------+--------------+--------------+---------------
+
+(0 rows)
+cqlsh:yiibai_ks&gt;
+</code></pre> 
+ <p><strong>看这个例子：</strong></p> 
+ <p>这里我们将删除以下两列：<code>student_fees</code>和<code>student_phone</code>。</p> 
+ <pre><code class="lang-sql">ALTER TABLE student DROP (student_fees, student_phone);
+</code></pre> 
+ <p>输出结果如下所示 -</p> 
+ <pre><code class="lang-sql">cqlsh:yiibai_ks&gt; ALTER TABLE student DROP student_email;
+cqlsh:yiibai_ks&gt; select * from student;
+
+ student_id | student_city | student_fees | student_name | student_phone
+------------+--------------+--------------+--------------+---------------
+
+(0 rows)
+cqlsh:yiibai_ks&gt; ALTER TABLE student DROP (student_fees, student_phone);
+cqlsh:yiibai_ks&gt; select * from student;
+
+ student_id | student_city | student_name
+------------+--------------+--------------
+
+(0 rows)
+cqlsh:yiibai_ks&gt;
+</code></pre>
+ <br>      
+</div></body></html>

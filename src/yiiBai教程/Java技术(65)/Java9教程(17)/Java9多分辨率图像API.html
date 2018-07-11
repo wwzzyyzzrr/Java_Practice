@@ -1,0 +1,87 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Java9多分辨率图像API</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>在Java 9中，已经推出了一种新的多分辨率图像API，支持具有不同分辨率变体的多个图像。 该API允许将具有不同分辨率的一组图像用作单个多分辨率图像。 以下是多分辨率图像的主要操作。</p> 
+ <ul> 
+  <li><code>Image getResolutionVariant(double destImageWidth, double destImageHeight)</code> - 获取一个特定的图像，这是最好的变体，以指定的尺寸表示这个逻辑图像。</li>
+  <li><code>List&lt;Image&gt; getResolutionVariants()</code> - 获取所有分辨率变体的可读列表。</li>
+ </ul> 
+ <p><strong>示例</strong></p> 
+ <pre><code class="lang-java">import java.io.IOException;
+import java.net.URL;
+import java.net.MalformedURLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.awt.Image;
+import java.awt.image.MultiResolutionImage;
+import java.awt.image.BaseMultiResolutionImage;
+
+import javax.imageio.ImageIO;
+
+public class Tester {
+   public static void main(String[] args) throws IOException, MalformedURLException {
+
+      List&lt;String&gt; imgUrls = List.of("http://www.yiibai.com/java9/images/logo.png",
+         "http://www.yiibai.com/java9/images/mini_logo.png",
+         "http://www.yiibai.com/java9/images/large_logo.png");
+
+      List&lt;Image&gt; images = new ArrayList&lt;Image&gt;();
+
+      for (String url : imgUrls) {
+         images.add(ImageIO.read(new URL(url)));
+      }
+
+      // read all images into one multiresolution image
+      MultiResolutionImage multiResolutionImage = 
+         new BaseMultiResolutionImage(images.toArray(new Image[0]));
+
+      // get all variants of images
+      List&lt;Image&gt; variants = multiResolutionImage.getResolutionVariants();
+
+      System.out.println("Total number of images: " + variants.size());
+
+      for (Image img : variants) {
+         System.out.println(img);
+      }
+
+      // get a resolution-specific image variant for each indicated size
+      Image variant1 = multiResolutionImage.getResolutionVariant(156, 45);
+      System.out.printf("\nImage for destination[%d,%d]: [%d,%d]", 
+         156, 45, variant1.getWidth(null), variant1.getHeight(null));
+
+      Image variant2 = multiResolutionImage.getResolutionVariant(311, 89);
+      System.out.printf("\nImage for destination[%d,%d]: [%d,%d]", 311, 89, 
+         variant2.getWidth(null), variant2.getHeight(null));
+
+      Image variant3 = multiResolutionImage.getResolutionVariant(622, 178);
+      System.out.printf("\nImage for destination[%d,%d]: [%d,%d]", 622, 178, 
+         variant3.getWidth(null), variant3.getHeight(null));
+
+      Image variant4 = multiResolutionImage.getResolutionVariant(300, 300);
+      System.out.printf("\nImage for destination[%d,%d]: [%d,%d]", 300, 300, 
+         variant4.getWidth(null), variant4.getHeight(null));
+   }  
+}
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 - </p>   
+ <pre><code class="lang-shell">Total number of images: 3
+BufferedImage@7ce6a65d: type = 6 ColorModel: #pixelBits = 32 numComponents = 4 
+color space =java.awt.color.ICC_ColorSpace@548ad73b transparency = 3 
+has alpha = true isAlphaPre = false ByteInterleavedRaster: width =311 
+height = 89 #numDataElements 4 dataOff[0] = 3
+
+BufferedImage@4c762604: type = 6 ColorModel: #pixelBits = 32 numComponents = 4 
+color space =java.awt.color.ICC_ColorSpace@548ad73b transparency = 3 
+has alpha = true isAlphaPre = false ByteInterleavedRaster: width =156 
+height = 45 #numDataElements 4 dataOff[0] = 3
+
+BufferedImage@2641e737: type = 6 ColorModel: #pixelBits = 32 numComponents = 4 
+color space =java.awt.color.ICC_ColorSpace@548ad73b transparency = 3 
+has alpha = true isAlphaPre = false ByteInterleavedRaster: width =622 
+height = 178 #numDataElements 4 dataOff[0] = 3
+
+Image for destination[156,45]: [311,89]
+Image for destination[311,89]: [311,89]
+Image for destination[622,178]: [622,178]
+Image for destination[300,300]: [622,178]
+</code></pre>
+ <br>      
+</div></body></html>

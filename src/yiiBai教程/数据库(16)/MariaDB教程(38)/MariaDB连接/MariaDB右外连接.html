@@ -1,0 +1,208 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">MariaDB右外连接</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>MariaDB <code>RIGHT OUTER JOIN</code>用于返回<code>ON</code>条件中指定的右表中的所有行，并且仅返回来自其他表中连接字段满足条件的行。</p> 
+ <p>MariaDB <code>RIGHT OUTER JOIN</code>也被称为<code>RIGHT JOIN</code>。</p> 
+ <p><strong>语法：</strong></p> 
+ <pre><code class="lang-sql">SELECT columns  
+FROM table1  
+RIGHT [OUTER] JOIN table2  
+ON table1.column = table2.column;
+</code></pre> 
+ <p>图形表示如下：</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201711/2811/779101153_99303.png" alt=""></p> 
+ <blockquote> 
+  <p>注： 上图中，两个图形的左侧表(table1)和右侧表(table2)中间交叉蓝色部分，以及右侧表(table2)就是连接返回的结果集。</p> 
+ </blockquote> 
+ <p>为了方便演示，我们需要创建两个表，并插入一些数据 - </p> 
+ <pre><code class="lang-sql">USE testdb;
+DROP table if exists students;
+DROP table if exists subjects;
+DROP table if exists scores;
+-- 学生信息
+CREATE TABLE students(  
+    student_id INT NOT NULL AUTO_INCREMENT,  
+    student_name VARCHAR(100) NOT NULL,  
+    student_address VARCHAR(40) NOT NULL,  
+    admission_date DATE,  
+    PRIMARY KEY ( student_id )
+);
+
+-- 科目信息
+CREATE TABLE subjects(  
+    subject_id INT NOT NULL AUTO_INCREMENT,  
+    subject_name VARCHAR(100) NOT NULL,
+    PRIMARY KEY ( subject_id )
+);
+
+-- 成绩信息
+CREATE TABLE scores(  
+    id INT NOT NULL AUTO_INCREMENT,
+    student_id int(10) NOT NULL,
+    subject_id int(10) NOT NULL,
+    score float(4,1) DEFAULT NULL,
+    created_time datetime DEFAULT NULL,
+    PRIMARY KEY ( id )
+);
+</code></pre> 
+ <p>插入数据 - </p> 
+ <pre><code class="lang-sql">--- 学生信息数据
+INSERT INTO students  
+(student_id, student_name, student_address, admission_date)  
+VALUES(1,'Maxsu','Haikou','2017-01-07 00:00:00');
+INSERT INTO students  
+(student_id, student_name, student_address, admission_date)  
+VALUES  
+(2,'JMaster','Beijing','2016-05-07 00:00:00'),  
+(3,'Mahesh','Guangzhou','2016-06-07 00:00:00'),  
+(4,'Kobe','Shanghai','2016-02-07 00:00:00'),  
+(5,'Blaba','Shenzhen','2016-08-07 00:00:00');
+
+-- 科目信息数据
+INSERT INTO subjects  
+(subject_id, subject_name)  
+VALUES(1,'计算机网络基础');
+
+INSERT INTO subjects  
+(subject_id, subject_name)  
+VALUES(2,'高等数学');
+
+INSERT INTO subjects  
+(subject_id, subject_name)  
+VALUES(3,'离散数学');
+
+-- 分数
+INSERT INTO scores  
+(student_id, subject_id, score, created_time)  
+VALUES(1,1,81,'2017-11-18 19:30:02');
+
+INSERT INTO scores  
+(student_id, subject_id, score, created_time)  
+VALUES(1,2,89,NOW());
+
+INSERT INTO scores  
+(student_id, subject_id, score, created_time)  
+VALUES(1,3,92,NOW());
+
+INSERT INTO scores  
+(student_id, subject_id, score, created_time)  
+VALUES(2,2,95,NOW());
+
+INSERT INTO scores  
+(student_id, subject_id, score, created_time)  
+VALUES(2,3,72,NOW());
+
+INSERT INTO scores  
+(student_id, subject_id, score, created_time)  
+VALUES(3,1,59,NOW());
+
+INSERT INTO scores  
+(student_id, subject_id, score, created_time)  
+VALUES(3,3,77,NOW());
+
+INSERT INTO scores  
+(student_id, subject_id, score, created_time)  
+VALUES(4,2,81,NOW());
+</code></pre> 
+ <p>当前<code>studens</code>表中的行记录如下 - </p> 
+ <pre><code class="lang-sql">MariaDB [testdb]&gt; select * from students;
++------------+--------------+-----------------+----------------+
+| student_id | student_name | student_address | admission_date |
++------------+--------------+-----------------+----------------+
+|          1 | Maxsu        | Haikou          | 2017-01-07     |
+|          2 | JMaster      | Beijing         | 2016-05-07     |
+|          3 | Mahesh       | Guangzhou       | 2016-06-07     |
+|          4 | Kobe         | Shanghai        | 2016-02-07     |
+|          5 | Blaba        | Shenzhen        | 2016-08-07     |
++------------+--------------+-----------------+----------------+
+5 rows in set (0.00 sec)
+</code></pre> 
+ <p>当前<code>score</code>表中的行记录如下 - </p> 
+ <pre><code class="lang-sql">MariaDB [testdb]&gt; select * from scores;
++----+------------+------------+-------+---------------------+
+| id | student_id | subject_id | score | created_time        |
++----+------------+------------+-------+---------------------+
+|  1 |          1 |          1 |  81.0 | 2017-11-18 19:30:02 |
+|  2 |          1 |          2 |  89.0 | 2017-11-28 22:31:57 |
+|  3 |          1 |          3 |  92.0 | 2017-11-28 22:31:58 |
+|  4 |          2 |          2 |  95.0 | 2017-11-28 22:31:58 |
+|  5 |          2 |          3 |  72.0 | 2017-11-28 22:31:58 |
+|  6 |          3 |          1 |  59.0 | 2017-11-28 22:31:58 |
+|  7 |          3 |          3 |  77.0 | 2017-11-28 22:31:58 |
+|  8 |          4 |          2 |  81.0 | 2017-11-28 22:31:58 |
++----+------------+------------+-------+---------------------+
+8 rows in set (0.00 sec)
+</code></pre> 
+ <h4 id="h4--1"><a name="示例1" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例1</h4>
+ <p>使用以下语法根据给定的条件连接两个表 - <code>students</code>和<code>scores</code>，即查询学生信息和对应的成绩信息，如果没有成绩则使用<code>NULL</code>值表示。</p> 
+ <pre><code class="lang-sql">SELECT scores.subject_id, scores.score,students.student_id, students.student_name
+FROM scores
+RIGHT JOIN students
+ON students.student_id = scores.student_id
+ORDER BY students.student_id;
+</code></pre> 
+ <p>上面查询语句查询所有科目的考试分数以及学生，得到以下结果 - </p>   
+ <pre><code class="lang-sql">MariaDB [testdb]&gt; SELECT scores.subject_id, scores.score,students.student_id, students.student_name
+    -&gt; FROM scores
+    -&gt; RIGHT JOIN students
+    -&gt; ON students.student_id = scores.student_id
+    -&gt; ORDER BY students.student_id;
++------------+-------+------------+--------------+
+| subject_id | score | student_id | student_name |
++------------+-------+------------+--------------+
+|          1 |  81.0 |          1 | Maxsu        |
+|          2 |  89.0 |          1 | Maxsu        |
+|          3 |  92.0 |          1 | Maxsu        |
+|          2 |  95.0 |          2 | JMaster      |
+|          3 |  72.0 |          2 | JMaster      |
+|          1 |  59.0 |          3 | Mahesh       |
+|          3 |  77.0 |          3 | Mahesh       |
+|          2 |  81.0 |          4 | Kobe         |
+|       NULL |  NULL |          5 | Blaba        |
++------------+-------+------------+--------------+
+9 rows in set (0.00 sec)
+</code></pre> 
+ <p>上面示例的查询结果中，由于最后一行(<code>student_id=5</code>)的学生还没有任何分数信息，所以在使用<code>RIGHT JOIN</code>连接后，左侧表(<code>scores</code>)相关列的值使用<code>NULL</code>来填充。可以看到右侧表(<code>students</code>)的每一行都有列出来了。</p> 
+ <h4 id="h4--2"><a name="示例2" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例2</h4>
+ <p>查询指定学生，并且成绩大于<code>85</code>分的信息 - </p> 
+ <pre><code class="lang-sql">SELECT students.student_id, students.student_name, scores.subject_id, scores.score  
+FROM scores
+RIGHT JOIN students
+ON students.student_id = scores.student_id
+WHERE students.student_name='Maxsu' AND scores.score &gt; 85;
+</code></pre> 
+ <p>执行上面查询语句，得到以下结果 - </p> 
+ <pre><code class="lang-shell">MariaDB [testdb]&gt; SELECT students.student_id, students.student_name, scores.subject_id, scores.score
+    -&gt; FROM scores
+    -&gt; RIGHT JOIN students
+    -&gt; ON students.student_id = scores.student_id
+    -&gt; WHERE students.student_name='Maxsu' AND scores.score &gt; 85;
++------------+--------------+------------+-------+
+| student_id | student_name | subject_id | score |
++------------+--------------+------------+-------+
+|          1 | Maxsu        |          2 |  89.0 |
+|          1 | Maxsu        |          3 |  92.0 |
++------------+--------------+------------+-------+
+2 rows in set (0.00 sec)
+</code></pre> 
+ <h4 id="h4--3"><a name="示例3" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例3</h4>
+ <p>查询没有考试成绩的学生信息(尚未录入) - </p> 
+ <pre><code class="lang-sql">SELECT students.student_id, students.student_name, scores.subject_id, scores.score  
+FROM scores
+RIGHT JOIN students
+ON students.student_id = scores.student_id
+WHERE scores.score IS NULL;
+</code></pre> 
+ <p>执行上面查询语句，得到以下结果 - </p> 
+ <pre><code class="lang-shell">MariaDB [testdb]&gt; SELECT students.student_id, students.student_name, scores.subject_id, scores.score
+    -&gt; FROM scores
+    -&gt; RIGHT JOIN students
+    -&gt; ON students.student_id = scores.student_id
+    -&gt; WHERE scores.score IS NULL;
++------------+--------------+------------+-------+
+| student_id | student_name | subject_id | score |
++------------+--------------+------------+-------+
+|          5 | Blaba        |       NULL |  NULL |
++------------+--------------+------------+-------+
+1 row in set (0.00 sec)
+</code></pre>
+ <br>      
+</div></body></html>

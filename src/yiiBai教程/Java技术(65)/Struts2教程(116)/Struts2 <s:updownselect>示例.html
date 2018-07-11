@@ -1,0 +1,214 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Struts2 &lt;s:updownselect&gt;示例</h1><div style="width:100%;float:left;" class="article-content">   
+ <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  background-color:#FFFFFF;"> 在Struts2，&lt;s:updownselect&gt;标签用于创建一个带有按钮的HTML选择组件向上或向下移动在选择组件的选项。当提交表单时，所有的选择方案将提交在它们的排列顺序。 </p> 
+ <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  background-color:#FFFFFF;"> <span style="font-family:Arial, 'Hiragino Sans GB', 'Microsoft YaHei', 微软雅黑, STHeiti, 'WenQuanYi Micro Hei', SimSun, sans-serif, sans-serif;color:#535B60;line-height:22px;background-color:#FFFFFF;">这里创建一个Web工程：strut2<span style="color:#333333;">updownselect</span>，来演示</span><span style="font-family:Arial, 'Hiragino Sans GB', 'Microsoft YaHei', 微软雅黑, STHeiti, 'WenQuanYi Micro Hei', SimSun, sans-serif, sans-serif;color:#535B60;line-height:22px;background-color:#FFFFFF;">在多个复选框</span><span style="font-family:Arial, 'Hiragino Sans GB', 'Microsoft YaHei', 微软雅黑, STHeiti, 'WenQuanYi Micro Hei', SimSun, sans-serif, sans-serif;color:#535B60;line-height:22px;background-color:#FFFFFF;">如何设置的默认值，整个项目的结构如下图所示：</span> </p> 
+ <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  background-color:#FFFFFF;"> <img src="/uploads/tutorial/20151115/1-1511151APV03.png" alt=""> </p> 
+ <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  background-color:#FFFFFF;"> <strong>&lt;s:updownselect&gt; 示例</strong> </p> 
+ <pre>&lt;s:updownselect
+list="#{'KFC':'KFC', 'McDonald':'McDonald', 'Burger King':'Burger King',
+'Pizza Hut':'Pizza Hut', 'Fat Boy King':'Fat Boy King'}"
+name="favFastFood"
+headerKey="-1"
+headerValue="--- Please Order ---" 
+size="7"
+/&gt;</pre> 
+ <p> 产生下面的HTML代码，选择组件，按钮和JavaScript在选择组件向下移动的选项。 （默认的XHTML主题） </p> 
+ <pre>&lt;tr&gt; 
+&lt;td class="tdLabel"&gt;&lt;/td&gt; 
+&lt;td&gt;&lt;script type="text/javascript" src="/Struts2Example/struts/optiontransferselect.js"&gt;
+&lt;/script&gt; 
+&lt;table&gt; 
+&lt;tr&gt;&lt;td&gt; 
+&lt;select name="favFastFood" size="7" 
+id="resultAction_favFastFood" multiple="multiple"&gt; 
+    &lt;option value="-1"&gt;--- Please Order ---&lt;/option&gt; 
+    &lt;option value="KFC"&gt;KFC&lt;/option&gt; 
+    &lt;option value="McDonald"&gt;McDonald&lt;/option&gt; 
+    &lt;option value="Burger King"&gt;Burger King&lt;/option&gt; 
+    &lt;option value="Pizza Hut"&gt;Pizza Hut&lt;/option&gt; 
+    &lt;option value="Fat Boy King"&gt;Fat Boy King&lt;/option&gt; 
+&lt;/select&gt; 
+&lt;input type="hidden" id="__multiselect_resultAction_favFastFood" 
+name="__multiselect_favFastFood" value="" /&gt; 
+&lt;/td&gt;&lt;/tr&gt; 
+&lt;tr&gt;&lt;td&gt; 
+&nbsp;&lt;input type="button" value="^" onclick="
+moveOptionUp(document.getElementById('resultAction_favFastFood'), 'key', '-1');" /&gt;
+
+&nbsp;&lt;input type="button" value="v" onclick="
+moveOptionDown(document.getElementById('resultAction_favFastFood'), 'key', '-1');" /&gt;
+
+&nbsp;&lt;input type="button" value="*" onclick="selectAllOptionsExceptSome(
+document.getElementById('resultAction_favFastFood'), 'key', '-1');" /&gt;
+&lt;/td&gt;&lt;/tr&gt; 
+&lt;/table&gt;&lt;/td&gt; 
+&lt;/tr&gt; 
+&lt;script type="text/javascript"&gt; 
+ 
+var containingForm = document.getElementById("resultAction");
+StrutsUtils.addEventListener(containingForm, "submit", 
+   function(evt) {
+     var updownselectObj = document.getElementById("resultAction_favFastFood");
+     selectAllOptionsExceptSome(updownselectObj, "key", "-1");
+   }, true);
+&lt;/script&gt;</pre> 
+ <h2> Struts2 &lt;s:updownselect&gt; 示例 </h2> 
+ <p> 在一个完整的全面&lt;s:updownselect&gt;标签例子来说明如何使用OGNL和Java列出的数据填充到上下按钮选择列表。 </p> 
+ <h2> 1. 动作类 - Action </h2> 
+ <p> Action类来生成和存储选择选项。 </p> 
+ <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  background-color:#FFFFFF;"> <strong>UpDownSelectAction.java</strong> </p> 
+ <pre>package com.yiibai.common.action;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import com.opensymphony.xwork2.ActionSupport;
+
+public class UpDownSelectAction extends ActionSupport{
+
+	private List&lt;String&gt; moviesList = new ArrayList&lt;String&gt;();
+
+	private String favMovie;
+	private String favFastFood;
+
+	public UpDownSelectAction(){
+		
+		moviesList.add("Spider Man");
+		moviesList.add("Matrix");
+		moviesList.add("Super Man");
+		moviesList.add("Dark Knight");
+		moviesList.add("BraveHeart");
+		moviesList.add("Ultraman");
+		
+	}
+	
+	public String getFavFastFood() {
+		return favFastFood;
+	}
+
+	public void setFavFastFood(String favFastFood) {
+		this.favFastFood = favFastFood;
+	}
+
+	public List&lt;String&gt; getMoviesList() {
+		return moviesList;
+	}
+
+	public void setMoviesList(List&lt;String&gt; moviesList) {
+		this.moviesList = moviesList;
+	}
+
+	public String getFavMovie() {
+		return favMovie;
+	}
+
+	public void setFavMovie(String favMovie) {
+		this.favMovie = favMovie;
+	}
+
+	public String execute() throws Exception{
+		
+		return SUCCESS;
+	}
+
+	public String display() {
+		return NONE;
+	}
+	
+}</pre> 
+ <h2> 2. 结果页面 </h2> 
+ <p> 通过“&lt;s:updownselect&gt;”渲染上下按钮选择组件标签。 </p> 
+ <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  background-color:#FFFFFF;"> <strong>updownselect.jsp</strong> </p> 
+ <pre>&lt;%@ taglib prefix="s" uri="/struts-tags" %&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;s:head /&gt;
+&lt;/head&gt;
+
+&lt;body&gt;
+&lt;h1&gt;Struts 2 updownselect example&lt;/h1&gt;
+
+&lt;s:form action="resultAction" namespace="/" method="POST" &gt;
+
+&lt;s:updownselect
+list="#{'KFC':'KFC', 'McDonald':'McDonald', 'Burger King':'Burger King',
+'Pizza Hut':'Pizza Hut', 'Fat Boy King':'Fat Boy King'}"
+name="favFastFood"
+headerKey="-1"
+headerValue="--- Please Order ---" 
+size="7"
+/&gt;
+
+&lt;s:updownselect
+list="moviesList"
+name="favMovie"
+headerKey="-1"
+headerValue="--- Please Order ---"
+size="10"
+moveUpLabel="Move Up"
+moveDownLabel="Move Down"
+selectAllLabel="Select All" /&gt;
+
+&lt;s:submit value="submit" name="submit" /&gt;
+	
+&lt;/s:form&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;</pre> 
+ <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  background-color:#FFFFFF;"> <strong>result.jsp</strong> </p>   
+ <pre>&lt;%@ taglib prefix="s" uri="/struts-tags" %&gt;
+&lt;html&gt;
+
+&lt;body&gt;
+&lt;h1&gt;Struts 2 updownselect example&lt;/h1&gt;
+
+&lt;h2&gt;
+   Favor fast food : &lt;s:property value="favFastFood"/&gt; 
+&lt;/h2&gt; 
+
+&lt;h2&gt;
+   Favor movies : &lt;s:property value="favMovie"/&gt; 
+&lt;/h2&gt; 
+
+&lt;/body&gt;
+&lt;/html&gt;</pre> 
+ <h2 style="font-family:'Helvetica Neue', Helvetica,  font-weight:500;color:#333333;font-size:24px;background-color:#FFFFFF;"> 3. struts.xml </h2> 
+ <pre>&lt;?xml version="1.0" encoding="UTF-8" ?&gt;
+&lt;!DOCTYPE struts PUBLIC
+"-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+"http://struts.apache.org/dtds/struts-2.0.dtd"&gt;
+ 
+&lt;struts&gt;
+
+    &lt;constant name="struts.devMode" value="true" /&gt;
+	
+   &lt;package name="default" namespace="/" extends="struts-default"&gt;
+		
+   &lt;action name="updownSelectAction" 
+       class="com.yiibai.common.action.UpDownSelectAction" method="display"&gt;
+       &lt;result name="none"&gt;pages/updownselect.jsp&lt;/result&gt;
+   &lt;/action&gt;
+		
+   &lt;action name="resultAction" class="com.yiibai.common.action.UpDownSelectAction" &gt;
+       &lt;result name="success"&gt;pages/result.jsp&lt;/result&gt;
+   &lt;/action&gt;
+  &lt;/package&gt;
+	
+&lt;/struts&gt;</pre> 
+ <h2 style="font-family:'Helvetica Neue', Helvetica,  font-weight:500;color:#333333;font-size:24px;background-color:#FFFFFF;"> 4. 示例 </h2> 
+ <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  background-color:#FFFFFF;"> <em>http://localhost:8080/Struts2Example/updownSelectAction.action</em><br> 选择选项，将其向上或向下。 </p> 
+ <div class="pic" style="border:1px solid #DDDDDD;margin:20px 0px;padding:20px;text-align:center;color:#333333;font-family:'Helvetica Neue', Helvetica,  background-color:#F9F9F9;"> 
+  <img src="/uploads/tutorial/20151115/1-1511151A609520.png" alt=""> 
+ </div> 
+ <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  background-color:#FFFFFF;"> 当提交后，所有的选项都将在它们的排列顺序<span style="color:#333333;">提交</span>。 </p> 
+ <div class="pic" style="border:1px solid #DDDDDD;margin:20px 0px;padding:20px;text-align:center;color:#333333;font-family:'Helvetica Neue', Helvetica,  background-color:#F9F9F9;"> 
+  <img src="/uploads/tutorial/20151115/1-1511151AI9453.png" alt=""> 
+ </div> 
+ <h2> 参考 </h2> 
+ <ol> 
+  <li> <a target="_blank" href="http://struts.apache.org/2.0.14/docs/updownselect.html">Struts 2 updownselect example</a> </li> 
+  <li> <a target="_blank" href="http://www.yiibai.com/struts_2/struts-2-sdoubleselect-example.html">http://www.yiibai.com/struts_2/struts-2-sdoubleselect-example.html</a> </li> 
+ </ol> 
+ <br> 代码下载：
+ <a target="_blank" href="http://pan.baidu.com/s/1hqtuAdY">http://pan.baidu.com/s/1hqtuAdY</a>
+ <br>      
+</div></body></html>

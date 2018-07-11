@@ -1,0 +1,54 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Jsoup示例：提取表单参数</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>在这个例子中，我们将提取并打印表单参数，如参数名称和参数值。 为此，我们调用<code>Document</code>类的<code>getElementById()</code>方法和<code>Element</code>类的<code>getElementsByTag()</code>方法。</p> 
+ <p>创建一个HTML文件：<em>register.html</em>，代码如下 - </p> 
+ <pre><code class="lang-html">&lt;!DOCTYPE html&gt;  
+&lt;html&gt;  
+&lt;head&gt;  
+&lt;meta charset="utf-8"&gt;  
+&lt;title&gt;Register Please&lt;/title&gt;  
+&lt;/head&gt;  
+&lt;body&gt;  
+&lt;form id="registerform" action="register.jsp" method="post"&gt;  
+Name:&lt;input type="text" name="name" value="maxsu"/&gt;&lt;br/&gt;  
+Password:&lt;input type="password" name="password" value="sj"/&gt;&lt;br/&gt;  
+Email:&lt;input type="email" name="email" value="maxsu@gmail.com"/&gt;&lt;br/&gt;  
+&lt;input name="submitbutton" type="submit" value="register"/&gt;  
+&lt;/form&gt;  
+&lt;/body&gt;  
+&lt;/html&gt;  
+`
+</code></pre> 
+ <p>创建一个Java类文件：<em>JsoupPrintFormParameters.java</em>，代码如下 - </p> 
+ <pre><code class="lang-java">import java.io.File;  
+import java.io.IOException;  
+import org.jsoup.Jsoup;  
+import org.jsoup.nodes.Document;  
+import org.jsoup.nodes.Element;  
+import org.jsoup.select.Elements;  
+public class JsoupPrintFormParameters {  
+public static void main(String[] args) throws IOException {  
+    Document doc = Jsoup.parse(new File("e:\\register.html"),"utf-8");  
+    Element loginform = doc.getElementById("registerform");  
+
+    Elements inputElements = loginform.getElementsByTag("input");  
+    for (Element inputElement : inputElements) {  
+        String key = inputElement.attr("name");  
+        String value = inputElement.attr("value");  
+        System.out.println("Param name: "+key+" \nParam value: "+value);  
+    }  
+}  
+}
+</code></pre> 
+ <p>执行结果 - </p>   
+ <pre><code class="lang-shell">Param name: name 
+Param value: maxsu
+Param name: password 
+Param value: sj
+Param name: email 
+Param value: maxsu@gmail.com
+Param name: submitbutton 
+Param value: register
+</code></pre> 
+ <p>自已编程运行看看吧 </p>
+ <br>      
+</div></body></html>

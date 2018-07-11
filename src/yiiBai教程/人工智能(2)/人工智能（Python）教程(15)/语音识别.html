@@ -1,0 +1,245 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">语音识别</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>在本章中，我们将学习使用AI和Python进行语音识别。<br>言语是成人人际沟通的最基本手段。 语音处理的基本目标是提供人与机器之间的交互。<br>语音处理系统主要有三项任务 -</p> 
+ <ul> 
+  <li>首先，语音识别允许机器捕捉我们所说的单词，短语和句子</li>
+  <li>其次，自然语言处理使机器能够理解我们所说的话</li>
+  <li>第三，语音合成允许机器说话。</li>
+ </ul> 
+ <p>本章重点讲述语音识别，理解人类说话的过程。 请记住，在麦克风的帮助下捕捉语音信号，然后系统才能理解它。</p> 
+ <h2 id="h2-u6784u5EFAu8BEDu97F3u8BC6u522Bu5668"><a name="构建语音识别器" class="reference-link"></a><span class="header-link octicon octicon-link"></span>构建语音识别器</h2>
+ <p>语音识别或自动语音识别(ASR)是AI机器人等AI项目的关注焦点。 没有ASR，就不可能想象一个认知机器人与人进行交互。 但是，构建语音识别器并不容易。</p> 
+ <p><strong>开发语音识别系统的困难</strong><br>开发高质量的语音识别系统确实是一个难题。 语音识别技术的困难可以广泛地表征为如下所讨论的许多维度 -</p> 
+ <ul> 
+  <li><strong>词汇大小</strong> - 词汇大小影响开发ASR的难易程度。考虑以下词汇量以便更好地理解。
+   <ul> 
+    <li>例如，在一个语音菜单系统中，一个小词汇由2到100个单词组成</li>
+    <li>例如，在数据库检索任务中，中等大小的词汇包含几个100到1000个单词</li>
+    <li>一个大的词汇由几万个单词组成，如在一般的听写任务中。</li>
+   </ul> </li>
+  <li><strong>信道特性</strong> - 信道质量也是一个重要的维度。 例如，人类语音包含全频率范围的高带宽，而电话语音包含频率范围有限的低带宽。 请注意，后者更难。</li>
+  <li><p><strong>说话模式</strong> - 轻松开发ASR还取决于说话模式，即语音是处于孤立词模式还是连接词模式，还是处于连续语音模式。 请注意，连续说话很难辨认。</p> </li>
+  <li><p><strong>口语风格</strong> - 阅读说话可以采用正式风格，也可以采用自发风格和对话风格。 后者更难以识别。</p> </li>
+  <li><strong>扬声器依赖性</strong> - 语音可以依赖扬声器，扬声器自适应或扬声器独立。 独立发言人是最难建立的。</li>
+  <li><strong>噪音类型</strong> - 噪音是开发ASR时需要考虑的另一个因素。 信噪比可以在各种范围内，这取决于观察较少的声学环境与较多的背景噪声 -
+   <ul> 
+    <li>如果信噪比大于30dB，则认为是高范围</li>
+    <li>如果信噪比在30dB到10db之间，则认为是中等信噪比</li>
+    <li>如果信噪比小于10dB，则认为是低范围</li>
+   </ul> </li>
+  <li><strong>麦克风特性</strong> - 麦克风的质量可能很好，平均水平或低于平均水平。 此外，嘴和微型电话之间的距离可能会有所不同。 识别系统也应考虑这些因素。</li>
+ </ul> 
+ <p>尽管存在这些困难，研究人员在语音的各个方面做了很多工作，例如理解语音信号，说话人以及识别口音。</p> 
+ <p>所以，需要按照以下步骤构建语音识别器 -</p> 
+ <h2 id="h2--"><a name="可视化音频信号 - 从文件读取并进行处理" class="reference-link"></a><span class="header-link octicon octicon-link"></span>可视化音频信号 - 从文件读取并进行处理</h2>
+ <p>这是构建语音识别系统的第一步，因为它可以帮助您理解音频信号的结构。 处理音频信号可遵循的一些常见步骤如下所示 - </p> 
+ <p><strong>记录</strong><br>当必须从文件中读取音频信号时，首先使用麦克风录制。</p> 
+ <p><strong>采样</strong><br>用麦克风录音时，信号以数字形式存储。 但为了解决这个问题，机器需要使用离散数字形式。 因此，我们应该以某个频率进行采样，并将信号转换为离散数字形式。 选择高频采样意味着当人类听到信号时，他们会感觉它是一个连续的音频信号。</p> 
+ <p><strong>示例</strong></p> 
+ <p>以下示例显示了使用Python存储在文件中的逐步分析音频信号的方法。 这个音频信号的频率是44,100HZ。</p> 
+ <p>下面导入必要的软件包 -</p> 
+ <pre><code class="lang-python">import numpy as np
+import matplotlib.pyplot as plt
+from scipy.io import wavfile
+</code></pre> 
+ <p>现在，读取存储的音频文件。 它会返回两个值:采样频率和音频信号。 提供存储音频文件的路径，如下所示 -</p> 
+ <pre><code class="lang-python">frequency_sampling, audio_signal = wavfile.read("/Users/admin/audio_file.wav")
+</code></pre> 
+ <p>使用显示的命令显示音频信号的采样频率，信号的数据类型及其持续时间等参数 -</p> 
+ <pre><code class="lang-python">print('\nSignal shape:', audio_signal.shape)
+print('Signal Datatype:', audio_signal.dtype)
+print('Signal duration:', round(audio_signal.shape[0] / 
+float(frequency_sampling), 2), 'seconds')
+</code></pre> 
+ <p>这一步涉及如下所示对信号进行标准化 -</p> 
+ <pre><code class="lang-python">audio_signal = audio_signal / np.power(2, 15)
+</code></pre> 
+ <p>在这一步中，从这个信号中提取出前100个值进行可视化。 为此目的使用以下命令 -</p> 
+ <pre><code class="lang-python">audio_signal = audio_signal [:100]
+time_axis = 1000 * np.arange(0, len(signal), 1) / float(frequency_sampling)
+</code></pre> 
+ <p>现在，使用下面给出的命令可视化信号 -</p> 
+ <pre><code class="lang-python">plt.plot(time_axis, signal, color='blue')
+plt.xlabel('Time (milliseconds)')
+plt.ylabel('Amplitude')
+plt.title('Input audio signal')
+plt.show()
+</code></pre> 
+ <p>下面输出图形是上述音频信号提取的数据，如图所示 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201806/0606/230150614_19650.jpg" alt=""></p> 
+ <pre><code class="lang-python">Signal shape: (132300,)
+Signal Datatype: int16
+Signal duration: 3.0 seconds
+</code></pre> 
+ <h2 id="h2--"><a name="表征音频信号:转换到频域" class="reference-link"></a><span class="header-link octicon octicon-link"></span>表征音频信号:转换到频域</h2>
+ <p>表征音频信号涉及将时域信号转换为频域，并通过以下方式理解其频率分量。 这是一个重要的步骤，因为它提供了关于信号的大量信息。 可以使用像傅立叶变换这样的数学工具来执行此转换。</p> 
+ <p><strong>示例</strong></p> 
+ <p>以下示例将逐步说明如何使用存储在文件中的Python来表征信号。 请注意，这里使用傅里叶变换数学工具将其转换为频域。</p> 
+ <p>导入必要的软件包，如下所示 -</p> 
+ <pre><code class="lang-python">import numpy as np
+import matplotlib.pyplot as plt
+from scipy.io import wavfile
+</code></pre> 
+ <p>现在，读取存储的音频文件。 它会返回两个值:采样频率和音频信号。 提供存储音频文件的路径，如命令所示 -</p> 
+ <pre><code class="lang-python">frequency_sampling, audio_signal = wavfile.read("/Users/admin/sample.wav")
+</code></pre> 
+ <p>在这一步中，将使用下面给出的命令显示音频信号的采样频率，信号的数据类型和持续时间等参数 -</p> 
+ <pre><code class="lang-python">print('\nSignal shape:', audio_signal.shape)
+print('Signal Datatype:', audio_signal.dtype)
+print('Signal duration:', round(audio_signal.shape[0] / 
+float(frequency_sampling), 2), 'seconds')
+</code></pre> 
+ <p>在这一步中，我们需要对信号进行标准化，如下面的命令所示 -</p> 
+ <pre><code class="lang-python">audio_signal = audio_signal / np.power(2, 15)
+</code></pre> 
+ <p>这一步涉及提取信号的长度和半长。使用以下命令 -</p> 
+ <pre><code class="lang-python">length_signal = len(audio_signal)
+half_length = np.ceil((length_signal + 1) / 2.0).astype(np.int)
+</code></pre> 
+ <p>现在，需要应用数学工具来转换到频域。 这里使用傅里叶变换。</p> 
+ <pre><code class="lang-python">signal_frequency = np.fft.fft(audio_signal)
+</code></pre> 
+ <p>现在，进行频域信号的归一化并将其平方 -</p> 
+ <pre><code class="lang-python">signal_frequency = abs(signal_frequency[0:half_length]) / length_signal
+signal_frequency **= 2
+</code></pre> 
+ <p>接下来，提取频率变换信号的长度和一半长度 -</p> 
+ <pre><code class="lang-python">len_fts = len(signal_frequency)
+</code></pre> 
+ <p>请注意，傅里叶变换信号必须针对奇偶情况进行调整。</p> 
+ <pre><code class="lang-python">if length_signal % 2:
+   signal_frequency[1:len_fts] *= 2
+else:
+   signal_frequency[1:len_fts-1] *= 2
+</code></pre> 
+ <p>现在，以分贝(dB)为单位提取功率 -</p> 
+ <pre><code class="lang-python">signal_power = 10 * np.log10(signal_frequency)
+</code></pre> 
+ <p>调整X轴的以kHz为单位的频率 -</p> 
+ <pre><code class="lang-python">x_axis = np.arange(0, len_half, 1) * (frequency_sampling / length_signal) / 1000.0
+</code></pre> 
+ <p>现在，将信号的特征可视化如下 -</p> 
+ <pre><code class="lang-python">plt.figure()
+plt.plot(x_axis, signal_power, color='black')
+plt.xlabel('Frequency (kHz)')
+plt.ylabel('Signal power (dB)')
+plt.show()
+</code></pre> 
+ <p>可以观察上面代码的输出图形，如下图所示 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201806/0606/769150629_50989.jpg" alt=""></p> 
+ <h2 id="h2-u751Fu6210u5355u8C03u97F3u9891u4FE1u53F7"><a name="生成单调音频信号" class="reference-link"></a><span class="header-link octicon octicon-link"></span>生成单调音频信号</h2>
+ <p>到目前为止你所看到的两个步骤对于了解信号很重要。 现在，如果要使用某些预定义参数生成音频信号，此步骤将很有用。 请注意，此步骤会将音频信号保存在输出文件中。</p> 
+ <p><strong>示例</strong></p> 
+ <p>在下面的例子中，我们将使用Python生成一个单调信号，它将被存储在一个文件中。需要采取以下步骤 - </p> 
+ <p>导入必要的软件包 -</p>   
+ <pre><code class="lang-python">import numpy as np
+import matplotlib.pyplot as plt
+from scipy.io.wavfile import write
+</code></pre> 
+ <p>指定输出保存的文件 - </p> 
+ <pre><code class="lang-python">output_file = 'audio_signal_generated.wav'
+</code></pre> 
+ <p>现在，指定选择的参数，如图所示 -</p> 
+ <pre><code class="lang-python">duration = 4 # in seconds
+frequency_sampling = 44100 # in Hz
+frequency_tone = 784
+min_val = -4 * np.pi
+max_val = 4 * np.pi
+</code></pre> 
+ <p>在这一步中，我们可以生成音频信号，如下代码所示 -</p> 
+ <pre><code class="lang-python">t = np.linspace(min_val, max_val, duration * frequency_sampling)
+audio_signal = np.sin(2 * np.pi * tone_freq * t)
+</code></pre> 
+ <p>现在，将音频文件保存在输出文件中 -</p> 
+ <pre><code class="lang-python">write(output_file, frequency_sampling, signal_scaled)
+</code></pre> 
+ <p>如图所示，提取图形的前100个值 -</p> 
+ <pre><code class="lang-python">audio_signal = audio_signal[:100]
+time_axis = 1000 * np.arange(0, len(signal), 1) / float(sampling_freq)
+</code></pre> 
+ <p>现在，将生成的音频信号可视化如下 -</p> 
+ <pre><code class="lang-python">plt.plot(time_axis, signal, color='blue')
+plt.xlabel('Time in milliseconds')
+plt.ylabel('Amplitude')
+plt.title('Generated audio signal')
+plt.show()
+</code></pre> 
+ <p>可以观察这里给出的图形 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201806/0606/563150634_97085.jpg" alt=""></p> 
+ <h2 id="h2-u8BEDu97F3u7279u5F81u63D0u53D6"><a name="语音特征提取" class="reference-link"></a><span class="header-link octicon octicon-link"></span>语音特征提取</h2>
+ <p>这是构建语音识别器的最重要步骤，因为在将语音信号转换为频域后，我们必须将其转换为可用的特征向量形式。 可以为此使用不同的特征提取技术，如MFCC，PLP，PLP-RASTA等。</p> 
+ <p><strong>示例</strong></p> 
+ <p>在以下示例中，我们将使用MFCC技术逐步使用Python从信号中提取特征。</p> 
+ <p>导入必要的软件包，如下所示 -</p> 
+ <pre><code class="lang-python">import numpy as np
+import matplotlib.pyplot as plt
+from scipy.io import wavfile
+from python_speech_features import mfcc, logfbank
+</code></pre> 
+ <p>现在，读取存储的音频文件。 它会返回两个值 - 采样频率和音频信号。 提供存储音频文件的路径。</p> 
+ <pre><code class="lang-python">frequency_sampling, audio_signal = wavfile.read("/Users/admin/audio_file.wav")
+</code></pre> 
+ <p>请注意，在此首先抽取15000个样本进行分析。</p> 
+ <pre><code class="lang-python">audio_signal = audio_signal[:15000]
+</code></pre> 
+ <p>使用MFCC技术并执行以下命令来提取MFCC特征 -</p> 
+ <pre><code class="lang-python">features_mfcc = mfcc(audio_signal, frequency_sampling)
+</code></pre> 
+ <p>现在，打印MFCC参数，如下所示 -</p> 
+ <pre><code class="lang-python">print('\nMFCC:\nNumber of windows =', features_mfcc.shape[0])
+print('Length of each feature =', features_mfcc.shape[1])
+</code></pre> 
+ <p>使用下面给出的命令绘制并可视化MFCC特征 -</p> 
+ <pre><code class="lang-python">features_mfcc = features_mfcc.T
+plt.matshow(features_mfcc)
+plt.title('MFCC')
+</code></pre> 
+ <p>在这一步中，我们使用如下滤器组特征，提取过滤器组特征 -</p> 
+ <pre><code class="lang-python">filterbank_features = logfbank(audio_signal, frequency_sampling)
+</code></pre> 
+ <p>现在，打印过滤器组参数。</p> 
+ <pre><code class="lang-python">print('\nFilter bank:\nNumber of windows =', filterbank_features.shape[0])
+print('Length of each feature =', filterbank_features.shape[1])
+</code></pre> 
+ <p>绘制并可视化过滤器组特征。</p> 
+ <pre><code class="lang-python">filterbank_features = filterbank_features.T
+plt.matshow(filterbank_features)
+plt.title('Filter bank')
+plt.show()
+</code></pre> 
+ <p>根据上述步骤，您可以观察到以下输出:图1为MFCC，图2为过滤器组。</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201806/0606/706080649_84772.jpg" alt=""></p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201806/0606/980080649_44586.jpg" alt=""></p> 
+ <h2 id="h2-u53E3u8BEDu8BCDu7684u8BC6u522B"><a name="口语词的识别" class="reference-link"></a><span class="header-link octicon octicon-link"></span>口语词的识别</h2>
+ <p>语音识别意味着当人们说话时，机器就会理解它。 这里使用Python中的Google Speech API来实现它。 需要为此安装以下软件包 -</p> 
+ <ul> 
+  <li>Pyaudio - 它可以通过使用pip安装Pyaudio命令进行安装。</li>
+  <li>SpeechRecognition - 这个软件包可以通过使用<code>pip install SpeechRecognition</code>进行安装。</li>
+  <li>Google-Speech-API - 可以使用命令<code>pip install google-api-python-client</code>进行安装。</li>
+ </ul> 
+ <p><strong>实例</strong></p> 
+ <p>观察下面的例子来理解口语的识别。如下所示导入必要的软件包 -</p> 
+ <pre><code class="lang-python">import speech_recognition as sr
+</code></pre> 
+ <p>创建一个对象，如下所示 -</p> 
+ <pre><code class="lang-python">recording = sr.Recognizer()
+</code></pre> 
+ <p>现在，Microphone()模块将把语音作为输入 -</p> 
+ <pre><code class="lang-python">with sr.Microphone() as source: recording.adjust_for_ambient_noise(source)
+   print("Please Say something:")
+   audio = recording.listen(source)
+</code></pre> 
+ <p>现在谷歌API会识别语音并提供输出。</p> 
+ <pre><code class="lang-python">try:
+   print("You said: \n" + recording.recognize_google(audio))
+except Exception as e:
+   print(e)
+</code></pre> 
+ <p>可以看到下面的输出 -</p> 
+ <pre><code class="lang-python">Please Say Something:
+You said:
+</code></pre> 
+ <p>例如，如果您说<code>yiibai.com</code>，那么系统会如下正确识别它 -</p> 
+ <pre><code class="lang-shell">yiibai.com
+</code></pre>
+ <br>      
+</div></body></html>

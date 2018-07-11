@@ -1,0 +1,40 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Cassandra数据模型</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>Cassandra中的数据模型与RDBMS中正常情况完全不同。 我们来看看Cassandra如何存储数据。</p> 
+ <h2 id="h2-u7FA4u96C6"><a name="群集" class="reference-link"></a><span class="header-link octicon octicon-link"></span>群集</h2>
+ <p>Cassandra数据库分布在运行的几(多)台机器上。 最外层的容器被称为包含不同节点的群集。 每个节点都包含一个副本，如果发生故障，副本将负责顶上。 Cassandra将节点以环形格式排列在群集中，并为其分配数据。</p> 
+ <h2 id="h2-u952Eu7A7Au95F4"><a name="键空间" class="reference-link"></a><span class="header-link octicon octicon-link"></span>键空间</h2>
+ <p>键空间(<strong>Keyspace</strong>)是Cassandra中数据的最外层容器。 以下是Cassandra中Keyspace的基本属性：</p> 
+ <ul> 
+  <li>复制因子：它指定集群中的机器数量，将接收相同数据的副本。</li>
+  <li><p>复制放置策略：这是一个策略，如何数据将复制品放在环中。有三种类型的策略，如：</p> 
+   <ul> 
+    <li>
+     <ol> 
+      <li>简单策略(机架感知策略)</li>
+     </ol> </li>
+    <li>
+     <ol> 
+      <li>旧网络拓扑策略(机架感知策略)</li>
+     </ol> </li>
+    <li>
+     <ol> 
+      <li>网络拓扑策略(数据中心共享策略) </li>
+     </ol> </li>
+   </ul> </li>
+  <li><p>列家族：列家族置于键空间之下。 键空间是一个或多个列族的列表的容器，而列族是一组行的容器。 每行包含已排序的列。列家族表示数据的结构。每个键空间至少有一个并且经常有很多列家族。</p> </li>
+ </ul> 
+ <p>在Cassandra中，良好的数据模型非常重要，因为不良数据模型可能会降低性能，特别是当您尝试在Cassandra上实现RDBMS概念时。</p> 
+ <h2 id="h2-cassandra-"><a name="Cassandra数据模型规则" class="reference-link"></a><span class="header-link octicon octicon-link"></span>Cassandra数据模型规则</h2>
+ <ul> 
+  <li>Cassandra不支持JOINS，GROUP BY，OR子句，聚合等等。因此必须按照需要存储数据的方式存储数据。</li>
+  <li>最大化数据重复，因为Cassandra是分布式数据库，数据重复提供即时可用性而无单点故障。</li>
+ </ul> 
+ <h2 id="h2-u6570u636Eu5EFAu6A21u76EEu6807"><a name="数据建模目标" class="reference-link"></a><span class="header-link octicon octicon-link"></span>数据建模目标</h2>  
+ <p>在Cassandra中建模数据时，您应该有以下目标：</p> 
+ <ul> 
+  <li><strong>在群集周围均匀传播数据</strong>：要在Cassandra群集的每个节点上传播相等数量的数据，您必须选择整数作为主键。 数据根据作为主键的第一部分的分区键传播到不同的节点。</li>
+  <li><strong>查询数据时读取的分区数最小化</strong>：分区用于将一组记录与相同的分区键绑定。 当读取查询发出时，它从不同的分区收集不同节点的数据。</li>
+ </ul> 
+ <p>在许多分区的情况下，需要访问所有这些分区来收集查询数据。 这并不意味着不应该创建分区。 如果您的数据非常大，则无法在单个分区上保留大量数据。 单个分区将会减慢。 所以必须有一个平衡数量的分区。</p>
+ <br>      
+</div></body></html>

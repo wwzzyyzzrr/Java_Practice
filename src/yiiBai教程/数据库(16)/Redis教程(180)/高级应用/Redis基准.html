@@ -1,0 +1,162 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Redis基准</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>Redis基准测试是通过同时运行<code>n</code>个命令来检查Redis的性能的实用程序。</p> 
+ <h2 id="h2-u8BEDu6CD5"><a name="语法" class="reference-link"></a><span class="header-link octicon octicon-link"></span>语法</h2>
+ <p>以下是基准测试命令的基本语法。</p> 
+ <pre><code class="lang-shell">yiibai@ubuntu:~$ redis-benchmark [option] [option value]
+</code></pre> 
+ <h2 id="h2-u793Au4F8B"><a name="示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例</h2>
+ <p>以下示例通过调用<code>100000</code>个命令检查Redis。</p> 
+ <pre><code class="lang-shell">yiibai@ubuntu:~$ redis-benchmark -n 100000  
+====== PING_INLINE ======
+  100000 requests completed in 1.56 seconds
+  50 parallel clients
+  3 bytes payload
+  keep alive: 1
+
+97.59% &lt;= 1 milliseconds
+99.78% &lt;= 2 milliseconds
+99.83% &lt;= 3 milliseconds
+99.86% &lt;= 4 milliseconds
+99.91% &lt;= 5 milliseconds
+99.98% &lt;= 6 milliseconds
+99.99% &lt;= 47 milliseconds
+100.00% &lt;= 47 milliseconds
+64226.07 requests per second
+
+====== PING_BULK ======
+  100000 requests completed in 1.57 seconds
+  50 parallel clients
+  3 bytes payload
+  keep alive: 1
+
+98.40% &lt;= 1 milliseconds
+99.68% &lt;= 2 milliseconds
+99.91% &lt;= 3 milliseconds
+99.94% &lt;= 4 milliseconds
+99.95% &lt;= 45 milliseconds
+100.00% &lt;= 45 milliseconds
+63694.27 requests per second
+
+====== SET ======
+  100000 requests completed in 1.49 seconds
+  50 parallel clients
+  3 bytes payload
+  keep alive: 1
+
+97.58% &lt;= 1 milliseconds
+99.92% &lt;= 2 milliseconds
+99.94% &lt;= 3 milliseconds
+100.00% &lt;= 3 milliseconds
+67340.07 requests per second
+</code></pre> 
+ <p>以下是Redis基准测试中可用选项的列表。</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>序号</th> 
+    <th>选项</th> 
+    <th>说明</th> 
+    <th>默认值</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>1</td> 
+    <td><code>-h</code></td> 
+    <td>指定服务器主机名</td> 
+    <td>127.0.0.1</td> 
+   </tr> 
+   <tr> 
+    <td>2</td> 
+    <td><code>-p</code></td> 
+    <td>指定服务器端口</td> 
+    <td>6379</td> 
+   </tr> 
+   <tr> 
+    <td>3</td> 
+    <td><code>-s</code></td> 
+    <td>指定服务器套接字</td> 
+    <td></td> 
+   </tr> 
+   <tr> 
+    <td>4</td> 
+    <td><code>-c</code></td> 
+    <td>指定并行连接的数量</td> 
+    <td>50</td> 
+   </tr> 
+   <tr> 
+    <td>5</td> 
+    <td><code>-n</code></td> 
+    <td>指定请求的总数</td> 
+    <td>10000</td> 
+   </tr> 
+   <tr> 
+    <td>6</td> 
+    <td><code>-d</code></td> 
+    <td>指定<code>SET/GET</code>值的数据大小(以字节为单位)</td> 
+    <td>2</td> 
+   </tr> 
+   <tr> 
+    <td>7</td> 
+    <td><code>-k</code></td> 
+    <td>1=keep alive, 0=reconnect</td> 
+    <td>1</td> 
+   </tr> 
+   <tr> 
+    <td>8</td> 
+    <td><code>-r</code></td> 
+    <td>使用<code>SET/GET/INCR</code>的随机键，SADD的随机值</td> 
+    <td></td> 
+   </tr> 
+   <tr> 
+    <td>9</td> 
+    <td><code>-p</code></td> 
+    <td>管道<code>&lt;numreq&gt;</code>请求</td> 
+    <td>1</td> 
+   </tr> 
+   <tr> 
+    <td>10</td> 
+    <td><code>-h</code></td> 
+    <td>指定服务器主机名</td> 
+    <td></td> 
+   </tr> 
+   <tr> 
+    <td>11</td> 
+    <td><code>-q</code></td> 
+    <td>强制让Redis安装。 只显示<code>query/sec</code>值</td> 
+    <td></td> 
+   </tr> 
+   <tr> 
+    <td>12</td> 
+    <td><code>--csv</code></td> 
+    <td>以CSV格式输出</td> 
+    <td></td> 
+   </tr> 
+   <tr> 
+    <td>13</td> 
+    <td><code>-l</code></td> 
+    <td>生成循环，永久运行测试</td> 
+    <td></td> 
+   </tr> 
+   <tr> 
+    <td>14</td> 
+    <td><code>-t</code></td> 
+    <td>只运行逗号分隔的测试列表</td> 
+    <td></td> 
+   </tr> 
+   <tr> 
+    <td>15</td> 
+    <td><code>-I</code></td> 
+    <td>空闲模式。 只打开N个空闲连接并等待</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h2 id="h2-u793Au4F8B"><a name="示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例</h2>
+ <p>下面的示例显示了Redis基准实用程序中多个选项的使用。</p>   
+ <pre><code class="lang-shell">redis-benchmark -h 127.0.0.1 -p 6379 -t set,lpush -n 100000 -q  
+
+SET: 146198.83 requests per second 
+LPUSH: 145560.41 requests per second
+</code></pre>
+ <br>      
+</div></body></html>

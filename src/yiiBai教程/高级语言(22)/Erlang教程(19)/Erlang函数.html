@@ -1,0 +1,161 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Erlang函数</h1><div style="width:100%;float:left;" class="article-content">   
+ <div> 
+  <div>
+    Erlang是一种函数式编程语言，因此我们重点来看看在&nbsp;Erlang&nbsp;中是函数是如何工作的。本章将介绍在&nbsp;Erlang&nbsp;中什么都可以使用函数来完成。 
+  </div> 
+ </div> 
+ <div> 
+  <h2> 定义函数 </h2> 
+  <div>
+    函数声明的语法如下&nbsp;- 
+  </div> 
+  <h3> 语法 </h3> 
+  <pre>FunctionName(Pattern1… PatternN) -&gt;
+Body;</pre> 
+  <p> 在这里, </p> 
+  <ul> 
+   <li> <p style="text-align:justify;"> <em>FunctionName</em><em>&nbsp;</em>−&nbsp;函数名称是一个原子(唯一性) </p> </li> 
+   <li> <p style="text-align:justify;"> <em>Pattern1… PatternN</em><em>&nbsp;</em>−&nbsp;每个参数都是一个模式。参数的个数N是函数的参数数量。函数名称名称是由模块、函数名和定义的参数数量是唯一的。即，具有相同的名称并在相同的模块中的两个函数，但它们具有不同参数数量也算是两种不同的函数。 </p> </li> 
+   <li> <p style="text-align:justify;"> <em>Body</em>&nbsp;−&nbsp;一个子句主体是由以逗号分隔的表达式序列组成&nbsp;(,) </p> </li> 
+  </ul> 
+  <div>
+    下面的程序是使用函数的一个简单的例子&nbsp;- 
+  </div> 
+  <h3> 示例 </h3> 
+  <pre>-module(helloworld). 
+-export([add/2,start/0]). 
+
+add(X,Y) -&gt; 
+   Z = X+Y, 
+   io:fwrite("~w~n",[Z]). 
+   
+start() -&gt; 
+   add(5,6).</pre> 
+  <div>
+    对上述程序以下几点需要注意- 
+  </div> 
+  <ul> 
+   <li> 
+    <div>
+      我们定义两个函数，一个函数为&nbsp;add&nbsp;，它需要&nbsp;2&nbsp;个参数，另一个函数是&nbsp;start ； 
+    </div> </li> 
+   <li> 
+    <div>
+      这两个函数都使用&nbsp;export&nbsp;函数定义。如果我们不这样做那么将无法使用函数； 
+    </div> </li> 
+   <li> 
+    <div>
+      一个函数可以在另一个函数中调用。在这里&nbsp;start&nbsp;函数中将调用&nbsp;add&nbsp;函数； 
+    </div> </li> 
+  </ul> 
+  <div>
+    上面的代码的输出结果是&nbsp;- 
+  </div> 
+  <pre>11</pre> 
+  <h2> 
+   <div>
+     匿名函数 
+   </div> </h2> 
+  <div>
+    匿名函数是一个函数，但它没有与任何名称相关联。在&nbsp;Erlang&nbsp;中有工具可以用来定义匿名函数。以下的程序是一个匿名函数的一个例子。 
+  </div> 
+  <h3> 示例 </h3> 
+  <pre>-module(helloworld). 
+-export([start/0]). 
+
+start() -&gt; 
+   Fn = fun() -&gt; 
+      io:fwrite("Anonymous Function") end, 
+   Fn().</pre> 
+  <div>
+    对于上面的例子，有以下几点需要注意&nbsp;- 
+  </div> 
+  <ul> 
+   <li> 
+    <div>
+      匿名函数是使用&nbsp;fun()&nbsp;关键字定义的 
+    </div> </li> 
+   <li> 
+    <div>
+      该函数被分配给一个名为&nbsp;Fn&nbsp;的变量 
+    </div> </li> 
+   <li> 
+    <div>
+      该函数是通过变量名称来调用的 
+    </div> </li> 
+  </ul> 
+  <div>
+    上面的代码的输出结果是&nbsp;- 
+  </div> 
+  <pre>Anonymous Function</pre> 
+  <h2> 
+   <div>
+     使用多个参数的函数 
+   </div> </h2> 
+  <div>
+    Erlang函数可以使用零个或多个参数来定义。函数重载也是可以的，可以定义一个相同名称的函数，只要它们具有不同数目的参数。在下面的例子中，demo函数的每个函数定义是使用多个参数来定义的。 
+  </div> 
+  <h3> 示例代码 </h3> 
+  <pre>-module(helloworld). 
+-export([add/2,add/3,start/0]). 
+
+add(X,Y) -&gt; 
+   Z = X+Y, 
+   io:fwrite("~w~n",[Z]). 
+   
+add(X,Y,Z) -&gt; 
+   A = X+Y+Z, 
+   io:fwrite("~w~n",[A]). 
+ 
+start() -&gt;
+   add(5,6), 
+   add(5,6,6).</pre> 
+  <div>
+    在上面的程序中，我们两次定义&nbsp;add&nbsp;函数。但第一个&nbsp;add&nbsp;函数的定义使用两个参数，第二个&nbsp;add&nbsp;函数的定义使用三个参数。 
+  </div> 
+  <div>
+    上面的代码的输出结果是&nbsp;- 
+  </div>   
+  <pre>11
+17</pre> 
+  <h2> 
+   <div>
+     函数使用序列 
+   </div> </h2> 
+  <div>
+    在&nbsp;Erlang&nbsp;中函数也都有保护序列的能力。这些都不算什么它只不过是一个表达式，只有当评估(计算)为&nbsp;true&nbsp;时函数才运行。 
+  </div> 
+  <div>
+    使用保护序列函数的语法如下面的程序中所示。 
+  </div> 
+  <pre>FunctionName(Pattern1… PatternN) [when GuardSeq1]-&gt;
+Body;</pre> 
+  <p> 在这里, </p> 
+  <ul> 
+   <li> <p style="text-align:justify;"> <em>FunctionName</em>&nbsp;−&nbsp;函数名称是一个原子(唯一性) </p> </li> 
+   <li> <p style="text-align:justify;"> <em>Pattern1… PatternN</em><em>&nbsp;</em>−&nbsp;每个参数都是一个模式。参数的个数N是函数的参数数量。函数名称名称是由模块、函数名和定义的参数数量是唯一的。即，具有相同的名称并在相同的模块中的两个函数，但它们具有不同参数数量也算是两种不同的函数。 </p> </li> 
+   <li> <p style="text-align:justify;"> <em>Body</em><em>&nbsp;</em>−&nbsp;一个子句主体是由以逗号分隔的表达式序列组成&nbsp;(,) </p> </li> 
+   <li> <p style="text-align:justify;"> <em>GuardSeq1</em>&nbsp;− 当函数被调用它获取计算的表达式。 </p> </li> 
+  </ul> 
+  <div>
+    下面的程序是一个使用保护序列的函数的一个简单例子。 
+  </div> 
+  <h3> 示例代码 </h3> 
+  <pre>-module(helloworld). 
+-export([add/1,start/0]). 
+
+add(X) when X&gt;3 -&gt; 
+   io:fwrite("~w~n",[X]). 
+
+start() -&gt; 
+   add(4).</pre> 
+  <div>
+    上面的代码的输出结果是&nbsp;- 
+  </div> 
+  <pre>4</pre> 
+  <div>
+    如果&nbsp;add&nbsp;函数被调用为&nbsp;add(3)，该程序将会出现错误。 
+  </div> 
+ </div>
+ <br>      
+</div></body></html>

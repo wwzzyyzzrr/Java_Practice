@@ -1,0 +1,35 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Java内存通道</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>对文件执行<code>I/O</code>的另一种方法是将文件的一个区域映射到物理内存，并将其作为内存数组。可以使用<code>MappedByteBuffer</code>来执行内存映射文件<code>I/O</code>。</p> 
+ <p>要使用内存映射文件<code>I/O</code>，请为文件获取<code>FileChannel</code>对象，并使用<code>FileChannel</code>的<code>map()</code>方法获取<code>MappedByteBuffer</code>。<br>直接读取或写入映射的字节缓冲区，而不是使用<code>FileChannel</code>对象的<code>read()</code>或<code>write()</code>方法。<br>当从映射的字节缓冲区读取时，从已经映射的文件区域读取。当写入映射的字节缓冲区时，写入文件映射区域。</p> 
+ <p>要将数据立即写入映射字节缓冲区到存储设备，需要使用映射字节缓冲区的<code>force()</code>方法。可以以只读，读写或私有模式映射文件的区域。</p> 
+ <p>在只读模式下，只能从映射的字节缓冲区读取。在读写模式下，可以从映射字节缓冲区读取以及写入。<br>专用模式也称为写时复制模式。当多个程序映射文件的相同区域时，所有程序共享文件的相同区域。</p> 
+ <p>当程序修改映射区域时，仅为该程序创建该区域的单独副本，该副本是其私有副本。对私人副本所做的任何修改对其他程序不可见。</p> 
+ <h2 id="h2-u793Au4F8B"><a name="示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例</h2>
+ <p>下面的代码以只读模式映射整个文件<code>test.txt</code>。 它读取文件并在标准输出上显示内容。</p>   
+ <pre><code class="lang-java">import java.io.FileInputStream;
+import java.nio.MappedByteBuffer;
+import java.nio.channels.FileChannel;
+
+public class Main {
+    public static void main(String[] args) throws Exception {
+        FileInputStream fis = new FileInputStream("test.txt");
+        FileChannel fc = fis.getChannel();
+
+        long startRegion = 0;
+        long endRegion = fc.size();
+        MappedByteBuffer mbb = fc.map(FileChannel.MapMode.READ_ONLY, startRegion, endRegion);
+        while (mbb.hasRemaining()) {
+            System.out.print((char) mbb.get());
+        }
+        fis.close();
+    }
+}
+</code></pre> 
+ <p>上面的代码生成以下结果。</p> 
+ <pre><code class="lang-java">test
+test
+test
+test
+</code></pre>
+ <br>      
+</div></body></html>

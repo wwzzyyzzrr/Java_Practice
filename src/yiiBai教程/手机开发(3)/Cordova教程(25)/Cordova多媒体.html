@@ -1,0 +1,191 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Cordova多媒体</h1><div style="width:100%;float:left;" class="article-content">   
+ <div> 
+  <div>
+    Cordova 媒体插件用来录制和 Cordova 应用程序播放音频声音。 
+  </div> 
+ </div> 
+ <div> 
+  <h2> 
+   <div>
+     第1步&nbsp;-&nbsp;安装插件媒体 
+   </div> </h2> 
+  <div>
+    媒体插件可以通过在命令提示符窗口中执行下面的代码安装。 
+  </div> 
+  <pre>C:\Users\username\Desktop\CordovaProject&gt;cordova plugin add cordova-plugin-media</pre> 
+  <h2> 
+   <div>
+     第2步&nbsp;-&nbsp;添加按钮 
+   </div> </h2> 
+  <div>
+    本教程中，我们将创建一个简单的音频播放。我们创建一个按钮在&nbsp;index.html 文件中。 
+  </div> 
+  <pre>&lt;button id = "playAudio"&gt;PLAY&lt;/button&gt;
+&lt;button id = "pauseAudio"&gt;PAUSE&lt;/button&gt;
+&lt;button id = "stopAudio"&gt;STOP&lt;/button&gt;
+&lt;button id = "volumeUp"&gt;VOLUME UP&lt;/button&gt;
+&lt;button id = "volumeDown"&gt;VOLUME DOWN&lt;/button&gt;</pre> 
+  <h2> 
+   <div>
+     第3步&nbsp;-&nbsp;添加事件监听器 
+   </div> </h2> 
+  <div>
+    现在，我们需要为按钮添加事件侦听器在文件&nbsp;index.js 中的&nbsp;onDeviceReady 函数内。 
+  </div> 
+  <pre>document.getElementById("playAudio").addEventListener("click", playAudio);
+document.getElementById("pauseAudio").addEventListener("click", pauseAudio);
+document.getElementById("stopAudio").addEventListener("click", stopAudio);
+document.getElementById("volumeUp").addEventListener("click", volumeUp);
+document.getElementById("volumeDown").addEventListener("click", volumeDown);</pre> 
+  <h2> 
+   <div>
+     步骤4A&nbsp;-&nbsp;播放功能 
+   </div> </h2> 
+  <p style="text-align:justify;"> 我们要添加的第一个函数是&nbsp;playAudio。我们定义myMedia&nbsp;在函数之外是因为我们希望在将要在以后添加的函数可以使用它(暂停，停止，音量增加和音量减小)。此代码放置在 index.js 文件中。 </p> 
+  <pre>var myMedia = null;
+
+function playAudio() {
+   var src = "/android_asset/www/audio/piano.mp3";
+
+   if(myMedia === null) {
+      myMedia = new Media(src, onSuccess, onError);
+
+      function onSuccess() {
+         console.log("playAudio Success");
+      }
+
+      function onError(error) {
+         console.log("playAudio Error: " + error.code);
+      }
+
+   }
+
+   myMedia.play();
+}</pre> 
+  <p style="text-align:justify;"> 我们点击&nbsp;PLAY&nbsp;按钮，开始由在 src 指定的路径播放钢琴音乐。 </p> 
+  <h2> 
+   <div>
+     步骤4B&nbsp;-&nbsp;暂停和停止函数功能 
+   </div> </h2> 
+  <div>
+    我们所需要的下一个函数是pauseAudio&nbsp;和 stopAudio 
+  </div> 
+  <pre>function pauseAudio() {
+   if(myMedia) {
+      myMedia.pause();
+   }
+}
+
+function stopAudio() {
+   if(myMedia) {
+      myMedia.stop(); 
+   }
+	
+   myMedia = null;
+}</pre> 
+  <div>
+    现在，我们可以暂停或通过单击暂停或停止按钮来停止钢琴的声音。 
+  </div> 
+  <h2> 
+   <div>
+     步骤4C&nbsp;-&nbsp;音量函数功能 
+   </div> </h2> 
+  <p style="text-align:justify;"> 要设置音量，我们可以使用 setVolume 方法。此方法需要使用参数值是从0到1。设置初值为0.5。 </p> 
+  <pre>var volumeValue = 0.5;
+
+function volumeUp() {
+   if(myMedia &amp;&amp; volumeValue &lt; 1) {
+      myMedia.setVolume(volumeValue += 0.1);
+   }
+}
+
+function volumeDown() {
+   if(myMedia &amp;&amp; volumeValue &gt; 0) {
+      myMedia.setVolume(volumeValue -= 0.1);
+   }
+}&nbsp;</pre> 
+  <p style="text-align:justify;"> 当按&nbsp;<strong>VOLUME UP</strong>&nbsp;或&nbsp;<strong>VOLUME DOWN</strong> 就可以通过改变音量0.1的值。 </p> 
+  <div>
+    该插件提供如下表显示的其它方法。 
+  </div> 
+  <table border="1" cellpadding="2" cellspacing="0" style="font-size:14px;color:#313131;font-family:Verdana, Geneva, Tahoma,  Helvetica, background-color:inherit;"> 
+   <tbody> 
+    <tr> 
+     <th style="border:1px solid #999999;background-color:#EEEEEE;"> 方法 </th> 
+     <th style="border:1px solid #999999;background-color:#EEEEEE;"> 详细 </th> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> getCurrentPosition </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 
+      <div style="background-color:inherit;">
+        返回音频的当前位置 
+      </div> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> getDuration </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 
+      <div style="background-color:inherit;">
+        返回一个音频的持续时间 
+      </div> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> play </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 
+      <div style="background-color:inherit;">
+        用于开始或恢复音频 
+      </div> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> pause </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 
+      <div style="background-color:inherit;">
+        用于暂停音频 
+      </div> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> release </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 
+      <div style="background-color:inherit;">
+        发布底层操作系统的音频资源 
+      </div> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> seekTo </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 
+      <div style="background-color:inherit;">
+        用于改变音频的位置 
+      </div> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> setVolume </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 
+      <div style="background-color:inherit;">
+        用于音频设置音量 
+      </div> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> startRecord </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 
+      <div style="background-color:inherit;">
+        开始录制音频文件 
+      </div> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> stopRecord </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 
+      <div style="background-color:inherit;">
+        停止录制音频文件 
+      </div> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> stop </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 
+      <div style="background-color:inherit;">
+        停止播放音频文件 
+      </div> </td> 
+    </tr> 
+   </tbody> 
+  </table> 
+ </div>
+ <br>      
+</div></body></html>

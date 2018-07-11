@@ -1,0 +1,515 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">JSP基础语法</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>在本章中，我们将了解和学习JSP语法。并了解JSP开发涉及的简单语法(即元素)的基本用法。</p> 
+ <p>为了方便演示，使用Eclipse创建一个动态Web项目：<em>jspsyntax</em>，用于运行以下涉及到的示例代码。</p> 
+ <h2 id="h2-jsp-"><a name="JSP的元素" class="reference-link"></a><span class="header-link octicon octicon-link"></span>JSP的元素</h2>
+ <p>JSP的元素如下所述：</p> 
+ <h3 id="h3-1-"><a name="1.小脚本" class="reference-link"></a><span class="header-link octicon octicon-link"></span>1.小脚本</h3>
+ <p>小脚本(scriptlet)可以将任何数量的小脚本包含在页面中，小脚本是有效的JAVA语言语句，变量或方法声明或表达式。</p> 
+ <p>以下是小脚本的语法 -</p> 
+ <pre><code class="lang-html">&lt;% code fragment %&gt;
+</code></pre> 
+ <p>可以将上述语法编写为XML的形式，效果相同，如下所示：</p> 
+ <pre><code class="lang-xml">&lt;jsp:scriptlet&gt;
+   code fragment
+&lt;/jsp:scriptlet&gt;
+</code></pre> 
+ <p>编写的任何文本，HTML标签或JSP元素必须在scriptlet之外。 以下是JSP的简单和第一个例子 -</p> 
+ <p>文件：<em>helloworld.jsp</em> - </p> 
+ <pre><code class="lang-html">&lt;%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%&gt;
+&lt;!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;meta http-equiv="Content-Type" content="text/html; charset=UTF-8"&gt;
+&lt;title&gt;Hello World&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    Hello World!
+    &lt;br /&gt;
+    &lt;%
+        out.println("Your IP address is " + request.getRemoteAddr());
+    %&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/1810/977141046_64542.png" alt=""></p> 
+ <h3 id="h3-2-jsp-"><a name="2.JSP声明" class="reference-link"></a><span class="header-link octicon octicon-link"></span>2.JSP声明</h3>
+ <p>声明一个或多个变量或方法，可以在Java代码中编写，之后在JSP文件中使用。 在JSP文件中使用该变量或方法之前，必须先声明变量或方法。</p> 
+ <p>以下是JSP声明的语法 -</p> 
+ <pre><code class="lang-jsp">&lt;%! declaration; [ declaration; ]+ ... %&gt;
+</code></pre> 
+ <p>可以将上述语法编写为XML的形式，效果相同，如下所示：</p> 
+ <pre><code class="lang-xml">&lt;jsp:declaration&gt;
+   code fragment
+&lt;/jsp:declaration&gt;
+</code></pre> 
+ <p>以下是JSP声明的示例 -</p> 
+ <pre><code class="lang-html">&lt;%! int i = 0; %&gt; 
+&lt;%! int a, b, c; %&gt; 
+&lt;%! Circle a = new Circle(2.0); %&gt;
+</code></pre> 
+ <h3 id="h3-3-jsp-"><a name="3.JSP表达式" class="reference-link"></a><span class="header-link octicon octicon-link"></span>3.JSP表达式</h3>
+ <p>JSP表达式元素包含一个脚本语言表达式，它被评估求值，转换为一个字符串，并插入到表达式显示在JSP文件中的指定输出位置。</p> 
+ <p>因为表达式的值被转换为字符串，所以可以在JSP文件中使用文本行内的表达式，无论是否使用HTML标记HTML。</p> 
+ <p>表达式元素可以包含根据Java语言规范有效的任何表达式，但不能使用分号来结束表达式。</p> 
+ <p>以下是JSP表达式的语法 -</p> 
+ <pre><code class="lang-html">&lt;%= expression %&gt;
+</code></pre> 
+ <p>可以将上述语法编写为XML的形式，效果相同，如下所示：</p> 
+ <pre><code class="lang-xml">&lt;jsp:expression&gt;
+   expression
+&lt;/jsp:expression&gt;
+</code></pre> 
+ <p>以下示例显示了JSP表达式 -</p> 
+ <p>文件：<em>express.jsp</em> - </p> 
+ <pre><code class="lang-html">&lt;html&gt; 
+   &lt;head&gt;&lt;title&gt;A Comment Test&lt;/title&gt;&lt;/head&gt; 
+
+   &lt;body&gt;
+      &lt;p&gt;Today's date: &lt;%= (new java.util.Date()).toLocaleString()%&gt;&lt;/p&gt;
+   &lt;/body&gt; 
+&lt;/html&gt;
+</code></pre> 
+ <p>上述代码将产生以下结果 -</p> 
+ <pre><code class="lang-shell">Today's date: 11-Sep-2017 21:24:25
+</code></pre> 
+ <h3 id="h3-4-jsp-"><a name="4.JSP注释" class="reference-link"></a><span class="header-link octicon octicon-link"></span>4.JSP注释</h3>
+ <p>JSP注释标记JSP容器应忽略的文本或语句。当您想要隐藏或注释掉JSP页面的一部分时，JSP注释很有用。</p> 
+ <p>以下是JSP注释的语法 -</p> 
+ <pre><code class="lang-html">&lt;%-- This is JSP comment --%&gt;
+</code></pre> 
+ <p>以下示例显示了JSP注释 -</p> 
+ <pre><code class="lang-html">&lt;html&gt; 
+   &lt;head&gt;&lt;title&gt;A Comment Test&lt;/title&gt;&lt;/head&gt; 
+
+   &lt;body&gt; 
+      &lt;h2&gt;A Test of Comments&lt;/h2&gt; 
+      &lt;%-- This comment will not be visible in the page source --%&gt; 
+   &lt;/body&gt; 
+&lt;/html&gt;
+</code></pre> 
+ <p>上述代码将产生以下结果 -</p> 
+ <pre><code class="lang-shell">A Test of Comments
+</code></pre> 
+ <p>可以使用少量特殊结构，在各种情况下可以插入特别处理的注释或字符。下面是一个总结 -</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>编号</th> 
+    <th>语法</th> 
+    <th>说明</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>1</td> 
+    <td><code>&lt;%-- comment --%&gt;</code></td> 
+    <td>JSP注释，它会被JSP引擎忽略。</td> 
+   </tr> 
+   <tr> 
+    <td>2</td> 
+    <td><code>&lt;!-- comment --&gt;</code></td> 
+    <td>HTML注释，它会被浏览器忽略。</td> 
+   </tr> 
+   <tr> 
+    <td>3</td> 
+    <td><code>&lt;\%</code></td> 
+    <td>表示静态的<code>&lt;%</code>字面值。</td> 
+   </tr> 
+   <tr> 
+    <td>4</td> 
+    <td><code>%\&gt;</code></td> 
+    <td>表示静态的<code>%&gt;</code>字面值。</td> 
+   </tr> 
+   <tr> 
+    <td>5</td> 
+    <td><code>\'</code></td> 
+    <td>表示静态的单引号<code>'</code>字面值。</td> 
+   </tr> 
+   <tr> 
+    <td>6</td> 
+    <td><code>\"</code></td> 
+    <td>静态的单引号<code>"</code>字面值。</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h3 id="h3-5-jsp-"><a name="5.JSP指令" class="reference-link"></a><span class="header-link octicon octicon-link"></span>5.JSP指令</h3>
+ <p>JSP指令影响servlet类的整体结构。它通常具有以下形式 -</p> 
+ <pre><code class="lang-html">&lt;%@ directive attribute="value" %&gt;
+</code></pre> 
+ <p>有三种类型的指令标签 -</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>编号</th> 
+    <th>指令</th> 
+    <th>描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>1</td> 
+    <td><code>&lt;%@ page ... %&gt;</code></td> 
+    <td>定义页面相关属性，如脚本语言，错误页面和缓冲要求等。</td> 
+   </tr> 
+   <tr> 
+    <td>2</td> 
+    <td><code>&lt;%@ include ... %&gt;</code></td> 
+    <td>在编译阶段包括文件。</td> 
+   </tr> 
+   <tr> 
+    <td>3</td> 
+    <td><code>&lt;%@ taglib ... %&gt;</code></td> 
+    <td>声明页面中使用包含自定义操作的标签库</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p>我们将在另一章专门介绍JSP指令 - <a target="_blank" href="http://www.yiibai.com/jsp/jsp_directives.html" title="JSP指令">JSP指令</a></p> 
+ <h3 id="h3-6-jsp-"><a name="6.JSP动作" class="reference-link"></a><span class="header-link octicon octicon-link"></span>6.JSP动作</h3>
+ <p>JSP动作使用XML语法中的结构来控制servlet引擎的行为。可以动态插入文件，重新使用JavaBeans组件，将用户转发到另一个页面，或为Java插件生成HTML。</p> 
+ <p>只有一个用于动作元素语法，因为它符合XML标准 -</p> 
+ <pre><code class="lang-xml">&lt;jsp:action_name attribute="value" /&gt;
+</code></pre> 
+ <p>动作元素基本上是预定义的功能，下表列出了可用的JSP动作 -</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>编号</th> 
+    <th>动作</th> 
+    <th>描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>1</td> 
+    <td><code>jsp:include</code></td> 
+    <td>在请求页面时包含一个文件。</td> 
+   </tr> 
+   <tr> 
+    <td>2</td> 
+    <td><code>jsp:useBean</code></td> 
+    <td>查找或实例化一个JavaBean。</td> 
+   </tr> 
+   <tr> 
+    <td>3</td> 
+    <td><code>jsp:setProperty</code></td> 
+    <td>设置JavaBean属性的值。</td> 
+   </tr> 
+   <tr> 
+    <td>4</td> 
+    <td><code>jsp:getProperty</code></td> 
+    <td>将JavaBean属性的值输出。</td> 
+   </tr> 
+   <tr> 
+    <td>5</td> 
+    <td><code>jsp:forward</code></td> 
+    <td>将请求者转发到新页面。</td> 
+   </tr> 
+   <tr> 
+    <td>6</td> 
+    <td><code>jsp:plugin</code></td> 
+    <td>生成针对Java插件创建<code>OBJECT</code>或<code>EMBED</code>标记的特定于浏览器的代码。</td> 
+   </tr> 
+   <tr> 
+    <td>7</td> 
+    <td><code>jsp:element</code></td> 
+    <td>动态定义XML元素。</td> 
+   </tr> 
+   <tr> 
+    <td>8</td> 
+    <td><code>jsp:attribute</code></td> 
+    <td>定义动态定义的XML元素属性。</td> 
+   </tr> 
+   <tr> 
+    <td>9</td> 
+    <td><code>jsp:body</code></td> 
+    <td>定义动态定义的XML元素的正文。</td> 
+   </tr> 
+   <tr> 
+    <td>10</td> 
+    <td><code>jsp:text</code></td> 
+    <td>用于在JSP页面和文档中编写模板文本。</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p>我们将在单独的章节解释JSP动作 - <a target="_blank" href="http://www.yiibai.com/jsp/jsp_actions.html" title="JSP动作">JSP动作</a></p> 
+ <h3 id="h3-7-jsp-"><a name="7.JSP隐式对象" class="reference-link"></a><span class="header-link octicon octicon-link"></span>7.JSP隐式对象</h3>
+ <p>JSP支持九个自动定义的变量，也称为隐式对象。这些变量是 -</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>编号</th> 
+    <th>对象</th> 
+    <th>描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>1</td> 
+    <td><code>request</code></td> 
+    <td>这是与请求相关联的<code>HttpServletRequest</code>对象。</td> 
+   </tr> 
+   <tr> 
+    <td>2</td> 
+    <td><code>response</code></td> 
+    <td>这是与客户端的响应关联的<code>HttpServletResponse</code>对象。</td> 
+   </tr> 
+   <tr> 
+    <td>3</td> 
+    <td><code>out</code></td> 
+    <td>这是用于将输出发送到客户端的<code>PrintWriter</code>对象。</td> 
+   </tr> 
+   <tr> 
+    <td>4</td> 
+    <td><code>session</code></td> 
+    <td>这是与请求相关联的<code>HttpSession</code>对象。</td> 
+   </tr> 
+   <tr> 
+    <td>5</td> 
+    <td><code>application</code></td> 
+    <td>这是与应用程序上下文相关联的<code>ServletContext</code>对象。</td> 
+   </tr> 
+   <tr> 
+    <td>6</td> 
+    <td><code>config</code></td> 
+    <td>这是与该页面相关联的<code>ServletConfig</code>对象。</td> 
+   </tr> 
+   <tr> 
+    <td>7</td> 
+    <td><code>pageContext</code></td> 
+    <td>它封装了使用服务器特定的功能，如更高性能的<code>JspWriter</code>对象。</td> 
+   </tr> 
+   <tr> 
+    <td>8</td> 
+    <td><code>page</code></td> 
+    <td>这只是一个同义词，用于调用由编译的servlet类定义的方法。</td> 
+   </tr> 
+   <tr> 
+    <td>9</td> 
+    <td><code>Exception</code></td> 
+    <td>异常对象允许指定的JSP访问异常数据。</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p>我们将在单独的章节讲解JSP隐式对象 - <a target="_blank" href="http://www.yiibai.com/jsp/jsp_implicit_objects.html" title="JSP隐式对象">JSP隐式对象</a>。</p> 
+ <h3 id="h3-8-"><a name="8.控制流程语句" class="reference-link"></a><span class="header-link octicon octicon-link"></span>8.控制流程语句</h3>
+ <p>在JSP编程中使用Java的所有API和构建块，包括决策语句，循环等。如：<code>if</code>,<code>if..else</code>等语句。</p> 
+ <h3 id="h3-9-"><a name="9.决策语句" class="reference-link"></a><span class="header-link octicon octicon-link"></span>9.决策语句</h3>
+ <p><code>if...else</code>块开始像一个普通的小脚本，但是小脚本在每一行都会被闭合，并且包含小脚本标签在HTML文本中。参考以下示例代码 - </p> 
+ <p>文件：<em>ifelse.jsp</em> - </p>   
+ <pre><code class="lang-html">&lt;%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%&gt;
+&lt;!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;meta http-equiv="Content-Type" content="text/html; charset=UTF-8"&gt;
+&lt;title&gt;IF...Else示例&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;%!int day = 3;%&gt;
+    &lt;%
+        if (day == 1 | day == 7) {
+    %&gt;
+    &lt;p&gt;今天是周末，不用上班，Oyes ~&lt;/p&gt;
+    &lt;%
+        } else {
+    %&gt;
+    &lt;p&gt;今天是工作日，乖乖去上班 ~&lt;/p&gt;
+    &lt;%
+        }
+    %&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>上述代码将产生以下结果 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/1810/977141049_70300.png" alt=""></p> 
+ <p>现在看看下面的<code>switch...case</code>块，对于不同选项匹配使用<code>out.println()</code>输出不同结果 -</p> 
+ <pre><code class="lang-html">&lt;%! int day = 3; %&gt; 
+&lt;html&gt; 
+   &lt;head&gt;&lt;title&gt;SWITCH...CASE Example&lt;/title&gt;&lt;/head&gt; 
+
+   &lt;body&gt;
+      &lt;% 
+         switch(day) {
+            case 0:
+               out.println("It\'s Sunday.");
+               break;
+            case 1:
+               out.println("It\'s Monday.");
+               break;
+            case 2:
+               out.println("It\'s Tuesday.");
+               break;
+            case 3:
+               out.println("It\'s Wednesday.");
+               break;
+            case 4:
+               out.println("It\'s Thursday.");
+               break;
+            case 5:
+               out.println("It\'s Friday.");
+               break;
+            default:
+               out.println("It's Saturday.");
+         }
+      %&gt;
+   &lt;/body&gt; 
+&lt;/html&gt;
+</code></pre> 
+ <p>上述代码将产生以下结果 -</p> 
+ <pre><code class="lang-shell">It's Saturday.
+</code></pre> 
+ <h3 id="h3-10-"><a name="10.循环语句" class="reference-link"></a><span class="header-link octicon octicon-link"></span>10.循环语句</h3>
+ <p>在Java中使用三种基本类型的循环块：<code>for</code>, <code>while</code> 以及 <code>do…while</code>均可在JSP编程中使用。</p> 
+ <p>下面来看看<code>for</code>循环语句的示例 -</p> 
+ <pre><code class="lang-html">&lt;%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%&gt;
+&lt;!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;meta http-equiv="Content-Type" content="text/html; charset=UTF-8"&gt;
+&lt;title&gt;For循环语句示例&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;%!int fontSize;%&gt;
+    &lt;%
+        for (fontSize = 1; fontSize &lt;= 5; fontSize++) {
+    %&gt;
+    &lt;font color="green" size="&lt;%=fontSize%&gt;"&gt; JSP教程 &lt;/font&gt;
+    &lt;br /&gt;
+    &lt;%
+        }
+    %&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>上述代码将产生以下结果 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/1810/573141052_74648.png" alt=""></p> 
+ <p>以上示例可以使用<code>while</code>循环编写，代码如下：</p> 
+ <pre><code class="lang-html">&lt;%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%&gt;
+&lt;!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;meta http-equiv="Content-Type" content="text/html; charset=UTF-8"&gt;
+&lt;title&gt;While循环语句示例&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;%!int fontSize;%&gt;
+    &lt;%
+        while (fontSize &lt;= 5) {
+    %&gt;
+    &lt;font color="green" size="&lt;%=fontSize%&gt;"&gt; JSP教程 &lt;/font&gt;
+    &lt;br /&gt;
+    &lt;%
+        fontSize++;
+    %&gt;
+    &lt;%
+        }
+    %&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>上述代码将产生以下结果 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/1810/600141054_90429.png" alt=""></p> 
+ <h3 id="h3-11-jsp-"><a name="11.JSP运算符" class="reference-link"></a><span class="header-link octicon octicon-link"></span>11.JSP运算符</h3>
+ <p>JSP支持Java支持的所有逻辑和算术运算符。下表列出了所有具有最高优先级的运算符放在表格的顶部，优先级较低的运算符放在底部。</p> 
+ <p>在一个表达式中，将首先评估计算较高优先级的运算符。</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>分类</th> 
+    <th>运算符</th> 
+    <th>关联性</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>后缀</td> 
+    <td><code>()</code> <code>[]</code> <code>.</code></td> 
+    <td>左到右</td> 
+   </tr> 
+   <tr> 
+    <td>一元运算符</td> 
+    <td><code>++</code> <code>--</code> <code>!</code> <code>~</code></td> 
+    <td>右到左</td> 
+   </tr> 
+   <tr> 
+    <td>乘法</td> 
+    <td><code>*</code> <code>/</code> <code>%</code></td> 
+    <td>左到右</td> 
+   </tr> 
+   <tr> 
+    <td>加法</td> 
+    <td><code>+</code> <code>-</code></td> 
+    <td></td> 
+   </tr> 
+   <tr> 
+    <td>位移</td> 
+    <td><code>&gt;&gt;</code> <code>&gt;&gt;&gt;</code> <code>&lt;&lt;</code></td> 
+    <td>左到右</td> 
+   </tr> 
+   <tr> 
+    <td>关系</td> 
+    <td><code>&gt;</code> <code>&gt;=</code> <code>&lt;</code> <code>&lt;=</code></td> 
+    <td>左到右</td> 
+   </tr> 
+   <tr> 
+    <td>等于</td> 
+    <td><code>==</code> <code>!=</code></td> 
+    <td>左到右</td> 
+   </tr> 
+   <tr> 
+    <td>按位与</td> 
+    <td><code>&amp;</code></td> 
+    <td>左到右</td> 
+   </tr> 
+   <tr> 
+    <td>按位异或</td> 
+    <td><code>^</code></td> 
+    <td>左到右</td> 
+   </tr> 
+   <tr> 
+    <td>按位或</td> 
+    <td><img src="http://www.yiibai.com/static/images/or.png" alt=""></td> 
+    <td>左到右</td> 
+   </tr> 
+   <tr> 
+    <td>逻辑与</td> 
+    <td><code>&amp;&amp;</code></td> 
+    <td></td> 
+   </tr> 
+   <tr> 
+    <td>逻辑或</td> 
+    <td><img src="http://www.yiibai.com/static/images/or2.png" alt=""></td> 
+    <td>左到右</td> 
+   </tr> 
+   <tr> 
+    <td>条件</td> 
+    <td><code>?:</code></td> 
+    <td>右到左</td> 
+   </tr> 
+   <tr> 
+    <td>分配</td> 
+    <td><code>=</code> <code>+=</code> <code>-=</code> <code>*=</code> <code>/=</code> <code>%=</code> <code>&gt;&gt;=</code> <code>&lt;&lt;=</code> <code>&amp;=</code> <code>^=</code></td> 
+    <td>右到左</td> 
+   </tr> 
+   <tr> 
+    <td>逗号</td> 
+    <td><code>,</code></td> 
+    <td>左到右</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h3 id="h3-12-jsp-"><a name="12.JSP文字" class="reference-link"></a><span class="header-link octicon octicon-link"></span>12.JSP文字</h3>
+ <p>JSP表达式语言定义了以下文字 -</p> 
+ <ul> 
+  <li><em>布尔</em> - <code>true</code>和<code>false</code></li>
+  <li><em>整数</em> - 与Java中的一样。</li>
+  <li><em>浮点</em> - 与Java中的一样。</li>
+  <li><em>字符串</em> - 带单引号和双引号; <code>"</code>被转义为<code>\"</code>，<code>'</code>被转义为<code>\'</code>，<code>\</code>被转义为<code>\\</code>。</li>
+  <li><em>空</em> - <code>null</code></li>
+ </ul>
+ <br>      
+</div></body></html>

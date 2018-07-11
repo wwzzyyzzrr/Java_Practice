@@ -1,0 +1,1466 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Spring4 MVC+Hibernate4 Many-to-many连接表+MySQL+Maven实例</h1><div style="width:100%;float:left;" class="article-content">   
+ <div> 
+  <div>
+    这篇文章显示 Hibernate 的多对多实例，在 Spring&nbsp;MVC CRUD&nbsp;Web应用程序中连接表。我们将同时讨论管理多对多关系在视图和后端。&nbsp;我们将使用应用程序的Web界面创建，更新，删除和查询。 
+  </div> 
+ </div> 
+ <div> 
+  <div>
+    本教程是利用 Spring 的 org.springframework.core.convert.converter.Converter 接口，它帮助我们在项目的数据库中实现实体的映射标识。 
+  </div> 
+  <div>
+    完整的示例的说明介绍如下。 
+  </div> 
+  <h2> 使用以下技术： </h2> 
+  <ul> 
+   <li> Spring 4.1.7.RELEASE </li> 
+   <li> Hibernate Core 4.3.10.Final </li> 
+   <li> validation-api 1.1.0.Final </li> 
+   <li> hibernate-validator 5.1.3.Final </li> 
+   <li> MySQL Server 5.6 </li> 
+   <li> Maven 3 </li> 
+   <li> JDK 1.7 </li> 
+   <li> Tomcat 8.0.21 </li> 
+   <li> Eclipse JUNO Service Release 2 </li> 
+  </ul> 
+  <p> 现在，让我们开始！ </p> 
+  <h4> 
+   <div>
+     步骤1.创建模式用于连接多对多表关联 
+   </div> </h4> 
+  <p> <img src="/uploads/tutorial/20160116/1-160116100956252.png" alt=""> </p> 
+  <p> APP_USER&nbsp;:包含用户。一个用户可以有多个配置[USER，ADMIN，DBA]。 </p> 
+  <p> USER_PROFILE&nbsp;:&nbsp;包含用户配置文件。配置文件可以链接到多个用户。 </p> 
+  <p> APP_USER_USER_PROFILE&nbsp;:&nbsp;这是一个连接表连接APP_USER＆USER_PROFILE中的多对多关系。 </p> 
+  <div>
+    出于演示的目的，我们在这里只讨论许多对多的单向[用户到用户信息]设置。 
+  </div> 
+  <pre>create table APP_USER (
+   id BIGINT NOT NULL AUTO_INCREMENT,
+   sso_id VARCHAR(30) NOT NULL,
+   password VARCHAR(100) NOT NULL,
+   first_name VARCHAR(30) NOT NULL,
+   last_name  VARCHAR(30) NOT NULL,
+   email VARCHAR(30) NOT NULL,
+   PRIMARY KEY (id),
+   UNIQUE (sso_id)
+);
+
+create table USER_PROFILE(
+   id BIGINT NOT NULL AUTO_INCREMENT,
+   type VARCHAR(30) NOT NULL,
+   PRIMARY KEY (id),
+   UNIQUE (type)
+);
+
+CREATE TABLE APP_USER_USER_PROFILE (
+    user_id BIGINT NOT NULL,
+    user_profile_id BIGINT NOT NULL,
+    PRIMARY KEY (user_id, user_profile_id),
+    CONSTRAINT FK_APP_USER FOREIGN KEY (user_id) REFERENCES APP_USER (id),
+    CONSTRAINT FK_USER_PROFILE FOREIGN KEY (user_profile_id) REFERENCES USER_PROFILE (id)
+);
+
+/* Populate USER_PROFILE Table */
+INSERT INTO USER_PROFILE(type)
+VALUES ('USER');
+
+INSERT INTO USER_PROFILE(type)
+VALUES ('ADMIN');
+
+INSERT INTO USER_PROFILE(type)
+VALUES ('DBA');
+
+commit;</pre> 
+  <h4> 
+   <div>
+     第2步：创建目录结构 
+   </div> </h4> 
+  <div>
+    以下是最终的项目结构： 
+  </div> 
+  <p> <img src="/uploads/tutorial/20160116/1-160116101015250.png" alt=""> </p> 
+  <h4> 
+   <div>
+     第3步：更新pom.xml，包括所需的依赖关系 
+   </div> </h4> 
+  <pre>&lt;project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"&gt;
+	&lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
+	&lt;groupId&gt;com.yiibai.springmvc&lt;/groupId&gt;
+	&lt;artifactId&gt;SpringMVCMany2ManyCRUD&lt;/artifactId&gt;
+	&lt;packaging&gt;war&lt;/packaging&gt;
+	&lt;version&gt;1.0.0&lt;/version&gt;
+	&lt;name&gt;SpringMVCHibernateManyToManyCRUDExample&lt;/name&gt;
+
+  	&lt;properties&gt;
+		&lt;springframework.version&gt;4.1.7.RELEASE&lt;/springframework.version&gt;
+		&lt;hibernate.version&gt;4.3.10.Final&lt;/hibernate.version&gt;
+		&lt;mysql.connector.version&gt;5.1.31&lt;/mysql.connector.version&gt;
+	&lt;/properties&gt;
+
+	&lt;dependencies&gt;
+		&lt;!-- Spring --&gt;
+		&lt;dependency&gt;
+			&lt;groupId&gt;org.springframework&lt;/groupId&gt;
+			&lt;artifactId&gt;spring-core&lt;/artifactId&gt;
+			&lt;version&gt;${springframework.version}&lt;/version&gt;
+		&lt;/dependency&gt;
+		&lt;dependency&gt;
+			&lt;groupId&gt;org.springframework&lt;/groupId&gt;
+			&lt;artifactId&gt;spring-web&lt;/artifactId&gt;
+			&lt;version&gt;${springframework.version}&lt;/version&gt;
+		&lt;/dependency&gt;
+		&lt;dependency&gt;
+			&lt;groupId&gt;org.springframework&lt;/groupId&gt;
+			&lt;artifactId&gt;spring-webmvc&lt;/artifactId&gt;
+			&lt;version&gt;${springframework.version}&lt;/version&gt;
+		&lt;/dependency&gt;
+		&lt;dependency&gt;
+			&lt;groupId&gt;org.springframework&lt;/groupId&gt;
+			&lt;artifactId&gt;spring-tx&lt;/artifactId&gt;
+			&lt;version&gt;${springframework.version}&lt;/version&gt;
+		&lt;/dependency&gt;
+		&lt;dependency&gt;
+			&lt;groupId&gt;org.springframework&lt;/groupId&gt;
+			&lt;artifactId&gt;spring-orm&lt;/artifactId&gt;
+			&lt;version&gt;${springframework.version}&lt;/version&gt;
+		&lt;/dependency&gt;
+
+		&lt;!-- Hibernate --&gt;
+		&lt;dependency&gt;
+			&lt;groupId&gt;org.hibernate&lt;/groupId&gt;
+			&lt;artifactId&gt;hibernate-core&lt;/artifactId&gt;
+			&lt;version&gt;${hibernate.version}&lt;/version&gt;
+		&lt;/dependency&gt;
+
+		&lt;!-- jsr303 validation --&gt;
+		&lt;dependency&gt;
+			&lt;groupId&gt;javax.validation&lt;/groupId&gt;
+			&lt;artifactId&gt;validation-api&lt;/artifactId&gt;
+			&lt;version&gt;1.1.0.Final&lt;/version&gt;
+		&lt;/dependency&gt;
+		&lt;dependency&gt;
+			&lt;groupId&gt;org.hibernate&lt;/groupId&gt;
+			&lt;artifactId&gt;hibernate-validator&lt;/artifactId&gt;
+			&lt;version&gt;5.1.3.Final&lt;/version&gt;
+		&lt;/dependency&gt;
+
+		&lt;!-- MySQL --&gt;
+		&lt;dependency&gt;
+			&lt;groupId&gt;mysql&lt;/groupId&gt;
+			&lt;artifactId&gt;mysql-connector-java&lt;/artifactId&gt;
+			&lt;version&gt;${mysql.connector.version}&lt;/version&gt;
+		&lt;/dependency&gt;
+
+		&lt;!-- Servlet+JSP+JSTL --&gt;
+		&lt;dependency&gt;
+			&lt;groupId&gt;javax.servlet&lt;/groupId&gt;
+			&lt;artifactId&gt;javax.servlet-api&lt;/artifactId&gt;
+			&lt;version&gt;3.1.0&lt;/version&gt;
+		&lt;/dependency&gt;
+		&lt;dependency&gt;
+			&lt;groupId&gt;javax.servlet.jsp&lt;/groupId&gt;
+			&lt;artifactId&gt;javax.servlet.jsp-api&lt;/artifactId&gt;
+			&lt;version&gt;2.3.1&lt;/version&gt;
+		&lt;/dependency&gt;
+		&lt;dependency&gt;
+		    &lt;groupId&gt;javax.servlet&lt;/groupId&gt;
+		    &lt;artifactId&gt;jstl&lt;/artifactId&gt;
+		    &lt;version&gt;1.2&lt;/version&gt;
+		&lt;/dependency&gt;
+		
+	&lt;/dependencies&gt;
+
+	&lt;build&gt;
+		&lt;pluginManagement&gt;
+			&lt;plugins&gt;
+				&lt;plugin&gt;
+					&lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+					&lt;artifactId&gt;maven-war-plugin&lt;/artifactId&gt;
+					&lt;version&gt;2.4&lt;/version&gt;
+					&lt;configuration&gt;
+						&lt;warSourceDirectory&gt;src/main/webapp&lt;/warSourceDirectory&gt;
+						&lt;warName&gt;<span style="font-family:Monaco, Consolas, Courier, 'Lucida Console', monospace;line-height:1.6;">SpringMVCMany2ManyCRUD</span><span style="line-height:1.6;font-family:Monaco, Consolas, Courier, 'Lucida Console', monospace;">&lt;/warName&gt;</span> &lt;failOnMissingWebXml&gt;false&lt;/failOnMissingWebXml&gt;
+					&lt;/configuration&gt;
+				&lt;/plugin&gt;
+			&lt;/plugins&gt;
+		&lt;/pluginManagement&gt;
+		&lt;finalName&gt;<span style="font-family:Monaco, Consolas, Courier, 'Lucida Console', monospace;line-height:1.6;">SpringMVCMany2ManyCRUD</span>&lt;/finalName&gt;
+	&lt;/build&gt;
+&lt;/project&gt;</pre> 
+  <h4> 
+   <div>
+     第4步：准备Model类 
+   </div> </h4> 
+  <pre>package com.yiibai.springmvc.model;
+
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.Table;
+
+import org.hibernate.validator.constraints.NotEmpty;
+
+@Entity
+@Table(name="APP_USER")
+public class User {
+
+	@Id @GeneratedValue(strategy=GenerationType.IDENTITY)
+	private Integer id;
+
+	@NotEmpty
+	@Column(name="SSO_ID", unique=true, nullable=false)
+	private String ssoId;
+	
+	@NotEmpty
+	@Column(name="PASSWORD", nullable=false)
+	private String password;
+		
+	@NotEmpty
+	@Column(name="FIRST_NAME", nullable=false)
+	private String firstName;
+
+	@NotEmpty
+	@Column(name="LAST_NAME", nullable=false)
+	private String lastName;
+
+	@NotEmpty
+	@Column(name="EMAIL", nullable=false)
+	private String email;
+
+	@NotEmpty
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(name = "APP_USER_USER_PROFILE", 
+             joinColumns = { @JoinColumn(name = "USER_ID") }, 
+             inverseJoinColumns = { @JoinColumn(name = "USER_PROFILE_ID") })
+	private Set&lt;UserProfile&gt; userProfiles = new HashSet&lt;UserProfile&gt;();
+
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
+	public String getSsoId() {
+		return ssoId;
+	}
+
+	public void setSsoId(String ssoId) {
+		this.ssoId = ssoId;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public String getFirstName() {
+		return firstName;
+	}
+
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+
+	public String getLastName() {
+		return lastName;
+	}
+
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public Set&lt;UserProfile&gt; getUserProfiles() {
+		return userProfiles;
+	}
+
+	public void setUserProfiles(Set&lt;UserProfile&gt; userProfiles) {
+		this.userProfiles = userProfiles;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result + ((ssoId == null) ? 0 : ssoId.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (!(obj instanceof User))
+			return false;
+		User other = (User) obj;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		if (ssoId == null) {
+			if (other.ssoId != null)
+				return false;
+		} else if (!ssoId.equals(other.ssoId))
+			return false;
+		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "User [id=" + id + ", ssoId=" + ssoId + ", password=" + password
+				+ ", firstName=" + firstName + ", lastName=" + lastName
+				+ ", email=" + email + "]";
+	}
+
+}</pre> 
+  <div>
+    再看看 UserProfiles&nbsp;属性是如何标注了多对多。 
+  </div> 
+  <p> @ManyToMany表示用户和用户配置之间有多到多关系。一个用户可以有多个资料[USER，ADMIN，DBA]用户资料信息可以属于多个用户。@JoinTable表示它使用两个表的表外键链接来约束自己的主键。这个注解，主要用于关系的拥有方。joinColumns是指拥有方(用户ID)的列名，inverseJoinColumns是指关系的反向端(USER_PROFILE的ID)的列。这个连接表的主键是USER_ID&nbsp;&amp;&nbsp;USER_PROFILE_ID&nbsp;组合。 </p> 
+  <div>
+    延迟加载： 
+  </div> 
+  <p> 要特别注意fetch&nbsp;=&nbsp;FetchType.LAZY。在这里，我们通知&nbsp;Hibernate&nbsp;懒加载用户资料集合。&nbsp;这也是默认的行为。在此设置中，首先访问仅当查询加载集合将被触发。这是一个很好的方式，以避免加载-这是一个昂贵的操作所有连接的对象。&nbsp;当在事务/活动会话，并会尝试访问集合，Hibernate会触发不同的选择来获取它们。 </p> 
+  <p> 但是，如果您不在活动的会话(会话关闭/无事务：如在JSP)，并试图访问集合，你会遇到报应:org.hibernate.LazyInitializationException – could not initialize proxy – no Session.&nbsp;为了避免它，需要通过调用 Hibernate.initialize(user.getUserProfiles());&nbsp;来初始化对需要的集合;&nbsp;在有效会话中[在DAO方法，在显示视图之前，可以调用这个初始化方法]。 </p> 
+  <div>
+    还要注意的是，我们没有使用任何级联。这是因为用户个人资料不依赖用户，并能独立生存。 
+  </div> 
+  <p> <br> </p> 
+  <div>
+    重要：如果是*Many*&nbsp;关联它总是覆盖 hashCode 和 equals 方法，它是通过&nbsp;Hibernate&nbsp;持有合并形成集合。 
+  </div> 
+  <pre>package com.yiibai.springmvc.model;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+@Entity
+@Table(name="USER_PROFILE")
+public class UserProfile {
+
+	@Id @GeneratedValue(strategy=GenerationType.IDENTITY)
+	private Integer id;	
+
+	@Column(name="TYPE", length=15, unique=true, nullable=false)
+	private String type = UserProfileType.USER.getUserProfileType();
+	
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result + ((type == null) ? 0 : type.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (!(obj instanceof UserProfile))
+			return false;
+		UserProfile other = (UserProfile) obj;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		if (type == null) {
+			if (other.type != null)
+				return false;
+		} else if (!type.equals(other.type))
+			return false;
+		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "UserProfile [id=" + id + ", type=" + type + "]";
+	}
+
+}</pre> 
+  <div>
+    既然我们都显示单向关系(User到UserProfile)，无须参考用户UserProfile。 
+  </div> 
+  <pre>package com.yiibai.springmvc.model;
+
+public enum UserProfileType {
+	USER("USER"),
+	DBA("DBA"),
+	ADMIN("ADMIN");
+	
+	String userProfileType;
+	
+	private UserProfileType(String userProfileType){
+		this.userProfileType = userProfileType;
+	}
+	
+	public String getUserProfileType(){
+		return userProfileType;
+	}
+	
+}</pre> 
+  <h4> 
+   <div>
+     第5步：创建DAO层 
+   </div> </h4> 
+  <pre>package com.yiibai.springmvc.dao;
+
+import java.util.List;
+
+import com.yiibai.springmvc.model.User;
+
+
+public interface UserDao {
+
+	User findById(int id);
+	
+	User findBySSO(String sso);
+	
+	void save(User user);
+	
+	void deleteBySSO(String sso);
+	
+	List&lt;User&gt; findAllUsers();
+
+}</pre> 
+  <pre>package com.yiibai.springmvc.dao;
+
+import java.util.List;
+
+import com.yiibai.springmvc.model.UserProfile;
+
+
+public interface UserProfileDao {
+
+	List&lt;UserProfile&gt; findAll();
+	
+	UserProfile findByType(String type);
+	
+	UserProfile findById(int id);
+}</pre> 
+  <pre>package com.yiibai.springmvc.dao;
+
+import java.io.Serializable;
+
+import java.lang.reflect.ParameterizedType;
+
+import org.hibernate.Criteria;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+
+public abstract class AbstractDao&lt;PK extends Serializable, T&gt; {
+	
+	private final Class&lt;T&gt; persistentClass;
+	
+	@SuppressWarnings("unchecked")
+	public AbstractDao(){
+		this.persistentClass =(Class&lt;T&gt;) ((ParameterizedType) this.getClass().getGenericSuperclass
+
+()).getActualTypeArguments()[1];
+	}
+	
+	@Autowired
+	private SessionFactory sessionFactory;
+
+	protected Session getSession(){
+		return sessionFactory.getCurrentSession();
+	}
+
+	@SuppressWarnings("unchecked")
+	public T getByKey(PK key) {
+		return (T) getSession().get(persistentClass, key);
+	}
+
+	public void persist(T entity) {
+		getSession().persist(entity);
+	}
+
+	public void delete(T entity) {
+		getSession().delete(entity);
+	}
+	
+	protected Criteria createEntityCriteria(){
+		return getSession().createCriteria(persistentClass);
+	}
+
+}</pre> 
+  <pre>package com.yiibai.springmvc.dao;
+
+import java.util.List;
+
+import org.hibernate.Criteria;
+import org.hibernate.Hibernate;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
+import org.springframework.stereotype.Repository;
+
+import com.yiibai.springmvc.model.User;
+
+@Repository("userDao")
+public class UserDaoImpl extends AbstractDao&lt;Integer, User&gt; implements UserDao {
+
+	public User findById(int id) {
+		User user = getByKey(id);
+		if(user!=null){
+			Hibernate.initialize(user.getUserProfiles());
+		}
+		return user;
+	}
+
+	public User findBySSO(String sso) {
+		System.out.println("SSO : "+sso);
+		Criteria crit = createEntityCriteria();
+		crit.add(Restrictions.eq("ssoId", sso));
+		User user = (User)crit.uniqueResult();
+		if(user!=null){
+			Hibernate.initialize(user.getUserProfiles());
+		}
+		return user;
+	}
+
+	@SuppressWarnings("unchecked")
+	public List&lt;User&gt; findAllUsers() {
+		Criteria criteria = createEntityCriteria().addOrder(Order.asc("firstName"));
+		criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);//To avoid duplicates.
+		List&lt;User&gt; users = (List&lt;User&gt;) criteria.list();
+		
+		// No need to fetch userProfiles since we are not showing them on list page. Let them lazy load. 
+		// Uncomment below lines for eagerly fetching of userProfiles if you want.
+		/*
+		for(User user : users){
+			Hibernate.initialize(user.getUserProfiles());
+		}*/
+		return users;
+	}
+
+	public void save(User user) {
+		persist(user);
+	}
+
+	public void deleteBySSO(String sso) {
+		Criteria crit = createEntityCriteria();
+		crit.add(Restrictions.eq("ssoId", sso));
+		User user = (User)crit.uniqueResult();
+		delete(user);
+	}
+
+}</pre> 
+  <pre>package com.yiibai.springmvc.dao;
+
+import java.util.List;
+
+import org.hibernate.Criteria;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
+import org.springframework.stereotype.Repository;
+
+import com.yiibai.springmvc.model.UserProfile;
+
+@Repository("userProfileDao")
+public class UserProfileDaoImpl extends AbstractDao&lt;Integer, UserProfile&gt;implements UserProfileDao{
+
+	public UserProfile findById(int id) {
+		return getByKey(id);
+	}
+
+	public UserProfile findByType(String type) {
+		Criteria crit = createEntityCriteria();
+		crit.add(Restrictions.eq("type", type));
+		return (UserProfile) crit.uniqueResult();
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List&lt;UserProfile&gt; findAll(){
+		Criteria crit = createEntityCriteria();
+		crit.addOrder(Order.asc("type"));
+		return (List&lt;UserProfile&gt;)crit.list();
+	}
+	
+}</pre> 
+  <h4> 
+   <div>
+     第6步：创建服务层 
+   </div> </h4> 
+  <pre>package com.yiibai.springmvc.service;
+
+import java.util.List;
+import com.yiibai.springmvc.model.UserProfile;
+
+public interface UserProfileService {
+
+	UserProfile findById(int id);
+
+	UserProfile findByType(String type);
+	
+	List&lt;UserProfile&gt; findAll();
+	
+}</pre> 
+  <pre>package com.yiibai.springmvc.service;
+
+import java.util.List;
+import com.yiibai.springmvc.model.User;
+
+public interface UserService {
+	
+	User findById(int id);
+	
+	User findBySSO(String sso);
+	
+	void saveUser(User user);
+	
+	void updateUser(User user);
+	
+	void deleteUserBySSO(String sso);
+
+	List&lt;User&gt; findAllUsers(); 
+	
+	boolean isUserSSOUnique(Integer id, String sso);
+
+}</pre> 
+  <pre>package com.yiibai.springmvc.service;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.yiibai.springmvc.dao.UserProfileDao;
+import com.yiibai.springmvc.model.UserProfile;
+
+@Service("userProfileService")
+@Transactional
+public class UserProfileServiceImpl implements UserProfileService{
+	
+	@Autowired
+	UserProfileDao dao;
+	
+	public UserProfile findById(int id) {
+		return dao.findById(id);
+	}
+
+	public UserProfile findByType(String type){
+		return dao.findByType(type);
+	}
+
+	public List&lt;UserProfile&gt; findAll() {
+		return dao.findAll();
+	}
+}</pre> 
+  <pre>package com.yiibai.springmvc.service;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.yiibai.springmvc.dao.UserDao;
+import com.yiibai.springmvc.model.User;
+
+@Service("userService")
+@Transactional
+public class UserServiceImpl implements UserService{
+
+	@Autowired
+	private UserDao dao;
+
+	public User findById(int id) {
+		return dao.findById(id);
+	}
+
+	public User findBySSO(String sso) {
+		User user = dao.findBySSO(sso);
+		return user;
+	}
+
+	public void saveUser(User user) {
+		dao.save(user);
+	}
+
+	/*
+	 * Since the method is running with Transaction, No need to call hibernate update explicitly.
+	 * Just fetch the entity from db and update it with proper values within transaction.
+	 * It will be updated in db once transaction ends. 
+	 */
+	public void updateUser(User user) {
+		User entity = dao.findById(user.getId());
+		if(entity!=null){
+			entity.setSsoId(user.getSsoId());
+			entity.setPassword(user.getPassword());
+			entity.setFirstName(user.getFirstName());
+			entity.setLastName(user.getLastName());
+			entity.setEmail(user.getEmail());
+			entity.setUserProfiles(user.getUserProfiles());
+		}
+	}
+
+	
+	public void deleteUserBySSO(String sso) {
+		dao.deleteBySSO(sso);
+	}
+
+	public List&lt;User&gt; findAllUsers() {
+		return dao.findAllUsers();
+	}
+
+	public boolean isUserSSOUnique(Integer id, String sso) {
+		User user = findBySSO(sso);
+		return ( user == null || ((id != null) &amp;&amp; (user.getId() == id)));
+	}
+	
+}</pre> 
+  <h4> 
+   <div>
+     第7步：创建Hibernate配置 
+   </div> </h4> 
+  <pre>package com.yiibai.springmvc.configuration;
+
+import java.util.Properties;
+import javax.sql.DataSource;
+
+import org.hibernate.SessionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.orm.hibernate4.HibernateTransactionManager;
+import org.springframework.orm.hibernate4.LocalSessionFactoryBean;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
+
+@Configuration
+@EnableTransactionManagement
+@ComponentScan({ "com.yiibai.springmvc.configuration" })
+@PropertySource(value = { "classpath:application.properties" })
+public class HibernateConfiguration {
+
+    @Autowired
+    private Environment environment;
+
+    @Bean
+    public LocalSessionFactoryBean sessionFactory() {
+        LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
+        sessionFactory.setDataSource(dataSource());
+        sessionFactory.setPackagesToScan(new String[] { "com.yiibai.springmvc.model" });
+        sessionFactory.setHibernateProperties(hibernateProperties());
+        return sessionFactory;
+     }
+	
+    @Bean
+    public DataSource dataSource() {
+        DriverManagerDataSource dataSource = new DriverManagerDataSource();
+        dataSource.setDriverClassName(environment.getRequiredProperty("jdbc.driverClassName"));
+        dataSource.setUrl(environment.getRequiredProperty("jdbc.url"));
+        dataSource.setUsername(environment.getRequiredProperty("jdbc.username"));
+        dataSource.setPassword(environment.getRequiredProperty("jdbc.password"));
+        return dataSource;
+    }
+    
+    private Properties hibernateProperties() {
+        Properties properties = new Properties();
+        properties.put("hibernate.dialect", environment.getRequiredProperty("hibernate.dialect"));
+        properties.put("hibernate.show_sql", environment.getRequiredProperty("hibernate.show_sql"));
+        properties.put("hibernate.format_sql", environment.getRequiredProperty("hibernate.format_sql"));
+        return properties;        
+    }
+    
+	@Bean
+    @Autowired
+    public HibernateTransactionManager transactionManager(SessionFactory s) {
+       HibernateTransactionManager txManager = new HibernateTransactionManager();
+       txManager.setSessionFactory(s);
+       return txManager;
+    }
+}</pre> 
+  <div>
+    以上 Hibernate 的配置使用下面提到 application.properties 
+  </div> 
+  <pre>jdbc.driverClassName = com.mysql.jdbc.Driver
+jdbc.url = jdbc:mysql://localhost:3306/yiibai
+jdbc.username = myuser
+jdbc.password = passwd123
+hibernate.dialect = org.hibernate.dialect.MySQLDialect
+hibernate.show_sql = true
+hibernate.format_sql = true</pre> 
+  <h4> 
+   <div>
+     第8步：创建控制器 
+   </div> </h4> 
+  <pre>package com.yiibai.springmvc.controller;
+
+import java.util.List;
+import java.util.Locale;
+
+import javax.validation.Valid;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.SessionAttributes;
+
+import com.yiibai.springmvc.model.User;
+import com.yiibai.springmvc.model.UserProfile;
+import com.yiibai.springmvc.service.UserProfileService;
+import com.yiibai.springmvc.service.UserService;
+
+@Controller
+@RequestMapping("/")
+@SessionAttributes("roles")
+public class AppController {
+
+	@Autowired
+	UserService userService;
+	
+	@Autowired
+	UserProfileService userProfileService;
+		
+	@Autowired
+	MessageSource messageSource;
+
+	/**
+	 * This method will list all existing users.
+	 */
+	@RequestMapping(value = { "/", "/list" }, method = RequestMethod.GET)
+	public String listUsers(ModelMap model) {
+
+		List&lt;User&gt; users = userService.findAllUsers();
+		model.addAttribute("users", users);
+		return "userslist";
+	}
+
+	/**
+	 * This method will provide the medium to add a new user.
+	 */
+	@RequestMapping(value = { "/newuser" }, method = RequestMethod.GET)
+	public String newUser(ModelMap model) {
+		User user = new User();
+		model.addAttribute("user", user);
+		model.addAttribute("edit", false);
+		return "registration";
+	}
+
+	/**
+	 * This method will be called on form submission, handling POST request for
+	 * saving user in database. It also validates the user input
+	 */
+	@RequestMapping(value = { "/newuser" }, method = RequestMethod.POST)
+	public String saveUser(@Valid User user, BindingResult result,
+			ModelMap model) {
+
+		if (result.hasErrors()) {
+			return "registration";
+		}
+
+		/*
+		 * Preferred way to achieve uniqueness of field [sso] should be implementing custom @Unique annotation 
+		 * and applying it on field [sso] of Model class [User].
+		 * 
+		 * Below mentioned peace of code [if block] is to demonstrate that you can fill custom errors outside the 
+
+validation
+		 * framework as well while still using internationalized messages.
+		 * 
+		 */
+		if(!userService.isUserSSOUnique(user.getId(), user.getSsoId())){
+			FieldError ssoError =new FieldError("user","ssoId",messageSource.getMessage("non.unique.ssoId", new 
+
+String[]{user.getSsoId()}, Locale.getDefault()));
+		    result.addError(ssoError);
+			return "registration";
+		}
+		
+		userService.saveUser(user);
+
+		model.addAttribute("success", "User " + user.getFirstName() + " "+ user.getLastName() + " registered 
+
+successfully");
+		//return "success";
+		return "registrationsuccess";
+	}
+
+
+	/**
+	 * This method will provide the medium to update an existing user.
+	 */
+	@RequestMapping(value = { "/edit-user-{ssoId}" }, method = RequestMethod.GET)
+	public String editUser(@PathVariable String ssoId, ModelMap model) {
+		User user = userService.findBySSO(ssoId);
+		model.addAttribute("user", user);
+		model.addAttribute("edit", true);
+		return "registration";
+	}
+	
+	/**
+	 * This method will be called on form submission, handling POST request for
+	 * updating user in database. It also validates the user input
+	 */
+	@RequestMapping(value = { "/edit-user-{ssoId}" }, method = RequestMethod.POST)
+	public String updateUser(@Valid User user, BindingResult result,
+			ModelMap model, @PathVariable String ssoId) {
+
+		if (result.hasErrors()) {
+			return "registration";
+		}
+
+		/*//Uncomment below 'if block' if you WANT TO ALLOW UPDATING SSO_ID in UI which is a unique key to a User.
+		if(!userService.isUserSSOUnique(user.getId(), user.getSsoId())){
+			FieldError ssoError =new FieldError("user","ssoId",messageSource.getMessage("non.unique.ssoId", new 
+
+String[]{user.getSsoId()}, Locale.getDefault()));
+		    result.addError(ssoError);
+			return "registration";
+		}*/
+
+		userService.updateUser(user);
+
+		model.addAttribute("success", "User " + user.getFirstName() + " "+ user.getLastName() + " updated successfully");
+		return "registrationsuccess";
+	}
+
+	
+	/**
+	 * This method will delete an user by it's SSOID value.
+	 */
+	@RequestMapping(value = { "/delete-user-{ssoId}" }, method = RequestMethod.GET)
+	public String deleteUser(@PathVariable String ssoId) {
+		userService.deleteUserBySSO(ssoId);
+		return "redirect:/list";
+	}
+	
+
+	/**
+	 * This method will provide UserProfile list to views
+	 */
+	@ModelAttribute("roles")
+	public List&lt;UserProfile&gt; initializeProfiles() {
+		return userProfileService.findAll();
+	}
+
+}</pre> 
+  <div>
+    在下面提到的 messages.properties 文件中定义消息 
+  </div>   
+  <pre>NotEmpty.user.firstName=First name can not be blank.
+NotEmpty.user.lastName=Last name can not be blank.
+NotEmpty.user.email=Email can not be blank.
+NotEmpty.user.password=Password can not be blank.
+NotEmpty.user.ssoId=SSO ID can not be blank.
+NotEmpty.user.userProfiles=At least one profile must be selected.
+non.unique.ssoId=SSO ID {0} already exist. Please fill in different value.</pre> 
+  <h4> 
+   <div>
+     第9步：创建转换器 
+   </div> </h4> 
+  <div>
+    这是这篇文章的核心。是需要映射单个&nbsp;userProfile&nbsp;的ID在实际的&nbsp;UserProfile&nbsp;实体在数据库中。 
+  </div> 
+  <pre>package com.yiibai.springmvc.converter;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.convert.converter.Converter;
+import org.springframework.stereotype.Component;
+
+import com.yiibai.springmvc.model.UserProfile;
+import com.yiibai.springmvc.service.UserProfileService;
+
+/**
+ * A converter class used in views to map id's to actual userProfile objects.
+ */
+@Component
+public class RoleToUserProfileConverter implements Converter&lt;Object, UserProfile&gt;{
+
+	@Autowired
+	UserProfileService userProfileService;
+
+	/**
+	 * Gets UserProfile by Id
+	 * @see org.springframework.core.convert.converter.Converter#convert(java.lang.Object)
+	 */
+	public UserProfile convert(Object element) {
+		Integer id = Integer.parseInt((String)element);
+		UserProfile profile= userProfileService.findById(id);
+		System.out.println("Profile : "+profile);
+		return profile;
+	}
+	
+}</pre> 
+  <h4> 
+   <div>
+     第10步、创建Spring配置文件 
+   </div> </h4> 
+  <pre>package com.yiibai.springmvc.configuration;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.format.FormatterRegistry;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.PathMatchConfigurer;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.ViewResolverRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.view.InternalResourceViewResolver;
+import org.springframework.web.servlet.view.JstlView;
+
+import com.yiibai.springmvc.converter.RoleToUserProfileConverter;
+
+@Configuration
+@EnableWebMvc
+@ComponentScan(basePackages = "com.yiibai.springmvc")
+public class AppConfig extends WebMvcConfigurerAdapter{
+	
+	@Autowired
+	RoleToUserProfileConverter roleToUserProfileConverter;
+	
+	/**
+     * Configure ViewResolvers to deliver preferred views.
+     */
+	@Override
+	public void configureViewResolvers(ViewResolverRegistry registry) {
+
+		InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
+		viewResolver.setViewClass(JstlView.class);
+		viewResolver.setPrefix("/WEB-INF/views/");
+		viewResolver.setSuffix(".jsp");
+		registry.viewResolver(viewResolver);
+	}
+	
+	/**
+     * Configure ResourceHandlers to serve static resources like CSS/ Javascript etc...
+     */
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/static/**").addResourceLocations("/static/");
+    }
+    
+    /**
+     * Configure Converter to be used.
+     * In our example, we need a converter to convert string values[Roles] to UserProfiles in newUser.jsp
+     */
+    @Override
+    public void addFormatters(FormatterRegistry registry) {
+        registry.addConverter(roleToUserProfileConverter);
+    }
+	
+
+    /**
+     * Configure MessageSource to lookup any validation/error message in internationalized property files
+     */
+    @Bean
+	public MessageSource messageSource() {
+	    ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
+	    messageSource.setBasename("messages");
+	    return messageSource;
+	}
+    
+    /**Optional. It's only required when handling '.' in @PathVariables which otherwise ignore everything after last '.' in 
+
+@PathVaidables argument.
+     * It's a known bug in Spring [https://jira.spring.io/browse/SPR-6164], still present in Spring 4.1.7.
+     * This is a workaround for this issue.
+     */
+    @Override
+    public void configurePathMatch(PathMatchConfigurer matcher) {
+        matcher.setUseRegisteredSuffixPatternMatch(true);
+    }
+}&nbsp;</pre> 
+  <p> 第一个有趣的事情是注册转换器，我们在上一步中使用addFormatters创建了Spring配置。其次是方法configurePathMatch它提供了一个解决方法(虽然其他解决方法存在)在Spring中是一个已知的错误，这仍然在Spring4.1.7.RELEASE中有发现。 </p> 
+  <div>
+    上述XML配置转换器设置为： 
+  </div> 
+  <pre>	&lt;mvc:annotation-driven conversion-service="conversionService"/&gt;
+
+	&lt;bean id="conversionService" class="org.springframework.format.support.FormattingConversionServiceFactoryBean"&gt;
+	
+		&lt;property name="converters"&gt;
+			&lt;list&gt;
+				&lt;bean id="roleToUserProfile" class="com.yiibai.springsecurity.configuration.RoleToUserProfileConverter" /&gt;
+			&lt;/list&gt;
+		&lt;/property&gt;
+	&lt;/bean&gt;</pre> 
+  <div>
+    添加初始化类： 
+  </div> 
+  <pre>package com.yiibai.springmvc.configuration;
+
+import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
+
+public class AppInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
+
+	@Override
+	protected Class&lt;?&gt;[] getRootConfigClasses() {
+		return new Class[] { AppConfig.class };
+	}
+ 
+	@Override
+	protected Class&lt;?&gt;[] getServletConfigClasses() {
+		return null;
+	}
+ 
+	@Override
+	protected String[] getServletMappings() {
+		return new String[] { "/" };
+	}
+
+}</pre> 
+  <h4> 
+   <div>
+     第11步：添加视图/&nbsp;JSP 
+   </div> </h4> 
+  <div>
+    请注意，我们使用 Bootstrap 样式在JSP中。 
+  </div> 
+  <p> userslist.jsp </p> 
+  <pre>&lt;%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%&gt;
+&lt;%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %&gt;
+&lt;html&gt;
+
+&lt;head&gt;
+	&lt;meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"&gt;
+	&lt;title&gt;Users List&lt;/title&gt;
+	&lt;link href="&lt;c:url value='/static/css/bootstrap.css' /&gt;" rel="stylesheet"&gt;&lt;/link&gt;
+	&lt;link href="&lt;c:url value='/static/css/app.css' /&gt;" rel="stylesheet"&gt;&lt;/link&gt;
+&lt;/head&gt;
+
+&lt;body&gt;
+	&lt;div class="generic-container"&gt;
+		&lt;div class="panel panel-default"&gt;
+			  &lt;!-- Default panel contents --&gt;
+		  	&lt;div class="panel-heading"&gt;&lt;span class="lead"&gt;List of Users &lt;/span&gt;&lt;/div&gt;
+			&lt;table class="table table-hover"&gt;
+	    		&lt;thead&gt;
+		      		&lt;tr&gt;
+				        &lt;th&gt;Firstname&lt;/th&gt;
+				        &lt;th&gt;Lastname&lt;/th&gt;
+				        &lt;th&gt;Email&lt;/th&gt;
+				        &lt;th&gt;SSO ID&lt;/th&gt;
+				        &lt;th width="100"&gt;&lt;/th&gt;
+				        &lt;th width="100"&gt;&lt;/th&gt;
+					&lt;/tr&gt;
+		    	&lt;/thead&gt;
+	    		&lt;tbody&gt;
+				&lt;c:forEach items="${users}" var="user"&gt;
+					&lt;tr&gt;
+						&lt;td&gt;${user.firstName}&lt;/td&gt;
+						&lt;td&gt;${user.lastName}&lt;/td&gt;
+						&lt;td&gt;${user.email}&lt;/td&gt;
+						&lt;td&gt;${user.ssoId}&lt;/td&gt;
+						&lt;td&gt;&lt;a href="&lt;c:url value='/edit-user-${user.ssoId}' /&gt;" class="btn btn-success 
+
+custom-width"&gt;edit&lt;/a&gt;&lt;/td&gt;
+						&lt;td&gt;&lt;a href="&lt;c:url value='/delete-user-${user.ssoId}' /&gt;" class="btn btn-danger 
+
+custom-width"&gt;delete&lt;/a&gt;&lt;/td&gt;
+					&lt;/tr&gt;
+				&lt;/c:forEach&gt;
+	    		&lt;/tbody&gt;
+	    	&lt;/table&gt;
+		&lt;/div&gt;
+	 	&lt;div class="well"&gt;
+	 		&lt;a href="&lt;c:url value='/newuser' /&gt;"&gt;Add New User&lt;/a&gt;
+	 	&lt;/div&gt;
+   	&lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre> 
+  <p> registration.jsp </p> 
+  <pre>&lt;%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%&gt;
+&lt;%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%&gt;
+&lt;%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %&gt;
+
+&lt;html&gt;
+
+&lt;head&gt;
+	&lt;meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"&gt;
+	&lt;title&gt;User Registration Form&lt;/title&gt;
+	&lt;link href="&lt;c:url value='/static/css/bootstrap.css' /&gt;" rel="stylesheet"&gt;&lt;/link&gt;
+	&lt;link href="&lt;c:url value='/static/css/app.css' /&gt;" rel="stylesheet"&gt;&lt;/link&gt;
+&lt;/head&gt;
+
+&lt;body&gt;
+
+ 	&lt;div class="generic-container"&gt;
+	&lt;div class="well lead"&gt;User Registration Form&lt;/div&gt;
+ 	&lt;form:form method="POST" modelAttribute="user" class="form-horizontal"&gt;
+		&lt;form:input type="hidden" path="id" id="id"/&gt;
+		
+		&lt;div class="row"&gt;
+			&lt;div class="form-group col-md-12"&gt;
+				&lt;label class="col-md-3 control-lable" for="firstName"&gt;First Name&lt;/label&gt;
+				&lt;div class="col-md-7"&gt;
+					&lt;form:input type="text" path="firstName" id="firstName" class="form-control input-sm"/&gt;
+					&lt;div class="has-error"&gt;
+						&lt;form:errors path="firstName" class="help-inline"/&gt;
+					&lt;/div&gt;
+				&lt;/div&gt;
+			&lt;/div&gt;
+		&lt;/div&gt;
+
+		&lt;div class="row"&gt;
+			&lt;div class="form-group col-md-12"&gt;
+				&lt;label class="col-md-3 control-lable" for="lastName"&gt;Last Name&lt;/label&gt;
+				&lt;div class="col-md-7"&gt;
+					&lt;form:input type="text" path="lastName" id="lastName" class="form-control input-sm" /&gt;
+					&lt;div class="has-error"&gt;
+						&lt;form:errors path="lastName" class="help-inline"/&gt;
+					&lt;/div&gt;
+				&lt;/div&gt;
+			&lt;/div&gt;
+		&lt;/div&gt;
+
+		&lt;div class="row"&gt;
+			&lt;div class="form-group col-md-12"&gt;
+				&lt;label class="col-md-3 control-lable" for="ssoId"&gt;SSO ID&lt;/label&gt;
+				&lt;div class="col-md-7"&gt;
+					&lt;c:choose&gt;
+						&lt;c:when test="${edit}"&gt;
+							&lt;form:input type="text" path="ssoId" id="ssoId" class="form-control 
+
+input-sm" disabled="true"/&gt;
+						&lt;/c:when&gt;
+						&lt;c:otherwise&gt;
+							&lt;form:input type="text" path="ssoId" id="ssoId" class="form-control 
+
+input-sm" /&gt;
+							&lt;div class="has-error"&gt;
+								&lt;form:errors path="ssoId" class="help-inline"/&gt;
+							&lt;/div&gt;
+						&lt;/c:otherwise&gt;
+					&lt;/c:choose&gt;
+				&lt;/div&gt;
+			&lt;/div&gt;
+		&lt;/div&gt;
+
+		&lt;div class="row"&gt;
+			&lt;div class="form-group col-md-12"&gt;
+				&lt;label class="col-md-3 control-lable" for="password"&gt;Password&lt;/label&gt;
+				&lt;div class="col-md-7"&gt;
+					&lt;form:input type="password" path="password" id="password" class="form-control input-sm" 
+
+/&gt;
+					&lt;div class="has-error"&gt;
+						&lt;form:errors path="password" class="help-inline"/&gt;
+					&lt;/div&gt;
+				&lt;/div&gt;
+			&lt;/div&gt;
+		&lt;/div&gt;
+
+		&lt;div class="row"&gt;
+			&lt;div class="form-group col-md-12"&gt;
+				&lt;label class="col-md-3 control-lable" for="email"&gt;Email&lt;/label&gt;
+				&lt;div class="col-md-7"&gt;
+					&lt;form:input type="text" path="email" id="email" class="form-control input-sm" /&gt;
+					&lt;div class="has-error"&gt;
+						&lt;form:errors path="email" class="help-inline"/&gt;
+					&lt;/div&gt;
+				&lt;/div&gt;
+			&lt;/div&gt;
+		&lt;/div&gt;
+
+		&lt;div class="row"&gt;
+			&lt;div class="form-group col-md-12"&gt;
+				&lt;label class="col-md-3 control-lable" for="userProfiles"&gt;Roles&lt;/label&gt;
+				&lt;div class="col-md-7"&gt;
+					&lt;form:select path="userProfiles" items="${roles}" multiple="true" itemValue="id" 
+
+itemLabel="type" class="form-control input-sm" /&gt;
+					&lt;div class="has-error"&gt;
+						&lt;form:errors path="userProfiles" class="help-inline"/&gt;
+					&lt;/div&gt;
+				&lt;/div&gt;
+			&lt;/div&gt;
+		&lt;/div&gt;
+
+		&lt;div class="row"&gt;
+			&lt;div class="form-actions floatRight"&gt;
+				&lt;c:choose&gt;
+					&lt;c:when test="${edit}"&gt;
+						&lt;input type="submit" value="Update" class="btn btn-primary btn-sm"/&gt; or &lt;a 
+
+href="&lt;c:url value='/list' /&gt;"&gt;Cancel&lt;/a&gt;
+					&lt;/c:when&gt;
+					&lt;c:otherwise&gt;
+						&lt;input type="submit" value="Register" class="btn btn-primary btn-sm"/&gt; or &lt;a 
+
+href="&lt;c:url value='/list' /&gt;"&gt;Cancel&lt;/a&gt;
+					&lt;/c:otherwise&gt;
+				&lt;/c:choose&gt;
+			&lt;/div&gt;
+		&lt;/div&gt;
+	&lt;/form:form&gt;
+	&lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre> 
+  <p> registrationsuccess.jsp </p> 
+  <pre>&lt;%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%&gt;
+&lt;%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %&gt;
+
+
+&lt;html&gt;
+&lt;head&gt;
+	&lt;meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"&gt;
+	&lt;title&gt;Registration Confirmation Page&lt;/title&gt;
+	&lt;link href="&lt;c:url value='/static/css/bootstrap.css' /&gt;" rel="stylesheet"&gt;&lt;/link&gt;
+	&lt;link href="&lt;c:url value='/static/css/app.css' /&gt;" rel="stylesheet"&gt;&lt;/link&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;div class="generic-container"&gt;
+	&lt;div class="alert alert-success lead"&gt;
+    	${success}
+	&lt;/div&gt;
+	
+	&lt;span class="well floatRight"&gt;
+		Go to &lt;a href="&lt;c:url value='/list' /&gt;"&gt;Users List&lt;/a&gt;
+	&lt;/span&gt;
+&lt;/div&gt;
+&lt;/body&gt;
+
+&lt;/html&gt;</pre> 
+  <div>
+    这里是一个小自定义样式表文件： 
+  </div> 
+  <p> app.css </p> 
+  <pre>body, #mainWrapper {
+	height: 100%;
+	background-color:rgb(245, 245, 245);
+}
+
+body, .form-control{
+	font-size:14px!important;
+}
+
+.floatRight{
+	float:right;
+	margin-right: 18px;
+}
+
+.has-error{
+	color:red;
+}
+
+.generic-container {
+  position:fixed;
+  width:80%;
+  margin-left: 20px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  padding: 20px;
+  background-color: #EAE7E7;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-shadow: 0 0 30px black;
+}
+
+.custom-width {
+    width: 80px !important;
+}</pre> 
+  <h4> 
+   <div>
+     第12步：构建，部署和运行应用程序 
+   </div> </h4> 
+  <p> 现在构建War(前面提到的Eclipse教程)或通过Maven的命令行( mvn clean install).&nbsp;部署&nbsp;war&nbsp;到Servlet3.0容器。 </p> 
+  <p> 打开浏览器，浏览URL =&gt;&nbsp;<a target="_blank" href="http://localhost:8080/SpringMVCMany2ManyCRUD/">http://localhost:8080/SpringMVCMany2ManyCRUD/</a> </p> 
+  <p> <img src="/uploads/tutorial/20160116/1-160116101404531.png" alt=""> </p> 
+  <p> 点击 ‘Add New User’ </p> 
+  <p> <img src="/uploads/tutorial/20160116/1-16011610141G12.png" alt=""> </p> 
+  <div>
+    直接提交而不填写任何东西。 
+  </div> 
+  <p> <img src="/uploads/tutorial/20160116/1-160116101435105.png" alt=""> </p> 
+  <div>
+    详细填写信息： 
+  </div> 
+  <p> <img src="/uploads/tutorial/20160116/1-160116101453260.png" alt=""> </p> 
+  <p> Submit. </p> 
+  <p> <img src="/uploads/tutorial/20160116/1-16011610150W12.png" alt=""> </p> 
+  <p> 点击 ‘Users List’ 链接： </p> 
+  <p> <img src="/uploads/tutorial/20160116/1-160116101526108.png" alt=""> </p> 
+  <div>
+    查看数据库，三张表的数据结果如下。 
+  </div> 
+  <p> <img src="/uploads/tutorial/20160116/1-160116101540409.png" alt=""> </p> 
+  <p> 添加更多的用户信息： </p> 
+  <p> <img src="/uploads/tutorial/20160116/1-16011610155Y07.png" alt=""> </p> 
+  <div>
+    点击用户"Si"编辑按钮。修改他的角色为Admin。 
+  </div> 
+  <p> <img src="/uploads/tutorial/20160116/1-1601161016135H.png" alt=""><br> 提交，如下结果显示： </p> 
+  <p> <img src="/uploads/tutorial/20160116/1-160116101625151.png" alt=""> </p> 
+  <div>
+    查看数据库，现在存储的数据如下： 
+  </div> 
+  <p> <img src="/uploads/tutorial/20160116/1-160116101641S1.png" alt=""> </p> 
+  <p> 现在回到列表，点击删除“Si”用户。 </p> 
+  <p> <img src="/uploads/tutorial/20160116/1-160116101G2923.png" alt=""> </p> 
+  <div>
+    最后，查看数据库，这里结果如下所示： 
+  </div> 
+  <p> <img src="/uploads/tutorial/20160116/1-160116101H9535.png" alt=""> </p> 
+  <p> 到这里，整个教程介绍完毕，包教不包会！ </p> 
+  <p> 下载代码：<a target="_blank" href="http://pan.baidu.com/s/1mhy2XwG">http://pan.baidu.com/s/1mhy2XwG</a> </p> 
+ </div>
+ <br>      
+</div></body></html>

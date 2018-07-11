@@ -1,0 +1,84 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">SQLite触发器(插入之前/之后）</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>SQLite插入之前或之后触发器指定了如何在插入数据后创建触发器。 假设有两个表：<code>COMPANY</code>和<code>AUDIT</code>，在这里要对向<code>COMPANY</code>表中插入的每条记录进行审计。如果您已经有创建过一个<code>COMPANY</code>表，请将其删除并重新创建。</p> 
+ <p><code>COMPANY</code>的创建语句 - </p> 
+ <pre><code class="lang-sql">CREATE TABLE company(  
+   ID INT PRIMARY KEY     NOT NULL,  
+   NAME           TEXT    NOT NULL,  
+   AGE            INT     NOT NULL,  
+   ADDRESS        CHAR(50),  
+   SALARY         REAL  
+);
+</code></pre> 
+ <p>创建一个名为<code>AUDIT</code>的新表，只要在向<code>COMPANY</code>表中插入新记录，就会插入日志消息：</p> 
+ <p><code>AUDIT</code>的创建语句 - </p> 
+ <pre><code class="lang-sql">CREATE TABLE audit(  
+    EMP_ID INT NOT NULL,
+    ACTION_TYPE TEXT NOT NULL,
+    ENTRY_DATE TEXT NOT NULL  
+);
+</code></pre> 
+ <p>创建以上两个表，如下图所示 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201705/2505/279090535_82774.png" alt=""></p> 
+ <h2 id="h2-sqlite-after-insert"><a name="SQLite触发器：AFTER INSERT" class="reference-link"></a><span class="header-link octicon octicon-link"></span>SQLite触发器：AFTER INSERT</h2>
+ <p>在插入操作后，使用以下语法是在<code>COMPANY</code>表上创建名为“<code>audit_log</code>”的触发器。</p> 
+ <pre><code class="lang-sql">CREATE TRIGGER audit_log AFTER INSERT   
+ON COMPANY  
+BEGIN  
+INSERT INTO AUDIT(EMP_ID, ACTION_TYPE ,ENTRY_DATE) VALUES (new.ID, 'AFTER INSERT',datetime('now'));  
+END;
+</code></pre> 
+ <p>这里，<code>ID</code>是<code>AUDIT</code>表行记录的<code>ID</code>，<code>EMP_ID</code>是来自<code>COMPANY</code>表的<code>ID</code>，<code>DATE</code>字段是用于在<code>COMPANY</code>表中创建记录时保留时间戳。</p> 
+ <p>现在向<code>COMPANY</code>表中插入一些记录，触发器将自动在<code>AUDIT</code>表中创建审核日志记录。</p> 
+ <pre><code class="lang-sql">INSERT INTO COMPANY (ID,NAME,AGE,ADDRESS,SALARY)  
+VALUES (1, 'Maxsu', 22, 'Haikou', 40000.00);
+</code></pre> 
+ <p>执行上面语句后，同时会在<code>AUDIT</code>表中创建一条记录。 这只是因为在<code>COMPANY</code>表上的<code>INSERT</code>操作上创建的触发器。现在查询<code>AUDIT</code>表中的记录数据。</p> 
+ <pre><code class="lang-sql">SELECT * FROM AUDIT;
+</code></pre> 
+ <p>执行上面语句，结果如下所示 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201705/2505/272090538_17971.png" alt=""></p> 
+ <p><strong>如何列出/查看触发器？</strong></p> 
+ <p>可以使用查询语句从<code>sqlite_master</code>表中来查询列出/查看触发器。</p> 
+ <pre><code class="lang-sql">SELECT name FROM sqlite_master  
+WHERE type = 'trigger';
+</code></pre> 
+ <p>执行上面语句，得到以下结果 - </p> 
+ <p>从上面结果中，可以看到触发器的名称。还可以使用<code>AND</code>子句列出特定表上的触发器。</p>   
+ <pre><code class="lang-sql">SELECT name FROM sqlite_master  
+WHERE type = 'trigger' AND tbl_name = 'COMPANY';
+</code></pre> 
+ <p>执行上面查询，得到以下结果 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201705/2505/253090539_44958.png" alt=""></p> 
+ <h2 id="h2-sqlite-before-insert"><a name="SQLite触发器：BEFORE INSERT" class="reference-link"></a><span class="header-link octicon octicon-link"></span>SQLite触发器：BEFORE INSERT</h2>
+ <p>如果要在插入数据之前创建触发器，可以使用以下语句 - </p> 
+ <pre><code class="lang-sql">CREATE TRIGGER befor_ins BEFORE INSERT   
+ON COMPANY  
+BEGIN  
+INSERT INTO AUDIT(EMP_ID, ACTION_TYPE ,ENTRY_DATE) VALUES (new.ID, 'BEFORE INSERT', datetime('now'));  
+END;
+</code></pre> 
+ <p>创建完成上面的触发器后，现在向<code>COMPANY</code>表中插入一条数据记录。</p> 
+ <pre><code class="lang-sql">INSERT INTO COMPANY (ID,NAME,AGE,ADDRESS,SALARY)  
+VALUES (2, 'Minsu', 28, 'Guangzhou', 35000.00);
+``
+
+现在，已经创建了两个触发器，一个是**BEFORE INSERT**，另一个是：**AFTER INSERT**，因此在向`COMPANY`表插入第二条记录时，`AUDIT`表中有生成两个记录。
+
+```sql
+SELECT * FROM AUDIT;
+</code></pre> 
+ <p><img src="http://www.yiibai.com/uploads/images/201705/2505/235090548_53307.png" alt=""></p> 
+ <p>检查创建的触发器：</p> 
+ <pre><code class="lang-sql">SELECT name FROM sqlite_master  
+WHERE type = 'trigger' AND tbl_name = 'COMPANY';
+</code></pre> 
+ <p>执行上面语句，得到以下结果 - </p> 
+ <pre><code class="lang-shell">sqlite&gt; SELECT name FROM sqlite_master
+   ...&gt; WHERE type = 'trigger' AND tbl_name = 'COMPANY';
+audit_log
+befor_ins
+sqlite&gt;
+</code></pre> 
+ <p>以上面查询的结果中，可以看到已创建的两个触发器。</p>
+ <br>      
+</div></body></html>

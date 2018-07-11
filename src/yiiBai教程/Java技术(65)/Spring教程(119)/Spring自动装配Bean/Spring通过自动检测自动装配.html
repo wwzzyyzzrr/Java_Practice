@@ -1,0 +1,76 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Spring通过自动检测自动装配</h1><div style="width:100%;float:left;" class="article-content">   
+ <div>
+   在Spring，“通过自动检测自动装配”，“通过构造函数自动装配”是指选，如果默认构造函数(参数与任何数据类型)，以其他方式使用“按类型自动装配”。 
+ </div> 
+ <div> 
+  <div>
+    请参见Spring&nbsp;“通过自动检测自动装配”的一个例子。自动装配(对"panda"&nbsp;bean&nbsp;的实现基地)的“kungfu”&nbsp;Bean&nbsp;到&nbsp;“panda”，通过构造函数或类型。 
+  </div> 
+  <pre>&lt;bean id="panda" class="com.yiibai.common.Panda" autowire="autodetect" /&gt;
+		
+	&lt;bean id="kungfu" class="com.yiibai.common.KungFu" &gt;
+		&lt;property name="name" value="Tai Ji" /&gt;
+	&lt;/bean&gt;</pre> 
+  <h2> 1. AutoDetect – 按构造函数装配 </h2> 
+  <div>
+    如果默认的构造函数提供，自动检测将构造自动装配。 
+  </div> 
+  <pre>package com.yiibai.common;
+
+public class Panda {
+	private KungFu kungfu;
+
+	public Panda(KungFu kungfu) {
+		System.out.println("autowiring by constructor");
+		this.kungfu = kungfu;
+	}
+
+	public KungFu getKungfu() {
+		return kungfu;
+	}
+
+	public void setKungfu(KungFu kungfu) {
+		System.out.println("autowiring by type");
+		this.kungfu = kungfu;
+	}
+
+	//...
+}</pre> 
+  <p> 输出 </p> 
+  <pre class="prettyprint lang-bsh">autowiring by type 
+Person [kungfu=Language [name=Tai Ji]]</pre> 
+  <p> <br> </p> 
+  <h2> 2. AutoDetect – 按类型装配 </h2> 
+  <div>
+    如果没有找到默认的构造函数，自动检测将按类型选择装配。 
+  </div>   
+  <pre>package com.yiibai.common;
+
+public class Panda {
+	private KungFu kungfu;
+
+	public KungFu getKungfu() {
+		return kungfu;
+	}
+
+	public void setKungfu(KungFu kungfu) {
+		System.out.println("autowiring by type");
+		this.kungfu = kungfu;
+	}
+
+	//...
+}</pre> 
+  <p> 输出 </p> 
+  <pre class="prettyprint lang-bsh">autowiring by type 
+Person [kungfu=Language [name=Tai Ji]]</pre> 
+  <p> <br> </p> 
+  <div style="color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:16px;background-color:inherit;"> 
+   <br> 
+  </div> 
+  <div>
+    下载代码 –&nbsp;&nbsp;
+   <a target="_blank" href="http://pan.baidu.com/s/1bnIFXvD">http://pan.baidu.com/s/1bnIFXvD</a> 
+  </div> 
+ </div>
+ <br>      
+</div></body></html>

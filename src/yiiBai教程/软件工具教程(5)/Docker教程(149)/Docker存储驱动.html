@@ -1,0 +1,103 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Docker存储驱动</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>Docker提供了可插拔的存储驱动程序架构。它使我们能够灵活地“插入”Docker中的存储驱动程序。它完全基于Linux文件系统。</p> 
+ <p>要实现这一功能，我们必须在docker守护进程的开始时就设置驱动程序。Docker守护程序只能运行一个存储驱动程序，并且该守护程序实例创建的所有容器都使用相同的存储驱动程序。</p> 
+ <p>下表中列出了Docker中支持的存储驱动程序 - </p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>技术</th> 
+    <th>存储驱动程序名称</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>OverlayFS</td> 
+    <td>overlay 或 overlay2</td> 
+   </tr> 
+   <tr> 
+    <td>AUFS</td> 
+    <td>aufs</td> 
+   </tr> 
+   <tr> 
+    <td>Btrfs</td> 
+    <td>btrfs</td> 
+   </tr> 
+   <tr> 
+    <td>Device Mapper</td> 
+    <td>devicemapper</td> 
+   </tr> 
+   <tr> 
+    <td>VFS</td> 
+    <td>vfs</td> 
+   </tr> 
+   <tr> 
+    <td>ZFS</td> 
+    <td>zfs</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p><strong>当前存储驱动</strong></p> 
+ <p>查看守护程序使用哪个存储驱动程序，可以使用以下命令。</p> 
+ <pre><code class="lang-shell">$ docker info
+</code></pre> 
+ <p>可以看到上面的命令显示了守护进程使用的存储驱动程序。备份文件系统是<code>extfs</code>。 <code>extfs</code>表示覆盖存储驱动程序在文件系统的顶部运行。</p> 
+ <p>后备文件系统是指用于在<code>/var/lib/docker</code>录下创建Docker主机的本地存储区域的文件系统。</p> 
+ <p>下表包含必须与主机备份文件系统相匹配的存储驱动程序。</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>存储驱动</th> 
+    <th>常用</th> 
+    <th>已禁用</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>overlay</td> 
+    <td>ext4xfs</td> 
+    <td>btrfs aufs overlay zfs eCryptfs</td> 
+   </tr> 
+   <tr> 
+    <td>overlay2</td> 
+    <td>ext4xfs</td> 
+    <td>btrfs aufs overlay zfs eCryptfs</td> 
+   </tr> 
+   <tr> 
+    <td>aufs</td> 
+    <td>ext4xfs</td> 
+    <td>btrfs aufs eCryptfs</td> 
+   </tr> 
+   <tr> 
+    <td>btrfs</td> 
+    <td>btrfsonly</td> 
+    <td>N/A</td> 
+   </tr> 
+   <tr> 
+    <td>devicemapper</td> 
+    <td>Direct-lvm</td> 
+    <td>N/A</td> 
+   </tr> 
+   <tr> 
+    <td>vfs</td> 
+    <td>debugging only</td> 
+    <td>N/A</td> 
+   </tr> 
+   <tr> 
+    <td>zfs</td> 
+    <td>zfsonly</td> 
+    <td>N/A</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <blockquote> 
+  <p>注意： - “已禁用/Disabled on”表示某些存储驱动程序无法在某些后台文件系统上运行。</p> 
+ </blockquote> 
+ <p><strong>设置存储驱动程序</strong></p> 
+ <p>可以通过dockerd命令按指定名称来设置存储驱动程序。以下命令启动守护程序并设置新的驱动程序。</p>   
+ <pre><code class="lang-shell">$ dockerd --storage-driver=devicemapper
+</code></pre> 
+ <p>稍后，可以通过以下命令检查docker服务器驱动程序。</p> 
+ <pre><code class="lang-shell">$ docker info
+</code></pre>
+ <br>      
+</div></body></html>

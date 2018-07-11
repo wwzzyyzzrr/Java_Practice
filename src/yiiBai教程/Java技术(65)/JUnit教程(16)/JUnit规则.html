@@ -1,0 +1,39 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">JUnit规则</h1><div style="width:100%;float:left;" class="article-content">   
+ <div> 
+  <p> 在本节中，我们学习和了解JUnit中叫做规则的新功能，它允许非常灵活在测试类重新定义每个测试方法的行为。为了这个目的，@Rule注解被使用来标出测试类的公共字段。这些字段类型为MethodRule，这是测试方法如何运行并报告。多个MethodRules可以应用到一个测试方法。MethodRule接口有很多的实现，如ErrorCollector在发现了第一个问题之后，也允许继续执行一个测试，ExpectedException&nbsp;允许在测试规范预期的异常类型和消息，TestName&nbsp;使得目前的测试名称在测试方法内部可用，以及其他许多。除了那些已经定义的规则，开发人员可以创建自己的自定义规则，并使用来测试自己用例。 </p> 
+ </div> 
+ <p> 下面我们介绍方法，可以使用一个名为TestName，在我们自己现有的测试规则。&nbsp;TestName被调用在测试开始时。 </p> 
+ <div> 
+  <p> <span style="background-color:inherit;"><span style="background-color:inherit;font-size:11px;line-height:16px;"></span></span> </p> 
+  <p style="color:#333333;font-family:Tahoma,  Verdana, font-size:15px;"> <span style="background-color:inherit;"><em>NameRuleTest.java</em></span> </p> 
+  <pre>package com.javacodegeeks.junit;
+
+import static org.junit.Assert.*;
+
+import org.junit.*;
+import org.junit.rules.TestName;
+
+public class NameRuleTest {
+	@Rule
+	public TestName name = new TestName();
+
+	@Test
+	public void testA() {
+		System.out.println(name.getMethodName());
+		assertEquals("testA", name.getMethodName());
+
+	}
+
+	@Test
+	public void testB() {
+		System.out.println(name.getMethodName());
+		assertEquals("testB", name.getMethodName());
+	}
+}</pre> 
+  <p> 我们可以看到，@Rule注解标记的类型是MethodRule的公共字段名，具体而言是TestName类型。 然后，可以在我们的测试中，这名称字段使用和查找，例如测试方法的名称，这种特定情况。 </p> 
+  <div> 
+   <br> 
+  </div> 
+ </div>
+ <br>      
+</div></body></html>

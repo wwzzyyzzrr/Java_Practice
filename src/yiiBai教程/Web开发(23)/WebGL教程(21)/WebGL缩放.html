@@ -1,0 +1,187 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">WebGL缩放</h1><div style="width:100%;float:left;" class="article-content">   
+ <div> 
+  <div>
+    在本章中，我们将举个例子来说明如何使用WebGL修改一个三角形的缩放比例。 
+  </div> 
+ </div> 
+ <div> 
+  <h2> 
+   <div>
+     缩放 
+   </div> </h2> 
+  <div>
+    缩放只不过是增加或减少的对象的大小。例如，如果一个三角形的大小的顶点是[a,b,c]，然后三角形的顶点[2a，2b，2c]将扩大两倍大小。因此，缩放一个三角形，要乘以每个顶点的缩放比例。还可以扩展一个特定的顶点。 
+  </div> 
+  <div>
+    缩放一个三角形，在该程序的顶点着色器，我们产生均匀的矩阵并用该矩阵乘以坐标值。之后，我们传递 x，y 的比例因子为 4×4 的对角矩阵和z坐标中的对角位置(最近对角位置1)。 
+  </div> 
+  <h2> 
+   <div>
+     所需的步骤 
+   </div> </h2> 
+  <div>
+    下面的步骤来创建一个 WebGL 应用程序来扩展三角形。 
+  </div> 
+  <div> 
+   <strong>第1步&nbsp;-&nbsp;准备Canvas和获取 WebGL 渲染上下文</strong> 
+  </div> 
+  <div>
+    在此步骤中，我们使用 getContext()得到&nbsp;WebGL&nbsp;渲染上下文对象。 
+  </div> 
+  <div> 
+   <strong>第2步&nbsp;-&nbsp;定义几何并将其存储在缓冲区对象</strong> 
+  </div> 
+  <div>
+    由于我们画一个三角形，我们必须通过三角形的三个顶点，并将它们存储在缓冲区中。 
+  </div> 
+  <pre>var vertices = [ -0.5,0.5,0.0, -0.5,-0.5,0.0, 0.5,-0.5,0.0, ];</pre> 
+  <div> 
+   <strong>第3步&nbsp;-&nbsp;创建和编译着色器程序</strong> 
+  </div> 
+  <div>
+    在这一步中，你需要编写的顶点着色器和片段着色器程序，编译它们，并通过连接这两个程序将创建一个合并程序。 
+  </div> 
+  <ul> 
+   <li> 
+    <div>
+      顶点着色器 -&nbsp;在程序的顶点着色器，我们定义一个向量属性来存储三维坐标。除了它，我们定义了一个统一的矩阵存储缩放系数，最后，我们乘这两个值并将其分配给gl_position&nbsp;保存顶点的最终位置。 
+    </div> </li> 
+  </ul> 
+  <pre>var vertCode =
+   'attribute vec4 coordinates;' +
+   'uniform mat4 u_xformMatrix;' +
+   'void main(void) {' +
+      ' gl_Position = u_xformMatrix * coordinates;' +
+   '}';</pre> 
+  <ul style="background-color:inherit;color:#313131;font-family:Verdana, Geneva, Tahoma,  Helvetica, "> 
+   <li> 
+    <div>
+      片段着色器-&nbsp;在片段着色器，我们只分配碎片颜色到&nbsp;gl_FragColor&nbsp;变量。 
+    </div> </li> 
+  </ul> 
+  <pre>var fragCode = 'void main(void) {' +' gl_FragColor = vec4(1, 0.5, 0.0, 1);' +'}';</pre> 
+  <div>
+    片段着色器-&nbsp;在片段着色器，我们只分配碎片颜色到&nbsp;gl_FragColor&nbsp;变量。 
+  </div> 
+  <div>
+    在这一步，我们关联着色器程序到缓冲器的对象。 
+  </div> 
+  <div> 
+   <strong>第5步&nbsp;-&nbsp;绘制所需的对象</strong> 
+  </div> 
+  <div> 
+   <div>
+     由于我们使用索引绘制三角形，这里使用&nbsp;drawArrays()方法。该方法必须通过被视为对顶点/元件的数目。由于我们画一个三角形，将传递3作为一个参数。 
+   </div> 
+  </div> 
+  <pre>gl.drawArrays(gl.TRIANGLES, 0, 3);</pre> 
+  <h2> 
+   <div>
+     示例&nbsp;-&nbsp;缩放三角形 
+   </div> </h2> 
+  <div>
+    下面的例子演示了如何扩展三角形&nbsp;- 
+  </div> 
+  <pre>&lt;!doctype html&gt;
+&lt;html&gt;
+   &lt;body&gt;
+      &lt;canvas width = "300" height = "300" id = "my_Canvas"&gt;&lt;/canvas&gt;
+         
+      &lt;script&gt;
+         
+         /*=================Creating a canvas=========================*/
+         var canvas = document.getElementById('my_Canvas');
+         gl = canvas.getContext('experimental-webgl'); 
+ 
+         /*===========Defining and storing the geometry==============*/
+         var vertices =  [
+            -0.5,0.5,0.0, 	
+            -0.5,-0.5,0.0, 	
+            0.5,-0.5,0.0,   
+         ];
+            
+         //Create an empty buffer object and store vertex data
+            
+         var vertex_buffer = gl.createBuffer();                                                     
+         gl.bindBuffer(gl.ARRAY_BUFFER, vertex_buffer);                                                
+         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);           
+         gl.bindBuffer(gl.ARRAY_BUFFER, null);  
+            
+         /*========================Shaders============================*/
+           
+         //Vertex shader source code
+         var vertCode =
+            'attribute vec4 coordinates;' + 
+            'uniform mat4 u_xformMatrix;' +
+            'void main(void) {' +
+               '  gl_Position = u_xformMatrix * coordinates;' +
+            '}';
+               
+         //Create a vertex shader program object and compile it                
+         var vertShader = gl.createShader(gl.VERTEX_SHADER);
+         gl.shaderSource(vertShader, vertCode);
+         gl.compileShader(vertShader);
+            
+         //fragment shader source code
+         var fragCode =
+            'void main(void) {' +
+               '   gl_FragColor = vec4(0.0, 0.0, 0.0, 0.1);' +
+            '}';
+            
+         //Create a fragment shader program object and compile it 
+         var fragShader = gl.createShader(gl.FRAGMENT_SHADER);
+         gl.shaderSource(fragShader, fragCode);
+         gl.compileShader(fragShader);
+  
+         //Create and use combiened shader program
+         var shaderProgram = gl.createProgram();
+         gl.attachShader(shaderProgram, vertShader);
+         gl.attachShader(shaderProgram, fragShader);
+         gl.linkProgram(shaderProgram);
+   
+         gl.useProgram(shaderProgram); 
+          
+         /*===================scaling==========================*/
+          
+         var Sx = 1.0, Sy = 1.5, Sz = 1.0;
+         var xformMatrix = new Float32Array([
+            Sx,   0.0,  0.0,  0.0,
+            0.0,  Sy,   0.0,  0.0,
+            0.0,  0.0,  Sz,   0.0,
+            0.0,  0.0,  0.0,  1.0  
+         ]);
+   
+         var u_xformMatrix = gl.getUniformLocation(shaderProgram, 'u_xformMatrix');
+         gl.uniformMatrix4fv(u_xformMatrix, false, xformMatrix);
+      
+         /* ===========Associating shaders to buffer objects============*/
+         gl.bindBuffer(gl.ARRAY_BUFFER, vertex_buffer);   
+   
+         var coordinatesVar = gl.getAttribLocation(shaderProgram, "coordinates"); 
+         gl.vertexAttribPointer(coordinatesVar, 3, gl.FLOAT, false, 0, 0);  
+         gl.enableVertexAttribArray(coordinatesVar);
+   
+         /*=================Drawing the Quad========================*/ 
+         gl.clearColor(0.5, 0.5, 0.5, 0.9);
+         gl.enable(gl.DEPTH_TEST);
+   
+         gl.clear(gl.COLOR_BUFFER_BIT);
+         gl.viewport(0,0,canvas.width,canvas.height);
+         gl.drawArrays(gl.TRIANGLES, 0, 3);
+			
+      &lt;/script&gt;      
+      
+   &lt;/body&gt;
+&lt;/html&gt;      </pre> 
+  <div>
+    这将产生以下结果&nbsp;-
+   <br> 
+   <img src="/uploads/tutorial/20151220/1-151220220H1555.png" alt="">
+   <br> 
+  </div> 
+ </div> 
+ <div style="font-family:微软雅黑;font-size:14px;background-color:#FFFFFF;"> 
+  <img src="file://E:/data/youdao/qq24B39E2329F08D9F4C3146A571A415EF/10951a6657e347a585b26de011790797/clipboard.png"> 
+ </div>
+ <br>      
+</div></body></html>

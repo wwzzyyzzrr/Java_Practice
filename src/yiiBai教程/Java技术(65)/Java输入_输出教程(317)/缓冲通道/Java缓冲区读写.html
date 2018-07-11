@@ -1,0 +1,132 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Java缓冲区读写</h1><div style="width:100%;float:left;" class="article-content">   
+ <h2 id="h2-u7F13u51B2u533Au8BFB"><a name="缓冲区读" class="reference-link"></a><span class="header-link octicon octicon-link"></span>缓冲区读</h2>
+ <p>有两种方法从缓冲区读取数据：</p> 
+ <ul> 
+  <li>绝对位置</li>
+  <li>相对位置</li>
+ </ul> 
+ <p>使用四个版本重载的<code>get()</code>方法用于从缓冲区读取数据。</p> 
+ <ul> 
+  <li><code>get(int index)</code>返回给定索引处的数据。</li>
+  <li><code>get()</code>从缓冲区中的当前位置返回数据，并将位置增加<code>1</code>。</li>
+  <li><p><code>get(byte [] destination，int offset，int length)</code>从缓冲区中批量读取数据。 它从缓冲区的当前位置读取长度字节数，并将它们放在从指定偏移量开始的指定目标数组中。</p> </li>
+  <li><p><code>get(byte [] destination)</code>通过从缓冲区的当前位置读取数据并且每次读取数据元素时将当前位置递增<code>1</code>来填充指定的目标数组。</p> </li>
+ </ul> 
+ <h2 id="h2-u7F13u51B2u533Au5199u5165"><a name="缓冲区写入" class="reference-link"></a><span class="header-link octicon octicon-link"></span>缓冲区写入</h2>
+ <p>使用重载五个版本的<code>put()</code>方法将数据写入缓冲区。</p> 
+ <ul> 
+  <li><code>put(int index，byte b)</code>将指定的<code>b</code>数据写入指定的索引。调用此方法不会更改缓冲区的当前位置。</li>
+  <li><p><code>put(byte b)</code>将指定的字节写入缓冲区的当前位置，并将位置递增<code>1</code>。</p> </li>
+  <li><p><code>put(byte [] source，int offset，int length)</code>将起始于偏移量的源数组的字节长度写入从当前位置开始的缓冲区。 如果缓冲区中没有足够的空间来写入所有字节，它会抛出<code>BufferOverflowException</code>。 缓冲区的位置按长度增加。<code>put(byte [] source)</code>与调用<code>put(byte [] source，0，source.length)</code>相同。</p> </li>
+  <li><p><code>ByteBuffer put(ByteBuffer src)</code>从指定的字节缓冲区<code>src</code>读取剩余的字节，并将它们写入缓冲区。如果目标缓冲区中的剩余空间小于源缓冲区中的剩余字节，则抛出运行时<code>BufferOverflowException</code>。</p> </li>
+ </ul> 
+ <p>以下代码显示如何写入缓冲区和从缓冲区读取。</p> 
+ <pre><code class="lang-java">import java.nio.ByteBuffer;
+
+public class Main {
+  public static void main(String[] args) {
+    ByteBuffer bb = ByteBuffer.allocate(8);
+    printBufferInfo(bb);
+    for (int i = 50; i &lt; 58; i++) {
+      bb.put((byte) i);
+    }
+    printBufferInfo(bb);
+  }
+
+  public static void printBufferInfo(ByteBuffer bb) {
+    int limit = bb.limit();
+    System.out.println("Position =  " + bb.position() + ", Limit   = " + limit);
+    for (int i = 0; i &lt; limit; i++) {
+      System.out.print(bb.get(i) + "  ");
+    }
+    System.out.println();
+  }
+}
+</code></pre> 
+ <p>如果在缓冲区上使用<code>get()</code>或<code>put()</code>方法来读/写至少一个元素，则缓冲区的<code>hasRemaining()</code>方法返回<code>true</code>。</p> 
+ <p>可以通过使用相对的<code>get()</code>或<code>put()</code>方法，通过使用其<code>remaining()</code>方法来获得可以读/写的最大数量的元素。</p> 
+ <p>上面的代码生成以下结果。</p> 
+ <pre><code class="lang-java">Position =  0, Limit   = 8
+0  0  0  0  0  0  0  0  
+Position =  8, Limit   = 8
+50  51  52  53  54  55  56  57
+</code></pre> 
+ <h2 id="h2-u793Au4F8B"><a name="示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例</h2>
+ <p>以下代码显示如何使用相对读取和写入缓冲区的<code>flip()</code>和<code>hasRemaining()</code>方法。</p> 
+ <pre><code class="lang-java">import java.nio.ByteBuffer;
+
+public class Main {
+  public static void main(String[] args) {
+    ByteBuffer bb = ByteBuffer.allocate(8);
+    printBufferInfo(bb);
+
+    // Use flip() to reset the position to zero because
+    // the printBufferInfo() method uses relative get() method
+    bb.flip();
+
+    int i = 50;
+    while (bb.hasRemaining()) {
+      bb.put((byte) i++);
+    }
+
+    // Call flip() again to reset the position to zero,
+    // because the above put() call incremented the position
+    bb.flip();
+    printBufferInfo(bb);
+  }
+
+  public static void printBufferInfo(ByteBuffer bb) {
+    int limit = bb.limit();
+    System.out.println("Position =  " + bb.position() + ", Limit   = " + limit);
+    while (bb.hasRemaining()) {
+      System.out.print(bb.get() + "  ");
+    }
+    System.out.println();
+  }
+}
+</code></pre> 
+ <p>上面的代码生成以下结果。</p>   
+ <pre><code class="lang-java">Position =  0, Limit   = 8
+0  0  0  0  0  0  0  0  
+Position =  0, Limit   = 8
+50  51  52  53  54  55  56  57
+</code></pre> 
+ <h2 id="h2-u53EAu8BFBu7F13u51B2u533A"><a name="只读缓冲区" class="reference-link"></a><span class="header-link octicon octicon-link"></span>只读缓冲区</h2>
+ <p>缓冲区可以是只读的或读写的。只能读取只读缓冲区的内容。可以通过调用特定缓冲区类的<code>asReadOnlyBuffer()</code>方法来获得只读缓冲区。</p> 
+ <pre><code class="lang-java">// Create a  buffer that is read-write by  default
+ByteBuffer bb  = ByteBuffer.allocate(1024);
+boolean readOnly   = bb.isReadOnly(); // false
+</code></pre> 
+ <p>要检查缓冲区是否为只读，请按如下所示调用<code>isReadOnly()</code>方法：</p> 
+ <pre><code class="lang-java">ByteBuffer bbReadOnly = bb.asReadOnlyBuffer();
+boolean readOnly = bbReadOnly.isReadOnly();
+</code></pre> 
+ <p><code>asReadOnlyBuffer()</code>方法返回的只读缓冲区是同一个缓冲区的不同视图。对原始缓冲区的内容的任何修改都反映在只读缓冲区中。</p> 
+ <h2 id="h2-u7F13u51B2u533Au89C6u56FE"><a name="缓冲区视图" class="reference-link"></a><span class="header-link octicon octicon-link"></span>缓冲区视图</h2>
+ <p>可以获得缓冲区的不同视图。缓冲区的视图与原始缓冲区共享数据，并保持其自身的位置，标记和限制。<br>也可以复制一个缓冲区，在这种情况下，它们共享内容，但独立地保持标记，位置和限制。 使用缓冲区的<code>duplicate()</code>方法获取缓冲区的副本如下：</p> 
+ <pre><code class="lang-java">// Create a  buffer
+ByteBuffer bb  = ByteBuffer.allocate(1024);
+
+// Create a  duplicate view  of  the   buffer
+ByteBuffer bbDuplicate = bb.duplicate();
+</code></pre> 
+ <p>还可以通过使用缓冲区的<code>slice()</code>方法创建其切片视图，从而创建缓冲区的切片视图，如下所示：</p> 
+ <pre><code class="lang-java">// Create a  buffer
+ByteBuffer bb  = ByteBuffer.allocate(8);
+bb.position(3);
+bb.limit(6);
+// bbSlice will have  position set to 0  and  its  limit set to 3. 
+ByteBuffer bbSlice  = bb.slice();
+</code></pre> 
+ <p>还可以获得用于不同原始数据类型的字节缓冲区的视图。<br>例如，可以获得字节缓冲区的字符视图，浮点视图等。 <code>ByteBuffer</code>类包含诸如<code>asCharBuffer()</code>，<code>asLongBuffer()</code>，<code>asFloatBuffer()</code>等方法来获得原始数据类型的视图。</p> 
+ <pre><code class="lang-java">// Create a  byte   buffer
+ByteBuffer bb  = ByteBuffer.allocate(8);
+
+// Create a  char   view  of  the   byte   buffer
+CharBuffer cb  = bb.asCharBuffer();
+
+// Create a  float view  of  the   byte   buffer
+FloatBuffer fb  = bb.asFloatBuffer();
+</code></pre>
+ <br>      
+</div></body></html>

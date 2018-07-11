@@ -1,0 +1,78 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Spring由名称(Name)自动装配</h1><div style="width:100%;float:left;" class="article-content">   
+ <div> 
+  <div>
+    在Spring中，“按名称自动装配”是指，如果一个bean的名称与其他bean属性的名称是一样的，那么将自动装配它。 
+  </div> 
+ </div> 
+ <div> 
+  <div>
+    例如，如果“customer”&nbsp;bean公开一个“address”属性，Spring会找到“address”&nbsp;bean在当前容器中，并自动装配。如果没有匹配找到，那么什么也不做。 
+  </div> 
+  <div>
+    你可以通过 autowire="byName"&nbsp;自动装配像下面这样： 
+  </div> 
+  <pre>&lt;!-- customer has a property name "address" --&gt;
+	&lt;bean id="customer" class="com.yiibai.common.Customer" autowire="byName" /&gt;
+	
+	&lt;bean id="address" class="com.yiibai.common.Address" &gt;
+		&lt;property name="fulladdress" value="<span style="background-color:inherit;font-family:Monaco, Consolas, Courier, 'Lucida Console', monospace;font-size:inherit;line-height:1.5;">YiLong&nbsp;Road,&nbsp;CA&nbsp;188</span><span style="background-color:inherit;font-family:Monaco, Consolas, Courier, 'Lucida Console', monospace;font-size:inherit;line-height:1.5;">" /&gt;</span> &lt;/bean&gt;</pre> 
+  <div>
+    看看Spring自动装配的完整例子。 
+  </div> 
+  <h2> 1. Beans </h2> 
+  <p> 这里有两个 beans, 分别是：customer 和 address. </p> 
+  <pre>package com.yiibai.common;
+ 
+public class Customer 
+{
+	private Address address;
+	//...
+}</pre> 
+  <pre>package com.yiibai.common;
+ 
+public class Address 
+{
+	private String fulladdress;
+	//...
+}</pre> 
+  <h2> 2. Spring 装配 </h2> 
+  <div>
+    通常情况下，您明确装配Bean，这样通过&nbsp;ref&nbsp;属性： 
+  </div> 
+  <pre>&lt;bean id="customer" class="com.yiibai.common.Customer" &gt;
+		&lt;property name="address" ref="address" /&gt;
+	&lt;/bean&gt;
+	
+	&lt;bean id="address" class="com.yiibai.common.Address" &gt;
+		&lt;property name="fulladdress" value="<span style="background-color:inherit;font-family:Monaco, Consolas, Courier, 'Lucida Console', monospace;font-size:inherit;line-height:1.5;">YiLong&nbsp;Road,&nbsp;CA&nbsp;188</span><span style="background-color:inherit;font-family:Monaco, Consolas, Courier, 'Lucida Console', monospace;font-size:inherit;line-height:1.5;">" /&gt;</span> &lt;/bean&gt;</pre> 
+  <p> 输出 </p> 
+  <pre><span style="line-height:1.5;background-color:inherit;">Customer&nbsp;[address=Address&nbsp;[fulladdress=YiLong&nbsp;Road,&nbsp;CA&nbsp;188]]</span></pre> 
+  <div>
+    使用按名称启用自动装配，你不必再声明属性标记。只要在“address”&nbsp;bean是相同于“customer”&nbsp;bean&nbsp;的“address”属性名称，Spring会自动装配它。 
+  </div>   
+  <pre>&lt;bean id="customer" class="com.yiibai.common.Customer" autowire="byName" /&gt;
+	
+	&lt;bean id="address" class="com.yiibai.common.Address" &gt;
+	&lt;property name="fulladdress" value="<span style="background-color:inherit;font-family:Monaco, Consolas, Courier, 'Lucida Console', monospace;font-size:inherit;line-height:1.5;">YiLong&nbsp;Road,&nbsp;CA&nbsp;188</span><span style="background-color:inherit;font-family:Monaco, Consolas, Courier, 'Lucida Console', monospace;font-size:inherit;line-height:1.5;">" /&gt;</span> &lt;/bean&gt;</pre> 
+  <p> 输出 </p> 
+  <pre><span style="line-height:1.5;background-color:inherit;">Customer&nbsp;[address=Address&nbsp;[fulladdress=YiLong&nbsp;Road,&nbsp;CA&nbsp;188]]</span></pre> 
+  <div>
+    看看下面另一个例子，这一次，装配将会失败，导致bean&nbsp;“addressABC”不匹配“customer”&nbsp;bean的属性名称。 
+  </div> 
+  <pre>&lt;bean id="customer" class="com.yiibai.common.Customer" autowire="byName" /&gt;
+	
+	&lt;bean id="addressABC" class="com.yiibai.common.Address" &gt;
+		&lt;property name="fulladdress" value="Block A 888, CA" /&gt;
+	&lt;/bean&gt;</pre> 
+  <p> 输出 </p> 
+  <pre>Customer [address=null]</pre> 
+  <div style="color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:16px;background-color:inherit;"> 
+   <br> 
+  </div> 
+  <div>
+    下载代码 &nbsp;–&nbsp;
+   <a target="_blank" href="http://pan.baidu.com/s/1mgO3pos">http://pan.baidu.com/s/1mgO3pos</a> 
+  </div> 
+ </div>
+ <br>      
+</div></body></html>

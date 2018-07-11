@@ -1,0 +1,501 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Scrapy项目加载器（Item Loader）</h1><div style="width:100%;float:left;" class="article-content">   
+ <div> 
+  <div>
+    项目加载器提供了一个方便的方式来填补从网站上刮取的项目。 
+  </div> 
+ </div> 
+ <div> 
+  <h2> 
+   <div>
+     声明项目加载器 
+   </div> </h2> 
+  <div>
+    项目加载器的声明类：Items。例如： 
+  </div> 
+  <pre>from scrapy.loader import ItemLoader
+from scrapy.loader.processors import TakeFirst, MapCompose, Join
+
+class DemoLoader(ItemLoader):
+
+    default_output_processor = TakeFirst()
+
+    title_in = MapCompose(unicode.title)
+    title_out = Join()
+
+    size_in = MapCompose(unicode.strip)
+
+    # you can continue scraping here&nbsp;</pre> 
+  <p style="text-align:justify;"> 在上面的代码可以看到，输入处理器使用 _id 作为后缀以及输出处理器声明使用_out 作为后缀声明。ItemLoader.default_input_processor&nbsp;和&nbsp;ItemLoader.default_output_processor&nbsp;属性用于声明默认输入/输出处理器。 </p> 
+  <h2> 
+   <div>
+     使用项目加载器来填充项目 
+   </div> </h2> 
+  <div>
+    要使用项目加载器，先用类似字典的对象，或项目使用&nbsp;Loader.default_item_class&nbsp;属性指定&nbsp;Item&nbsp;类实例化。 
+  </div> 
+  <ul> 
+   <li> 
+    <div>
+      可以使用选择器来收集值到项目加载器。 
+    </div> </li> 
+   <li> 
+    <div>
+      可以在同一项目字段中添加更多的值，项目加载器将使用相应的处理程序来添加这些值。 
+    </div> </li> 
+  </ul> 
+  <div>
+    下面的代码演示项目是如何使用项目加载器来填充： 
+  </div> 
+  <pre>from scrapy.loader import ItemLoader
+from demoproject.items import Demo
+
+def parse(self, response):
+    l = ItemLoader(item = Product(), response = response)
+    l.add_xpath("title", "//div[@class='product_title']")
+    l.add_xpath("title", "//div[@class='product_name']")
+    l.add_xpath("desc", "//div[@class='desc']")
+    l.add_css("size", "div#size]")
+    l.add_value("last_updated", "yesterday")
+    return l.load_item()</pre> 
+  <div>
+    如上图所示，有两种不同的XPath，使用&nbsp;add_xpath()方法从标题(title)字段提取： 
+  </div> 
+  <pre>1. //div[@class="product_title"] 
+
+2. //div[@class="product_name"]&nbsp;</pre> 
+  <p style="text-align:justify;"> 此后，类似请求用于内容描述(desc)字段。size数据使用&nbsp;add_css()方法提取和last_updated&nbsp;使用add_value()方法使用值“yesterday”来填充。 </p> 
+  <div>
+    完成所有收集数据的，调用&nbsp;ItemLoader.load_item()&nbsp;方法返回填充并使用&nbsp;add_xpath()，add_css()和&nbsp;dadd_value()方法提取数据项。 
+  </div> 
+  <h2> 
+   <div>
+     输入和输出处理器 
+   </div> </h2> 
+  <div>
+    一个项目加载器的各个字段包含一个输入处理器和一个输出处理器。 
+  </div> 
+  <ul> 
+   <li> 
+    <div>
+      当提取数据时，输入处理器处理结果，交将结果存储在数据加载器。 
+    </div> </li> 
+   <li> 
+    <div>
+      接下来，收集数据后，调用&nbsp;ItemLoader.load_item()&nbsp;方法来获得&nbsp;Item&nbsp;对象。 
+    </div> </li> 
+   <li> 
+    <div>
+      最后，指定输出处理器到该项目的结果。 
+    </div> </li> 
+  </ul> 
+  <div>
+    下面的代码演示针对特定字段如何调用输入和输出处理器： 
+  </div> 
+  <pre>l = ItemLoader(Product(), some_selector)
+l.add_xpath("title", xpath1) # [1]
+l.add_xpath("title", xpath2) #  [2]
+l.add_css("title", css) # [3]
+l.add_value("title", "demo") # [4]
+return l.load_item() # [5]</pre> 
+  <ul> 
+   <li> <p style="text-align:justify;"> 第1行:&nbsp;标题(title)的数据是从xpath1提取并通过输入处理器，其结果被收集并存储在&nbsp;ItemLoader&nbsp;中。 </p> </li> 
+   <li> <p style="text-align:justify;"> 第2行:&nbsp;同样地，标题(title)从xpath2提取并通过相同的输入处理器，其结果收集的数据加到[1]中。 </p> </li> 
+   <li> <p style="text-align:justify;"> 第3行:&nbsp;标题(title)被从css选择萃取和通过相同的输入处理器传递并将收集的数据结果加到[1]及[2]。 </p> </li> 
+   <li> <p style="text-align:justify;"> 第4行:&nbsp;接着，将“demo”值分配并传递到输入处理器。 </p> </li> 
+   <li> <p style="text-align:justify;"> 第5行:&nbsp;最后，数据是从所有字段内部收集并传递给输出处理器，最终值将分配给项目。 </p> </li> 
+  </ul> 
+  <h2> 
+   <div>
+     声明输入和输出处理器 
+   </div> </h2> 
+  <p style="text-align:justify;"> 输入和输出的处理器在项目加载器(ItemLoader&nbsp;)定义声明。除此之外，它们还可以在项目字段的元数据指定。 </p> 
+  <p style="text-align:justify;"> 例如： </p> 
+  <pre>import scrapy
+from scrapy.loader.processors import Join, MapCompose, TakeFirst
+from w3lib.htmll import remove_tags
+
+def filter_size(value):
+    if value.isdigit():
+        return value
+
+class Item(scrapy.Item):
+    name = scrapy.Field(
+        input_processor = MapCompose(remove_tags),
+        output_processor = Join(),
+    )
+    size = scrapy.Field(
+       input_processor = MapCompose(remove_tags, filter_price),
+       output_processor = TakeFirst(),
+    )</pre> 
+  <pre>&gt;&gt;&gt; from scrapy.loader import ItemLoader
+&gt;&gt;&gt; il = ItemLoader(item=Product())
+&gt;&gt;&gt; il.add_value('title', [u'Hello', u'&lt;strong&gt;world&lt;/strong&gt;'])
+&gt;&gt;&gt; il.add_value('size', [u'&lt;span&gt;100 kg&lt;/span&gt;'])
+&gt;&gt;&gt; il.load_item()</pre> 
+  <div>
+    它显示的输出结果如下： 
+  </div> 
+  <pre>{'title': u'Hello world', 'size': u'100 kg'}</pre> 
+  <h2> 
+   <div>
+     项目加载器上下文 
+   </div> </h2> 
+  <div>
+    项目加载器上下文是输入和输出的处理器中共享的任意键值的字典。 
+  </div> 
+  <div>
+    例如，假设有一个函数parse_length： 
+  </div> 
+  <pre>def parse_length(text, loader_context):
+    unit = loader_context.get('unit', 'cm')
+    # You can write parsing code of length here 
+    return parsed_length&nbsp;</pre> 
+  <p style="text-align:justify;"> 通过接收loader_context参数，它告诉项目加载器可以收到项目加载器上下文。有几种方法可以改变项目加载器上下文的值： </p> 
+  <ul> 
+   <li> 
+    <div>
+      修改当前的活动项目加载器上下文： 
+    </div> <pre>loader = ItemLoader (product)
+loader.context ["unit"] = "mm"</pre> </li> 
+   <li> 
+    <div>
+      在项目加载器实例中修改： 
+    </div> <pre>loader = ItemLoader(product, unit="mm")</pre> </li> 
+   <li> 
+    <div>
+      在加载器项目声明与项目加载器上下文实例输入/输出处理器中修改： 
+    </div> <pre>class ProductLoader(ItemLoader):
+    length_out = MapCompose(parse_length, unit="mm")</pre> </li> 
+  </ul> 
+  <h2> ItemLoader对象 </h2> 
+  <div>
+    它是一个对象，它返回一个新项加载器到填充给定项目。它有以下类： 
+  </div> 
+  <pre>class scrapy.loader.ItemLoader([item, selector, response, ]**kwargs)</pre> 
+  <div>
+    下面的表显示 ItemReader 对象的参数： 
+  </div> 
+  <table border="1" cellpadding="2" cellspacing="0"> 
+   <tbody> 
+    <tr> 
+     <th style="border:1px solid #999999;"> S.N. </th> 
+     <th style="border:1px solid #999999;"> 参数 &amp; 描述 </th> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;"> 1 </td> 
+     <td style="border:1px solid #999999;"> item<br> 它是通过&nbsp;calling&nbsp;add_xpath(),&nbsp;add_css()&nbsp;或&nbsp;add_value()的填充项 </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;"> 2 </td> 
+     <td style="border:1px solid #999999;"> selector<br> 
+      <div>
+        它用来从网站提取数据 
+      </div> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;"> 3 </td> 
+     <td style="border:1px solid #999999;"> response<br> 
+      <div>
+        它是用&nbsp;default_selector_class&nbsp;来构造选择器 
+      </div> </td> 
+    </tr> 
+   </tbody> 
+  </table> 
+  <div>
+    下表显示项目加载器(ItemLoader)对象的方法： 
+  </div> 
+  <table border="1" cellpadding="2" cellspacing="0"> 
+   <tbody> 
+    <tr> 
+     <th style="border:1px solid #999999;"> S.N. </th> 
+     <th style="border:1px solid #999999;"> 方法 &amp; 描述 </th> 
+     <th style="border:1px solid #999999;"> 示例 </th> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;"> 1 </td> 
+     <td style="border:1px solid #999999;"> get_value(value, *processors, **kwargs)<br> 
+      <div>
+        由一个给定的处理器和关键字参数，该值在getValue()方法处理 
+      </div> </td> 
+     <td style="border:1px solid #999999;"> <pre>    &gt;&gt;&gt; from scrapy.loader.processors import TakeFirst
+    &gt;&gt;&gt; loader.get_value(u'title: demoweb', TakeFirst(), unicode.upper, re='title: (.+)')
+    'DEMOWEB`
+		</pre> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;"> 2 </td> 
+     <td style="border:1px solid #999999;"> add_value(field_name, value, *processors, **kwargs)<br> 它首先通过get_value传递处理值，并增加到字段中 </td> 
+     <td style="border:1px solid #999999;"> <pre>    loader.add_value('title', u'DVD')
+    loader.add_value('colors', [u'black', u'white'])
+    loader.add_value('length', u'80')
+    loader.add_value('price', u'2500')
+    </pre> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;"> 3 </td> 
+     <td style="border:1px solid #999999;"> replace_value(field_name, value, *processors, **kwargs)<br> 
+      <div>
+        它用一个新值替换所收集的数据 
+      </div> </td> 
+     <td style="border:1px solid #999999;"> <pre>    loader.replace_value('title', u'DVD')
+    loader.replace_value('colors', [u'black', u'white'])
+    loader.replace_value('length', u'80')
+    loader.replace_value('price', u'2500')
+	</pre> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;"> 4 </td> 
+     <td style="border:1px solid #999999;"> get_xpath(xpath, *processors, **kwargs)<br> 
+      <div>
+        它用于由接到的XPath给处理器和关键字参数提取unicode字符串 
+      </div> </td> 
+     <td style="border:1px solid #999999;"> <pre>    # HTML code: &lt;div class="item-name"&gt;DVD&lt;/div&gt;
+    loader.get_xpath("//div[@class='item-name']")
+    # HTML code: &lt;div id="length"&gt;the length is 45cm&lt;/div&gt;
+    loader.get_xpath("//div[@id='length']", TakeFirst(), re="the length is (.*)")
+    </pre> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;"> 5 </td> 
+     <td style="border:1px solid #999999;"> add_xpath(field_name, xpath, *processors, **kwargs)<br> 
+      <div>
+        它接收XPath提取unicode字符串到字段中 
+      </div> </td> 
+     <td style="border:1px solid #999999;"> <pre>    # HTML code: &lt;div class="item-name"&gt;DVD&lt;/div&gt;
+    loader.add_xpath('name', '//div[@class="item-name"]')
+    # HTML code: &lt;div id="length"&gt;the length is 45cm&lt;/div&gt;
+    loader.add_xpath('length', '//div[@id="length"]', re='the length is (.*)')
+    </pre> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;"> 6 </td> 
+     <td style="border:1px solid #999999;"> replace_xpath(field_name, xpath, *processors, **kwargs)<br> 
+      <div>
+        它使用XPath取换了从网站收集的数据 
+      </div> </td> 
+     <td style="border:1px solid #999999;"> <pre>    # HTML code: &lt;div class="item-name"&gt;DVD&lt;/div&gt;
+    loader.replace_xpath('name', '//div[@class="item-name"]')
+    # HTML code: &lt;div id="length"&gt;the length is 45cm&lt;/div&gt;
+    loader.replace_xpath('length', '//div[@id="length"]', re='the length is (.*)')
+    </pre> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;"> 7 </td> 
+     <td style="border:1px solid #999999;"> get_css(css, *processors, **kwargs)<br> 
+      <div>
+        它接收用于提取unicode字符串的CSS选择器 
+      </div> </td> 
+     <td style="border:1px solid #999999;"> <pre>    loader.get_css("div.item-name")
+    loader.get_css("div#length", TakeFirst(), re="the length is (.*)")
+    </pre> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;"> 8 </td> 
+     <td style="border:1px solid #999999;"> add_css(field_name, css, *processors, **kwargs)<br> 
+      <div>
+        它类似于add_value()方法，它增加CSS选择器到字段中 
+      </div> </td> 
+     <td style="border:1px solid #999999;">   <pre>    loader.add_css('name', 'div.item-name')
+    loader.add_css('length', 'div#length', re='the length is (.*)')
+    </pre> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;"> 9 </td> 
+     <td style="border:1px solid #999999;"> replace_css(field_name, css, *processors, **kwargs)<br> 
+      <div>
+        它使用CSS选择器取代了提取的数据 
+      </div> </td> 
+     <td style="border:1px solid #999999;"> <pre>    loader.replace_css('name', 'div.item-name')
+    loader.replace_css('length', 'div#length', re='the length is (.*)')
+    </pre> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;"> 10 </td> 
+     <td style="border:1px solid #999999;"> load_item()<br> 
+      <div>
+        当收集数据后，这个方法填充收集到数据的项目并返回 
+      </div> </td> 
+     <td style="border:1px solid #999999;"> <pre>    def parse(self, response):
+        l = ItemLoader(item=Product(), response=response)
+        l.add_xpath('title', '//div[@class="product_title"]')
+        loader.load_item()
+    </pre> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;"> 11 </td> 
+     <td style="border:1px solid #999999;"> nested_xpath(xpath)<br> 
+      <div>
+        它是通过XPath选择器来创建嵌套加载器 
+      </div> </td> 
+     <td style="border:1px solid #999999;"> <pre>    loader = ItemLoader(item=Item())
+    loader.add_xpath('social', 'a[@class = "social"]/@href')
+    loader.add_xpath('email', 'a[@class = "email"]/@href')
+	</pre> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;"> 12 </td> 
+     <td style="border:1px solid #999999;"> nested_css(css)<br> 
+      <div>
+        它被用来创建一个CSS选择器嵌套加载器 
+      </div> </td> 
+     <td style="border:1px solid #999999;"> <pre>    loader = ItemLoader(item=Item())
+    loader.add_css('social', 'a[@class = "social"]/@href')
+    loader.add_css('email', 'a[@class = "email"]/@href')	
+	</pre> </td> 
+    </tr> 
+   </tbody> 
+  </table> 
+  <div>
+    下表显示项目加载器对象的属性： 
+  </div> 
+  <table border="1" cellpadding="2" cellspacing="0"> 
+   <tbody> 
+    <tr> 
+     <th style="border:1px solid #999999;"> S.N. </th> 
+     <th style="border:1px solid #999999;"> 属性 &amp; 描述 </th> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;"> 1 </td> 
+     <td style="border:1px solid #999999;"> item<br> 
+      <div>
+        它是项目加载器进行解析的对象 
+      </div> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;"> 2 </td> 
+     <td style="border:1px solid #999999;"> context<br> 
+      <div>
+        这是项目加载器是活跃的当前上下文 
+      </div> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;"> 3 </td> 
+     <td style="border:1px solid #999999;"> default_item_class<br> 
+      <div>
+        如果在构造没有给出，它用来表示项 
+      </div> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;"> 4 </td> 
+     <td style="border:1px solid #999999;"> default_input_processor<br> 
+      <div>
+        不指定输入处理器中的字段，只有一个用于其默认输入处理器 
+      </div> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;"> 5 </td> 
+     <td style="border:1px solid #999999;"> default_output_processor<br> 
+      <div>
+        不指定输出处理器中的字段，只有一个用于其默认的输出处理器 
+      </div> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;"> 6 </td> 
+     <td style="border:1px solid #999999;"> default_selector_class<br> 
+      <div>
+        如果它没有在构造给定，它是使用来构造选择器的一个类 
+      </div> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;"> 7 </td> 
+     <td style="border:1px solid #999999;"> selector<br> 
+      <div>
+        它是一个用来从站点提取数据的对象 
+      </div> </td> 
+    </tr> 
+   </tbody> 
+  </table> 
+  <h2> 
+   <div>
+     嵌套加载器 
+   </div> </h2> 
+  <p style="text-align:justify;"> 这是使用从文档解析分段的值来创建嵌套加载器。如果不创建嵌套装载器，需要为您想提取的每个值指定完整的XPath或CSS。 </p> 
+  <div>
+    例如，假设要从一个标题页中提取数据： 
+  </div> 
+  <pre>&lt;header&gt;
+  &lt;a class="social" href="http://facebook.com/whatever"&gt;facebook&lt;/a&gt;
+  &lt;a class="social" href="http://twitter.com/whatever"&gt;twitter&lt;/a&gt;
+  &lt;a class="email" href="mailto:someone@example.com"&gt;send mail&lt;/a&gt;
+&lt;/header&gt;</pre> 
+  <div>
+    接下来，您可以通过添加相关的值到页眉来创建头选择器嵌套装载器： 
+  </div> 
+  <pre>loader = ItemLoader(item=Item())
+header_loader = loader.nested_xpath('//header')
+header_loader.add_xpath('social', 'a[@class = "social"]/@href')
+header_loader.add_xpath('email', 'a[@class = "email"]/@href')
+loader.load_item()</pre> 
+  <h2> 
+   <div>
+     重用和扩展项目加载器 
+   </div> </h2> 
+  <div>
+    项目加载器的设计以缓解维护，当要获取更多的蜘蛛时项目变成一个根本的问题。 
+  </div> 
+  <p style="text-align:justify;"> 举例来说，假设一个网站自己的产品名称是由三条短线封闭的(例如：&nbsp;---DVD---)。&nbsp;您可以通过重复使用默认产品项目加载器，如果你不希望它在最终产品名称所示，下面的代码删除这些破折号： </p> 
+  <pre>from scrapy.loader.processors import MapCompose
+from demoproject.ItemLoaders import DemoLoader
+
+def strip_dashes(x):
+    return x.strip('-')
+
+class SiteSpecificLoader(DemoLoader):
+    title_in = MapCompose(strip_dashes, DemoLoader.title_in)</pre> 
+  <h2> 
+   <div>
+     可用内置处理器 
+   </div> </h2> 
+  <div>
+    以下是一些常用的内置处理器： 
+  </div> 
+  <ul> 
+   <li> <p style="text-align:justify;"> class scrapy.loader.processors.Identity </p> 
+    <div>
+      它返回原始的值而并不修改它。&nbsp;例如： 
+    </div> <pre>&gt;&gt;&gt; from scrapy.loader.processors import Identity
+&gt;&gt;&gt; proc = Identity()
+&gt;&gt;&gt; proc(['a', 'b', 'c'])
+['a', 'b', 'c']</pre> </li> 
+   <li> <p style="text-align:justify;"> class scrapy.loader.processors.TakeFirst </p> 
+    <div>
+      它返回一个值来自收到列表的值即非空/非null值。&nbsp;例如： 
+    </div> <pre>&gt;&gt;&gt; from scrapy.loader.processors import TakeFirst
+&gt;&gt;&gt; proc = TakeFirst()
+&gt;&gt;&gt; proc(['', 'a', 'b', 'c'])
+'a'</pre> </li> 
+   <li> <p style="text-align:justify;"> class scrapy.loader.processors.Join(separator = u' ') </p> 
+    <div>
+      它返回附连到分隔符的值。默认的分隔符是&nbsp;u''，这相当于于&nbsp;u'&nbsp;'.join&nbsp;的功能。例如： 
+    </div> <pre>&gt;&gt;&gt; from scrapy.loader.processors import Join
+&gt;&gt;&gt; proc = Join()
+&gt;&gt;&gt; proc(['a', 'b', 'c'])
+u'a b c'
+&gt;&gt;&gt; proc = Join('&lt;br&gt;')
+&gt;&gt;&gt; proc(['a', 'b', 'c'])
+u'a&lt;br&gt;b&lt;br&gt;c'</pre> </li> 
+   <li> <p style="text-align:justify;"> class scrapy.loader.processors.SelectJmes(json_path) </p> 
+    <div>
+      此类查询使用提供JSON路径值，并返回输出。 
+    </div> 
+    <div>
+      例如： 
+    </div> <pre>&gt;&gt;&gt; from scrapy.loader.processors import SelectJmes, Compose, MapCompose
+&gt;&gt;&gt; proc = SelectJmes("hello")
+&gt;&gt;&gt; proc({'hello': 'scrapy'})
+'scrapy'
+&gt;&gt;&gt; proc({'hello': {'scrapy': 'world'}})
+{'scrapy': 'world'}</pre> 
+    <div>
+      下面是一个查询通过导入JSON值的代码： 
+    </div> <pre>&gt;&gt;&gt; import json
+&gt;&gt;&gt; proc_single_json_str = Compose(json.loads, SelectJmes("hello"))
+&gt;&gt;&gt; proc_single_json_str('{"hello": "scrapy"}')
+u'scrapy'
+&gt;&gt;&gt; proc_json_list = Compose(json.loads, MapCompose(SelectJmes('hello')))
+&gt;&gt;&gt; proc_json_list('[{"hello":"scrapy"}, {"world":"env"}]')
+[u'scrapy']</pre> </li> 
+  </ul> 
+ </div>
+ <br>      
+</div></body></html>

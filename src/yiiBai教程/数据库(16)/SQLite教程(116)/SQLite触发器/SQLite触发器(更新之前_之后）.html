@@ -1,0 +1,65 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">SQLite触发器(更新之前/之后）</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>SQLite触发器(更新之前/之后)指定了如何在更新数据后执行触发器操作。 假设有两个表<code>company</code>和<code>audit</code>，在这里要对在<code>company</code>表中的每个记录更新时进行审核。</p> 
+ <p>创建<code>company</code>表的语句 - </p> 
+ <pre><code class="lang-sql">CREATE TABLE company(  
+   ID INT PRIMARY KEY     NOT NULL,  
+   NAME           TEXT    NOT NULL,  
+   AGE            INT     NOT NULL,  
+   ADDRESS        CHAR(50),  
+   SALARY         REAL  
+);
+</code></pre> 
+ <p>创建一个名为<code>audit</code>的新表，用于在<code>company</code>表中有更新时插入日志消息。</p> 
+ <pre><code class="lang-sql">CREATE TABLE audit(  
+    EMP_ID INT NOT NULL,
+    ACTION_TYPE TEXT NOT NULL,
+    ENTRY_DATE TEXT NOT NULL  
+);
+</code></pre> 
+ <p><strong>创建更新后的触发器：</strong></p> 
+ <p>使用以下语法创建名为“<code>after_up</code>”的触发器，在<code>COMPANY</code>表上更新操作后触发此触发器。</p> 
+ <pre><code class="lang-sql">CREATE TRIGGER after_up AFTER UPDATE   
+ON COMPANY  
+BEGIN  
+INSERT INTO AUDIT(EMP_ID, ACTION_TYPE, ENTRY_DATE) VALUES (new.ID, 'AFTER UPDATE', datetime('now'));  
+END;
+</code></pre> 
+ <p>现在更新一条记录数据，如下：</p> 
+ <pre><code class="lang-sql">UPDATE COMPANY SET ADDRESS = 'Shenzhen' WHERE ID = 1;
+</code></pre> 
+ <p>查看已创建的触发器 - </p> 
+ <pre><code class="lang-sql">SELECT name FROM sqlite_master  WHERE type = 'trigger';
+</code></pre> 
+ <p>执行上面语句，看到以下结果 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201705/2505/789100514_75035.png" alt=""></p> 
+ <h2 id="h2-sqlite-update-"><a name="SQLite触发器：在UPDATE之前" class="reference-link"></a><span class="header-link octicon octicon-link"></span>SQLite触发器：在UPDATE之前</h2>
+ <p>如果要创建在更新数据之前的触发器，请参考以下语句 - </p>   
+ <pre><code class="lang-sql">CREATE TRIGGER befor_up BEFORE UPDATE   
+ON COMPANY  
+BEGIN  
+INSERT INTO AUDIT(EMP_ID, ACTION_TYPE, ENTRY_DATE) VALUES (new.ID, old.ADDRESS , datetime('now'));  
+END;
+</code></pre> 
+ <blockquote> 
+  <p>注意：上面的两个关键字：<code>new</code>和<code>old</code>，它们分别表示新插入的行记录和表中已存在行记录。</p> 
+ </blockquote> 
+ <p>现在更新一条记录数据，如下：</p> 
+ <pre><code class="lang-sql">UPDATE COMPANY SET ADDRESS = 'Beijing' WHERE ID = 1;
+</code></pre> 
+ <p>查询审计表：<code>audit</code>中的记录信息，如下所示 - </p> 
+ <pre><code class="lang-sql">sqlite&gt; select * from audit;
+1|AFTER INSERT|2017-05-25 13:39:32
+2|BEFORE INSERT|2017-05-25 13:41:50
+2|AFTER INSERT|2017-05-25 13:41:50
+1|AFTER UPDATE|2017-05-25 14:14:00
+1|Shenzhen|2017-05-25 14:18:19 -- 使用旧行的Address值写入
+1|AFTER UPDATE|2017-05-25 14:18:19
+sqlite&gt;
+</code></pre> 
+ <p>执行上面语句创建触发器，查看上面创建的触发器 - </p> 
+ <pre><code class="lang-sql">SELECT name FROM sqlite_master  WHERE type = 'trigger';
+</code></pre> 
+ <p>执行上面语句，得到以下结果 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201705/2505/544100521_16276.png" alt=""></p>
+ <br>      
+</div></body></html>

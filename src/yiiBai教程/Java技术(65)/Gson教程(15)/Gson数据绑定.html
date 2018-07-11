@@ -1,0 +1,57 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Gson数据绑定</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>数据绑定API用于使用属性访问器或使用注释将JSON转换为POJO(普通旧Java对象)以及从POJO(普通旧Java对象)转换。 它有两种类型，分别如下所示 - </p> 
+ <ul> 
+  <li><strong>原始数据绑定</strong> - 将JSON转换为Java地图，列表，字符串，数字，布尔值和<code>NULL</code>对象。</li>
+  <li><strong>对象数据绑定</strong> - 从任何JAVA类型转换JSON。</li>
+ </ul> 
+ <p>Gson为这两种类型的数据绑定读/写JSON。 数据绑定类似于XML的JAXB解析器。</p> 
+ <h2 id="h2-u539Fu59CBu6570u636Eu7ED1u5B9A"><a name="原始数据绑定" class="reference-link"></a><span class="header-link octicon octicon-link"></span>原始数据绑定</h2>
+ <p>基元数据绑定是指将JSON映射到JAVA核心数据类型和内置集合。 Gson提供了各种内置适配器，可用于序列化/反序列化原始数据类型。</p> 
+ <h2 id="h2-u793Au4F8B"><a name="示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例</h2>
+ <p>让我们看看原始数据绑定的行动。 这里将JAVA基本类型直接映射到JSON，反之亦然。参考以下文件代码:<em>GsonTester.java</em> - </p> 
+ <pre><code class="lang-java">import java.util.Arrays; 
+import com.google.gson.Gson;  
+
+public class GsonTester { 
+   public static void main(String args[]) { 
+      Gson gson = new Gson();  
+      String name = "Maxsu"; 
+      long rollNo = 1; 
+      boolean verified = false; 
+      int[] marks = {100,90,85};  
+
+      //Serialization 
+      System.out.println("{"); 
+      System.out.println("name: " + gson.toJson(name) +","); 
+      System.out.println("rollNo: " + gson.toJson(rollNo) +","); 
+      System.out.println("verified: " + gson.toJson(verified) +","); 
+      System.out.println("marks:" + gson.toJson(marks)); 
+      System.out.println("}");  
+
+      //De-serialization 
+      name = gson.fromJson("\"Maxsu\"", String.class); 
+      rollNo = gson.fromJson("1", Long.class); 
+      verified = gson.fromJson("false", Boolean.class); 
+      marks = gson.fromJson("[100,90,85]", int[].class);  
+
+      System.out.println("name: " + name); 
+      System.out.println("rollNo: " + rollNo); 
+      System.out.println("verified: " +verified); 
+      System.out.println("marks:" + Arrays.toString(marks)); 
+   } 
+}
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 - </p>   
+ <pre><code class="lang-shell">{ 
+name: "Maxsu", 
+rollNo: 1, 
+verified: false, 
+marks:[100,90,85] 
+} 
+name: Maxsu
+rollNo: 1 
+verified: false 
+marks:[100, 90, 85]
+</code></pre>
+ <br>      
+</div></body></html>

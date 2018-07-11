@@ -1,0 +1,112 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Spring MapFactoryBean例子</h1><div style="width:100%;float:left;" class="article-content">   
+ <div> 
+  <div>
+    MapFactoryBean类为开发者提供了一种在Spring的bean配置文件中创建一个具体的Map集合类(HashMap和TreeMap)。 
+  </div> 
+ </div> 
+ <div> 
+  <div>
+    这里有一个MapFactoryBean。例如，在运行时它将实例化一个HashMap，并注入到一个bean属性。 
+  </div> 
+  <pre>package com.yiibai.common;
+
+import java.util.Map;
+
+public class Customer 
+{
+	private Map maps;
+	//...
+}</pre> 
+  <div>
+    Spring 的 bean 配置文件。 
+  </div> 
+  <pre>&lt;beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-2.5.xsd"&gt;
+
+	&lt;bean id="CustomerBean" class="com.yiibai.common.Customer"&gt;
+		&lt;property name="maps"&gt;
+			&lt;bean class="org.springframework.beans.factory.config.MapFactoryBean"&gt;
+				&lt;property name="targetMapClass"&gt;
+					&lt;value&gt;java.util.HashMap&lt;/value&gt;
+				&lt;/property&gt;
+				&lt;property name="sourceMap"&gt;
+					&lt;map&gt;
+						&lt;entry key="Key1" value="one" /&gt;
+						&lt;entry key="Key2" value="two" /&gt;
+						&lt;entry key="Key3" value="three" /&gt;
+					&lt;/map&gt;
+				&lt;/property&gt;
+			&lt;/bean&gt;
+		&lt;/property&gt;
+	&lt;/bean&gt;
+
+&lt;/beans&gt;</pre> 
+  <div>
+    另外，还可以使用&nbsp;util 的模式和&lt;util:map&gt;来做到同样的事情。 
+  </div> 
+  <pre>&lt;beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+	http://www.springframework.org/schema/util
+	http://www.springframework.org/schema/util/spring-util-2.5.xsd"&gt;
+
+	&lt;bean id="CustomerBean" class="com.yiibai.common.Customer"&gt;
+		&lt;property name="maps"&gt;
+			&lt;util:map map-class="java.util.HashMap"&gt;
+				&lt;entry key="Key1" value="1" /&gt;
+				&lt;entry key="Key2" value="2" /&gt;
+				&lt;entry key="Key3" value="3" /&gt;
+			&lt;/util:map&gt;
+		&lt;/property&gt;
+	&lt;/bean&gt;
+
+&lt;/beans&gt;</pre> 
+  <div>
+    请记住包函util模式，否则会出现下面的错误 
+  </div>   
+  <pre>Caused by: org.xml.sax.SAXParseException: 
+	The prefix "util" for element "util:map" is not bound.</pre> 
+  <p> 执行结果... </p> 
+  <pre>package com.yiibai.common;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+public class App 
+{
+    public static void main( String[] args )
+    {
+    	ApplicationContext context = new ClassPathXmlApplicationContext("SpringBeans.xml");
+
+    	Customer cust = (Customer)context.getBean("CustomerBean");
+    	System.out.println(cust);
+    	
+    }
+}</pre> 
+  <p> 输出结果： </p> 
+  <pre>	
+	
+	
+	
+   <div style="background-color:inherit;">
+    
+		Customer&nbsp;[maps={Key2=two,&nbsp;Key1=one,&nbsp;Key3=three}]
+	
+   </div></pre> 
+  <div>
+    在运行时实例化一个HashMap和注入到客户的映射(Map)属性。 
+  </div> 
+  <div> 
+   <br> 
+  </div> 
+  <div>
+    下载代码 – 
+   <a target="_blank" href="http://pan.baidu.com/s/1kTXsDoj">http://pan.baidu.com/s/1kTXsDoj</a> 
+  </div> 
+ </div>
+ <br>      
+</div></body></html>

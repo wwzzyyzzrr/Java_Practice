@@ -1,0 +1,122 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Spring在bean配置文件中定义电子邮件模板</h1><div style="width:100%;float:left;" class="article-content">   
+ <div> 
+  <div>
+    在上一篇
+   <a target="_blank" href="http://www.yiibai.com/spring/spring-sending-e-mail-via-gmail-smtp-server-with-mailsender.html">Spring电子邮件教程</a>，硬编码的所有电子邮件属性和消息的方法体中的内容，这是不实际的，应予以避免。应该考虑在Spring&nbsp;bean 配置文件中定义电子邮件模板。 
+  </div> 
+ </div> 
+ <div> 
+  <h2> 
+   <div>
+     1.Spring的邮件发件人 
+   </div> </h2> 
+  <div>
+    Java类使用 Spring的MailSender接口发送电子邮件，并使用 String.Format 传递变量bean配置文件替换电子邮件中的 '%s'。 
+  </div> 
+  <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:16px;"> <em>File : MailMail.java</em> </p> 
+  <pre>package com.yiibai.common;
+
+import org.springframework.mail.MailSender;
+import org.springframework.mail.SimpleMailMessage;
+
+public class MailMail
+{
+	private MailSender mailSender;
+	private SimpleMailMessage simpleMailMessage;
+	
+	public void setSimpleMailMessage(SimpleMailMessage simpleMailMessage) {
+		this.simpleMailMessage = simpleMailMessage;
+	}
+
+	public void setMailSender(MailSender mailSender) {
+		this.mailSender = mailSender;
+	}
+	
+	public void sendMail(String dear, String content) {
+
+	   SimpleMailMessage message = new SimpleMailMessage(simpleMailMessage);
+		
+	   message.setText(String.format(
+			simpleMailMessage.getText(), dear, content));
+
+	   mailSender.send(message);
+		
+	}	
+}</pre> 
+  <h2> 2. Bean的配置文件 </h2> 
+  <div>
+    定义电子邮件模板“customeMailMessage' 和邮件发件人信息的bean配置文件。 
+  </div> 
+  <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:16px;"> <em>File : Spring-Mail.xml</em> </p> 
+  <pre>&lt;beans xmlns="http://www.springframework.org/schema/beans"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans-2.5.xsd"&gt;
+
+&lt;bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl"&gt;
+	&lt;property name="host" value="smtp.gmail.com" /&gt;
+	&lt;property name="port" value="587" /&gt;
+	&lt;property name="username" value="username" /&gt;
+	&lt;property name="password" value="password" /&gt;
+		
+	&lt;property name="javaMailProperties"&gt;
+	     &lt;props&gt;
+           	&lt;prop key="mail.smtp.auth"&gt;true&lt;/prop&gt;
+           	&lt;prop key="mail.smtp.starttls.enable"&gt;true&lt;/prop&gt;
+       	     &lt;/props&gt;
+	&lt;/property&gt;
+&lt;/bean&gt;
+	
+&lt;bean id="mailMail" class="com.yiibai.common.MailMail"&gt;
+	&lt;property name="mailSender" ref="mailSender" /&gt;
+	&lt;property name="simpleMailMessage" ref="customeMailMessage" /&gt;
+&lt;/bean&gt;
+	
+&lt;bean id="customeMailMessage"
+	class="org.springframework.mail.SimpleMailMessage"&gt;
+
+	&lt;property name="from" value="from@no-spam.com" /&gt;
+	&lt;property name="to" value="to@no-spam.com" /&gt;
+	&lt;property name="subject" value="Testing Subject" /&gt;
+	&lt;property name="text"&gt;
+	   &lt;value&gt;
+		&lt;![CDATA[
+			Dear %s,
+			Mail Content : %s
+		]]&gt;
+	   &lt;/value&gt;
+        &lt;/property&gt;
+&lt;/bean&gt;
+
+&lt;/beans&gt;</pre> 
+  <h2 style="color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:24px;font-weight:500;"> 4. 运行它 </h2>   
+  <pre>package com.yiibai.common;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+public class App 
+{
+    public static void main( String[] args )
+    {
+    	ApplicationContext context = 
+           new ClassPathXmlApplicationContext("applicationContext.xml");
+    	 
+    	MailMail mm = (MailMail) context.getBean("mailMail");
+        mm.sendMail("Yiibai", "This is text content");
+        
+    }
+}</pre> 
+  <p> 输出 </p> 
+  <pre>Dear Yiibai,
+ Mail Content : This is text content</pre> 
+  <div style="color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:16px;background-color:inherit;"> 
+   <br> 
+  </div> 
+  <div style="color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:16px;background-color:inherit;">
+    代码下载 –
+   <span style="background-color:inherit;">&nbsp;&nbsp;<a target="_blank" href="http://pan.baidu.com/s/1c0UPsFA">http://pan.baidu.com/s/1c0UPsFA</a></span> 
+  </div> 
+ </div>
+ <br>      
+</div></body></html>

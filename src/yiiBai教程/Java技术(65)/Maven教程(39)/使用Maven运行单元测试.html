@@ -1,0 +1,111 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">使用Maven运行单元测试</h1><div style="width:100%;float:left;" class="article-content">   
+ <p> 要通过Maven运行单元测试，发出此命令： </p> 
+ <pre>mvn <span style="background-color:inherit;color:#DD4A68;">test</span></pre> 
+ <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  background-color:#FFFFFF;"> 这会在你的项目中运行整个单元测试。 </p> 
+ <h2 style="color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:24px;font-weight:500;background-color:#FFFFFF;"> 案例学习 </h2> 
+ <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  background-color:#FFFFFF;"> 创建两个单元测试，并通过 Maven 的运行它。参见一个简单的 Java&nbsp;测试类： </p> 
+ <pre class="prettyprint lang-java">package com.yiibai.core;
+
+public class App {
+	public static void main(String[] args) {
+
+		System.out.println(getHelloWorld());
+
+	}
+
+	public static String getHelloWorld() {
+
+		return "Hello World";
+
+	}
+
+	public static String getHelloWorld2() {
+
+		return "Hello World 2";
+
+	}
+}</pre> 
+ <h2 style="color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:24px;font-weight:500;background-color:#FFFFFF;"> Unit Test 1 </h2> 
+ <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  background-color:#FFFFFF;"> 单元测试为getHelloWorld()方法。 </p> 
+ <pre class="prettyprint lang-java">package com.yiibai.core;
+
+import junit.framework.Assert;
+import org.junit.Test;
+
+public class TestApp1 {
+
+	@Test
+	public void testPrintHelloWorld() {
+
+		Assert.assertEquals(App.getHelloWorld(), "Hello World");
+
+	}
+
+}</pre> 
+ <h2 style="color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:24px;font-weight:500;background-color:#FFFFFF;"> Unit Test 2 </h2> 
+ <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  background-color:#FFFFFF;"> 单元测试为getHelloWorld2()方法。 </p> 
+ <pre class="prettyprint lang-java">package com.yiibai.core;
+
+import junit.framework.Assert;
+import org.junit.Test;
+
+public class TestApp2 {
+
+	@Test
+	public void testPrintHelloWorld2() {
+
+		Assert.assertEquals(App.getHelloWorld2(), "Hello World 2");
+
+	}
+
+}</pre> 
+ <h2 style="color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:24px;font-weight:500;background-color:#FFFFFF;"> 运行单元测试 </h2> 
+ <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  background-color:#FFFFFF;"> 使用Maven运行单元测试看见下面的例子。 </p> 
+ <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  background-color:#FFFFFF;"> <strong>示例 1</strong><br> 运行整个单元测试(TestApp1和TestApp2)，发出以下命令： </p> 
+ <pre>mvn <span style="background-color:inherit;color:#DD4A68;">test</span></pre> 
+ <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  background-color:#FFFFFF;"> <strong><strong>示例 2</strong></strong><br> 为了运行单个测试(TestApp1)，发出此命令： </p> 
+ <pre>mvn <span style="background-color:rgba(255, 255, 255, 0.498039);color:#A67F59;">-</span>Dtest<span style="background-color:rgba(255, 255, 255, 0.498039);color:#A67F59;">=</span>TestApp1 <span style="background-color:inherit;color:#DD4A68;">test</span> [INFO] --- maven-compiler-plugin:3.1:compile (default-compile) @ yiibai-core --
+[INFO] Nothing to compile - all classes are up to date
+[INFO]
+[INFO] --- maven-resources-plugin:2.6:testResources (default-testResources) @ y
+ibai-core ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] skip non existing resourceDirectory C:\worksp\yiibai-core\src\test\resou
+ces
+[INFO]
+[INFO] --- maven-compiler-plugin:3.1:testCompile (default-testCompile) @ yiibai
+core ---
+[INFO] Nothing to compile - all classes are up to date
+[INFO]
+[INFO] --- maven-surefire-plugin:2.12.4:test (default-test) @ yiibai-core ---
+[INFO] Surefire report directory: C:\worksp\yiibai-core\target\surefire-reports
+
+-------------------------------------------------------
+ T E S T S
+-------------------------------------------------------
+Running com.yiibai.core.TestApp1
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.002 sec
+
+Results :
+
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
+
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 2.143 s
+[INFO] Finished at: 2015-11-03T20:29:50+08:00
+[INFO] Final Memory: 11M/114M
+[INFO] ------------------------------------------------------------------------</pre> 
+ <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  background-color:#FFFFFF;"> <strong><strong>示例 3</strong></strong><br> 为了运行单个测试(TestApp2)，发出此命令： </p>   
+ <pre>mvn <span style="background-color:rgba(255, 255, 255, 0.498039);color:#A67F59;">-</span>Dtest<span style="background-color:rgba(255, 255, 255, 0.498039);color:#A67F59;">=</span>TestApp2 <span style="background-color:inherit;color:#DD4A68;">test</span></pre> 
+ <div style="color:#333333;font-family:'Helvetica Neue', Helvetica,  background-color:#E6E6FC;"> 
+  <strong>注意</strong>
+  <br> 欲了解更多“mvn test”的例子，请参考
+  <a target="_blank" href="http://maven.apache.org/surefire/maven-surefire-plugin/examples/single-test.html">Maven测试插件文档</a>。 
+ </div> 
+ <div> 
+  <br> 
+ </div>
+ <br>      
+</div></body></html>

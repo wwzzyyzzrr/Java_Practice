@@ -1,0 +1,102 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">JDBC批量处理</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>批量处理允许将相关的SQL语句分组到批处理中，并通过对数据库的一次调用来提交它们，一次执行完成与数据库之间的交互。</p> 
+ <p>一次向数据库发送多个SQL语句时，可以减少通信开销，从而提高性能。</p> 
+ <ul> 
+  <li>不需要JDBC驱动程序来支持此功能。应该使用<code>DatabaseMetaData.supportsBatchUpdates()</code>方法来确定目标数据库是否支持批量更新处理。如果JDBC驱动程序支持此功能，该方法将返回<code>true</code>。</li>
+  <li><code>Statement</code>，<code>PreparedStatement</code>和<code>CallableStatement</code>的<code>addBatch()</code>方法用于将单个语句添加到批处理。 <code>executeBatch()</code>用于执行组成批量的所有语句。</li>
+  <li><code>executeBatch()</code>返回一个整数数组，数组的每个元素表示相应更新语句的更新计数。</li>
+  <li>就像将批处理语句添加到处理中一样，可以使用<code>clearBatch()</code>方法删除它们。此方法将删除所有使用<code>addBatch()</code>方法添加的语句。 但是，无法指定选择某个要删除的语句。</li>
+ </ul> 
+ <h2 id="h2--statement-"><a name="使用Statement对象进行批处理" class="reference-link"></a><span class="header-link octicon octicon-link"></span>使用Statement对象进行批处理</h2>
+ <p>以下是使用<code>Statement</code>对象的批处理的典型步骤序列 -</p> 
+ <ul> 
+  <li>使用<code>createStatement()</code>方法创建<code>Statement</code>对象。</li>
+  <li>使用<code>setAutoCommit()</code>将自动提交设置为<code>false</code>。</li>
+  <li>使用<code>addBatch()</code>方法在创建的<code>Statement</code>对象上添加SQL语句到批处理中。</li>
+  <li>在创建的<code>Statement</code>对象上使用<code>executeBatch()</code>方法执行所有SQL语句。</li>
+  <li>最后，使用<code>commit()</code>方法提交所有更改。</li>
+ </ul> 
+ <h3 id="h3-u5B9Eu4F8B"><a name="实例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实例</h3>
+ <p>以下代码片段提供了使用<code>Statement</code>对象的批量更新示例 -</p> 
+ <pre><code class="lang-sql">// Create statement object
+Statement stmt = conn.createStatement();
+
+// Set auto-commit to false
+conn.setAutoCommit(false);
+
+// Create SQL statement
+String SQL = "INSERT INTO Employees (id, first, last, age) " +
+             "VALUES(200,'Ruby', 'Yang', 30)";
+// Add above SQL statement in the batch.
+stmt.addBatch(SQL);
+
+// Create one more SQL statement
+String SQL = "INSERT INTO Employees (id, first, last, age) " +
+             "VALUES(201,'Java', 'Lee', 35)";
+// Add above SQL statement in the batch.
+stmt.addBatch(SQL);
+
+// Create one more SQL statement
+String SQL = "UPDATE Employees SET age = 35 " +
+             "WHERE id = 100";
+// Add above SQL statement in the batch.
+stmt.addBatch(SQL);
+
+// Create an int[] to hold returned values
+int[] count = stmt.executeBatch();
+
+//Explicitly commit statements to apply changes
+conn.commit();
+</code></pre> 
+ <p>为了更好的理解，建议学习和研究“<a target="_blank" href="http://www.yiibai.com/jdbc/statement-batching-example.html" title="JDBC批处理示例代码">JDBC批处理示例代码</a>”。</p> 
+ <h2 id="h2--preparestatement-"><a name="使用PrepareStatement对象进行批处理" class="reference-link"></a><span class="header-link octicon octicon-link"></span>使用PrepareStatement对象进行批处理</h2>
+ <p>以下是使用<code>PrepareStatement</code>对象进行批处理的典型步骤顺序 -</p> 
+ <ul> 
+  <li>使用占位符创建SQL语句。</li>
+  <li>使用<code>prepareStatement()</code>方法创建<code>PrepareStatement</code>对象。</li>
+  <li>使用<code>setAutoCommit()</code>将自动提交设置为<code>false</code>。</li>
+  <li>使用<code>addBatch()</code>方法在创建的<code>Statement</code>对象上添加SQL语句到批处理中。</li>
+  <li>在创建的<code>Statement</code>对象上使用<code>executeBatch()</code>方法执行所有SQL语句。</li>
+  <li>最后，使用<code>commit()</code>方法提交所有更改。</li>
+ </ul> 
+ <p>以下代码段提供了使用<code>PreparedStatement</code>对象进行批量更新的示例 -</p>   
+ <pre><code class="lang-java">// Create SQL statement
+String SQL = "INSERT INTO Employees (id, first, last, age) " +
+             "VALUES(?, ?, ?, ?)";
+
+// Create PrepareStatement object
+PreparedStatemen pstmt = conn.prepareStatement(SQL);
+
+//Set auto-commit to false
+conn.setAutoCommit(false);
+
+// Set the variables
+pstmt.setInt( 1, 400 );
+pstmt.setString( 2, "JDBC" );
+pstmt.setString( 3, "Li" );
+pstmt.setInt( 4, 33 );
+// Add it to the batch
+pstmt.addBatch();
+
+// Set the variables
+pstmt.setInt( 1, 401 );
+pstmt.setString( 2, "CSharp" );
+pstmt.setString( 3, "Liang" );
+pstmt.setInt( 4, 31 );
+// Add it to the batch
+pstmt.addBatch();
+
+//add more batches
+.
+.
+.
+.
+//Create an int[] to hold returned values
+int[] count = stmt.executeBatch();
+
+//Explicitly commit statements to apply changes
+conn.commit();
+</code></pre> 
+ <p>为了更好的理解，建议学习和研究“<a target="_blank" href="http://www.yiibai.com/jdbc/preparestatement-batching-example.html" title="JDBC批处理示例代码">JDBC批处理示例代码</a>”</p>
+ <br>      
+</div></body></html>

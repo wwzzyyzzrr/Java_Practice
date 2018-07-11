@@ -1,0 +1,233 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">perfmonctl()函数 Unix/Linux</h1><div style="width:100%;float:left;" class="article-content">   
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">perfmonctl -&nbsp;</span>接口PMU 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> 内容简介</h1> 
+ <table cellpadding="5" cellspacing="5" class="src" style="font-family: verdana, helvetica, arial, sans-serif;  border-color: rgb(170, 170, 170); width: 552px; background-color: rgb(241, 241, 241); border-collapse: collapse; padding-left: 5px; vertical-align: top; color: rgb(0, 0, 0);"> 
+  <tbody> 
+   <tr> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse;  border-color: rgb(170, 170, 170);"> <pre style="font-family: 'Courier New', monospace; font-size: 12px; margin-bottom: 0px;">
+<b>#include &lt;syscall.h&gt;</b> 
+<b>#include &lt;perfmon.h&gt;</b> 
+<b style="font-family: verdana, helvetica, arial, sans-serif; text-align: justify; background-color: rgb(241, 241, 241);">long perfmonctl(int&nbsp;</b><i style="font-family: verdana, helvetica, arial, sans-serif; text-align: justify; background-color: rgb(241, 241, 241);">fd</i><b style="font-family: verdana, helvetica, arial, sans-serif; text-align: justify; background-color: rgb(241, 241, 241);">, int&nbsp;</b><i style="font-family: verdana, helvetica, arial, sans-serif; text-align: justify; background-color: rgb(241, 241, 241);">cmd</i><b style="font-family: verdana, helvetica, arial, sans-serif; text-align: justify; background-color: rgb(241, 241, 241);">, void *</b><i style="font-family: verdana, helvetica, arial, sans-serif; text-align: justify; background-color: rgb(241, 241, 241);">arg</i><b style="font-family: verdana, helvetica, arial, sans-serif; text-align: justify; background-color: rgb(241, 241, 241);">, int&nbsp;</b><i style="font-family: verdana, helvetica, arial, sans-serif; text-align: justify; background-color: rgb(241, 241, 241);">narg</i><b style="font-family: verdana, helvetica, arial, sans-serif; text-align: justify; background-color: rgb(241, 241, 241);">);</b></pre> </td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> 描述</h1> 
+ <b style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">perfmonctl</b>
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">&nbsp;system call provides an interface to PMU (performance monitoring unit). PMU consists of PMD (performance monitoring data) registers and PMC (performance monitoring control) registers, where are gathered the hardware statistic.</span> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> <b>perfmonctl</b>&nbsp;will apply a function&nbsp;<i>cmd</i>&nbsp;to input arguments&nbsp;<i>arg.</i>&nbsp;The number of arguments is defined by input variable&nbsp;<i>narg</i>.&nbsp;<i>fd</i>&nbsp;specifies the perfmon context to operate on.</p> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> 实现的&nbsp;<i>cmd&nbsp;</i>命令是：</p> 
+ <table border="1" cellpadding="5" cellspacing="0" class="src" style="font-family: verdana, helvetica, arial, sans-serif; border: 1px solid rgb(170, 170, 170); width: 552px; background-color: rgb(241, 241, 241); border-collapse: collapse; padding-left: 5px; vertical-align: top; color: rgb(0, 0, 0);"> 
+  <tbody> 
+   <tr> 
+    <th style="background-color: rgb(205, 205, 205); border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" width="25%"> 标签</th> 
+    <th style="background-color: rgb(205, 205, 205); border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> 描述</th> 
+   </tr> 
+   <tr valign="top"> 
+    <td colspan="2" style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>PFM_CREATE_CONTEXT</b></td> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" width="6%"> &nbsp;</td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> set up a context 
+     <table cellpadding="5" cellspacing="5" class="src" style=" border-color: rgb(170, 170, 170); width: 468px; border-collapse: collapse; padding-left: 5px; vertical-align: top;"> 
+      <tbody> 
+       <tr> 
+        <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse;  border-color: rgb(170, 170, 170);"> <pre style="font-family: 'Courier New', monospace; font-size: 12px; margin-bottom: 0px;">
+<b>perfmonctl(int </b><i>fd</i><b>, PFM_CREATE_CONTEXT , pfarg_context_t *</b><i>ctxt</i><b>,</b><i>1);</i> 
+</pre> </td> 
+       </tr> 
+      </tbody> 
+     </table> <p style="text-align: justify;"> The&nbsp;<i>fd</i>&nbsp;parameter is ignored. A new context is created as specified in&nbsp;<i>ctxt</i>and its file descriptor is returned in&nbsp;<i>ctxt-&gt;ctx_fd</i>.</p> <p style="text-align: justify;"> The file descriptor, apart from passing it to&nbsp;<b>perfmonctl</b>, can be used to read event notifications (type&nbsp;<b>pfm_msg_t</b>) using the&nbsp;<b>read</b>(2) system call. Both&nbsp;<b>select</b>(2) and&nbsp;<b>poll</b>(2) can be used to wait for event notifications.</p> <p style="text-align: justify;"> The context can be destroyed using the&nbsp;<b>close</b>(2) system call.</p> </td> 
+   </tr> 
+   <tr valign="top"> 
+    <td colspan="2" style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>PFM_WRITE_PMCS</b></td> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" width="6%"> &nbsp;</td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> set PMC registers 
+     <table cellpadding="5" cellspacing="5" class="src" style=" border-color: rgb(170, 170, 170); width: 468px; border-collapse: collapse; padding-left: 5px; vertical-align: top;"> 
+      <tbody> 
+       <tr> 
+        <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse;  border-color: rgb(170, 170, 170);"> <pre style="font-family: 'Courier New', monospace; font-size: 12px; margin-bottom: 0px;">
+<b>perfmonctl(int </b><i>fd</i><b>, PFM_WRITE_PMCS , pfarg_pmc_t *</b><i>pmcs</i><b>,</b><i>n);</i> 
+</pre> </td> 
+       </tr> 
+      </tbody> 
+     </table> </td> 
+   </tr> 
+   <tr valign="top"> 
+    <td colspan="2" style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>PFM_WRITE_PMDS</b></td> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" width="6%"> &nbsp;</td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> set PMD registers 
+     <table cellpadding="5" cellspacing="5" class="src" style=" border-color: rgb(170, 170, 170); width: 468px; border-collapse: collapse; padding-left: 5px; vertical-align: top;"> 
+      <tbody> 
+       <tr> 
+        <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse;  border-color: rgb(170, 170, 170);"> <pre style="font-family: 'Courier New', monospace; font-size: 12px; margin-bottom: 0px;">
+<b>perfmonctl(int </b><i>fd</i><b>, PFM_WRITE_PMDS , pfarg_pmd_t *</b><i>pmds</i><b>,</b><i>n);</i> 
+</pre> </td> 
+       </tr> 
+      </tbody> 
+     </table> </td> 
+   </tr> 
+   <tr valign="top"> 
+    <td colspan="2" style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>PFM_READ_PMDS</b></td> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" width="6%"> &nbsp;</td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> read PMD registers 
+     <table cellpadding="5" cellspacing="5" class="src" style=" border-color: rgb(170, 170, 170); width: 468px; border-collapse: collapse; padding-left: 5px; vertical-align: top;"> 
+      <tbody> 
+       <tr> 
+        <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse;  border-color: rgb(170, 170, 170);"> <pre style="font-family: 'Courier New', monospace; font-size: 12px; margin-bottom: 0px;">
+<b>perfmonctl(int </b><i>fd</i><b>, PFM_READ_PMDS , pfarg_pmd_t *</b><i>pmds</i><b>,</b><i>n);</i> 
+</pre> </td> 
+       </tr> 
+      </tbody> 
+     </table> </td> 
+   </tr> 
+   <tr valign="top"> 
+    <td colspan="2" style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>PFM_START</b></td> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" width="6%"> &nbsp;</td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> start monitoring 
+     <table cellpadding="5" cellspacing="5" class="src" style=" border-color: rgb(170, 170, 170); width: 468px; border-collapse: collapse; padding-left: 5px; vertical-align: top;"> 
+      <tbody> 
+       <tr> 
+        <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse;  border-color: rgb(170, 170, 170);"> <pre style="font-family: 'Courier New', monospace; font-size: 12px; margin-bottom: 0px;">
+<b>perfmonctl(int </b><i>fd</i><b>,</b><i>PFM_START</i><b>,</b><i>arg</i><b>,</b><i>1);</i> 
+<b>perfmonctl(int </b><i>fd</i><b>,</b><i>PFM_START</i><b>,</b><i>NULL</i><b>,</b><i>0);</i> 
+</pre> </td> 
+       </tr> 
+      </tbody> 
+     </table> </td> 
+   </tr> 
+   <tr valign="top"> 
+    <td colspan="2" style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>PFM_STOP</b></td> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" width="6%"> &nbsp;</td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> stop monitoring 
+     <table cellpadding="5" cellspacing="5" class="src" style=" border-color: rgb(170, 170, 170); width: 468px; border-collapse: collapse; padding-left: 5px; vertical-align: top;"> 
+      <tbody> 
+       <tr> 
+        <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse;  border-color: rgb(170, 170, 170);"> <pre style="font-family: 'Courier New', monospace; font-size: 12px; margin-bottom: 0px;">
+<b>perfmonctl(int </b><i>fd</i><b>,</b><i>PFM_START</i><b>,</b><i>NULL</i><b>,</b><i>0);</i> 
+</pre> </td> 
+       </tr> 
+      </tbody> 
+     </table> </td> 
+   </tr> 
+   <tr valign="top"> 
+    <td colspan="2" style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>PFM_LOAD_CONTEXT</b></td> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" width="6%"> &nbsp;</td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> attach the context to a thread 
+     <table cellpadding="5" cellspacing="5" class="src" style=" border-color: rgb(170, 170, 170); width: 468px; border-collapse: collapse; padding-left: 5px; vertical-align: top;"> 
+      <tbody> 
+       <tr> 
+        <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse;  border-color: rgb(170, 170, 170);">   <pre style="font-family: 'Courier New', monospace; font-size: 12px; margin-bottom: 0px;">
+<b>perfmonctl(int </b><i>fd</i><b>, PFM_LOAD_CONTEXT ,pfarg_load_t *</b><i>largs</i><b>,</b><i>1);</i> 
+</pre> </td> 
+       </tr> 
+      </tbody> 
+     </table> </td> 
+   </tr> 
+   <tr valign="top"> 
+    <td colspan="2" style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>PFM_UNLOAD_CONTEXT</b></td> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" width="6%"> &nbsp;</td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> detach the context from a thread 
+     <table cellpadding="5" cellspacing="5" class="src" style=" border-color: rgb(170, 170, 170); width: 468px; border-collapse: collapse; padding-left: 5px; vertical-align: top;"> 
+      <tbody> 
+       <tr> 
+        <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse;  border-color: rgb(170, 170, 170);"> <pre style="font-family: 'Courier New', monospace; font-size: 12px; margin-bottom: 0px;">
+<b>perfmonctl(int </b><i>fd</i><b>,</b><i>PFM_UNLOAD_CONTEXT</i><b>,</b><i>NULL</i><b>,</b><i>0);</i> 
+</pre> </td> 
+       </tr> 
+      </tbody> 
+     </table> </td> 
+   </tr> 
+   <tr valign="top"> 
+    <td colspan="2" style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>PFM_RESTART</b></td> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" width="6%"> &nbsp;</td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> restart monitoring after recieving an overflow notification 
+     <table cellpadding="5" cellspacing="5" class="src" style=" border-color: rgb(170, 170, 170); width: 468px; border-collapse: collapse; padding-left: 5px; vertical-align: top;"> 
+      <tbody> 
+       <tr> 
+        <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse;  border-color: rgb(170, 170, 170);"> <pre style="font-family: 'Courier New', monospace; font-size: 12px; margin-bottom: 0px;">
+<b>perfmonctl(int </b><i>fd</i><b>,</b><i>PFM_RESTART</i><b>,</b><i>NULL</i><b>,</b><i>0);</i> 
+</pre> </td> 
+       </tr> 
+      </tbody> 
+     </table> </td> 
+   </tr> 
+   <tr valign="top"> 
+    <td colspan="2" style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>PFM_CREATE_EVTSETS</b></td> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" width="6%"> &nbsp;</td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> create or modify event sets 
+     <table cellpadding="5" cellspacing="5" class="src" style=" border-color: rgb(170, 170, 170); width: 468px; border-collapse: collapse; padding-left: 5px; vertical-align: top;"> 
+      <tbody> 
+       <tr> 
+        <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse;  border-color: rgb(170, 170, 170);"> <pre style="font-family: 'Courier New', monospace; font-size: 12px; margin-bottom: 0px;">
+<b>perfmonctl(int </b><i>fd</i><b>,</b><i>PFM_CREATE_EVTSETS,</i><b>pfarg_setdesc_t</b><i>*desc</i><b>,</b><i>n);</i> 
+</pre> </td> 
+       </tr> 
+      </tbody> 
+     </table> </td> 
+   </tr> 
+   <tr valign="top"> 
+    <td colspan="2" style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>PFM_DELETE_EVTSETS</b></td> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" width="6%"> &nbsp;</td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> delete event sets 
+     <table cellpadding="5" cellspacing="5" class="src" style=" border-color: rgb(170, 170, 170); width: 468px; border-collapse: collapse; padding-left: 5px; vertical-align: top;"> 
+      <tbody> 
+       <tr> 
+        <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse;  border-color: rgb(170, 170, 170);"> <pre style="font-family: 'Courier New', monospace; font-size: 12px; margin-bottom: 0px;">
+<b>perfmonctl(int </b><i>fd</i><b>,</b><i>PFM_DELETE_EVTSET,</i><b>pfarg_setdesc_t</b><i>*desc</i><b>,</b><i>n);</i> 
+</pre> </td> 
+       </tr> 
+      </tbody> 
+     </table> </td> 
+   </tr> 
+   <tr valign="top"> 
+    <td colspan="2" style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>PFM_GETINFO_EVTSETS</b></td> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" width="6%"> &nbsp;</td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> get information about event sets 
+     <table cellpadding="5" cellspacing="5" class="src" style=" border-color: rgb(170, 170, 170); width: 468px; border-collapse: collapse; padding-left: 5px; vertical-align: top;"> 
+      <tbody> 
+       <tr> 
+        <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse;  border-color: rgb(170, 170, 170);"> <pre style="font-family: 'Courier New', monospace; font-size: 12px; margin-bottom: 0px;">
+<b>perfmonctl(int </b><i>fd</i><b>,</b><i>PFM_GETINFO_EVTSETS,</i><b>pfarg_setinfo_t</b><i>*info,</i><b>n);</b> 
+</pre> </td> 
+       </tr> 
+      </tbody> 
+     </table> <p style="text-align: justify;"> &nbsp;</p> </td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> 返回值</h1> 
+ <b style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">performctl</b>
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">&nbsp;returns zero when the operation is successful. On error -1 is returned and an error code is set in&nbsp;</span>
+ <b style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">errno</b>
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">.</span> 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> 可用性</h1> 
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">This syscall is implemented only on the IA-64 architecture since kernel 2.6.</span> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> &nbsp;</p> 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> 另请参阅</h1> 
+ <ul style="font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> 
+  <li> <p style="text-align: justify;"> <a target="_blank" href="http://www.yiibai.com/unix_commands/gprof.html" style="color: rgb(144, 11, 9); background-color: transparent;">gprof (1)</a></p> </li> 
+ </ul> 
+ <br>      
+</div></body></html>

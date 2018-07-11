@@ -1,0 +1,350 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">TCL字符串</h1><div style="width:100%;float:left;" class="article-content">   
+ <p> Tcl 的原始数据类型是字符串，我们常常可以在Tcl找到引用字符串的唯一语言。这些字符串可以包含字母数字字符，数字，布尔值，甚至是二进制数据。 TCL采用16位Unicode字符和字母数字字符，可以包含字母包括非拉丁字符，数字或标点符号。</p> 
+ <p> 布尔值，可以表示为1，yes 或 true 为真值和0，no 或 false 为假值。</p> 
+ <h2> 字符串表示</h2> 
+ <p> 不同于其他语言，在TCL，只有一个字时，不需要包含双引号。示例如下，</p> 
+ <pre class="prettyprint notranslate tryit prettyprinted" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 496.1875px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); cursor: default; background-image: url(http://www.yiibai.com/images/link.png) !important; background-attachment: initial !important; background-size: initial !important; background-origin: initial !important; background-clip: initial !important; background-position: 100% 0%; background-repeat: no-repeat !important;">
+<span class="com" style="box-sizing: border-box; color: rgb(136, 0, 0);">#!/usr/bin/tclsh</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+
+</span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">set</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> myVariable hello
+puts $myVariable</span></pre> 
+ <p> 当上述代码被执行时，它会产生以下结果。</p> 
+ <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 496.1875px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+<span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">hello</span></pre> 
+ <p> 当要表示多个字符串，我们可以使用双引号或大括号。它如下所示。</p> 
+ <pre class="prettyprint notranslate tryit prettyprinted" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 496.1875px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); cursor: default; background-image: url(http://www.yiibai.com/images/link.png) !important; background-attachment: initial !important; background-size: initial !important; background-origin: initial !important; background-clip: initial !important; background-position: 100% 0%; background-repeat: no-repeat !important;">
+<span class="com" style="box-sizing: border-box; color: rgb(136, 0, 0);">#!/usr/bin/tclsh</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+
+</span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">set</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> myVariable </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"hello world"</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+puts $myVariable
+</span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">set</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> myVariable </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">{</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">hello world</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">}</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+puts $myVariable</span></pre> 
+ <p> 当上述代码被执行时，它会产生以下结果。</p> 
+ <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 496.1875px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+<span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">hello world
+hello world</span></pre> 
+ <h2> 字符串转义序列</h2> 
+ <p> 字符文字可以是一个普通的字符（例如，'x'），转义序列（如“\t'），或通用字符（例如，'\u02C0'）。</p> 
+ <p> Tcl有一些字符，当他们前面加一个反斜杠他们将有特殊的含义，它们被用来表示类似的换行符（\n）或制表符（\t）。在这里，有一些转义序列代码的列表：</p> 
+ <table class="table table-bordered" style="box-sizing: border-box; border-collapse: collapse; border-spacing: 0px; width: 496px; max-width: 100%; margin-bottom: 20px;  border-color: rgb(221, 221, 221); color: rgb(49, 49, 49); font-family: 'Open Sans', Arial, sans-serif; font-size: 14px; line-height: 22px; background-color: transparent;"> 
+  <tbody style="box-sizing: border-box;"> 
+   <tr style="box-sizing: border-box;"> 
+    <th style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221); width: 138px; background: rgb(238, 238, 238);"> 转义序列</th> 
+    <th style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221); background: rgb(238, 238, 238);"> 意思</th> 
+   </tr> 
+   <tr style="box-sizing: border-box;"> 
+    <td style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221);"> \\</td> 
+    <td style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221);"> \&nbsp;字符</td> 
+   </tr> 
+   <tr style="box-sizing: border-box;"> 
+    <td style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221);"> \'</td> 
+    <td style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221);"> '&nbsp;字符</td> 
+   </tr> 
+   <tr style="box-sizing: border-box;"> 
+    <td style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221);"> \"</td> 
+    <td style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221);"> "&nbsp;字符</td> 
+   </tr> 
+   <tr style="box-sizing: border-box;"> 
+    <td style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221);"> \?</td> 
+    <td style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221);"> ? 字符</td> 
+   </tr> 
+   <tr style="box-sizing: border-box;"> 
+    <td style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221);"> \a</td> 
+    <td style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221);"> 警报或铃</td> 
+   </tr> 
+   <tr style="box-sizing: border-box;"> 
+    <td style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221);"> \b</td> 
+    <td style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221);"> 退格</td> 
+   </tr> 
+   <tr style="box-sizing: border-box;"> 
+    <td style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221);"> \f</td> 
+    <td style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221);"> 换页</td> 
+   </tr> 
+   <tr style="box-sizing: border-box;"> 
+    <td style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221);"> \n</td> 
+    <td style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221);"> 新一行</td> 
+   </tr> 
+   <tr style="box-sizing: border-box;"> 
+    <td style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221);"> \r</td> 
+    <td style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221);"> 回车</td> 
+   </tr> 
+   <tr style="box-sizing: border-box;"> 
+    <td style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221);"> \t</td> 
+    <td style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221);"> 水平制表</td> 
+   </tr> 
+   <tr style="box-sizing: border-box;"> 
+    <td style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221);"> \v</td> 
+    <td style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221);"> 垂直制表</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p> 以下为例子来说明一些转义字符序列：</p> 
+ <pre class="prettyprint notranslate tryit prettyprinted" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 496.1875px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); background-image: url(http://www.yiibai.com/images/link.png) !important; background-attachment: initial !important; background-size: initial !important; background-origin: initial !important; background-clip: initial !important; background-position: 100% 0%; background-repeat: no-repeat !important;">
+<span class="com" style="box-sizing: border-box; color: rgb(136, 0, 0);">#!/usr/bin/tclsh</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+
+puts</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"Hello\tWorld\n\n"</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">);</span></pre> 
+ <p style="box-sizing: border-box; color: rgb(0, 0, 0); line-height: 24px; margin: 0em 0.2em 1em; padding: 0px; text-align: justify; font-family: 'Open Sans', Arial, sans-serif; font-size: 14px;"> 让我们编译和运行上面的程序，这将产生以下结果：</p> 
+ <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 496.1875px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+<span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">Hello</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">   </span><span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">World</span></pre> 
+ <h2> 字符串命令</h2> 
+ <p> 子命令字符串命令列表列如下表。</p> 
+ <table class="table table-bordered" style="box-sizing: border-box; border-collapse: collapse; border-spacing: 0px; width: 496px; max-width: 100%; margin-bottom: 20px;  border-color: rgb(221, 221, 221); color: rgb(49, 49, 49); font-family: 'Open Sans', Arial, sans-serif; font-size: 14px; line-height: 22px; background-color: transparent;"> 
+  <tbody style="box-sizing: border-box;"> 
+   <tr style="box-sizing: border-box;"> 
+    <th style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221); background: rgb(238, 238, 238);"> SN</th> 
+    <th style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221); background: rgb(238, 238, 238);"> 方法及描述</th> 
+   </tr> 
+   <tr style="box-sizing: border-box;"> 
+    <td style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221);"> 1</td> 
+    <td style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221);"> <p style="box-sizing: border-box; color: rgb(0, 0, 0); line-height: 24px; margin: 0em 0.2em 1em; padding: 0px; text-align: justify;"> <b style="box-sizing: border-box;">compare</b>&nbsp;string1 string2</p> <p style="box-sizing: border-box; color: rgb(0, 0, 0); line-height: 24px; margin: 0em 0.2em 1em; padding: 0px; text-align: justify;"> 比较字string1和string2字典顺序。如果相等返回0，如果string1在string2出现之前返回-1，否则返回1。</p> </td> 
+   </tr> 
+   <tr style="box-sizing: border-box;"> 
+    <td style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221);"> 2</td> 
+    <td style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221);"> <p style="box-sizing: border-box; color: rgb(0, 0, 0); line-height: 24px; margin: 0em 0.2em 1em; padding: 0px; text-align: justify;"> 
+      <bfirst< b="" style="box-sizing: border-box;">
+       string1 string2
+      </bfirst<></p> <p style="box-sizing: border-box; color: rgb(0, 0, 0); line-height: 24px; margin: 0em 0.2em 1em; padding: 0px; text-align: justify;"> 返回string1中第一次出现string1索引的位置。如果没有找到，返回-1。</p> </td> 
+   </tr> 
+   <tr style="box-sizing: border-box;"> 
+    <td style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221);"> 3</td> 
+    <td style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221);"> <p style="box-sizing: border-box; color: rgb(0, 0, 0); line-height: 24px; margin: 0em 0.2em 1em; padding: 0px; text-align: justify;"> <b style="box-sizing: border-box;">index</b>&nbsp;string index</p> <p style="box-sizing: border-box; color: rgb(0, 0, 0); line-height: 24px; margin: 0em 0.2em 1em; padding: 0px; text-align: justify;"> 返回索引的字符。</p> </td> 
+   </tr> 
+   <tr style="box-sizing: border-box;"> 
+    <td style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221);"> 4</td> 
+    <td style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221);"> <p style="box-sizing: border-box; color: rgb(0, 0, 0); line-height: 24px; margin: 0em 0.2em 1em; padding: 0px; text-align: justify;"> <b style="box-sizing: border-box;">last</b>&nbsp;string1 string2</p> <p style="box-sizing: border-box; color: rgb(0, 0, 0); line-height: 24px; margin: 0em 0.2em 1em; padding: 0px; text-align: justify;"> 返回索引string1在string2中出现的最后一次。如果没有找到，返回-1。</p> </td> 
+   </tr> 
+   <tr style="box-sizing: border-box;"> 
+    <td style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221);"> 5</td> 
+    <td style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221);"> <p style="box-sizing: border-box; color: rgb(0, 0, 0); line-height: 24px; margin: 0em 0.2em 1em; padding: 0px; text-align: justify;"> <b style="box-sizing: border-box;">length</b>&nbsp;string</p> <p style="box-sizing: border-box; color: rgb(0, 0, 0); line-height: 24px; margin: 0em 0.2em 1em; padding: 0px; text-align: justify;"> 返回字符串的长度。</p> </td> 
+   </tr> 
+   <tr style="box-sizing: border-box;"> 
+    <td style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221);"> 6</td> 
+    <td style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221);"> <p style="box-sizing: border-box; color: rgb(0, 0, 0); line-height: 24px; margin: 0em 0.2em 1em; padding: 0px; text-align: justify;"> <b style="box-sizing: border-box;">match pattern</b>&nbsp;string</p> <p style="box-sizing: border-box; color: rgb(0, 0, 0); line-height: 24px; margin: 0em 0.2em 1em; padding: 0px; text-align: justify;"> 返回1，如果该字符串匹配模式。</p> </td> 
+   </tr> 
+   <tr style="box-sizing: border-box;"> 
+    <td style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221);"> 7</td> 
+    <td style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221);"> <p style="box-sizing: border-box; color: rgb(0, 0, 0); line-height: 24px; margin: 0em 0.2em 1em; padding: 0px; text-align: justify;"> <b style="box-sizing: border-box;">range</b>&nbsp;string index1 index2</p> <p style="box-sizing: border-box; color: rgb(0, 0, 0); line-height: 24px; margin: 0em 0.2em 1em; padding: 0px; text-align: justify;"> 返回指定索引范围内的字符串，index1到index2。</p> </td> 
+   </tr> 
+   <tr style="box-sizing: border-box;"> 
+    <td style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221);"> 8</td> 
+    <td style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221);"> <p style="box-sizing: border-box; color: rgb(0, 0, 0); line-height: 24px; margin: 0em 0.2em 1em; padding: 0px; text-align: justify;"> <b style="box-sizing: border-box;">tolower</b>&nbsp;string</p> <p style="box-sizing: border-box; color: rgb(0, 0, 0); line-height: 24px; margin: 0em 0.2em 1em; padding: 0px; text-align: justify;"> 返回小写字符串。</p> </td> 
+   </tr> 
+   <tr style="box-sizing: border-box;"> 
+    <td style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221);"> 9</td> 
+    <td style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221);"> <p style="box-sizing: border-box; color: rgb(0, 0, 0); line-height: 24px; margin: 0em 0.2em 1em; padding: 0px; text-align: justify;"> <b style="box-sizing: border-box;">toupper</b>&nbsp;string</p> <p style="box-sizing: border-box; color: rgb(0, 0, 0); line-height: 24px; margin: 0em 0.2em 1em; padding: 0px; text-align: justify;"> 返回大写字符串。</p> </td> 
+   </tr> 
+   <tr style="box-sizing: border-box;"> 
+    <td style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221);"> 10</td> 
+    <td style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221);"> <p style="box-sizing: border-box; color: rgb(0, 0, 0); line-height: 24px; margin: 0em 0.2em 1em; padding: 0px; text-align: justify;"> <b style="box-sizing: border-box;">trim</b>&nbsp;string ?trimcharacters?</p> <p style="box-sizing: border-box; color: rgb(0, 0, 0); line-height: 24px; margin: 0em 0.2em 1em; padding: 0px; text-align: justify;"> 删除字符串两端的trimcharacters。默认trimcharacters是空白。</p> </td> 
+   </tr> 
+   <tr style="box-sizing: border-box;"> 
+    <td style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221);"> 11</td> 
+    <td style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221);"> <p style="box-sizing: border-box; color: rgb(0, 0, 0); line-height: 24px; margin: 0em 0.2em 1em; padding: 0px; text-align: justify;"> <b style="box-sizing: border-box;">trimleft</b>&nbsp;string ?trimcharacters?</p> <p style="box-sizing: border-box; color: rgb(0, 0, 0); line-height: 24px; margin: 0em 0.2em 1em; padding: 0px; text-align: justify;"> 删除字符串左侧开始的trimcharacters。默认trimcharacters是空白。</p> </td> 
+   </tr> 
+   <tr style="box-sizing: border-box;"> 
+    <td style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221);"> 12</td> 
+    <td style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221);"> <p style="box-sizing: border-box; color: rgb(0, 0, 0); line-height: 24px; margin: 0em 0.2em 1em; padding: 0px; text-align: justify;"> <b style="box-sizing: border-box;">trimright</b>&nbsp;string ?trimcharacters?</p> <p style="box-sizing: border-box; color: rgb(0, 0, 0); line-height: 24px; margin: 0em 0.2em 1em; padding: 0px; text-align: justify;"> 删除字符串左端trimcharacters。默认trimcharacters是空白。</p> </td> 
+   </tr> 
+   <tr style="box-sizing: border-box;"> 
+    <td style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221);"> 13</td> 
+    <td style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221);"> <p style="box-sizing: border-box; color: rgb(0, 0, 0); line-height: 24px; margin: 0em 0.2em 1em; padding: 0px; text-align: justify;"> <b style="box-sizing: border-box;">wordend</b>&nbsp;findstring index</p> <p style="box-sizing: border-box; color: rgb(0, 0, 0); line-height: 24px; margin: 0em 0.2em 1em; padding: 0px; text-align: justify;"> 返回索引字符findstring包含字符索引单词。</p> </td> 
+   </tr> 
+   <tr style="box-sizing: border-box;"> 
+    <td style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221);"> 14</td> 
+    <td style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221);"> <p style="box-sizing: border-box; color: rgb(0, 0, 0); line-height: 24px; margin: 0em 0.2em 1em; padding: 0px; text-align: justify;"> <b style="box-sizing: border-box;">wordstart</b>&nbsp;findstring index</p> <p style="box-sizing: border-box; color: rgb(0, 0, 0); line-height: 24px; margin: 0em 0.2em 1em; padding: 0px; text-align: justify;"> 返回findstring中第一个字符的含有索引中的字符索引的单词。</p> </td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p> 一些常用的Tcl字符串子命令的例子在下面给出。</p> 
+ <h3> 字符串比较</h3> 
+ <pre class="prettyprint notranslate tryit prettyprinted" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 496.1875px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); cursor: default; background-image: url(http://www.yiibai.com/images/link.png) !important; background-attachment: initial !important; background-size: initial !important; background-origin: initial !important; background-clip: initial !important; background-position: 100% 0%; background-repeat: no-repeat !important;">
+<span class="com" style="box-sizing: border-box; color: rgb(136, 0, 0);">#!/usr/bin/tclsh</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+
+</span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">set</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> s1 </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"Hello"</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+</span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">set</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> s2 </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"World"</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+</span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">set</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> s3 </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"World"</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+puts </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">string</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> compare s1 s2</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+</span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">if</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">{[</span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">string</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> compare s2 s3</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">==</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="lit" style="box-sizing: border-box; color: rgb(0, 102, 102);">0</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">}</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">{</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+puts </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"String \'s1\' and \'s2\' are same."</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">;</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> 
+</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">}</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> 
+
+</span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">if</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">{[</span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">string</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> compare s1 s2</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">==</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">-</span><span class="lit" style="box-sizing: border-box; color: rgb(0, 102, 102);">1</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">}</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">{</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+puts </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"String \'s1\' comes before \'s2\'."</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">;</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">}</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+
+</span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">if</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">{[</span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">string</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> compare s2 s1</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">==</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="lit" style="box-sizing: border-box; color: rgb(0, 102, 102);">1</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">}</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">{</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+puts </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"String \'s2\' comes before \'s1\'."</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">;</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">}</span></pre> 
+ <p> 让我们编译和运行上面的程序，这将产生以下结果：</p> 
+ <pre class="result notranslate" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 496.1875px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+-1
+String 's1' comes before 's2'.
+String 's2' comes before 's1'.</pre> 
+ <h3> 字符串索引</h3> 
+ <pre class="prettyprint notranslate tryit prettyprinted" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 496.1875px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); cursor: default; background-image: url(http://www.yiibai.com/images/link.png) !important; background-attachment: initial !important; background-size: initial !important; background-origin: initial !important; background-clip: initial !important; background-position: 100% 0%; background-repeat: no-repeat !important;">
+<span class="com" style="box-sizing: border-box; color: rgb(136, 0, 0);">#!/usr/bin/tclsh</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+
+</span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">set</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> s1 </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"Hello World"</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+</span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">set</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> s2 </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"o"</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+puts </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"First occurrence of $s2 in s1"</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+puts </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">string</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> first $s2 $s1</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+puts </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"Character at index 0 in s1"</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+puts </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">string</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> index $s1 </span><span class="lit" style="box-sizing: border-box; color: rgb(0, 102, 102);">0</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+puts </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"Last occurrence of $s2 in s1"</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+puts </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">string</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">last</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> $s2 $s1</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+puts </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"Word end index in s1"</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+puts </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">string</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> wordend $s1 </span><span class="lit" style="box-sizing: border-box; color: rgb(0, 102, 102);">20</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+puts </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"Word start index in s1"</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+puts </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">string</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> wordstart $s1 </span><span class="lit" style="box-sizing: border-box; color: rgb(0, 102, 102);">20</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span></pre> 
+ <p style="box-sizing: border-box; color: rgb(0, 0, 0); line-height: 24px; margin: 0em 0.2em 1em; padding: 0px; text-align: justify; font-family: 'Open Sans', Arial, sans-serif; font-size: 14px;"> 让我们编译和运行上面的程序，这将产生以下结果：</p> 
+ <pre class="result notranslate" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 496.1875px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+First occurrence of o in s1
+4
+Character at index 0 in s1
+H
+Last occurrence of o in s1
+7
+Word end index in s1
+11
+Word start index in s1
+6</pre> 
+ <h3> 字符串长度</h3> 
+ <pre class="prettyprint notranslate tryit prettyprinted" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 496.1875px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); cursor: default; background-image: url(http://www.yiibai.com/images/link.png) !important; background-attachment: initial !important; background-size: initial !important; background-origin: initial !important; background-clip: initial !important; background-position: 100% 0%; background-repeat: no-repeat !important;">
+<span class="com" style="box-sizing: border-box; color: rgb(136, 0, 0);">#!/usr/bin/tclsh</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+
+</span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">set</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> s1 </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"Hello World"</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+puts </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"Length of string s1"</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+puts </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">string</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> length $s1</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span></pre> 
+ <p style="box-sizing: border-box; color: rgb(0, 0, 0); line-height: 24px; margin: 0em 0.2em 1em; padding: 0px; text-align: justify; font-family: 'Open Sans', Arial, sans-serif; font-size: 14px;"> 让我们编译和运行上面的程序，这将产生以下结果：</p> 
+ <pre class="result notranslate" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 496.1875px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+Length of string s1
+11</pre> 
+ <h3> 处理大小写</h3>   
+ <pre class="prettyprint notranslate tryit prettyprinted" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 496.1875px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); background-image: url(http://www.yiibai.com/images/link.png) !important; background-attachment: initial !important; background-size: initial !important; background-origin: initial !important; background-clip: initial !important; background-position: 100% 0%; background-repeat: no-repeat !important;">
+<span class="com" style="box-sizing: border-box; color: rgb(136, 0, 0);">#!/usr/bin/tclsh</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+
+</span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">set</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> s1 </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"Hello World"</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+puts </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"Uppercase string of s1"</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+puts </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">string</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> toupper $s1</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+puts </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"Lowercase string of s1"</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+puts </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">string</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> tolower $s1</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span></pre> 
+ <p> 让我们编译和运行上面的程序，这将产生以下结果：</p> 
+ <pre class="result notranslate" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 496.1875px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+Uppercase string of s1
+HELLO WORLD
+Lowercase string of s1
+hello world</pre> 
+ <h3> 修整字符</h3> 
+ <pre class="prettyprint notranslate tryit prettyprinted" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 496.1875px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); background-image: url(http://www.yiibai.com/images/link.png) !important; background-attachment: initial !important; background-size: initial !important; background-origin: initial !important; background-clip: initial !important; background-position: 100% 0%; background-repeat: no-repeat !important;">
+<span class="com" style="box-sizing: border-box; color: rgb(136, 0, 0);">#!/usr/bin/tclsh</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+
+</span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">set</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> s1 </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"Hello World"</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+</span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">set</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> s2 </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"World"</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+puts </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"Trim right $s2 in $s1"</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+puts </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">string</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> trimright $s1 $s2</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+
+</span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">set</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> s2 </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"Hello"</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+puts </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"Trim left $s2 in $s1"</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+puts </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">string</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> trimleft $s1 $s2</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+
+</span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">set</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> s1 </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">" Hello World "</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+</span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">set</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> s2 </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">" "</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+puts </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"Trim characters s1 on both sides of s2"</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+puts </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">string</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> trim $s1 $s2</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span></pre> 
+ <p> 让我们编译和运行上面的程序，这将产生以下结果：</p> 
+ <pre class="result notranslate" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 496.1875px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+Trim right World in Hello World
+Hello 
+Trim left Hello in Hello World
+ World
+Trim characters s1 on both sides of s2
+Hello World</pre> 
+ <h3> 匹配字符串</h3> 
+ <pre class="prettyprint notranslate tryit prettyprinted" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 496.1875px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); background-image: url(http://www.yiibai.com/images/link.png) !important; background-attachment: initial !important; background-size: initial !important; background-origin: initial !important; background-clip: initial !important; background-position: 100% 0%; background-repeat: no-repeat !important;">
+<span class="com" style="box-sizing: border-box; color: rgb(136, 0, 0);">#!/usr/bin/tclsh</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+
+</span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">set</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> s1 </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"test@test.com"</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> 
+</span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">set</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> s2 </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"*@*.com"</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+puts </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"Matching pattern s2 in s1"</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+puts </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">string</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> match </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"*@*.com"</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> $s1 </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+puts </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"Matching pattern tcl in s1"</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+puts </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">string</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> match </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">{</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">tcl</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">}</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> $s1</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span></pre> 
+ <p> 让我们编译和运行上面的程序，这将产生以下结果：</p> 
+ <pre class="result notranslate" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 496.1875px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+Matching pattern s2 in s1
+1
+Matching pattern tcl in s1
+0</pre> 
+ <h3> Append 命令</h3> 
+ <pre class="prettyprint notranslate tryit prettyprinted" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 496.1875px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); background-image: url(http://www.yiibai.com/images/link.png) !important; background-attachment: initial !important; background-size: initial !important; background-origin: initial !important; background-clip: initial !important; background-position: 100% 0%; background-repeat: no-repeat !important;">
+<span class="com" style="box-sizing: border-box; color: rgb(136, 0, 0);">#!/usr/bin/tclsh</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+
+</span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">set</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> s1 </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"Hello"</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> 
+append s1 </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">" World"</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+puts $s1</span></pre> 
+ <p> 让我们编译和运行上面的程序，这将产生以下结果：</p> 
+ <pre class="result notranslate" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 496.1875px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+Hello World</pre> 
+ <h3> Format 命令</h3> 
+ <p> Tcl显示格式format说明如下列表。</p> 
+ <table class="table table-bordered" style="box-sizing: border-box; border-collapse: collapse; border-spacing: 0px; width: 496px; max-width: 100%; margin-bottom: 20px;  border-color: rgb(221, 221, 221); color: rgb(49, 49, 49); font-family: 'Open Sans', Arial, sans-serif; font-size: 14px; line-height: 22px; background-color: transparent;"> 
+  <tbody style="box-sizing: border-box;"> 
+   <tr style="box-sizing: border-box;"> 
+    <th style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221); width: 78px; background: rgb(238, 238, 238);"> 指示符</th> 
+    <th style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221); background: rgb(238, 238, 238);"> 使用</th> 
+   </tr> 
+   <tr style="box-sizing: border-box;"> 
+    <td style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221);"> %s</td> 
+    <td style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221);"> 字符串表示</td> 
+   </tr> 
+   <tr style="box-sizing: border-box;"> 
+    <td style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221);"> %d</td> 
+    <td style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221);"> 整数表示</td> 
+   </tr> 
+   <tr style="box-sizing: border-box;"> 
+    <td style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221);"> %f</td> 
+    <td style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221);"> 浮点表示</td> 
+   </tr> 
+   <tr style="box-sizing: border-box;"> 
+    <td style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221);"> %e</td> 
+    <td style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221);"> 指数形式浮点表示</td> 
+   </tr> 
+   <tr style="box-sizing: border-box;"> 
+    <td style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221);"> %x</td> 
+    <td style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221);"> 十六进制表示</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p> 一些简单下面的例子给出。</p> 
+ <pre class="prettyprint notranslate tryit prettyprinted" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 496.1875px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); cursor: default; background-image: url(http://www.yiibai.com/images/link.png) !important; background-attachment: initial !important; background-size: initial !important; background-origin: initial !important; background-clip: initial !important; background-position: 100% 0%; background-repeat: no-repeat !important;">
+<span class="com" style="box-sizing: border-box; color: rgb(136, 0, 0);">#!/usr/bin/tclsh</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+
+puts </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">format </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"%f"</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="lit" style="box-sizing: border-box; color: rgb(0, 102, 102);">43.5</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+puts </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">format </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"%e"</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="lit" style="box-sizing: border-box; color: rgb(0, 102, 102);">43.5</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+puts </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">format </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"%d %s"</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="lit" style="box-sizing: border-box; color: rgb(0, 102, 102);">4</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> tuts</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+puts </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">format </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"%s"</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"Tcl Language"</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+puts </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">format </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"%x"</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="lit" style="box-sizing: border-box; color: rgb(0, 102, 102);">40</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span></pre> 
+ <p> 让我们编译和运行上面的程序，这将产生以下结果：</p> 
+ <pre class="result notranslate" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 496.1875px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+43.500000
+4.350000e+01
+4 tuts
+Tcl Language
+28</pre> 
+ <h2> Scan命令</h2> 
+ <p> scan命令用于分析基于对格式说明的字符串。一些例子如下所示。</p> 
+ <pre class="prettyprint notranslate tryit prettyprinted" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 496.1875px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); cursor: default; background-image: url(http://www.yiibai.com/images/link.png) !important; background-attachment: initial !important; background-size: initial !important; background-origin: initial !important; background-clip: initial !important; background-position: 100% 0%; background-repeat: no-repeat !important;">
+<span class="com" style="box-sizing: border-box; color: rgb(136, 0, 0);">#!/usr/bin/tclsh</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+
+puts </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">scan </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"90"</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">{%[</span><span class="lit" style="box-sizing: border-box; color: rgb(0, 102, 102);">0</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">-</span><span class="lit" style="box-sizing: border-box; color: rgb(0, 102, 102);">9</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]}</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> m</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+puts </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">scan </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"abc"</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">{%[</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">a</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">-</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">z</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]}</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> m</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+puts </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">scan </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"abc"</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">{%[</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">A</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">-</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">Z</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]}</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> m</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+puts </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">scan </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"ABC"</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">{%[</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">A</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">-</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">Z</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]}</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> m</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span></pre> 
+ <p> 当上述代码被编译和执行时，它产生了以下结果：</p> 
+ <pre class="result notranslate" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 496.1875px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+1
+1
+0
+1</pre> 
+ <br>      
+</div></body></html>

@@ -1,0 +1,179 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">神经网络</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>神经网络是并行计算设备，它们试图构建大脑的计算机模型。 背后的主要目标是开发一个系统来执行各种计算任务比传统系统更快。 这些任务包括模式识别和分类，近似，优化和数据聚类。</p> 
+ <h2 id="h2--ann-"><a name="什么是人工神经网络(ANN)" class="reference-link"></a><span class="header-link octicon octicon-link"></span>什么是人工神经网络(ANN)</h2>
+ <p>人工神经网络(ANN)是一个高效的计算系统，其核心主题是借用生物神经网络的类比。人工神经网络也被称为人工神经系统，并行分布式处理系统和连接系统。 ANN获取了大量以某种模式相互连接的单元，以允许它们之间的通信。这些单元也称为节点或神经元，是并行操作的简单处理器。</p> 
+ <p>每个神经元通过连接链接与其他神经元连接。每个连接链路与具有关于输入信号的信息的权重相关联。这是神经元解决特定问题最有用的信息，因为体重通常会激发或抑制正在传递的信号。每个神经元都有其内部状态，称为激活信号。在组合输入信号和激活规则之后产生的输出信号可以被发送到其他单元。</p> 
+ <p>如果想详细研究神经网络，那么可以参考以下示例 - <a target="_blank" href="https://www.yiibai.com/artificial_neural_network/index.html" title="人工神经网络">人工神经网络</a>。</p> 
+ <h2 id="h2-u5B89u88C5u6709u7528u7684u5305"><a name="安装有用的包" class="reference-link"></a><span class="header-link octicon octicon-link"></span>安装有用的包</h2>
+ <p>在Python中创建神经网络，可以使用一个强大的NeuroLab神经网络包。它是一个基本的神经网络算法库，具有灵活的网络配置和Python学习算法。可以在命令提示符下使用以下命令来安装此软件包 -</p> 
+ <pre><code class="lang-shell">pip install NeuroLab
+</code></pre> 
+ <p>如果使用的是Anaconda环境，请使用以下命令安装NeuroLab -</p> 
+ <pre><code class="lang-shell">conda install -c labfabulous neurolab
+</code></pre> 
+ <h2 id="h2-u6784u5EFAu795Eu7ECFu7F51u7EDC"><a name="构建神经网络" class="reference-link"></a><span class="header-link octicon octicon-link"></span>构建神经网络</h2>
+ <p>在本节中，让我们使用NeuroLab软件包在Python中构建一些神经网络。</p> 
+ <h3 id="h3-u57FAu4E8Eu611Fu77E5u5668u7684u5206u7C7Bu5668"><a name="基于感知器的分类器" class="reference-link"></a><span class="header-link octicon octicon-link"></span>基于感知器的分类器</h3>
+ <p>感知器是ANN的基石。 如果您想了解更多关于Perceptron的信息，可以点击链接 - <a target="_blank" href="https://www.yiibai.com/artificial_neural_network/artificial_neural_network_supervised_learning.html" title="artificial_neural_network">artificial_neural_network</a></p> 
+ <p>以下是逐步执行Python代码，用于构建基于感知器的简单神经网络分类器 - </p> 
+ <p>如下所示导入必要的软件包 -</p> 
+ <pre><code class="lang-python">import matplotlib.pyplot as plt
+import neurolab as nl
+</code></pre> 
+ <p>请注意，这是一个监督学习的例子，因此您也必须提供目标值。</p> 
+ <pre><code class="lang-python">input = [[0, 0], [0, 1], [1, 0], [1, 1]]
+target = [[0], [0], [0], [1]]
+</code></pre> 
+ <p>用<code>2</code>个输入和<code>1</code>个神经元创建网络 -</p> 
+ <pre><code class="lang-python">net = nl.net.newp([[0, 1],[0, 1]], 1)
+</code></pre> 
+ <p>现在，训练网络。 在这里使用Delta规则进行训练。</p> 
+ <pre><code class="lang-python">error_progress = net.train(input, target, epochs=100, show=10, lr=0.1)
+</code></pre> 
+ <p>接下来，可视化输出并绘制图表 -</p> 
+ <pre><code class="lang-python">plt.figure()
+plt.plot(error_progress)
+plt.xlabel('Number of epochs')
+plt.ylabel('Training error')
+plt.grid()
+plt.show()
+</code></pre> 
+ <p>可以看到下图显示了使用错误度量标准的训练进度 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201806/0606/658100602_78848.jpg" alt=""></p> 
+ <h2 id="h2-u5355u5C42u795Eu7ECFu7F51u7EDC"><a name="单层神经网络" class="reference-link"></a><span class="header-link octicon octicon-link"></span>单层神经网络</h2>
+ <p>在这个例子中，我们来创建一个单层神经网络，它由独立的神经元组成，这些神经元在输入数据上起作用以产生输出。 请注意，这里使用<code>neural_simple.txt</code>文件作为输入。</p> 
+ <p>如下所示导入所需的软件包 -</p> 
+ <pre><code class="lang-python">import numpy as np
+import matplotlib.pyplot as plt
+import neurolab as nl
+</code></pre> 
+ <p>加载数据集如下代码 -</p> 
+ <pre><code class="lang-python">input_data = np.loadtxt(“/Users/admin/neural_simple.txt')
+</code></pre> 
+ <p>以下是我们要使用的数据。 请注意，在此数据中，前两列是特征，最后两列是标签。</p> 
+ <pre><code class="lang-python">array([[2. , 4. , 0. , 0. ],
+      [1.5, 3.9, 0. , 0. ],
+      [2.2, 4.1, 0. , 0. ],
+      [1.9, 4.7, 0. , 0. ],
+      [5.4, 2.2, 0. , 1. ],
+      [4.3, 7.1, 0. , 1. ],
+      [5.8, 4.9, 0. , 1. ],
+      [6.5, 3.2, 0. , 1. ],
+      [3. , 2. , 1. , 0. ],
+      [2.5, 0.5, 1. , 0. ],
+      [3.5, 2.1, 1. , 0. ],
+      [2.9, 0.3, 1. , 0. ],
+      [6.5, 8.3, 1. , 1. ],
+      [3.2, 6.2, 1. , 1. ],
+      [4.9, 7.8, 1. , 1. ],
+      [2.1, 4.8, 1. , 1. ]])
+</code></pre> 
+ <p>现在，将这四列分成2个数据列和2个标签 -</p> 
+ <pre><code class="lang-python">data = input_data[:, 0:2]
+labels = input_data[:, 2:]
+</code></pre> 
+ <p>使用以下命令绘制输入数据 -</p> 
+ <pre><code class="lang-python">plt.figure()
+plt.scatter(data[:,0], data[:,1])
+plt.xlabel('Dimension 1')
+plt.ylabel('Dimension 2')
+plt.title('Input data')
+</code></pre> 
+ <p>现在，为每个维度定义最小值和最大值，如下所示 -</p> 
+ <pre><code class="lang-python">dim1_min, dim1_max = data[:,0].min(), data[:,0].max()
+dim2_min, dim2_max = data[:,1].min(), data[:,1].max()
+</code></pre> 
+ <p>接下来，如下定义输出层中神经元的数量 -</p> 
+ <pre><code class="lang-python">nn_output_layer = labels.shape[1]
+</code></pre> 
+ <p>现在，定义一个单层神经网络 -</p> 
+ <pre><code class="lang-python">dim1 = [dim1_min, dim1_max]
+dim2 = [dim2_min, dim2_max]
+neural_net = nl.net.newp([dim1, dim2], nn_output_layer)
+</code></pre> 
+ <p>训练神经网络的时代数和学习率如下所示 -</p>   
+ <pre><code class="lang-python">error = neural_net.train(data, labels, epochs = 200, show = 20, lr = 0.01)
+</code></pre> 
+ <p>现在，使用以下命令可视化并绘制训练进度 -</p> 
+ <pre><code class="lang-python">plt.figure()
+plt.plot(error)
+plt.xlabel('Number of epochs')
+plt.ylabel('Training error')
+plt.title('Training error progress')
+plt.grid()
+plt.show()
+</code></pre> 
+ <p>现在，使用上述分类器中的测试数据点 -</p> 
+ <pre><code class="lang-python">print('\nTest Results:')
+data_test = [[1.5, 3.2], [3.6, 1.7], [3.6, 5.7],[1.6, 3.9]] for item in data_test:
+   print(item, '--&gt;', neural_net.sim([item])[0])
+</code></pre> 
+ <p>下面是测试结果 -</p> 
+ <pre><code class="lang-python">[1.5, 3.2] --&gt; [1. 0.]
+[3.6, 1.7] --&gt; [1. 0.]
+[3.6, 5.7] --&gt; [1. 1.]
+[1.6, 3.9] --&gt; [1. 0.]
+</code></pre> 
+ <p>您可以看到迄今为止讨论的代码的输出图表 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201806/0606/672100623_75039.jpg" alt=""></p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201806/0606/738100623_20662.jpg" alt=""></p> 
+ <h2 id="h2-u591Au5C42u795Eu7ECFu7F51u7EDC"><a name="多层神经网络" class="reference-link"></a><span class="header-link octicon octicon-link"></span>多层神经网络</h2>
+ <p>在这个例子中，我们创建了一个由多个层组成的多层神经网络，以提取训练数据中的基础模式。 这个多层神经网络将像一个回归器一样工作。 我们将根据下面等式生成一些数据点:<code>y = 2x2 + 8</code>。</p> 
+ <p>如下所示导入必要的软件包 -</p> 
+ <pre><code class="lang-python">import numpy as np
+import matplotlib.pyplot as plt
+import neurolab as nl
+</code></pre> 
+ <p>根据上述公式生成一些数据点 -</p> 
+ <pre><code class="lang-python">min_val = -30
+max_val = 30
+num_points = 160
+x = np.linspace(min_val, max_val, num_points)
+y = 2 * np.square(x) + 8
+y /= np.linalg.norm(y)
+</code></pre> 
+ <p>现在，重塑这个数据集如下 -</p> 
+ <pre><code class="lang-python">data = x.reshape(num_points, 1)
+labels = y.reshape(num_points, 1)
+</code></pre> 
+ <p>使用以下命令可视化并绘制输入数据集 -</p> 
+ <pre><code class="lang-python">plt.figure()
+plt.scatter(data, labels)
+plt.xlabel('Dimension 1')
+plt.ylabel('Dimension 2')
+plt.title('Data-points')
+</code></pre> 
+ <p>现在，构建神经网络，其具有两个隐藏层，第一隐藏层中具有十个神经元的神经元，第二隐藏层中六个，输出层中一个神经元。</p> 
+ <pre><code class="lang-python">neural_net = nl.net.newff([[min_val, max_val]], [10, 6, 1])
+</code></pre> 
+ <p>现在使用梯度训练算法 -</p> 
+ <pre><code class="lang-python">neural_net.trainf = nl.train.train_gd
+</code></pre> 
+ <p>现在训练网络的目标是学习上面生成的数据 -</p> 
+ <pre><code class="lang-python">error = neural_net.train(data, labels, epochs = 1000, show = 100, goal = 0.01)
+</code></pre> 
+ <p>训练数据点上运行神经网络 -</p> 
+ <pre><code class="lang-python">output = neural_net.sim(data)
+y_pred = output.reshape(num_points)
+</code></pre> 
+ <p>现在绘图并可视化任务 -</p> 
+ <pre><code class="lang-python">plt.figure()
+plt.plot(error)
+plt.xlabel('Number of epochs')
+plt.ylabel('Error')
+plt.title('Training error progress')
+</code></pre> 
+ <p>现在将绘制实际与预测输出关系图 -</p> 
+ <pre><code class="lang-python">x_dense = np.linspace(min_val, max_val, num_points * 2)
+y_dense_pred = neural_net.sim(x_dense.reshape(x_dense.size,1)).reshape(x_dense.size)
+plt.figure()
+plt.plot(x_dense, y_dense_pred, '-', x, y, '.', x, y_pred, 'p')
+plt.title('Actual vs predicted')
+plt.show()
+</code></pre> 
+ <p>执行上述代码，您可以观察如下所示的图形 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201806/0606/590100630_39075.jpg" alt=""></p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201806/0606/183100630_51174.jpg" alt=""></p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201806/0606/386100630_52739.jpg" alt=""></p>
+ <br>      
+</div></body></html>

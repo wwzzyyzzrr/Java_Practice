@@ -1,0 +1,81 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Javascript Array.some()方法</h1><div style="width:100%;float:left;" class="article-content">   
+ <p> JavaScript数组some()方法测试数组中的某个元素是否通过由提供的功能来实现测试。</p> 
+ <h2> 语法</h2> 
+ <pre style="'Courier New', monospace; font-size: 12px; ">
+<i>array</i>.some(callback[, thisObject]);</pre> 
+ <p> 下面是参数的详细信息：</p> 
+ <ul> 
+  <li> <p> <strong>callback&nbsp;: </strong>函数用来测试每个元素。</p> </li> 
+  <li> <p> <strong>thisObject&nbsp;: </strong>对象作为该执行回调时使用。</p> </li> 
+ </ul> 
+ <h2> 返回值:</h2> 
+ <p> 如果某些元素通过测试则返回true，否则为false。</p> 
+ <h2> 兼容性：</h2> 
+ <p> 这个方法是一个JavaScript扩展到ECMA-262标准; 因此它可能不存在在标准的其他实现。为了使它工作，你需要添加下面的脚本代码放到顶部：</p> 
+ <pre style="'Courier New', monospace; font-size: 12px; ">
+if (!Array.prototype.some)
+{
+  Array.prototype.some = function(fun /*, thisp*/)
+  {
+    var len = this.length;
+    if (typeof fun != "function")
+      throw new TypeError();
+
+    var thisp = arguments[1];
+    for (var i = 0; i &lt; len; i++)
+    {
+      if (i in this &amp;&amp;
+          fun.call(thisp, this[i], i, this))
+        return true;
+    }
+
+    return false;
+  };
+}</pre> 
+ <h2> 例子：</h2> 
+ <pre style="'Courier New', monospace; font-size: 12px; ">
+&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;JavaScript Array some Method&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;script type="text/javascript"&gt;
+if (!Array.prototype.some)
+{
+  Array.prototype.some = function(fun /*, thisp*/)
+  {
+    var len = this.length;
+    if (typeof fun != "function")
+      throw new TypeError();
+
+    var thisp = arguments[1];
+    for (var i = 0; i &lt; len; i++)
+    {
+      if (i in this &amp;&amp;
+          fun.call(thisp, this[i], i, this))
+        return true;
+    }
+
+    return false;
+  };
+}
+
+function isBigEnough(element, index, array) {
+  return (element &gt;= 10);
+}
+
+var retval = [2, 5, 8, 1, 4].some(isBigEnough);
+document.write("Returned value is : " + retval );
+
+var retval = [12, 5, 8, 1, 4].some(isBigEnough);
+document.write("&lt;br /&gt;Returned value is : " + retval );
+&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre> 
+ <p> 这将产生以下结果：</p>   
+ <pre style="'Courier New', monospace; font-size: 12px; ">
+Returned value is : false
+Returned value is : true </pre> 
+ <p style="text-align: justify; verdana, helvetica, arial,  color: rgb(0, 0, 0);"> &nbsp;</p> 
+ <br>      
+</div></body></html>

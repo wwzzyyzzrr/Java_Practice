@@ -1,0 +1,101 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">C语言存储分类</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>存储分类用于定义变量的范围和使用寿命。C语言编程中有四个存储分类。它们分别如下 - </p> 
+ <ul> 
+  <li><em>auto</em></li>
+  <li><em>extern</em></li>
+  <li><em>static</em></li>
+  <li><em>register</em></li>
+ </ul> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>存储类</th> 
+    <th>存储地点</th> 
+    <th>默认值</th> 
+    <th>范围</th> 
+    <th>生命周期</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>auto</td> 
+    <td>RAM</td> 
+    <td>垃圾值</td> 
+    <td>局部</td> 
+    <td>函数中</td> 
+   </tr> 
+   <tr> 
+    <td>extern</td> 
+    <td>RAM</td> 
+    <td>零</td> 
+    <td>全局</td> 
+    <td>直到主程序结束，可以在程序的任何地方声明</td> 
+   </tr> 
+   <tr> 
+    <td>static</td> 
+    <td>RAM</td> 
+    <td>零</td> 
+    <td>局部</td> 
+    <td>直到主程序结束，保留多个函数之间的值调用</td> 
+   </tr> 
+   <tr> 
+    <td>register</td> 
+    <td>寄存器</td> 
+    <td>垃圾值</td> 
+    <td>局部</td> 
+    <td>函数中</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h2 id="h2-1-auto-"><a name="1. auto变量" class="reference-link"></a><span class="header-link octicon octicon-link"></span>1. auto变量</h2>
+ <p><code>auto</code>关键字自动应用于所有局部变量。它是默认存储类，这就是为什么它被称为自动变量。</p> 
+ <p>为了方便演示，首先创建一个工程：<em>storage-classes</em>，然后在此工程下创建一个源文件：<em>auto-example.c</em>，其代码如下 - </p> 
+ <pre><code class="lang-c">#include &lt;stdio.h&gt;  
+void main() {
+    int a = 10;
+    auto int b = 10;//same like above  
+    printf("%d %d", a, b);
+}
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 - </p> 
+ <pre><code class="lang-shell">10 10
+</code></pre> 
+ <h2 id="h2-2-register-"><a name="2.register变量" class="reference-link"></a><span class="header-link octicon octicon-link"></span>2.register变量</h2>
+ <p>寄存器(<code>register</code>)变量将寄存器的内存分配给RAM。 其大小与寄存器大小相同。它比其他变量的访问速度更快。</p> 
+ <p>建议仅使用寄存器变量进行快速访问，如计数器。</p> 
+ <blockquote> 
+  <p>注意：我们无法获取寄存器变量的地址。</p> 
+ </blockquote> 
+ <p><strong>声明示例：</strong></p>   
+ <pre><code class="lang-c">register int counter = 0;
+</code></pre> 
+ <h2 id="h2-3-static-"><a name="3.static变量" class="reference-link"></a><span class="header-link octicon octicon-link"></span>3.static变量</h2>
+ <p>静态变量只初始化一次，直到程序结束。它在多个函数调用之间保留其值。<br>静态变量的默认值为<code>0</code>，由编译器提供。</p> 
+ <p>创建一个源文件：<em>static-example.c</em>，其代码如下 - </p> 
+ <pre><code class="lang-c">#include &lt;stdio.h&gt;  
+void func() {
+    static int i = 0;//static variable  
+    int j = 0;//local variable  
+    i++;
+    j++;
+    printf("i= %d and j= %d\n", i, j);
+}
+
+void main() {
+    func();
+    func();
+    func();
+}
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 - </p> 
+ <pre><code class="lang-shell">i= 1 and j= 1
+i= 2 and j= 1
+i= 3 and j= 1
+</code></pre> 
+ <h2 id="h2-4-extern-"><a name="4.extern变量" class="reference-link"></a><span class="header-link octicon octicon-link"></span>4.extern变量</h2>
+ <p>所有程序都可以看到(或访问)<code>extern</code>变量。如果两个或多个文件共享相同的变量或函数，则可使用<code>extern</code>变量。</p> 
+ <p>下面是一个声明示例：</p> 
+ <pre><code class="lang-c">extern int counter = 0;
+</code></pre>
+ <br>      
+</div></body></html>

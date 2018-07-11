@@ -1,0 +1,65 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">TCL变量</h1><div style="width:100%;float:left;" class="article-content">   
+ <p> 在TCL，变量声明没有概念。当遇到一个新的变量名，TCL将定义一个新的变量。</p> 
+ <h2> 变量命名</h2> 
+ <p> 变量的名称可以包含任何字符和长度。甚至可以存在空格被封闭在大括号中的变量，但不建议这样做。</p> 
+ <p> set命令用于指定值的变量。set 命令的语法是：</p> 
+ <pre class="prettyprint notranslate" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+set variableName value</pre> 
+ <p> 变量的几个例子如下所示。</p> 
+ <pre class="prettyprint notranslate tryit" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); cursor: default; background-image: url(http://www.yiibai.com/images/link.png) !important; background-attachment: initial !important; background-size: initial !important; background-origin: initial !important; background-clip: initial !important; background-position: 100% 0%; background-repeat: no-repeat !important;">
+#!/usr/bin/tclsh
+
+set variableA 10
+set {variable B} test
+puts $variableA
+puts ${variable B}</pre> 
+ <p> 当上述代码被执行时，它会产生以下结果。</p> 
+ <pre class="result notranslate" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+10
+test</pre> 
+ <p> 正如可以在上面的方案看到，$variableName 用于获取变量的值。</p> 
+ <h2> 动态类型</h2> 
+ <p> TCL是一种动态类型语言。变量的值可以在需要时被动态地转换为所需的类型。例如，一个数字5，其被存储为字符串将做的算术运算时被转换为数字。它如下所示。</p> 
+ <pre class="prettyprint notranslate tryit" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); background-image: url(http://www.yiibai.com/images/link.png) !important; background-attachment: initial !important; background-size: initial !important; background-origin: initial !important; background-clip: initial !important; background-position: 100% 0%; background-repeat: no-repeat !important;">
+#!/usr/bin/tclsh
+
+set variableA "10"
+puts $variableA
+set sum [expr $variableA +20];
+puts $sum</pre> 
+ <p> 当上述代码被执行时，它会产生以下结果。</p> 
+ <pre class="result notranslate" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+10
+30</pre> 
+ <h2> 数学表达式</h2> 
+ <p> 正如在上面的例子中看到，expr是用于表示数学表达式。 Tcl默认精度为12位。为了得到浮点运算的结果，我们应该增加至少一个十进制数字。一个简单的例子说明了上述情况。</p> 
+ <pre class="prettyprint notranslate tryit" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); cursor: default; background-image: url(http://www.yiibai.com/images/link.png) !important; background-attachment: initial !important; background-size: initial !important; background-origin: initial !important; background-clip: initial !important; background-position: 100% 0%; background-repeat: no-repeat !important;">
+#!/usr/bin/tclsh
+
+set variableA "10"
+set result [expr $variableA / 9];
+puts $result
+set result [expr $variableA / 9.0];
+puts $result
+set variableA "10.0"
+set result [expr $variableA / 9];
+puts $result</pre> 
+ <p> 当上述代码被执行时，它会产生以下结果。</p>   
+ <pre class="result notranslate" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+1
+1.1111111111111112
+1.1111111111111112</pre> 
+ <p> 在上面的例子中，可以看到三种情况。第一种情况，被除数和除数是整数，得到一个整数作为结果。第二种情况，除数是小数以及第三种情况，分数是一个十进制数。在第二和第三情况下，得到的是十进制数作的结果。</p> 
+ <p> 在上面的代码，可以使用tcl_precision特殊变量改变精度。它如下所示。</p> 
+ <pre class="prettyprint notranslate tryit" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); cursor: default; background-image: url(http://www.yiibai.com/images/link.png) !important; background-attachment: initial !important; background-size: initial !important; background-origin: initial !important; background-clip: initial !important; background-position: 100% 0%; background-repeat: no-repeat !important;">
+#!/usr/bin/tclsh
+
+set variableA "10"
+set tcl_precision 5
+set result [expr $variableA / 9.0];
+puts $result</pre> 
+ <p> 当上述代码被执行时，它会产生以下结果。</p> 
+ <pre class="result notranslate" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+1.1111</pre> 
+ <br>      
+</div></body></html>

@@ -1,0 +1,66 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Go范围实例</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>范围可对各种数据结构中的元素进行迭代。下面来看看如何使用范围在前面已经学习过的的一些数据结构中的使用。</p> 
+ <blockquote> 
+  <p>所有的示例代码，都放在 <code>F:\worksp\golang</code> 目录下。安装Go编程环境请参考：<a target="_blank" href="http://www.yiibai.com/go/go_environment.html">http://www.yiibai.com/go/go_environment.html</a> </p> 
+ </blockquote> 
+ <p>这里使用范围来对切片中的数字求和。数组也是可以这样使用的。<br>数组和切片上的范围提供每个条目的索引和值。上面不需要索引，所以忽略它与空白标识符<code>_</code>。 有时候实际上想要索引。<br>范围在映射上迭代键/值对。<br>范围也可以遍历映射中的键。</p> 
+ <p>字符串上的范围在<code>Unicode</code>代码点上迭代。第一个值是符文的起始字节索引，第二个是符文本身。</p> 
+ <p><code>range.go</code>的完整代码如下所示 -</p> 
+ <pre><code class="lang-go">package main
+
+import "fmt"
+
+func main() {
+
+    // Here we use `range` to sum the numbers in a slice.
+    // Arrays work like this too.
+    nums := []int{2, 3, 4}
+    sum := 0
+    for _, num := range nums {
+        sum += num
+    }
+    fmt.Println("sum:", sum)
+
+    // `range` on arrays and slices provides both the
+    // index and value for each entry. Above we didn't
+    // need the index, so we ignored it with the
+    // blank identifier `_`. Sometimes we actually want
+    // the indexes though.
+    for i, num := range nums {
+        if num == 3 {
+            fmt.Println("index:", i)
+        }
+    }
+
+    // `range` on map iterates over key/value pairs.
+    kvs := map[string]string{"a": "apple", "b": "banana"}
+    for k, v := range kvs {
+        fmt.Printf("%s -&gt; %s\n", k, v)
+    }
+
+    // `range` can also iterate over just the keys of a map.
+    for k := range kvs {
+        fmt.Println("key:", k)
+    }
+
+    // `range` on strings iterates over Unicode code
+    // points. The first value is the starting byte index
+    // of the `rune` and the second the `rune` itself.
+    for i, c := range "go" {
+        fmt.Println(i, c)
+    }
+}
+</code></pre> 
+ <p>执行上面代码，将得到以下输出结果 - </p>   
+ <pre><code class="lang-go">F:\worksp\golang&gt;go run range.go
+sum: 9
+index: 1
+a -&gt; apple
+b -&gt; banana
+key: a
+key: b
+0 103
+1 111
+</code></pre>
+ <br>      
+</div></body></html>

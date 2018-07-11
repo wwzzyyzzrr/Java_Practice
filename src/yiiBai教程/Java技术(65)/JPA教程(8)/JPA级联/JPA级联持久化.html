@@ -1,0 +1,230 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">JPA级联持久化</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>级联持久化用于指定如果实体持久化，则其所有关联的子实体也将被持久化。 以下语法用于执行级联持久性操作 -</p> 
+ <pre><code class="lang-java">@OneToOne(cascade=CascadeType.PERSIST)
+</code></pre> 
+ <h2 id="h2-jpa-"><a name="JPA级联持久化示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>JPA级联持久化示例</h2>
+ <p>在这个例子中，我们将创建两个相互关联的实体类，但要建立它们之间的依赖关系，我们将执行级联操作。</p> 
+ <p>这个例子包含以下步骤 -</p> 
+ <p><strong>第1步:</strong> 在<code>com.yiibai.jpa.student</code>包下创建一个名为<code>StudentEntity.java</code>的实体类，其中包含属性:<code>s_id</code>，<code>s_name</code>，<code>s_age</code>以及标记为级联规范的<code>Subject</code>类型的对象。</p> 
+ <p>文件: <em>StudentEntity.java</em> - </p> 
+ <pre><code class="lang-java">package com.yiibai.jpa.student;
+
+import javax.persistence.*;
+import com.yiibai.jpa.subject.Subject;
+
+@Entity
+@Table(name = "student")
+public class StudentEntity {
+
+    @Id
+    private int s_id;
+    private String s_name;
+    private int s_age;
+
+    @OneToOne(cascade = CascadeType.PERSIST)
+    private Subject sub;
+
+    public Subject getSub() {
+        return sub;
+    }
+
+    public void setSub(Subject sub) {
+        this.sub = sub;
+    }
+
+    public StudentEntity(int s_id, String s_name, int s_age, Subject sub) {
+        super();
+        this.s_id = s_id;
+        this.s_name = s_name;
+        this.s_age = s_age;
+        this.sub = sub;
+    }
+
+    public StudentEntity() {
+        super();
+    }
+
+    public int getS_id() {
+        return s_id;
+    }
+
+    public void setS_id(int s_id) {
+        this.s_id = s_id;
+    }
+
+    public String getS_name() {
+        return s_name;
+    }
+
+    public void setS_name(String s_name) {
+        this.s_name = s_name;
+    }
+
+    public int getS_age() {
+        return s_age;
+    }
+
+    public void setS_age(int s_age) {
+        this.s_age = s_age;
+    }
+
+}
+</code></pre> 
+ <p><strong>第2步:</strong> 在<code>com.yiibai.jpa.subject</code>包下创建另一个名为<code>Subject.java</code>的实体类。</p> 
+ <p>文件:<em>Subject.java</em> - </p> 
+ <pre><code class="lang-java">package com.yiibai.jpa.subject;
+
+import javax.persistence.*;
+
+@Entity
+@Table(name = "subject")
+public class Subject {
+
+    private String name;
+    private int marks;
+    @Id
+    private int s_id;
+
+    public Subject(String name, int marks, int s_id) {
+        super();
+        this.name = name;
+        this.marks = marks;
+        this.s_id = s_id;
+    }
+
+    public Subject() {
+        super();
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int getMarks() {
+        return marks;
+    }
+
+    public void setMarks(int marks) {
+        this.marks = marks;
+    }
+
+    public int getS_id() {
+        return s_id;
+    }
+
+    public void setS_id(int s_id) {
+        this.s_id = s_id;
+    }
+
+}
+</code></pre> 
+ <p>现在，将实体类和其他数据库配置映射到<em>persistence.xml</em>文件中。</p> 
+ <p>文件:<em>persistence.xml</em> - </p> 
+ <pre><code class="lang-xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;persistence version="2.1"
+    xmlns="http://xmlns.jcp.org/xml/ns/persistence"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd"&gt;
+    &lt;persistence-unit name="Student_details"&gt;
+        &lt;class&gt;com.yiibai.jpa.student.StudentEntity&lt;/class&gt;  
+    &lt;class&gt;com.yiibai.jpa.subject.Subject&lt;/class&gt;  
+        &lt;properties&gt;
+            &lt;property name="javax.persistence.jdbc.driver"
+                value="com.mysql.jdbc.Driver" /&gt;
+            &lt;property name="javax.persistence.jdbc.url"
+                value="jdbc:mysql://localhost:3306/testdb?serverTimezone=UTC" /&gt;
+            &lt;property name="javax.persistence.jdbc.user" value="root" /&gt;
+            &lt;property name="javax.persistence.jdbc.password"
+                value="123456" /&gt;
+            &lt;property name="eclipselink.logging.level" value="SEVERE" /&gt;
+            &lt;property name="eclipselink.ddl-generation"
+                value="create-or-extend-tables" /&gt;
+        &lt;/properties&gt;
+    &lt;/persistence-unit&gt;
+
+&lt;/persistence&gt;
+</code></pre> 
+ <p>在<code>com.yiibai.jpa.cascade</code>包下创建一个名为<code>StudentCascade.java</code>的持久化类，以便将实体对象与数据保持一致。</p> 
+ <p>文件:<em>StudentCascade.java</em> - </p>   
+ <pre><code class="lang-java">package com.yiibai.jpa.cascade;
+
+import javax.persistence.*;
+
+import com.yiibai.jpa.student.*;
+import com.yiibai.jpa.subject.Subject;
+
+public class StudentCascade {
+
+    public static void main(String[] args) {
+
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("Student_details");
+
+        EntityManager em = emf.createEntityManager();
+        em.getTransaction().begin();
+
+        StudentEntity s1 = new StudentEntity();
+        s1.setS_id(101);
+        s1.setS_name("Maxsu");
+        s1.setS_age(20);
+
+        StudentEntity s2 = new StudentEntity();
+        s2.setS_id(102);
+        s2.setS_name("James");
+        s2.setS_age(22);
+
+        Subject sb1 = new Subject();
+        sb1.setName("ENGLISH");
+        sb1.setMarks(80);
+        sb1.setS_id(s1.getS_id());
+
+        Subject sb2 = new Subject();
+        sb2.setName("Maths");
+        sb2.setMarks(75);
+        sb2.setS_id(s2.getS_id());
+
+        s1.setSub(sb1);
+        s2.setSub(sb2);
+
+        em.persist(s1);// No need to perform persist operation separately for different entities.
+        em.persist(s2);
+
+        em.getTransaction().commit();
+
+        em.close();
+        emf.close();
+
+    }
+
+}
+</code></pre> 
+ <blockquote> 
+  <p>注 - student表中的主键(即s_id)将作为<code>subject</code>表中的外键处理，以维持两个表之间的关系。</p> 
+ </blockquote> 
+ <h2 id="h2-u8F93u51FAu7ED3u679C"><a name="输出结果" class="reference-link"></a><span class="header-link octicon octicon-link"></span>输出结果</h2>
+ <p>程序执行完毕后，在MySQL工作台下生成以下表格。</p> 
+ <ul> 
+  <li><p><code>student</code>表 - 要获取数据，在MySQL中运行<code>select * from student</code>。得到结果如下 - </p> <pre><code class="lang-shell">mysql&gt; select * from student;
++------+-------+--------+----------+
+| S_ID | S_AGE | S_NAME | SUB_S_ID |
++------+-------+--------+----------+
+|  102 |    22 | James  |      102 |
+|  101 |    20 | Maxsu  |      101 |
++------+-------+--------+----------+
+2 rows in set
+</code></pre> </li>
+  <li><p><code>subject</code>表 - 要获取数据，在MySQL中运行<code>select * from subject</code>。得到结果如下 - </p> <pre><code class="lang-shell">mysql&gt;  select * from subject ;
++------+-------+---------+
+| S_ID | MARKS | NAME    |
++------+-------+---------+
+|  102 |    75 | Maths   |
+|  101 |    80 | ENGLISH |
++------+-------+---------+
+2 rows in set
+</code></pre> </li>
+ </ul>
+ <br>      
+</div></body></html>

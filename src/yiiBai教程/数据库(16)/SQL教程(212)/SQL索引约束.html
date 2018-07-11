@@ -1,0 +1,33 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">SQL索引约束</h1><div style="width:100%;float:left;" class="article-content">   
+ <p> 索引是用来快速创建并从数据库中检索数据。索引可以通过使用单个或一组的列在一个表中创建。 当创建索引时，它被分配一个ROWID在每一行进行排序出来的数据之前。</p> 
+ <p> 适当的索引对于大型数据库的性能有不错的提升， 但在创建索引时要小心。选择字段取决于使用的是什么SQL查询。</p> 
+ <h2> 示例:</h2> 
+ <p> 例如，下面的SQL创建一个新的表名为CUSTOMERS，并增加了五列：</p> 
+ <pre class="prettyprint prettyprinted" style="border-radius: 0px; font-size: 12px; overflow: auto;">
+<span class="pln" style="margin: 0px; padding: 0px;">CREATE TABLE CUSTOMERS</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="pln" style="margin: 0px; padding: 0px;">
+       ID   INT              NOT NULL</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">,</span><span class="pln" style="margin: 0px; padding: 0px;">
+       NAME VARCHAR </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">20</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">)</span><span class="pln" style="margin: 0px; padding: 0px;">     NOT NULL</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">,</span><span class="pln" style="margin: 0px; padding: 0px;">
+       AGE  INT              NOT NULL</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">,</span><span class="pln" style="margin: 0px; padding: 0px;">
+       ADDRESS  CHAR </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">25</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">)</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">,</span><span class="pln" style="margin: 0px; padding: 0px;">
+       SALARY   DECIMAL </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">18</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">,</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">2</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">),</span><span class="pln" style="margin: 0px; padding: 0px;">       
+       PRIMARY KEY </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="pln" style="margin: 0px; padding: 0px;">ID</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">)</span><span class="pln" style="margin: 0px; padding: 0px;">
+</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">);</span></pre> 
+ <p> 现在，您可以创建单个或多个列索引使用以下语法：</p> 
+ <pre class="prettyprint prettyprinted" style="border-radius: 0px; font-size: 12px; overflow: auto;">
+<span class="pln" style="margin: 0px; padding: 0px;">CREATE INDEX index_name
+    ON table_name </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="pln" style="margin: 0px; padding: 0px;"> column1</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">,</span><span class="pln" style="margin: 0px; padding: 0px;"> column2</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">.....);</span></pre> 
+ <p> 要在AGE列上创建一个索引， 来优化客户搜索一个特定的年龄，以下是SQL语法：</p> 
+ <div style="float:left;margin-bottom: 10px;">  
+ </div>
+ <div style="float:left;margin-bottom: 10px;">  
+ </div>  
+ <pre class="prettyprint prettyprinted" style="border-radius: 0px; font-size: 12px; overflow: auto;">
+<span class="pln" style="margin: 0px; padding: 0px;">CREATE INDEX idx_age
+    ON CUSTOMERS </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="pln" style="margin: 0px; padding: 0px;"> AGE </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">);</span></pre> 
+ <h2> 删除索引约束：</h2> 
+ <p> 要删除索引的约束，使用下面的SQL：</p> 
+ <pre class="prettyprint prettyprinted" style="border-radius: 0px; font-size: 12px; overflow: auto;">
+<span class="pln" style="margin: 0px; padding: 0px;">ALTER TABLE CUSTOMERS
+   DROP INDEX idx_age</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">;</span></pre> 
+ <br>      
+</div></body></html>

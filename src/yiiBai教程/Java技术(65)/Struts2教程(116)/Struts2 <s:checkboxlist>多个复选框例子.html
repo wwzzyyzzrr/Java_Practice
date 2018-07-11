@@ -1,0 +1,155 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Struts2 &lt;s:checkboxlist&gt;多个复选框例子</h1><div style="width:100%;float:left;" class="article-content">   
+ <p> 这里创建一个Web工程：struts2checkboxlist，来演示在多个复选框如何设置的默认值，整个项目的结构如下图所示： </p> 
+ <p> <img src="/uploads/tutorial/20151115/1-151115094520525.png" alt=""> </p> 
+ <p> 在Struts2，可以使用&lt;s:checkboxlist&gt;标签来使用相同的名称来创建多个复选框。唯一的问题是如何把握变量中的多个检查值？ 例如， </p> 
+ <pre>public List&lt;String&gt; getColors() {
+	colors = new ArrayList&lt;String&gt;();
+	colors.add("red");
+	colors.add("yellow");
+	colors.add("blue");
+	colors.add("green");
+	return colors;
+}</pre> 
+ <pre>&lt;s:checkboxlist label="What's your favor color" list="colors" 
+name="yourColor" value="defaultColor" /&gt;</pre> 
+ <p> 一个多复选框以“红”，“黄”，“蓝”和“绿色”为选项。如果有多个选项被选中，可以通过一个String对象存储。 </p> 
+ <p> 例如，如果“红”“黄”选项被选中，选中的值将用逗号相结合连接，yourColor = “red,yellow”. </p> 
+ <pre>private String yourColor;
+	
+public void setYourColor(String yourColor) {
+	this.yourColor = yourColor;
+}</pre> 
+ <div class="note" style="border:1px solid #D1D1E8;padding:20px;margin:20px 0px;color:#333333;font-family:'Helvetica Neue', Helvetica,  background-color:#E6E6FC;">
+   阅读这篇文章，有关
+  <a target="_blank" href="http://www.yiibai.com/struts_2/how-to-set-default-value-for-multiple-checkboxes-in-struts-2.html">如何设置多个复选框的默认值</a>。 
+ </div> 
+ <h2> Struts2&nbsp;&lt;s:checkboxlist&gt;&nbsp;示例 </h2> 
+ <p> 一个完整的Struts2实例，通过&lt;s:checkboxlist&gt;用相同的名称创建多个复选框，存储检选中的值，并在另一页面中显示。 </p> 
+ <h2> 1. 动作 - Action </h2> 
+ <p> Action类来生成和保持的多个复选框值。<br> <strong>CheckBoxListAction.java</strong> </p> 
+ <pre>package com.yiibai.common.action;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import com.opensymphony.xwork2.ActionSupport;
+
+public class CheckBoxListAction extends ActionSupport{
+
+	private List&lt;String&gt; colors;
+
+	private String yourColor;
+	
+	public String getYourColor() {
+		return yourColor;
+	}
+
+	public void setYourColor(String yourColor) {
+		this.yourColor = yourColor;
+	}
+
+	public CheckBoxListAction(){
+		colors = new ArrayList&lt;String&gt;();
+		colors.add("red");
+		colors.add("yellow");
+		colors.add("blue");
+		colors.add("green");
+	}
+	
+	public String[] getDefaultColor(){
+		return new String [] {"red", "green"};
+	}
+	
+	public List&lt;String&gt; getColors() {
+		return colors;
+	}
+
+	public void setColors(List&lt;String&gt; colors) {
+		this.colors = colors;
+	}
+
+	public String execute() {
+		return SUCCESS;
+	}
+	
+	public String display() {
+		return NONE;
+	}
+}</pre> 
+ <h2> 2. 结果页面 </h2> 
+ <p> 通过“s:checkboxlist”标签渲染多个复选框。<br> <strong>checkBoxlist.jsp</strong> </p> 
+ <pre>&lt;%@ taglib prefix="s" uri="/struts-tags" %&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;/head&gt;
+
+&lt;body&gt;
+&lt;h1&gt;Struts 2 multiple check boxes example&lt;/h1&gt;
+
+&lt;s:form action="resultAction" namespace="/"&gt;
+
+&lt;h2&gt;
+	&lt;s:checkboxlist label="What's your favor color" list="colors" 
+	   name="yourColor" value="defaultColor" /&gt;
+&lt;/h2&gt; 
+
+&lt;s:submit value="submit" name="submit" /&gt;
+	
+&lt;/s:form&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;</pre> 
+ <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  background-color:#FFFFFF;"> <strong>result.jsp</strong> </p> 
+ <pre>&lt;%@ taglib prefix="s" uri="/struts-tags" %&gt;
+&lt;html&gt;
+
+&lt;body&gt;
+&lt;h1&gt;Struts 2 multiple check boxes example&lt;/h1&gt;
+
+&lt;h2&gt;
+  Favor colors : &lt;s:property value="yourColor"/&gt;
+&lt;/h2&gt; 
+
+&lt;/body&gt;
+&lt;/html&gt;</pre> 
+ <h2 style="font-family:'Helvetica Neue', Helvetica,  font-weight:500;color:#333333;font-size:24px;background-color:#FFFFFF;"> 3. struts.xml </h2>   
+ <pre>&lt;?xml version="1.0" encoding="UTF-8" ?&gt;
+&lt;!DOCTYPE struts PUBLIC
+"-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+"http://struts.apache.org/dtds/struts-2.0.dtd"&gt;
+ 
+&lt;struts&gt;
+
+ &lt;constant name="struts.devMode" value="true" /&gt;
+ 	
+&lt;package name="default" namespace="/" extends="struts-default"&gt;
+		
+   &lt;action name="checkBoxListAction" 
+         class="com.yiibai.common.action.CheckBoxListAction" method="display"&gt;
+	&lt;result name="none"&gt;/pages/checkBoxlist.jsp&lt;/result&gt;
+   &lt;/action&gt;
+		
+   &lt;action name="resultAction" class="com.yiibai.common.action.CheckBoxListAction"&gt;
+	&lt;result name="success"&gt;/pages/result.jsp&lt;/result&gt;
+   &lt;/action&gt;
+  &lt;/package&gt;
+	
+&lt;/struts&gt;</pre> 
+ <h2 style="font-family:'Helvetica Neue', Helvetica,  font-weight:500;color:#333333;font-size:24px;background-color:#FFFFFF;"> 5. 实例 </h2> 
+ <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  background-color:#FFFFFF;"> <em>http://localhost:8080/struts2checkboxlist/checkBoxListAction.action</em> </p> 
+ <div class="pic" style="border:1px solid #DDDDDD;margin:20px 0px;padding:20px;text-align:center;color:#333333;font-family:'Helvetica Neue', Helvetica,  background-color:#F9F9F9;"> 
+  <img src="/uploads/tutorial/20151115/1-15111509413V16.png" alt="">
+  <br> 
+ </div> 
+ <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  background-color:#FFFFFF;"> <em>http://localhost:8080/struts2checkboxlist/resultAction.action</em> </p> 
+ <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  background-color:#FFFFFF;"> <em><img src="/uploads/tutorial/20151115/1-151115094230E2.png" alt=""><br> </em> </p> 
+ <h2> 参考 </h2> 
+ <ol> 
+  <li> <a target="_blank" href="http://struts.apache.org/2.0.14/docs/checkboxlist.html">Struts 2 checkboxlist 文档</a> </li> 
+ </ol> 
+ <div class="download" style="padding:40px 85px;border:1px solid #CEEBCE;color:#333333;font-family:'Helvetica Neue', Helvetica,  background:url(http://www.yiibai.com/wp-content/themes/yiibai/images/download.png) 25px 25px no-repeat #DFF7DF;">
+   下载代码 –&nbsp;
+  <a target="_blank" href="http://pan.baidu.com/s/1dDCxAiH">http://pan.baidu.com/s/1dDCxAiH</a> 
+ </div>
+ <br>      
+</div></body></html>

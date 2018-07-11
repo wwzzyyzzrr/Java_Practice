@@ -1,0 +1,176 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">ASP.NET文件上传</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>ASP.NET有两个控件，允许用户将文件上传到Web服务器。当服务器收到用户提交的文件数据，应用程序就可以保存，检查或忽略它。 以下控件允许上传文件：</p> 
+ <ul> 
+  <li><em>HtmlInputFile</em> - HTML服务器控件</li>
+  <li><em>FileUpload</em> - ASP.NET网页控件</li>
+ </ul> 
+ <p>两个控件都允许文件上传，但是<code>FileUpload</code>控件会自动设置表单的编码，而<code>HtmlInputFile</code>则不会。</p> 
+ <p>在本教程中，我们演示如何使用<code>FileUpload</code>控件。 <code>FileUpload</code>控件允许用户浏览并选择要上传的文件，提供浏览按钮和用于输入文件名的文本框。</p> 
+ <p>当用户通过输入名称或浏览在文本框中输入文件名，就可以调用<code>FileUpload</code>控件的<code>SaveAs</code>方法来将文件保存到磁盘。</p> 
+ <p><code>FileUpload</code>的基本语法是：</p> 
+ <pre><code class="lang-aspnet">&lt;asp:FileUpload ID= "Uploader" runat = "server" /&gt;
+</code></pre> 
+ <p><code>FileUpload</code>类从<code>WebControl</code>类派生，并继承其所有成员。除此之外，<code>FileUpload</code>类具有以下只读属性：</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>编号</th> 
+    <th>属性</th> 
+    <th>描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>1</td> 
+    <td><code>FileBytes</code></td> 
+    <td>返回要上传的文件中的字节数组。</td> 
+   </tr> 
+   <tr> 
+    <td>2</td> 
+    <td><code>FileContent</code></td> 
+    <td>返回指向要上传的文件的流对象。</td> 
+   </tr> 
+   <tr> 
+    <td>3</td> 
+    <td><code>FileName</code></td> 
+    <td>返回要上传的文件的名称。</td> 
+   </tr> 
+   <tr> 
+    <td>4</td> 
+    <td><code>HasFile</code></td> 
+    <td>指定控件是否有要上传的文件。</td> 
+   </tr> 
+   <tr> 
+    <td>5</td> 
+    <td><code>PostedFile</code></td> 
+    <td>返回对上传文件的引用。</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p>要上传的文件封装在<code>HttpPostedFile</code>类型的对象中，可以通过<code>FileUpload</code>类的<code>PostedFile</code>属性访问。</p> 
+ <p><code>HttpPostedFile</code>类具有以下常用属性：</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>编号</th> 
+    <th>属性</th> 
+    <th>描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>1</td> 
+    <td><code>ContentLength</code></td> 
+    <td>以字节为单位返回上传文件的大小。</td> 
+   </tr> 
+   <tr> 
+    <td>2</td> 
+    <td><code>ContentType</code></td> 
+    <td>返回上传文件的MIME类型。</td> 
+   </tr> 
+   <tr> 
+    <td>3</td> 
+    <td><code>FileName</code></td> 
+    <td>返回完整的文件名。</td> 
+   </tr> 
+   <tr> 
+    <td>4</td> 
+    <td><code>InputStream</code></td> 
+    <td>返回指向上传文件的流对象。</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h2 id="h2-u793Au4F8B"><a name="示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例</h2>
+ <p>以下示例演示了<code>FileUpload</code>控件及其属性。窗体有一个<code>FileUpload</code>控件以及一个<em>保存</em>按钮和一个用于显示文件名，文件类型和文件长度的标签控件。</p> 
+ <p>打开<em>Visual Studio</em> ，创建一个空的网站项目：<em>FileUploading</em> ，如下 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201712/0612/101141252_60329.png" alt=""></p> 
+ <p>然后，在项目名称上点击右键选择：<em>添加</em>-&gt;<em>添加新项</em> ，填写文件名称为：<em>Default.aspx</em> ， 如下图所示 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201712/0612/428141255_29387.png" alt=""></p> 
+ <p>在设计视图中，窗体如下所示：</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201712/0612/616151201_61493.png" alt=""></p> 
+ <p><em>Default.aspx</em> 文件中的代码如下：</p> 
+ <pre><code class="lang-aspnet">&lt;%@ Page Language="C#" AutoEventWireup="true" CodeFile="Default.aspx.cs" Inherits="_Default" %&gt;
+
+&lt;!DOCTYPE html&gt;
+
+&lt;html xmlns="http://www.w3.org/1999/xhtml"&gt;
+&lt;head runat="server"&gt;
+&lt;meta http-equiv="Content-Type" content="text/html; charset=utf-8"/&gt;
+    &lt;title&gt;文件上传示例&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;form id="form1" runat="server"&gt;
+        &lt;div&gt;
+         &lt;h3&gt; 文件上传:&lt;/h3&gt;
+         &lt;br /&gt;
+         &lt;asp:FileUpload ID="FileUpload1" runat="server" /&gt;
+         &lt;br /&gt;
+         &lt;asp:Button ID="btnsave" runat="server" onclick="btnsave_Click"  Text="上传保存" style="width:85px" /&gt;
+         &lt;br /&gt;&lt;br /&gt;
+         &lt;asp:Label ID="lblmessage" runat="server" /&gt;
+      &lt;/div&gt;
+    &lt;/form&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p><em>保存</em>按钮后端的代码(<em>Default.aspx.cs</em> )如下所示：</p>   
+ <pre><code class="lang-csharp">using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+
+public partial class _Default : System.Web.UI.Page
+{
+    protected void Page_Load(object sender, EventArgs e)
+    {
+
+    }
+
+    protected void btnsave_Click(object sender, EventArgs e)
+    {
+        StringBuilder sb = new StringBuilder("Empty File");
+        string fn = System.IO.Path.GetFileName(FileUpload1.PostedFile.FileName);
+        string SaveLocation = Server.MapPath("upload") + "\\" + fn;
+        lblmessage.Text = SaveLocation;
+        if ((FileUpload1.PostedFile != null) &amp;&amp; (FileUpload1.PostedFile.ContentLength &gt; 0))
+        {
+            try
+            {
+                sb.AppendFormat(" 正在上传文件: {0}", FileUpload1.FileName);
+
+                //saving the file
+                //FileUpload1.SaveAs("F:\\worksp\\asp.net\\FileUploading\\" + FileUpload1.FileName);
+                FileUpload1.PostedFile.SaveAs(SaveLocation);
+
+                //Showing the file information
+                sb.AppendFormat("&lt;br/&gt; 保存为: {0}", FileUpload1.PostedFile.FileName);
+                sb.AppendFormat("&lt;br/&gt; 文件类型: {0}", FileUpload1.PostedFile.ContentType);
+                sb.AppendFormat("&lt;br/&gt; 文件长度: {0}", FileUpload1.PostedFile.ContentLength);
+                sb.AppendFormat("&lt;br/&gt; 文件名称: {0}", FileUpload1.PostedFile.FileName);
+
+            }catch (Exception ex)
+            {
+                sb.Append("&lt;br/&gt; 错误 &lt;br/&gt;");
+                sb.AppendFormat("Unable to save file &lt;br/&gt; {0}", ex.Message);
+            }
+        }
+
+        lblmessage.Text = sb.ToString();
+
+    }
+}
+</code></pre> 
+ <p>请注意以下几点：</p> 
+ <ul> 
+  <li><code>StringBuilder</code>类是从<code>System.IO</code>命名空间派生的，所以需要包含它。</li>
+  <li><code>try</code>和<code>catch</code>块用于捕获错误，并显示错误消息。</li>
+ </ul> 
+ <p>执行上面项目，得到以下结果 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201712/0612/169151255_11994.png" alt=""></p> 
+ <p>选择一个要上传的文件，然后提交上传 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201712/0612/355151256_89300.png" alt=""></p>
+ <br>      
+</div></body></html>

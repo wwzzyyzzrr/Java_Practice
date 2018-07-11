@@ -1,0 +1,57 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Thymeleaf字符串转义</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>本文章将介绍Thymeleaf标准表达式语法中的概念。</p> 
+ <ul> 
+  <li>学习如何在Thymeleaf模板中显示转义值。</li>
+  <li>已将HTML代码片段设置为上下文模型，并将其作为变量名为<code>html</code>的字符串。在第一个div中显示HTML转义字符串，在第二个<code>div</code>中显示未转义字符串。</li>
+ </ul> 
+ <p>如果要上机实践，请参考:<a target="_blank" href="https://www.yiibai.com/thymeleaf/thymeleaf-springmvc5.html" title="Thymeleaf+SpringMVC5示例项目">Thymeleaf+SpringMVC5示例项目</a>。这里不再重复创建项目的过程，这里将只介绍如何使用<code>Thymeleaf</code>标准表达式和标签。</p> 
+ <p>这里创建一个Maven Web项目: <em>thymeleaf-tutorials</em> ，其目录结构如下所示 -<br><img src="http://www.yiibai.com/uploads/images/201802/1402/876150238_78276.png" alt=""></p> 
+ <p>控制器类的实现:<em>MyController.java</em> - </p> 
+ <pre><code class="lang-java">package com.yiibai.spring.controller;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import com.yiibai.spring.bean.Product;
+
+@Controller
+public class MyController {
+
+   @GetMapping("/")
+   public String index(Model model) throws ParseException {
+       SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+      Product product = new Product("花生油", 129, sdf.parse("2018-02-18"));
+      model.addAttribute("product", product);
+      return "index";
+   }
+
+   @GetMapping("/escape")
+   public String escape(Model model) throws ParseException {
+     String html =  "Welcome to our &lt;b&gt;fantastic&lt;/b&gt; grocery store!";
+      model.addAttribute("html", html);
+      return "escape";
+   }
+}
+</code></pre> 
+ <p>模板文件的实现:<em>/webapp/WEB-INFO/views/escape.html</em> - </p>   
+ <pre><code class="lang-html">&lt;html xmlns:th="http://www.thymeleaf.org"&gt;
+&lt;head&gt;
+&lt;meta charset="UTF-8"&gt;
+&lt;meta http-equiv="X-UA-Compatible" content="IE=edge"&gt;
+&lt;link rel="stylesheet" th:href="@{/css/main.css}" /&gt;
+&lt;title&gt;SpringMVC5+Thymeleaf示例&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h2&gt;Spring MVC5 + Thymeleaf 字符串转义示例&lt;/h2&gt;
+    &lt;div th:text="${html}"&gt;Some escaped text&lt;/div&gt;
+    &lt;div th:utext="${html}"&gt;Some unescaped text&lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>运行上面项目，在浏览器中显示效果如下 -<br><img src="http://www.yiibai.com/uploads/images/201802/2202/792150232_67990.png" alt=""></p>
+ <br>      
+</div></body></html>

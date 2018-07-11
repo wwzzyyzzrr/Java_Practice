@@ -1,0 +1,57 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Gradle依赖管理</h1><div style="width:100%;float:left;" class="article-content">   
+ <p><code>Gradle</code>构建脚本定义了构建项目的过程; 每个项目包含一些依赖项和一些发表项。依赖性意味着支持构建项目的东西，例如来自其他项目的所需<code>JAR</code>文件以及类路径中的外部<code>JAR</code>（如<code>JDBC JAR</code>或<code>Eh-cache JAR</code>）。发布表示项目的结果，如测试类文件和构建文件，如<code>war</code>文件。</p> 
+ <p><code>Gradle</code>负责构建和发布结果。 发布基于定义的任务。 可能希望将文件复制到本地目录，或将其上传到远程<a target="_blank" href="http://www.yiibai.com/maven/" title="Maven">Maven</a>或lvy存储库，或者可以在同一个多项目构建中使用另一个项目的文件。 发布的过程称为发布。</p> 
+ <h2 id="h2-u58F0u660Eu4F9Du8D56u5173u7CFB"><a name="声明依赖关系" class="reference-link"></a><span class="header-link octicon octicon-link"></span>声明依赖关系</h2>
+ <p><code>Gradle</code>遵循一些特殊语法来定义依赖关系。 以下脚本定义了两个依赖项，一个是<code>Hibernate core 3.6.7</code>，第二个是<code>Junit 4.0</code>和更高版本。如下面的代码所示，可在<code>build.gradle</code>文件中使用此代码。</p> 
+ <pre><code class="lang-sql">apply plugin: 'java'
+
+repositories {
+   mavenCentral()
+}
+
+dependencies {
+   compile group: 'org.hibernate', name: 'hibernate-core', version: '3.6.7.Final'
+   testCompile group: 'junit', name: 'junit', version: '4.+'
+}
+</code></pre> 
+ <h2 id="h2-u4F9Du8D56u5173u7CFBu914Du7F6E"><a name="依赖关系配置" class="reference-link"></a><span class="header-link octicon octicon-link"></span>依赖关系配置</h2>
+ <p>依赖关系配置只是定义了一组依赖关系。 您可以使用此功能声明从Web下载外部依赖关系。这定义了以下不同的标准配置。</p> 
+ <ul> 
+  <li>编译 − 编译项目的生产源所需的依赖关系。</li>
+  <li>运行时 - 运行时生产类所需的依赖关系。 默认情况下，还包括编译时依赖项。</li>
+  <li>测试编译 - 编译项目测试源所需的依赖项。 默认情况下，它包括编译的产生的类和编译时的依赖。</li>
+  <li>测试运行时 - 运行测试所需的依赖关系。 默认情况下，它包括运行时和测试编译依赖项。</li>
+ </ul> 
+ <h2 id="h2-u5916u90E8u4F9Du8D56"><a name="外部依赖" class="reference-link"></a><span class="header-link octicon octicon-link"></span>外部依赖</h2>
+ <p>外部依赖是一种依赖。 这是对当前构建之外构建的一些文件的依赖，并且存储在某种类型的存储库中，例如：<a target="_blank" href="http://www.yiibai.com/maven/" title="Maven">Maven</a> central，corporate Maven或lvy repository或本地文件系统中的目录。<br>以下代码片段是定义外部依赖关系。 在<code>build.gradle</code>文件中使用如下代码。</p>   
+ <pre><code class="lang-shell">dependencies {
+   compile group: 'org.hibernate', name: 'hibernate-core', version: '3.6.7.Final'
+}
+</code></pre> 
+ <h2 id="h2-u5B58u50A8u5E93"><a name="存储库" class="reference-link"></a><span class="header-link octicon octicon-link"></span>存储库</h2>
+ <p>在添加外部依赖关系时， Gradle在存储库中查找它们。 存储库只是文件的集合，按分组，名称和版本来组织构造。 默认情况下，Gradle不定义任何存储库。 我们必须至少明确地定义一个存储库。 下面的代码片段定义了如何定义 <code>maven</code> 仓库。 在<code>build.gradle</code>文件中使用此代码。</p> 
+ <pre><code class="lang-shell">repositories {
+   mavenCentral()
+}
+</code></pre> 
+ <p>下面的代码是定义远程<code>maven</code>。 在<code>build.gradle</code>文件中可使用下面代码。</p> 
+ <pre><code class="lang-shell">repositories {
+   maven {
+      url "http://repo.mycompany.com/maven2"
+   }
+}
+</code></pre> 
+ <h2 id="h2-u53D1u5E03u6587u4EF6"><a name="发布文件" class="reference-link"></a><span class="header-link octicon octicon-link"></span>发布文件</h2>
+ <p>依赖关系配置也用于发布文件。 这些已发布的文件称为工件。 通常，我们使用插件来定义工件。 但是需要告诉<code>Gradle</code>在哪里发布文件。可以通过将存储库附加到上传存档任务来实现此目的。 请查看以下用于发布<code>Maven</code>存储库的语法。 执行时，<code>Gradle</code>将根据项目需求生成并上传<code>Pom.xml</code>。 在<code>build.gradle</code>文件中使用此代码。</p> 
+ <pre><code class="lang-sql">apply plugin: 'maven'
+
+uploadArchives {
+   repositories {
+      mavenDeployer {
+         repository(url: "file://localhost/tmp/myRepo/")
+      }
+   }
+}
+</code></pre>
+ <br>      
+</div></body></html>

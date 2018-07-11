@@ -1,0 +1,91 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">alarm()函数 Unix/Linux</h1><div style="width:100%;float:left;" class="article-content">   
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> 名称</h1> 
+ <span style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;">alarm -&nbsp;</span>设置闹钟传递信号 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> 内容简介</h1> 
+ <table cellpadding="5" cellspacing="5" class="src" style="font-family: verdana, helvetica, arial, sans-serif;  border-color: rgb(170, 170, 170); width: 552px; background-color: rgb(241, 241, 241); border-collapse: collapse; padding-left: 5px; vertical-align: top; color: rgb(0, 0, 0);"> 
+  <tbody> 
+   <tr> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse;  border-color: rgb(170, 170, 170);"> <pre style="font-family: 'Courier New', monospace; font-size: 12px; margin-bottom: 0px;">
+<b>#include &lt;unistd.h&gt;</b> 
+
+</pre> <p style="text-align: justify;"> <b>unsigned int alarm(unsigned int </b><i>seconds</i><b>);</b></p> </td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> 描述</h1> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> <b>alarm</b>() arranges for a&nbsp;<b>SIGALRM</b>&nbsp;signal to be delivered to the process in&nbsp;<i>seconds</i>seconds.</p> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> If&nbsp;<i>seconds</i>&nbsp;is zero, no new&nbsp;<b>alarm</b>() is scheduled.</p> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> In any event any previously set&nbsp;<b>alarm</b>() is cancelled.</p> 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> 返回值</h1> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> <b>alarm</b>() 返回剩余的秒数，直到任何先前预定的报警是由于传递或零，如果没有先前预定的报警。</p> 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> 注意</h1> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> <b>alarm</b>() and&nbsp;<b>setitimer</b>() share the same timer; calls to one will interfere with use of the other.</p> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> <b>sleep</b>() may be implemented using&nbsp;<b>SIGALRM</b>; mixing calls to&nbsp;<b>alarm</b>() and&nbsp;<b>sleep</b>() is a bad idea.</p> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> 调度延迟，以往一样，导致执行任意数量的时间被推迟的进程。<br> &nbsp;</p> 
+ <p> 系统中的每个进程都有一个私有的闹钟。这个闹钟很像一个计时器，可以设置在一定秒数后闹钟。时间一到，时钟就发送一个信号SIGALRM到进程。</p> 
+ <p> 函数原型：unsigned int alarm（unsigned int seconds);<br> 头文件：#include&lt;unistd.h&gt;<br> 函数说明: alarm()用来设置信号SIGALRM在经过参数seconds指定的秒数后，传送给目前的进程。如果参数seconds为0，则之前设置的闹钟会被取消，并将剩下的时间返回。<br> 返回值：如果调用此alarm()前，进程已经设置了闹钟时间，则返回上一个闹钟时间的剩余时间，否则返回0。 出错返回-1。<br> <br> 例1：</p> 
+ <pre>
+int main(int argc, char *argv[]) {
+
+ unsigned int  timeleft;
+
+ 
+
+ printf( "Set the alarm and sleep\n" );  alarm( 10 );  sleep( 5 );
+
+ 
+
+ timeleft = alarm( 0 ); //获得上一个闹钟的剩余时间：5秒  printf( "\Time left     before cancel, and rearm: %d\n", timeleft );
+
+
+ alarm( timeleft );
+
+ printf( "\Hanging around, waiting to die\n" );  pause(); //让进程暂停直到信号出现
+
+ return EXIT_SUCCESS;
+
+}
+</pre> 
+ <p> &nbsp;</p> 
+ <p> 运行结果：</p> 
+ <p> 首先打印&nbsp;<wbr>&nbsp;<wbr>&nbsp;Set the alarm and sleep</p> 
+ <p> 5秒后打印&nbsp;<wbr>&nbsp;Time left before cancel, and rearm: 5</p> 
+ <p> &nbsp;<wbr>&nbsp;<wbr>&nbsp;<wbr>&nbsp;<wbr>&nbsp;<wbr>&nbsp;<wbr>&nbsp;<wbr>&nbsp;<wbr>&nbsp;<wbr>&nbsp;<wbr>&nbsp;Hanging around, waiting to die</p> 
+ <p> 再经过5秒，程序结束</p> 
+ <p> 除非进程为SIGALRM设置了处理函数，否则信号将杀死这个进程。比较下例中signal(SIGALRM, wakeup);语句打开与关闭的区别。</p> 
+ <p> 例2：</p>   
+ <pre>
+static void timer(int sig) {  static int count=0;  count++;
+
+ printf("\ncount = %d\n", count);
+
+    if(sig == SIGALRM)     {         printf("timer\n");     }
+
+ 
+
+ signal(SIGALRM, timer);  alarm(1);
+
+ 
+
+  if (count == 5)     alarm(0);     return; }
+
+ 
+
+int main(int argc, char *argv[]) {  signal(SIGALRM, timer);  alarm(1);  while(1);
+
+}</pre> 
+ <p> &nbsp;<wbr></p> 
+ <p> 计时器的另一个用途是调度一个在将来的某个时刻发生的动作同时做些其他事情。调度一个将要发生的动作很简单，通过调用alarm来设置计时器，然后继续做别的事情。当计时器计时到0时，信号发送，处理函数被调用。</p> 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> 遵循于</h1> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> SVr4, POSIX.1-2001, 4.3BSD</p> 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> 另请参阅</h1> 
+ <ul style="font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> 
+  <li> <p style="text-align: justify;"> <a target="_blank" href="http://www.yiibai.com/unix_system_calls/gettimeofday.html" style="color: rgb(144, 11, 9); background-color: transparent;">gettimeofday (2)</a></p> </li> 
+  <li> <p style="text-align: justify;"> <a target="_blank" href="http://www.yiibai.com/unix_system_calls/pause.html" style="color: rgb(144, 11, 9); background-color: transparent;">pause (2)</a></p> </li> 
+  <li> <p style="text-align: justify;"> <a target="_blank" href="http://www.yiibai.com/unix_system_calls/select.html" style="color: rgb(144, 11, 9); background-color: transparent;">select (2)</a></p> </li> 
+  <li> <p style="text-align: justify;"> <a target="_blank" href="http://www.yiibai.com/unix_system_calls/setitimer.html" style="color: rgb(144, 11, 9); background-color: transparent;">setitimer (2)</a></p> </li> 
+  <li> <p style="text-align: justify;"> <a target="_blank" href="http://www.yiibai.com/unix_system_calls/sigaction.html" style="color: rgb(144, 11, 9); background-color: transparent;">sigaction (2)</a></p> </li> 
+  <li> <p style="text-align: justify;"> <a target="_blank" href="http://www.yiibai.com/unix_system_calls/signal.html" style="color: rgb(144, 11, 9); background-color: transparent;">signal (2)</a></p> </li> 
+ </ul> 
+ <br>      
+</div></body></html>

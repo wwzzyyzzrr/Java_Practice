@@ -1,0 +1,142 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">ReactJS JSX</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>React使用JSX进行模板化，而不是使用普通的JavaScript。因为没有必要使用Javascript，但是，下面是一些它的利弊。</p> 
+ <ul> 
+  <li>它更快，因为它在将代码编译为JavaScript时执行优化。</li>
+  <li>它也是类型安全的，在编译过程中大部分错误都可以被捕获。</li>
+  <li>如果熟悉HTML，则可以更轻松，更快地编写模板。</li>
+ </ul> 
+ <h2 id="h2--jsx"><a name="使用JSX" class="reference-link"></a><span class="header-link octicon octicon-link"></span>使用JSX</h2>
+ <p>在大多数情况下，JSX看起来像一个普通的HTML。 我们已经在“开发环境设置”一章中使用了它。 下面来看看App.jsx中返回<code>div</code>的代码。</p> 
+ <p>文件：<em>App.jsx</em> - </p> 
+ <pre><code class="lang-js">import React from 'react';
+
+class App extends React.Component {
+   render() {
+      return (
+         &lt;div&gt;
+            Hello World!!!
+         &lt;/div&gt;
+      );
+   }
+}
+export default App;
+</code></pre> 
+ <p>尽管它与HTML很相似，但在处理JSX时还需要记住一些事项。</p> 
+ <h2 id="h2-u5D4Cu5957u7684u5143u7D20"><a name="嵌套的元素" class="reference-link"></a><span class="header-link octicon octicon-link"></span>嵌套的元素</h2>
+ <p>如果想返回更多的元素，需要用一个容器元素来包装它。注意这里我们如何使用<code>div</code>作为<code>h1</code>，<code>h2</code>和<code>p</code>元素的包装。</p> 
+ <p>文件：<em>App.jsx</em> - </p> 
+ <pre><code class="lang-js">import React from 'react';
+
+class App extends React.Component {
+   render() {
+      return (
+         &lt;div&gt;
+            &lt;h1&gt;Header h1&lt;/h1&gt;
+            &lt;h2&gt;Content h2&lt;/h2&gt;
+            &lt;p&gt;This is the content ~ &lt;/p&gt;
+         &lt;/div&gt;
+      );
+   }
+}
+export default App;
+</code></pre> 
+ <p>运行上面示例代码，得到以下结果 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201801/0201/357140117_89099.png" alt=""></p> 
+ <h2 id="h2-u5C5Eu6027"><a name="属性" class="reference-link"></a><span class="header-link octicon octicon-link"></span>属性</h2>
+ <p>除了常规的HTML属性外，还可以使用自己的自定义属性。 当想要添加自定义属性时，需要使用数据前缀。在下面的例子中，我们添加了<code>data-myattribute</code>作为<code>p</code>元素的一个属性。</p> 
+ <p>文件：<em>App.jsx</em> - </p> 
+ <pre><code class="lang-js">import React from 'react';
+
+class App extends React.Component {
+   render() {
+      return (
+         &lt;div&gt;
+            &lt;h1&gt;Header h1&lt;/h1&gt;
+            &lt;h2&gt;Content h2&lt;/h2&gt;
+            &lt;p data-myattribute = "somevalue"&gt;This is the content ~ &lt;/p&gt;
+         &lt;/div&gt;
+      );
+   }
+}
+export default App;
+</code></pre> 
+ <h2 id="h2-javascript-"><a name="JavaScript表达式" class="reference-link"></a><span class="header-link octicon octicon-link"></span>JavaScript表达式</h2>
+ <p>JavaScript表达式可以在JSX中使用。只需要用大括号<code>{}</code>来包装它。 以下示例将呈现数字：<code>2</code>。</p> 
+ <p>文件：<em>App.jsx</em> - </p> 
+ <pre><code class="lang-js">import React from 'react';
+
+class App extends React.Component {
+   render() {
+      return (
+         &lt;div&gt;
+            &lt;h1&gt;结果值为：{1+1}&lt;/h1&gt;
+         &lt;/div&gt;
+      );
+   }
+}
+export default App;
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 -<br><img src="http://www.yiibai.com/uploads/images/201801/0201/919140123_56599.png" alt=""></p> 
+ <p>不能在JSX中使用<code>if else</code>语句，而是使用条件(三元)表达式。 在下面的例子中，变量<code>i</code>等于<code>1</code>，所以浏览器将呈现为真，如果将其更改为其他值，它将呈现<code>false</code>。</p> 
+ <p>文件：<em>App.jsx</em> - </p> 
+ <pre><code class="lang-js">import React from 'react';
+
+class App extends React.Component {
+   render() {
+      var i = 1;
+      return (
+         &lt;div&gt;
+            &lt;h1&gt;{i == 1 ? 'True!' : 'False'}&lt;/h1&gt;
+         &lt;/div&gt;
+      );
+   }
+}
+export default App;
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 -<br><img src="http://www.yiibai.com/uploads/images/201801/0201/351170144_12768.png" alt=""></p> 
+ <h2 id="h2-u6837u5F0F"><a name="样式" class="reference-link"></a><span class="header-link octicon octicon-link"></span>样式</h2>
+ <p>React建议使用内联样式。当想要设置内联样式时，需要使用驼峰(<code>camelCase</code>)语法。 React还会在特定元素的数值后自动附加<code>px</code>。以下示例显示如何将<code>myStyle</code>内联添加到<code>h1</code>元素。</p> 
+ <p>文件：<em>App.jsx</em> - </p>   
+ <pre><code class="lang-js">import React from 'react';
+
+class App extends React.Component {
+   render() {
+      var myStyle = {
+         fontSize: 40,
+         color: 'green'
+      }
+      return (
+         &lt;div&gt;
+            &lt;h1 style = {myStyle}&gt;Header&lt;/h1&gt;
+         &lt;/div&gt;
+      );
+   }
+}
+export default App;
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 -<br><img src="http://www.yiibai.com/uploads/images/201801/0201/983170147_86914.png" alt=""></p> 
+ <h2 id="h2-u6CE8u91CA"><a name="注释" class="reference-link"></a><span class="header-link octicon octicon-link"></span>注释</h2>
+ <p>在写注释时，我们需要在想要在标签的子部分写注释的时候放上大括号<code>{}</code>。 在编写注释时总是使用<code>{}</code>是一个好习惯，因为我们希望在编写应用程序时保持一致。如下代码所示 - </p> 
+ <pre><code class="lang-js">import React from 'react';
+
+class App extends React.Component {
+   render() {
+      return (
+         &lt;div&gt;
+            &lt;h1&gt;Header&lt;/h1&gt;
+            {//End of the line Comment...}
+            {/*Multi line comment...*/}
+         &lt;/div&gt;
+      );
+   }
+}
+export default App;
+</code></pre> 
+ <h2 id="h2-u547Du540Du7EA6u5B9A"><a name="命名约定" class="reference-link"></a><span class="header-link octicon octicon-link"></span>命名约定</h2>
+ <p>HTML标签总是使用小写的标签名称，而React组件以大写字母开头。</p> 
+ <blockquote> 
+  <p>注意 - 应该使用<code>className</code>和<code>htmlFor</code>作为XML属性名称，而不是<code>class</code>和<code>for</code>。</p> 
+ </blockquote> 
+ <p>这在React官方页面上解释为 -<br>由于JSX是JavaScript，所以不鼓励使用类和标识符等标识符作为XML属性名称。 React DOM组件期望使用DOM属性名称，例如<code>className</code>和<code>htmlFor</code>。</p>
+ <br>      
+</div></body></html>

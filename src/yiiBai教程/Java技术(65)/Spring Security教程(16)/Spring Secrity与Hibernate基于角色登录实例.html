@@ -1,0 +1,245 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Spring Secrity与Hibernate基于角色登录实例</h1><div style="width:100%;float:left;" class="article-content">   
+ <div>
+   这篇文章介绍了如何使用Hibernate设置来实现Spring&nbsp;Security基于角色登录。程序会根据用户分配的角色，使用Hibernate设置在用户登录后根据用户角色重定向到不同的URL。 
+ </div> 
+ <div> 
+  <p> 这篇文章是在&nbsp;<a target="_blank" href="http://www.yiibai.com/spring-security/spring-security-4-hibernate-annotation-example.html">Spring Security Hibernate注释实例</a>&nbsp;基础上补充的,&nbsp;并简单地增加了基于角色的登录功能。由于这个篇文章与&nbsp;<a target="_blank" href="http://www.yiibai.com/spring-security/spring-security-4-hibernate-annotation-example.html">Spring&nbsp;Security Hibernate注解实例</a>有&nbsp;99%&nbsp;是相同的，除了一些改变，我们就不在这里重复的代码。仅做了一些简单地更改如下。 </p> 
+  <p> 首先我们来看看整个工程目录的结构，如下图所示 -&nbsp;<br> <img src="/uploads/tutorial/20160822/160r2213036_1_w7.png" alt=""><br> <img src="/uploads/tutorial/20160822/160r2213052_1_143.png" alt=""> </p> 
+  <h4> 
+   <div>
+     第1步：创建一个新客户成功处理程序 
+   </div> </h4> 
+  <div>
+    这个类的目标是提供自定义的重定向功能。 
+  </div> 
+  <pre>package com.yiibai.springsecurity.configuration;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.web.DefaultRedirectStrategy;
+import org.springframework.security.web.RedirectStrategy;
+import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
+import org.springframework.stereotype.Component;
+
+@Component
+public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler{
+
+	private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
+	
+    @Override
+    protected void handle(HttpServletRequest request, 
+      HttpServletResponse response, Authentication authentication) throws IOException {
+        String targetUrl = determineTargetUrl(authentication);
+ 
+        if (response.isCommitted()) {
+            System.out.println("Can't redirect");
+            return;
+        }
+ 
+        redirectStrategy.sendRedirect(request, response, targetUrl);
+    }
+    
+    protected String determineTargetUrl(Authentication authentication) {
+    	String url="";
+    	
+        Collection&lt;? extends GrantedAuthority&gt; authorities =  authentication.getAuthorities();
+        
+		List&lt;String&gt; roles = new ArrayList&lt;String&gt;();
+
+		for (GrantedAuthority a : authorities) {
+			roles.add(a.getAuthority());
+		}
+
+		if (isDba(roles)) {
+			url = "/db";
+		} else if (isAdmin(roles)) {
+			url = "/admin";
+		} else if (isUser(roles)) {
+			url = "/home";
+		} else {
+			url="/accessDenied";
+		}
+
+		return url;
+    }
+ 
+    public void setRedirectStrategy(RedirectStrategy redirectStrategy) {
+        this.redirectStrategy = redirectStrategy;
+    }
+    protected RedirectStrategy getRedirectStrategy() {
+        return redirectStrategy;
+    }
+    
+	private boolean isUser(List&lt;String&gt; roles) {
+		if (roles.contains("ROLE_USER")) {
+			return true;
+		}
+		return false;
+	}
+
+	private boolean isAdmin(List&lt;String&gt; roles) {
+		if (roles.contains("ROLE_ADMIN")) {
+			return true;
+		}
+		return false;
+	}
+
+	private boolean isDba(List&lt;String&gt; roles) {
+		if (roles.contains("ROLE_DBA")) {
+			return true;
+		}
+		return false;
+	}
+
+}&nbsp;</pre> 
+  <p> 请注意我们是如何扩展Spring&nbsp;SimpleUrlAuthenticationSuccessHandler类和覆盖&nbsp;handle()&nbsp;方法，只是调用使用配置RedirectStrategy重定向[默认在这种情况下]URL，它是用户定义determineTargetUrl方法返回。&nbsp;这个方法从当前认证对象提取登录用户的角色，然后构造基于角色有相应的URL。最后是RedirectStrategy&nbsp;负责Spring&nbsp;Security&nbsp;框架内的所有重定向，将请求重定向到指定的URL。 </p> 
+  <h4> 
+   <div>
+     第2步：注册自定义成功处理程序使用[现有]Security配置 
+   </div> </h4> 
+  <pre>package com.yiibai.springsecurity.configuration;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.userdetails.UserDetailsService;
+
+@Configuration
+@EnableWebSecurity
+public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
+
+	@Autowired
+	@Qualifier("customUserDetailsService")
+	UserDetailsService userDetailsService;
+
+	@Autowired
+	CustomSuccessHandler customSuccessHandler;
+	
+	
+	@Autowired
+	public void configureGlobalSecurity(AuthenticationManagerBuilder auth) throws Exception {
+		auth.userDetailsService(userDetailsService);
+	}
+	
+	@Override
+	protected void configure(HttpSecurity http) throws Exception {
+	  http.authorizeRequests()
+	  	//.antMatchers("/", "/home").permitAll()
+	  	.antMatchers("/", "/home").access("hasRole('USER')")
+	  	.antMatchers("/admin/**").access("hasRole('ADMIN')")
+	  	.antMatchers("/db/**").access("hasRole('ADMIN') and hasRole('DBA')")
+	  	//.and().formLogin().loginPage("/login")
+	  	.and().formLogin().loginPage("/login").successHandler(customSuccessHandler)
+	  	.usernameParameter("ssoId").passwordParameter("password")
+	  	.and().csrf()
+	  	.and().exceptionHandling().accessDeniedPage("/Access_Denied");
+	}
+
+}</pre> 
+  <div>
+    这里相比之前&nbsp;Hibernate&nbsp;文章中的变化是额外调用&nbsp;successHandler()如下所示： 
+  </div> 
+  <p> formLogin().loginPage("/login").successHandler(customSuccessHandler).<br> 我们来看看 successHandler。这个类基于自定义逻辑负责最后的重定向，这对我们来说是用户的重定向[home/admin/db]是根据他的角色[USER/ADMIN/DBA]。 </p> 
+  <div>
+    此外，我们根据用户角色保护了主页，使例子更贴近现实。 
+  </div> 
+  <div>
+    刚刚在配置包添加这个类并将其注册为成功处理程序来使用Security配置(如上图所示)。 
+  </div> 
+  <div>
+    以上对应的XML配置格式的安全配置是： 
+  </div> 
+  <pre>&lt;beans:beans xmlns="http://www.springframework.org/schema/security"
+    xmlns:beans="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
+    http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-4.0.xsd"&gt;
+     
+    &lt;http auto-config="true" &gt;
+        &lt;intercept-url pattern="/" access="permitAll" /&gt;
+        &lt;intercept-url pattern="/home" access="permitAll" /&gt;
+        &lt;intercept-url pattern="/admin**" access="hasRole('ADMIN')" /&gt;
+        &lt;intercept-url pattern="/dba**" access="hasRole('ADMIN') and hasRole('DBA')" /&gt;
+        &lt;form-login  login-page="/login" 
+                     username-parameter="ssoId" 
+                     password-parameter="password" 
+                     authentication-success-handler-ref="customSuccessHandler"
+                     authentication-failure-url="/Access_Denied" /&gt;
+        &lt;csrf/&gt;
+    &lt;/http&gt;
+ 
+    &lt;authentication-manager &gt;
+        &lt;authentication-provider user-service-ref="customUserDetailsService"/&gt;
+    &lt;/authentication-manager&gt;
+     
+    &lt;beans:bean id="customUserDetailsService" class="com.yiibai.springsecurity.service.CustomUserDetailsService" /&gt;
+    &lt;beans:bean id="customSuccessHandler"     class="com.yiibai.springsecurity.configuration.CustomSuccessHandler" /&gt;
+    
+&lt;/beans:beans&gt;</pre> 
+  <h4> </h4> 
+  <h4> 
+   <div>
+     构建和部署应用程序 
+   </div> </h4> 
+  <p> 现在构造&nbsp;war(通过&nbsp;eclipse/m2eclipse)或通过Maven的命令行(mvn&nbsp;clean&nbsp;install)。部署WAR文件到Servlet3.0容器。由于这里我使用的是在&nbsp;eclipse&nbsp;中配置&nbsp;Tomcat，可以直接发布到&nbsp;Tomcat&nbsp;服务容器中。如果不知道怎么使用，可以参考：<a target="_blank" href="http://www.yiibai.com/maven/create-a-maven-web-project-with-eclipse.html">http://www.yiibai.com/maven/create-a-maven-web-project-with-eclipse.html</a> </p> 
+  <div>
+    运行应用程序 
+  </div> 
+  <p> 仅供参考，我们将使用在上一节中的所定义的数据库表结构及数据记录。点击查看<a target="_blank" href="http://www.yiibai.com/spring-security/spring-security-4-hibernate-annotation-example.html">数据库表和记录</a>&nbsp;。 </p> 
+  <p> 打开浏览器并访问 -&nbsp;<a target="_blank" href="http://localhost:8080/SpringSecurityHibernateRoleBasedLogin/">http://localhost:8080/SpringSecurityHibernateRoleBasedLogin/&nbsp;</a> </p> 
+ </div> 
+ <div> 
+  <p> 结果如下所示 -&nbsp; </p> 
+ </div> 
+ <div> 
+  <p> <img src="/uploads/tutorial/20160822/160r2213148_1_448.png" alt=""> </p> 
+  <p> 提供DBA登录帐户信息，这里使用 kenny 作为登录名。 </p> 
+  <p> <img src="/uploads/tutorial/20160822/160r2213210_1_918.png" alt=""> </p> 
+  <p> 提交后登录成功后，你会被直接跳转到 /db 页面， kenny具有DBA角色。如下图中所示 -&nbsp; </p> 
+  <p> <img src="/uploads/tutorial/20160822/160r2213227_1_m4.png" alt=""> </p> 
+  <div>
+    现在注销，并填写一个一般用户角色的用户名，执行登录测试跳转 - 
+  </div> 
+  <p> <img src="/uploads/tutorial/20160822/160r2213244_1_513.png" alt=""> </p> 
+  <p> 这里为了演示，故意写错了登录密码，如下所示 -&nbsp;<br> <img src="/uploads/tutorial/20160822/160r2213301_1_348.png" alt=""> </p> 
+  <p> 提供正确的用户(USER&nbsp;)角色的凭据，您将被重定向到主页。 </p> 
+  <p> <img src="/uploads/tutorial/20160822/160r2213318_1_312.png" alt=""> </p> 
+  <div>
+    现在尝试访问管理页面：
+   <a target="_blank" href="http://localhost:8080/SpringSecurityHibernateRoleBasedLogin/admin">http://localhost:8080/SpringSecurityHibernateRoleBasedLogin/admin</a>&nbsp;。您应该看到拒绝访问页面。如下图中所示 -&nbsp; 
+  </div> 
+  <p> <img src="/uploads/tutorial/20160822/160r2213332_1_956.png" alt=""> </p> 
+  <div>
+    现在，注销和管理员(ADMIN)凭据登录，这里使用一个叫作：sam 的用户登录，您将会被跳转到URL：/admin。如下图中所示 -&nbsp; 
+  </div> 
+  <p> <img src="/uploads/tutorial/20160822/160r2213347_1_9b.png" alt=""> </p> 
+  <p> 最后，注销登录- </p> 
+  <p> <img src="/uploads/tutorial/20160822/160r2213410_1_1b.png" alt=""> </p> 
+  <div>
+    就这样。下一篇文章我们将来学习在&nbsp;Spring&nbsp;Security&nbsp;中
+   <a target="_blank" href="http://yiibai.com/spring-security/spring-security-4-password-encoder-bcrypt-example-with-hibernate.html">使用BCryptPasswordEncoder密码编码</a>。 
+  </div> 
+  <h4> 下载源代码 &nbsp;&nbsp;<br> <a target="_blank" href="http://share.weiyun.com/fa782a043b07e7a08df0b7d36f15e7a3">09-SpringSecurityHibernateRoleBasedLogin.zip</a><br> </h4> 
+  <h4> 参考 </h4> 
+  <ul> 
+   <li> <a target="_blank" href="http://projects.spring.io/spring-security/">Spring Security 4 工程实例</a> </li> 
+   <li> <a target="_blank" href="http://docs.spring.io/spring-security/site/docs/4.0.1.RELEASE/reference/htmlsingle/">Spring Security 4 参考手册</a> </li> 
+  </ul> 
+ </div> 
+ <div> 
+  <br> 
+ </div>
+ <br>      
+</div></body></html>

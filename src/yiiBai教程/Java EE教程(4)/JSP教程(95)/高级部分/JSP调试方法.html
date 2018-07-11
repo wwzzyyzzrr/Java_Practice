@@ -1,0 +1,132 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">JSP调试方法</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>在本章中，我们将讨论学习如何调试JSP。JSP和servlet总是难以测试/调试。 JSP和Servlet往往涉及到大量的客户端/服务器交互，使错误可能难以复制。</p> 
+ <p>以下是一些提示和建议，可能会帮助您对JSP和servlet进行调试。</p> 
+ <h2 id="h2-1-system-out-println-"><a name="1. 使用System.out.println()" class="reference-link"></a><span class="header-link octicon octicon-link"></span>1. 使用System.out.println()</h2>
+ <p><code>System.out.println()</code>很容易用作一个标记来测试某段代码是否被执行。也可以打印变量值。想一下以下附加知识要点 -</p> 
+ <ul> 
+  <li><p>由于System对象是核心Java对象的一部分，因此可以在任何地方使用它，而无需安装任何额外的类。这包括Servlet，JSP，RMI，EJB，普通Bean和类，以及独立应用程序。</p> </li>
+  <li><p>与停止断点相比，写入<code>System.out</code>并不会干扰应用程序的正常执行流程，这使得查看执行时序时非常有价值。</p> </li>
+ </ul> 
+ <p>以下是使用<code>System.out.println()</code>的语法 -</p> 
+ <pre><code class="lang-java">System.out.println("Debugging message");
+</code></pre> 
+ <p>以下示例显示如何使用<code>System.out.print()</code>的示例 -</p> 
+ <pre><code class="lang-html">&lt;%@taglib prefix = "c" uri = "http://java.sun.com/jsp/jstl/core" %&gt;
+
+&lt;html&gt;
+   &lt;head&gt;&lt;title&gt;System.out.println&lt;/title&gt;&lt;/head&gt;
+   &lt;body&gt;
+      &lt;c:forEach var = "counter" begin = "1" end = "10" step = "1" &gt;
+
+         &lt;c:out value = "${counter-5}"/&gt;&lt;/br&gt;
+         &lt;% System.out.println( "counter = " + pageContext.findAttribute("counter") ); %&gt;
+      &lt;/c:forEach&gt;
+
+   &lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>访问上述JSP，浏览器将显示以下结果 -</p> 
+ <pre><code class="lang-shell">-4
+-3
+-2
+-1
+0
+1
+2
+3
+4
+5
+</code></pre> 
+ <p>如果使用Tomcat，还将在<code>logs</code>目录中的<code>stdout.log</code>文件末尾看到输出了这些行。</p> 
+ <pre><code class="lang-shell">counter = 1
+counter = 2
+counter = 3
+counter = 4
+counter = 5
+counter = 6
+counter = 7
+counter = 8
+counter = 9
+counter = 10
+</code></pre> 
+ <p>这样，可以将变量和其他信息输入到系统日志中，以便分析问题的根本原因或其他原因。</p> 
+ <h2 id="h2-2-jdb-"><a name="2. 使用JDB记录器" class="reference-link"></a><span class="header-link octicon octicon-link"></span>2. 使用JDB记录器</h2>
+ <p>J2SE日志记录框架旨在为在JVM中运行的任何类提供日志记录服务。我们可以利用这个框架来记录任何信息。</p> 
+ <p>这里演示使用JDK logger API重写上面的例子 -</p> 
+ <pre><code class="lang-html">&lt;%@taglib prefix = "c" uri = "http://java.sun.com/jsp/jstl/core" %&gt;
+&lt;%@page import = "java.util.logging.Logger" %&gt;
+
+&lt;html&gt;
+   &lt;head&gt;&lt;title&gt;Logger.info&lt;/title&gt;&lt;/head&gt;
+
+   &lt;body&gt;
+      &lt;% Logger logger = Logger.getLogger(this.getClass().getName());%&gt;
+
+      &lt;c:forEach var = "counter" begin = "1" end = "10" step = "1" &gt;
+      &lt;c:set var = "myCount" value = "${counter-5}" /&gt;
+      &lt;c:out value = "${myCount}"/&gt;&lt;/br&gt;
+         &lt;% String message = "counter = "
+            + pageContext.findAttribute("counter") + "myCount = "
+            + pageContext.findAttribute("myCount");
+            logger.info( message );
+         %&gt;
+      &lt;/c:forEach&gt;
+
+   &lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>上述代码将在浏览器和<code>stdout.log</code>中生成类似的结果，但是在<code>stdout.log</code>中将会有其他信息。我们将使用信息记录器的<code>info()</code>方法，因为并记录信息仅供参考。 以下是<code>stdout.log</code>文件的快照 -</p> 
+ <pre><code class="lang-shell">24-Sep-2017 23:31:31 org.apache.jsp.main_jsp _jspService
+INFO: counter = 1 myCount = -4
+24-Sep-2017 23:31:31 org.apache.jsp.main_jsp _jspService
+INFO: counter = 2 myCount = -3
+24-Sep-2017 23:31:31 org.apache.jsp.main_jsp _jspService
+INFO: counter = 3 myCount = -2
+24-Sep-2017 23:31:31 org.apache.jsp.main_jsp _jspService
+INFO: counter = 4 myCount = -1
+24-Sep-2017 23:31:31 org.apache.jsp.main_jsp _jspService
+INFO: counter = 5 myCount = 0
+24-Sep-2017 23:31:31 org.apache.jsp.main_jsp _jspService
+INFO: counter = 6 myCount = 1
+24-Sep-2017 23:31:31 org.apache.jsp.main_jsp _jspService
+INFO: counter = 7 myCount = 2
+24-Sep-2017 23:31:31 org.apache.jsp.main_jsp _jspService
+INFO: counter = 8 myCount = 3
+24-Sep-2017 23:31:31 org.apache.jsp.main_jsp _jspService
+INFO: counter = 9 myCount = 4
+24-Sep-2017 23:31:31 org.apache.jsp.main_jsp _jspService
+INFO: counter = 10 myCount = 5
+</code></pre> 
+ <p>消息可以通过使用函数<code>severe()</code>，<code>warning()</code>，<code>info()</code>，<code>config()</code>，<code>fine()</code>，<code>finer()</code>和<code>finest()</code>来发送到各个级别的信息。 这里可以使用<code>severe()</code>方法来记录信息，并使用<code>strict()</code>方法来记录严重的信息。</p> 
+ <p>可以使用<a target="_blank" href="http://www.yiibai.com/log4j/" title="Log4J框架">Log4J框架</a>根据其严重性级别和重要性将消息记录在不同的文件中。</p> 
+ <h2 id="h2-u8C03u8BD5u5DE5u5177"><a name="调试工具" class="reference-link"></a><span class="header-link octicon octicon-link"></span>调试工具</h2>
+ <p>NetBeans是一个免费的开源Java集成开发环境，支持独立的Java应用程序和支持JSP和servlet规范的Web应用程序的开发，并且还包括一个JSP调试器。</p> 
+ <p>NetBeans支持以下基本调试功能 -</p> 
+ <ul> 
+  <li>断点</li>
+  <li>逐步通过代码</li>
+  <li>观察点</li>
+ </ul> 
+ <p>可以参考NetBeans文档来了解以上调试功能。</p> 
+ <h2 id="h2-1-jdb-"><a name="1. 使用JDB调试器" class="reference-link"></a><span class="header-link octicon octicon-link"></span>1. 使用JDB调试器</h2>
+ <p>可以使用用于调试小程序或应用程序的相同jdb命令调试JSP和servlet。</p> 
+ <p>要调试JSP或servlet，可以调试<code>sun.servlet.http.HttpServer</code>，然后观察<code>HttpServer</code>是否执行JSP/servlet以响应从浏览器进行的HTTP请求。这非常类似于applet的调试方式。与applet不同的是，被调试的实际程序是<code>sun.applet.AppletViewer</code>。</p> 
+ <p>大多数调试器通过自动知道如何调试小程序来隐藏这些细节。直到它们对JSP执行相同操作，必须通过考虑以下内容来使用调试器 -</p> 
+ <ul> 
+  <li>设置调试器的类路径。这有助于找到<code>sun.servlet.http.Http-Server</code>和关联的类。</li>
+  <li>设置调试器的类路径。这有助于找到JSP和支持类，通常是<code>{WebApp}\WEB-INF\classes</code>。</li>
+ </ul> 
+ <p>当设置了正确的<code>classpath</code>，开始调试<code>sun.servlet.http.HttpServer</code>。就可以在任何调试感兴趣的JSP中设置断点，然后使用Web浏览器向HttpServer发送给定JSP(<em>http：// localhost：8080/JSPToDebug</em>)的请求。这里的执行停止在设置的断点处。</p> 
+ <h2 id="h2-2-"><a name="2. 使用注释" class="reference-link"></a><span class="header-link octicon octicon-link"></span>2. 使用注释</h2>
+ <p>代码中的注释可以以各种方式帮助调试过程。注释可以在调试过程中以很多其他方式使用。</p> 
+ <p>JSP使用Java注释和单行(<code>//...</code>)，多行(<code>/* ... */</code>)注释可用于临时删除部分Java代码。如果错误消失，请仔细查看刚刚注释的代码，并找出问题。</p> 
+ <h2 id="h2-3-"><a name="3. 客户端和服务器头" class="reference-link"></a><span class="header-link octicon octicon-link"></span>3. 客户端和服务器头</h2>
+ <p>有时，当JSP不按预期行为时，查看原始HTTP请求和响应是有用的。如果熟悉HTTP的结构，可以阅读请求和响应，并查看这些标题究竟是什么。</p> 
+ <p><strong>重要的调试提示</strong></p> 
+ <p>以下是有关JSP调试的更多调试提示的列表：</p> 
+ <p>请浏览器显示正在显示的页面的原始内容。这可以帮助识别格式化问题。它通常是视图菜单下的一个选项。</p> 
+ <ul> 
+  <li>确保浏览器不通过强制完全重新载入页面来缓存先前请求的输出。如果使用的浏览器是：<em>Netscape Navigator</em>，则使用<code>Shift-Reload</code>; 使用的浏览器是：<em>Internet Explorer</em>使用<code>Shift-Refresh</code>。</li>
+ </ul>
+ <br>      
+</div></body></html>

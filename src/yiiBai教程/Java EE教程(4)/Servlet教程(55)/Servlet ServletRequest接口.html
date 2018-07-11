@@ -1,0 +1,147 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Servlet ServletRequest接口</h1><div style="width:100%;float:left;" class="article-content">   
+ <p><strong>ServletRequest接口</strong></p> 
+ <p><code>ServletRequest</code>的对象用于向Servlet提供客户端请求信息，如内容类型，内容长度，参数名称和值，标题信息，属性等。</p> 
+ <h2 id="h2-servletrequest-"><a name="ServletRequest接口的方法" class="reference-link"></a><span class="header-link octicon octicon-link"></span>ServletRequest接口的方法</h2>
+ <p><code>ServletRequest</code>接口中定义了很多方法。 其中一些如下：</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>编号</th> 
+    <th>方法</th> 
+    <th>描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>1</td> 
+    <td><code>public String getParameter(String name)</code></td> 
+    <td>用于通过名称获取参数的值。</td> 
+   </tr> 
+   <tr> 
+    <td>2</td> 
+    <td><code>public String[] getParameterValues(String name)</code></td> 
+    <td>返回一个包含给定参数名称的所有值的String数组。它主要用于获取多选列表框的值。</td> 
+   </tr> 
+   <tr> 
+    <td>3</td> 
+    <td><code>java.util.Enumeration getParameterNames()</code></td> 
+    <td>返回所有请求参数名称的枚举。</td> 
+   </tr> 
+   <tr> 
+    <td>4</td> 
+    <td><code>public int getContentLength()</code></td> 
+    <td>返回请求实体数据的大小，如果未知则返回<code>-1</code>。</td> 
+   </tr> 
+   <tr> 
+    <td>5</td> 
+    <td><code>public String getCharacterEncoding()</code></td> 
+    <td>返回此请求输入的字符集编码。</td> 
+   </tr> 
+   <tr> 
+    <td>6</td> 
+    <td><code>public String getContentType()</code></td> 
+    <td>返回请求实体数据的网络媒体类型，如果未知则返回<code>null</code>。</td> 
+   </tr> 
+   <tr> 
+    <td>7</td> 
+    <td><code>public ServletInputStream getInputStream() throws IOException</code></td> 
+    <td>返回用于读取请求正文中二进制数据的输入流。</td> 
+   </tr> 
+   <tr> 
+    <td>8</td> 
+    <td><code>public abstract String getServerName()</code></td> 
+    <td>返回接收请求的服务器的主机名。</td> 
+   </tr> 
+   <tr> 
+    <td>9</td> 
+    <td><code>public int getServerPort()</code></td> 
+    <td>返回接收到此请求的端口号。</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p><strong>ServletRequest显示用户名称的示例</strong></p> 
+ <p>在这个例子中，在servlet中显示用户提交上来的名字。这里使用<code>getParameter()</code>方法返回指定请求参数名称的值。</p> 
+ <p>打开Eclipse，创建一个名称为：<strong>ServletRequest</strong> 的动态Web网站项目，项目的目录结构如下 - </p> 
+ <p>关键代码如下 - </p> 
+ <p><em>ServletRequest.java</em> - </p> 
+ <pre><code class="lang-java">package com.yiibai;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+/**
+ * Servlet implementation class ServletRequest
+ */
+public class ServletRequest extends HttpServlet {
+    private static final long serialVersionUID = 1L;
+
+    /**
+     * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
+     *      response)
+     */
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        // TODO Auto-generated method stub
+        // response.getWriter().append("Served at: ").append(request.getContextPath());
+        response.setContentType("text/html");
+        PrintWriter pw = response.getWriter();
+
+        String name = request.getParameter("name");// will return value
+        if (name == null || name == "") {
+            name = "";
+        }
+        pw.println("Welcome " + name);
+
+        pw.close();
+    }
+
+}
+</code></pre> 
+ <p><em>index.html</em> - </p>   
+ <pre><code class="lang-html">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;meta charset="UTF-8"&gt;
+&lt;title&gt;Welcome - ServletRequest&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div style="text-align: center;"&gt;
+        &lt;form action="/ServletRequest/welcome"&gt;
+            名字：&lt;input type="text" name="name"&gt;&lt;input type="submit"
+                value="提交"&gt;
+        &lt;/form&gt;
+    &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p><em>web.xml</em> - </p> 
+ <pre><code class="lang-xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+    xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
+    id="WebApp_ID" version="3.1"&gt;
+    &lt;display-name&gt;ServletRequest&lt;/display-name&gt;
+    &lt;welcome-file-list&gt;
+        &lt;welcome-file&gt;index.html&lt;/welcome-file&gt;
+        &lt;welcome-file&gt;index.jsp&lt;/welcome-file&gt;
+    &lt;/welcome-file-list&gt;
+    &lt;servlet&gt;
+        &lt;servlet-name&gt;ServletRequest&lt;/servlet-name&gt;
+        &lt;servlet-class&gt;com.yiibai.ServletRequest&lt;/servlet-class&gt;
+    &lt;/servlet&gt;
+
+    &lt;servlet-mapping&gt;
+        &lt;servlet-name&gt;ServletRequest&lt;/servlet-name&gt;
+        &lt;url-pattern&gt;/welcome&lt;/url-pattern&gt;
+    &lt;/servlet-mapping&gt;
+&lt;/web-app&gt;
+</code></pre> 
+ <h2 id="h2-servletrequest-"><a name="ServletRequest接口的其他示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>ServletRequest接口的其他示例</h2>
+ <p><a target="_blank" href="http://www.yiibai.com/servlet/displaying-all-the-header-information-in-the-servlet.html" title="ServletRequest的示例显示所有头信息">ServletRequest的示例显示所有头信息</a><br>在这个例子中，显示servlet的头信息，如内容类型，内容长度，用户代理等。</p>
+ <br>      
+</div></body></html>

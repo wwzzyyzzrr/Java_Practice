@@ -1,0 +1,169 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">JSF &lt;h:message&gt;标签</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>它用于显示特定组件的单个消息。您可以通过将该组件的<code>id</code>传递给<code>for</code>属性来显示您的自定义消息。</p> 
+ <p>以下JSF标签 - </p> 
+ <pre><code class="lang-html">&lt;h:inputText  id="username"  size="20" label="UserName" required="true"&gt;
+   &lt;f:validateLength for="username" minimum="5" maximum="20" /&gt;      
+&lt;/h:inputText&gt;
+&lt;h:message for="username" style="color:red" /&gt;
+</code></pre> 
+ <p>如果输入超过20个字符时提示 -</p> 
+ <pre><code class="lang-html">&lt;span style="color:red"&gt;UserName: Validation Error: 
+Length is greater than allowable maximum of '20'&lt;/span&gt;
+</code></pre> 
+ <p>如果输入小于<code>5</code>个字符时提示 -</p> 
+ <pre><code class="lang-html">&lt;span style="color:red"&gt;UserName: Validation Error: 
+Length is less than allowable minimum of '5'&lt;/span&gt;
+</code></pre> 
+ <p>如果输入字段未输入时提示 -</p> 
+ <pre><code class="lang-html">&lt;span style="color:red"&gt;UserName: Validation Error: Value is required&lt;/span&gt;
+</code></pre> 
+ <h3 id="h3-jsf-code-lt-h-graphicimage-gt-code-"><a name="JSF <code><h:graphicImage></code>标签的属性" class="reference-link"></a><span class="header-link octicon octicon-link"></span>JSF <code>&lt;h:graphicImage&gt;</code>标签的属性</h3>
+ <table> 
+  <thead> 
+   <tr> 
+    <th>标签</th> 
+    <th>描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>for</td> 
+    <td>它是用于分配组件ID的强制性标签，因为该消息是组成的。</td> 
+   </tr> 
+   <tr> 
+    <td>errorClass</td> 
+    <td>它用于将CSS样式类应用于严重性类为“<code>ERROR</code>”的任何消息。</td> 
+   </tr> 
+   <tr> 
+    <td>errorStyle</td> 
+    <td>它用于将CSS样式应用于严重性级别为“<code>ERROR</code>”的任何消息。</td> 
+   </tr> 
+   <tr> 
+    <td>fatalClass</td> 
+    <td>它用于将CSS样式类应用于严重性级别为“<code>FATAL</code>”的任何消息。</td> 
+   </tr> 
+   <tr> 
+    <td>FatalStyle</td> 
+    <td>它用于将CSS样式应用于严重性级别为“<code>FATAL</code>”的任何消息。</td> 
+   </tr> 
+   <tr> 
+    <td>infoClass</td> 
+    <td>它用于将CSS样式类应用于严重性级别为“<code>INFO</code>”的任何消息。</td> 
+   </tr> 
+   <tr> 
+    <td>InfoStyle</td> 
+    <td>它用于将CSS样式应用于严重性级别为“<code>INFO</code>”的任何消息。</td> 
+   </tr> 
+   <tr> 
+    <td>tooltip</td> 
+    <td>它用于将消息的详细信息部分显示为工具提示。</td> 
+   </tr> 
+   <tr> 
+    <td>warnClass</td> 
+    <td>它用于将CSS样式类应用于严重性类为“<code>WARN</code>”的任何消息。</td> 
+   </tr> 
+   <tr> 
+    <td>warnStyle</td> 
+    <td>它用于将CSS样式应用于严重性级别为“WARN”的任何消息。</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h2 id="h2-u5B9Eu4F8B"><a name="实例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实例</h2>
+ <p>文件： <strong>index.xhtml</strong> 中有如下代码 - </p> 
+ <pre><code class="lang-html">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"&gt;
+&lt;html xmlns="http://www.w3.org/1999/xhtml"   
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"&gt;
+
+    &lt;h:body&gt;
+    &lt;h:form&gt;
+      &lt;h:messages style="color:red;margin:8px;" /&gt;
+      &lt;br /&gt;
+      &lt;h:panelGrid columns="3"&gt;
+        Enter your username :
+        &lt;h:inputText id="username" value="#{user.username}" 
+          size="20" required="true"
+          label="UserName" &gt;
+          &lt;f:validateLength minimum="5" maximum="10" /&gt;
+        &lt;/h:inputText&gt;
+
+        &lt;h:message for="username" style="color:red" /&gt;
+
+        Enter your age :
+        &lt;h:inputText id="age" value="#{user.age}" 
+          size="20" required="true"
+          label="Age" &gt;
+          &lt;f:validateLongRange for="age" minimum="1" maximum="200" /&gt;
+        &lt;/h:inputText&gt;
+
+        &lt;h:message for="age" style="color:red" /&gt;
+
+      &lt;/h:panelGrid&gt;
+
+      &lt;h:commandButton value="Submit" action="result" /&gt;
+
+    &lt;/h:form&gt;
+
+    &lt;/h:body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>文件： <strong>UserBean.java</strong> 中有如下代码 - </p>   
+ <pre><code class="lang-java">package com.yiibai;
+
+
+import java.io.Serializable;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.SessionScoped;
+
+@ManagedBean(name="user")
+@SessionScoped
+public class User implements Serializable{
+
+  private static final long serialVersionUID = 1L;
+
+  public String username;
+  public int age;
+
+  public String getUsername() {
+    return username;
+  }
+  public void setUsername(String username) {
+    this.username = username;
+  }
+  public int getAge() {
+    return age;
+  }
+  public void setAge(int age) {
+    this.age = age;
+  }
+
+}
+</code></pre> 
+ <p>以下是<code>result.xhtml</code>文件中的代码 - </p> 
+ <pre><code class="lang-html">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"&gt;
+&lt;html xmlns="http://www.w3.org/1999/xhtml"   
+      xmlns:h="http://java.sun.com/jsf/html"&gt;
+    &lt;h:body&gt;
+    Username : #{user.username}
+    &lt;br /&gt;
+    Age : #{user.age}
+    &lt;/h:body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <h2 id="h2-u8FD0u884Cu9879u76EE"><a name="运行项目" class="reference-link"></a><span class="header-link octicon octicon-link"></span>运行项目</h2>
+ <p>启动Tomcat完成后，在浏览器地址栏中输入以下URL。</p> 
+ <pre><code>http://localhost:8080/hjsf/index.xhtml
+</code></pre>
+ <p>运行结果如下 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201704/2304/603110425_80909.png" alt=""></p> 
+ <p>未输入值直接提交，结果如下 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201704/2304/123110425_26960.png" alt=""></p> 
+ <p>输入值后提交，结果如下 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201704/2304/122110426_39653.png" alt=""></p>
+ <br>      
+</div></body></html>

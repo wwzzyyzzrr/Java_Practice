@@ -1,0 +1,38 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">ios::exceptions()函数</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>它用于获取/设置异常掩码。异常掩码是所有流对象保存的内部值，指定为哪些状态标志设置时抛出成员类型失败（或某些派生类型）的异常。</p> 
+ <h2 id="h2-u58F0u660E"><a name="声明" class="reference-link"></a><span class="header-link octicon octicon-link"></span>声明</h2>
+ <p>以下是<code>ios::exceptions</code>函数的声明。</p> 
+ <pre><code class="lang-cpp">get (1)    iostate exceptions() const;
+set (2)    void exceptions (iostate except);
+</code></pre> 
+ <p>上述第一种形式（1）返回流的当前异常掩码。<br>上面的第二种形式（2）为流设置一个新的异常掩码，并清除流的错误状态标志（好像调用了成员<code>clear（）</code>）。</p> 
+ <h2 id="h2-u53C2u6570"><a name="参数" class="reference-link"></a><span class="header-link octicon octicon-link"></span>参数</h2>
+ <ul> 
+  <li><code>except</code> − 设置错误状态标志位（<code>badbit</code>，<code>eofbit</code>和/或<code>failbit</code>）的组合形成的成员类型<code>iostate</code>的位掩码值，或者设置为<code>goodbit</code>（或零）。</li>
+ </ul> 
+ <h2 id="h2-u8FD4u56DEu503C"><a name="返回值" class="reference-link"></a><span class="header-link octicon octicon-link"></span>返回值</h2>
+ <ul> 
+  <li>在调用此成员函数之前返回表示现有异常掩码的成员类型<code>iostate</code>的位掩码。</li>
+ </ul> 
+ <h2 id="h2-u793Au4F8B"><a name="示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例</h2>
+ <p>下面的例子演示了<code>ios::fill</code>函数。</p>   
+ <pre><code class="lang-cpp">#include &lt;iostream&gt;     
+#include &lt;fstream&gt;      
+
+int main () {
+  std::ifstream file;
+  file.exceptions ( std::ifstream::failbit | std::ifstream::badbit );
+  try {
+    file.open ("test.txt");
+    while (!file.eof()) file.get();
+    file.close();
+  }
+  catch (std::ifstream::failure e) {
+    std::cerr &lt;&lt; "Exception opening/reading/closing file/n";
+  }
+
+  return 0;
+}
+</code></pre>
+ <br>      
+</div></body></html>

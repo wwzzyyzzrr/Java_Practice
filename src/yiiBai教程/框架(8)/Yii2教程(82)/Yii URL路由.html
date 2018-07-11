@@ -1,0 +1,187 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Yii URL路由</h1><div style="width:100%;float:left;" class="article-content">   
+ <div> 
+  <div>
+    要改变应用程序的默认路由，应该配置&nbsp;defaultRoute&nbsp;属性。 
+  </div> 
+ </div> 
+ <div> 
+  <div>
+    步骤1-&nbsp;以下列方式修改&nbsp;config/web.php&nbsp;文件。 
+  </div> 
+  <pre>&lt;?php
+   $params = require(__DIR__ . '/params.php');
+   $config = [
+      'id' =&gt; 'basic',
+      'basePath' =&gt; dirname(__DIR__),
+      'bootstrap' =&gt; ['log'],
+      'defaultRoute' =&gt; 'site/contact',
+      'components' =&gt; [
+         //other code
+?&gt;</pre> 
+  <div>
+    第2步&nbsp;-&nbsp;打开URL=&gt;&nbsp;
+   <a target="_blank" href="http://localhost:8080/index.php">http://localhost:8080/index.php</a>，&nbsp;将会看到默认页面是&nbsp;contact。
+   <br> 
+   <img src="/uploads/tutorial/20160530/1-160530223104409.png" width="735" height="389" title="Yii URL路由" alt="Yii URL路由">
+   <br> 
+  </div> 
+  <div>
+    如要把应用程序暂时开启维护模式，应该配置 yii\web\Application::$catchAll&nbsp;这个属性。 
+  </div> 
+  <div>
+    第3步&nbsp;-&nbsp;添加以下 actionMaintenance() 函数到 SiteController&nbsp; 
+  </div> 
+  <pre>public function actionMaintenance() {
+   echo "&lt;h1&gt;<span style="font-family:Monaco, Consolas, Courier, &quot;line-height:1.5;">系统正在维护中...</span><span style="font-family:Monaco, Consolas, Courier, &quot;line-height:1.5;">&lt;/h1&gt;";</span> }</pre> 
+  <div>
+    步骤4&nbsp;-&nbsp;然后，以下面的方式修改config/web.php&nbsp;文件&nbsp;。 
+  </div> 
+  <pre>&lt;?php
+   $params = require(__DIR__ . '/params.php');
+   $config = [
+      'id' =&gt; 'basic',
+      'basePath' =&gt; dirname(__DIR__),
+      'bootstrap' =&gt; ['log'],
+      'catchAll' =&gt; ['site/maintenance'],
+      'components' =&gt; [
+         //OTHER CODE</pre> 
+  <div>
+    第5步&nbsp;-&nbsp;进入应用程序中的任何URL，会看到以下内容。
+   <br> 
+   <img src="/uploads/tutorial/20160530/1-160530223125595.png" alt="">
+   <br> 
+  </div> 
+  <h2> 
+   <div>
+     创建URL 
+   </div> </h2> 
+  <p style="text-align:justify;"> 要创建各种URL，可以使用&nbsp;yii\helpers\Url::to()&nbsp;辅助方法。下面的例子假定使用的是默认的URL格式。 </p> 
+  <div>
+    第1步-&nbsp;在&nbsp;SiteController&nbsp;添加一个&nbsp;actionRoutes() 方法。 
+  </div> 
+  <pre>public function actionRoutes() {
+   return $this-&gt;render('routes');
+}</pre> 
+  <div>
+    这个方法只是简单地呈现的路由视图。 
+  </div> 
+  <div>
+    第2步&nbsp;-&nbsp;在&nbsp;views/site&nbsp;目录下，创建一个名为&nbsp;routes.php文件，并使用下面的代码。 
+  </div> 
+  <pre>&lt;?php
+   use yii\helpers\Url;
+?&gt;
+
+&lt;h4&gt;
+   &lt;b&gt;Url::to(['post/index']):&lt;/b&gt;
+   &lt;?php
+      // creates a URL to a route: /index.php?r = post/index
+      echo Url::to(['post/index']);
+   ?&gt;
+&lt;/h4&gt;
+
+&lt;h4&gt;
+   &lt;b&gt;Url::to(['post/view', 'id' =&gt; 100]):&lt;/b&gt;
+   &lt;?php
+      // creates a URL to a route with parameters: /index.php?r = post/view&amp;id=100
+      echo Url::to(['post/view', 'id' =&gt; 100]);
+   ?&gt;
+&lt;/h4&gt;
+
+&lt;h4&gt;
+   &lt;b&gt;Url::to(['post/view', 'id' =&gt; 100, '#' =&gt; 'content']):&lt;/b&gt;
+   &lt;?php
+      // creates an anchored URL: /index.php?r = post/view&amp;id=100#content
+      echo Url::to(['post/view', 'id' =&gt; 100, '#' =&gt; 'content']);
+   ?&gt;
+&lt;/h4&gt;
+
+&lt;h4&gt;
+   &lt;b&gt;Url::to(['post/index'], true):&lt;/b&gt;
+   &lt;?php
+      // creates an absolute URL: http://www.example.com/index.php?r=post/index
+      echo Url::to(['post/index'], true);
+   ?&gt;
+&lt;/h4&gt;
+
+&lt;h4&gt;
+   &lt;b&gt;Url::to(['post/index'], 'https'):&lt;/b&gt;
+   &lt;?php
+      // creates an absolute URL using the https scheme: https://www.example.com/index.php?r=post/index
+      echo Url::to(['post/index'], 'https');
+   ?&gt;
+&lt;/h4&gt;</pre> 
+  <div>
+    第3步&nbsp;-&nbsp;打开浏览器URL访问：
+   <a target="_blank" href="http://localhost:8080/index.php?r=site/routes">http://localhost:8080/index.php?r=site/routes</a>，会看到&nbsp;to()函数的一些用法 
+  </div> 
+  <img src="/uploads/tutorial/20160530/1-160530223235X4.png" alt="">
+  <br> 
+  <div>
+    传递到&nbsp;yii\helpers\Url::to()方法的路由可以是根据下面的规则使用相对或绝对路径&nbsp;- 
+  </div> 
+  <ul> 
+   <li> 
+    <div>
+      如果路由是空的，则使用当前所请求的路径 
+    </div> </li> 
+   <li> 
+    <div>
+      如果路由没有前导斜线，使用相对于当前模块的路由 
+    </div> </li> 
+   <li> 
+    <div>
+      如果根不包含斜线，使用当前控制器的动作ID。 
+    </div> </li> 
+  </ul> 
+  <div>
+    yii\helpers\Url&nbsp;助手类还提供了一些有用的方法。 
+  </div> 
+  <div>
+    第4步&nbsp;-&nbsp;修改路由视图 -&nbsp;views/site/routes.php 文件。按如下面给出的代码。 
+  </div>   
+  <pre>&lt;?php
+   use yii\helpers\Url;
+?&gt;
+
+&lt;h4&gt;
+   &lt;b&gt;Url::home():&lt;/b&gt;
+   &lt;?php
+      // home page URL: /index.php?r=site/index
+      echo Url::home();
+   ?&gt;
+&lt;/h4&gt;
+ 
+&lt;h4&gt;
+   &lt;b&gt;Url::base():&lt;/b&gt;
+   &lt;?php
+      // the base URL, useful if the application is deployed in a sub-folder of the Web root
+      echo Url::base();
+   ?&gt;
+&lt;/h4&gt;
+ 
+&lt;h4&gt;
+   &lt;b&gt;Url::canonical():&lt;/b&gt;
+   &lt;?php
+      // the canonical URL of the currently requested URL
+      // see https://en.wikipedia.org/wiki/Canonical_link_element
+      echo Url::canonical();
+   ?&gt;
+&lt;/h4&gt;
+ 
+&lt;h4&gt;
+   &lt;b&gt;Url::previous():&lt;/b&gt;
+   &lt;?php
+      // remember the currently requested URL and retrieve it back in later requests
+      Url::remember();
+      echo Url::previous();
+   ?&gt;
+&lt;/h4&gt;</pre> 
+  <div>
+    第5步&nbsp;-&nbsp;打开浏览器输入的地址：
+   <a target="_blank" href="http://localhost:8080/index.php?r=site/routes">http://localhost:8080/index.php?r=site/routes</a>，会看到下面结果。 
+  </div> 
+  <img src="/uploads/tutorial/20160530/1-16053022331B02.png" alt=""> 
+ </div>
+ <br>      
+</div></body></html>

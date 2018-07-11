@@ -1,0 +1,183 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Lucene IndexSearcher类</h1><div style="width:100%;float:left;" class="article-content">   
+ <p> 此类充当读取/在搜索过程中搜索索引的一个核心组成部分。</p> 
+ <h2> Class 声明</h2> 
+ <p> 以下是org.apache.lucene.search.IndexSearcher类的声明：</p> 
+ <pre class="prettyprint prettyprinted" style="border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; font-size: 12px; overflow: auto;">
+<span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">public</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">class</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="typ" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">IndexSearcher</span><span class="pln" style="margin: 0px; padding: 0px;">
+   </span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">extends</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="typ" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">Searcher</span></pre> 
+ <h2> 字段</h2> 
+ <p> 以下是org.apache.lucene.index.IndexWriter类的字段：</p> 
+ <ul> 
+  <li> <p> protected int[] docStarts</p> </li> 
+  <li> <p> protected IndexReader[] subReaders</p> </li> 
+  <li> <p> protected IndexSearcher[] subSearchers</p> </li> 
+ </ul> 
+ <h2> 类的构造函数</h2> 
+ <table class="src" style="margin: 8px 0px; padding: 0px;  border-color: rgb(214, 214, 214); width: 560px; border-collapse: collapse; vertical-align: top; color: rgb(0, 0, 0);  background-color: rgb(247, 247, 247);"> 
+  <tbody style="margin: 0px; padding: 0px;"> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <th style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214); width: 23px; background-color: rgb(238, 238, 238);"> S.N.</th> 
+    <th style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214); background-color: rgb(238, 238, 238);"> 构造函数和说明</th> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 1</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> <b style="margin: 0px; padding: 0px;">IndexSearcher(Directory path)</b><br style="margin: 0px; padding: 0px;"> 不推荐使用。使用IndexSearcher(IndexReader) 代替</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 2</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> <b style="margin: 0px; padding: 0px;">IndexSearcher(Directory path, boolean readOnly)</b><br style="margin: 0px; padding: 0px;"> 不推荐使用。使用IndexSearcher(IndexReader) 代替</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 3</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> <b style="margin: 0px; padding: 0px;">IndexSearcher(IndexReader r)</b><br style="margin: 0px; padding: 0px;"> 创建一个搜索searching提供索引</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 4</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> <b style="margin: 0px; padding: 0px;">IndexSearcher(IndexReader r, ExecutorService executor)</b><br style="margin: 0px; padding: 0px;"> 运行搜索单独各段，使用提供的ExecutorService</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 5</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> <b style="margin: 0px; padding: 0px;">IndexSearcher(IndexReader reader, IndexReader[] subReaders, int[] docStarts)</b><br style="margin: 0px; padding: 0px;"> 直接指定读取器，subReaders 和&nbsp;docID 启动</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 6</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> <b style="margin: 0px; padding: 0px;">IndexSearcher(IndexReader reader, IndexReader[] subReaders, int[] docStarts, ExecutorService executor)</b><br style="margin: 0px; padding: 0px;"> 直接指定读取器，subReaders和&nbsp;docID 开始，和一个ExecutorService</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h2> 类方法</h2> 
+ <table class="src" style="margin: 8px 0px; padding: 0px;  border-color: rgb(214, 214, 214); width: 560px; border-collapse: collapse; vertical-align: top; color: rgb(0, 0, 0);  background-color: rgb(247, 247, 247);"> 
+  <tbody style="margin: 0px; padding: 0px;"> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <th style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214); width: 23px; background-color: rgb(238, 238, 238);"> S.N.</th> 
+    <th style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214); background-color: rgb(238, 238, 238);"> 方法及说明</th> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 1</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> <b style="margin: 0px; padding: 0px;">void close()</b><br style="margin: 0px; padding: 0px;"> 需要注意的是底层IndexReader没有关闭，如果是IndexSearcher用IndexSearcher（IndexReader r）构造</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 2</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> <b style="margin: 0px; padding: 0px;">Weight createNormalizedWeight(Query query)</b><br style="margin: 0px; padding: 0px;"> 创建了一个规范化的重量为顶层查询</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 3</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> <b style="margin: 0px; padding: 0px;">Document doc(int docID)</b><br style="margin: 0px; padding: 0px;"> 返回文档存储 i 字段</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 4</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> <b style="margin: 0px; padding: 0px;">Document doc(int docID, FieldSelector fieldSelector)</b><br style="margin: 0px; padding: 0px;"> 获取文档在第n个位置</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 5</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> <b style="margin: 0px; padding: 0px;">int docFreq(Term term)</b><br style="margin: 0px; padding: 0px;"> 返回这两个字 docFreq 的总数</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 6</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> <b style="margin: 0px; padding: 0px;">Explanation explain(Query query, int doc)</b><br style="margin: 0px; padding: 0px;"> 返回描述如何打进DOC对查询的说明</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 7</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> <b style="margin: 0px; padding: 0px;">Explanation explain(Weight weight, int doc)</b><br style="margin: 0px; padding: 0px;"> 低层次的实现方法返回描述如何打进DOC对重量的解释</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 8</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> <b style="margin: 0px; padding: 0px;">protected void gatherSubReaders(List
+      <indexreader>
+       &nbsp;allSubReaders, IndexReader r)&nbsp;
+      </indexreader></b></td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 9</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> <b style="margin: 0px; padding: 0px;">IndexReader getIndexReader()</b><br style="margin: 0px; padding: 0px;"> 返回搜索IndexReader</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 10</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> <b style="margin: 0px; padding: 0px;">Similarity getSimilarity()</b><br style="margin: 0px; padding: 0px;"> 返回使用该搜索器的相似执行</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 11</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> <b style="margin: 0px; padding: 0px;">IndexReader[] getSubReaders()</b><br style="margin: 0px; padding: 0px;"> 返回此搜索原子subReaders</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 12</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> <b style="margin: 0px; padding: 0px;">int maxDoc()</b><br style="margin: 0px; padding: 0px;"> 返回比最大可能的文档数目多一个</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 13</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> <b style="margin: 0px; padding: 0px;">Query rewrite(Query original)</b><br style="margin: 0px; padding: 0px;"> 所谓的重新编写查询到原始查询</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 14</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> <b style="margin: 0px; padding: 0px;">void search(Query query, Collector results)</b><br style="margin: 0px; padding: 0px;"> 低级别的搜索API</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 15</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> <b style="margin: 0px; padding: 0px;">void search(Query query, Filter filter, Collector results)</b><br style="margin: 0px; padding: 0px;"> 低级别的搜索API</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 16</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> <b style="margin: 0px; padding: 0px;">TopDocs search(Query query, Filter filter, int n)</b><br style="margin: 0px; padding: 0px;"> 找到前n点击查询，应用过滤器，如果非空（no null）</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 17</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> <b style="margin: 0px; padding: 0px;">TopFieldDocs search(Query query, Filter filter, int n, Sort sort)</b><br style="margin: 0px; padding: 0px;"> 搜索执行任意排序</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 18</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> <b style="margin: 0px; padding: 0px;">TopDocs search(Query query, int n)</b><br style="margin: 0px; padding: 0px;"> 找到前n点击查询</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 19</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> <b style="margin: 0px; padding: 0px;">TopFieldDocs search(Query query, int n, Sort sort)</b><br style="margin: 0px; padding: 0px;"> 搜索执行任意排序并且不用过滤</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 20</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> <b style="margin: 0px; padding: 0px;">void search(Weight weight, Filter filter, Collector collector)</b><br style="margin: 0px; padding: 0px;"> 低级别的搜索API</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 21</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> <b style="margin: 0px; padding: 0px;">TopDocs search(Weight weight, Filter filter, int nDocs)</b><br style="margin: 0px; padding: 0px;"> 低层次的搜索实现</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 22</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> <b style="margin: 0px; padding: 0px;">TopFieldDocs search(Weight weight, Filter filter, int nDocs, Sort sort)</b><br style="margin: 0px; padding: 0px;"> 低层次的搜索实现任意排序</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 23</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> <b style="margin: 0px; padding: 0px;">protected TopFieldDocs search(Weight weight, Filter filter, int nDocs, Sort sort, boolean fillFields)</b><br style="margin: 0px; padding: 0px;"> 就像search(Weight, Filter, int, Sort)，选择是否在返回 FieldDoc 实例字段应该通过指定fillFields进行设置</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 24</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> <b style="margin: 0px; padding: 0px;">protected TopDocs search(Weight weight, Filter filter, ScoreDoc after, int nDocs)</b><br style="margin: 0px; padding: 0px;"> 低层次的搜索实现</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 25</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> <b style="margin: 0px; padding: 0px;">TopDocs searchAfter(ScoreDoc after, Query query, Filter filter, int n)</b><br style="margin: 0px; padding: 0px;"> 找到前n点击查询，应用过滤器，如果非空，所有的结果都是一个结果（后）。</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 26</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> <b style="margin: 0px; padding: 0px;">TopDocs searchAfter(ScoreDoc after, Query query, int n)</b><br style="margin: 0px; padding: 0px;"> 找到前n点击查询，所有结果都是一个结果（后）</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 27</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> <b style="margin: 0px; padding: 0px;">void setDefaultFieldSortScoring(boolean doTrackScores, boolean doMaxScore)</b><br style="margin: 0px; padding: 0px;"> 缺省情况下，分数是由字段(using search(Query,Filter,int,Sort)) 排序计算</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 28</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> <b style="margin: 0px; padding: 0px;">void setSimilarity(Similarity similarity)</b><br style="margin: 0px; padding: 0px;"> 设置使用搜索器的相似执行。</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 29</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> <b style="margin: 0px; padding: 0px;">String toString()&nbsp;</b></td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h2> 继承的方法</h2>   
+ <p> 这个类继承了以下类方法：</p> 
+ <ul> 
+  <li> <p> org.apache.lucene.search.Searcher</p> </li> 
+  <li> <p> java.lang.Object</p> </li> 
+ </ul> 
+ <br>      
+</div></body></html>

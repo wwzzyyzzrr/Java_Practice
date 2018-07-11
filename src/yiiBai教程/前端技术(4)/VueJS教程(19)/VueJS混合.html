@@ -1,0 +1,113 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">VueJS混合</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>混合 (mixins) 是一种分发 Vue 组件中可复用功能的非常灵活的方式。混合对象可以包含任意组件选项。当组件使用混合对象时，所有混合对象的选项将被混入该组件本身的选项。</p> 
+ <p><strong>示例</strong></p> 
+ <pre><code class="lang-html">&lt;html&gt;
+   &lt;head&gt;
+      &lt;meta charset="utf-8" /&gt;
+      &lt;title&gt;VueJs混合(Mixins)示例&lt;/title&gt;
+      &lt;script type = "text/javascript" src = "js/vue.js"&gt;&lt;/script&gt;
+   &lt;/head&gt;
+   &lt;body&gt;
+      &lt;div id = "databinding"&gt;&lt;/div&gt;
+      &lt;script type = "text/javascript"&gt;
+         var vm = new Vue({
+            el: '#databinding',
+            data: {
+            },
+            methods : {
+            },
+         });
+         var myMixin = {
+            created: function () {
+               this.startmixin()
+            },
+            methods: {
+               startmixin: function () {
+                  alert("Welcome  to mixin example");
+               }
+            }
+         };
+         var Component = Vue.extend({
+            mixins: [myMixin]
+         })
+         var component = new Component();
+      &lt;/script&gt;
+   &lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>在浏览器中打开上面示例文件，效果如下 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201712/2412/309091237_85687.png" alt=""></p> 
+ <p>当一个混合(mixin)和一个组件包含重叠选项时，它们将被合并，如下例所示。</p> 
+ <pre><code class="lang-html">&lt;html&gt;
+   &lt;head&gt;
+      &lt;title&gt;VueJs Instance&lt;/title&gt;
+      &lt;script type = "text/javascript" src = "js/vue.js"&gt;&lt;/script&gt;
+   &lt;/head&gt;
+   &lt;body&gt;
+      &lt;div id = "databinding"&gt;&lt;/div&gt;
+      &lt;script type = "text/javascript"&gt;
+         var mixin = {
+            created: function () {
+               console.log('mixin called')
+            }
+         }
+         new Vue({
+            mixins: [mixin],
+            created: function () {
+               console.log('component called')
+            }
+         });
+      &lt;/script&gt;
+   &lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>现在<code>mixin</code>和vue实例创建了相同的方法。下面是在控制台中看到的输出。如下所见，vue和<code>mixin</code>的选项将被合并。<br><img src="http://www.yiibai.com/uploads/images/201712/2412/185091239_66101.jpg" alt=""></p> 
+ <p>如果碰巧在方法中有相同的函数名，那么主vue实例将会优先。</p> 
+ <p><strong>示例</strong></p> 
+ <p>创建一个文件：<em>mixins-2.html</em> -</p> 
+ <pre><code class="lang-html">&lt;html&gt;
+   &lt;head&gt;
+      &lt;meta charset="utf-8" /&gt;
+      &lt;title&gt;VueJs混合(Mixins)示例&lt;/title&gt;
+      &lt;script type = "text/javascript" src = "js/vue.js"&gt;&lt;/script&gt;
+   &lt;/head&gt;
+   &lt;body&gt;
+      &lt;div id = "databinding"&gt;&lt;/div&gt;
+      &lt;script type = "text/javascript"&gt;
+         var mixin = {
+            methods: {
+               hellworld: function () {
+                  console.log('In HelloWorld');
+               },
+               samemethod: function () {
+                  console.log('Mixin:Same Method');
+               }
+            }
+         };
+         var vm = new Vue({
+            mixins: [mixin],
+            methods: {
+               start: function () {
+                  console.log('start method');
+               },
+               samemethod: function () {
+                  console.log('Main: same method');
+               }
+            }
+         });
+         vm.hellworld();
+         vm.start();
+         vm.samemethod();
+      &lt;/script&gt;
+   &lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>如上面代码中，mixin有一个方法属性，其中定义了<code>helloworld</code>和相同的方法函数。 同样，vue实例也有一个方法属性，在这个属性里面又定义了两个方法<code>start</code>和<code>samemethod</code>。</p> 
+ <p>以下每个方法都被调用。</p>   
+ <pre><code class="lang-html">vm.hellworld(); // In HelloWorld
+vm.start(); // start method
+vm.samemethod(); // Main: same method
+</code></pre> 
+ <p>如上所示，已经调用了<code>helloworld</code>，<code>start</code>和<code>same</code>方法。 同样的方法也存在于mixin中，但优先级将赋予主实例，如下面的控制台所示。<br><img src="http://www.yiibai.com/uploads/images/201712/2412/649091242_94767.jpg" alt=""></p>
+ <br>      
+</div></body></html>

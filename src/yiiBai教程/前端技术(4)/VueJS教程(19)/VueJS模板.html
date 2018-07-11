@@ -1,0 +1,117 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">VueJS模板</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>在前面的章节中我们已经学到了如何在屏幕上以文本内容的形式获得输出。 在本章中将学习如何在屏幕上以HTML模板的形式获取输出。</p> 
+ <p>要理解这一点，让我们先看看一个例子，并在浏览器中看到输出。创建一个文件：<em>template.html</em> - </p> 
+ <pre><code class="lang-html">&lt;html&gt;
+   &lt;head&gt;
+      &lt;meta charset="utf-8" /&gt;
+      &lt;title&gt;VueJs模板&lt;/title&gt;
+      &lt;script type = "text/javascript" src = "js/vue.js"&gt;&lt;/script&gt;
+   &lt;/head&gt;
+   &lt;body&gt;
+      &lt;div id = "vue_det"&gt;
+         &lt;h2&gt;名字 : {{name}}&lt;/h2&gt;
+         &lt;h2&gt;城市 : {{city}}&lt;/h2&gt;
+         &lt;div&gt;{{htmlcontent}}&lt;/div&gt;
+      &lt;/div&gt;
+      &lt;script type = "text/javascript" src = "js/vue_template.js"&gt;&lt;/script&gt;
+   &lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>再创建另一个文件：<em>vue_template.js</em> - </p> 
+ <pre><code class="lang-js">var vm = new Vue({
+   el: '#vue_det',
+   data: {
+      name : "Maxsu",
+      city  : "海口",
+      htmlcontent : "&lt;div&gt;&lt;h1&gt;Vue Js Template&lt;/h1&gt;&lt;/div&gt;"
+   }
+})
+</code></pre> 
+ <p>现在，假设要在页面上显示html内容。 如果使用了插值，也就是使用双括号，在浏览器中得到的结果如下所示 -<br><img src="http://www.yiibai.com/uploads/images/201712/2012/950091207_60667.png" alt=""></p> 
+ <p>如果看到html内容的显示方式与在<code>htmlcontent</code>中给出的方法相同，那么这不是我们想要的，我们希望它在浏览器中显示在正确的HTML内容中。</p> 
+ <p>为此，可以通过使用<code>v-html</code>指令。 当将<code>v-html</code>指令分配给html元素时，VueJS知道它必须以HTML内容的形式输出。现在通过<code>template.html</code>文件中添加<code>v-html</code>指令并查看之上面显示的结果有什么不同。</p> 
+ <pre><code class="lang-html">&lt;html&gt;
+   &lt;head&gt;
+      &lt;meta charset="utf-8" /&gt;
+      &lt;title&gt;VueJs模板&lt;/title&gt;
+      &lt;script type = "text/javascript" src = "js/vue.js"&gt;&lt;/script&gt;
+   &lt;/head&gt;
+   &lt;body&gt;
+      &lt;div id = "vue_det"&gt;
+         &lt;h2&gt;名字 : {{name}}&lt;/h2&gt;
+         &lt;h2&gt;城市 : {{city}}&lt;/h2&gt;
+         &lt;div v-html = "htmlcontent"&gt;&lt;/div&gt;
+      &lt;/div&gt;
+      &lt;script type = "text/javascript" src = "js/vue_template.js"&gt;&lt;/script&gt;
+   &lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>现在，不需要使用双括号来显示HTML内容，而是使用了<code>v-html ="html content"</code>，其中html内容在<em>vue_template.js</em>文件中定义如下 -</p> 
+ <pre><code class="lang-js">var vm = new Vue({
+   el: '#vue_det',
+   data: {
+      name : "Maxsu",
+      city  : "海口",
+      htmlcontent : "&lt;div&gt;&lt;h1&gt;Vue Js Template&lt;/h1&gt;&lt;/div&gt;"
+   }
+})
+</code></pre> 
+ <p>再次使用浏览器打开<em>template.html</em>，输出效果如下所示 -<br><img src="http://www.yiibai.com/uploads/images/201712/2012/563091218_65085.png" alt=""></p> 
+ <p>如果查看浏览器，我们会看到内容的添加方式与在<code>.js</code>文件中定义的变量<code>htmlcontent</code>相同：<code>"&lt;div&gt;&lt;h1&gt;Vue Js Template&lt;/h1&gt;&lt;/div&gt;"</code>。</p> 
+ <p>下面来看看浏览器中的<code>inspect</code>元素，如下图所示 -<br><img src="http://www.yiibai.com/uploads/images/201712/2012/143091220_78337.png" alt=""></p> 
+ <p>我们已经看到如何将HTML模板添加到DOM。 现在来看看如何为现有的HTML元素添加属性。<br>考虑一下，在HTML文件中有一个图像标签，并为<code>src</code>属性分配一个值，它是Vue的一部分。</p> 
+ <h2 id="h2-u793Au4F8Bu4E00"><a name="示例一" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例一</h2>
+ <p>参考以下代码(<em>template-example1.html</em>) - </p> 
+ <pre><code class="lang-html">&lt;html&gt;
+   &lt;head&gt;
+      &lt;meta charset="utf-8" /&gt;
+      &lt;title&gt;VueJs模板&lt;/title&gt;
+      &lt;script type = "text/javascript" src = "js/vue.js"&gt;&lt;/script&gt;
+   &lt;/head&gt;
+   &lt;body&gt;
+      &lt;div id = "vue_det"&gt;
+         &lt;h2&gt;名字 : {{name}}&lt;/h2&gt;
+         &lt;h2&gt;城市 : {{city}}&lt;/h2&gt;
+         &lt;div v-html = "htmlcontent"&gt;&lt;/div&gt;
+         &lt;img src = "" width = "300" height = "250" /&gt;
+      &lt;/div&gt;
+      &lt;script type = "text/javascript" src = "js/template-image.js"&gt;&lt;/script&gt;
+   &lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>看看上面的<code>img</code>标签，<code>src</code>属性的值是空的。所以我们需要从vuejs中添加<code>src</code>属性的值。 如何可以做到这一点？在<em>template-example1.js</em>文件中的数据对象中存储<code>imgsrc</code>，如下所示 —</p>   
+ <pre><code class="lang-js">var vm = new Vue({
+   el: '#vue_det',
+   data: {
+      name : "Maxsu",
+      city  : "海口",
+      htmlcontent : "&lt;div&gt;&lt;h2&gt;Vue Js Template&lt;/h2&gt;&lt;/div&gt;",
+      imgsrc : "images/mydog.jpg"
+   }
+})
+</code></pre> 
+ <p>如果按如下所示分配<code>src</code>属性的值，浏览器中的输出将如下图所示 - </p> 
+ <pre><code class="lang-js">&lt;img src = "{{imgsrc}}" width = "300" height = "250" /&gt;
+</code></pre> 
+ <p><img src="http://www.yiibai.com/uploads/images/201712/2012/779091257_22630.png" alt=""></p> 
+ <p>但是这样做并不能显示图像。要将任何属性分配给HTML标签，需要使用<code>v-bind</code>指令。 用<code>v-bind</code>指令将<code>src</code>添加到<code>img</code>标签中。这是在<em>template-example1.html</em>文件中分配的。参考以下代码 - </p> 
+ <pre><code class="lang-html">&lt;html&gt;
+   &lt;head&gt;
+      &lt;meta charset="utf-8" /&gt;
+      &lt;title&gt;VueJs模板&lt;/title&gt;
+      &lt;script type = "text/javascript" src = "js/vue.js"&gt;&lt;/script&gt;
+   &lt;/head&gt;
+   &lt;body&gt;
+      &lt;div id = "vue_det"&gt;
+         &lt;h2&gt;名字 : {{name}}&lt;/h2&gt;
+         &lt;h2&gt;城市 : {{city}}&lt;/h2&gt;
+         &lt;div v-html = "htmlcontent"&gt;&lt;/div&gt;
+         &lt;img v-bind:src = "imgsrc" width = "300" height = "250" /&gt;
+      &lt;/div&gt;
+      &lt;script type = "text/javascript" src = "js/template-image.js"&gt;&lt;/script&gt;
+   &lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>需要在<code>src</code>属性前添加<code>v-bind:src = "imgsrc"</code>和<code>src</code>的变量名称。以下是浏览器中的输出结果 -<br><img src="http://www.yiibai.com/uploads/images/201712/2012/301091259_99657.png" alt=""></p>
+ <br>      
+</div></body></html>

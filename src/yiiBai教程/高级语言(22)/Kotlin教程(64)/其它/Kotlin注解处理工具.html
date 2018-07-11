@@ -1,0 +1,53 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Kotlin注解处理工具</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>Kotlin 插件支持注解处理器，如 <em>Dagger</em> 或 <em>DBFlow</em> 。<br>为了让它们与 Kotlin 类一起工作，需要应用 <code>kotlin-kapt</code> 插件：</p> 
+ <blockquote> 
+  <p>译注：kapt 即 Kotlin annotation processing tool(Kotlin 注解处理工具)缩写。</p> 
+ </blockquote> 
+ <h2 id="h2-gradle-"><a name="Gradle 配置" class="reference-link"></a><span class="header-link octicon octicon-link"></span>Gradle 配置</h2>
+ <pre><code class="lang-groovy">apply plugin: 'kotlin-kapt'
+</code></pre> 
+ <p>或者，从 Kotlin 1.1.1 起，你可以使用插件 DSL 应用它：</p> 
+ <pre><code class="lang-groovy">plugins {
+    id "org.jetbrains.kotlin.kapt" version "＜要使用的版本＞"
+}
+</code></pre> 
+ <p>然后在 <code>dependencies</code> 块中使用 <code>kapt</code> 配置添加相应的依赖项：</p> 
+ <pre><code class="lang-groovy">dependencies {
+    kapt 'groupId:artifactId:版本'
+}
+</code></pre> 
+ <p>如果你以前使用 <a target="_blank" href="https://bitbucket.org/hvisser/android-apt">android-apt</a> 插件，请将其从 <code>build.gradle</code> 文件中删除，并用 <code>kapt</code> 取代 <code>apt</code> 配置的用法。如果你的项目包含 Java 类，<code>kapt</code> 也会顾全到它们。</p> 
+ <p>如果为 <code>androidTest</code> 或 <code>test</code> 源代码使用注解处理器，那么相应的 <code>kapt</code> 配置名为 <code>kaptAndroidTest</code> 和 <code>kaptTest</code>。请注意 <code>kaptAndroidTest</code> 和 <code>kaptTest</code> 扩展了 <code>kapt</code>，所以你可以只提供 <code>kapt</code> 依赖而它对生产和测试源代码都可用。</p> 
+ <p>一些注解处理器(如 <code>AutoFactory</code>)依赖于声明签名中的精确类型。默认情况下，Kapt 将每个未知类型(包括生成的类的类型)替换为 <code>NonExistentClass</code>，但你可以更改此行为。将额外标志添加到 <code>build.gradle</code> 文件以启用在存根(stub)中推断出的错误类型：</p> 
+ <pre><code class="lang-groovy">kapt {
+    correctErrorTypes = true
+}
+</code></pre> 
+ <p>请注意，这个选项是实验性的，且默认是禁用的。</p> 
+ <h2 id="h2-maven-kotlin-1-1-2-"><a name="Maven 配置(自 Kotlin 1.1.2 起)" class="reference-link"></a><span class="header-link octicon octicon-link"></span>Maven 配置(自 Kotlin 1.1.2 起)</h2>
+ <p>在 <code>compile</code> 之前在 kotlin-maven-plugin 中添加 <code>kapt</code> 目标的执行：</p>   
+ <pre><code class="lang-xml">&lt;execution&gt;
+    &lt;id&gt;kapt&lt;/id&gt;
+    &lt;goals&gt;
+        &lt;goal&gt;kapt&lt;/goal&gt;
+    &lt;/goals&gt;
+    &lt;configuration&gt;
+        &lt;sourceDirs&gt;
+            &lt;sourceDir&gt;src/main/kotlin&lt;/sourceDir&gt;
+            &lt;sourceDir&gt;src/main/java&lt;/sourceDir&gt;
+        &lt;/sourceDirs&gt;
+        &lt;annotationProcessorPaths&gt;
+            &lt;!-- 在此处指定你的注解处理器。 --&gt;
+            &lt;annotationProcessorPath&gt;
+                &lt;groupId&gt;com.google.dagger&lt;/groupId&gt;
+                &lt;artifactId&gt;dagger-compiler&lt;/artifactId&gt;
+                &lt;version&gt;2.9&lt;/version&gt;
+            &lt;/annotationProcessorPath&gt;
+        &lt;/annotationProcessorPaths&gt;
+    &lt;/configuration&gt;
+&lt;/execution&gt;
+</code></pre> 
+ <p>你可以在<br><a target="_blank" href="https://github.com/JetBrains/kotlin-examples/tree/master/maven/dagger-maven-example">Kotlin 示例版本库</a> 中找到一个显示使用 Kotlin、Maven 和 Dagger 的完整示例项目。</p> 
+ <p>请注意，IntelliJ IDEA 自身的构建系统目前还不支持 kapt。当你想要重新运行注解处理时，请从“Maven Projects”工具栏启动构建。</p>
+ <br>      
+</div></body></html>

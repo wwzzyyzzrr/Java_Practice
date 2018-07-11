@@ -1,0 +1,68 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">PL/SQL IF-THEN语句</h1><div style="width:100%;float:left;" class="article-content">   
+ <p> 它是最简单的IF控制语句，经常使用的决策和改变程序执行的控制流程的形式。</p> 
+ <p> IF语句关联的条件通过THEN和END IF关键字封闭的语句序列。如果条件为TRUE，语句得到执行，并且如果条件为FALSE或NULL，那么IF语句什么都不做。</p> 
+ <h2> 语法：</h2> 
+ <p> IF-THEN语句的语法是：</p> 
+ <pre class="prettyprint lang-sql" style="border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; font-size: 12px; overflow: auto;">
+IF condition THEN 
+   S;
+END IF;</pre> 
+ <p> 其中，条件是布尔或关系条件，S是一个简单的或复合语句。一个IF-THEN语句的例子如下：</p> 
+ <pre class="prettyprint lang-sql" style="border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; font-size: 12px; overflow: auto;">
+IF (a &lt;= 20) THEN
+   c:= c+1;
+END IF;</pre> 
+ <p> 如果布尔表达式条件计算为真，那么代码的if语句里面的模块将被执行。如果if语句结束后布尔表达式的值为false那么第一组码（闭幕结束后，若）将被执行。</p> 
+ <h2> 流程图：</h2> 
+ <img alt="PL/SQL if-then statement" src="/uploads/allimg/150110/094J25256-0.jpg"> 
+ <h2> 示例 1:</h2> 
+ <p> 让我们尝试一个完整的例子，来说明这一概念：</p> 
+ <pre class="prettyprint lang-sql" style="border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; font-size: 12px; overflow: auto;">
+DECLARE
+   a number(2) := 10;
+BEGIN
+   a:= 10;
+  -- check the boolean condition using if statement 
+   IF( a &lt; 20 ) THEN
+      -- if condition is true then print the following  
+      dbms_output.put_line('a is less than 20 ' );
+   END IF;
+   dbms_output.put_line('value of a is : ' || a);
+END;
+/</pre> 
+ <p> 让我们尝试一个完整的例子，将说明这一概念：</p> 
+ <pre class="result" style="margin-bottom: 0px; font-size: 12px; overflow: auto; background-color: rgb(241, 241, 241);">
+a is less than 20
+value of a is : 10
+
+PL/SQL procedure successfully completed.&nbsp;</pre> 
+ <h2> 示例2:</h2> 
+ <p> 考虑我们在创建表以及表中的一些记录，因为我们在创建&nbsp;<a target="_blank" href="http://www.yiibai.com/plsql/plsql_variable_types.html">PL/SQL变量类型</a></p> 
+ <div style="float:left;margin-bottom: 10px;">  
+ </div>
+ <div style="float:left;margin-bottom: 10px;">  
+ </div>  
+ <pre class="prettyprint lang-sql" style="border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; font-size: 12px; overflow: auto;">
+DECLARE
+   c_id customers.id%type := 1;
+   c_sal  customers.salary%type;
+BEGIN
+   SELECT  salary 
+   INTO  c_sal
+   FROM customers
+   WHERE id = c_id;
+   IF (c_sal &lt;= 2000) THEN
+      UPDATE customers 
+      SET salary =  salary + 1000
+         WHERE id = c_id;
+      dbms_output.put_line ('Salary updated');
+   END IF;
+END;
+/</pre> 
+ <p> 当上述代码在SQL提示符执行时，它产生了以下结果：</p> 
+ <pre class="result" style="margin-bottom: 0px; font-size: 12px; overflow: auto; background-color: rgb(241, 241, 241);">
+Salary updated
+
+PL/SQL procedure successfully completed.</pre> 
+ <br>      
+</div></body></html>

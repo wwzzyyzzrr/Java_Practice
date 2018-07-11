@@ -1,0 +1,164 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Netty实践入门-编写简单服务器</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>按照以前的套路，一般学习一项新的IT技术，首先得来个 ‘<strong>Hello，World！</strong>‘之类的，以向世界宣告你要学习某项技术了。但在世界上最简单的协议不是’<strong>Hello，World！</strong>‘而是 <a target="_blank" href="http://tools.ietf.org/html/rfc863" title="DISCARD">DISCARD</a>。它是一种丢弃任何接收到的数据而没有任何响应的协议(暂时就叫它”装死协议”吧)。</p> 
+ <p>要实现<strong>DISCARD</strong>协议，只需要忽略所有接收到的数据。让我们从处理程序实现直接开始，这个处理程序实现处理Netty生成的I/O事件。先撸下面几串代码吧 - </p> 
+ <pre><code class="lang-java">package com.yiibai.netty;
+
+import io.netty.buffer.ByteBuf;
+
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelInboundHandlerAdapter;
+
+/**
+ * 处理服务器端通道
+ */
+public class DiscardServerHandler extends ChannelInboundHandlerAdapter { // (1)
+
+    @Override
+    public void channelRead(ChannelHandlerContext ctx, Object msg) { // (2)
+        // 以静默方式丢弃接收的数据
+        ((ByteBuf) msg).release(); // (3)
+    }
+
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) { // (4)
+        // 出现异常时关闭连接。
+        cause.printStackTrace();
+        ctx.close();
+    }
+}
+</code></pre> 
+ <p>一些重要的解释：</p> 
+ <ol> 
+  <li><p><code>DiscardServerHandler</code>扩展了<code>ChannelInboundHandlerAdapter</code>，它是<code>ChannelInboundHandler</code>的一个实现。 <code>ChannelInboundHandler</code>提供了可以覆盖的各种事件处理程序方法。 现在，它只是扩展了<code>ChannelInboundHandlerAdapter</code>，而不是自己实现处理程序接口。</p> </li>
+  <li><p>我们在这里覆盖<code>channelRead()</code>事件处理程序方法。每当从客户端接收到新数据时，使用该方法来接收客户端的消息。 在此示例中，接收到的消息的类型为<code>ByteBuf</code>。</p> </li>
+  <li><p>要实现<code>DISCARD</code>协议，处理程序必须忽略接收到的消息。<code>ByteBuf</code>是引用计数的对象，必须通过<code>release()</code>方法显式释放。请记住，处理程序负责释放传递给处理程序的引用计数对象。 通常，<code>channelRead()</code>处理程序方法实现如下：</p> <pre><code class="lang-java"><a target="_blank" href="https://github.com/Override" title="@Override" class="at-link">@Override</a>
+public void channelRead(ChannelHandlerContext ctx, Object msg) {
+ try {
+     // Do something with msg
+ } finally {
+     ReferenceCountUtil.release(msg);
+ }
+}
+</code></pre> <p>当Netty由于I/O错误或由处理事件时抛出的异常而导致的处理程序实现引发异常时，使用<code>Throwable</code>调用<code>exceptionCaught()</code>事件处理程序方法。 在大多数情况下，捕获的异常会被记录，并且其相关的通道应该在这里关闭，这种方法的实现可以根据想要什么样的方式来处理异常情况而有所不同。 例如，您可能希望在关闭连接之前发送带有错误代码的响应消息。</p> </li>
+ </ol> 
+ <p>到现在如果没有问题，我们已经实现了<code>DISCARD</code>服务器的前半部分。 现在剩下的就是编写<code>main()</code>方法，并使用<code>DiscardServerHandler</code>启动服务器。</p> 
+ <pre><code class="lang-java">package com.yiibai.netty;
+
+import io.netty.bootstrap.ServerBootstrap;
+
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelInitializer;
+import io.netty.channel.ChannelOption;
+import io.netty.channel.EventLoopGroup;
+import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.SocketChannel;
+import io.netty.channel.socket.nio.NioServerSocketChannel;
+
+/**
+ * Discards any incoming data.
+ */
+public class DiscardServer {
+
+    private int port;
+
+    public DiscardServer(int port) {
+        this.port = port;
+    }
+
+    public void run() throws Exception {
+        EventLoopGroup bossGroup = new NioEventLoopGroup(); // (1)
+        EventLoopGroup workerGroup = new NioEventLoopGroup();
+        try {
+            ServerBootstrap b = new ServerBootstrap(); // (2)
+            b.group(bossGroup, workerGroup)
+             .channel(NioServerSocketChannel.class) // (3)
+             .childHandler(new ChannelInitializer&lt;SocketChannel&gt;() { // (4)
+                 @Override
+                 public void initChannel(SocketChannel ch) throws Exception {
+                     ch.pipeline().addLast(new DiscardServerHandler());
+                 }
+             })
+             .option(ChannelOption.SO_BACKLOG, 128)          // (5)
+             .childOption(ChannelOption.SO_KEEPALIVE, true); // (6)
+
+            // Bind and start to accept incoming connections.
+            ChannelFuture f = b.bind(port).sync(); // (7)
+
+            // Wait until the server socket is closed.
+            // In this example, this does not happen, but you can do that to gracefully
+            // shut down your server.
+            f.channel().closeFuture().sync();
+        } finally {
+            workerGroup.shutdownGracefully();
+            bossGroup.shutdownGracefully();
+        }
+    }
+
+    public static void main(String[] args) throws Exception {
+        int port;
+        if (args.length &gt; 0) {
+            port = Integer.parseInt(args[0]);
+        } else {
+            port = 8080;
+        }
+        new DiscardServer(port).run();
+    }
+}
+</code></pre> 
+ <ol> 
+  <li><p><code>NioEventLoopGroup</code>是处理<code>I/O</code>操作的多线程事件循环。 Netty为不同类型的传输提供了各种<code>EventLoopGroup</code>实现。 在此示例中，实现的是服务器端应用程序，因此将使用两个<code>NioEventLoopGroup</code>。 第一个通常称为“<code>boss</code>”，接受传入连接。 第二个通常称为“<code>worker</code>”，当“<code>boss</code>”接受连接并且向“<code>worker</code>”注册接受连接，则“<code>worker</code>”处理所接受连接的流量。 使用多少个线程以及如何将它们映射到创建的通道取决于<code>EventLoopGroup</code>实现，甚至可以通过构造函数进行配置。</p> </li>
+  <li><p><code>ServerBootstrap</code>是一个用于设置服务器的助手类。 您可以直接使用通道设置服务器。 但是，请注意，这是一个冗长的过程，在大多数情况下不需要这样做。</p> </li>
+  <li><p>在这里，我们指定使用<code>NioServerSocketChannel</code>类，该类用于实例化新的通道以接受传入连接。</p> </li>
+  <li><p>此处指定的处理程序将始终由新接受的通道计算。 <code>ChannelInitializer</code>是一个特殊的处理程序，用于帮助用户配置新的通道。 很可能要通过添加一些处理程序(例如<code>DiscardServerHandler</code>)来配置新通道的<code>ChannelPipeline</code>来实现您的网络应用程序。 随着应用程序变得复杂，可能会向管道中添加更多处理程序，并最终将此匿名类提取到顶级类中。</p> </li>
+  <li><p>还可以设置指定<code>Channel</code>实现的参数。这里编写的是一个<code>TCP/IP</code>服务器，所以我们允许设置套接字选项，如<code>tcpNoDelay</code>和<code>keepAlive</code>。 请参阅<a target="_blank" href="http://netty.io/4.0/api/io/netty/channel/ChannelOption.html" title="ChannelOption的apidocs">ChannelOption的apidocs</a>和指定的<a target="_blank" href="http://netty.io/4.0/api/io/netty/channel/ChannelConfig.html" title="ChannelConfig">ChannelConfig</a>实现，以了解关于<a target="_blank" href="http://netty.io/4.0/api/io/netty/channel/ChannelConfig.html" title="ChannelOptions">ChannelOptions</a>。</p> </li>
+  <li><p>你注意到<code>option()</code>和<code>childOption()</code>没有？ <code>option()</code>用于接受传入连接的<code>NioServerSocketChannel</code>。 <code>childOption()</code>用于由父<code>ServerChannel</code>接受的通道，在这个示例中为<code>NioServerSocketChannel</code>。</p> </li>
+  <li><p>现在准备好了。剩下的是绑定到端口和启动服务器。 这里，我们绑定到机器中所有NIC(网络接口卡)的端口：<code>8080</code>。 现在可以根据需要多次调用<code>bind()</code>方法(使用不同的绑定地址)。<br>恭喜！这就完成了一个基于 Netty 的第一个服务器。</p> </li>
+ </ol> 
+ <h2 id="h2-u67E5u770Bu63A5u6536u7684u6570u636E"><a name="查看接收的数据" class="reference-link"></a><span class="header-link octicon octicon-link"></span>查看接收的数据</h2>
+ <p>现在我们已经编写了第一个服务器，还需要测试它是否真的有效地运行工作。测试它的最简单的方法是使用<code>telnet</code>命令。 例如，可以在命令行中输入<code>telnet localhost 8080</code>并键入内容。</p> 
+ <p>但是，能验证服务器工作正常吗？ 其实不能真正知道，因为它是一个”<strong>丢弃</strong>“(什么也不处理)服务器。所以发送什么请求根本不会得到任何反应。 为了证明它是真的在运行工作，我们还修改一点服务器端上的代码 - 打印它收到了什么东西。</p> 
+ <p>前面我们已经知道，只要接收到数据，就调用<code>channelRead()</code>方法。现在把一些代码放到<code>DiscardServerHandler</code>的<code>channelRead()</code>方法中，如下所示：</p>   
+ <pre><code class="lang-java">@Override
+public void channelRead(ChannelHandlerContext ctx, Object msg) {
+    ByteBuf in = (ByteBuf) msg;
+    try {
+        while (in.isReadable()) { // (1)
+            System.out.print((char) in.readByte());
+            System.out.flush();
+        }
+    } finally {
+        ReferenceCountUtil.release(msg); // (2)
+    }
+    // 或者直接打印
+    System.out.println("Yes, A new client in = " + ctx.name());
+}
+</code></pre> 
+ <p>这个低效的循环实际上可以简化为：</p> 
+ <pre><code class="lang-java">System.out.println(in.toString(io.netty.util.CharsetUtil.US_ASCII))
+</code></pre> 
+ <p>或者，可以在这里写上：<code>in.release()</code>。</p> 
+ <p>最后看一看项目的文件结构，如下所示 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201703/0103/664110359_42466.png" alt=""></p> 
+ <p>运行 <code>DiscardServer</code> ，输出结果如下 - </p> 
+ <pre><code class="lang-shell">三月 01, 2017 00:02:07 上午 io.netty.handler.logging.LoggingHandler channelRegistered
+信息: [id: 0x4f99602f] REGISTERED
+三月 01, 2017 00:02:07 上午 io.netty.handler.logging.LoggingHandler bind
+信息: [id: 0x4f99602f] BIND: 0.0.0.0/0.0.0.0:8080
+三月 01, 2017 00:02:07 上午 io.netty.handler.logging.LoggingHandler channelActive
+信息: [id: 0x4f99602f, L:/0:0:0:0:0:0:0:0:8080] ACTIVE
+</code></pre> 
+ <p>如果再次运行<code>telnet localhost 8080</code>命令，将会看到服务器打印接收到的内容。</p> 
+ <pre><code class="lang-shell">三月 01, 2017 2:14:14 上午 io.netty.handler.logging.LoggingHandler channelRegistered
+信息: [id: 0xd63646da] REGISTERED
+三月 01, 2017 2:14:14 上午 io.netty.handler.logging.LoggingHandler bind
+信息: [id: 0xd63646da] BIND: 0.0.0.0/0.0.0.0:8080
+三月 01, 2017 2:14:14 上午 io.netty.handler.logging.LoggingHandler channelActive
+信息: [id: 0xd63646da, L:/0:0:0:0:0:0:0:0:8080] ACTIVE
+三月 01, 2017 2:14:32 上午 io.netty.handler.logging.LoggingHandler channelRead
+信息: [id: 0xd63646da, L:/0:0:0:0:0:0:0:0:8080] RECEIVED: [id: 0x452d2ebd, L:/0:0:0:0:0:0:0:1:8080 - R:/0:0:0:0:0:0:0:1:58248]
+Yes, A new client in = DiscardServerHandler#0
+Yes, A new client in = DiscardServerHandler#0
+</code></pre> 
+ <p>上面的输出证明，这个服务器程序是可以正常运行工作的。</p>
+ <br>      
+</div></body></html>

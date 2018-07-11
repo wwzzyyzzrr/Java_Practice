@@ -1,0 +1,50 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Redis HyperLogLog</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>Redis HyperLogLog是一种使用随机化的算法，以少量内存提供集合中唯一元素数量的近似值。</p> 
+ <p>HyperLogLog 可以接受多个元素作为输入，并给出输入元素的基数估算值：</p> 
+ <ul> 
+  <li><strong>基数</strong>：集合中不同元素的数量。比如 {‘apple’, ‘banana’, ‘cherry’, ‘banana’, ‘apple’} 的基数就是 3 。</li>
+  <li><strong>估算值</strong>：算法给出的基数并不是精确的，可能会比实际稍微多一些或者稍微少一些，但会控制在合理的范围之内。</li>
+ </ul> 
+ <p>HyperLogLog 的优点是，即使输入元素的数量或者体积非常非常大，计算基数所需的空间总是固定的、并且是很小的。</p> 
+ <p>在 Redis 里面，每个 HyperLogLog 键只需要花费 12 KB 内存，就可以计算接近 2^64 个不同元素的基数。这和计算基数时，元素越多耗费内存就越多的集合形成鲜明对比。</p> 
+ <p>但是，因为 HyperLogLog 只会根据输入元素来计算基数，而不会储存输入元素本身，所以<br>HyperLogLog 不能像集合那样，返回输入的各个元素。</p> 
+ <h2 id="h2-u793Au4F8B"><a name="示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例</h2>
+ <pre><code class="lang-shell">redis 127.0.0.1:6379&gt; PFADD mykey "redis"  
+1) (integer) 1  
+redis 127.0.0.1:6379&gt; PFADD mykey "mongodb"  
+1) (integer) 1  
+redis 127.0.0.1:6379&gt; PFADD mykey "mysql"  
+1) (integer) 1  
+redis 127.0.0.1:6379&gt; PFCOUNT mykey  
+(integer) 3
+</code></pre> 
+ <h2 id="h2-redis-"><a name="Redis集排序集合命令" class="reference-link"></a><span class="header-link octicon octicon-link"></span>Redis集排序集合命令</h2>  
+ <p>下表列出了 <strong>HyperLogLog</strong> 相关的一些基本命令。</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>序号</th> 
+    <th>命令</th> 
+    <th>说明</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>1</td> 
+    <td><a target="_blank" href="http://www.yiibai.com/redis/hyperloglog_pfadd.html" title="PFADD key element [element ...]">PFADD key element [element …]</a></td> 
+    <td>将指定的元素添加到指定的HyperLogLog 中。</td> 
+   </tr> 
+   <tr> 
+    <td>2</td> 
+    <td><a target="_blank" href="http://www.yiibai.com/redis/hyperloglog_pfcount.html" title="PFCOUNT key [key ...]">PFCOUNT key [key …]</a></td> 
+    <td>返回给定 HyperLogLog 的基数估算值。</td> 
+   </tr> 
+   <tr> 
+    <td>3</td> 
+    <td><a target="_blank" href="http://www.yiibai.com/redis/hyperloglog_pfmerge.html" title="PFMERGE destkey sourcekey [sourcekey ...]">PFMERGE destkey sourcekey [sourcekey …]</a></td> 
+    <td>将多个 HyperLogLog 合并为一个 HyperLogLog</td> 
+   </tr> 
+  </tbody> 
+ </table>
+ <br>      
+</div></body></html>

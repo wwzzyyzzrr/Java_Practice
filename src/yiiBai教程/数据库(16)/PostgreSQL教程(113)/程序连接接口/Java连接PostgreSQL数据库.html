@@ -1,0 +1,363 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Java连接PostgreSQL数据库</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>在Java程序中使用PostgreSQL之前，我们需要确保在机器上安装了PostgreSQL JDBC和Java。 您可以在机器上检查是否正确安装了Java：<a target="_blank" href="http://www.yiibai.com/java/how-to-install-java-on-ubuntu.html" title="Java教程">Java教程</a>。 现在我们来看一下如何设置PostgreSQL JDBC驱动。</p> 
+ <ul> 
+  <li><p>从<a target="_blank" href="http://jdbc.postgresql.org/download.html" title="postgresql-jdbc">postgresql-jdbc</a>存储库下载最新版本的<code>postgresql-(VERSION).jdbc.jar</code>。</p> </li>
+  <li><p>在类路径中添加下载的<code>jar</code>文件<code>postgresql-(VERSION).jdbc.jar</code>，或者您可以使用<code>-classpath</code>选项，如下面的例子所述。</p> </li>
+ </ul> 
+ <h2 id="h2-java-postgresql-"><a name="Java连接到PostgreSQL数据库" class="reference-link"></a><span class="header-link octicon octicon-link"></span>Java连接到PostgreSQL数据库</h2>
+ <p>以下Java代码显示如何连接到现有数据库。 如果数据库不存在，那么它将被创建，最后将返回一个数据库对象。</p> 
+ <pre><code class="lang-java">import java.sql.Connection;
+import java.sql.DriverManager;
+
+public class PostgreSQLJDBC {
+   public static void main(String args[]) {
+      Connection c = null;
+      try {
+         Class.forName("org.postgresql.Driver");
+         c = DriverManager
+            .getConnection("jdbc:postgresql://localhost:5432/testdb",
+            "postgres", "123");
+      } catch (Exception e) {
+         e.printStackTrace();
+         System.err.println(e.getClass().getName()+": "+e.getMessage());
+         System.exit(0);
+      }
+      System.out.println("Opened database successfully");
+   }
+}
+</code></pre> 
+ <p>在编译并运行上述程序之前，请在PostgreSQL安装目录中找到<code>pg_hba.conf</code>文件并添加以下行：</p> 
+ <pre><code class="lang-shell"># IPv4 local connections:
+host    all         all         127.0.0.1/32          md5
+</code></pre> 
+ <p>您可以启动/重新启动postgres服务器，使用以下命令运行：</p> 
+ <pre><code class="lang-shell">[root@host]# service postgresql restart
+Stopping postgresql service:                               [  OK  ]
+Starting postgresql service:                               [  OK  ]
+</code></pre> 
+ <p>现在，我们来编译并运行上面的程序来获得与<code>testdb</code>的连接。 在这里使用用户ID为<code>postgres</code>和密码为<code>123</code>来访问数据库。 您可以根据数据库配置和设置进行更改。 我们还假定当前版本的JDBC驱动程序<code>postgresql-9.2-1002.jdbc3.jar</code>在当前路径中(<code>c:\tools\</code>)可用。</p> 
+ <pre><code class="lang-shell">C:\JavaPostgresIntegration&gt;javac PostgreSQLJDBC.java
+C:\JavaPostgresIntegration&gt;java -cp c:\tools\postgresql-9.2-1002.jdbc3.jar;C:\JavaPostgresIntegration PostgreSQLJDBC
+Open database successfully
+</code></pre> 
+ <h2 id="h2-u521Bu5EFAu8868"><a name="创建表" class="reference-link"></a><span class="header-link octicon octicon-link"></span>创建表</h2>
+ <p>以下Java程序将用于在之前打开的数据库中创建一个表。确保目标数据库中没有此表。</p> 
+ <pre><code class="lang-java">import java.sql.*;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.Statement;
+
+
+public class PostgreSQLJDBC {
+   public static void main( String args[] )
+     {
+       Connection c = null;
+       Statement stmt = null;
+       try {
+         Class.forName("org.postgresql.Driver");
+         c = DriverManager
+            .getConnection("jdbc:postgresql://localhost:5432/testdb",
+            "manisha", "123");
+         System.out.println("Opened database successfully");
+
+         stmt = c.createStatement();
+         String sql = "CREATE TABLE COMPANY " +
+                      "(ID INT PRIMARY KEY     NOT NULL," +
+                      " NAME           TEXT    NOT NULL, " +
+                      " AGE            INT     NOT NULL, " +
+                      " ADDRESS        CHAR(50), " +
+                      " SALARY         REAL)";
+         stmt.executeUpdate(sql);
+         stmt.close();
+         c.close();
+       } catch ( Exception e ) {
+         System.err.println( e.getClass().getName()+": "+ e.getMessage() );
+         System.exit(0);
+       }
+       System.out.println("Table created successfully");
+     }
+}
+</code></pre> 
+ <p>编译和执行程序时，将在<code>testdb</code>数据库中创建<code>COMPANY</code>表，并显示以下两行：</p> 
+ <pre><code class="lang-shell">Opened database successfully
+Table created successfully
+</code></pre> 
+ <h2 id="h2-u63D2u5165u6570u636Eu64CDu4F5C"><a name="插入数据操作" class="reference-link"></a><span class="header-link octicon octicon-link"></span>插入数据操作</h2>
+ <p>以下Java程序显示了如何在上述示例中创建的<code>COMPANY</code>表中创建/插入数据记录：</p> 
+ <pre><code class="lang-java">import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.Statement;
+
+public class PostgreSQLJDBC {
+   public static void main(String args[]) {
+      Connection c = null;
+      Statement stmt = null;
+      try {
+         Class.forName("org.postgresql.Driver");
+         c = DriverManager
+            .getConnection("jdbc:postgresql://localhost:5432/testdb",
+            "manisha", "123");
+         c.setAutoCommit(false);
+         System.out.println("Opened database successfully");
+
+         stmt = c.createStatement();
+         String sql = "INSERT INTO COMPANY (ID,NAME,AGE,ADDRESS,SALARY) "
+               + "VALUES (1, 'Paul', 32, 'California', 20000.00 );";
+         stmt.executeUpdate(sql);
+
+         sql = "INSERT INTO COMPANY (ID,NAME,AGE,ADDRESS,SALARY) "
+               + "VALUES (2, 'Allen', 25, 'Texas', 15000.00 );";
+         stmt.executeUpdate(sql);
+
+         sql = "INSERT INTO COMPANY (ID,NAME,AGE,ADDRESS,SALARY) "
+               + "VALUES (3, 'Teddy', 23, 'Norway', 20000.00 );";
+         stmt.executeUpdate(sql);
+
+         sql = "INSERT INTO COMPANY (ID,NAME,AGE,ADDRESS,SALARY) "
+               + "VALUES (4, 'Mark', 25, 'Rich-Mond ', 65000.00 );";
+         stmt.executeUpdate(sql);
+
+         stmt.close();
+         c.commit();
+         c.close();
+      } catch (Exception e) {
+         System.err.println( e.getClass().getName()+": "+ e.getMessage() );
+         System.exit(0);
+      }
+      System.out.println("Records created successfully");
+   }
+}
+</code></pre> 
+ <p>程序编译执行后，将在<code>COMPANY</code>表中创建/插入给定的记录，并显示以下两行：</p> 
+ <pre><code class="lang-shell">Opened database successfully
+Records created successfully
+</code></pre> 
+ <h2 id="h2-select-"><a name="SELECT操作" class="reference-link"></a><span class="header-link octicon octicon-link"></span>SELECT操作</h2>
+ <p>以下Java程序显示了如何从上述示例中创建的<code>COMPANY</code>表中获取和显示记录：</p> 
+ <pre><code class="lang-java">import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
+
+
+public class PostgreSQLJDBC {
+   public static void main( String args[] )
+     {
+       Connection c = null;
+       Statement stmt = null;
+       try {
+       Class.forName("org.postgresql.Driver");
+         c = DriverManager
+            .getConnection("jdbc:postgresql://localhost:5432/testdb",
+            "manisha", "123");
+         c.setAutoCommit(false);
+         System.out.println("Opened database successfully");
+
+         stmt = c.createStatement();
+         ResultSet rs = stmt.executeQuery( "SELECT * FROM COMPANY;" );
+         while ( rs.next() ) {
+            int id = rs.getInt("id");
+            String  name = rs.getString("name");
+            int age  = rs.getInt("age");
+            String  address = rs.getString("address");
+            float salary = rs.getFloat("salary");
+            System.out.println( "ID = " + id );
+            System.out.println( "NAME = " + name );
+            System.out.println( "AGE = " + age );
+            System.out.println( "ADDRESS = " + address );
+            System.out.println( "SALARY = " + salary );
+            System.out.println();
+         }
+         rs.close();
+         stmt.close();
+         c.close();
+       } catch ( Exception e ) {
+         System.err.println( e.getClass().getName()+": "+ e.getMessage() );
+         System.exit(0);
+       }
+       System.out.println("Operation done successfully");
+     }
+}
+</code></pre> 
+ <p>程序编译执行时，会产生以下结果：</p>   
+ <pre><code class="lang-shell">Opened database successfully
+ID = 1
+NAME = Paul
+AGE = 32
+ADDRESS = California
+SALARY = 20000.0
+
+ID = 2
+NAME = Allen
+AGE = 25
+ADDRESS = Texas
+SALARY = 15000.0
+
+ID = 3
+NAME = Teddy
+AGE = 23
+ADDRESS = Norway
+SALARY = 20000.0
+
+ID = 4
+NAME = Mark
+AGE = 25
+ADDRESS = Rich-Mond
+SALARY = 65000.0
+
+Operation done successfully
+</code></pre> 
+ <h2 id="h2-u66F4u65B0u64CDu4F5C"><a name="更新操作" class="reference-link"></a><span class="header-link octicon octicon-link"></span>更新操作</h2>
+ <p>以下Java代码显示了如何使用<code>UPDATE</code>语句来更新指定记录，然后从<code>COMPANY</code>表中获取和显示更新的记录：</p> 
+ <pre><code class="lang-sql">import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
+
+
+public class PostgreSQLJDBC {
+   public static void main( String args[] )
+     {
+       Connection c = null;
+       Statement stmt = null;
+       try {
+       Class.forName("org.postgresql.Driver");
+         c = DriverManager
+            .getConnection("jdbc:postgresql://localhost:5432/testdb",
+            "manisha", "123");
+         c.setAutoCommit(false);
+         System.out.println("Opened database successfully");
+
+         stmt = c.createStatement();
+         String sql = "UPDATE COMPANY set SALARY = 25000.00 where ID=1;";
+         stmt.executeUpdate(sql);
+         c.commit();
+
+         ResultSet rs = stmt.executeQuery( "SELECT * FROM COMPANY;" );
+         while ( rs.next() ) {
+            int id = rs.getInt("id");
+            String  name = rs.getString("name");
+            int age  = rs.getInt("age");
+            String  address = rs.getString("address");
+            float salary = rs.getFloat("salary");
+            System.out.println( "ID = " + id );
+            System.out.println( "NAME = " + name );
+            System.out.println( "AGE = " + age );
+            System.out.println( "ADDRESS = " + address );
+            System.out.println( "SALARY = " + salary );
+            System.out.println();
+         }
+         rs.close();
+         stmt.close();
+         c.close();
+       } catch ( Exception e ) {
+         System.err.println( e.getClass().getName()+": "+ e.getMessage() );
+         System.exit(0);
+       }
+       System.out.println("Operation done successfully");
+     }
+}
+</code></pre> 
+ <p>程序编译执行时，会产生以下结果：</p> 
+ <pre><code class="lang-shell">Opened database successfully
+ID = 2
+NAME = Allen
+AGE = 25
+ADDRESS = Texas
+SALARY = 15000.0
+
+ID = 3
+NAME = Teddy
+AGE = 23
+ADDRESS = Norway
+SALARY = 20000.0
+
+ID = 4
+NAME = Mark
+AGE = 25
+ADDRESS = Rich-Mond
+SALARY = 65000.0
+
+ID = 1
+NAME = Paul
+AGE = 32
+ADDRESS = California
+SALARY = 25000.0
+
+Operation done successfully
+</code></pre> 
+ <h2 id="h2-u5220u9664u64CDu4F5C"><a name="删除操作" class="reference-link"></a><span class="header-link octicon octicon-link"></span>删除操作</h2>
+ <p>以下Java代码显示了如何使用<code>DELETE</code>语句删除指定记录，然后从<code>COMPANY</code>表中获取并显示剩余的记录：</p> 
+ <pre><code class="lang-java">import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
+
+
+public class PostgreSQLJDBC6 {
+   public static void main( String args[] )
+     {
+       Connection c = null;
+       Statement stmt = null;
+       try {
+       Class.forName("org.postgresql.Driver");
+         c = DriverManager
+            .getConnection("jdbc:postgresql://localhost:5432/testdb",
+            "manisha", "123");
+         c.setAutoCommit(false);
+         System.out.println("Opened database successfully");
+
+         stmt = c.createStatement();
+         String sql = "DELETE from COMPANY where ID=2;";
+         stmt.executeUpdate(sql);
+         c.commit();
+
+         ResultSet rs = stmt.executeQuery( "SELECT * FROM COMPANY;" );
+         while ( rs.next() ) {
+            int id = rs.getInt("id");
+            String  name = rs.getString("name");
+            int age  = rs.getInt("age");
+            String  address = rs.getString("address");
+            float salary = rs.getFloat("salary");
+            System.out.println( "ID = " + id );
+            System.out.println( "NAME = " + name );
+            System.out.println( "AGE = " + age );
+            System.out.println( "ADDRESS = " + address );
+            System.out.println( "SALARY = " + salary );
+            System.out.println();
+         }
+         rs.close();
+         stmt.close();
+         c.close();
+       } catch ( Exception e ) {
+         System.err.println( e.getClass().getName()+": "+ e.getMessage() );
+         System.exit(0);
+       }
+       System.out.println("Operation done successfully");
+     }
+}
+</code></pre> 
+ <p>程序编译执行时，会产生以下结果：</p> 
+ <pre><code class="lang-shell">Opened database successfully
+ID = 3
+NAME = Teddy
+AGE = 23
+ADDRESS = Norway
+SALARY = 20000.0
+
+ID = 4
+NAME = Mark
+AGE = 25
+ADDRESS = Rich-Mond
+SALARY = 65000.0
+
+ID = 1
+NAME = Paul
+AGE = 32
+ADDRESS = California
+SALARY = 25000.0
+Operation done successfully
+</code></pre>
+ <br>      
+</div></body></html>

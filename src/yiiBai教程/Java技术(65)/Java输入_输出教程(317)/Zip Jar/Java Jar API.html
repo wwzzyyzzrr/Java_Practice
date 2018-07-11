@@ -1,0 +1,139 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Java Jar API</h1><div style="width:100%;float:left;" class="article-content">   
+ <h2 id="h2-jar-api"><a name="JAR API" class="reference-link"></a><span class="header-link octicon octicon-link"></span>JAR API</h2>
+ <p>JAR API包括使用 <code>manifest</code> 文件的类。<code>Manifest</code>类的一个对象表示一个<code>manifest</code>文件。 在代码中创建一个<code>Manifest</code>对象，如下所示：</p> 
+ <pre><code class="lang-java">Manifest manifest = new Manifest();
+</code></pre> 
+ <p>可以从<code>manifest</code>文件中读取条目并向其写入条目。要将一个条目添加到主部分，使用<code>Manifest</code>类中的<code>getMainAttributes()</code>方法获取<code>Attributes</code>类的实例，并使用其<code>put()</code>方法继续向其添加名称/值对。</p> 
+ <p>以下代码将一些属性添加到<code>manifest</code>对象的主部分。已知的属性名称在<code>Attributes.Name</code>类中定义为常量。</p> 
+ <p>例如，常量<code>Attributes.Name.MANIFEST_VERSION</code>表示<code>manifest</code>版本属性名称。</p> 
+ <pre><code class="lang-java">Manifest manifest = new Manifest();
+Attributes  mainAttribs = manifest.getMainAttributes(); mainAttribs.put(Attributes.Name.MANIFEST_VERSION, "1.0"); mainAttribs.put(Attributes.Name.MAIN_CLASS, "com.yiibai.Main"); mainAttribs.put(Attributes.Name.SEALED, "true");
+</code></pre> 
+ <p>将单个条目添加到<code>manifest</code>文件比添加到主条目稍微复杂一点。以下代码显示如何向<code>Manifest</code>对象添加单个条目：</p> 
+ <pre><code class="lang-java">Map&lt;String,Attributes&gt; attribsMap = manifest.getEntries();
+Attributes attribs  = new Attributes();
+Attributes.Name name = new Attributes.Name("Sealed");
+attribs.put(name, "false");
+attribsMap.put("com/yiibai/archives/", attribs);
+</code></pre> 
+ <p>要将<code>manifest</code>文件添加到JAR文件，请在<code>JarOutputStream</code>类的一个构造函数中指定它。例如，以下代码创建一个<code>jar</code>输出流，以使用<code>Manifest</code>对象创建一个<code>test.jar</code>文件：</p> 
+ <pre><code class="lang-java">Manifest manifest = new Manifest();
+JarOutputStream jos  = new JarOutputStream(new BufferedOutputStream(
+new FileOutputStream("test.jar")), manifest);
+</code></pre> 
+ <p>以下代码创建包含<code>Manifest</code>文件的JAR文件。</p> 
+ <pre><code class="lang-java">import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.Map;
+import java.util.jar.Attributes;
+import java.util.jar.JarEntry;
+import java.util.jar.JarOutputStream;
+import java.util.jar.Manifest;
+import java.util.zip.Deflater;
+
+public class Main {
+  public static void main(String[] args) throws Exception {
+    Manifest manifest = getManifest();
+    String jarFileName = "jartest.jar";
+    String[] entries = new String[2];
+    entries[0] = "images/logo.bmp";
+    entries[1] = "com/yiibai/Test.class";
+
+    createJAR(jarFileName, entries, manifest);
+  }
+
+  public static void createJAR(String jarFileName, String[] jarEntries,
+      Manifest manifest) {
+
+    try (JarOutputStream jos = new JarOutputStream(new BufferedOutputStream(
+        new FileOutputStream(jarFileName)), manifest)) {
+      jos.setLevel(Deflater.BEST_COMPRESSION);
+      for (int i = 0; i &lt; jarEntries.length; i++) {
+        File entryFile = new File(jarEntries[i]);
+        if (!entryFile.exists()) {
+          return;
+        }
+        JarEntry je = new JarEntry(jarEntries[i]);
+        jos.putNextEntry(je);
+        addEntryContent(jos, jarEntries[i]);
+        jos.closeEntry();
+      }
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
+
+  public static void addEntryContent(JarOutputStream jos, String entryFileName)
+      throws IOException, FileNotFoundException {
+    BufferedInputStream bis = new BufferedInputStream(new FileInputStream(
+        entryFileName));
+    byte[] buffer = new byte[1024];
+    int count = -1;
+    while ((count = bis.read(buffer)) != -1) {
+      jos.write(buffer, 0, count);
+    }
+
+    bis.close();
+  }
+
+  public static Manifest getManifest() {
+    Manifest manifest = new Manifest();
+    Attributes mainAttribs = manifest.getMainAttributes();
+    mainAttribs.put(Attributes.Name.MANIFEST_VERSION, "1.0");
+    mainAttribs.put(Attributes.Name.MAIN_CLASS, "com.yiibai.Test");
+    mainAttribs.put(Attributes.Name.SEALED, "true");
+
+    Map&lt;String, Attributes&gt; attribsMap = manifest.getEntries();
+
+    Attributes a1 = getAttribute("Sealed", "false");
+    attribsMap.put("com/yiibai/", a1);
+
+    Attributes a2 = getAttribute("Content-Type", "image/bmp");
+    attribsMap.put("images/logo.bmp", a2);
+
+    return manifest;
+  }
+
+  public static Attributes getAttribute(String name, String value) {
+    Attributes a = new Attributes();
+    Attributes.Name attribName = new Attributes.Name(name);
+    a.put(attribName, value);
+    return a;
+  }
+}
+</code></pre> 
+ <p>要从JAR文件的清单文件读取条目，请使用<code>JarInputStream</code>的<code>getManifest()</code>类获取<code>Manifest</code>类的对象，如下所示：</p>   
+ <pre><code class="lang-java">JarInputStream jis = new JarInputStream(new FileInputStream("jartest.jar"));
+Manifest manifest = jis.getManifest();
+
+if (manifest !=  null)  {
+    Attributes  mainAttributes = manifest.getMainAttributes(); 
+    String  mainClass = mainAttributes.getValue("Main-Class");
+    Map&lt;String, Attributes&gt; entries  = manifest.getEntries();
+}
+</code></pre> 
+ <h2 id="h2--jar-"><a name="从JAR文件访问资源" class="reference-link"></a><span class="header-link octicon octicon-link"></span>从JAR文件访问资源</h2>
+ <p>可以通过使用JAR文件中的资源引用来构造URL对象。JAR文件<code>URL</code>语法为 - </p> 
+ <pre><code class="lang-java">jar:&lt;url&gt;!/{entry}
+</code></pre> 
+ <p>以下URL使用HTTP协议引用<code>www.yiibai.com</code>上的<code>test.jar</code>文件中的<code>images/logo.bmp</code> JAR条目如下：</p> 
+ <pre><code class="lang-java">jar:http://www.yiibai.com/test.jar!/images/logo.bmp
+</code></pre> 
+ <p>以下URL使用文件协议引用<code>c:\jarfiles\</code> 目录中的本地文件系统上的<code>test.jar</code>文件中的<code>images/logo.bmp</code> JAR条目：</p> 
+ <pre><code class="lang-java">jar:file:/c:/jarfiles/test.jar!/images/logo.bmp
+</code></pre> 
+ <p>要从类路径中的JAR文件读取<code>images/logo.bmp</code>文件，可以使用类对象获取输入流对象，如下所示：</p> 
+ <pre><code class="lang-java">// Assuming that the   Test   class is in the   CLASSPATH 
+Class cls = Test.class;
+InputStream in = cls.getResourceAsStream("/images/logo.bmp")
+</code></pre> 
+ <p>还可以在JAR文件中获取一个条目的URL对象，该路径在类路径中如下所示：</p> 
+ <pre><code class="lang-java">URL  url = cls.getResource("/images/logo.bmp");
+</code></pre>
+ <br>      
+</div></body></html>

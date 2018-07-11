@@ -1,0 +1,180 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Struts2中文本地化问题</h1><div style="width:100%;float:left;" class="article-content">   
+ <div> 
+  <div>
+    一个 Struts2 的国际化定位的问题，用来显示中国汉字... 
+  </div> 
+ </div> 
+ <p> <br> </p> 
+ <h2> 
+  <div>
+    案例1：属性有特殊字符的文件 
+  </div> </h2> 
+ <p> 属性文件存储用户名，密码信息，并以中文字符提交。此属性文件以UTF-8格式创建的，但内容不使用 native2ascii&nbsp;编码。 </p> 
+ <p> <img src="/uploads/tutorial/20151202/1-1512022102403F.jpg" alt=""> </p> 
+ <div style="text-align:center;"> 
+  <img title="struts2-localization-case1-1" src="file://E:/data/youdao/qq24B39E2329F08D9F4C3146A571A415EF/3bbe06cb8f9b4f5d91ce5f103a07895f/ion-case1-1.jpeg" alt="struts2-localization-case1-1" style="height:auto;"> 
+ </div> 
+ <p> 让我们试着通过一些UI标签，来显示中国汉字。查看页面声明为UTF-8格式的HTML元标记来显示。 </p> 
+ <pre>...
+&lt;head&gt;
+&lt;meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /&gt;
+&lt;/head&gt;
+...
+&lt;s:form action="validateUser"&gt;
+	&lt;s:textfield key="global.username" name="username"/&gt;
+	&lt;s:password key="global.password" name="password"/&gt;	
+	&lt;s:submit key="global.submit" name="submit" /&gt;
+	
+	&lt;div&gt;Testing 1 : &lt;s:property value="getText('global.username')" /&gt;&lt;/div&gt;
+	&lt;div&gt;Testing 2 : &lt;s:text name="global.password" /&gt;&lt;/div&gt;&lt;/br/&gt;
+&lt;/s:form&gt;
+...
+&lt;s:url id="localezhCN" namespace="/" action="locale" &gt;
+   &lt;s:param name="request_locale" &gt;zh_CN&lt;/s:param&gt;
+&lt;/s:url&gt;
+...
+&lt;s:a href="%{localezhCN}" &gt;Chinese&lt;/s:a&gt;
+...</pre> 
+ <p> 结果<br> <img src="/uploads/tutorial/20151202/1-15120221032U11.png" alt=""> </p> 
+ <div style="text-align:center;"> 
+  <img src="file://E:/data/youdao/qq24B39E2329F08D9F4C3146A571A415EF/0207435c5f0849ff81afba2bdb9b57c4/clipboard.png"> 
+ </div> 
+ <div>
+   令人惊奇的是，以下三个UI标签都能够正确地显示中国消息 
+ </div> 
+ <pre>&lt;s:textfield key="global.username" name="username"/&gt;
+&lt;s:password key="global.password" name="password"/&gt;	
+Testing 2 : &lt;s:text name="global.password" /&gt;</pre> 
+ <div>
+   然而，“s:submit”&nbsp;和&nbsp;“getText()”&nbsp;却无法显示呢？ 
+ </div> 
+ <div> 
+  <div>
+    据Java的国际化文档，要使用资源包正确显示特殊字符，则必须用 native2ascii 工具进行处理。 
+  </div> 
+ </div> 
+ <p> 深入到 TextProvider.getText()的源代码后，它使用的资源&nbsp;bundle.getString()来从资源包检索的消息，所以不正确的消息是合理的。但是，为什么“s:text“,&nbsp;“s:textfield”&nbsp;和&nbsp;“s:password”&nbsp;能够正确显示了中文的消息，为什么“s:submit”会失败？在有太多的问题，让我们看看示例2... </p> 
+ <h2> 
+  <div>
+    案例2：有特殊字符的属性文件(编码) 
+  </div> </h2> 
+ <p> 这一次，属性文件使用native2ascii工具处理中国汉字的编码正确。 </p> 
+ <p> <img src="/uploads/tutorial/20151202/1-151202210404492.jpg" alt=""> </p> 
+ <div style="text-align:center;"> 
+  <img title="struts2-localization-case2-1" src="file://E:/data/youdao/qq24B39E2329F08D9F4C3146A571A415EF/84833088810b4757a8e873b6e69c48a6/ion-case2-1.jpeg" alt="struts2-localization-case2-1" style="height:auto;"> 
+ </div> 
+ <p> 结果如下所示： </p> 
+ <p> <img src="/uploads/tutorial/20151202/1-151202210422407.png" alt=""> </p> 
+ <div style="text-align:center;"> 
+  <img src="file://E:/data/youdao/qq24B39E2329F08D9F4C3146A571A415EF/63d95924aedb40a18e26d9a45791a11a/clipboard.png"> 
+ </div> 
+ <p> 其结果是完全逆转，现在&nbsp;“s:submit”&nbsp;和&nbsp;“getText()”&nbsp;是能够正确地显示它，但其他UI组件失败。&nbsp;这里是按预期方式工作的，因为在Struts&nbsp;2推荐使用getText()，以显示国际化或本地化的消息。问题是，为什么“s:submit”会不同呢？ </p> 
+ <div style="background-color:#E6E6FC;color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:16px;"> 
+  <h2 style="background-color:inherit;color:inherit;font-family:inherit;font-size:24px;font-weight:500;"> Struts2..哪里有问题？ </h2> 
+  <p style="background-color:inherit;"> 这里有几个问题： </p> 
+  <ol style="background-color:inherit;"> 
+   <li style="background-color:inherit;"> 
+    <div style="background-color:inherit;">
+      为什么&nbsp;s:submit&nbsp;有如此不同的效果？ 
+    </div> </li> 
+   <li style="background-color:inherit;"> <span style="line-height:1.5;">对国际化应该是非常简单的，为什么在Struts&nbsp;2有这种问题？</span>&nbsp;<span style="line-height:1.5;">或者我们误解了Struts2 国际化如何工作了？</span> </li> 
+   <li style="background-color:inherit;"> <span style="line-height:1.5;">为什么有这么多的方式来显示来自资源包的消息？</span><span style="line-height:1.5;">为什么不直接组织成一个方法？</span><span style="line-height:1.5;">&nbsp;</span><span style="line-height:1.5;">在Struts1，只需使用“bean:message”，为什么Struts&nbsp;2中它看起来很复杂？</span> </li> 
+   <li style="background-color:inherit;"> <span style="line-height:1.5;">Struts2的支持XML资源包？</span>&nbsp;我们可能<span style="line-height:1.5;">不太喜欢用native2ascii工具对数据进行编码为UTF-8格式，</span><span style="line-height:1.5;">它使属性文件不可读。&nbsp;Apache&nbsp;Wicket的在这个问题做了很好的工作，可能是在Struts&nbsp;2中吸取教训。</span> </li> 
+   <li style="background-color:inherit;"> 
+    <div style="background-color:inherit;">
+      那么，如何正确地在 Struts2 中显示中国汉字？ 
+    </div> </li> 
+  </ol> 
+ </div> 
+ <div style="background-color:#F7F7DA;color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:16px;"> 
+  <div style="background-color:inherit;">
+    许多文章和教程使用以下方法来显示资源包的消息： 
+  </div> 
+  <pre>&lt;s:text name="global.username"/&gt;
+&lt;s:property value="getText('global.username')"/&gt;&nbsp;</pre> 
+  <p style="background-color:inherit;"> <span style="line-height:1.5;">然而，这仅适用于英国或一些“英语状(欧洲)” 的字符，如法文，德文。</span><span style="line-height:1.5;">但对中文或日文，这两种方法将返回完全不同的输出。真的不知道Struts2的本地化该怎么办了。</span> </p> 
+ </div> 
+ <h2> 解决办法 </h2> 
+ <div>
+   问题是在HTML&nbsp;meta标签， 
+ </div> 
+ <pre>&lt;head&gt;
+&lt;meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /&gt;
+&lt;/head&gt;</pre> 
+ <div style="background-color:#F7F7DA;color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:16px;"> 
+  <div style="background-color:inherit;">
+    在Struts1，上述meta标签必须正确显示UTF-8的数据，但这在 Struts2 是有问题的。 
+  </div> 
+ </div> 
+ <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:16px;"> <span style="background-color:inherit;font-family:微软雅黑;font-size:14px;line-height:1.5;">在Struts2，meta标签不起作用，我们应该把&nbsp;&lt;%@&nbsp;page&nbsp;contentType=”text/html;charset=UTF-8″&nbsp;%&gt;标签放在页面的第一行。</span>例如下面的代码片断： </p>   
+ <pre>&lt;%@ page contentType="text/html;charset=UTF-8" %&gt;
+&lt;%@ taglib prefix="s" uri="/struts-tags" %&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;/head&gt;
+...</pre> 
+ <p> 结果显示如下： </p> 
+ <p> <img src="/uploads/tutorial/20151202/1-151202210451241.png" alt=""> </p> 
+ <div style="text-align:center;"> 
+  <img src="file://E:/data/youdao/qq24B39E2329F08D9F4C3146A571A415EF/56e5b9848d0f43c5832010482dc4af4b/clipboard.png"> 
+ </div> 
+ <div>
+   所有的中文消息正确显示。 
+ </div> 
+ <div style="background-color:#E6E6FC;color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:16px;"> 
+  <h2 style="background-color:inherit;color:inherit;font-family:inherit;font-size:24px;font-weight:500;"> 
+   <div style="background-color:inherit;">
+     回答之前的问题 
+   </div> </h2> 
+  <ol style="background-color:inherit;"> 
+   <li style="background-color:inherit;"> 
+    <div style="background-color:inherit;">
+      为什么&nbsp;s:submit&nbsp;有如此不同的效果？ 
+    </div> <strong>A:&nbsp;</strong><span style="line-height:1.5;">暂无评论</span> </li> 
+   <li style="background-color:inherit;"> 
+    <div style="background-color:inherit;">
+      对国际化应该是非常简单的，为什么在Struts&nbsp;2有这种问题？&nbsp;或者我们误解了Struts2&nbsp;国际化如何工作了？ 
+    </div> <strong>A:&nbsp;<strong> 
+      <div style="background-color:inherit;">
+        确保把 
+      </div> </strong><strong>&nbsp;<strong>&lt;%@ page contentType=”text/html;charset=UTF-8″ %&gt;</strong>” 放在页面的第一行。</strong></strong> </li> 
+   <li style="background-color:inherit;"> 
+    <div style="background-color:inherit;">
+      为什么有这么多的方式来显示来自资源包的消息？为什么不直接组织成一个方法？&nbsp;在Struts1，只需使用“bean:message”，为什么Struts&nbsp;2中它看起来很复杂？ 
+    </div> <strong>A: s:text, key, getText(), name… ,&nbsp;<strong> 
+      <div style="background-color:inherit;">
+        所有的都能够正确地显示中文或UTF-8编码的数据，
+       <strong><strong> 
+         <div style="background-color:inherit;">
+           只要确保把正确的“字符集”放在视图页面中。 
+         </div> </strong></strong> 
+      </div> </strong></strong> </li> 
+   <li style="background-color:inherit;"> 
+    <div style="background-color:inherit;">
+      Struts2的支持XML资源包？&nbsp;我们可能不太喜欢用native2ascii工具对数据进行编码为UTF-8格式，它使属性文件不可读。&nbsp;Apache&nbsp;Wicket的在这个问题做了很好的工作，可能是在Struts&nbsp;2中吸取教训。 
+    </div> <strong>A:</strong><span style="line-height:1.5;">希望在Struts2的下一版本可以支持在XML资源包。</span> </li> 
+   <li style="background-color:inherit;"> 
+    <div style="background-color:inherit;">
+      那么，如何正确地在&nbsp;Struts2&nbsp;中显示中国汉字？ 
+    </div> <strong>A: 看看上页的解决办法</strong> </li> 
+  </ol> 
+ </div> 
+ <p> <br> </p> 
+ <div style="color:#333333;font-family:'Helvetica Neue', Helvetica,  background-color:#FFFFFF;"> 
+  <h2 style="font-size:24px;font-weight:500;"> 参考 </h2> 
+  <ol> 
+   <li style="background-color:inherit;"> <a target="_blank" href="http://www.yiibai.com/java/java-convert-chinese-character-to-unicode-with-native2ascii/">http://www.yiibai.com/java/java-convert-chinese-character-to-unicode-with-native2ascii</a>.html </li> 
+   <li style="background-color:inherit;"> <a target="_blank" href="http://forums.sun.com/thread.jspa?threadID=5185040">http://forums.sun.com/thread.jspa?threadID=5185040</a> </li> 
+   <li style="background-color:inherit;"> <a target="_blank" href="http://www.coderanch.com/t/452139/Struts/applicationresources-properties-utf-characters#2013557">http://www.coderanch.com/t/452139/Struts/applicationresources-properties-utf-characters#2013557</a> </li> 
+   <li style="background-color:inherit;"> <a target="_blank" href="http://struts.apache.org/2.1.8/docs/localization.html">http://struts.apache.org/2.1.8/docs/localization.html</a> </li> 
+   <li style="background-color:inherit;"> <a target="_blank" href="http://hxzon00.blog.163.com/blog/static/10489241620088121449163/">http://hxzon00.blog.163.com/blog/static/10489241620088121449163/</a> </li> 
+  </ol> 
+  <div style="background-color:inherit;"> 
+   <br> 下载代码(
+   <span style="background-color:inherit;line-height:1.5;">globalresource</span>
+   <span style="line-height:1.5;">) –</span>
+   <span style="line-height:1.5;">&nbsp;<a target="_blank" href="http://pan.baidu.com/s/1mgzt3dQ">http://pan.baidu.com/s/1mgzt3dQ</a></span> 
+  </div> 
+ </div>
+ <br>      
+</div></body></html>

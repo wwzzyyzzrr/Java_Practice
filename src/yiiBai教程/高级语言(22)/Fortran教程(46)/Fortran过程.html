@@ -1,0 +1,260 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Fortran过程</h1><div style="width:100%;float:left;" class="article-content">   
+ <p> 过程是一组执行一个明确定义的任务，可以从程序调用语句。信息(或数据)被传递给调用程序，以过程作为参数。</p> 
+ <p> 有两种类型的程序：</p> 
+ <ul> 
+  <li> 函数</li> 
+  <li> 子程序</li> 
+ </ul> 
+ <h2> 函数</h2> 
+ <p> 函数是返回一个数量的过程。函数不修改其参数。</p> 
+ <p> 返回数值被称为函数值，并将其表示为函数名。</p> 
+ <p> 语法：</p> 
+ <p> 函数的语法如下：</p> 
+ <pre class="prettyprint notranslate" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+function name(arg1, arg2, ....)  
+   [declarations, including those for the arguments]   
+   [executable statements] 
+end function [name]</pre> 
+ <p> 下面的示例演示一个函数名为area_of_circle。它计算半径为 r 的圆的面积。</p> 
+ <pre class="prettyprint notranslate tryit" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); cursor: default; background-image: url(http://www.yiibai.com/fortran/images/tryit.jpg) !important; background-attachment: initial !important; background-size: initial !important; background-origin: initial !important; background-clip: initial !important; background-position: 100% 0%; background-repeat: no-repeat !important;">
+program calling_func
+
+   real :: a
+   a = area_of_circle(2.0) 
+   
+   Print *, "The area of a circle with radius 2.0 is"
+   Print *, a
+   
+end program calling_func
+
+
+! this function computes the area of a circle with radius r  
+function area_of_circle (r)  
+
+! function result     
+implicit none      
+
+   ! dummy arguments        
+   real :: area_of_circle   
+   
+   ! local variables 
+   real :: r     
+   real :: pi
+   
+   pi = 4 * atan (1.0)     
+   area_of_circle = pi * r**2  
+   
+end function area_of_circle</pre> 
+ <p> 当编译并执行上述程序，它会产生以下结果：</p> 
+ <pre class="result notranslate" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+The area of a circle with radius 2.0 is
+   12.5663710   </pre> 
+ <p> <strong>请注意：</strong></p> 
+ <ul> 
+  <li> <p> 必须指定隐含都不在这两个在主程序和过程中。</p> </li> 
+  <li> <p> 在被调用函数的参数r被称为&nbsp;<strong>dummy argument.</strong></p> </li> 
+ </ul> 
+ <p> 结果选项</p> 
+ <p> 如果想返回的值存储在函数名的其他名称，则可以使用result选项。</p> 
+ <p> 可以根据指定返回变量名：</p> 
+ <pre class="prettyprint notranslate" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+function name(arg1, arg2, ....) result (return_var_name)  
+   [declarations, including those for the arguments]   
+   [executable statements] 
+end function [name]</pre> 
+ <h2> 子程序</h2> 
+ <p> 子程序没有返回值，但可以修改其参数。</p> 
+ <p> <strong>语法</strong></p> 
+ <pre class="prettyprint notranslate" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+subroutine name(arg1, arg2, ....)    
+   [declarations, including those for the arguments]    
+   [executable statements]  
+end subroutine [name]</pre> 
+ <p> <strong>调用子程序</strong></p> 
+ <p> 需要使用call语句来调用一个子程序。</p> 
+ <p> 下面的例子演示了一个子程序交换，改变其参数值的定义和使用。</p> 
+ <pre class="prettyprint notranslate tryit" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); cursor: default; background-image: url(http://www.yiibai.com/fortran/images/tryit.jpg) !important; background-attachment: initial !important; background-size: initial !important; background-origin: initial !important; background-clip: initial !important; background-position: 100% 0%; background-repeat: no-repeat !important;">
+program calling_func
+implicit none
+
+   real :: a, b
+   a = 2.0
+   b = 3.0
+   
+   Print *, "Before calling swap"
+   Print *, "a = ", a
+   Print *, "b = ", b
+   
+   call swap(a, b)
+   
+   Print *, "After calling swap"
+   Print *, "a = ", a
+   Print *, "b = ", b
+   
+end program calling_func
+
+
+subroutine swap(x, y) 
+implicit none
+
+   real :: x, y, temp   
+   
+   temp = x  
+   x = y 
+   y = temp  
+   
+end subroutine swap</pre> 
+ <p> 当编译并执行上述程序，它会产生以下结果：</p> 
+ <pre class="result notranslate" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+Before calling swap
+a = 2.00000000    
+b = 3.00000000    
+After calling swap
+a = 3.00000000    
+b = 2.00000000   </pre> 
+ <h2> 指定参数的意图</h2> 
+ <p> 意图属性允许指定与参数的过程中使用的意向。下表提供intent属性的值：</p> 
+ <table class="table table-bordered" style="box-sizing: border-box; border-collapse: collapse; border-spacing: 0px; width: 604px; max-width: 100%; margin-bottom: 20px;  border-color: rgb(221, 221, 221); color: rgb(49, 49, 49); font-family: 'Open Sans', Arial, sans-serif; font-size: 14px; line-height: 22px; background-color: transparent;"> 
+  <tbody style="box-sizing: border-box;"> 
+   <tr style="box-sizing: border-box;"> 
+    <th style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221); background: rgb(238, 238, 238);"> 值</th> 
+    <th style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221); background: rgb(238, 238, 238);"> 使用为</th> 
+    <th style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221); background: rgb(238, 238, 238);"> 解释</th> 
+   </tr> 
+   <tr style="box-sizing: border-box;"> 
+    <td style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221);"> in</td> 
+    <td style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221);"> intent(in)</td> 
+    <td style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221);"> 用作输入值，而不是在函数中改变</td> 
+   </tr> 
+   <tr style="box-sizing: border-box;"> 
+    <td style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221);"> out</td> 
+    <td style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221);"> intent(out)</td> 
+    <td style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221);"> 用作输出值，它们将被覆盖</td> 
+   </tr> 
+   <tr style="box-sizing: border-box;"> 
+    <td style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221);"> inout</td> 
+    <td style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221);"> intent(inout)</td> 
+    <td style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221);"> 参数都使用和覆盖</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p> 下面的例子演示了这一概念：</p>   
+ <pre class="prettyprint notranslate tryit" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); cursor: default; background-image: url(http://www.yiibai.com/fortran/images/tryit.jpg) !important; background-attachment: initial !important; background-size: initial !important; background-origin: initial !important; background-clip: initial !important; background-position: 100% 0%; background-repeat: no-repeat !important;">
+program calling_func
+implicit none
+
+   real :: x, y, z, disc
+   
+   x= 1.0
+   y = 5.0
+   z = 2.0
+   
+   call intent_example(x, y, z, disc)
+   
+   Print *, "The value of the discriminant is"
+   Print *, disc
+   
+end program calling_func
+
+
+subroutine intent_example (a, b, c, d)     
+implicit none     
+
+   ! dummy arguments      
+   real, intent (in) :: a     
+   real, intent (in) :: b      
+   real, intent (in) :: c    
+   real, intent (out) :: d   
+   
+   d = b * b - 4.0 * a * c 
+   
+end subroutine intent_example</pre> 
+ <p> 当编译并执行上述程序，它会产生以下结果：</p> 
+ <pre class="result notranslate" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+The value of the discriminant is
+   17.0000000    </pre> 
+ <h2> 递归过程</h2> 
+ <p> 递归发生在一个编程语言可以调用同一个函数在函数内。这就是所谓的函数的递归调用。</p> 
+ <p> 当一个过程调用本身，直接或间接地被称为递归过程。应该通过其声明之前的字前面递归声明这种类型的程序。</p> 
+ <p> 当一个函数被递归使用，则&nbsp;result&nbsp;选项要被使用。</p> 
+ <p> 以下是一个例子，它计算阶乘用于使用一个递归过程：</p> 
+ <pre class="prettyprint notranslate" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+program calling_func
+implicit none
+
+   integer :: i, f
+   i = 15
+   
+   Print *, "The value of factorial 15 is"
+   f = myfactorial(15)
+   Print *, f
+   
+end program calling_func
+
+! computes the factorial of n (n!)      
+recursive function myfactorial (n) result (fac)  
+! function result     
+implicit none     
+
+   ! dummy arguments     
+   integer :: fac     
+   integer, intent (in) :: n     
+   
+   select case (n)         
+      case (0:1)         
+         fac = 1         
+      case default    
+         fac = n * myfactorial (n-1)  
+   end select 
+   
+end function myfactorial</pre> 
+ <h2> 内部过程</h2> 
+ <p> 当一个过程被包含在程序中，它被称为程序的内部程序。包含一个内部程序的语法如下：</p> 
+ <pre class="prettyprint notranslate" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+program program_name     
+   implicit none         
+   ! type declaration statements         
+   ! executable statements    
+   . . .     
+   contains         
+   ! internal procedures      
+   . . .  
+end program program_name</pre> 
+ <p> 下面的例子演示了这一概念：</p> 
+ <pre class="prettyprint notranslate tryit" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); cursor: default; background-image: url(http://www.yiibai.com/fortran/images/tryit.jpg) !important; background-attachment: initial !important; background-size: initial !important; background-origin: initial !important; background-clip: initial !important; background-position: 100% 0%; background-repeat: no-repeat !important;">
+program mainprog  
+implicit none 
+
+   real :: a, b 
+   a = 2.0
+   b = 3.0
+   
+   Print *, "Before calling swap"
+   Print *, "a = ", a
+   Print *, "b = ", b
+   
+   call swap(a, b)
+   
+   Print *, "After calling swap"
+   Print *, "a = ", a
+   Print *, "b = ", b
+ 
+contains   
+   subroutine swap(x, y)     
+      real :: x, y, temp      
+      temp = x 
+      x = y  
+      y = temp   
+   end subroutine swap 
+   
+end program mainprog   </pre> 
+ <p> 当编译并执行上述程序，它会产生以下结果：</p> 
+ <pre class="result notranslate" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+Before calling swap
+a = 2.00000000    
+b = 3.00000000    
+After calling swap
+a = 3.00000000    
+b = 2.00000000  </pre> 
+ <br>      
+</div></body></html>

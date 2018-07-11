@@ -1,0 +1,96 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Java并发ConcurrentNavigableMap接口</h1><div style="width:100%;float:left;" class="article-content">   
+ <p><code>java.util.concurrent.ConcurrentNavigableMap</code>接口是<code>ConcurrentMap</code>接口的子接口，并且支持<code>NavigableMap</code>操作，并且对其可导航子映射和近似匹配进行递归。</p> 
+ <h2 id="h2-concurrentnavigablemap-"><a name="ConcurrentNavigableMap接口中的方法" class="reference-link"></a><span class="header-link octicon octicon-link"></span>ConcurrentNavigableMap接口中的方法</h2>
+ <table> 
+  <thead> 
+   <tr> 
+    <th>序号</th> 
+    <th>方法</th> 
+    <th>描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>1</td> 
+    <td><code>NavigableSet&lt;K&gt; descendingKeySet()</code></td> 
+    <td>返回此映射中包含的键的相反顺序的<code>NavigableSet</code>视图。</td> 
+   </tr> 
+   <tr> 
+    <td>2</td> 
+    <td><code>ConcurrentNavigableMap&lt;K,V&gt; descendingMap()</code></td> 
+    <td>返回此映射中包含的映射的反向排序视图。</td> 
+   </tr> 
+   <tr> 
+    <td>3</td> 
+    <td><code>ConcurrentNavigableMap&lt;K,V&gt; headMap(K toKey)</code></td> 
+    <td>返回该映射的部分键严格小于<code>toKey</code>的视图。</td> 
+   </tr> 
+   <tr> 
+    <td>4</td> 
+    <td><code>ConcurrentNavigableMap&lt;K,V&gt; headMap(K toKey, boolean inclusive)</code></td> 
+    <td>返回该映射的部分视图，其键值小于(或等于，如果包含值为<code>true</code>)<code>toKey</code>。</td> 
+   </tr> 
+   <tr> 
+    <td>5</td> 
+    <td><code>NavigableSet&lt;K&gt; keySet()</code></td> 
+    <td>返回此映射中包含的键的<code>NavigableSet</code>视图。</td> 
+   </tr> 
+   <tr> 
+    <td>6</td> 
+    <td><code>NavigableSet&lt;K&gt; navigableKeySet()</code></td> 
+    <td>返回此映射中包含的键的<code>NavigableSet</code>视图。</td> 
+   </tr> 
+   <tr> 
+    <td>7</td> 
+    <td><code>ConcurrentNavigableMap&lt;K,V&gt; subMap(K fromKey, boolean fromInclusive, K toKey, boolean toInclusive)</code></td> 
+    <td>返回此映射部分的视图，其键范围从<code>fromKey</code>到<code>toKey</code>。</td> 
+   </tr> 
+   <tr> 
+    <td>8</td> 
+    <td><code>ConcurrentNavigableMap&lt;K,V&gt; subMap(K fromKey, K toKey)</code></td> 
+    <td>返回此映射，其键从<code>fromKey</code>(包括)到<code>toKey</code>所述部分的视图。</td> 
+   </tr> 
+   <tr> 
+    <td>9</td> 
+    <td><code>ConcurrentNavigableMap&lt;K,V&gt; tailMap(K fromKey)</code></td> 
+    <td>返回此映射的部分视图，其键值大于或等于<code>fromKey</code>。</td> 
+   </tr> 
+   <tr> 
+    <td>10</td> 
+    <td><code>ConcurrentNavigableMap&lt;K,V&gt; tailMap(K fromKey, boolean inclusive)</code></td> 
+    <td>从映射返回一个键大于(或等于，包含值为<code>true</code>)部分的视图。</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h2 id="h2-u5B9Eu4F8B"><a name="实例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实例</h2>
+ <p>以下<code>TestThread</code>程序显示了基于线程的环境中<code>ConcurrentNavigableMap</code>接口的使用。</p>   
+ <pre><code class="lang-java">import java.util.concurrent.ConcurrentNavigableMap;
+import java.util.concurrent.ConcurrentSkipListMap;
+
+public class TestThread {
+
+   public static void main(final String[] arguments){
+
+      ConcurrentNavigableMap&lt;String,String&gt; map = new ConcurrentSkipListMap&lt;String, String&gt;();
+
+      map.put("1", "One");
+      map.put("2", "Two");
+      map.put("3", "Three");
+      map.put("5", "Five");
+      map.put("6", "Six");
+
+      System.out.println("Initial ConcurrentHashMap: "+map);
+      System.out.println("HeadMap(\"2\") of ConcurrentHashMap: "+map.headMap("2"));
+      System.out.println("TailMap(\"2\") of ConcurrentHashMap: "+map.tailMap("2"));
+      System.out.println("SubMap(\"2\", \"4\") of ConcurrentHashMap: "+map.subMap("2","4"));
+   }  
+}
+</code></pre> 
+ <p>这将产生以下结果 - </p> 
+ <pre><code class="lang-shell">Initial ConcurrentHashMap: {1=One, 2=Two, 3=Three, 5=Five, 6=Six}
+HeadMap("2") of ConcurrentHashMap: {1=One}
+TailMap("2") of ConcurrentHashMap: {2=Two, 3=Three, 5=Five, 6=Six}
+SubMap("2", "4") of ConcurrentHashMap: {2=Two, 3=Three}
+</code></pre>
+ <br>      
+</div></body></html>

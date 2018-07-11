@@ -1,0 +1,94 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">TCL文件I/O</h1><div style="width:100%;float:left;" class="article-content">   
+ <p> TCL支持文件处理使用内置命令，如：open, read, puts, gets 和 close.</p> 
+ <p> 一个文件代表了一个字节序列，不要紧，如果它是一个文本文件或二进制文件。</p> 
+ <h2> 打开文件</h2> 
+ <p> TCL使用open命令在Tcl中打开文件。打开文件的语法如下。</p> 
+ <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+<span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">open fileName accessMode</span></pre> 
+ <p> 在这里，文件名是字符串文字，用它来命名文件名，accessMode可以是以下值之一：</p> 
+ <table class="table table-bordered" style="box-sizing: border-box; border-collapse: collapse; border-spacing: 0px; width: 604px; max-width: 100%; margin-bottom: 20px;  border-color: rgb(221, 221, 221); color: rgb(49, 49, 49); font-family: 'Open Sans', Arial, sans-serif; font-size: 14px; line-height: 22px; background-color: transparent;"> 
+  <tbody style="box-sizing: border-box;"> 
+   <tr style="box-sizing: border-box;"> 
+    <th style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221); background: rgb(238, 238, 238);"> 模式</th> 
+    <th style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221); background: rgb(238, 238, 238);"> 描述</th> 
+   </tr> 
+   <tr style="box-sizing: border-box;"> 
+    <td style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221);"> r</td> 
+    <td style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221);"> 打开一个现有的文本文件读取并且文件必须存在。这是没有指定accessMode时使用的默认模式。</td> 
+   </tr> 
+   <tr style="box-sizing: border-box;"> 
+    <td style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221);"> w</td> 
+    <td style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221);"> 打开用于写入的文本文件中、，如果它不存在，则一个新文件创建，其他现有的文件将被截断。</td> 
+   </tr> 
+   <tr style="box-sizing: border-box;"> 
+    <td style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221);"> a</td> 
+    <td style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221);"> 打开写在追加模式，文件必须存在一个文本文件。在这里，程序将开始追加到现有的文件内容的内容。</td> 
+   </tr> 
+   <tr style="box-sizing: border-box;"> 
+    <td style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221);"> r+</td> 
+    <td style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221);"> 打开用于读取和写入两种的文本文件。文件必须已经存在。</td> 
+   </tr> 
+   <tr style="box-sizing: border-box;"> 
+    <td style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221);"> w+</td> 
+    <td style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221);"> 打开用于读取和写入两种的文本文件。如果它存在首先截断文件为零长度，否则创建该文件，如果它不存在。</td> 
+   </tr> 
+   <tr style="box-sizing: border-box;"> 
+    <td style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221);"> a+</td> 
+    <td style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221);"> 打开用于读取和写入两种的文本文件。它，如果它不存在，创建该文件。读数将从头开始，但写只能追加。</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h2> 关闭文件</h2> 
+ <p> 要关闭一个文件，请使用close命令。close 的语法如下。</p> 
+ <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+<span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">close fileName </span></pre> 
+ <p> 当程序完成使用该文件已被打开的一个程序中的任何文件都必须关闭。在大多数情况下，文件不需要被明确地关闭;它们会自动关闭，当文件对象会自动终止。</p> 
+ <h2> 写入文件</h2> 
+ <p> puts命令用于写入一个打开的文件。</p> 
+ <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+<span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">puts $filename </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"text to write"</span></pre> 
+ <p> 一个简单写入文件的例子如下所示。</p> 
+ <pre class="prettyprint notranslate tryit prettyprinted" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); cursor: default; background-image: url(http://www.yiibai.com/images/link.png) !important; background-attachment: initial !important; background-size: initial !important; background-origin: initial !important; background-clip: initial !important; background-position: 100% 0%; background-repeat: no-repeat !important;">
+<span class="com" style="box-sizing: border-box; color: rgb(136, 0, 0);">#!/usr/bin/tclsh</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+
+</span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">set</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> fp </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">open </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"input.txt"</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> w</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">+]</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+puts $fp </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"test"</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+close $fp</span></pre> 
+ <p> 当上述代码被编译和执行时，它创建根据目录的新文件input.txt（在该程序的工作目录）。</p> 
+ <h2> 读取文件</h2> 
+ <p> 以下是简单从文件中读取的命令：</p> 
+ <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+<span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">set</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> file_data </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">read $fp</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span></pre> 
+ <p> 读与写一个完整的例子如下所示。</p> 
+ <pre class="prettyprint notranslate tryit prettyprinted" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); cursor: default; background-image: url(http://www.yiibai.com/images/link.png) !important; background-attachment: initial !important; background-size: initial !important; background-origin: initial !important; background-clip: initial !important; background-position: 100% 0%; background-repeat: no-repeat !important;">
+<span class="com" style="box-sizing: border-box; color: rgb(136, 0, 0);">#!/usr/bin/tclsh</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+
+</span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">set</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> fp </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">open </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"input.txt"</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> w</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">+]</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+puts $fp </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"test"</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+close $fp
+</span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">set</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> fp </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">open </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"input.txt"</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> r</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+</span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">set</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> file_data </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">read $fp</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+puts $file_data
+close $fp</span></pre> 
+ <p> 当上述代码被编译和执行时，它读取在前面的部分创建的文件，并且产生以下结果：</p>   
+ <pre class="result notranslate" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+test</pre> 
+ <p> 下面是另一个例子读取文件，文件一行一行直到结束。</p> 
+ <pre class="prettyprint notranslate tryit prettyprinted" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); cursor: default; background-image: url(http://www.yiibai.com/images/link.png) !important; background-attachment: initial !important; background-size: initial !important; background-origin: initial !important; background-clip: initial !important; background-position: 100% 0%; background-repeat: no-repeat !important;">
+<span class="com" style="box-sizing: border-box; color: rgb(136, 0, 0);">#!/usr/bin/tclsh</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+
+</span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">set</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> fp </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">open </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"input.txt"</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> w</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">+]</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+puts $fp </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"test\ntest"</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+close $fp
+</span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">set</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> fp </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">open </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"input.txt"</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> r</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+
+</span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">while</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">{</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">gets $fp data</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">&gt;=</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="lit" style="box-sizing: border-box; color: rgb(0, 102, 102);">0</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">}</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">{</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+   puts $data
+</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">}</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+close $fp</span></pre> 
+ <p> 当上述代码被编译和执行时，它读取在前面的部分来创建的文件，并且产生以下结果：</p> 
+ <pre class="result notranslate" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+test
+test</pre> 
+ <br>      
+</div></body></html>

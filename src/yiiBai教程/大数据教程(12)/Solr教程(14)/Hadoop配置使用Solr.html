@@ -1,0 +1,209 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Hadoop配置使用Solr</h1><div style="width:100%;float:left;" class="article-content">   
+ <p><strong>Solr</strong>可以和Hadoop一起使用。 由于Hadoop是用于处理大量数据，<strong>Solr</strong>帮助我们从这么大数据源中找到所需的信息。在本节中，我们将了解如何在系统上安装Hadoop。</p> 
+ <h2 id="h2--hadoop"><a name="下载Hadoop" class="reference-link"></a><span class="header-link octicon octicon-link"></span>下载Hadoop</h2>
+ <p>下面给出了如何将<strong>Hadoop</strong>下载到系统中的步骤。</p> 
+ <p><strong>第1步</strong> - 打开Hadoop主页 - www.hadoop.apache.org/。 单击链接版本，如下面的屏幕截图中突出显示。<br><img src="http://www.yiibai.com/uploads/images/201702/0302/461140209_60235.png" alt=""></p> 
+ <p>它将重定向到Apache Hadoop发布页面，其中包含有关各种版本的<strong>Hadoop源代</strong>码和二<strong>进制文件</strong>镜像的链接，如下所示：</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201702/0302/528140211_69815.png" alt=""></p> 
+ <p>步骤2 - 选择最新稳定Hadoop版本(在本教程中，选择的是<code>2.6.4</code>)，并单击其二进制链接。 它将转到一个页面，其中提供了Hadoop二进制文件的镜像。单击其中一个镜像下载Hadoop。</p> 
+ <h2 id="h2--hadoop"><a name="从命令提示符下载Hadoop" class="reference-link"></a><span class="header-link octicon octicon-link"></span>从命令提示符下载Hadoop</h2>
+ <p>打开Linux终端并以超级用户(<code>root</code>)身份登录。</p> 
+ <pre><code class="lang-shell">$ su 
+password:
+</code></pre> 
+ <p>转到需要安装Hadoop的目录，并使用之前复制的链接将文件保存在此目录下，如下面的代码块所示。</p> 
+ <pre><code class="lang-shell"># cd /usr/local 
+# wget http://redrockdigimark.com/apachemirror/hadoop/common/hadoop-
+2.6.4/hadoop-2.6.4.tar.gz
+</code></pre> 
+ <p>下载<strong>Hadoop</strong>后，使用以下命令解压缩。</p> 
+ <pre><code class="lang-shell"># tar zxvf hadoop-2.6.4.tar.gz  
+# mkdir hadoop 
+# mv hadoop-2.6.4/* to hadoop/ 
+# exit
+</code></pre> 
+ <h2 id="h2--hadoop"><a name="安装Hadoop" class="reference-link"></a><span class="header-link octicon octicon-link"></span>安装Hadoop</h2>
+ <p>按照下面给出的步骤在伪分布式模式下安装<strong>Hadoop</strong>。</p> 
+ <h3 id="h3--1-hadoop"><a name="第1步：设置Hadoop" class="reference-link"></a><span class="header-link octicon octicon-link"></span>第1步：设置Hadoop</h3>
+ <p>可以通过将以下命令附加到<code>〜/ .bashrc</code>文件来设置<code>Hadoop</code>环境变量。</p> 
+ <pre><code class="lang-shell">export HADOOP_HOME = /usr/local/hadoop export
+HADOOP_MAPRED_HOME = $HADOOP_HOME export
+HADOOP_COMMON_HOME = $HADOOP_HOME export 
+HADOOP_HDFS_HOME = $HADOOP_HOME export 
+YARN_HOME = $HADOOP_HOME 
+export HADOOP_COMMON_LIB_NATIVE_DIR = $HADOOP_HOME/lib/native 
+export PATH = $PATH:$HADOOP_HOME/sbin:$HADOOP_HOME/bin 
+export HADOOP_INSTALL = $HADOOP_HOME
+</code></pre> 
+ <p>接下来，将所有更改应用到当前运行的系统，执行以下代码 - </p> 
+ <pre><code class="lang-shell">$ source ~/.bashrc
+</code></pre> 
+ <h3 id="h3--2-hadoop-"><a name="第2步：Hadoop配置" class="reference-link"></a><span class="header-link octicon octicon-link"></span>第2步：Hadoop配置</h3>
+ <p>可以在位置“<code>$HADOOP_HOME/etc/hadoop</code>”目录中找到所有<strong>Hadoop</strong>配置文件。需要根据您的Hadoop基础结构对这些配置文件进行更改。</p> 
+ <pre><code class="lang-shell">$ cd $HADOOP_HOME/etc/hadoop
+</code></pre> 
+ <p>为了在Java中开发<strong>Hadoop</strong>程序，必须通过将<code>JAVA_HOME</code>值替换为系统中Java的位置来重置<code>hadoop-env.sh</code>文件中的Java环境变量。</p> 
+ <pre><code class="lang-shell">export JAVA_HOME = /usr/local/jdk1.7.0_71
+</code></pre> 
+ <p>以下是必须编辑以配置<strong>Hadoop</strong>的文件的列表 -</p> 
+ <ul> 
+  <li>core-site.xml</li>
+  <li>hdfs-site.xml</li>
+  <li>yarn-site.xml</li>
+  <li>mapred-site.xml</li>
+ </ul> 
+ <p><strong>core-site.xml</strong></p> 
+ <p><code>core-site.xml</code>文件包含诸如用于Hadoop实例的端口号，为文件系统分配的内存，用于存储数据的内存限制以及读/写缓冲区大小的信息。</p> 
+ <p>打开<code>core-site.xml</code>并在<code>&lt;configuration&gt;，&lt;/ configuration&gt;</code>标签中添加以下属性。</p> 
+ <pre><code class="lang-xml">&lt;configuration&gt; 
+   &lt;property&gt;     
+      &lt;name&gt;fs.default.name&lt;/name&gt;     
+      &lt;value&gt;hdfs://localhost:9000&lt;/value&gt;   
+   &lt;/property&gt; 
+&lt;/configuration&gt;
+</code></pre> 
+ <p><strong>hdfs-site.xml</strong></p> 
+ <p><code>hdfs-site.xml</code>文件包含本地文件系统的复制数据值，<code>namenode</code>路径和<code>datanode</code>路径等信息。表示要存储Hadoop基础架构的位置。</p> 
+ <p>假设有以下数据。</p> 
+ <pre><code class="lang-shell">dfs.replication (data replication value) = 1  
+
+(In the below given path /hadoop/ is the user name. 
+hadoopinfra/hdfs/namenode is the directory created by hdfs file system.) 
+namenode path = //home/hadoop/hadoopinfra/hdfs/namenode  
+
+(hadoopinfra/hdfs/datanode is the directory created by hdfs file system.) 
+datanode path = //home/hadoop/hadoopinfra/hdfs/datanode
+</code></pre> 
+ <p>打开此文件，并在<code>&lt;configuration&gt;，&lt;/ configuration&gt;</code>标记中添加以下属性。</p> 
+ <pre><code class="lang-xml">&lt;configuration&gt; 
+   &lt;property&gt;     
+      &lt;name&gt;dfs.replication&lt;/name&gt;     
+      &lt;value&gt;1&lt;/value&gt;   
+   &lt;/property&gt;  
+
+   &lt;property&gt;     
+      &lt;name&gt;dfs.name.dir&lt;/name&gt;     
+      &lt;value&gt;file:///home/hadoop/hadoopinfra/hdfs/namenode&lt;/value&gt;   
+   &lt;/property&gt;  
+
+   &lt;property&gt;     
+      &lt;name&gt;dfs.data.dir&lt;/name&gt;     
+      &lt;value&gt;file:///home/hadoop/hadoopinfra/hdfs/datanode&lt;/value&gt;   
+   &lt;/property&gt; 
+&lt;/configuration&gt;
+</code></pre> 
+ <blockquote> 
+  <p>注意 - 在上述文件中，所有属性值都是用户定义的，您可以根据Hadoop基础结构进行更改。</p> 
+ </blockquote> 
+ <p><strong>yarn-site.xml</strong><br>此文件用于在Hadoop中配置<code>yarn</code> 。 打开<code>yarn-site.xml</code>文件，并在此文件中的<code>&lt;configuration&gt;，&lt;/ configuration&gt;</code>标记之间添加以下属性。</p> 
+ <pre><code class="lang-shell">&lt;configuration&gt; 
+   &lt;property&gt;     
+      &lt;name&gt;yarn.nodemanager.aux-services&lt;/name&gt;     
+      &lt;value&gt;mapreduce_shuffle&lt;/value&gt;   
+   &lt;/property&gt; 
+&lt;/configuration&gt;
+</code></pre> 
+ <p><strong>mapred-site.xml</strong></p> 
+ <p>此文件用于指定使用的<code>MapReduce</code>框架。默认情况下，Hadoop包含<code>yarn-site.xml</code>模板。 首先，需要使用以下命令将文件从<code>mapred-site，xml.template</code>复制到<code>mapred-site.xml</code>文件。</p> 
+ <pre><code class="lang-shell">$ cp mapred-site.xml.template mapred-site.xml
+</code></pre> 
+ <p>打开<code>mapred-site.xml</code>文件，并在<code>&lt;configuration&gt;，&lt;/ configuration&gt;</code>标签中添加以下属性。</p> 
+ <pre><code class="lang-shell">&lt;configuration&gt; 
+   &lt;property&gt;     
+      &lt;name&gt;mapreduce.framework.name&lt;/name&gt;     
+      &lt;value&gt;yarn&lt;/value&gt;   
+   &lt;/property&gt; 
+&lt;/configuration&gt;
+</code></pre> 
+ <h2 id="h2--hadoop-"><a name="验证Hadoop安装" class="reference-link"></a><span class="header-link octicon octicon-link"></span>验证Hadoop安装</h2>
+ <p>以下步骤用于验证Hadoop安装。</p> 
+ <h3 id="h3--1-"><a name="第1步：命名节点设置" class="reference-link"></a><span class="header-link octicon octicon-link"></span>第1步：命名节点设置</h3>
+ <p>使用命令“<code>hdfs namenode -format</code>”设置<code>namenode</code>，如下所示。</p> 
+ <pre><code class="lang-shell">$ cd ~ 
+$ hdfs namenode -format
+</code></pre> 
+ <p>预期输出结果如下 - </p> 
+ <pre><code class="lang-shell">10/24/14 21:30:55 INFO namenode.NameNode: STARTUP_MSG: 
+/************************************************************ 
+STARTUP_MSG: Starting NameNode 
+STARTUP_MSG:   host = localhost/192.168.1.11 
+STARTUP_MSG:   args = [-format] STARTUP_MSG:   version = 2.6.4 
+... 
+... 
+10/24/14 21:30:56 INFO common.Storage: Storage directory 
+/home/hadoop/hadoopinfra/hdfs/namenode has been successfully formatted. 
+10/24/14 21:30:56 INFO namenode.NNStorageRetentionManager: Going to retain 1 
+images with txid &gt;= 0 
+10/24/14 21:30:56 INFO util.ExitUtil: Exiting with status 0 
+10/24/14 21:30:56 INFO namenode.NameNode: SHUTDOWN_MSG: 
+/************************************************************ 
+SHUTDOWN_MSG: Shutting down NameNode at localhost/192.168.1.11 
+************************************************************/
+</code></pre> 
+ <h3 id="h3--2-hadoop-dfs"><a name="第2步：验证Hadoop dfs" class="reference-link"></a><span class="header-link octicon octicon-link"></span>第2步：验证Hadoop dfs</h3>
+ <p>以下命令用于启动<strong>Hadoop dfs</strong>。执行此命令将启动Hadoop文件系统。</p>   
+ <pre><code class="lang-shell">$ start-dfs.sh
+</code></pre> 
+ <p>输出结果如下 - </p> 
+ <pre><code class="lang-shell">10/24/14 21:37:56 
+Starting namenodes on [localhost] 
+localhost: starting namenode, logging to /home/hadoop/hadoop-2.6.4/logs/hadoop-
+hadoop-namenode-localhost.out 
+localhost: starting datanode, logging to /home/hadoop/hadoop-2.6.4/logs/hadoop-
+hadoop-datanode-localhost.out 
+Starting secondary namenodes [0.0.0.0]
+</code></pre> 
+ <h3 id="h3--3-yarn-"><a name="第3步：验证Yarn脚本" class="reference-link"></a><span class="header-link octicon octicon-link"></span>第3步：验证Yarn脚本</h3>
+ <p>以下命令用于启动<code>Yarn</code>脚本。执行此命令将启动 <strong>Yarn</strong> 实例。</p> 
+ <pre><code class="lang-shell">$ start-yarn.sh
+</code></pre> 
+ <p>输出结果如下 - </p> 
+ <pre><code class="lang-shell">starting yarn daemons 
+starting resourcemanager, logging to /home/hadoop/hadoop-2.6.4/logs/yarn-
+hadoop-resourcemanager-localhost.out 
+localhost: starting nodemanager, logging to /home/hadoop/hadoop-
+2.6.4/logs/yarn-hadoop-nodemanager-localhost.out
+</code></pre> 
+ <h3 id="h3--4-hadoop"><a name="第4步：在浏览器上访问Hadoop" class="reference-link"></a><span class="header-link octicon octicon-link"></span>第4步：在浏览器上访问Hadoop</h3>
+ <p>访问Hadoop的默认端口号为<code>50070</code>。使用以下URL在浏览器上获取Hadoop服务。</p> 
+ <ul> 
+  <li><a target="_blank" href="http://localhost:50070/">http://localhost:50070/</a></li>
+ </ul> 
+ <p>得到结果如下 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201702/0302/513140238_99349.jpg" alt=""></p> 
+ <h2 id="h2--hadoop-solr"><a name="在Hadoop上安装Solr" class="reference-link"></a><span class="header-link octicon octicon-link"></span>在Hadoop上安装Solr</h2>
+ <p>按照以下步骤下载并安装<strong>Solr</strong>。</p> 
+ <h3 id="h3--1-"><a name="第1步" class="reference-link"></a><span class="header-link octicon octicon-link"></span>第1步</h3>
+ <p>通过单击以下链接打开<strong>Apache Solr</strong>的主页 - <a target="_blank" href="http://lucene.apache.org/solr/">http://lucene.apache.org/solr/</a></p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201702/0302/485140241_88908.png" alt=""></p> 
+ <h3 id="h3--2-"><a name="第2步" class="reference-link"></a><span class="header-link octicon octicon-link"></span>第2步</h3>
+ <p>点击下载按钮(在上面的截图中箭头突出显示)。点击后将被重定向到Apache Solr的各种镜像的页面。 选择一个镜像并单击它，这将重定向到一个页面，您可以下载<strong>Apache Solr</strong>的源文件和二进制文件，如下面的屏幕截图所示。</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201702/0302/670140243_87272.png" alt=""></p> 
+ <h3 id="h3--3-"><a name="第3步" class="reference-link"></a><span class="header-link octicon octicon-link"></span>第3步</h3>
+ <p>选择<code>Solr-6.2.0.tqz</code>的文件夹将它下载到系统的文件夹中。提取下载的文件夹的内容。</p> 
+ <h3 id="h3--4-"><a name="第4步" class="reference-link"></a><span class="header-link octicon octicon-link"></span>第4步</h3>
+ <p>在Hadoop主目录中创建一个<code>Solr</code>的文件夹，并将解压缩文件夹的内容移动到其中，如下所示。</p> 
+ <pre><code class="lang-shell">$ mkdir Solr 
+$ cd Downloads 
+$ mv Solr-6.2.0 /home/Hadoop/
+</code></pre> 
+ <h3 id="h3-u9A8Cu8BC1"><a name="验证" class="reference-link"></a><span class="header-link octicon octicon-link"></span>验证</h3>
+ <p>进入到<code>solr</code>主目录的<code>bin</code>文件夹，并使用<code>version</code>选项验证安装，如以下代码块所示。</p> 
+ <pre><code class="lang-shell">$ cd bin/ 
+$ ./Solr version 
+6.2.0
+</code></pre> 
+ <h3 id="h3-u8BBEu7F6Eu4E3Bu76EEu5F55u548Cu8DEFu5F84"><a name="设置主目录和路径" class="reference-link"></a><span class="header-link octicon octicon-link"></span>设置主目录和路径</h3>
+ <p>使用以下命令打开<code>.bashrc</code>文件 -</p> 
+ <pre><code class="lang-shell">[Hadoop@localhost ~]$ source ~/.bashrc
+</code></pre> 
+ <p>现在设置<strong>Apache Solr</strong>的<code>home</code>和<code>path</code>目录如下 -</p> 
+ <pre><code class="lang-shell">export SOLR_HOME = /home/Hadoop/Solr  
+export PATH = $PATH:/$SOLR_HOME/bin/
+</code></pre> 
+ <p>打开终端并执行以下命令 -</p> 
+ <pre><code class="lang-shell">[Hadoop@localhost Solr]$ source ~/.bashrc
+</code></pre> 
+ <p>现在，可以从任何目录执行<code>Solr</code>命令。</p>
+ <br>      
+</div></body></html>

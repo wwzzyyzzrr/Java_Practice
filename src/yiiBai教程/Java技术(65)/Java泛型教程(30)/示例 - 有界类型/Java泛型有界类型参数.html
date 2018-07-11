@@ -1,0 +1,46 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Java泛型有界类型参数</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>有时候您可能希望限制允许传递给类型参数的类型。 例如，对数字进行操作的方法可能只希望接受<code>Number</code>类或其子类的实例。这样的参考限制称为：<strong>有界类型参数</strong>。</p> 
+ <p>要声明一个有界类型参数，列出类型参数名称，后跟<code>extends</code>关键字，后跟其边界上限。</p> 
+ <h2 id="h2-u793Au4F8B"><a name="示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例</h2>
+ <p>以下示例说明如何在一般意义上使用<code>extends</code>来表示“扩展”(如在类中)或“实现”(如在接口中)。 这个例子是泛型方法返回最大的三个<code>Comparable</code>对象 -</p> 
+ <p>使用您喜欢的编辑器创建以下java程序，并保存到文件：<em>BoundedTypeParameters.java</em> 中，代码如下所示 -</p> 
+ <pre><code class="lang-java">public class BoundedTypeParameters {
+    // determines the largest of three Comparable objects
+
+    public static &lt;T extends Comparable&lt;T&gt;&gt; T maximum(T x, T y, T z) {
+        T max = x; // assume x is initially the largest
+
+        if (y.compareTo(max) &gt; 0) {
+            max = y; // y is the largest so far
+        }
+
+        if (z.compareTo(max) &gt; 0) {
+            max = z; // z is the largest now
+        }
+        return max; // returns the largest object
+    }
+
+    public static void main(String args[]) {
+        System.out.printf("Max of %d, %d and %d is %d\n\n", 3, 4, 5,
+                maximum(3, 4, 5));
+
+        System.out.printf("Max of %.1f,%.1f and %.1f is %.1f\n\n", 6.6, 8.8,
+                7.7, maximum(6.6, 8.8, 7.7));
+
+        System.out.printf("Max of %s, %s and %s is %s\n", "pear", "apple",
+                "orange", maximum("pear", "apple", "orange"));
+    }
+}
+</code></pre> 
+ <p>执行上面代码，得到以下结果 - </p>   
+ <pre><code class="lang-shell">D:\&gt;javac BoundedTypeParameters.java
+
+D:\&gt;java BoundedTypeParameters
+Max of 3, 4 and 5 is 5
+
+Max of 6.6,8.8 and 7.7 is 8.8
+
+Max of pear, apple and orange is pear
+</code></pre>
+ <br>      
+</div></body></html>

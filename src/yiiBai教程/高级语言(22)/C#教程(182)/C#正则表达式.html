@@ -1,0 +1,162 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">C#正则表达式</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>正则表达式是匹配输入文本的模式。<em>.Net</em>框架提供了允许这种匹配的正则表达式引擎。模式由一个或多个字符文字，运算符或构造组成。</p> 
+ <h2 id="h2-u5B9Au4E49u6B63u5219u8868u8FBEu5F0Fu7684u6784u9020"><a name="定义正则表达式的构造" class="reference-link"></a><span class="header-link octicon octicon-link"></span>定义正则表达式的构造</h2>
+ <p>有各种类型的字符，运算符和结构，可以让您用来定义正则表达式。点击以下链接查找这些结构。</p> 
+ <ul> 
+  <li><a target="_blank" href="http://www.yiibai.com/csharp/csharp_character_escapes.html" title="字符转义">字符转义</a></li>
+  <li><a target="_blank" href="http://www.yiibai.com/csharp/csharp_character_classes.html" title="字符类">字符类</a></li>
+  <li><a target="_blank" href="http://www.yiibai.com/csharp/csharp_anchors.html" title="锚(Anchors)">锚(Anchors)</a></li>
+  <li><a target="_blank" href="http://www.yiibai.com/csharp/csharp_grouping_constructs.html" title="分组结构">分组结构</a></li>
+  <li><a target="_blank" href="http://www.yiibai.com/csharp/csharp_quantifiers.html" title="限定符">限定符</a></li>
+  <li><a target="_blank" href="http://www.yiibai.com/csharp/csharp_backreference_constructs.html" title="反向引用结构">反向引用结构</a></li>
+  <li><a target="_blank" href="http://www.yiibai.com/csharp/csharp_alternation_constructs.html" title="交替构造">交替构造</a></li>
+  <li><a target="_blank" href="http://www.yiibai.com/csharp/csharp_substitutions.html" title="替换">替换</a></li>
+  <li><a target="_blank" href="http://www.yiibai.com/csharp/csharp_miscellaneous_constructs.html" title="其他结构">其他结构</a></li>
+ </ul> 
+ <h2 id="h2-regex-"><a name="Regex类" class="reference-link"></a><span class="header-link octicon octicon-link"></span>Regex类</h2>
+ <p>正则表达式 - <code>Regex</code> 类用于表示正则表达式。 它有以下常用的方法：</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>序号</th> 
+    <th>方法</th> 
+    <th>描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>1</td> 
+    <td>public bool IsMatch(string input)</td> 
+    <td>指示在正则表达式构造函数中指定的正则表达式是否在指定的输入字符串中找到匹配项。</td> 
+   </tr> 
+   <tr> 
+    <td>2</td> 
+    <td>public bool IsMatch(string input, int startat)</td> 
+    <td>指示在正则表达式构造函数中指定的正则表达式是否在指定的输入字符串(<code>input</code>)中找到匹配，从字符串中指定的起始(<code>startat</code>)位置开始。</td> 
+   </tr> 
+   <tr> 
+    <td>3</td> 
+    <td>public static bool IsMatch(string input, string pattern)</td> 
+    <td>在指定的正则表达式是否在指定的输入字符串中找到匹配项。</td> 
+   </tr> 
+   <tr> 
+    <td>4</td> 
+    <td>public MatchCollection Matches(string input)</td> 
+    <td>搜索所有出现正则表达式的指定输入字符串。</td> 
+   </tr> 
+   <tr> 
+    <td>5</td> 
+    <td>public string Replace(string input, string replacement)</td> 
+    <td>在指定的输入字符串中，将与正则表达式模式匹配的所有字符串替换为指定的替换字符串(<code>replacementreplacement</code>)。</td> 
+   </tr> 
+   <tr> 
+    <td>6</td> 
+    <td>public string[] Split(string input)</td> 
+    <td>将输入字符串拆分为由正则表达式构造函数中指定的正则表达式模式定义的位置的子字符串数组。</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p>有关方法和属性的完整列表，请阅读Microsoft C# 文档。</p> 
+ <h2 id="h2--1"><a name="实例1" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实例1</h2>
+ <p>以下示例匹配以<code>“S”</code>开头的单词：</p> 
+ <pre><code class="lang-csharp">using System;
+using System.Text.RegularExpressions;
+
+namespace RegExApplication
+{
+   class Program
+   {
+      private static void showMatch(string text, string expr)
+      {
+         Console.WriteLine("The Expression: " + expr);
+         MatchCollection mc = Regex.Matches(text, expr);
+         foreach (Match m in mc)
+         {
+            Console.WriteLine(m);
+         }
+      }
+
+      static void Main(string[] args)
+      {
+         string str = "A Thousand Splendid Suns";
+
+         Console.WriteLine("Matching words that start with 'S': ");
+         showMatch(str, @"\bS\S*");
+         Console.ReadKey();
+      }
+   }
+}
+</code></pre> 
+ <p>当编译和执行上述代码时，会产生以下结果：</p>   
+ <pre><code class="lang-shell">Matching words that start with 'S':
+The Expression: \bS\S*
+Splendid
+Suns
+</code></pre> 
+ <h2 id="h2--2"><a name="示例2" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例2</h2>
+ <p>以下示例匹配以<code>'m'</code>开头并以<code>'e'</code>结尾的单词：</p> 
+ <pre><code class="lang-csharp">using System;
+using System.Text.RegularExpressions;
+
+namespace RegExApplication
+{
+   class Program
+   {
+      private static void showMatch(string text, string expr)
+      {
+         Console.WriteLine("The Expression: " + expr);
+         MatchCollection mc = Regex.Matches(text, expr);
+         foreach (Match m in mc)
+         {
+            Console.WriteLine(m);
+         }
+      }
+      static void Main(string[] args)
+      {
+         string str = "make maze and manage to measure it";
+
+         Console.WriteLine("Matching words start with 'm' and ends with 'e':");
+         showMatch(str, @"\bm\S*e\b");
+         Console.ReadKey();
+      }
+   }
+}
+</code></pre> 
+ <p>当编译和执行上述代码时，会产生以下结果：</p> 
+ <pre><code class="lang-shell">Matching words start with 'm' and ends with 'e':
+The Expression: \bm\S*e\b
+make
+maze
+manage
+measure
+</code></pre> 
+ <h2 id="h2--3"><a name="实例3" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实例3</h2>
+ <p>此示例替换了额外多余的空格：</p> 
+ <pre><code class="lang-csharp">using System;
+using System.Text.RegularExpressions;
+
+namespace RegExApplication
+{
+   class Program
+   {
+      static void Main(string[] args)
+      {
+         string input = "Hello   World   ";
+         string pattern = "\\s+";
+         string replacement = " ";
+         Regex rgx = new Regex(pattern);
+         string result = rgx.Replace(input, replacement);
+
+         Console.WriteLine("Original String: {0}", input);
+         Console.WriteLine("Replacement String: {0}", result);    
+         Console.ReadKey();
+      }
+   }
+}
+</code></pre> 
+ <p>当编译和执行上述代码时，会产生以下结果：</p> 
+ <pre><code class="lang-shell">Original String: Hello World   
+Replacement String: Hello World
+</code></pre>
+ <br>      
+</div></body></html>

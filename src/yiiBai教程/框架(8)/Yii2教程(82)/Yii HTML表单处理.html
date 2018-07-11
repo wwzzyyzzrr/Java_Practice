@@ -1,0 +1,87 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Yii HTML表单处理</h1><div style="width:100%;float:left;" class="article-content">   
+ <div> 
+  <div>
+    当表单是基于一个模型时，这种表单在Yii中的常见方式是通过&nbsp;yii\widgets\ActiveForm&nbsp;类来创建。在大多数情况下，一个表单具有用于数据验证对应的一个模型。&nbsp;如果模型代表数据库中的数据，那么模型应该从Active&nbsp;Record类派生。如果模型捕捉任意输入，它应该从&nbsp;yii\base\Model&nbsp;类派生。 
+  </div> 
+ </div> 
+ <div> 
+  <div>
+    现在我们创建一个注册登记表单。 
+  </div> 
+  <div>
+    第1步&nbsp;-&nbsp;在&nbsp;models&nbsp;文件夹中，创建一个&nbsp;RegistrationForm.php&nbsp;文件并用下面的代码。 
+  </div> 
+  <pre>&lt;?php
+   namespace app\models;
+   use Yii;
+   use yii\base\Model;
+   class RegistrationForm extends Model {
+      public $username;
+      public $password;
+      public $email;
+      public $subscriptions;
+      public $photos;
+      /**
+      * @return array customized attribute labels
+      */
+      public function attributeLabels() {
+         return [
+            'username' =&gt; 'Username',
+            'password' =&gt; 'Password',
+            'email' =&gt; 'Email',
+            'subscriptions' =&gt; 'Subscriptions',
+            'photos' =&gt; 'Photos',
+         ];
+      }
+   }
+?&gt;</pre> 
+  <div>
+    这里我们已经声明注册登记表单模型有五个属性&nbsp;-&nbsp;username,&nbsp;password,&nbsp;email,&nbsp;subscriptions&nbsp;和&nbsp;photos。 
+  </div> 
+  <div>
+    第2步&nbsp;-&nbsp;要显示此表单，将&nbsp;actionRegistration&nbsp;方法添加到 SiteController。 
+  </div> 
+  <pre>public function actionRegistration() {
+   $mRegistration = new RegistrationForm();
+   return $this-&gt;render('registration', ['model' =&gt; $mRegistration]);
+}&nbsp;</pre> 
+  <p style="text-align:justify;"> 我们创建&nbsp;RegistrationForm&nbsp;的一个实例，并把它传递到registration&nbsp;视图。现在，是时候创建一个视图。 </p> 
+  <div>
+    第3步&nbsp;-&nbsp;在&nbsp;views/site&nbsp;文件夹中，添加一个&nbsp;registration.php&nbsp;文件并使用下面的代码。 
+  </div> 
+  <pre>&lt;?php
+   use yii\bootstrap\ActiveForm;
+   use yii\bootstrap\Html;
+?&gt;
+&lt;div class = "row"&gt;
+   &lt;div class = "col-lg-5"&gt;
+      &lt;?php $form = ActiveForm::begin(['id' =&gt; 'registration-form']); ?&gt;
+      &lt;?= $form-&gt;field($model, 'username') ?&gt;
+      &lt;?= $form-&gt;field($model, 'password')-&gt;passwordInput() ?&gt;
+      &lt;?= $form-&gt;field($model, 'email')-&gt;input('email') ?&gt;
+      &lt;?= $form-&gt;field($model, 'photos[]')-&gt;fileInput(['multiple'=&gt;'multiple']) ?&gt;
+      &lt;?= $form-&gt;field($model, 'subscriptions[]')-&gt;checkboxList(['a' =&gt; 'Item A',
+         'b' =&gt; 'Item B', 'c' =&gt; 'Item C']) ?&gt;
+      &lt;div class = "form-group"&gt;
+         &lt;?= Html::submitButton('提交', ['class' =&gt; 'btn btn-primary',
+            'name' =&gt; 'registration-button']) ?&gt;
+      &lt;/div&gt;
+      &lt;?php ActiveForm::end(); ?&gt;
+   &lt;/div&gt;
+&lt;/div&gt;</pre> 
+  <div>
+    我们遵守以下&nbsp;- 
+  </div> 
+  <ul> 
+   <li> <p style="text-align:justify;"> ActiveForm::begin()&nbsp;函数标记表单的开始。所有代码都在&nbsp;ActiveForm::begin()&nbsp;和&nbsp;ActiveForm::end()&nbsp;函数之间包裹着。 </p> </li> 
+   <li> <p style="text-align:justify;"> 要在表单中创建一个字段，应该调用ActiveForm::field()方法。它创建所有的输入和标签标签。输入名称会自动决定。 </p> </li> 
+   <li> <p style="text-align:justify;"> 例如，password&nbsp;属性将是&nbsp;RegistrationForm[password].&nbsp;如果想要属性取值为一个数组，应该追加&nbsp;[]&nbsp;到属性名称。 </p> </li> 
+  </ul> 
+  <p style="text-align:justify;"> 第4步&nbsp;-&nbsp;如果打Web浏览器并在地址栏输入URL=&gt;&nbsp;http://localhost:8080/index.php?r=site/registration, 结果如下所示： </p> 
+  <img src="/uploads/tutorial/20160531/1-1605310G60G50.png" width="817" height="639" title="Yii HTML表单处理" alt="Yii HTML表单处理"> 
+ </div> 
+ <div style="font-family:微软雅黑;font-size:14px;background-color:#FFFFFF;"> 
+  <br> 
+ </div>
+ <br>      
+</div></body></html>

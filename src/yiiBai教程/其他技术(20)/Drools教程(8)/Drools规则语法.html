@@ -1,0 +1,62 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Drools规则语法</h1><div style="width:100%;float:left;" class="article-content">   
+ <p> 正如你看到的.drl(规则文件)都有自己的语法，让我们盖这个章介绍规则语法的某些部分。</p> 
+ <h2> 在规则中的条件</h2> 
+ <p> 规则可以包含很多的条件和模式，如：</p> 
+ <ul> 
+  <li> Account (balance == 200)</li> 
+  <li> Customer (name == “Vivek”)</li> 
+ </ul> 
+ <p> 上述条件检查帐户余额是200或客户名称是 “Vivek”.</p> 
+ <h2> 在规则中的变量</h2> 
+ <p> 在Drools中的变量名称以美元($)符号开始。</p> 
+ <ul> 
+  <li> $account : Account( )</li> 
+  <li> $account is the variable for Account() class</li> 
+ </ul> 
+ <p> Drools可与所有本地Java类型，甚至枚举工作。</p> 
+ <h2> 在规则中的注释</h2> 
+ <p> 特殊字符，# 或 //，可用于标记单行注释。</p> 
+ <p> 对于多行注释，请使用以下格式：</p> 
+ <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+<span class="com" style="box-sizing: border-box; color: rgb(136, 0, 0);">/*
+   Another line
+   .........
+   .........
+*/</span></pre> 
+ <h2> 全局变量</h2> 
+ <p> 全局变量分配给会话变量。它们可用于各种原因如下：</p> 
+ <ul> 
+  <li> <p> 对于输入参数(可从会话定制会话。例如，常量值)。</p> </li> 
+  <li> <p> 对于输出参数(例如，报告，规则可以写一些消息给全局报表变量)。</p> </li> 
+  <li> <p> 切入点的服务，如日志记录，这可以在规则中使用。</p> </li> 
+ </ul> 
+ <h2> 在规则中的函数</h2> 
+ <p> 函数是一个方便的功能。它们可以在条件和后果使用。函数代表的替代工具/辅助类。例如，</p> 
+ <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+<span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">function</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">double</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> calculateSquare </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">double</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> value</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">)</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">{</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+   </span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">return</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> value </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">*</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> value</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">;</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">}</span></pre> 
+ <h2> 方言</h2> 
+ <p> 方言指定任何代码的表达是在条件或因此所使用的语法。它包括返回值，evals,内联evals，谓词突性表达式，后果，并依此类推。默认值是Java。目前，Drools支持多了一个叫做方言MVEL。默认方言可以指定在包级别如下：</p> 
+ <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+<span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">package</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> org</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">mycompany</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">somePackage
+dialect </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"mvel"</span></pre> 
+ <h2> MVEL 方言</h2> 
+ <p> MVEL是基于Java的应用程序的表达式语言。它支持字段和方法/getter访问。它是基于Java的语法。</p> 
+ <h2> 突显</h2> 
+ <p> 突显是规则语法的一个非常重要的特点。突显使用的冲突解决策略，以决定哪些规则首先触发。默认情况下，它是主要标准。</p> 
+ <p> 我们可以用突性来定义的击发规则的顺序。突显有一个属性，这需要一个返回数字类型为int（正数和负数是有效）的任何表达式。该值越高，就越有可能的规则将被拾起的冲突解决策略触发。</p>   
+ <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+<span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">salience </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">$account</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">balance </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">*</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="lit" style="box-sizing: border-box; color: rgb(0, 102, 102);">5</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">)</span></pre> 
+ <p> 默认的显着值是0分配显着值只有一些规则时，我们应该记住这一点。</p> 
+ <p> 有很多的规则语法等特性/参数，但我们只涵盖了重要的位置。</p> 
+ <h2> 规则后果关键词</h2> 
+ <p> 规则后果关键字是规则“then”的一部分使用的关键字。</p> 
+ <ul> 
+  <li> <p> Modify&nbsp;– fact属性可在随后部分的规则进行修改。</p> </li> 
+  <li> <p> Insert&nbsp;– 基于一些条件，如果true，可以插入一个新的事实到规则引擎会话。</p> </li> 
+  <li> <p> Retract&nbsp;– 如果一个特定的条件是一个true的规则，则不采取其他任何就事实，可以从规则引擎收回特定事实。</p> </li> 
+ </ul> 
+ <p> 注意：它被认为是一个非常不好的做法，有一个条件逻辑（if语句）规则的后果之内。大多数时候，一个新的规则应该被创建。</p> 
+ <br>      
+</div></body></html>

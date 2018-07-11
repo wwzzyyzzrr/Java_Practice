@@ -1,0 +1,131 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Java适配器模式</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>适配器模式作为两个不兼容接口之间的桥梁。 这种类型的设计模式属于结构模式，因为该模式组合了两个独立接口。</p> 
+ <p>这种模式涉及一个单独的类，它负责连接独立或不兼容接口的功能。 现实生活的例子- 读卡器的，其用作为存储卡和笔记本电脑之间的适配器。将存储卡插入读卡器并将读卡器插入笔记本电脑接口，以便可以通过笔记本电脑读取存储卡。</p> 
+ <p>我们通过以下示例演示适配器模式的使用。音频播放器设备只能播放<code>mp3</code>文件，但希望能够实现一个可播放<code>vlc</code>和<code>mp4</code>文件的高级音频播放器。</p> 
+ <h2 id="h2-u5B9Eu73B0u5B9Eu4F8B"><a name="实现实例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实现实例</h2>
+ <p>有一个<code>MediaPlayer</code>接口和一个具体的类-<code>AudioPlayer</code>它实现了<code>MediaPlayer</code>接口。 默认情况下，音频播放器（<code>AudioPlayer</code> ）可以播放<code>mp3</code>格式的音频文件。</p> 
+ <p>还有另一个接口<code>AdvancedMediaPlayer</code> 和实现<code>AdvancedMediaPlayer</code> 接口的具体类。 这些类可以播放<code>vlc</code>和<code>mp4</code>格式的文件。</p> 
+ <p>想让<code>AudioPlayer</code>播放其他格式。要实现这一点，需要创建了一个适配器类<code>MediaAdapter</code>，它实现了<code>MediaPlayer</code>接口并使用<code>AdvancedMediaPlayer</code>对象来播放所需的格式。</p> 
+ <p><code>AudioPlayer</code>使用适配器类<code>MediaAdapter</code>传递它所需的音频类型，而不知道可以播放所需格式的实际类。 <code>AdapterPatternDemo</code>这是一个演示类，它将使用<code>AudioPlayer</code>类来播放各种格式。</p> 
+ <p>实现结构如下图所示 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201612/08/788111212_34953.jpg" alt=""></p> 
+ <h3 id="h3--1-"><a name="第1步" class="reference-link"></a><span class="header-link octicon octicon-link"></span>第1步</h3>
+ <p>分别创建媒体播放器和高级媒体播放器接口。代码如下所示 - </p> 
+ <p><em>MediaPlayer.java</em></p> 
+ <pre><code class="lang-java">public interface MediaPlayer {
+   public void play(String audioType, String fileName);
+}
+</code></pre> 
+ <p><em>AdvancedMediaPlayer.java</em></p> 
+ <pre><code class="lang-java">public interface AdvancedMediaPlayer {    
+   public void playVlc(String fileName);
+   public void playMp4(String fileName);
+}
+</code></pre> 
+ <h3 id="h3--2-"><a name="第2步" class="reference-link"></a><span class="header-link octicon octicon-link"></span>第2步</h3>
+ <p>创建实现<code>AdvancedMediaPlayer</code>接口的具体类。</p> 
+ <p><em>VlcPlayer.java</em></p> 
+ <pre><code class="lang-java">public class VlcPlayer implements AdvancedMediaPlayer{
+   @Override
+   public void playVlc(String fileName) {
+      System.out.println("Playing vlc file. Name: "+ fileName);
+   }
+
+   @Override
+   public void playMp4(String fileName) {
+      //do nothing
+   }
+}
+</code></pre> 
+ <p><em>Mp4Player.java</em></p> 
+ <pre><code class="lang-java">public class Mp4Player implements AdvancedMediaPlayer{
+
+   @Override
+   public void playVlc(String fileName) {
+      //do nothing
+   }
+
+   @Override
+   public void playMp4(String fileName) {
+      System.out.println("Playing mp4 file. Name: "+ fileName);        
+   }
+}
+</code></pre> 
+ <h3 id="h3--3-"><a name="第3步" class="reference-link"></a><span class="header-link octicon octicon-link"></span>第3步</h3>
+ <p>创建实现<code>MediaPlayer</code>接口的适配器类。</p> 
+ <p><em>MediaAdapter.java</em></p> 
+ <pre><code class="lang-java">public class MediaAdapter implements MediaPlayer {
+
+   AdvancedMediaPlayer advancedMusicPlayer;
+
+   public MediaAdapter(String audioType){
+
+      if(audioType.equalsIgnoreCase("vlc") ){
+         advancedMusicPlayer = new VlcPlayer();            
+
+      }else if (audioType.equalsIgnoreCase("mp4")){
+         advancedMusicPlayer = new Mp4Player();
+      }    
+   }
+
+   @Override
+   public void play(String audioType, String fileName) {
+
+      if(audioType.equalsIgnoreCase("vlc")){
+         advancedMusicPlayer.playVlc(fileName);
+      }
+      else if(audioType.equalsIgnoreCase("mp4")){
+         advancedMusicPlayer.playMp4(fileName);
+      }
+   }
+}
+</code></pre> 
+ <h3 id="h3--4-"><a name="第4步" class="reference-link"></a><span class="header-link octicon octicon-link"></span>第4步</h3>
+ <p>创建一个实现<code>MediaPlayer</code>接口的具体类。</p> 
+ <p><em>AudioPlayer.java</em></p>   
+ <pre><code class="lang-java">public class AudioPlayer implements MediaPlayer {
+   MediaAdapter mediaAdapter; 
+
+   @Override
+   public void play(String audioType, String fileName) {        
+
+      //inbuilt support to play mp3 music files
+      if(audioType.equalsIgnoreCase("mp3")){
+         System.out.println("Playing mp3 file. Name: " + fileName);            
+      } 
+
+      //mediaAdapter is providing support to play other file formats
+      else if(audioType.equalsIgnoreCase("vlc") || audioType.equalsIgnoreCase("mp4")){
+         mediaAdapter = new MediaAdapter(audioType);
+         mediaAdapter.play(audioType, fileName);
+      }
+
+      else{
+         System.out.println("Invalid media. " + audioType + " format not supported");
+      }
+   }   
+}
+</code></pre> 
+ <h3 id="h3--5-"><a name="第5步" class="reference-link"></a><span class="header-link octicon octicon-link"></span>第5步</h3>
+ <p>使用<code>AudioPlayer</code>播放不同类型的音频格式。</p> 
+ <p><em>AdapterPatternDemo.java</em></p> 
+ <pre><code class="lang-java">public class AdapterPatternDemo {
+   public static void main(String[] args) {
+      AudioPlayer audioPlayer = new AudioPlayer();
+
+      audioPlayer.play("mp3", "beyond the horizon.mp3");
+      audioPlayer.play("mp4", "alone.mp4");
+      audioPlayer.play("vlc", "far far away.vlc");
+      audioPlayer.play("avi", "mind me.avi");
+   }
+}
+</code></pre> 
+ <h3 id="h3--6-"><a name="第6步" class="reference-link"></a><span class="header-link octicon octicon-link"></span>第6步</h3>
+ <p>验证输出结果，执行上面的代码得到以下结果 - </p> 
+ <pre><code class="lang-java">Playing mp3 file. Name: beyond the horizon.mp3
+Playing mp4 file. Name: alone.mp4
+Playing vlc file. Name: far far away.vlc
+Invalid media. avi format not supported
+</code></pre>
+ <br>      
+</div></body></html>

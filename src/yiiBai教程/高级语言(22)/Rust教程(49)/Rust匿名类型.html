@@ -1,0 +1,39 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Rust匿名类型</h1><div style="width:100%;float:left;" class="article-content">   
+ <h3 id="823-type-anonymity" style="box-sizing: border-box; -webkit-tap-highlight-color: transparent; -webkit-font-smoothing: antialiased; margin-bottom: 16px; line-height: 1.43; font-size: 1.5em; position: relative; color: rgb(51, 51, 51);  'Clear Sans', 'Helvetica Neue', Helvetica,   margin-top: 0px !important;"> 匿名类型</h3> 
+ <p style="box-sizing: border-box; -webkit-tap-highlight-color: transparent; -webkit-font-smoothing: antialiased; margin-top: 0px; margin-bottom: 16px; color: rgb(51, 51, 51);  'Clear Sans', 'Helvetica Neue', Helvetica,   font-size: 16px; line-height: 25.6000003814697px;"> 简明扼要闭包从封闭范围内捕捉变量。这是否有什么后果？ 它肯定不会。观察一下在函数中调用一个封闭泛型要求，这是因为它们定义如何要求：</p> 
+ <pre style="box-sizing: border-box; -webkit-tap-highlight-color: transparent; -webkit-font-smoothing: antialiased; Consolas, 'Liberation Mono', Menlo, Courier, monospace; font-size: 13.6000003814697px; overflow: auto; margin-bottom: 16px; padding: 16px; line-height: 1.45; border: 0px; border-radius: 3px; word-wrap: normal; color: rgb(51, 51, 51); background-color: rgb(247, 247, 247);">
+<code class="lang-rust" style="box-sizing: border-box; -webkit-tap-highlight-color: transparent; -webkit-font-smoothing: antialiased; Consolas, 'Liberation Mono', Menlo, Courier, monospace; font-size: 13.6000003814697px; padding: 0px; margin: 0px; border-radius: 3px; white-space: pre; border: 0px; display: inline; max-width: initial; overflow: initial; line-height: inherit; word-wrap: normal; background: transparent;"><span class="hljs-comment" style="box-sizing: border-box; -webkit-tap-highlight-color: transparent; -webkit-font-smoothing: antialiased; color: rgb(142, 144, 140);">// `F` must be generic.</span>
+<span class="hljs-function" style="box-sizing: border-box; -webkit-tap-highlight-color: transparent; -webkit-font-smoothing: antialiased; color: rgb(66, 113, 174);"><span class="hljs-keyword" style="box-sizing: border-box; -webkit-tap-highlight-color: transparent; -webkit-font-smoothing: antialiased; color: rgb(137, 89, 168);">fn</span> <span class="hljs-title" style="box-sizing: border-box; -webkit-tap-highlight-color: transparent; -webkit-font-smoothing: antialiased; color: rgb(142, 144, 140);">apply</span></span>&lt;F&gt;(f: F) where
+    F: FnOnce() {
+    f()
+}
+</code></pre> 
+ <p style="box-sizing: border-box; -webkit-tap-highlight-color: transparent; -webkit-font-smoothing: antialiased; margin-top: 0px; margin-bottom: 16px; color: rgb(51, 51, 51);  'Clear Sans', 'Helvetica Neue', Helvetica,   font-size: 16px; line-height: 25.6000003814697px;"> 当封闭件被定义，编译器隐式地创建一个新的匿名结构到内部存储所捕获的变量，通过之一&nbsp;<code style="box-sizing: border-box; -webkit-tap-highlight-color: transparent; -webkit-font-smoothing: antialiased; Consolas, 'Liberation Mono', Menlo, Courier, monospace; font-size: 13.6000003814697px; padding: 0.2em 0px; margin: 0px; border-radius: 3px; background-color: rgb(247, 247, 247);">traits</code>:&nbsp;<code style="box-sizing: border-box; -webkit-tap-highlight-color: transparent; -webkit-font-smoothing: antialiased; Consolas, 'Liberation Mono', Menlo, Courier, monospace; font-size: 13.6000003814697px; padding: 0.2em 0px; margin: 0px; border-radius: 3px; background-color: rgb(247, 247, 247);">Fn</code>,&nbsp;<code style="box-sizing: border-box; -webkit-tap-highlight-color: transparent; -webkit-font-smoothing: antialiased; Consolas, 'Liberation Mono', Menlo, Courier, monospace; font-size: 13.6000003814697px; padding: 0.2em 0px; margin: 0px; border-radius: 3px; background-color: rgb(247, 247, 247);">FnMut</code>, 或&nbsp;<code style="box-sizing: border-box; -webkit-tap-highlight-color: transparent; -webkit-font-smoothing: antialiased; Consolas, 'Liberation Mono', Menlo, Courier, monospace; font-size: 13.6000003814697px; padding: 0.2em 0px; margin: 0px; border-radius: 3px; background-color: rgb(247, 247, 247);">FnOnce</code>&nbsp;这种未知类型<span style="line-height: 25.6000003814697px;">来实现功能</span><span style="line-height: 25.6000003814697px;">。</span><span style="line-height: 25.6000003814697px;">&nbsp;</span><span style="color: rgb(34, 34, 34);  Verdana,  font-size: 12px;">这种类型被分配给被存储直到调用变量。</span></p> 
+ <p style="box-sizing: border-box; -webkit-tap-highlight-color: transparent; -webkit-font-smoothing: antialiased; margin-top: 0px; margin-bottom: 16px; color: rgb(51, 51, 51);  'Clear Sans', 'Helvetica Neue', Helvetica,   font-size: 16px; line-height: 25.6000003814697px;"> 由于这种新型的未知类型的，在功能的任何使用都需要泛型。但是，无限制类型参数(&lt;T&gt;)仍然是不明确的，不会被允许。&nbsp;因此，边界是由所述一个&nbsp;<code style="box-sizing: border-box; -webkit-tap-highlight-color: transparent; -webkit-font-smoothing: antialiased; Consolas, 'Liberation Mono', Menlo, Courier, monospace; font-size: 13.6000003814697px; padding: 0.2em 0px; margin: 0px; border-radius: 3px; background-color: rgb(247, 247, 247);">traits</code>:&nbsp;<code style="box-sizing: border-box; -webkit-tap-highlight-color: transparent; -webkit-font-smoothing: antialiased; Consolas, 'Liberation Mono', Menlo, Courier, monospace; font-size: 13.6000003814697px; padding: 0.2em 0px; margin: 0px; border-radius: 3px; background-color: rgb(247, 247, 247);">Fn</code>,&nbsp;<code style="box-sizing: border-box; -webkit-tap-highlight-color: transparent; -webkit-font-smoothing: antialiased; Consolas, 'Liberation Mono', Menlo, Courier, monospace; font-size: 13.6000003814697px; padding: 0.2em 0px; margin: 0px; border-radius: 3px; background-color: rgb(247, 247, 247);">FnMut</code>, 或<code style="box-sizing: border-box; -webkit-tap-highlight-color: transparent; -webkit-font-smoothing: antialiased; Consolas, 'Liberation Mono', Menlo, Courier, monospace; font-size: 13.6000003814697px; padding: 0.2em 0px; margin: 0px; border-radius: 3px; background-color: rgb(247, 247, 247);">FnOnce</code>&nbsp;(实现)足以指定它的类型。</p>   
+ <pre>
+// `F` must implement `Fn` for a closure which takes no
+// inputs and returns nothing. Exactly what is required
+// for `print`.
+fn apply
+  <f>
+   (f: F) where
+    F: Fn() {
+
+    f()
+}
+
+fn main() {
+    let x = 7;
+
+    // Capture `x` into an anonymous type and implement
+    // `Fn` for it. Store it in `print`.
+    let print = || println!("{}", x);
+
+    apply(print);
+}
+
+  </f></pre> 
+ <h3 id="see-also" style="box-sizing: border-box; -webkit-tap-highlight-color: transparent; -webkit-font-smoothing: antialiased; margin-top: 1em; margin-bottom: 16px; line-height: 1.43; font-size: 1.5em; position: relative; color: rgb(51, 51, 51);  'Clear Sans', 'Helvetica Neue', Helvetica,  "> 也可以看看：</h3> 
+ <p> <a target="_blank" href="http://huonw.github.io/blog/2015/05/finding-closure-in-rust/">透彻分析</a>,&nbsp;<a target="_blank" href="http://doc.rust-lang.org/std/ops/trait.Fn.html">Fn</a>,&nbsp;<a target="_blank" href="http://doc.rust-lang.org/std/ops/trait.FnMut.html">FnMut</a>, 和&nbsp;<a target="_blank" href="http://doc.rust-lang.org/std/ops/trait.FnOnce.html">FnOnce</a></p> 
+ <br>      
+</div></body></html>

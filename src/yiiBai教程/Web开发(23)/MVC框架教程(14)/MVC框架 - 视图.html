@@ -1,0 +1,196 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">MVC框架 - 视图</h1><div style="width:100%;float:left;" class="article-content">   
+ <p> 正如在最初的介绍章节，视图涉及应用程序的用户界面组件。 这些视图一般都从模型数据结合并有一个像HTML，ASPX，CSHTML，vbhtml等扩展。&nbsp;在我们的第一个MVC应用程序，我们已经使用控制器视图来显示数据给最终用户。对于这些渲染静态和动态内容到浏览器，MVC框架使用视图引擎。视图引擎基本上标记语法的实现，它负责呈现到最终的HTML浏览器。</p> 
+ <p> MVC框架带有两个内置的视图引擎：</p> 
+ <p> <strong>1. Razor 引擎:&nbsp;</strong>Razor 是一种标记语法，使用服务器端的C#或VB代码到网页中。这个服务器端代码可以使用加载网页创建动态内容。 Razor是一种先进的引擎相比于ASPX引擎，并在以后的MVC版本中推出。</p> 
+ <p> <strong>2. ASPX 引擎:&nbsp;</strong>ASPX或Web窗体引擎是从一开始列入MVC框架的默认视图引擎。用这个引擎编写代码非常类似于使用ASP.NET Web窗体编写代码。</p> 
+ <p> 以下是比较Razor和ASPX引擎小型代码片段。</p> 
+ <p> <strong>Razor:</strong></p> 
+ <pre class="prettyprint prettyprinted" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+<span class="lit" style="box-sizing: border-box; color: rgb(0, 102, 102);">@Html</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">ActionLink</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"Create New"</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">,</span><span class="pln" style="box-sizing: border-box;"> </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"UserAdd"</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">)</span></pre> 
+ <strong>ASPX:</strong> 
+ <pre class="prettyprint prettyprinted" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+<span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">&lt;%</span><span class="pln" style="box-sizing: border-box;"> </span><span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">Html</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">ActionLink</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"SignUp"</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">,</span><span class="pln" style="box-sizing: border-box;"> </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"SignUp"</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">)</span><span class="pln" style="box-sizing: border-box;"> %&gt;</span></pre> 
+ <p> Razor是比较先进的视图引擎，因为它带有简洁的语法，测试驱动的开发方法，以及更好的安全特性。 我们将使用Razor引擎在我们的所有例子中，因为它是视图最主要使用的引擎。</p> 
+ <p> 这些视图引擎可以被编码并实现在以下两种类型：</p> 
+ <ul> 
+  <li> 强类型</li> 
+  <li> 动态类型</li> 
+ </ul> 
+ <p> 这些方法类似于早期绑定和后期绑定，分别在模型绑定到视图强类型或动态类型。</p> 
+ <h2> 强类型视图</h2> 
+ <p> 为了理解这个概念，让我们创建一个示例MVC应用程序（按照前面章节中的步骤），并添加一个名为ViewDemoController控制器类文件：</p> 
+ <img alt="new_view_controller" src="/uploads/allimg/150531/09163620S-0.jpg" style="box-sizing: border-box; vertical-align: middle; max-width: 100%; display: block; margin-left: auto; margin-right: auto; padding-bottom: 4px; color: rgb(49, 49, 49);  font-size: 14px; line-height: 22px;"> 
+ <p> 现在复制器文件中的以下代码：</p> 
+ <pre class="prettyprint prettyprinted" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+<span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">using</span><span class="pln" style="box-sizing: border-box;"> </span><span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">System</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">Collections</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">Generic</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">;</span><span class="pln" style="box-sizing: border-box;">
+</span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">using</span><span class="pln" style="box-sizing: border-box;"> </span><span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">System</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">Web</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">Mvc</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">;</span><span class="pln" style="box-sizing: border-box;">
+
+</span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">namespace</span><span class="pln" style="box-sizing: border-box;"> </span><span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">ViewsInMVC</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">Controllers</span><span class="pln" style="box-sizing: border-box;">
+</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">{</span><span class="pln" style="box-sizing: border-box;">
+    </span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">public</span><span class="pln" style="box-sizing: border-box;"> </span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">class</span><span class="pln" style="box-sizing: border-box;"> </span><span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">ViewDemoController</span><span class="pln" style="box-sizing: border-box;"> </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">:</span><span class="pln" style="box-sizing: border-box;"> </span><span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">Controller</span><span class="pln" style="box-sizing: border-box;">
+    </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">{</span><span class="pln" style="box-sizing: border-box;">
+        </span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">public</span><span class="pln" style="box-sizing: border-box;"> </span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">class</span><span class="pln" style="box-sizing: border-box;"> </span><span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">Blog</span><span class="pln" style="box-sizing: border-box;">
+        </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">{</span><span class="pln" style="box-sizing: border-box;">
+            </span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">public</span><span class="pln" style="box-sizing: border-box;"> </span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">string</span><span class="pln" style="box-sizing: border-box;"> </span><span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">Name</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">;</span><span class="pln" style="box-sizing: border-box;">
+            </span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">public</span><span class="pln" style="box-sizing: border-box;"> </span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">string</span><span class="pln" style="box-sizing: border-box;"> URL</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">;</span><span class="pln" style="box-sizing: border-box;">
+        </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">}</span><span class="pln" style="box-sizing: border-box;">
+
+        </span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">private</span><span class="pln" style="box-sizing: border-box;"> </span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">readonly</span><span class="pln" style="box-sizing: border-box;"> </span><span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">List</span>
+  <blog style="box-sizing: border-box;">
+   <span class="pln" style="box-sizing: border-box;"> topBlogs </span>
+   <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">=</span>
+   <span class="pln" style="box-sizing: border-box;"> </span>
+   <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">new</span>
+   <span class="pln" style="box-sizing: border-box;"> </span>
+   <span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">List</span>
+   <blog style="box-sizing: border-box;">
+    <span class="pln" style="box-sizing: border-box;">
+        </span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">{</span>
+    <span class="pln" style="box-sizing: border-box;">
+            </span>
+    <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">new</span>
+    <span class="pln" style="box-sizing: border-box;"> </span>
+    <span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">Blog</span>
+    <span class="pln" style="box-sizing: border-box;"> </span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">{</span>
+    <span class="pln" style="box-sizing: border-box;"> </span>
+    <span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">Name</span>
+    <span class="pln" style="box-sizing: border-box;"> </span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">=</span>
+    <span class="pln" style="box-sizing: border-box;"> </span>
+    <span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"Joe Delage"</span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">,</span>
+    <span class="pln" style="box-sizing: border-box;"> URL </span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">=</span>
+    <span class="pln" style="box-sizing: border-box;"> </span>
+    <span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"http://yiibai/joe/"</span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">},</span>
+    <span class="pln" style="box-sizing: border-box;">
+            </span>
+    <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">new</span>
+    <span class="pln" style="box-sizing: border-box;"> </span>
+    <span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">Blog</span>
+    <span class="pln" style="box-sizing: border-box;"> </span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">{</span>
+    <span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">Name</span>
+    <span class="pln" style="box-sizing: border-box;"> </span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">=</span>
+    <span class="pln" style="box-sizing: border-box;"> </span>
+    <span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"Mark Dsouza"</span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">,</span>
+    <span class="pln" style="box-sizing: border-box;"> URL </span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">=</span>
+    <span class="pln" style="box-sizing: border-box;"> </span>
+    <span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"http://yiibai/mark"</span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">},</span>
+    <span class="pln" style="box-sizing: border-box;">
+            </span>
+    <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">new</span>
+    <span class="pln" style="box-sizing: border-box;"> </span>
+    <span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">Blog</span>
+    <span class="pln" style="box-sizing: border-box;"> </span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">{</span>
+    <span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">Name</span>
+    <span class="pln" style="box-sizing: border-box;"> </span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">=</span>
+    <span class="pln" style="box-sizing: border-box;"> </span>
+    <span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"Michael Shawn"</span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">,</span>
+    <span class="pln" style="box-sizing: border-box;"> URL </span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">=</span>
+    <span class="pln" style="box-sizing: border-box;"> </span>
+    <span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"http://yiibai/michael"</span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">}</span>
+    <span class="pln" style="box-sizing: border-box;">
+        </span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">};</span>
+    <span class="pln" style="box-sizing: border-box;">
+
+        </span>
+    <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">public</span>
+    <span class="pln" style="box-sizing: border-box;"> </span>
+    <span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">ActionResult</span>
+    <span class="pln" style="box-sizing: border-box;"> </span>
+    <span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">StonglyTypedIndex</span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">()</span>
+    <span class="pln" style="box-sizing: border-box;">
+        </span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">{</span>
+    <span class="pln" style="box-sizing: border-box;">
+            </span>
+    <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">return</span>
+    <span class="pln" style="box-sizing: border-box;"> </span>
+    <span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">View</span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span>
+    <span class="pln" style="box-sizing: border-box;">topBlogs</span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">);</span>
+    <span class="pln" style="box-sizing: border-box;">
+        </span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">}</span>
+    <span class="pln" style="box-sizing: border-box;">
+
+        </span>
+    <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">public</span>
+    <span class="pln" style="box-sizing: border-box;"> </span>
+    <span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">ActionResult</span>
+    <span class="pln" style="box-sizing: border-box;"> </span>
+    <span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">IndexNotStonglyTyped</span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">()</span>
+    <span class="pln" style="box-sizing: border-box;">
+        </span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">{</span>
+    <span class="pln" style="box-sizing: border-box;">
+            </span>
+    <span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">return</span>
+    <span class="pln" style="box-sizing: border-box;"> </span>
+    <span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">View</span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span>
+    <span class="pln" style="box-sizing: border-box;">topBlogs</span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">);</span>
+    <span class="pln" style="box-sizing: border-box;">
+        </span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">}</span>
+    <span class="pln" style="box-sizing: border-box;">  
+    </span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">}</span>
+    <span class="pln" style="box-sizing: border-box;">
+</span>
+    <span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">}</span>
+    <span class="pln" style="box-sizing: border-box;">
+    </span>
+   </blog>
+  </blog></pre> 
+ <p> 在上面的代码中，我们定义了两个动作方法：StronglyTypedIndex和IndexNotStonglyTyped。现在对这些动作的方法添加视图。</p> 
+ <p> 右键单击StonglyTypedIndex操作方法，然后单击添加视图。在接下来的窗口中，选择“创建一个强类型视图”复选框。 这也将使模型类和脚手架模板选项。从脚手架模板选项选择列表。单击添加。</p> 
+ <img alt="add_view_strongly_type" src="/uploads/allimg/150531/0916362505-1.jpg" style="box-sizing: border-box; vertical-align: middle; max-width: 100%; display: block; margin-left: auto; margin-right: auto; padding-bottom: 4px; color: rgb(49, 49, 49);  font-size: 14px; line-height: 22px;"> 
+ <p> 类似下面的截图，视图文件将被创建。可以注意到，它在顶部的ViewDemoController已经包括Blog模型类。还可以使用智能提示在代码中使用这种方法。</p> 
+ <img alt="view_strongly_type_intellisense" src="/uploads/allimg/150531/09163B416-2.jpg" style="box-sizing: border-box; vertical-align: middle; max-width: 100%; display: block; margin-left: auto; margin-right: auto; padding-bottom: 4px; color: rgb(49, 49, 49);  font-size: 14px; line-height: 22px;"> 
+ <h2> 动态类型的视图：</h2> 
+ <p> 创建动态类型的视图，右键点击IndexNotStonglyTyped操作，然后单击添加视图。</p> 
+ <img alt="add_view" src="/uploads/allimg/150531/0916362018-3.jpg" style="box-sizing: border-box; vertical-align: middle; max-width: 100%; display: block; margin-left: auto; margin-right: auto; padding-bottom: 4px; color: rgb(49, 49, 49);  font-size: 14px; line-height: 22px;"> 
+ <p> 这个时候不要选择“创建一个强类型视图”复选框。</p> 
+ <img alt="view_index_not_strongly_type" src="/uploads/allimg/150531/09163CU7-4.jpg" style="box-sizing: border-box; vertical-align: middle; max-width: 100%; display: block; margin-left: auto; margin-right: auto; padding-bottom: 4px; color: rgb(49, 49, 49);  font-size: 14px; line-height: 22px;"> 
+ <p> 所得视图有以下代码：</p>   
+ <pre class="prettyprint prettyprinted" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+<span class="lit" style="box-sizing: border-box; color: rgb(0, 102, 102);">@model</span><span class="pln" style="box-sizing: border-box;"> </span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">dynamic</span><span class="pln" style="box-sizing: border-box;">
+           
+</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">@{</span><span class="pln" style="box-sizing: border-box;">
+    </span><span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">ViewBag</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">Title</span><span class="pln" style="box-sizing: border-box;"> </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">=</span><span class="pln" style="box-sizing: border-box;"> </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"IndexNotStonglyTyped"</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">;</span><span class="pln" style="box-sizing: border-box;">
+</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">}</span><span class="pln" style="box-sizing: border-box;">
+
+</span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">&lt;h2&gt;</span><span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">Index</span><span class="pln" style="box-sizing: border-box;"> </span><span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">Not</span><span class="pln" style="box-sizing: border-box;"> </span><span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">Stongly</span><span class="pln" style="box-sizing: border-box;"> </span><span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">Typed</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">&lt;/</span><span class="pln" style="box-sizing: border-box;">h2</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">&gt;</span><span class="pln" style="box-sizing: border-box;">
+
+</span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">&lt;p&gt;</span><span class="pln" style="box-sizing: border-box;">
+ </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">&lt;ul&gt;</span><span class="pln" style="box-sizing: border-box;">
+</span><span class="lit" style="box-sizing: border-box; color: rgb(0, 102, 102);">@foreach</span><span class="pln" style="box-sizing: border-box;"> </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">var</span><span class="pln" style="box-sizing: border-box;"> blog </span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">in</span><span class="pln" style="box-sizing: border-box;"> </span><span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">Model</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">)</span><span class="pln" style="box-sizing: border-box;"> </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">{</span><span class="pln" style="box-sizing: border-box;">
+   </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">&lt;li&gt;</span><span class="pln" style="box-sizing: border-box;">
+    </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">&lt;</span><span class="pln" style="box-sizing: border-box;">a href</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">=</span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"@blog.URL"</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">&gt;</span><span class="lit" style="box-sizing: border-box; color: rgb(0, 102, 102);">@blog</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">Name</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">&lt;/</span><span class="pln" style="box-sizing: border-box;">a</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">&gt;</span><span class="pln" style="box-sizing: border-box;">
+   </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">&lt;/</span><span class="pln" style="box-sizing: border-box;">li</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">&gt;</span><span class="pln" style="box-sizing: border-box;">   
+</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">}</span><span class="pln" style="box-sizing: border-box;">
+ </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">&lt;/</span><span class="pln" style="box-sizing: border-box;">ul</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">&gt;</span><span class="pln" style="box-sizing: border-box;">
+</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">&lt;/</span><span class="pln" style="box-sizing: border-box;">p</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">&gt;</span></pre> 
+ <p> 正如在上面的代码中看到，这一次它没有添加的Blog模型。 此外，在这个时间将无法使用智能提示，因为这个时候的结合将在运行时进行。</p> 
+ <p> 强类型的视图被认为是一个更好的办法，因为我们已经知道什么数据被传递模型使用动态类型的视图中的数据绑定获取在运行时，如果有新的变化链接模型中可能导致运行错误。</p> 
+ <br>      
+</div></body></html>

@@ -1,0 +1,81 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Git移动操作</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>顾名思义，移动操作将目录或文件从一个位置移动到另一个位置。例如，我们想要将源代码移动到src目录中。修改后的目录结构将显示如下：</p> 
+ <pre><code class="lang-shell">Administrator@MY-PC /D/worksp/sample (master)
+$ pwd
+/D/worksp/sample
+
+Administrator@MY-PC /D/worksp/sample (master)
+$ ls
+README.md  main.py
+
+Administrator@MY-PC /D/worksp/sample (master)
+$ mkdir src
+
+Administrator@MY-PC /D/worksp/sample (master)
+$ git mv main.py src/
+
+Administrator@MY-PC /D/worksp/sample (master)
+$ git status
+On branch master
+Your branch is up-to-date with 'origin/master'.
+
+Changes to be committed:
+  (use "git reset HEAD &lt;file&gt;..." to unstage)
+
+        renamed:    main.py -&gt; src/main.py
+
+Changes not staged for commit:
+  (use "git add &lt;file&gt;..." to update what will be committed)
+  (use "git checkout -- &lt;file&gt;..." to discard changes in working directory)
+
+        modified:   src/main.py
+</code></pre> 
+ <p>为了使这些更改永久性，必须将修改的目录结构推送到远程存储库，以便其他开发人员可以看到这些更改。</p> 
+ <pre><code class="lang-shell">$ git add .
+
+Administrator@MY-PC /D/worksp/sample (master)
+$ git commit -m "Modified directory structure"
+[master 186df84] Modified directory structure
+ 1 file changed, 3 insertions(+)
+ rename main.py =&gt; src/main.py (78%)
+
+Administrator@MY-PC /D/worksp/sample (master)
+$ git push origin master
+Username for 'http://git.oschina.net': 769728683@qq.com
+Password for 'http://769728683@qq.com@git.oschina.net':
+Counting objects: 5, done.
+Delta compression using up to 4 threads.
+Compressing objects: 100% (3/3), done.
+Writing objects: 100% (4/4), 491 bytes | 0 bytes/s, done.
+Total 4 (delta 0), reused 0 (delta 0)
+To http://git.oschina.net/yiibai/sample.git
+   ef07ab5..186df84  master -&gt; master
+</code></pre> 
+ <p>在其它开发人员的本地存储库中，在执行<code>git pull</code>操作之前，它将显示旧的目录结构。在另外一台开发者机器上，执行以下命令 - </p>   
+ <pre><code class="lang-shell">yiibai@ubuntu:~/git/sample$ pwd
+/home/yiibai/git/sample
+yiibai@ubuntu:~/git/sample$ ls
+main.py  master  README.md
+yiibai@ubuntu:~/git/sample$
+</code></pre> 
+ <p>但是在执行<code>git pull</code>操作之后，目录结构将被更新。 现在，假设在另外一个开发人员(<code>minsu</code>)执行<code>git pull</code>操作之后,就可以看到目录中的<code>src</code>目录和文件了。</p> 
+ <pre><code class="lang-shell">yiibai@ubuntu:~/git/sample$ git pull
+remote: Counting objects: 10, done.
+remote: Compressing objects: 100% (9/9), done.
+remote: Total 10 (delta 2), reused 0 (delta 0)
+Unpacking objects: 100% (10/10), done.
+From http://git.oschina.net/yiibai/sample
+   01c5462..186df84  master     -&gt; origin/master
+Updating 01c5462..186df84
+Fast-forward
+ main.py =&gt; src/main.py | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
+ rename main.py =&gt; src/main.py (58%)
+yiibai@ubuntu:~/git/sample$ ls
+master  README.md  src
+yiibai@ubuntu:~/git/sample$ ls src/
+main.py
+yiibai@ubuntu:~/git/sample$
+</code></pre>
+ <br>      
+</div></body></html>

@@ -1,0 +1,44 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">PHP7匿名类</h1><div style="width:100%;float:left;" class="article-content">   
+ <div> 
+  <div>
+    在php7中，匿名类现在可以使用&nbsp;new&nbsp;class&nbsp;来定义。匿名类可以使用来代替完整的类定义。 
+  </div> 
+ </div> 
+ <div> 
+  <h2> 示例 </h2> 
+  <pre>&lt;?php
+   interface Logger {
+      public function log(string $msg);
+   }
+
+   class Application {
+      private $logger;
+
+      public function getLogger(): Logger {
+         return $this-&gt;logger;
+      }
+
+      public function setLogger(Logger $logger) {
+         $this-&gt;logger = $logger;
+      }  
+   }
+
+   $app = new Application;
+   $app-&gt;setLogger(new class implements Logger {
+      public function log(string $msg) {
+         print($msg);
+      }
+   });
+
+   $app-&gt;getLogger()-&gt;log("My first Log Message");
+?&gt;</pre> 
+  <div>
+    这将在浏览器产生输出以下结果- 
+  </div>   
+  <pre>My first Log Message</pre> 
+  <div> 
+   <br> 
+  </div> 
+ </div>
+ <br>      
+</div></body></html>

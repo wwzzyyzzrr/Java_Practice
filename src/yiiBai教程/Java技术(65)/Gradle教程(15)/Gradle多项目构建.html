@@ -1,0 +1,187 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Gradle多项目构建</h1><div style="width:100%;float:left;" class="article-content">   
+ <p><code>Gradle</code>可以轻松处理各种大小规模的项目。小项目由一个单一的构建文件和一个源代码树构成。 大项目可以将其拆分成更小的，相互依赖的模块，以便更容易理解。Gradle完美支持这种多项目构建的场景。</p> 
+ <h2 id="h2-u591Au9879u76EEu6784u5EFAu7684u7ED3u6784"><a name="多项目构建的结构" class="reference-link"></a><span class="header-link octicon octicon-link"></span>多项目构建的结构</h2>
+ <p>这种构建有各种形状和大小，但它们都有一些共同的特点 -</p> 
+ <ul> 
+  <li>在项目的根目录或主目录中都有一个<code>settings.gradle</code>文件。</li>
+  <li>根目录或主目录都有一个<code>build.gradle</code>文件。</li>
+  <li>具有自己的<code>*.gradle</code>构建文件的子目录（某些多项目构建可能会省略子项目构建脚本）。</li>
+ </ul> 
+ <p>要列出构建文件中的所有项目，可以使用以下命令。</p> 
+ <pre><code>D:/water&gt;gradle -q projects
+</code></pre>
+ <p>如果命令执行成功，将获得以下输出。</p> 
+ <pre><code>D:/water&gt;gradle -q projects
+
+------------------------------------------------------------
+Root project
+------------------------------------------------------------
+
+Root project 'water'
++--- Project ':bluewhale'
+/--- Project ':krill'
+
+To see a list of the tasks of a project, run gradle &lt;project-path&gt;:tasks
+For example, try running gradle :bluewhale:tasks
+</code></pre>
+ <p>报告将显示每个项目的描述（如果指定）。可以使用以下命令指定描述。 将其粘贴到<code>build.gradle</code>文件中。</p> 
+ <pre><code class="lang-sql">description = 'The shared API for the application'
+</code></pre> 
+ <h2 id="h2-u6307u5B9Au5E38u89C4u6784u5EFAu914Du7F6E"><a name="指定常规构建配置" class="reference-link"></a><span class="header-link octicon octicon-link"></span>指定常规构建配置</h2>
+ <p>在根项目中的<code>build.gradle</code>文件中，常规配置可以应用于所有项目或仅应用于子项目。</p> 
+ <pre><code class="lang-groovy">allprojects {
+   group = 'com.example.gradle'
+   version = '0.1.0'
+}
+
+subprojects {
+   apply plugin: 'java'
+   apply plugin: 'eclipse'
+}
+</code></pre> 
+ <p>这指定了一个公共<code>com.example.gradle</code>组和一个<code>0.1.0</code>版本到所有项目。<code>subprojects</code> 闭合所有应用对子项目通用配置，但不对根项目应用，如：<code>allprojects</code>闭合。</p> 
+ <h2 id="h2-u9879u76EEu6307u5B9Au914Du7F6Eu548Cu4F9Du8D56u5173u7CFB"><a name="项目指定配置和依赖关系" class="reference-link"></a><span class="header-link octicon octicon-link"></span>项目指定配置和依赖关系</h2>
+ <p>核心<code>ui</code>和<code>util</code>子项目也可以有自己的<code>build.gradle</code>文件，如果它们有特定的需求，那么一般不会应用根项目配置。</p> 
+ <p>例如，<code>ui</code>项目通常具有对核心项目的依赖性。所以在<code>ui</code>项目中需要有配置自己的<code>build.gradle</code>文件来指定这个依赖。</p> 
+ <pre><code class="lang-groovy">dependencies {
+   compile project(':core')
+   compile 'log4j:log4j:1.2.17'
+}
+</code></pre> 
+ <p>项目依赖项可使用项目方法指定。</p> 
+ <h2 id="h2-gradle-"><a name="Gradle多项目构建的示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>Gradle多项目构建的示例</h2>
+ <h3 id="h3-u5B9Au4E49u516Cu5171u884Cu4E3A"><a name="定义公共行为" class="reference-link"></a><span class="header-link octicon octicon-link"></span>定义公共行为</h3>
+ <p>让我们看看下面的一个例子的项目树。这是一个多项目构建，其中包含一个名为<code>water</code>的根项目和一个名称为<code>bluewham</code>的子项目。在这个示例中，我们把在创建一个目录<code>D:/water</code>，作为根项目的目录。<br>多项目树 - <code>water</code> 和<code>bluewham</code>项目的构建布局如下图所示 - </p> 
+ <pre><code class="lang-groovy">water/
+  build.gradle
+  settings.gradle
+  bluewhale/
+</code></pre> 
+ <p>首先，创建一个文件 settings.gradle 并写入以下代码内容 - </p> 
+ <pre><code class="lang-groovy">include 'bluewhale'
+</code></pre> 
+ <p><code>bluewhale</code>项目的构建脚本在哪里？ 在Gradle中构建脚本是可选的。显然，对于单个项目构建，如果没有构建脚本那么项目是没有意义的。但对于多项目构建情况不同。让我们看看<code>water</code>项目的构建脚本并执行它，创建一个文件<code>build.gradle</code> 并写入以下代码：</p> 
+ <pre><code class="lang-groovy">Closure cl = { task -&gt; println "I'm $task.project.name" }
+task hello &lt;&lt; cl
+project(':bluewhale') {
+    task hello &lt;&lt; cl
+}
+</code></pre> 
+ <p>并执行 <code>gradle -q hello</code> 输出结果如下 - </p> 
+ <pre><code class="lang-groovy">D:/water&gt;gradle -q hello
+I'm water
+I'm bluewhale
+</code></pre> 
+ <p>Gradle允许从构建脚本中访问多项目构建的任何项目。 Project API提供了一个名称为<code>project（）</code>的方法，它将一个路径作为参数，并返回此路径的<code>Project</code>对象。<br>为每个项目显式添加任务是不方便的。我们可以稍微做一下调整，先将另一个名称为<code>krill</code>的项目添加到多项目构建中。<br>现在目录结构看起来如下所示 - </p> 
+ <pre><code class="lang-groovy">water/
+  build.gradle
+  settings.gradle
+  bluewhale/
+  krill/
+</code></pre> 
+ <p>再次编辑 <code>settings.gradle</code> 将以下代码加入到文件中 - </p> 
+ <pre><code class="lang-groovy">include 'bluewhale', 'krill'
+</code></pre> 
+ <p>现在我们已经重写 <code>water</code> 构建脚本并将其放在一行中。<br>将文件<code>water</code>项目中的 <code>build.gradle</code> 并写入以下代码：</p> 
+ <pre><code class="lang-groovy">allprojects {
+    task hello &lt;&lt; { task -&gt; println "I'm $task.project.name" }
+}
+</code></pre> 
+ <p>并执行 <code>gradle -q hello</code> 输出结果如下 - </p> 
+ <pre><code class="lang-groovy">D:/water&gt;gradle -q hello
+I'm water
+I'm bluewhale
+I'm krill
+</code></pre> 
+ <p>这是如何工作的？ Project API提供了一个属性<code>allprojects</code>，它返回当前项目及其下面所有子项目的列表。 如果使用闭包调用<code>allprojects</code>，则闭包的语句将委派给与所有项目相关联的项目。当然也可以通过<code>allprojects.each</code>进行迭代，但这将更冗长。</p> 
+ <p>其他构建系统使用继承作为定义公共行为的主要方法。Gradle也为项目提供继承，您将在后面看到。但Gradle使用配置注入作为定义公共行为的常用方式。这是一种非常强大和灵活的配置多项目构建的方式。共享配置的另一种可能性是使用公共外部脚本。</p> 
+ <h2 id="h2-u5B50u9879u76EEu914Du7F6E"><a name="子项目配置" class="reference-link"></a><span class="header-link octicon octicon-link"></span>子项目配置</h2>
+ <p><code>Project API</code>还提供了一个仅用于访问子项目的属性。</p> 
+ <h3 id="h3-u5B9Au4E49u516Cu5171u884Cu4E3A"><a name="定义公共行为" class="reference-link"></a><span class="header-link octicon octicon-link"></span>定义公共行为</h3>
+ <p>定义所有项目和子项目的公共行为，编辑 <code>build.gradle</code> 文件使用以下代码 - </p>   
+ <pre><code class="lang-groovy">allprojects {
+    task hello &lt;&lt; {task -&gt; println "I'm $task.project.name" }
+}
+subprojects {
+    hello &lt;&lt; {println "- I depend on water"}
+}
+</code></pre> 
+ <p>并执行 <code>gradle -q hello</code> 输出结果如下 - </p> 
+ <pre><code class="lang-groovy">D:/water&gt;gradle -q hello
+I'm water
+I'm bluewhale
+- I depend on water
+I'm krill
+- I depend on water
+</code></pre> 
+ <p>注意两个代码片段引用“<code>hello</code>”任务。 第一个，它使用“<code>task</code>”关键字，构建任务并提供它的基本配置。第二部分不使用“<code>task</code>”关键字，因为它进一步配置现有的“<code>hello</code>”任务。只能在项目中构建一次任务，但可以添加任意数量的代码块以提供其他配置。</p> 
+ <h3 id="h3-u6DFBu52A0u6307u5B9Au884Cu4E3A"><a name="添加指定行为" class="reference-link"></a><span class="header-link octicon octicon-link"></span>添加指定行为</h3>
+ <p>可以在常见行为之上添加指定的行为。要应用这个特定的行为，通常将项目特定的行为放在项目的构建脚本中。我们可以为 <code>bluewhale</code> 项目添加项目特定的行为，如下所示：<br>编辑 <code>build.gradle</code> 文件使用以下代码 - </p> 
+ <pre><code class="lang-groovy">allprojects {
+    task hello &lt;&lt; {task -&gt; println "I'm $task.project.name" }
+}
+subprojects {
+    hello &lt;&lt; {println "- I depend on water"}
+}
+project(':bluewhale').hello &lt;&lt; {
+    println "- I'm the largest animal that has ever lived on this planet."
+}
+</code></pre> 
+ <p>并执行 <code>gradle -q hello</code> 输出结果如下 - </p> 
+ <pre><code class="lang-groovy">D:/water&gt;gradle -q hello
+I'm water
+I'm bluewhale
+- I depend on water
+- I'm the largest animal that has ever lived on this planet.
+I'm krill
+- I depend on water
+</code></pre> 
+ <p>正如上面所说的，通常把项目特定的行为放入这个项目的构建脚本中。现在重构代码并向<code>krill</code>项目添加一些项目特定的行为。</p> 
+ <h3 id="h3--code-krill-code-"><a name="定义 <code>krill</code> 项目的具体行为" class="reference-link"></a><span class="header-link octicon octicon-link"></span>定义 <code>krill</code> 项目的具体行为</h3>
+ <p>构建布局如下图中所示 - </p> 
+ <pre><code class="lang-groovy">water/
+  build.gradle
+  settings.gradle
+  bluewhale/
+    build.gradle
+  krill/
+    build.gradle
+</code></pre> 
+ <p><code>settings.gradle</code> 文件的内容 - </p> 
+ <pre><code class="lang-groovy">include 'bluewhale', 'krill'
+</code></pre> 
+ <p><code>bluewhale/build.gradle</code> 文件的内容 - </p> 
+ <pre><code class="lang-groovy">hello.doLast {
+  println "- I'm the largest animal that has ever lived on this planet."
+}
+</code></pre> 
+ <p><code>krill/build.gradle</code> 文件的内容 - </p> 
+ <pre><code class="lang-groovy">hello.doLast {
+  println "- The weight of my species in summer is twice as heavy as all human beings."
+}
+</code></pre> 
+ <p><code>build.gradle</code> 文件的内容 - </p> 
+ <pre><code class="lang-groovy">allprojects {
+    task hello &lt;&lt; {task -&gt; println "I'm $task.project.name" }
+}
+subprojects {
+    hello &lt;&lt; {println "- I depend on water"}
+}
+</code></pre> 
+ <p>并执行 <code>gradle -q hello</code> 输出结果如下 - </p> 
+ <pre><code class="lang-groovy">D:/water&gt;gradle -q hello
+I'm water
+I'm bluewhale
+- I depend on water
+- I'm the largest animal that has ever lived on this planet.
+I'm krill
+- I depend on water
+- The weight of my species in summer is twice as heavy as all human beings.
+</code></pre> 
+ <h2 id="h2-u53C2u8003"><a name="参考" class="reference-link"></a><span class="header-link octicon octicon-link"></span>参考</h2>
+ <ul> 
+  <li><a target="_blank" href="https://docs.gradle.org/current/userguide/multi_project_builds.html">https://docs.gradle.org/current/userguide/multi_project_builds.html</a></li>
+  <li><a target="_blank" href="https://www.petrikainulainen.net/getting-started-with-gradle/">https://www.petrikainulainen.net/getting-started-with-gradle/</a></li>
+ </ul>
+ <br>      
+</div></body></html>

@@ -1,0 +1,177 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Android 资源组织和访问</h1><div style="width:100%;float:left;" class="article-content">   
+ <p> 在许多Android项目中，有很多东西要用来建立一个良好的Android应用程序。除了编码应用各种资源，如：位图，颜色，布局定义，用户界面字符串，动画，静态内容。在res/目录下，这些资源一直保持在各自子目录。</p> 
+ <p> 这一小节将学习如何组织应用程序资源，指定替代资源，并在应用程序访问它们。</p> 
+ <h2> 组织资源</h2> 
+ <p> 将每种类型的资源在一个特定项目的 res/目录的子目录。例如，这里有一个简单的项目文件层次：</p> 
+ <pre class="result" style="margin-bottom: 0px; background-color: rgb(241, 241, 241); font-size: 12px;">
+MyProject/
+    src/  
+        MyActivity.java  
+    <b style="margin: 0px; padding: 0px;">res/</b>
+        drawable/  
+            icon.png  
+        layout/  
+            activity_main.xml
+            info.xml
+        values/  
+            strings.xml &nbsp;</pre> 
+ <p style="margin: 0.8em 0px 1em; padding: 0px; text-align: justify; color: rgb(0, 0, 0); "> &nbsp;<b style="margin: 0px; padding: 0px;">r</b>es/目录中包含不同的子目录的不同资源。在这里有一个图像资源，两个布局资源和一个字符串资源文件。下表给出了详细的项目在 res/目录里面支持的资源。</p> 
+ <table class="src" style="margin: 8px 0px; padding: 0px; border-style: solid; border-color: rgb(214, 214, 214); width: 560px; border-collapse: collapse; vertical-align: top; background-color: rgb(247, 247, 247); color: rgb(0, 0, 0); "> 
+  <tbody style="margin: 0px; padding: 0px;"> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <th style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214); background-color: rgb(238, 238, 238); width: 101px;"> 目录</th> 
+    <th style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214); background-color: rgb(238, 238, 238);"> 资源类型</th> 
+   </tr> 
+   <tr> 
+    <td> anim/</td> 
+    <td> 定义属性的动画XML文件。它们被保存在res/anim/文件夹，并从R.anim类访问</td> 
+   </tr> 
+   <tr> 
+    <td> color/</td> 
+    <td> 定义的颜色状态列表的XML文件。它们被保存在res/color/ ，并从R.color类访问</td> 
+   </tr> 
+   <tr> 
+    <td> drawable/</td> 
+    <td> 像被编译成位图。.png, .jpg, .gif 或XML文件，状态列表，图形，动画可绘制的图像文件。它们被保存在res/drawable/，并可从R.drawable类访问</td> 
+   </tr> 
+   <tr> 
+    <td> layout/</td> 
+    <td> 定义用户界面布局的XML文件。它们被保存在res/layout/，并可从R.layout类访问</td> 
+   </tr> 
+   <tr> 
+    <td> menu/</td> 
+    <td> 定义应用程序菜单，如选项菜单，上下文菜单或子菜单的XML文件。它们被保存在res/menu/，并可从R.menu类访问</td> 
+   </tr> 
+   <tr> 
+    <td> raw/</td> 
+    <td> 任意文件保存在其原始形式。您需要callResources.openRawResource()与所述资源ID，即R.raw.filename来打开这样的原始文件</td> 
+   </tr> 
+   <tr> 
+    <td> values/</td> 
+    <td> 包含简单的值，如字符串，整数和颜色的XML文件。例如，这里有一些文件名约定资源，可以创建在该目录中： 
+     <ul> 
+      <li> <p> arrays.xml资源数组，并可从R.array类访问</p> </li> 
+      <li> <p> integers.xml资源整数，并可从R.integerclass访问</p> </li> 
+      <li> <p> bools.xml资源布尔型，并可从R.bool类访问</p> </li> 
+      <li> <p> colors.xml为颜色值，并可从R.color类访问</p> </li> 
+      <li> <p> dimens.xml为维度值，并可从R.dimen类访问</p> </li> 
+      <li> <p> strings.xml为字符串值，并且可从R.string类访问</p> </li> 
+      <li> <p> styles.xml为样式并可从R.style类访问</p> </li> 
+     </ul> </td> 
+   </tr> 
+   <tr> 
+    <td> xml/</td> 
+    <td> 可以通过调用Resources.getXML()来读取在运行时任意的XML文件。可以在这里保存各种配置文件，这些文件可在运行时使用</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h2> 替代资源</h2> 
+ <p> 应用程序提供替代资源以支持特定的设备配置。例如，包括替代绘制资源（ie.images），针对不同的语言不同的屏幕分辨率并替代字符串资源。在运行时Android 检测当前设备的配置，并为应用程序加载适当的资源。</p> 
+ <p> 要指定一组资源的配置具体的替代，请遵循以下步骤：</p> 
+ <ul> 
+  <li> <p> 创建新目录在res/ 目录下，命名形式如&nbsp;&lt;resources_name&gt;-&lt;config_qualifier&gt;。这里resources_name 是在上表中提到的资源，如layout，drawable&nbsp;等限定符将指定一个单独的配置，要使用这些资源。可以查看官方文档的完整列表，限定符为不同类型的资源。</p> </li> 
+  <li> <p> 在这个新的目录中保存相应的替代资源。资源文件必须被命名为默认的资源文件，如下面的例子所示的完全一样，但这些文件具有特定内容的替代。例如，虽然图像的文件名是相同的，但对高分辨率屏幕，其分辨率会很高。</p> </li> 
+ </ul> 
+ <p> 下面是一个例子，它指定一个默认的屏幕和高分辨率屏幕的替代图像的图像。</p> 
+ <pre class="result" style="margin-bottom: 0px; background-color: rgb(241, 241, 241); font-size: 12px;">
+MyProject/
+    src/  
+        MyActivity.java  
+    <b style="margin: 0px; padding: 0px;">res/</b>
+        drawable/  
+            icon.png
+            background.png
+        <b style="margin: 0px; padding: 0px;">drawable-hdpi/</b>  
+            icon.png
+            background.png  
+        layout/  
+            activity_main.xml
+            info.xml
+        values/  
+            strings.xml </pre> 
+ <p> 下面是另一个例子，指定一种默认语言为阿拉伯语并指定替代布局。</p> 
+ <pre class="result" style="margin-bottom: 0px; background-color: rgb(241, 241, 241); font-size: 12px;">
+MyProject/
+    src/  
+        MyActivity.java  
+    <b style="margin: 0px; padding: 0px;">res/</b>
+        drawable/  
+            icon.png
+            background.png
+        <b style="margin: 0px; padding: 0px;">drawable-hdpi/</b>  
+            icon.png
+            background.png  
+        layout/  
+            activity_main.xml
+            info.xml
+        <b style="margin: 0px; padding: 0px;">layout-ar/</b>
+            main.xml
+        values/  
+            strings.xml </pre> 
+ <h2> 访问资源</h2> 
+ <p> 在应用程序开发中，需要访问定义的资源，无论是在代码还是在布局XML文件。下面的部分介绍了如何访问资源在这两个场景：</p> 
+ <h3> 访问资源代码</h3> 
+ <p> 当Android应用程序被编译时，会产生一个R类，其中包含在res/&nbsp;目录中的所有可用资源的资源ID。使用R类直接访问该子目录和资源名称或资源ID。&nbsp;</p> 
+ <h3> 示例：</h3> 
+ <p> 要访问&nbsp;res/drawable/myimage.png，并设置一个ImageView 可使用下面的代码：</p> 
+ <pre class="prettyprint prettyprinted" style="font-size: 12px;">
+<span class="typ" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">ImageView</span><span class="pln" style="margin: 0px; padding: 0px;"> imageView </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">=</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="typ" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">ImageView</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">)</span><span class="pln" style="margin: 0px; padding: 0px;"> findViewById</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="pln" style="margin: 0px; padding: 0px;">R</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">.</span><span class="pln" style="margin: 0px; padding: 0px;">id</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">.</span><span class="pln" style="margin: 0px; padding: 0px;">myimageview</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">);</span><span class="pln" style="margin: 0px; padding: 0px;">
+imageView</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">.</span><span class="pln" style="margin: 0px; padding: 0px;">setImageResource</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="pln" style="margin: 0px; padding: 0px;">R</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">.</span><span class="pln" style="margin: 0px; padding: 0px;">drawable</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">.</span><span class="pln" style="margin: 0px; padding: 0px;">myimage</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">);</span></pre> 
+ <p> 下面第一行代码，使用R.id.myimageview &nbsp;id 为myimageview定义布局文件。第二行代码使用 R.drawable.myimage 得到的图像名称myimage ，在&nbsp;/res子目录下。</p> 
+ <h3> 示例：</h3> 
+ <p> 考虑在下一个例子&nbsp;res/values/strings.xml&nbsp;有以下定义：</p> 
+ <pre class="prettyprint prettyprinted" style="font-size: 12px;">
+<span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">&lt;?</span><span class="pln" style="margin: 0px; padding: 0px;">xml version</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">=</span><span class="str" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"1.0"</span><span class="pln" style="margin: 0px; padding: 0px;"> encoding</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">=</span><span class="str" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"utf-8"</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">?&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">
+</span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;resources&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">
+    </span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;string</span><span class="pln" style="margin: 0px; padding: 0px;">  </span><span class="atn" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">name</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">=</span><span class="atv" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"hello"</span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">Hello, World!</span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;/string&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">
+</span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;/resources&gt;</span></pre> 
+ <p> 现在，可以设置一个TextView对象msg 文字使用资源ID如下：</p> 
+ <pre class="prettyprint prettyprinted" style="font-size: 12px;">
+<span class="typ" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">TextView</span><span class="pln" style="margin: 0px; padding: 0px;"> msgTextView </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">=</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="typ" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">TextView</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">)</span><span class="pln" style="margin: 0px; padding: 0px;"> findViewById</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="pln" style="margin: 0px; padding: 0px;">R</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">.</span><span class="pln" style="margin: 0px; padding: 0px;">id</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">.</span><span class="pln" style="margin: 0px; padding: 0px;">msg</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">);</span><span class="pln" style="margin: 0px; padding: 0px;">
+msgTextView</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">.</span><span class="pln" style="margin: 0px; padding: 0px;">setText</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="pln" style="margin: 0px; padding: 0px;">R</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">.</span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">string</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">.</span><span class="pln" style="margin: 0px; padding: 0px;">hello</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">);</span></pre> 
+ <h3> 示例：</h3> 
+ <p> 考虑一个布局res/layout/activity_main.xml&nbsp;如以下的定义：</p> 
+ <pre class="prettyprint prettyprinted" style="font-size: 12px;">
+<span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">&lt;?</span><span class="pln" style="margin: 0px; padding: 0px;">xml version</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">=</span><span class="str" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"1.0"</span><span class="pln" style="margin: 0px; padding: 0px;"> encoding</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">=</span><span class="str" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"utf-8"</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">?&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">
+</span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;LinearLayout</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="atn" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">xmlns:android</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">=</span><span class="atv" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"http://schemas.android.com/apk/res/android"</span><span class="pln" style="margin: 0px; padding: 0px;">
+   </span><span class="atn" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">android:layout_width</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">=</span><span class="atv" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"fill_parent"</span><span class="pln" style="margin: 0px; padding: 0px;"> 
+   </span><span class="atn" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">android:layout_height</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">=</span><span class="atv" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"fill_parent"</span><span class="pln" style="margin: 0px; padding: 0px;"> 
+   </span><span class="atn" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">android:orientation</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">=</span><span class="atv" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"vertical"</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">
+</span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;TextView</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="atn" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">android:id</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">=</span><span class="atv" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"@+id/text"</span><span class="pln" style="margin: 0px; padding: 0px;">
+   </span><span class="atn" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">android:layout_width</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">=</span><span class="atv" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"wrap_content"</span><span class="pln" style="margin: 0px; padding: 0px;">
+   </span><span class="atn" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">android:layout_height</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">=</span><span class="atv" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"wrap_content"</span><span class="pln" style="margin: 0px; padding: 0px;">
+   </span><span class="atn" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">android:text</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">=</span><span class="atv" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"Hello, I am a TextView"</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">/&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">
+</span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;Button</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="atn" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">android:id</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">=</span><span class="atv" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"@+id/button"</span><span class="pln" style="margin: 0px; padding: 0px;">
+   </span><span class="atn" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">android:layout_width</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">=</span><span class="atv" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"wrap_content"</span><span class="pln" style="margin: 0px; padding: 0px;">
+   </span><span class="atn" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">android:layout_height</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">=</span><span class="atv" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"wrap_content"</span><span class="pln" style="margin: 0px; padding: 0px;">
+   </span><span class="atn" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">android:text</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">=</span><span class="atv" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"Hello, I am a Button"</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">/&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">
+</span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;/LinearLayout&gt;</span></pre> 
+ <p> 这个应用程序代码的一个活动将加载此布局，在onCreate()方法如下：</p>   
+ <pre class="prettyprint prettyprinted" style="font-size: 12px;">
+<span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">public</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">void</span><span class="pln" style="margin: 0px; padding: 0px;"> onCreate</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="typ" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">Bundle</span><span class="pln" style="margin: 0px; padding: 0px;"> savedInstanceState</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">)</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">{</span><span class="pln" style="margin: 0px; padding: 0px;">
+    </span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">super</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">.</span><span class="pln" style="margin: 0px; padding: 0px;">onCreate</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="pln" style="margin: 0px; padding: 0px;">savedInstanceState</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">);</span><span class="pln" style="margin: 0px; padding: 0px;">
+    setContentView</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="pln" style="margin: 0px; padding: 0px;">R</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">.</span><span class="pln" style="margin: 0px; padding: 0px;">layout</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">.</span><span class="pln" style="margin: 0px; padding: 0px;">main_activity</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">);</span><span class="pln" style="margin: 0px; padding: 0px;">
+</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">}</span></pre> 
+ <h3> XML中访问资源</h3> 
+ <p> 考虑下面的XML资源res/values/strings.xml文件，包括颜色资源和一个字符串资源：</p> 
+ <div style="float:left;margin-bottom: 10px;">  
+ </div>
+ <div style="float:left;margin-bottom: 10px;">  
+ </div>
+ <pre class="prettyprint prettyprinted" style="font-size: 12px;">
+<span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">&lt;?</span><span class="pln" style="margin: 0px; padding: 0px;">xml version</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">=</span><span class="str" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"1.0"</span><span class="pln" style="margin: 0px; padding: 0px;"> encoding</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">=</span><span class="str" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"utf-8"</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">?&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">
+</span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;resources&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">
+   </span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;color</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="atn" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">name</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">=</span><span class="atv" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"opaque_red"</span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">#f00</span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;/color&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">
+   </span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;string</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="atn" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">name</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">=</span><span class="atv" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"hello"</span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">Hello!</span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;/string&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">
+</span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;/resources&gt;</span></pre> 
+ <p> 现在，可以利用这些资源，在下面的布局文件中设置文本颜色和文本字符串如下：</p> 
+ <pre class="prettyprint prettyprinted" style="font-size: 12px;">
+<span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">&lt;?</span><span class="pln" style="margin: 0px; padding: 0px;">xml version</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">=</span><span class="str" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"1.0"</span><span class="pln" style="margin: 0px; padding: 0px;"> encoding</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">=</span><span class="str" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"utf-8"</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">?&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">
+</span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">&lt;EditText</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="atn" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">xmlns:android</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">=</span><span class="atv" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"http://schemas.android.com/apk/res/android"</span><span class="pln" style="margin: 0px; padding: 0px;">
+    </span><span class="atn" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">android:layout_width</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">=</span><span class="atv" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"fill_parent"</span><span class="pln" style="margin: 0px; padding: 0px;">
+    </span><span class="atn" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">android:layout_height</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">=</span><span class="atv" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"fill_parent"</span><span class="pln" style="margin: 0px; padding: 0px;">
+    </span><span class="atn" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">android:textColor</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">=</span><b style="margin: 0px; padding: 0px;"><span class="atv" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"@color/opaque_red"</span></b><span class="pln" style="margin: 0px; padding: 0px;">
+    </span><span class="atn" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">android:text</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">=</span><b style="margin: 0px; padding: 0px;"><span class="atv" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"@string/hello"</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="tag" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">/&gt;</span></b></pre> 
+ <p> 现在，如果将再次通过前面的章节了解，例如：Hello World！应用，将有助于更好的理解本小节介绍的概念。了解在前面的小节中是如何利用各种资源的基本操作。</p> 
+ <br>      
+</div></body></html>

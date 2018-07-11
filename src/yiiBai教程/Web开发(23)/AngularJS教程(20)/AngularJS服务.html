@@ -1,0 +1,74 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">AngularJS服务</h1><div style="width:100%;float:left;" class="article-content">   
+ <p> AngularJS支持使用服务的体系结构“关注点分离”的概念。服务是JavaScript函数，并负责只做一个特定的任务。这也使得他们即维护和测试的单独实体。控制器，过滤器可以调用它们作为需求的基础。服务使用AngularJS的依赖注入机制注入正常。</p> 
+ <p> AngularJS提供例如许多内在的服务，如：$http, $route, $window, $location等。每个服务负责例如一个特定的任务，$http是用来创建AJAX调用，以获得服务器的数据。 $route用来定义路由信息等。内置的服务总是前缀$符号。</p> 
+ <p> 有两种方法来创建服务。</p> 
+ <ul> 
+  <li> <p> 工厂</p> </li> 
+  <li> <p> 服务</p> </li> 
+ </ul> 
+ <h2> 使用工厂方法</h2> 
+ <p> 使用工厂方法，我们先定义一个工厂，然后分配方法给它。</p> 
+ <pre class="prettyprint" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+      var mainApp = angular.module("mainApp", []);
+      mainApp.factory('MathService', function() {     
+         var factory = {};  
+         factory.multiply = function(a, b) {
+            return a * b 
+         }
+         return factory;
+      }); </pre> 
+ <h2> 使用服务方法</h2> 
+ <p> 使用服务的方法，我们定义了一个服务，然后分配方法。还注入已经可用的服务。</p> 
+ <pre class="prettyprint" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+mainApp.service('CalcService', function(MathService){
+    this.square = function(a) { 
+		return MathService.multiply(a,a); 
+	}
+});</pre> 
+ <h2> 例子</h2> 
+ <p> 下面的例子将展示上述所有指令。</p> testAngularJS.html 
+ <pre class="prettyprint" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);" tryit="">
+&lt;html&gt;
+&lt;head&gt;
+   &lt;title&gt;Angular JS Forms&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+   &lt;h2&gt;AngularJS Sample Application&lt;/h2&gt;
+   &lt;div ng-app="mainApp" ng-controller="CalcController"&gt;
+      &lt;p&gt;Enter a number: &lt;input type="number" ng-model="number" /&gt;
+      &lt;button ng-click="square()"&gt;X&lt;sup&gt;2&lt;/sup&gt;&lt;/button&gt;
+      &lt;p&gt;Result: {{result}}&lt;/p&gt;
+   &lt;/div&gt;
+   &lt;script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.15/angular.min.js"&gt;&lt;/script&gt;
+   &lt;script&gt;
+      var mainApp = angular.module("mainApp", []);
+      mainApp.factory('MathService', function() {     
+         var factory = {};  
+         factory.multiply = function(a, b) {
+            return a * b 
+         }
+         return factory;
+      }); 
+
+      mainApp.service('CalcService', function(MathService){
+            this.square = function(a) { 
+            return MathService.multiply(a,a); 
+         }
+      });
+
+      mainApp.controller('CalcController', function($scope, CalcService) {
+            $scope.square = function() {
+            $scope.result = CalcService.square($scope.number);
+         }
+      });
+   &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre> 
+ <h2> 结果</h2> 
+ <p> 在Web浏览器打开textAngularJS.html。看到结果如下。</p> 
+ <img alt="AngularJS Services" src="/uploads/allimg/141104/0AZ13353-0.jpg" style="box-sizing: border-box; vertical-align: middle; display: block; margin-left: auto; margin-right: auto; padding-bottom: 10px; max-width: 100%; color: rgb(49, 49, 49); font-family: 'Open Sans', Arial, sans-serif; font-size: 14px; line-height: 22px;"> 
+ <div>
+   &nbsp;
+ </div> 
+ <br>      
+</div></body></html>

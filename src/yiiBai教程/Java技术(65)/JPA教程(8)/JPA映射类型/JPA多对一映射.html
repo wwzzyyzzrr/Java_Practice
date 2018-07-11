@@ -1,0 +1,191 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">JPA多对一映射</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>多对一映射表示实体集合可以与相似实体关联的单值关联。 因此，在关系数据库中，实体的多于一行可以引用另一个实体的相似行。</p> 
+ <p>完整的项目目录结构如下所示 -<br><img src="http://www.yiibai.com/uploads/images/201806/1006/124090605_66960.png" alt=""></p> 
+ <h2 id="h2--manytoone-"><a name="@ManyToOne 示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span><a target="_blank" href="https://github.com/ManyToOne" title="@ManyToOne" class="at-link">@ManyToOne</a> 示例</h2>
+ <p>在这个例子中，我们将创建一个学生和图书库之间的多对一关系，多个学生可以发布同一本书。</p> 
+ <p>这个例子包含以下步骤 -</p> 
+ <p><strong>第1步:</strong> 在<code>com.yiibai.mapping</code>包中创建一个实体类<code>Student.java</code>，包含学生ID(s_id)和学生姓名(s_name)，其中包含一个包含库类型对象的<code><a target="_blank" href="https://github.com/ManyToOne" title="@ManyToOne" class="at-link">@ManyToOne</a></code>注解。</p> 
+ <p>文件:<em>Student.java</em> 的代码如下所示 - </p> 
+ <pre><code class="lang-java">package com.yiibai.mapping;
+
+import javax.persistence.*;
+
+@Entity
+public class Student {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private int s_id;
+    private String s_name;
+
+    @ManyToOne
+    private Library lib;
+
+    public int getS_id() {
+        return s_id;
+    }
+
+    public void setS_id(int s_id) {
+        this.s_id = s_id;
+    }
+
+    public String getS_name() {
+        return s_name;
+    }
+
+    public void setS_name(String s_name) {
+        this.s_name = s_name;
+    }
+
+    public Library getLib() {
+        return lib;
+    }
+
+    public void setLib(Library lib) {
+        this.lib = lib;
+    }
+
+}
+</code></pre> 
+ <p><strong>第2步:</strong> 在<code>com.yiibai.mapping</code>包下创建另一个实体类<code>Library.java</code>，它包含book id(b_id)，book name(b_name)。</p> 
+ <p>文件:<em>Library.java</em> 的代码如下所示 - </p> 
+ <pre><code class="lang-java">package com.yiibai.mapping;
+
+import javax.persistence.*;
+
+@Entity
+public class Library {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private int b_id;
+    private String b_name;
+
+    public Library(int b_id, String b_name) {
+        super();
+        this.b_id = b_id;
+        this.b_name = b_name;
+
+    }
+
+    public Library() {
+        super();
+        // TODO Auto-generated constructor stub
+    }
+
+    public int getB_id() {
+        return b_id;
+    }
+
+    public void setB_id(int b_id) {
+        this.b_id = b_id;
+    }
+
+    public String getB_name() {
+        return b_name;
+    }
+
+    public void setB_name(String b_name) {
+        this.b_name = b_name;
+    }
+
+}
+</code></pre> 
+ <p><strong>第3步:</strong> 将实体类和其他数据库配置映射到<code>persistence.xml</code>文件中。</p> 
+ <p>文件:<em>persistence.xml</em> 的代码如下所示 - </p> 
+ <pre><code class="lang-xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;persistence version="2.1"
+    xmlns="http://xmlns.jcp.org/xml/ns/persistence"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd"&gt;
+    &lt;persistence-unit name="book_issued"&gt;
+        &lt;class&gt;com.yiibai.mapping.Student&lt;/class&gt;
+        &lt;class&gt;com.yiibai.mapping.Library&lt;/class&gt;
+        &lt;properties&gt;
+            &lt;property name="javax.persistence.jdbc.driver"
+                value="com.mysql.jdbc.Driver" /&gt;
+            &lt;property name="javax.persistence.jdbc.url"
+                value="jdbc:mysql://localhost:3306/testdb?serverTimezone=UTC" /&gt;
+            &lt;property name="javax.persistence.jdbc.user" value="root" /&gt;
+            &lt;property name="javax.persistence.jdbc.password"
+                value="123456" /&gt;
+            &lt;property name="eclipselink.logging.level" value="SEVERE" /&gt;
+            &lt;property name="eclipselink.ddl-generation"
+                value="create-or-extend-tables" /&gt;
+        &lt;/properties&gt;
+    &lt;/persistence-unit&gt;
+
+&lt;/persistence&gt;
+</code></pre> 
+ <p>在<code>com.yiibai.mapping</code>包下创建一个持久化类<code>ManyToOneExample</code>，用于将实体对象与数据保持一致。</p> 
+ <p>文件:<em>ManyToOneExample.java</em> 的代码如下所示 - </p>   
+ <pre><code class="lang-java">package com.yiibai.mapping;
+
+import javax.persistence.*;
+
+import javax.persistence.EntityManagerFactory;
+
+import com.yiibai.mapping.Library;
+
+public class ManyToOneExample {
+
+    public static void main(String[] args) {
+
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("books_issued");
+
+        EntityManager em = emf.createEntityManager();
+
+        em.getTransaction().begin();
+
+        Library lib = new Library();
+        lib.setB_id(101);
+        lib.setB_name("Data Structure");
+
+        em.persist(lib);
+
+        Student st1 = new Student();
+        st1.setS_id(1);
+        st1.setS_name("Maxsu");
+        st1.setLib(lib);
+
+        Student st2 = new Student();
+        st2.setS_id(2);
+        st2.setS_name("Curry");
+        st2.setLib(lib);
+
+        em.persist(st1);
+        ;
+        em.persist(st2);
+
+        em.getTransaction().commit();
+        em.close();
+        emf.close();
+    }
+}
+</code></pre> 
+ <h2 id="h2-u7A0Bu5E8Fu8F93u51FAu7ED3u679C"><a name="程序输出结果" class="reference-link"></a><span class="header-link octicon octicon-link"></span>程序输出结果</h2>
+ <p>程序执行完成后，下面的表格在MySQL工作台下生成。</p> 
+ <ul> 
+  <li>Student表 - 此表包含学生详细信息。要获取数据，请在MySQL中运行<code>select * from student</code>查询。结果如下所示 - </li>
+ </ul> 
+ <pre><code class="lang-shell">mysql&gt; select * from student;
++------+--------+----------+
+| S_ID | S_NAME | LIB_B_ID |
++------+--------+----------+
+|    2 | Curry  |      101 |
+|    1 | Maxsu  |      101 |
++------+--------+----------+
+2 rows in set
+</code></pre> 
+ <ul> 
+  <li>Library表 - 这个表格代表学生和图书库之间的映射。 要获取数据，请在MySQL中运行<code>select * from library</code>查询。结果如下所示 - </li>
+ </ul> 
+ <pre><code class="lang-shell">mysql&gt; select * from library;
++------+----------------+
+| B_ID | B_NAME         |
++------+----------------+
+|  101 | Data Structure |
++------+----------------+
+1 row in set
+</code></pre>
+ <br>      
+</div></body></html>

@@ -1,0 +1,193 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">ASP.Net MVC选择器</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>动作选择器是可以应用于动作方法的属性，用于影响响应请求时调用哪个动作方法。 它有助于路由引擎选择正确的操作方法来处理特定的请求。</p> 
+ <p>当你编写动作方法时，它扮演着非常关键的角色。 这些选择器将根据动作方法前面给出的修改后的名称来决定方法调用的行为。动作选择器通常用于别名操作方法的名称。</p> 
+ <p>动作选择器有三种类型的属性 -</p> 
+ <ul> 
+  <li>ActionName</li>
+  <li>NonAction</li>
+  <li>ActionVerbs</li>
+ </ul> 
+ <h2 id="h2-1-actionname"><a name="1. ActionName" class="reference-link"></a><span class="header-link octicon octicon-link"></span>1. ActionName</h2>
+ <p>这个类表示一个用于动作名称的属性。它还允许开发人员使用与方法名称不同的动作名称(即动作的别名)。</p> 
+ <p>我们来创建一个项目：<em>MVCSelectors</em>，在这个项目中，创建一个控制器 - <em>HomeController</em> ，它包含有两个操作方法。参考以下代码 - </p> 
+ <pre><code class="lang-csharp">using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+
+namespace MVCSelectors.Controllers
+{
+    public class HomeController : Controller
+    {
+        // GET: Home
+        public string Index()
+        {
+            return "This is ASP.Net MVC Filters Tutorial";
+        }
+
+        public string GetCurrentTime()
+        {
+            return DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+        }
+    }
+}
+</code></pre> 
+ <p>通过在<code>GetCurrentTime()</code>方法之上写<code>[ActionName("CurrentTime")]</code>来应用<code>GetCurrentTime</code>的<code>ActionName</code>选择器，如以下代码所示 -</p> 
+ <pre><code class="lang-csharp">using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+
+namespace MVCSelectors.Controllers
+{
+    public class HomeController : Controller
+    {
+        // GET: Home
+        public string Index()
+        {
+            return "This is ASP.Net MVC Filters Tutorial";
+        }
+
+        [ActionName("CurrentTime")]
+        public string GetCurrentTime()
+        {
+            return DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+        }
+    }
+}
+</code></pre> 
+ <p>现在运行该应用程序并在浏览器URL栏中输入以下URL：<code>http://localhost:62833/Home/CurrentTime</code>(不是<code>GetCurrentTime</code>)，将收到以下输出结果 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201712/1512/312141232_34524.png" alt=""></p> 
+ <p>可以看到已经使用了<code>CurrentTime</code>，而不是原来的动作名称，在上面正常的URL应该是:<code>GetCurrentTime</code>。</p> 
+ <h2 id="h2-2-nonaction"><a name="2. NonAction" class="reference-link"></a><span class="header-link octicon octicon-link"></span>2. NonAction</h2>
+ <p><code>NonAction</code>是另一个内置属性，它表示<code>Controller</code>的公共方法不是一个操作方法。当想要一个方法不要被当作一个操作方法来处理的时候，就可以使用它了。</p> 
+ <p>下面来看看一个简单的例子，在<code>HomeController</code>中添加另一个方法，并使用下面的代码应用<code>NonAction</code>属性。</p> 
+ <pre><code class="lang-csharp">using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+
+namespace MVCSelectors.Controllers
+{
+    public class HomeController : Controller
+    {
+        // GET: Home
+        public string Index()
+        {
+            return "This is ASP.Net MVC Filters Tutorial";
+        }
+
+        [ActionName("CurrentTime")]
+        public string GetCurrentTime()
+        {
+            return TimeString();
+        }
+
+        [NonAction]
+        public string TimeString()
+        {
+            return "当前时间是： " + DateTime.Now.ToString("T");
+        }
+    }
+}
+</code></pre> 
+ <p>新的方法<code>TimeString()</code>是要被<code>GetCurrentTime()</code>方法调用的，但不能在URL中作为动作使用。</p> 
+ <p>运行这个应用程序，并在浏览器中指定以下URL： <code>http://localhost:62466/Home/CurrentTime</code> ， 将收到以下输出。如下图所示 -<br><img src="http://www.yiibai.com/uploads/images/201712/1512/644141236_55580.png" alt=""></p> 
+ <p>现在来看看在URL中使用<code>/Home/TimeString</code>作为动作，看看会发生什么。如下图所示 -<br><img src="http://www.yiibai.com/uploads/images/201712/1512/168141237_24744.png" alt=""></p> 
+ <p>可以看到它给出了<em>“404-找不到”</em> 的错误。</p> 
+ <h2 id="h2-3-actionverbs"><a name="3. ActionVerbs" class="reference-link"></a><span class="header-link octicon octicon-link"></span>3. ActionVerbs</h2>
+ <p>另一个可以应用的选择器过滤器是<code>ActionVerbs</code>属性。所以这限制了特定行为对特定的<code>HttpVerbs</code>的指示。可以定义两个具有相同名称的不同操作方法，但是一个操作方法会响应HTTP Get请求，另一个操作方法会响应HTTP Post请求。</p> 
+ <p>MVC框架支持以下<code>ActionVerbs</code> - </p> 
+ <ul> 
+  <li><em>HttpGet</em></li>
+  <li><em>HttpPost</em></li>
+  <li><em>HttpPut</em></li>
+  <li><em>HttpDelete</em></li>
+  <li><em>HttpOptions</em></li>
+  <li><em>HttpPatch</em></li>
+ </ul> 
+ <p>下面来看一个简单的例子，创建一个控制器 - <code>EmployeeController</code>。</p>   
+ <pre><code class="lang-csharp">using System;
+using System.Collections.Generic;
+using System.Linq;
+
+using System.Web;
+using System.Web.Mvc;
+
+
+namespace MVCSelectors.Controllers
+{
+    public class EmployeeController : Controller
+    {
+        // GET: Employee
+        public ActionResult Search(string name = "No name Entered")
+        {
+            var input = Server.HtmlEncode(name);
+            return Content(input);
+        }
+    }
+}
+</code></pre> 
+ <p>现在使用下面的代码添加另一个具有相同名称的操作方法。</p> 
+ <pre><code class="lang-csharp">using System;
+using System.Collections.Generic;
+using System.Linq;
+
+using System.Web;
+using System.Web.Mvc;
+
+
+namespace MVCSelectors.Controllers
+{
+    public class EmployeeController : Controller
+    {
+        public ActionResult Search(string name)
+        {
+            var input = Server.HtmlEncode(name);
+            return Content(input);
+        }
+
+        public ActionResult Search()
+        {
+            var input = "Another Search action";
+            return Content(input);
+        }
+    }
+}
+</code></pre> 
+ <p>当运行这个应用程序时，它会给出一个错误，因为MVC框架无法确定应该为请求选择哪个操作方法。</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201712/1512/275141240_99636.png" alt=""></p> 
+ <p>使用下面的代码来指定HttpGet <code>ActionVerb</code>作为响应的动作。</p> 
+ <pre><code class="lang-csharp">using System;
+using System.Collections.Generic;
+using System.Linq;
+
+using System.Web;
+using System.Web.Mvc;
+
+
+namespace MVCSelectors.Controllers
+{
+    public class EmployeeController : Controller
+    {
+        public ActionResult Search(string name)
+        {
+            var input = Server.HtmlEncode(name);
+            return Content(input);
+        }
+        [HttpGet]
+        public ActionResult Search()
+        {
+            var input = "Another Search action";
+            return Content(input);
+        }
+    }
+}
+</code></pre> 
+ <p>当运行此应用程序时，将收到以下输出结果 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201712/1512/452141241_49155.png" alt=""></p>
+ <br>      
+</div></body></html>

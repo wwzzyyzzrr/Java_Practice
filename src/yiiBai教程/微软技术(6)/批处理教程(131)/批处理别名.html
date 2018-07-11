@@ -1,0 +1,117 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">批处理别名</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>别名表示现有命令创建快捷键或关键字。 假设想要执行下面的命令，不是使用<code>/w</code>选项的目录列表命令，而不是在目录列表中显示所有必要的细节。</p> 
+ <pre><code class="lang-bat">dir /w
+</code></pre> 
+ <p>假设如果要创建这个命令的快捷方式如下。</p> 
+ <pre><code class="lang-bat">dw=dir /w
+</code></pre> 
+ <p>当要执行<code>dir /w</code>命令时，可以简单地键入<code>dw</code>这个单词。<code>dw</code>这个词现在已经成为命令<code>dir /w</code>的别名。</p> 
+ <h2 id="h2-u521Bu5EFAu522Bu540D"><a name="创建别名" class="reference-link"></a><span class="header-link octicon octicon-link"></span>创建别名</h2>
+ <p>别名通过使用<code>doskey</code>命令进行管理。</p> 
+ <p><strong>语法</strong></p> 
+ <pre><code class="lang-bat">DOSKEY [options] [macroname=[text]]
+</code></pre> 
+ <p>其中， </p> 
+ <ul> 
+  <li><em>macroname</em> - 宏的简称。</li>
+  <li><em>text</em> - 要调用的命令。</li>
+ </ul> 
+ <p>以下是<code>DOSKEY</code>命令的选项的说明。</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>编号</th> 
+    <th>选项</th> 
+    <th>描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>1</td> 
+    <td><code>/REINSTALL</code></td> 
+    <td>安装Doskey的新副本</td> 
+   </tr> 
+   <tr> 
+    <td>2</td> 
+    <td><code>/LISTSIZE = size</code></td> 
+    <td>设置命令历史缓冲区的大小。</td> 
+   </tr> 
+   <tr> 
+    <td>3</td> 
+    <td><code>/MACROS</code></td> 
+    <td>显示所有Doskey宏。</td> 
+   </tr> 
+   <tr> 
+    <td>4</td> 
+    <td><code>/MACROS:ALL</code></td> 
+    <td>显示所有具有Doskey宏的可执行文件的所有Doskey宏。</td> 
+   </tr> 
+   <tr> 
+    <td>5</td> 
+    <td><code>/MACROS:exename</code></td> 
+    <td>显示给定可执行文件的所有Doskey宏。</td> 
+   </tr> 
+   <tr> 
+    <td>6</td> 
+    <td><code>/HISTORY</code></td> 
+    <td>显示存储在内存中的所有命令。</td> 
+   </tr> 
+   <tr> 
+    <td>7</td> 
+    <td><code>/INSERT</code></td> 
+    <td>指定键入的新文本以旧文本插入。</td> 
+   </tr> 
+   <tr> 
+    <td>8</td> 
+    <td><code>/OVERSTRIKE</code></td> 
+    <td>指定新文本覆盖旧文本。</td> 
+   </tr> 
+   <tr> 
+    <td>9</td> 
+    <td><code>/EXENAME = exename</code></td> 
+    <td>指定可执行文件。</td> 
+   </tr> 
+   <tr> 
+    <td>10</td> 
+    <td><code>/MACROFILE = filename</code></td> 
+    <td>指定要安装的宏的文件。</td> 
+   </tr> 
+   <tr> 
+    <td>11</td> 
+    <td><code>macroname</code></td> 
+    <td>指定创建的宏的名称。</td> 
+   </tr> 
+   <tr> 
+    <td>12</td> 
+    <td><code>text</code></td> 
+    <td>指定要录制的命令。</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p><strong>示例</strong></p> 
+ <p>创建一个名为<code>keys.bat</code>的新文件，并在文件中输入以下命令。 下面的命令会创建两个别名，一个是<code>cd</code>命令，它会自动进入名为<code>test</code>的目录。 另一个是<code>dir</code>命令。</p>   
+ <pre><code class="lang-shell">@echo off
+doskey cd=cd/test
+doskey d=dir
+</code></pre> 
+ <p>当执行该命令，就可以在命令提示符下运行这些别名。</p> 
+ <p>下面的截图显示了在上面创建的批处理文件被执行后，可以自由地输入<code>d</code>命令，它会给目录列表，这意味着别名已经被创建成功了。<br><img src="http://www.yiibai.com/uploads/images/201801/2501/823160100_31942.jpg" alt=""></p> 
+ <h2 id="h2-u5220u9664u522Bu540D"><a name="删除别名" class="reference-link"></a><span class="header-link octicon octicon-link"></span>删除别名</h2>
+ <p>通过将宏的值设置为<code>NULL</code>，可以删除别名或宏。</p> 
+ <pre><code class="lang-bat">@echo off
+doskey cd=cd/test
+doskey d=dir
+d=
+</code></pre> 
+ <p>在上面的例子中，首先将宏<code>d</code>设置为<code>d = dir</code>。 之后将其设置为<code>NULL</code>。 因为已经将<code>d</code>的值设置为<code>NULL</code>，所以宏<code>d</code>将被删除。</p> 
+ <h2 id="h2-u66FFu6362u522Bu540D"><a name="替换别名" class="reference-link"></a><span class="header-link octicon octicon-link"></span>替换别名</h2>
+ <p>可以通过将宏的值设置为新的期望值来替换别名或宏。</p> 
+ <pre><code class="lang-bat">@echo off
+doskey cd=cd/test
+doskey d=dir
+
+d=dir /w
+</code></pre> 
+ <p>在上面的例子中，首先将宏<code>d</code>设置为<code>d = dir</code>。 之后将其设置为<code>dir /w</code>。 由于已经将<code>d</code>的值设置为一个新的值，所以别名<code>d</code>现在将呈现新的值。</p>
+ <br>      
+</div></body></html>

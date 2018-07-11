@@ -1,0 +1,124 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Java并发Lock接口</h1><div style="width:100%;float:left;" class="article-content">   
+ <p><code>java.util.concurrent.locks.Lock</code>接口用作线程同步机制，类似于同步块。新的锁定机制更灵活，提供比同步块更多的选项。 锁和同步块之间的主要区别如下：</p> 
+ <ul> 
+  <li><strong>序列的保证</strong> - 同步块不提供对等待线程进行访问的序列的任何保证，但<code>Lock</code>接口处理它。</li>
+  <li><strong>无超时</strong>，如果未授予锁，则同步块没有超时选项。<code>Lock</code>接口提供了这样的选项。</li>
+  <li><strong>单一方法</strong>同步块必须完全包含在单个方法中，而<code>Lock</code>接口的方法<code>lock()</code>和<code>unlock()</code>可以以不同的方式调用。</li>
+ </ul> 
+ <h2 id="h2-lock-"><a name="Lock类中的方法" class="reference-link"></a><span class="header-link octicon octicon-link"></span>Lock类中的方法</h2>
+ <p>以下是<code>Lock</code>类中可用的重要方法的列表。</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>编号</th> 
+    <th>方法</th> 
+    <th>描述说明</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>1</td> 
+    <td><code>public void lock()</code></td> 
+    <td>获得锁</td> 
+   </tr> 
+   <tr> 
+    <td>2</td> 
+    <td><code>public void lockInterruptibly()</code></td> 
+    <td>获取锁定，除非当前线程中断</td> 
+   </tr> 
+   <tr> 
+    <td>3</td> 
+    <td><code>public Condition newCondition()</code></td> 
+    <td>返回绑定到此<code>Lock</code>实例的新<code>Condition</code>实例</td> 
+   </tr> 
+   <tr> 
+    <td>4</td> 
+    <td><code>public boolean tryLock()</code></td> 
+    <td>只有在调用时才可以获得锁</td> 
+   </tr> 
+   <tr> 
+    <td>5</td> 
+    <td><code>public boolean tryLock(long time, TimeUnit unit)</code></td> 
+    <td>如果在给定的等待时间内自由，并且当前线程未被中断，则获取该锁。</td> 
+   </tr> 
+   <tr> 
+    <td>6</td> 
+    <td><code>public void unlock()</code></td> 
+    <td>释放锁</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h2 id="h2-u793Au4F8B"><a name="示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例</h2>
+ <p>以下<code>TestThread</code>程序演示了使用<code>Lock</code>接口的一些方法。 这里我们使用<code>lock()</code>获取锁和<code>unlock()</code>来释放锁。</p> 
+ <pre><code class="lang-java">import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
+class PrintDemo {
+
+   private final Lock queueLock = new ReentrantLock();
+
+   public void print() {
+      queueLock.lock();
+      try {
+         Long duration = (long) (Math.random() * 10000);
+         System.out.println(Thread.currentThread().getName() 
+            + "  Time Taken " + (duration / 1000) + " seconds.");
+         Thread.sleep(duration);
+      } catch (InterruptedException e) {
+         e.printStackTrace();
+      } finally {
+         System.out.printf("%s printed the document successfully.\n", Thread.currentThread().getName());
+         queueLock.unlock();
+      }
+   }
+}
+
+class ThreadDemo extends Thread {
+   PrintDemo  printDemo;
+
+   ThreadDemo( String name,  PrintDemo printDemo) {
+      super(name);
+      this.printDemo = printDemo;
+   }   
+
+   @Override
+   public void run() {
+      System.out.printf("%s starts printing a document\n", Thread.currentThread().getName());
+      printDemo.print();
+   }
+}
+
+public class TestThread {
+
+   public static void main(String args[]) {
+      PrintDemo PD = new PrintDemo();
+
+      ThreadDemo t1 = new ThreadDemo( "Thread - 1 ", PD );
+      ThreadDemo t2 = new ThreadDemo( "Thread - 2 ", PD );
+      ThreadDemo t3 = new ThreadDemo( "Thread - 3 ", PD );
+      ThreadDemo t4 = new ThreadDemo( "Thread - 4 ", PD );
+
+      t1.start();
+      t2.start();
+      t3.start();
+      t4.start();
+   }
+}
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 -</p>   
+ <pre><code class="lang-java">Thread - 1  starts printing a document
+Thread - 4  starts printing a document
+Thread - 3  starts printing a document
+Thread - 2  starts printing a document
+Thread - 1   Time Taken 4 seconds.
+Thread - 1  printed the document successfully.
+Thread - 4   Time Taken 3 seconds.
+Thread - 4  printed the document successfully.
+Thread - 3   Time Taken 5 seconds.
+Thread - 3  printed the document successfully.
+Thread - 2   Time Taken 4 seconds.
+Thread - 2  printed the document successfully.
+</code></pre> 
+ <p>在上面的示例中，使用<code>ReentrantLock</code>类作为<code>Lock</code>接口的一个实现。 <code>ReentrantLock</code>类允许线程锁定方法，即使它已经具有其他方法锁。</p>
+ <br>      
+</div></body></html>

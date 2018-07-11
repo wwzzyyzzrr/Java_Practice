@@ -1,0 +1,295 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">COBOL条件语句</h1><div style="width:100%;float:left;" class="article-content">   
+ <p> 条件语句是用于改变根据由程序员指定的特定条件下的执行流程。条件语句将总是为真或假。条件是使用在如果，计算和执行的语句。不同类型的条件如下：</p> 
+ <ul> 
+  <li> if条件语句</li> 
+  <li> 关系条件</li> 
+  <li> 签名条件</li> 
+  <li> 类条件</li> 
+  <li> 条件名条件</li> 
+  <li> 取反条件</li> 
+  <li> 组合条件</li> 
+ </ul> 
+ <h2> if条件语句</h2> 
+ <p> if语句检查的条件。如果条件为True IF块被执行，如果条件为假ELSE块被执行。</p> 
+ <p> END-IF被用来结束IF块。到结束可以用来代替END-IF IF块。但最好使用END IF的多个if块。</p> 
+ <p> 嵌套IF：IF 模块出现另一个IF块内。没有限制嵌套IF语句。</p> 
+ <h3> 语法</h3> 
+ <p> 以下是语法如果条件语句：</p> 
+ <pre class="prettyprint" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+IF [condition] THEN
+[COBOL statements]
+ELSE
+[COBOL statements]
+END-IF.</pre> 
+ <p> 实例</p> 
+ <pre class="prettyprint tryit" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); background-image: url(http://www.yiibai.com/images/link.png) !important; background-attachment: initial !important; background-size: initial !important; background-origin: initial !important; background-clip: initial !important; background-position: 100% 0%; background-repeat: no-repeat !important;">
+IDENTIFICATION DIVISION.
+PROGRAM-ID. HELLO.
+DATA DIVISION.
+WORKING-STORAGE SECTION.
+01 WS-NUM1 PIC 9(9).
+01 WS-NUM2 PIC 9(9).
+01 WS-NUM3 PIC 9(5).
+01 WS-NUM4 PIC 9(6).
+PROCEDURE DIVISION.
+A000-FIRST-PARA.
+MOVE 25 TO WS-NUM1 WS-NUM3.
+MOVE 15 TO WS-NUM2 WS-NUM4.
+IF WS-NUM1 &gt; WS-NUM2 THEN
+DISPLAY 'IN LOOP 1 - IF BLOCK'
+   IF WS-NUM3 = WS-NUM4 THEN
+   DISPLAY 'IN LOOP 2 - IF BLOCK'
+   ELSE
+   DISPLAY 'IN LOOP 2 - ELSE BLOCK'
+   END-IF
+ELSE
+DISPLAY 'IN LOOP 1 - ELSE BLOCK'
+END-IF.
+STOP RUN.</pre> 
+ <p> JCL以上COBOL程序执行。</p> 
+ <pre class="prettyprint" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+//SAMPLE JOB(TESTJCL,XXXXXX),CLASS=A,MSGCLASS=C
+//STEP1 EXEC PGM=HELLO</pre> 
+ <p> 当编译并执行上面的程序它会产生以下结果：</p> 
+ <pre class="result" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+IN LOOP 1 - IF BLOCK
+IN LOOP 2 - ELSE BLOCK</pre> 
+ <h2> 关系条件</h2> 
+ <p> 关系的条件是用来评估真假的两个数值。数字字段的代数比较不论大小和用法子句完成。</p> 
+ <p> 对于非数字操作数</p> 
+ <p> 如果两个相同大小的非数字操作数进行比较，然后字符进行比较，从左边的对应的位置，直到结束为止。含大字符操作数被声明更大。</p> 
+ <p> 如果不相等大小的两个非数字操作数进行比较，然后在较短的数据项被追加了位已经结束，直到操作数的大小成为相等，然后根据在先前的点所提到的规则相比较。</p> 
+ <h3> 语法</h3> 
+ <p> 以下是关系的条件语句的语法：</p> 
+ <pre class="prettyprint" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+[Data Name/Arithmetic Operation]
+
+          [IS] [NOT] 
+
+[Equal to (=),Greater than (&gt;), Less than (&lt;), 
+ Greater than or Equal (&gt;=), Less than or equal (&lt;=) ]
+
+[Data Name/Arithmetic Operation] </pre> 
+ <p> 例子</p> 
+ <pre class="prettyprint tryit" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); background-image: url(http://www.yiibai.com/images/link.png) !important; background-attachment: initial !important; background-size: initial !important; background-origin: initial !important; background-clip: initial !important; background-position: 100% 0%; background-repeat: no-repeat !important;">
+IDENTIFICATION DIVISION.
+PROGRAM-ID. HELLO.
+DATA DIVISION.
+WORKING-STORAGE SECTION.
+01 WS-NUM1 PIC 9(9).
+01 WS-NUM2 PIC 9(9).
+PROCEDURE DIVISION.
+A000-FIRST-PARA.
+MOVE 25 TO WS-NUM1.
+MOVE 15 TO WS-NUM2.
+IF WS-NUM1 IS GREATER THAN OR EQUAL TO WS-NUM2 THEN
+DISPLAY 'WS-NUM1 IS GREATER THAN WS-NUM2'
+ELSE
+DISPLAY 'WS-NUM1 IS LESS THAN WS-NUM2'
+END-IF.
+STOP RUN.</pre> 
+ <p> JCL以上COBOL程序执行。</p> 
+ <pre class="prettyprint" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+//SAMPLE JOB(TESTJCL,XXXXXX),CLASS=A,MSGCLASS=C
+//STEP1 EXEC PGM=HELLO</pre> 
+ <p> 当编译并执行上面的程序它会产生以下结果：</p> 
+ <pre class="result" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+WS-NUM1 IS GREATER THAN WS-NUM2</pre> 
+ <h2> 签名条件</h2> 
+ <p> 签名条件用于检查数字操作数的符号。操作数可以是：</p> 
+ <h3> 语法</h3> 
+ <p> 以下是签名条件语句的语法：</p> 
+ <pre class="prettyprint" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+[Data Name/Arithmetic Operation] 
+
+          [IS] [NOT] 
+
+[Positive, Negative or Zero]
+
+[Data Name/Arithmetic Operation]</pre> 
+ <p> 例子</p> 
+ <pre class="prettyprint tryit" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); background-image: url(http://www.yiibai.com/images/link.png) !important; background-attachment: initial !important; background-size: initial !important; background-origin: initial !important; background-clip: initial !important; background-position: 100% 0%; background-repeat: no-repeat !important;">
+IDENTIFICATION DIVISION.
+PROGRAM-ID. HELLO.
+DATA DIVISION.
+WORKING-STORAGE SECTION.
+01 WS-NUM1 PIC S9(9) VALUE -1234.
+01 WS-NUM2 PIC S9(9) VALUE 123456.
+PROCEDURE DIVISION.
+A000-FIRST-PARA.
+IF WS-NUM1 IS POSITIVE THEN
+DISPLAY 'WS-NUM1 IS POSITIVE'.
+IF WS-NUM1 IS NEGATIVE THEN
+DISPLAY 'WS-NUM1 IS NEGATIVE'.
+IF WS-NUM1 IS ZERO THEN
+DISPLAY 'WS-NUM1 IS ZERO'.
+IF WS-NUM2 IS POSITIVE THEN
+DISPLAY 'WS-NUM2 IS POSITIVE'.
+STOP RUN.</pre> 
+ <p> JCL以上COBOL程序执行。</p> 
+ <pre class="prettyprint" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+//SAMPLE JOB(TESTJCL,XXXXXX),CLASS=A,MSGCLASS=C
+//STEP1 EXEC PGM=HELLO</pre> 
+ <p> 当编译并执行上面的程序它会产生以下结果：</p> 
+ <pre class="result" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+WS-NUM1 IS NEGATIVE
+WS-NUM2 IS POSITIVE</pre> 
+ <h2> 类条件</h2> 
+ <p> 签名条件用来判断是否操作数只包含字母或数字数据。空间被认为是 ALPHABETIC, ALPHABETIC-LOWER, ALPHABETIC-UPPER.</p> 
+ <h3> 语法</h3> 
+ <p> 以下是类条件语句的语法：</p> 
+ <pre class="prettyprint" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+[Data Name/Arithmetic Operation&gt;]
+
+          [IS] [NOT] 
+
+[NUMERIC, ALPHABETIC, ALPHABETIC-LOWER, ALPHABETIC-UPPER]
+
+[Data Name/Arithmetic Operation]</pre> 
+ <p> 例子</p> 
+ <pre class="prettyprint tryit" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); background-image: url(http://www.yiibai.com/images/link.png) !important; background-attachment: initial !important; background-size: initial !important; background-origin: initial !important; background-clip: initial !important; background-position: 100% 0%; background-repeat: no-repeat !important;">
+IDENTIFICATION DIVISION.
+PROGRAM-ID. HELLO.
+DATA DIVISION.
+WORKING-STORAGE SECTION.
+01 WS-NUM1 PIC X(9) VALUE 'ABCD '.
+01 WS-NUM2 PIC 9(9) VALUE 123456789.
+PROCEDURE DIVISION.
+A000-FIRST-PARA.
+IF WS-NUM1 IS ALPHABETIC THEN
+DISPLAY 'WS-NUM1 IS ALPHABETIC'.
+IF WS-NUM1 IS NUMERIC THEN
+DISPLAY 'WS-NUM1 IS NUMERIC'.
+IF WS-NUM2 IS NUMERIC THEN
+DISPLAY 'WS-NUM1 IS NUMERIC'.
+STOP RUN.</pre> 
+ <p> JCL以上COBOL程序执行。</p> 
+ <pre class="prettyprint" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+//SAMPLE JOB(TESTJCL,XXXXXX),CLASS=A,MSGCLASS=C
+//STEP1 EXEC PGM=HELLO</pre> 
+ <p> 当编译并执行上面的程序它会产生以下结果：</p> 
+ <pre class="result" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+WS-NUM1 IS ALPHABETIC
+WS-NUM1 IS NUMERIC</pre> 
+ <h2> 条件-名称条件</h2> 
+ <p> 一个条件名称是用户定义的名称。它包含由用户设置指定的值。它的行为就像布尔变量。他们定义了88级数。它不会有一个PIC子句。</p> 
+ <h3> 语法</h3> 
+ <p> 以下是用户定义的条件语句的语法：</p> 
+ <pre class="prettyprint" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+88 [Condition-Name] VALUE [IS, ARE] [LITERAL] [THRU LITERAL].</pre> 
+ <p> 例子</p> 
+ <pre class="prettyprint tryit" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); background-image: url(http://www.yiibai.com/images/link.png) !important; background-attachment: initial !important; background-size: initial !important; background-origin: initial !important; background-clip: initial !important; background-position: 100% 0%; background-repeat: no-repeat !important;">
+IDENTIFICATION DIVISION.
+PROGRAM-ID. HELLO.
+DATA DIVISION.
+WORKING-STORAGE SECTION.
+01 WS-NUM PIC 9(3).
+88 PASS VALUES ARE 041 THRU 100.
+88 FAIL VALUES ARE 000 THRU 40.
+PROCEDURE DIVISION.
+A000-FIRST-PARA.
+MOVE 65 TO WS-NUM.
+IF PASS 
+DISPLAY 'Passed with ' WS-NUM ' marks'.
+IF FAIL 
+DISPLAY 'FAILED with ' WS-NUM 'marks'.
+STOP RUN.</pre> 
+ <p> JCL以上COBOL程序执行。</p>   
+ <pre class="prettyprint" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+//SAMPLE JOB(TESTJCL,XXXXXX),CLASS=A,MSGCLASS=C
+//STEP1 EXEC PGM=HELLO</pre> 
+ <p> 当编译并执行上面的程序它会产生以下结果：</p> 
+ <pre class="result" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+Passed with 065 marks</pre> 
+ <h2> 取反条件</h2> 
+ <p> 取反条件使用NOT关键字给出。如果情况为true，我们已经不考虑在它前面，，它的最终值将为false。</p> 
+ <h3> 语法</h3> 
+ <p> 以下是取反条件语句的语法：</p> 
+ <pre class="prettyprint" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+IF NOT [CONDITION] 
+COBOL Statements
+END-IF.</pre> 
+ <p> 示例</p> 
+ <pre class="prettyprint tryit" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); background-image: url(http://www.yiibai.com/images/link.png) !important; background-attachment: initial !important; background-size: initial !important; background-origin: initial !important; background-clip: initial !important; background-position: 100% 0%; background-repeat: no-repeat !important;">
+IDENTIFICATION DIVISION.
+PROGRAM-ID. HELLO.
+DATA DIVISION.
+WORKING-STORAGE SECTION.
+01 WS-NUM1 PIC 9(2) VALUE 20.
+01 WS-NUM2 PIC 9(9) VALUE 25.
+PROCEDURE DIVISION.
+A000-FIRST-PARA.
+IF NOT WS-NUM1 IS LESS THAN WS-NUM2 THEN
+DISPLAY 'IF-BLOCK'
+ELSE
+DISPLAY 'ELSE-BLOCK'
+END-IF.
+STOP RUN.</pre> 
+ <p> JCL以上COBOL程序执行。</p> 
+ <pre class="prettyprint" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+//SAMPLE JOB(TESTJCL,XXXXXX),CLASS=A,MSGCLASS=C
+//STEP1 EXEC PGM=HELLO</pre> 
+ <p> 当编译并执行上面的程序它会产生以下结果：</p> 
+ <pre class="result" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+ELSE-BLOCK</pre> 
+ <h2> 组合条件</h2> 
+ <p> 组合条件中包含两个或更多的条件通过使用逻辑运算符AND或OR。</p> 
+ <h3> 语法</h3> 
+ <p> 以下是组合条件语句的语法：</p> 
+ <pre class="prettyprint" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+IF [CONDITION] AND [CONDITION]
+COBOL Statements
+END-IF.</pre> 
+ <p> 例子</p> 
+ <pre class="prettyprint tryit" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); background-image: url(http://www.yiibai.com/images/link.png) !important; background-attachment: initial !important; background-size: initial !important; background-origin: initial !important; background-clip: initial !important; background-position: 100% 0%; background-repeat: no-repeat !important;">
+IDENTIFICATION DIVISION.
+PROGRAM-ID. HELLO.
+DATA DIVISION.
+WORKING-STORAGE SECTION.
+01 WS-NUM1 PIC 9(2) VALUE 20.
+01 WS-NUM2 PIC 9(2) VALUE 25.
+01 WS-NUM3 PIC 9(2) VALUE 20.
+PROCEDURE DIVISION.
+A000-FIRST-PARA.
+IF WS-NUM1 IS LESS THAN WS-NUM2 AND WS-NUM1=WS-NUM3 THEN
+DISPLAY 'Both condition OK'
+ELSE
+DISPLAY 'Error'
+END-IF.
+STOP RUN.</pre> 
+ <p> JCL以上COBOL程序执行。</p> 
+ <pre class="prettyprint" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+//SAMPLE JOB(TESTJCL,XXXXXX),CLASS=A,MSGCLASS=C
+//STEP1 EXEC PGM=HELLO</pre> 
+ <p> 当编译并执行上面的程序它会产生以下结果：</p> 
+ <pre class="result" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+Both condition OK</pre> 
+ <h2> 计算动词</h2> 
+ <p> 计算动词是更换一系列if-else语句。它可以被用于计算一个以上的条件。它类似于在C程序中的switch语句。</p> 
+ <p> 例子</p> 
+ <pre class="prettyprint tryit" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); cursor: default; background-image: url(http://www.yiibai.com/images/link.png) !important; background-attachment: initial !important; background-size: initial !important; background-origin: initial !important; background-clip: initial !important; background-position: 100% 0%; background-repeat: no-repeat !important;">
+IDENTIFICATION DIVISION.
+PROGRAM-ID. HELLO.
+DATA DIVISION.
+WORKING-STORAGE SECTION.
+01 WS-A PIC 9 VALUE 0.
+PROCEDURE DIVISION.
+MOVE 3 TO WS-A.
+EVALUATE TRUE
+WHEN WS-A &gt; 2
+DISPLAY 'WS-A GREATER THAN 2'
+WHEN WS-A &lt; 0
+DISPLAY 'WS-A LESS THAN 0'
+WHEN OTHER
+DISPLAY 'INVALID VALUE OF WS-A'
+END-EVALUATE.
+STOP RUN.</pre> 
+ <p> JCL以上COBOL程序执行。</p> 
+ <pre class="prettyprint" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+//SAMPLE JOB(TESTJCL,XXXXXX),CLASS=A,MSGCLASS=C
+//STEP1 EXEC PGM=HELLO</pre> 
+ <p> 当编译并执行上面的程序它会产生以下结果：</p> 
+ <pre class="result" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+WS-A GREATER THAN 2</pre> 
+ <br>      
+</div></body></html>

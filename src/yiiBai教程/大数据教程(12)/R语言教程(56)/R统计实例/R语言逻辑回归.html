@@ -1,0 +1,75 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">R语言逻辑回归</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>逻辑回归是一种回归模型，其响应变量(因变量)具有分类值，如<code>True/False</code>或<code>0/1</code>。 它实际上是根据与预测变量相关的数学方程，来衡量二进制响应的概率作为响应变量的值。</p> 
+ <p>逻辑回归的一般数学方程为 -</p> 
+ <pre><code class="lang-r">y = 1/(1+e^-(a+b1x1+b2x2+b3x3+...))
+</code></pre> 
+ <p>以下是使用的参数的描述 - </p> 
+ <ul> 
+  <li><em>y</em> - 是响应变量。</li>
+  <li><em>x</em> - 是预测变量。</li>
+  <li><em>a</em> 和 <em>b</em> 是数字常数的系数。</li>
+ </ul> 
+ <p>用于创建回归模型的函数是<code>glm()</code>函数。</p> 
+ <h2 id="h2-u8BEDu6CD5"><a name="语法" class="reference-link"></a><span class="header-link octicon octicon-link"></span>语法</h2>
+ <p>用于计算逻辑回归的<code>glm()</code>函数的基本语法是 -</p> 
+ <pre><code class="lang-r">glm(formula,data,family)
+</code></pre> 
+ <p>以下是使用的参数的描述 - </p> 
+ <ul> 
+  <li><em>formula</em> - 是呈现变量之间关系的符号。</li>
+  <li><em>data</em> - 是给出这些变量值的数据集。</li>
+  <li><em>family</em> - 是R对象来指定模型的概述，对于逻辑回归，它的值是二项式。</li>
+ </ul> 
+ <h2 id="h2-u793Au4F8B"><a name="示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例</h2>
+ <p>内置数据集<code>“mtcars”</code>描述了具有各种发动机规格的汽车的不同型号。在<code>“mtcars”</code>数据集中，传输模式(自动或手动)由列<code>am</code>(其为二进制值(<code>0</code>或<code>1</code>))描述。我们可以在<code>“am”</code>列和另外<code>3</code>列 - <code>hp</code>，<code>wt</code>和<code>cyl</code>之间创建逻辑回归模型。参考以上示例代码 - </p> 
+ <pre><code class="lang-r"># Select some columns form mtcars.
+input &lt;- mtcars[,c("am","cyl","hp","wt")]
+
+print(head(input))
+</code></pre> 
+ <p>当我们执行上述代码时，会产生以下结果 -</p> 
+ <pre><code class="lang-shell">                  am   cyl  hp    wt
+Mazda RX4          1   6    110   2.620
+Mazda RX4 Wag      1   6    110   2.875
+Datsun 710         1   4     93   2.320
+Hornet 4 Drive     0   6    110   3.215
+Hornet Sportabout  0   8    175   3.440
+Valiant            0   6    105   3.460
+</code></pre> 
+ <h2 id="h2-u521Bu5EFAu56DEu5F52u6A21u578B"><a name="创建回归模型" class="reference-link"></a><span class="header-link octicon octicon-link"></span>创建回归模型</h2>
+ <p>我们可使用<code>glm()</code>函数来创建回归模型并得到其摘要用于分析。</p>   
+ <pre><code class="lang-r">input &lt;- mtcars[,c("am","cyl","hp","wt")]
+
+am.data = glm(formula = am ~ cyl + hp + wt, data = input, family = binomial)
+
+print(summary(am.data))
+</code></pre> 
+ <p>当我们执行上述代码时，会产生以下结果 -</p> 
+ <pre><code class="lang-shell">Call:
+glm(formula = am ~ cyl + hp + wt, family = binomial, data = input)
+
+Deviance Residuals: 
+     Min        1Q      Median        3Q       Max  
+-2.17272     -0.14907  -0.01464     0.14116   1.27641  
+
+Coefficients:
+            Estimate Std. Error z value Pr(&gt;|z|)  
+(Intercept) 19.70288    8.11637   2.428   0.0152 *
+cyl          0.48760    1.07162   0.455   0.6491  
+hp           0.03259    0.01886   1.728   0.0840 .
+wt          -9.14947    4.15332  -2.203   0.0276 *
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 43.2297  on 31  degrees of freedom
+Residual deviance:  9.8415  on 28  degrees of freedom
+AIC: 17.841
+
+Number of Fisher Scoring iterations: 8
+</code></pre> 
+ <p><strong>总结：</strong></p> 
+ <p>对于变量<code>“cyl”</code>和<code>“hp”</code>，最后一列的<code>p</code>值大于<code>0.05</code>，可认为它们对变量<code>“am”</code>的值有微不足道的作用。这个回归模型中只有体重(<code>wt</code>)才会影响<code>“am”</code>值。</p>
+ <br>      
+</div></body></html>

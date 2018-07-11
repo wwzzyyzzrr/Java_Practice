@@ -1,0 +1,140 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Spring发送带附件邮件</h1><div style="width:100%;float:left;" class="article-content">   
+ <div> 
+  <div>
+    下面是一个例子使用Spring通过Gmail&nbsp;SMTP服务器来发送电子邮件附件。为了包含附件的电子邮件，你必须使用&nbsp;Spring的JavaMailSender及MimeMessage&nbsp;来代替 MailSender＆SimpleMailMessage。 
+  </div> 
+ </div> 
+ <div> 
+  <h2> 
+   <div>
+     2.Spring的邮件发件人 
+   </div> </h2> 
+  <p> 必须使用 JavaMailSender 代替 MailSender 发送附件，并用 MimeMessageHelper 附加的资源。在这个例子中，它会得到&nbsp;“c:\\log.txt”&nbsp;从文件系统(FileSystemResource)作为电子邮件附件的文本文件。 </p> 
+  <div>
+    除了文件系统，您还可以从URL路径(UrlResource对象)，类路径(使用ClassPathResource)，InputStream(InputStreamResource)的任何资源......请参考 Spring 的 AbstractResource&nbsp;类的实现。 
+  </div> 
+  <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:16px;"> <em>File : MailMail.java</em> </p> 
+  <pre>package com.yiibai.common;
+
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
+
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.mail.MailParseException;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
+
+public class MailMail
+{
+	private JavaMailSender mailSender;
+	private SimpleMailMessage simpleMailMessage;
+	
+	public void setSimpleMailMessage(SimpleMailMessage simpleMailMessage) {
+		this.simpleMailMessage = simpleMailMessage;
+	}
+
+	public void setMailSender(JavaMailSender mailSender) {
+		this.mailSender = mailSender;
+	}
+	
+	public void sendMail(String dear, String content) {
+	
+	   MimeMessage message = mailSender.createMimeMessage();
+		
+	   try{
+		MimeMessageHelper helper = new MimeMessageHelper(message, true);
+			
+		helper.setFrom(simpleMailMessage.getFrom());
+		helper.setTo(simpleMailMessage.getTo());
+		helper.setSubject(simpleMailMessage.getSubject());
+		helper.setText(String.format(
+			simpleMailMessage.getText(), dear, content));
+			
+		FileSystemResource file = new FileSystemResource("C:\\log.txt");
+		helper.addAttachment(file.getFilename(), file);
+
+	     }catch (MessagingException e) {
+		throw new MailParseException(e);
+	     }
+	     mailSender.send(message);
+         }
+}</pre> 
+  <h2> 3. Bean配置文件 </h2> 
+  <div>
+    配置 mailSender&nbsp;bean，电子邮件模板，并指定Gmail的SMTP服务器电子邮件的详细信息。 
+  </div> 
+  <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:16px;"> <em>File : Spring-Mail.xml</em> </p> 
+  <pre>&lt;beans xmlns="http://www.springframework.org/schema/beans"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans-2.5.xsd"&gt;
+
+&lt;bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl"&gt;
+	&lt;property name="host" value="smtp.gmail.com" /&gt;
+	&lt;property name="port" value="587" /&gt;
+	&lt;property name="username" value="yiibai.com@gmail.com" /&gt;
+	&lt;property name="password" value="password" /&gt;
+		
+	&lt;property name="javaMailProperties"&gt;
+		&lt;props&gt;
+           	&lt;prop key="mail.smtp.auth"&gt;true&lt;/prop&gt;
+           	&lt;prop key="mail.smtp.starttls.enable"&gt;true&lt;/prop&gt;
+       	&lt;/props&gt;
+	&lt;/property&gt;
+&lt;/bean&gt;
+	
+&lt;bean id="mailMail" class="com.yiibai.common.MailMail"&gt;
+	&lt;property name="mailSender" ref="mailSender" /&gt;
+	&lt;property name="simpleMailMessage" ref="customeMailMessage" /&gt;
+&lt;/bean&gt;
+	
+&lt;bean id="customeMailMessage"
+	class="org.springframework.mail.SimpleMailMessage"&gt;
+
+	&lt;property name="from" value="from@no-spam.com" /&gt;
+	&lt;property name="to" value="to@no-spam.com" /&gt;
+	&lt;property name="subject" value="Testing Subject" /&gt;
+	&lt;property name="text"&gt;
+	&lt;value&gt;
+		&lt;![CDATA[
+			Dear %s,
+			Mail Content : %s
+		]]&gt;
+	&lt;/value&gt;
+    &lt;/property&gt;
+&lt;/bean&gt;
+
+&lt;/beans&gt;</pre> 
+  <h2> 4. 运行它 </h2>   
+  <pre>package com.yiibai.common;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+public class App 
+{
+    public static void main( String[] args )
+    {
+    	ApplicationContext context = 
+            new ClassPathXmlApplicationContext("applicationContext.xml");
+    	 
+    	MailMail mm = (MailMail) context.getBean("mailMail");
+        mm.sendMail("Yiibai", "This is text content");
+        
+    }
+}</pre> 
+  <p> 输出结果 </p> 
+  <pre>Dear Yiibai,
+ Mail Content : This is text content
+ Attachment : log.txt</pre> 
+  <div style="color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:16px;background-color:inherit;"> 
+   <br> 
+  </div> 
+  <div>
+    下载代码 –&nbsp;&nbsp;
+   <a target="_blank" href="http://pan.baidu.com/s/1jHn9VLW">http://pan.baidu.com/s/1jHn9VLW</a> 
+  </div> 
+ </div>
+ <br>      
+</div></body></html>

@@ -1,0 +1,162 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Laravel更新数据</h1><div style="width:100%;float:left;" class="article-content">   
+ <div>
+   使用DB::update()方法更新记录。&nbsp;DB::update()方法的语法如下表中所示。 
+ </div> 
+ <div> 
+  <table border="1" cellpadding="2" cellspacing="0" style="font-size:14px;color:#313131;font-family:Verdana, Geneva, Tahoma,  Helvetica, background-color:inherit;"> 
+   <tbody> 
+    <tr> 
+     <th style="border:1px solid #999999;background-color:#EEEEEE;"> 语法 </th> 
+     <td style="border:1px solid #999999;background-color:inherit;"> int update(string $query, array $bindings = array()) </td> 
+    </tr> 
+    <tr> 
+     <th style="border:1px solid #999999;background-color:#EEEEEE;"> 参数 </th> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 
+      <ul style="background-color:inherit;"> 
+       <li style="background-color:inherit;color:#000000;"> $query(string) –&nbsp;<span style="background-color:inherit;font-size:inherit;line-height:1.5;">在数据库中执行查询</span> </li> 
+       <li style="background-color:inherit;color:#000000;"> $bindings(array) –&nbsp;<span style="background-color:inherit;font-size:inherit;line-height:1.5;">与查询绑定值</span> </li> 
+      </ul> </td> 
+    </tr> 
+    <tr> 
+     <th style="border:1px solid #999999;background-color:#EEEEEE;"> 返回值 </th> 
+     <td style="border:1px solid #999999;background-color:inherit;"> int </td> 
+    </tr> 
+    <tr> 
+     <th style="border:1px solid #999999;background-color:#EEEEEE;"> 描述 </th> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 
+      <div style="background-color:inherit;">
+        在数据库上运行一个更新语句 
+      </div> </td> 
+    </tr> 
+   </tbody> 
+  </table> 
+  <h2> 示例 </h2> 
+  <div>
+    第1步-&nbsp;执行以下命令来创建一个名为&nbsp;StudUpdateController&nbsp;的控制器。 
+  </div> 
+  <pre>php artisan make:controller StudUpdateController</pre> 
+  <div> 
+   <strong>第2步</strong>&nbsp;-&nbsp;成功执行后，您会收到以下输出&nbsp;-
+   <br> 
+   <img src="/uploads/tutorial/20160511/1-160511222422556.png" alt="">
+   <br> 
+  </div> 
+  <p style="text-align:justify;"> <strong>第3步&nbsp;</strong>-&nbsp;将以下代码复制到文件 -&nbsp;app/Http/Controllers/StudUpdateController.php </p> 
+  <pre>&lt;?php
+namespace App\Http\Controllers;
+use Illuminate\Http\Request;
+use DB;
+use App\Http\Requests;
+use App\Http\Controllers\Controller;
+
+class StudUpdateController extends Controller {
+   public function index(){
+      $users = DB::select('select * from student');
+      return view('stud_edit_view',['users'=&gt;$users]);
+   }
+   public function show($id) {
+      $users = DB::select('select * from student where id = ?',[$id]);
+      return view('stud_update',['users'=&gt;$users]);
+   }
+   public function edit(Request $request,$id) {
+      $name = $request-&gt;input('stud_name');
+      DB::update('update student set name = ? where id = ?',[$name,$id]);
+      echo "更新记录成功.&lt;br/&gt;";
+      echo '&lt;a href = "/edit-records"&gt;点击这里&lt;/a&gt; 返回';
+   }
+}</pre> 
+  <div> 
+   <strong>第4步&nbsp;</strong>-&nbsp;创建一个名为&nbsp;resources/views/stud_edit_view.blade.php&nbsp;的视图文件，并复制下面的代码到此文件中。 
+  </div> 
+  <p style="text-align:justify;"> resources/views/stud_edit_view.blade.php </p> 
+  <pre>&lt;html&gt;
+   &lt;head&gt;
+      &lt;title&gt;查看学生记录&lt;/title&gt;
+   &lt;/head&gt;   
+   &lt;body&gt;
+      
+      &lt;table border = "1"&gt;
+         &lt;tr&gt;
+            &lt;td&gt;ID&lt;/td&gt;
+            &lt;td&gt;Name&lt;/td&gt;
+            &lt;td&gt;Edit&lt;/td&gt;
+         &lt;/tr&gt;
+         @foreach ($users as $user)
+         &lt;tr&gt;
+            &lt;td&gt;{{ $user-&gt;id }}&lt;/td&gt;
+            &lt;td&gt;{{ $user-&gt;name }}&lt;/td&gt;
+            &lt;td&gt;&lt;a href = 'edit/{{ $user-&gt;id }}'&gt;编辑&lt;/a&gt;&lt;/td&gt;
+         &lt;/tr&gt;
+         @endforeach
+      &lt;/table&gt;
+   
+   &lt;/body&gt;
+&lt;/html&gt;</pre> 
+  <div> 
+   <strong>第5步</strong>&nbsp;-&nbsp;创建一个名为&nbsp;resources/views/stud_update.php&nbsp;的另一个视图文件，并复制下面的代码放入下面的文件中。 
+  </div> 
+  <p style="text-align:justify;"> resources/views/stud_update.php </p>   
+  <pre>&lt;html&gt;
+   
+   &lt;head&gt;
+      &lt;title&gt;编辑 | 学生管理&lt;/title&gt;
+   &lt;/head&gt;
+   
+   &lt;body&gt;
+      &lt;form action = "/edit/&lt;?php echo $users[0]-&gt;id; ?&gt;" method = "post"&gt;
+         &lt;input type = "hidden" name = "_token" value = "&lt;?php echo csrf_token(); ?&gt;"&gt;
+      
+         &lt;table&gt;
+            &lt;tr&gt;
+               &lt;td&gt;名字&lt;/td&gt;
+               &lt;td&gt;
+                  &lt;input type = 'text' name = 'stud_name' 
+                     value = '&lt;?php echo$users[0]-&gt;name; ?&gt;'/&gt;
+               &lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+               &lt;td colspan = '2'&gt;
+                  &lt;input type = 'submit' value = "更新学生信息" /&gt;
+               &lt;/td&gt;
+            &lt;/tr&gt;
+         &lt;/table&gt;
+      
+      &lt;/form&gt;
+   
+   &lt;/body&gt;
+&lt;/html&gt;</pre> 
+  <div> 
+   <strong>第6步</strong>&nbsp;-&nbsp;添加以下行到文件&nbsp;-&nbsp;app/Http/routes.php. 
+  </div> 
+  <p style="text-align:justify;"> app/Http/routes.php </p> 
+  <pre>Route::get('edit-records','StudUpdateController@index');
+Route::get('edit/{id}','StudUpdateController@show');
+Route::post('edit/{id}','StudUpdateController@edit');</pre> 
+  <div>
+    第7步&nbsp;-&nbsp;请访问以下网址数据库中更新记录。 
+  </div> 
+  <p style="text-align:justify;"> <em><strong>http://localhost:8000/edit-records</strong></em> </p> 
+  <div>
+    第8步&nbsp;-&nbsp;输出结果如下图所示
+   <br> 
+   <img src="/uploads/tutorial/20160511/1-160511222444203.png" alt="">
+   <br> 
+  </div> 
+  <div>
+    步骤9-&nbsp;点击记录"编辑"链接，将被重定向到一个页面，可以编辑特定的记录。 
+  </div> 
+  <div>
+    第10步&nbsp;-&nbsp;输出如下面图所示。
+   <br> 
+   <img src="/uploads/tutorial/20160511/1-1605112224593W.png" alt="">
+   <br> 
+  </div> 
+  <div>
+    第11步&nbsp;-&nbsp;编辑这条记录后，会看到一个提示图如下图所示。
+   <br> 
+   <img src="/uploads/tutorial/20160511/1-160511222513U2.png" alt="">
+   <br> 
+  </div> 
+ </div>
+ <br>      
+</div></body></html>

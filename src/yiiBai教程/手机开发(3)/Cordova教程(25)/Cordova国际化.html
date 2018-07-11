@@ -1,0 +1,253 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Cordova国际化</h1><div style="width:100%;float:left;" class="article-content">   
+ <div> 
+  <div>
+    这个插件是用于获取关于用户区域设置语言，日期和时区，货币等的信息。 
+  </div> 
+ </div> 
+ <div> 
+  <h2> 
+   <div>
+     第1步-&nbsp;安装全球化插件 
+   </div> </h2> 
+  <div>
+    打开命令提示符窗口，键入如下所示的代码来安装这个插件。 
+  </div> 
+  <pre>C:\Users\username\Desktop\CordovaProject&gt;cordova plugin add cordova-plugin-globalization</pre> 
+  <h2> 
+   <div>
+     第2步&nbsp;-&nbsp;添加按钮 
+   </div> </h2> 
+  <div>
+    这里需要添加几个按钮的index.html才能够调用，我们将在稍后创建不同的方法。 
+  </div> 
+  <pre>&lt;button id = "getLanguage"&gt;LANGUAGE&lt;/button&gt;
+&lt;button id = "getLocaleName"&gt;LOCALE NAME&lt;/button&gt;
+&lt;button id = "getDate"&gt;DATE&lt;/button&gt;
+&lt;button id = "getCurrency"&gt;CURRENCY&lt;/button&gt;</pre> 
+  <h2> 
+   <div>
+     第3步&nbsp;-&nbsp;添加事件监听器 
+   </div> </h2> 
+  <div>
+    事件侦听器将被添加到index.js文件的DeviceReady函数里面，以确保我们开始使用它之前，应用程序被Cordova&nbsp;加载。 
+  </div> 
+  <pre>document.getElementById("getLanguage").addEventListener("click", getLanguage);
+document.getElementById("getLocaleName").addEventListener("click", getLocaleName);
+document.getElementById("getDate").addEventListener("click", getDate);
+document.getElementById("getCurrency").addEventListener("click", getCurrency);</pre> 
+  <h2> 
+   <div>
+     步骤4A&nbsp;-&nbsp;语言函数 
+   </div> </h2> 
+  <p style="text-align:justify;"> 我们使用第一个函数返回户端设备的BCP客47语言标记。这里使用的是&nbsp;getPreferredLanguage&nbsp;方法.&nbsp;该函数有两个参数：onSuccess和onError。我们在 index.js 中使用此函数。 </p> 
+  <pre>function getLanguage() {
+   navigator.globalization.getPreferredLanguage(onSuccess, onError);
+
+   function onSuccess(language) {
+      alert('language: ' + language.value + '\n');
+   }
+
+   function onError(){
+      alert('Error getting language');
+   }
+	
+}</pre> 
+  <div>
+    当我们按&nbsp;LANGUAGE&nbsp;按钮，弹出框就会显示在屏幕上。
+   <br> 
+   <img src="http://www.yiibai.com/uploads/tutorial/20160220/1-160220111502Q1.jpg" alt="">
+   <br> 
+  </div> 
+  <img src="file://E:/data/youdao/qq24B39E2329F08D9F4C3146A571A415EF/1562697197944df286b7c06840793200/on-language.jpeg" alt="Cordova Globalization Language"> 
+  <h2> 
+   <div>
+     步骤4B&nbsp;-&nbsp;区域设置函数 
+   </div> </h2> 
+  <p style="text-align:justify;"> 该函数返回客户端的区域设置的 BCP&nbsp;47标记。此函数和我们之前创建的相似。唯一的区别是，我们这次使用的是&nbsp;getLocaleName&nbsp;方法。 </p> 
+  <pre>function getLocaleName() {
+   navigator.globalization.getLocaleName(onSuccess, onError);
+
+   function onSuccess(locale) {
+      alert('locale: ' + locale.value);
+   }
+
+   function onError(){
+      alert('Error getting locale');
+   }
+	
+}</pre> 
+  <div>
+    当我们点击LOCALE按钮，弹出框将显示我们的区域标记。
+   <br> 
+   <img src="http://www.yiibai.com/uploads/tutorial/20160220/1-160220111502Q1.jpg" alt="">
+   <br> 
+  </div> 
+  <img src="file://E:/data/youdao/qq24B39E2329F08D9F4C3146A571A415EF/e7c52760ebbb447b8f58c0fb44915780/tion-locale.jpeg" alt="Cordova Globalization Locale"> 
+  <h2> 
+   <div>
+     步骤4C&nbsp;-&nbsp;Date函数 
+   </div> </h2> 
+  <p style="text-align:justify;"> 此功能用于根据用户的语言环境和时区设置返回日期。date&nbsp;参数是当前日期以及 options参数是可选的。 </p> 
+  <pre>function getDate() {
+   var date = new Date();
+
+   var options = {
+      formatLength:'short',
+      selector:'date and time'
+   }
+
+   navigator.globalization.dateToString(date, onSuccess, onError, options);
+
+   function onSuccess(date) {
+      alert('date: ' + date.value);
+   }
+
+   function onError(){
+      alert('Error getting dateString');
+   }
+	
+}</pre> 
+  <div>
+    现在，我们运行应用程序，并按下DATE&nbsp;按钮来看当前的日期。
+   <br> 
+   <img src="/uploads/tutorial/20160220/1-160220111F2B6.jpg" alt="">
+   <br> 
+  </div> 
+  <img src="file://E:/data/youdao/qq24B39E2329F08D9F4C3146A571A415EF/5fd915dec0ee438f96148f4085ec27ca/zation-date.jpeg" alt="Cordova Globalization Date"> 
+  <p style="text-align:justify;"> 最后一个函数功能，将是根据客户设备的设置和 ISO4217 货币代码返回货币值。&nbsp; </p> 
+  <pre>function getCurrency() {
+   var currencyCode = 'EUR';
+   navigator.globalization.getCurrencyPattern(currencyCode, onSuccess, onError);
+
+   function onSuccess(pattern) {
+      alert('pattern: '  + pattern.pattern  + '\n' +
+         'code: '     + pattern.code     + '\n' +
+         'fraction: ' + pattern.fraction + '\n' +
+         'rounding: ' + pattern.rounding + '\n' +
+         'decimal: '  + pattern.decimal  + '\n' +
+         'grouping: ' + pattern.grouping);
+   }
+
+   function onError(){
+      alert('Error getting pattern');
+   }
+	
+}</pre> 
+  <div>
+    当点击&nbsp;CURRENCY&nbsp;按钮会触发弹出框，显示用户的货币模式。
+   <br> 
+   <img src="/uploads/tutorial/20160220/1-160220111J1495.jpg" alt="">
+   <br> 
+  </div> 
+  <img src="file://E:/data/youdao/qq24B39E2329F08D9F4C3146A571A415EF/f4d9e151c4bc4d7fa431e50594ae9726/on-currency.jpeg" alt="Cordova Globalization Currency"> 
+  <div>
+    这个插件提供了其他方法。可以看到如下面的表中。 
+  </div> 
+  <table border="1" cellpadding="2" cellspacing="0" style="font-size:14px;color:#313131;font-family:Verdana, Geneva, Tahoma,  Helvetica, background-color:inherit;"> 
+   <tbody> 
+    <tr> 
+     <th style="border:1px solid #999999;background-color:#EEEEEE;"> 方法 </th> 
+     <th style="border:1px solid #999999;background-color:#EEEEEE;"> 参数 </th> 
+     <th style="border:1px solid #999999;background-color:#EEEEEE;"> 描述 </th> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> getPreferredLanguage </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> onSuccess, onError </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 
+      <div style="background-color:inherit;">
+        返回客户端的当前语言 
+      </div> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> getLocaleName </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> onSuccess, onError </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 
+      <div style="background-color:inherit;">
+        返回客户端的当前区域设置 
+      </div> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> dateToString </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> date, onSuccess, onError, options </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 
+      <div style="background-color:inherit;">
+        根据客户的语言环境和时区返回日期 
+      </div> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> stringToDate </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> dateString, onSuccess, onError, options </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 
+      <div style="background-color:inherit;">
+        根据客户的设置解析日期 
+      </div> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> getCurrencyPattern </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> currencyCode, onSuccess, onError </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 
+      <div style="background-color:inherit;">
+        返回客户端的货币模式 
+      </div> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> getDatePattern </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> onSuccess, onError, options </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 
+      <div style="background-color:inherit;">
+        返回客户端的日期模式 
+      </div> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> getDateNames </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> onSuccess, onError, options </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 
+      <div style="background-color:inherit;">
+        返回根据客户设置几个月份，几个星期甚至几天的名称数组 
+      </div> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> isDayLightSavingsTime </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> date, successCallback, errorCallback </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 
+      <div style="background-color:inherit;">
+        用于确定是否夏令时根据客户的时区和日历处于活动状态 
+      </div> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> getFirstDayOfWeek </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> onSuccess, onError </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 
+      <div style="background-color:inherit;">
+        根据客户端设置返回一周的第一天 
+      </div> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> numberToString </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> number, onSuccess, onError, options </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 
+      <div style="background-color:inherit;">
+        根据客户端的设置返回数值 
+      </div> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> stringToNumber </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> string, onSuccess, onError, options </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 
+      <div style="background-color:inherit;">
+        根据客户端设置解析一个数值 
+      </div> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> getNumberPattern </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> onSuccess, onError, options </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 
+      <div style="background-color:inherit;">
+        根据客户端的设置，返回数值的模式 
+      </div> </td> 
+    </tr> 
+   </tbody> 
+  </table> 
+ </div>
+ <br>      
+</div></body></html>

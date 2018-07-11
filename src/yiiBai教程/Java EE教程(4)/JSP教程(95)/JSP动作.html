@@ -1,0 +1,384 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">JSP动作</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>在本章中，我们将讨论JSP中的动作。这些操作使用XML语法中的结构来控制servlet引擎的行为。我们可以动态插入文件，重新使用JavaBeans组件，将用户转发到另一个页面或为Java插件生成HTML。</p> 
+ <p>为了方便示例中的代码运行的结果，我们使用Eclipse创建一个动态Web项目：<em>JspActions</em> 。这个项目的结构如下所示 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/1810/850101027_93791.png" alt=""></p> 
+ <p>动作元素只有一种语法，因为它符合XML标准 -</p> 
+ <pre><code class="lang-html">&lt;jsp:action_name attribute = "value" /&gt;
+</code></pre> 
+ <p>动作元素基本上是预定义的功能。下表列出了可用的JSP动作 -</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>编号</th> 
+    <th>动作</th> 
+    <th>描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>1</td> 
+    <td><code>jsp:include</code></td> 
+    <td>在请求页面时包含一个文件。</td> 
+   </tr> 
+   <tr> 
+    <td>2</td> 
+    <td><code>jsp:useBean</code></td> 
+    <td>查找或实例化一个JavaBean。</td> 
+   </tr> 
+   <tr> 
+    <td>3</td> 
+    <td><code>jsp:setProperty</code></td> 
+    <td>设置JavaBean的属性。</td> 
+   </tr> 
+   <tr> 
+    <td>4</td> 
+    <td><code>jsp:getProperty</code></td> 
+    <td>将JavaBean的属性插入输出。</td> 
+   </tr> 
+   <tr> 
+    <td>5</td> 
+    <td><code>jsp:forward</code></td> 
+    <td>将请求者转发到新页面。</td> 
+   </tr> 
+   <tr> 
+    <td>6</td> 
+    <td><code>jsp:plugin</code></td> 
+    <td>生成针对Java插件创建<code>OBJECT</code>或<code>EMBED</code>标记的特定于浏览器的代码。</td> 
+   </tr> 
+   <tr> 
+    <td>7</td> 
+    <td><code>jsp:element</code></td> 
+    <td>动态定义XML元素。</td> 
+   </tr> 
+   <tr> 
+    <td>8</td> 
+    <td><code>jsp:attribute</code></td> 
+    <td>定义动态定义的XML元素属性。</td> 
+   </tr> 
+   <tr> 
+    <td>9</td> 
+    <td><code>jsp:body</code></td> 
+    <td>定义动态定义的XML元素的正文。</td> 
+   </tr> 
+   <tr> 
+    <td>10</td> 
+    <td><code>jsp:text</code></td> 
+    <td>用于在JSP页面和文档中编写模板文本。</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h3 id="h3-u5171u540Cu5C5Eu6027"><a name="共同属性" class="reference-link"></a><span class="header-link octicon octicon-link"></span>共同属性</h3>
+ <p>所有动作元素共有两个属性：<code>id</code>属性和<code>scope</code>属性。</p> 
+ <p><strong>id属性</strong></p> 
+ <p><code>id</code>属性唯一标识动作元素，并允许在JSP页面内引用该操作。 如果动作创建了一个对象的实例，则<code>id</code>值可以用于通过隐式对象<code>PageContext</code>引用它。</p> 
+ <p><strong>scope属性</strong></p> 
+ <p><code>scope</code>属性标识动作元素的生命周期。<code>id</code>属性和<code>scope</code>属性是直接相关的，因为<code>scope</code>属性决定了与<code>id</code>关联的对象的使用寿命。<code>scope</code>属性有四个可能的值：</p> 
+ <ul> 
+  <li><em>page</em></li>
+  <li><em>request</em></li>
+  <li><em>session</em></li>
+  <li><em>application</em></li>
+ </ul> 
+ <h2 id="h2-1-jsp-include-"><a name="1. jsp:include动作" class="reference-link"></a><span class="header-link octicon octicon-link"></span>1. jsp:include动作</h2>
+ <p>此动作允许将文件插入到正在生成的页面中。语法如下所示 -</p> 
+ <pre><code class="lang-html">&lt;jsp:include page = "relative URL" flush = "true" /&gt;
+</code></pre> 
+ <p>与在将JSP页面转换为servlet时将文件插入的<code>include</code>指令不同，此动作在请求页面时插入该文件。</p> 
+ <p>下表列出了与<code>include</code>动作相关联的属性 -</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>编号</th> 
+    <th>属性</th> 
+    <th>描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>1</td> 
+    <td><code>page</code></td> 
+    <td>要包括的页面的相对URL。</td> 
+   </tr> 
+   <tr> 
+    <td>2</td> 
+    <td><code>flush</code></td> 
+    <td>布尔属性确定包含的资源是否在包含其缓冲区之前被刷新。</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p><strong>示例</strong></p> 
+ <p>下面定义两个文件<code>date.jsp</code>和<code>index.jsp</code>，以下是<code>date.jsp</code>文件的内容 -</p> 
+ <pre><code class="lang-html">&lt;%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%&gt;
+&lt;p&gt;今天是: &lt;%= (new java.util.Date()).toLocaleString()%&gt;&lt;/p&gt;
+</code></pre> 
+ <p>以下是<code>index.jsp</code>文件的内容 -</p> 
+ <pre><code class="lang-html">&lt;%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%&gt;
+&lt;!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;meta http-equiv="Content-Type" content="text/html; charset=UTF-8"&gt;
+&lt;title&gt;include动作示例&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h2&gt;include动作示例&lt;/h2&gt;
+    &lt;jsp:include page="date.jsp" flush="true" /&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>现在将这些文件保存在根目录下，并尝试访问<code>index.jsp</code>。将会看到以下输出 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/1810/520101012_59478.png" alt=""></p> 
+ <h2 id="h2-2-jsp-usebean-"><a name="2. jsp:useBean 动作" class="reference-link"></a><span class="header-link octicon octicon-link"></span>2. jsp:useBean 动作</h2>
+ <p><code>useBean</code>动作是非常通用的。它首先使用<code>id</code>和<code>scope</code>变量搜索现有对象。如果未找到对象，则会尝试创建指定的对象。</p> 
+ <p>加载<code>bean</code>的最简单的方法如下 -</p> 
+ <pre><code class="lang-html">&lt;jsp:useBean id = "name" class = "package.class" /&gt;
+</code></pre> 
+ <p>当加载了一个<code>bean</code>类，可以使用<code>jsp:setProperty</code>和<code>jsp:getProperty</code>操作来修改和检索<code>bean</code>属性。</p> 
+ <p>下表列出了与<code>useBean</code>动作关联的属性 -</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>编号</th> 
+    <th>属性</th> 
+    <th>描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>1</td> 
+    <td><code>class</code></td> 
+    <td>指定<code>bean</code>的完整包名称。</td> 
+   </tr> 
+   <tr> 
+    <td>2</td> 
+    <td><code>type</code></td> 
+    <td>指定将引用对象的变量的类型。</td> 
+   </tr> 
+   <tr> 
+    <td>3</td> 
+    <td><code>beanName</code></td> 
+    <td>给出由<code>java.beans.Beans</code>类<code>instantiate()</code>方法指定的<code>bean</code>的名称。</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p>现在来看看<code>jsp:setProperty</code>和<code>jsp:getProperty</code>动作，然后再给出与这些操作相关的有效示例。</p> 
+ <h2 id="h2-3-jsp-setproperty-"><a name="3. jsp:setProperty 动作" class="reference-link"></a><span class="header-link octicon octicon-link"></span>3. jsp:setProperty 动作</h2>
+ <p><code>setProperty</code>操作设置<code>Bean</code>的属性。 在此操作之前，<code>Bean</code>先前已定义。 有两种使用<code>setProperty</code>操作的基本方法 -</p> 
+ <p>可以使用<code>jsp:setProperty</code>在之后，但是在<code>jsp:useBean</code>元素之外，如下所示：</p> 
+ <pre><code class="lang-html">&lt;jsp:useBean id = "myName" ... /&gt;
+...
+&lt;jsp:setProperty name = "myName" property = "someProperty" .../&gt;
+</code></pre> 
+ <p>在这种情况下，执行<code>jsp:setProperty</code>，无论是实例化新<code>bean</code>还是找到现有的<code>bean</code>。</p> 
+ <p><code>jsp:setProperty</code>可以在<code>jsp:useBean</code>元素的正文内的上下文内出现，如下所示：</p> 
+ <pre><code class="lang-html">&lt;jsp:useBean id = "myName" ... &gt;
+   ...
+   &lt;jsp:setProperty name = "myName" property = "someProperty" .../&gt;
+&lt;/jsp:useBean&gt;
+</code></pre> 
+ <p>这里，只有当一个新对象被实例化时，才执行<code>jsp:setProperty</code>，如果找到了一个现有的对象，则不执行。</p> 
+ <p>下表列出了与<code>setProperty</code>动作相关联的属性 -</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>编号</th> 
+    <th>属性</th> 
+    <th>描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>1</td> 
+    <td><code>name</code></td> 
+    <td>指定将设置其属性的<code>bean</code>。 <code>Bean</code>在先前就已经定义了。</td> 
+   </tr> 
+   <tr> 
+    <td>2</td> 
+    <td><code>property</code></td> 
+    <td>表示要设置的属性。值<code>“*”</code>表示名称与<code>bean</code>属性名称匹配的所有请求参数将被传递给对应的<code>setter</code>方法。</td> 
+   </tr> 
+   <tr> 
+    <td>3</td> 
+    <td><code>value</code></td> 
+    <td>要分配给给定属性的值。参数的值为<code>null</code>，或者参数不存在，则<code>setProperty</code>操作被忽略。</td> 
+   </tr> 
+   <tr> 
+    <td>4</td> 
+    <td><code>param</code></td> 
+    <td><code>param</code>属性是属性要接收的值的请求参数的名称。不能同时使用值和参数，但是不允许使用。</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h2 id="h2-4-jsp-getproperty-"><a name="4. jsp:getProperty动作" class="reference-link"></a><span class="header-link octicon octicon-link"></span>4. jsp:getProperty动作</h2>
+ <p><code>getProperty</code>操作用于检索给定属性的值并将其转换为字符串，最后将其插入输出。<code>getProperty</code>动作只有两个属性，这两个属性都是必需的。<code>getProperty</code>操作的语法如下：</p> 
+ <pre><code class="lang-html">&lt;jsp:useBean id = "myName" ... /&gt;
+...
+&lt;jsp:getProperty name = "myName" property = "someProperty" .../&gt;
+</code></pre> 
+ <p>下表列出了与<code>getProperty</code>动作相关联的必需属性 -</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>编号</th> 
+    <th>动作</th> 
+    <th>描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>1</td> 
+    <td><code>name</code></td> 
+    <td>要检索的属性的<code>Bean</code>名称。 前提是<code>Bean</code>在先前已经定义了。</td> 
+   </tr> 
+   <tr> 
+    <td>2</td> 
+    <td><code>property</code></td> 
+    <td><code>property</code>属性是要检索的<code>Bean</code>属性的名称。</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p><strong>示例</strong></p> 
+ <p>下面定义一个<code>Bean</code>类：<em>Message</em> ，其代码如下-</p> 
+ <pre><code class="lang-java">/* File: Message.java */
+package com.yiibai;
+
+public class Message {
+   private String message = "No message specified";
+
+   public String getMessage() {
+      return(message);
+   }
+   public void setMessage(String message) {
+      this.message = message;
+   }
+}
+</code></pre> 
+ <p>在<code>main.jsp</code>文件中编写以下代码。这将加载bean并设置/获取一个简单的String参数 -</p> 
+ <pre><code class="lang-html">&lt;%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%&gt;
+&lt;html&gt;
+
+&lt;head&gt;
+&lt;title&gt;在JSP使用JavaBeans示例&lt;/title&gt;
+&lt;/head&gt;
+
+&lt;body&gt;
+    &lt;div style="margin:auto;text-align:center;"&gt;
+        &lt;h2&gt;在JSP使用JavaBeans示例&lt;/h2&gt;
+        &lt;hr/&gt;
+        &lt;jsp:useBean id="msg" class="com.yiibai.Message" /&gt;
+        &lt;p&gt;获取默认设置的信息是：&lt;jsp:getProperty name="msg" property="message" /&gt;&lt;/p&gt;
+
+        &lt;jsp:setProperty name="msg" property="message" value="Hello JSP..." /&gt;
+        &lt;p&gt;获取设置的信息是：&lt;jsp:getProperty name="msg" property="message" /&gt;&lt;/p&gt;
+
+    &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>现在尝试访问<code>main.jsp</code>，它将显示以下结果 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/1810/135101024_79167.png" alt=""></p> 
+ <h2 id="h2-5-jsp-forward-"><a name="5. jsp:forward动作" class="reference-link"></a><span class="header-link octicon octicon-link"></span>5. jsp:forward动作</h2>
+ <p><code>&lt;jsp:forward&gt;</code>动作终止当前页面的操作，并将请求转发到另一个资源，例如静态页面，另一个JSP页面或Java Servlet。</p> 
+ <p>以下是<code>&lt;jsp:forward&gt;</code>动作的语法 -</p>   
+ <pre><code class="lang-html">&lt;jsp:forward page = "Relative URL" /&gt;
+</code></pre> 
+ <p>下表列出了与<code>&lt;jsp:forward&gt;</code>动作相关联的必需属性 -</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>编号</th> 
+    <th>动作</th> 
+    <th>描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>1</td> 
+    <td><code>page</code></td> 
+    <td>应该包含另一个资源的相对URL，例如静态页面，另一个JSP页面或Java Servlet。</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p><strong>示例</strong></p> 
+ <p>创建以下两个文件：<code>date.jsp</code>和<code>main.jsp</code>，分别如下 -</p> 
+ <p>以下是<code>date.jsp</code>文件的内容 -</p> 
+ <pre><code class="lang-html">&lt;p&gt;Today's date: &lt;%= (new java.util.Date()).toLocaleString()%&gt;&lt;/p&gt;
+</code></pre> 
+ <p>以下是<code>main.jsp</code>文件的内容 -</p> 
+ <p>现在将这些文件保存在根目录下，并尝试访问<code>main.jsp</code>。这将显示如下所示的结果。</p> 
+ <p>在这里，它从<code>main.jsp</code>丢弃了内容，并显示了来自转发目标页面的内容。</p> 
+ <h2 id="h2-6-jsp-plugin-"><a name="6. jsp:plugin 动作" class="reference-link"></a><span class="header-link octicon octicon-link"></span>6. jsp:plugin 动作</h2>
+ <p><code>&lt;jsp:plugin&gt;</code>动作用于将Java组件插入到JSP页面中。它确定浏览器的类型，并根据需要插入<code>&lt;object&gt;</code>或<code>&lt;embed&gt;</code>标签。</p> 
+ <p>如果所需的插件不存在，它会下载插件，然后执行Java组件。Java组件可以是Applet或JavaBean。</p> 
+ <p><code>&lt;jsp:plugin&gt;</code>动作有几个属性对应于用于格式化Java组件的常用HTML标记。 <code>&lt;param&gt;</code>元素也可用于向<code>Applet</code>或<code>Bean</code>发送参数。</p> 
+ <p>以下是使用<code>&lt;jsp:plugin&gt;</code>动作的典型语法 -</p> 
+ <pre><code class="lang-html">&lt;jsp:plugin type = "applet" codebase = "dirname" code = "MyApplet.class"
+   width = "60" height = "80"&gt;
+   &lt;jsp:param name = "fontcolor" value = "red" /&gt;
+   &lt;jsp:param name = "background" value = "black" /&gt;
+
+   &lt;jsp:fallback&gt;
+      Unable to initialize Java Plugin
+   &lt;/jsp:fallback&gt;
+
+&lt;/jsp:plugin&gt;
+</code></pre> 
+ <p>如果您有兴趣，可以使用一些小程序尝试此操作。新元素<code>&lt;fallback&gt;</code>元素可用于指定要发送给用户的错误字符串，以防组件发生故障。</p> 
+ <p><code>&lt;jsp:element&gt;</code>，<code>&lt;jsp:attribute&gt;</code>和<code>&lt;jsp:body&gt;</code>动作用于动态定义XML元素。 这个词动态是重要的，因为这意味着XML元素可以在请求时生成，而不是在编译时静态生成。</p> 
+ <p>以下是动态定义XML元素的简单示例 -</p> 
+ <pre><code class="lang-html">&lt;%@page language = "java" contentType = "text/html"%&gt;
+&lt;html xmlns = "http://www.w3c.org/1999/xhtml"
+   xmlns:jsp = "http://java.sun.com/JSP/Page"&gt;
+
+   &lt;head&gt;&lt;title&gt;Generate XML Element&lt;/title&gt;&lt;/head&gt;
+
+   &lt;body&gt;
+      &lt;jsp:element name = "xmlElement"&gt;
+         &lt;jsp:attribute name = "xmlElementAttr"&gt;
+            Value for the attribute
+         &lt;/jsp:attribute&gt;
+
+         &lt;jsp:body&gt;
+            Body for XML element
+         &lt;/jsp:body&gt;
+
+      &lt;/jsp:element&gt;
+   &lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>这将在运行时生成以下HTML代码 -</p> 
+ <pre><code class="lang-html">&lt;html xmlns = "http://www.w3c.org/1999/xhtml" xmlns:jsp = "http://java.sun.com/JSP/Page"&gt;
+   &lt;head&gt;&lt;title&gt;Generate XML Element&lt;/title&gt;&lt;/head&gt;
+
+   &lt;body&gt;
+      &lt;xmlElement xmlElementAttr = "Value for the attribute"&gt;
+         Body for XML element
+      &lt;/xmlElement&gt;
+   &lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <h2 id="h2-7-jsp-text-"><a name="7. jsp:text动作" class="reference-link"></a><span class="header-link octicon octicon-link"></span>7. jsp:text动作</h2>
+ <p>可以使用<code>&lt;jsp:text&gt;</code>操作将模板文本写入JSP页面和文档。以下是此操作的简单语法 -</p> 
+ <pre><code class="lang-html">&lt;jsp:text&gt;Template data&lt;/jsp:text&gt;
+</code></pre> 
+ <p>模板的主体不能包含其他元素; 它只能包含文本和EL表达式(注 - EL表达式将在后续章节中进行说明)。 请注意，在XML文件中不能使用诸如<code>${whatever&gt; 0}</code>的表达式，因为大于符号是非法的。它是使用<code>gt</code>形式来代替，例如<code>${whatever gt 0}</code>或替代方法是将值嵌入到<code>CDATA</code>中。如下示例 - </p> 
+ <pre><code class="lang-html">&lt;jsp:text&gt;&lt;![CDATA[&lt;br&gt;]]&gt;&lt;/jsp:text&gt;
+</code></pre> 
+ <p>如果需要包括<code>DOCTYPE</code>声明，例如<code>XHTML</code>，还必须使用<code>&lt;jsp:text&gt;</code>元素，如下所示：</p> 
+ <pre><code class="lang-html">&lt;jsp:text&gt;&lt;![CDATA[&lt;!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "DTD/xhtml1-strict.dtd"&gt;]]&gt;&lt;/jsp:text&gt;
+
+   &lt;head&gt;&lt;title&gt;jsp:text action&lt;/title&gt;&lt;/head&gt;
+
+   &lt;body&gt;
+      &lt;books&gt;&lt;book&gt;&lt;jsp:text&gt;  
+         Welcome to JSP Programming
+      &lt;/jsp:text&gt;&lt;/book&gt;&lt;/books&gt;
+   &lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>尝试以上示例，并使用<code>&lt;jsp:text&gt;</code>操作。</p>
+ <br>      
+</div></body></html>

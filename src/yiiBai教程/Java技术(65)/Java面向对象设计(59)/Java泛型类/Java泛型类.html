@@ -1,0 +1,96 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Java泛型类</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>使用泛型(也叫通用)，可以在不知道代码操作的对象的类型的情况下编写代码。 它允许创建通用类，构造函数和方法。泛型类是使用形式类型参数定义的。<br>形式类型参数是一个逗号分隔的变量名列表，放在类声明中类名后的尖括号<code>&lt;&gt;</code>中。</p> 
+ <h2 id="h2-u8BEDu6CD5"><a name="语法" class="reference-link"></a><span class="header-link octicon octicon-link"></span>语法</h2>
+ <p>下面的代码声明一个类<code>Wrapper</code>，它接受一个形式类型参数：</p> 
+ <pre><code class="lang-java">public class Wrapper&lt;T&gt;  {
+
+}
+</code></pre> 
+ <p>上代码中，参数已命名为<code>T</code>。<code>T</code>是一个类型变量，它可以是Java中的任何引用类型，例如：<code>String</code>，<code>Integer</code>，<code>Double</code>等。</p> 
+ <p>当使用<code>Wrapper</code>类时，要指定形式类型参数值。</p> 
+ <h2 id="h2-u5B9Eu9645u53C2u6570"><a name="实际参数" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实际参数</h2>
+ <p>采用形式类型参数的类也称为参数化类。可以声明<code>Wrapper</code>类的变量，将<code>String</code>类型指定为其形式类型参数的值，如下所示。</p> 
+ <pre><code class="lang-java">Wrapper&lt;String&gt; stringWrapper;
+</code></pre> 
+ <p>这里，<code>String</code>是实际的类型参数。<br>Java允许使用一个泛型类不指定形式类型参数。</p> 
+ <h2 id="h2-u7528u6CD5"><a name="用法" class="reference-link"></a><span class="header-link octicon octicon-link"></span>用法</h2>
+ <p>这是为了向后兼容。还可以声明<code>Wrapper &lt;T&gt;</code>类的变量，如下所示：</p> 
+ <pre><code class="lang-java">Wrapper  aRawWrapper;
+</code></pre> 
+ <p>当使用通用类而不指定实际的类型参数时，它被称为原始类型。 上面的声明使用<code>Wrapper &lt;T&gt;</code>类作为原始类型，因为它没有指定<code>T</code>类型的值。</p> 
+ <p>通用类的实际类型参数必须是引用类型。原始类型不允许作为通用类的实际类型参数。<br>类可以采用多个正式类型参数。 下面的代码声明一个<code>Mapper</code>类，它接受两个形式参数<code>T</code>和<code>R</code>：</p> 
+ <pre><code class="lang-java">public class Mapper&lt;T, R&gt;    {
+
+}
+</code></pre> 
+ <p>可以声明<code>Mapper &lt;T，R&gt;</code>类的变量如下：</p> 
+ <pre><code class="lang-java">Mapper&lt;String, Integer&gt;  mapper;
+</code></pre> 
+ <p>这里，实际的类型参数是<code>String</code>和<code>Integer</code>。形式类型参数在类体中可用作类型。</p> 
+ <pre><code class="lang-java">public class Wrapper&lt;T&gt; {
+  private T obj;
+
+  public Wrapper(T obj) {
+    this.obj = obj;
+  }
+
+  public T get() {
+    return obj;
+  }
+
+  public void set(T obj) {
+    this.obj = obj;
+  }
+}
+</code></pre> 
+ <p><code>Wrapper &lt;T&gt;</code>类使用形式类型参数来声明实例变量<code>obj</code>，以声明其构造函数和<code>set()</code>方法的形式参数，以及作为<code>get()</code>方法的返回类型。</p> 
+ <p>可以通过为构造函数指定实际的类型参数来创建泛型类型的对象，如下所示：</p>   
+ <pre><code class="lang-java">Wrapper&lt;String&gt; w1  = new Wrapper&lt;String&gt;("Hello");
+</code></pre> 
+ <p>也可以省略实际的类型参数。 在下面的代码中，省略指定<code>String</code>类型，编译器会将构造函数的实际类型参数推断为<code>String</code>：</p> 
+ <pre><code class="lang-java">Wrapper&lt;String&gt; w1  = new Wrapper&lt;&gt;("Hello");
+</code></pre> 
+ <p>当声明了泛型类的一个变量，可以把形式类型参数看作是指定的实际类型参数。现在，可以认为，对于<code>w1</code>，<code>Wrapper</code>类的<code>get()</code>方法返回一个<code>String</code>。</p> 
+ <pre><code class="lang-java">String s1=  w1.get();
+</code></pre> 
+ <h2 id="h2-u793Au4F8B"><a name="示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例</h2>
+ <p>以下代码显示如何使用<code>Wrapper</code>类。</p> 
+ <pre><code class="lang-java">public class Main {
+  public static void main(String[] args) {
+    Wrapper&lt;String&gt; w1 = new Wrapper&lt;&gt;("Hello");
+    String s1 = w1.get();
+    System.out.println("s1=" + s1);
+
+    w1.set("Testing generics");
+    String s2 = w1.get();
+    System.out.println("s2=" + s2);
+
+    w1.set(null);
+    String s3 = w1.get();
+    System.out.println("s3=" + s3);
+  }
+}
+
+class Wrapper&lt;T&gt; {
+  private T obj;
+
+  public Wrapper(T obj) {
+    this.obj = obj;
+  }
+
+  public T get() {
+    return obj;
+  }
+
+  public void set(T obj) {
+    this.obj = obj;
+  }
+}
+</code></pre> 
+ <p>执行上面代码，输出结果如下 - </p> 
+ <pre><code class="lang-java">s1=Hello
+s2=Testing generics
+s3=null
+</code></pre>
+ <br>      
+</div></body></html>

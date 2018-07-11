@@ -1,0 +1,155 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">JSF值变化的事件</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>在JSF中，我们可以处理<code>&lt;h:inputText&gt;</code>或<code>&lt;h:selectOneMenu&gt;</code>的值变化的事件。</p> 
+ <p>要注册事件处理程序侦听器，请在UI组件的<code>valueChangeListener</code>属性中传递托管bean方法的名称。</p> 
+ <p>或者实现<code>ValueChangeListener</code>接口，并将实现类名传递给UI组件的<code>valueChangeListener</code>属性。</p> 
+ <p>以下代码显示了如何将托管Bean的方法注册到<code>valueChangeListener</code>方法。</p> 
+ <pre><code class="lang-java">public void localeChanged(ValueChangeEvent e){
+   //assign new value to country
+   selectedCountry = e.getNewValue().toString(); 
+}
+</code></pre> 
+ <p><strong>注册方法</strong></p> 
+ <pre><code class="lang-html">&lt;h:selectOneMenu value="#{userData.selectedCountry}"  onchange="submit()" 
+   valueChangeListener="#{userData.localeChanged}" &gt;
+   &lt;f:selectItems value="#{userData.countries}" /&gt;
+&lt;/h:selectOneMenu&gt;
+</code></pre> 
+ <p>以下代码显示了如何实现<code>ValueChangeListener</code>监听器方法。</p> 
+ <pre><code class="lang-java">public class LocaleChangeListener implements ValueChangeListener {
+   @Override
+   public void processValueChange(ValueChangeEvent event)
+      throws AbortProcessingException {
+     //access country bean directly
+     UserData userData = (UserData) FacesContext.getCurrentInstance().
+        getExternalContext().getSessionMap().get("userData"); 
+     userData.setSelectedCountry(event.getNewValue().toString());
+   }
+}
+</code></pre> 
+ <p>并注册到<code>&lt;f:valueChangeListener&gt;</code>标签。</p> 
+ <pre><code class="lang-html">&lt;h:selectOneMenu value="#{userData.selectedCountry}" onchange="submit()"&gt;
+   &lt;f:valueChangeListener type="com.yiibai.test.LocaleChangeListener"
+      /&gt;
+   &lt;f:selectItems value="#{userData.countries}" /&gt;
+&lt;/h:selectOneMenu&gt;
+</code></pre> 
+ <h2 id="h2-u5B9Eu4F8B"><a name="实例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实例</h2>
+ <p>打开<strong>NetBeans</strong>，创建一个名称为：<strong>ValueChangedEvent</strong> 的Web项目，其结构如下所示 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201704/2604/310110422_16127.png" alt=""></p> 
+ <p>以下是文件：<code>User.java</code> 文件中的代码 - </p> 
+ <pre><code class="lang-java">/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package com.yiibai;
+
+/**
+ *
+ * @author Maxsu
+ */
+import java.io.Serializable;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.SessionScoped;
+import javax.faces.event.ValueChangeEvent;
+
+@ManagedBean(name = "country")
+@SessionScoped
+public class User implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+    private static Map&lt;String, String&gt; countries;
+    private String localeCode = "en"; //default value 
+
+    static {
+        countries = new LinkedHashMap&lt;String, String&gt;();
+        countries.put("United Kingdom", "en"); //label, value
+        countries.put("French", "fr");
+        countries.put("German", "de");
+    }
+
+    public void countryLocaleCodeChanged(ValueChangeEvent e) {
+        localeCode = e.getNewValue().toString();
+    }
+
+    public Map&lt;String, String&gt; getCountryInMap() {
+        return this.countries;
+    }
+
+    public String getLocaleCode() {
+        return localeCode;
+    }
+
+    public void setLocaleCode(String localeCode) {
+        this.localeCode = localeCode;
+    }
+}
+</code></pre> 
+ <p>以下是文件：<code>MyValueChangedListener.java</code> 文件中的代码 - </p> 
+ <pre><code class="lang-java">/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package com.yiibai;
+
+/**
+ *
+ * @author Maxsu
+ */
+import javax.faces.context.FacesContext;
+import javax.faces.event.AbortProcessingException;
+import javax.faces.event.ValueChangeEvent;
+import javax.faces.event.ValueChangeListener;
+
+public class MyValueChangedListener implements ValueChangeListener {
+
+    @Override
+    public void processValueChange(ValueChangeEvent event)
+            throws AbortProcessingException {
+
+        User country = (User) FacesContext.getCurrentInstance().
+                getExternalContext().getSessionMap().get("country");
+
+        country.setLocaleCode(event.getNewValue().toString());
+
+    }
+
+}
+</code></pre> 
+ <p>以下是文件：<code>index.xhtml</code> 文件中的代码 - </p>   
+ <pre><code class="lang-html">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"&gt;
+&lt;html xmlns="http://www.w3.org/1999/xhtml"   
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"&gt;
+    &lt;h:body&gt;
+        &lt;h:form&gt;
+            Selected country locale : 
+            &lt;h:inputText id="country" value="#{country.localeCode}" size="20" /&gt;
+            Select a country {method binding}: 
+            &lt;h:selectOneMenu value="#{country.localeCode}" onchange="submit()"
+                             valueChangeListener="#{country.countryLocaleCodeChanged}"&gt;
+                &lt;f:selectItems value="#{country.countryInMap}" /&gt;
+            &lt;/h:selectOneMenu&gt;
+            Select a country: 
+            &lt;h:selectOneMenu value="#{country.localeCode}" onchange="submit()"&gt;
+                &lt;f:valueChangeListener type="com.yiibai.MyValueChangedListener" /&gt;
+                &lt;f:selectItems value="#{country.countryInMap}" /&gt;
+            &lt;/h:selectOneMenu&gt;      
+        &lt;/h:form&gt;
+    &lt;/h:body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p><strong>运行项目</strong></p> 
+ <p>在<strong>ValueChangedEvent</strong> 项目上点击右键，选择 <strong>【运行】</strong>，在Tomcat启动完成后，打开浏览器访问以下地址：</p> 
+ <pre><code>http://localhost:8084/ValueChangedEvent/
+</code></pre>
+ <p>如果程序没有错误，应该会看到如下界面 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201704/2604/969110423_43530.png" alt=""></p>
+ <br>      
+</div></body></html>

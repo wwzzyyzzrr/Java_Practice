@@ -1,0 +1,204 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">VueJS渲染函数</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>前面我们已经学习了组件和它的用法。 例如，有一个需要在整个项目中重用的内容。 我们可以将其转换为组件并使用它。</p> 
+ <p>下面来看看一个简单组件的例子，看看渲染函数在它里面做什么。<br><strong>示例</strong><br>创建一个文件：<em>render_function.html</em> - </p> 
+ <pre><code class="lang-html">&lt;html&gt;
+   &lt;head&gt;
+      &lt;meta charset="utf-8" /&gt;
+      &lt;title&gt;VueJs渲染函数&lt;/title&gt;
+      &lt;script type = "text/javascript" src = "js/vue.js"&gt;&lt;/script&gt;
+   &lt;/head&gt;
+   &lt;body&gt;
+      &lt;div id = "component_test"&gt;
+         &lt;testcomponent&gt;&lt;/testcomponent&gt;
+      &lt;/div&gt;
+      &lt;script type = "text/javascript"&gt;
+         Vue.component('testcomponent',{
+            template : '&lt;h2&gt;Hello World&lt;/h2&gt;',
+            data: function() {
+            },
+            methods:{
+            }
+         });
+         var vm = new Vue({
+            el: '#component_test'
+         });
+      &lt;/script&gt;
+   &lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>考虑上面一个打印<code>"Hello World"</code>的简单组件的例子，在浏览器输出效果如下图所示 -<br><img src="http://www.yiibai.com/uploads/images/201712/2412/490101208_12593.png" alt=""></p> 
+ <p>现在，如果想重新使用组件，可以通过重新打印来实现。 例如，</p> 
+ <pre><code class="lang-html">&lt;div id = "component_test"&gt;
+   &lt;testcomponent&gt;&lt;/testcomponent&gt;
+   &lt;testcomponent&gt;&lt;/testcomponent&gt;
+   &lt;testcomponent&gt;&lt;/testcomponent&gt;
+   &lt;testcomponent&gt;&lt;/testcomponent&gt;
+&lt;/div&gt;
+</code></pre> 
+ <p>在浏览器输出效果如下图所示 -<br><img src="http://www.yiibai.com/uploads/images/201712/2412/190101209_64942.png" alt=""></p> 
+ <p>但是，现在需要对组件进行一些更改。 我们不希望打印相同的文本。那么如何修改它？ 如果在组件内部输入一些东西，是否会考虑到？</p> 
+ <p>考虑下面的例子，看看会输出什么效果 - </p> 
+ <pre><code class="lang-html">&lt;div id = "component_test"&gt;
+   &lt;testcomponent&gt;Hello Java&lt;/testcomponent&gt;
+   &lt;testcomponent&gt;Hello Ruby&lt;/testcomponent&gt;
+   &lt;testcomponent&gt;Hello Linux&lt;/testcomponent&gt;
+   &lt;testcomponent&gt;Hello Python&lt;/testcomponent&gt;
+&lt;/div&gt;
+</code></pre> 
+ <p>输出结果仍与我们前面看到的一样。 它不会改变我们需要的文字值。如下 -<br><img src="http://www.yiibai.com/uploads/images/201712/2412/190101209_64942.png" alt=""></p> 
+ <p>组件提供了一些被称为插槽的东西。在下面的示例中使用它，看看是否得到了预期的结果。</p> 
+ <p>创建一个文件：<em>render_function-slots.html</em></p> 
+ <pre><code class="lang-html">&lt;html&gt;
+   &lt;head&gt;
+      &lt;title&gt;VueJs Instance&lt;/title&gt;
+      &lt;script type = "text/javascript" src = "js/vue.js"&gt;&lt;/script&gt;
+   &lt;/head&gt;
+   &lt;body&gt;
+      &lt;div id = "component_test"&gt;
+       &lt;testcomponent&gt;Hello Java&lt;/testcomponent&gt;
+       &lt;testcomponent&gt;Hello Ruby&lt;/testcomponent&gt;
+       &lt;testcomponent&gt;Hello Linux&lt;/testcomponent&gt;
+       &lt;testcomponent&gt;Hello Python&lt;/testcomponent&gt;
+    &lt;/div&gt;
+      &lt;script type = "text/javascript"&gt;
+         Vue.component('testcomponent',{
+            template : '&lt;h2&gt;&lt;slot&gt;&lt;/slot&gt;&lt;/h2&gt;',
+            data: function() {
+            },
+            methods:{
+            }
+         });
+         var vm = new Vue({
+            el: '#component_test'
+         });
+      &lt;/script&gt;
+   &lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>如上面的代码所示，在模板中添加了插槽，因此现在需要在组件内部发送值，如以下屏幕截图所示。<br><img src="http://www.yiibai.com/uploads/images/201712/2412/975101219_32277.png" alt=""></p> 
+ <p>现在，假设想要改变颜色和大小。 例如，目前使用的是<code>h2</code>标签，希望将HTML标签更改为同一个组件的<code>p</code>标签或<code>div</code>标签。如何能够灵活地进行如此多的改变？</p> 
+ <p>可以在渲染函数的帮助下做到这一点。渲染函数有助于使组件动态化，并通过保持通用性和使用相同组件传递参数来使用它所需的方式。</p> 
+ <p><strong>示例</strong></p> 
+ <p>创建一个文件：<em>render_function-style.html</em> - </p> 
+ <pre><code class="lang-html">&lt;html&gt;
+   &lt;head&gt;
+      &lt;title&gt;VueJs渲染函数样式&lt;/title&gt;
+      &lt;script type = "text/javascript" src = "js/vue.js"&gt;&lt;/script&gt;
+   &lt;/head&gt;
+   &lt;body&gt;
+      &lt;div id = "component_test"&gt;
+         &lt;testcomponent :elementtype = "'div,red,25,div1'"&gt;Hello Java&lt;/testcomponent&gt;
+         &lt;testcomponent :elementtype = "'h3,green,25,h3tag'"&gt;Hello Ruby&lt;/testcomponent&gt;
+         &lt;testcomponent :elementtype = "'p,blue,25,ptag'"&gt;Hello C#&lt;/testcomponent&gt;
+         &lt;testcomponent :elementtype = "'div,green,25,divtag'"&gt;Hello Python&lt;/testcomponent&gt;
+      &lt;/div&gt;
+      &lt;script type = "text/javascript"&gt;
+         Vue.component('testcomponent',{
+            render :function(createElement){
+               var a = this.elementtype.split(",");
+               return createElement(a[0],{
+                  attrs:{
+                     id:a[3],
+                     style:"color:"+a[1]+";font-size:"+a[2]+";"
+                  }
+               },
+               this.$slots.default
+               )
+            },
+            props:{
+               elementtype:{
+                  attributes:String,
+                  required:true
+               }
+            }
+         });
+         var vm = new Vue({
+            el: '#component_test'
+         });
+      &lt;/script&gt;
+   &lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>在上面的代码中，我们已经改变了组件，并使用下面的一段代码添加了带有<code>props</code>属性的渲染函数。</p>   
+ <pre><code class="lang-js">Vue.component('testcomponent',{
+   render :function(createElement){
+      var a = this.elementtype.split(",");
+      return createElement(a[0],{
+         attrs:{
+            id:a[3],
+            style:"color:"+a[1]+";font-size:"+a[2]+";"
+         }
+      },
+      this.$slots.default
+      )
+   },
+   props:{
+      elementtype:{
+         attributes:String,
+         required:true
+      }
+   }
+});
+</code></pre> 
+ <p><code>props</code>属性如下所示。</p> 
+ <pre><code class="lang-html">props:{
+   elementtype:{
+      attributes:String,
+      required:true
+   }
+}
+</code></pre> 
+ <p>已经定义了一个名为<code>elementtype</code>的属性，它接受<code>string</code>类型的属性字段。 另一个必填字段，其中提到该字段是强制性的。</p> 
+ <p>在渲染函数中，使用了<code>elementtype</code>属性，如下面的一段代码所示。</p> 
+ <pre><code class="lang-html">render :function(createElement){
+   var a = this.elementtype.split(",");
+   return createElement(a[0],{
+      attrs:{
+         id:a[3],
+         style:"color:"+a[1]+";font-size:"+a[2]+";"
+      }
+   },
+   this.$slots.default
+   )
+}
+</code></pre> 
+ <p>渲染函数将<code>createElement</code>作为参数并返回相同的值。 <code>CreateElement</code>和JavaScript中一样创建DOM元素。还用逗号分隔元素类型，使用<code>attrs</code>字段中的值。</p> 
+ <p><code>CreateElement</code>将第一个参数作为要创建的元素标签。它使用下面的一段代码传递给组件。</p> 
+ <pre><code class="lang-html">&lt;testcomponent  :elementtype = "'div,red,25,div1'"&gt;Hello Java&lt;/testcomponent&gt;
+</code></pre> 
+ <p>该组件需要采取<code>props</code>字段如上所示。 它开始于：<code>props</code>的名字。 在这里传递元素标签，颜色，字体大小和元素的ID。</p> 
+ <p>在渲染函数中，在<code>createElement</code>中，使用逗号进行分割，所以第一个元素是<code>elementtag</code>，它被赋给了<code>createElemet</code>，如下面的一段代码所示。</p> 
+ <pre><code class="lang-html">return createElement(
+   a[0],{
+      attrs:{
+         id:a[3],
+         style:"color:"+a[1]+";font-size:"+a[2]+";"
+      }
+   },
+   this.$slots.default
+)
+</code></pre> 
+ <p><code>a[0]</code>是html元素标记。 下一个参数是元素标签的属性。 它们在<code>attr</code>字段中定义在下面的一段代码中。</p> 
+ <pre><code class="lang-html">attrs:{
+   id:a[3],
+   style:"color:"+a[1]+";font-size:"+a[2]+";"
+}
+</code></pre> 
+ <p>我们已经定义了元素标签的<code>id</code>和<code>style</code>两个属性。 对于<code>id</code>，传递了<code>a[3]</code>，这是在逗号分割后的值。 使用样式定义了颜色和字体大小。<br>最后是<code>slot</code>，下面的代码片段中给出的消息。</p> 
+ <pre><code class="lang-html">&lt;testcomponent :elementtype = "'div,red,25,div1'"&gt;Hello Java&lt;/testcomponent&gt;
+</code></pre> 
+ <p>使用下面的一段代码定义了要在<code>createElement</code>中打印的文本。</p> 
+ <pre><code class="lang-html">this.$slots.default
+</code></pre> 
+ <p>它采用组件字段中分配的默认值。以下是在浏览器中获得的输出。</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201712/2412/307101241_28476.png" alt=""></p> 
+ <p>元素也显示结构。下面是定义的组件 -</p> 
+ <pre><code class="lang-html">&lt;div id = "component_test"&gt;
+   &lt;testcomponent :elementtype = "'div,red,25,div1'"&gt;Hello Java&lt;/testcomponent&gt;
+   &lt;testcomponent :elementtype = "'h3,green,25,h3tag'"&gt;Hello Ruby&lt;/testcomponent&gt;
+   &lt;testcomponent :elementtype = "'p,blue,25,ptag'"&gt;Hello C#&lt;/testcomponent&gt;
+   &lt;testcomponent :elementtype = "'div,green,25,divtag'"&gt;Hello Python&lt;/testcomponent&gt;
+&lt;/div&gt;
+</code></pre>
+ <br>      
+</div></body></html>

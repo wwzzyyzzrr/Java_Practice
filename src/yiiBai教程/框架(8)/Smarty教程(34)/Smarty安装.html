@@ -1,0 +1,109 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Smarty安装</h1><div style="width:100%;float:left;" class="article-content">   
+ <p style="box-sizing: border-box; margin: 0px 0px 10px; color: rgb(83, 91, 96); 微软雅黑, Verdana, sans-serif, 宋体; font-size: 14px; line-height: 20px;"> <span style="box-sizing: border-box; Verdana, arial, helvetica,  font-size: 13px; line-height: normal;">安装Smarty发行版在/libs/目录里的库文件(就是解压了). 这些php文件你可不能乱画哦.这些文件被所有应用程序共享,也只能在你升级到新版的<a target="_blank" href="http://www.yiibai.com/smarty" style="box-sizing: border-box; color: rgb(79, 141, 179); text-decoration: none; background: 0px 0px;">smarty</a>的时候得到更新。</span></p> 
+ <p style="box-sizing: border-box; margin: 0px 0px 10px; color: rgb(83, 91, 96); line-height: 20px; Verdana, arial, helvetica,  font-size: 13px;"> <span style="box-sizing: border-box; font-weight: 700;">Smarty手册范例 2-1.Smarty库文件</span></p> 
+ <pre class="SCREEN" style="box-sizing: border-box; overflow: auto; Menlo, Monaco, Consolas, 'Courier New', monospace; font-size: 13px; padding: 9.5px; line-height: 1.42857143; word-break: break-all; word-wrap: break-word; color: rgb(51, 51, 51); border-color: rgb(204, 204, 204); border-top-left-radius: 4px; border-top-right-radius: 4px; border-bottom-right-radius: 4px; border-bottom-left-radius: 4px; background-color: rgb(245, 245, 245);">
+Smarty.class.php
+Smarty_Compiler.class.php
+Config_File.class.php
+debug.tpl
+/core/*.php (all of them)
+/plugins/*.php (all of them)</pre> 
+ <p style="box-sizing: border-box; margin: 0px 0px 10px; color: rgb(83, 91, 96); 微软雅黑, Verdana, sans-serif, 宋体; font-size: 14px; line-height: 20px;"> <span style="box-sizing: border-box; Verdana, arial, helvetica,  font-size: 13px; line-height: normal;"><span style="box-sizing: border-box;">Smarty使用一个叫做'SMARTY_DIR'的php常量作为它的系统库目录。基本上,如果你的应用程序可以找到&nbsp;</span><i style="box-sizing: border-box;">Smarty.class.php</i><span style="box-sizing: border-box;">文件,你不需要设置SMARTY_DIR,Smarty将会自己运作。但是,如果&nbsp;</span><i style="box-sizing: border-box;">Smarty.class.php</i><span style="box-sizing: border-box;">没有在你的include_path(php.ini里的一项设置)里,或者没有在你的应用程序里设置它的绝对路径的时候,你就必须手动配置SMARTY_DIR 了(大多数程序都如此)SMARTY_DIR必须包含结尾斜杠。</span></span></p> 
+ <p style="box-sizing: border-box; margin: 0px 0px 10px; color: rgb(83, 91, 96); line-height: 20px; Verdana, arial, helvetica,  font-size: 13px;"> 这里是你在你的php脚本里创建一个smarty的应用实例的例子:</p> 
+ <pre class="SCREEN" style="box-sizing: border-box; overflow: auto; Menlo, Monaco, Consolas, 'Courier New', monospace; font-size: 13px; padding: 9.5px; line-height: 1.42857143; word-break: break-all; word-wrap: break-word; color: rgb(51, 51, 51); border-color: rgb(204, 204, 204); border-top-left-radius: 4px; border-top-right-radius: 4px; border-bottom-right-radius: 4px; border-bottom-left-radius: 4px; background-color: rgb(245, 245, 245);">
+require('Smarty.class.php');
+$smarty = new Smarty;</pre> 
+ <p style="box-sizing: border-box; margin: 0px 0px 10px; color: rgb(83, 91, 96); line-height: 20px; Verdana, arial, helvetica,  font-size: 13px;"> 试着运行一下以上脚本,如果你发现"未找到<i style="box-sizing: border-box;">Smarty.class.php 文件"</i>的错误时,你应该这样做:</p> 
+ <p style="box-sizing: border-box; margin: 0px 0px 10px;"> <span style="box-sizing: border-box; font-weight: 700;">Smarty手册范例 2-3.加入库文件目录的绝对路径</span></p> 
+ <pre class="SCREEN" style="box-sizing: border-box; overflow: auto; Menlo, Monaco, Consolas, 'Courier New', monospace; font-size: 13px; padding: 9.5px; line-height: 1.42857143; word-break: break-all; word-wrap: break-word; color: rgb(51, 51, 51); border-color: rgb(204, 204, 204); border-top-left-radius: 4px; border-top-right-radius: 4px; border-bottom-right-radius: 4px; border-bottom-left-radius: 4px; background-color: rgb(245, 245, 245);">
+require('/usr/local/lib/php/Smarty/Smarty.class.php');
+$smarty = new Smarty;</pre> 
+ <p style="box-sizing: border-box; margin: 0px 0px 10px;"> <span style="box-sizing: border-box; font-weight: 700;">Smarty手册范例 2-4.在include_path加入库文件目录</span></p> 
+ <pre class="SCREEN" style="box-sizing: border-box; overflow: auto; Menlo, Monaco, Consolas, 'Courier New', monospace; font-size: 13px; padding: 9.5px; line-height: 1.42857143; word-break: break-all; word-wrap: break-word; color: rgb(51, 51, 51); border-color: rgb(204, 204, 204); border-top-left-radius: 4px; border-top-right-radius: 4px; border-bottom-right-radius: 4px; border-bottom-left-radius: 4px; background-color: rgb(245, 245, 245);">
+// Edit your php.ini file, add the Smarty library
+// directory to the include_path and restart web server.
+// Then the following should work:
+require('Smarty.class.php');
+$smarty = new Smarty;</pre> 
+ <div style="box-sizing: border-box;"> 
+  <p style="box-sizing: border-box; margin: 0px 0px 10px;"> <span style="box-sizing: border-box; font-weight: 700;">Smarty手册范例 2-5.手工设置SMARTY_DIR常量</span></p> 
+  <pre class="SCREEN" style="box-sizing: border-box; overflow: auto; Menlo, Monaco, Consolas, 'Courier New', monospace; font-size: 13px; padding: 9.5px; line-height: 1.42857143; word-break: break-all; word-wrap: break-word; color: rgb(51, 51, 51); border-color: rgb(204, 204, 204); border-top-left-radius: 4px; border-top-right-radius: 4px; border-bottom-right-radius: 4px; border-bottom-left-radius: 4px; background-color: rgb(245, 245, 245);">
+define('SMARTY_DIR','/usr/local/lib/php/Smarty/');
+require(SMARTY_DIR.'Smarty.class.php');
+$smarty = new Smarty;</pre> 
+  <p style="box-sizing: border-box; margin: 0px 0px 10px; color: rgb(83, 91, 96); line-height: 20px; Verdana, arial, helvetica,  font-size: 13px;"> <br style="box-sizing: border-box;"> 现在库文件已经搞定,该是设置为你的应用程序配置其他有关Smarty的目录的时候了。Smarty要求4个目录,默认下命名为:<i style="box-sizing: border-box;">tempalates</i>,&nbsp;<i style="box-sizing: border-box;">templates_c</i>,&nbsp;<i style="box-sizing: border-box;">configs</i>&nbsp;and&nbsp;<i style="box-sizing: border-box;">cache</i>。每个都是可以自定义的,可以修改Smarty类属性:&nbsp;<i style="box-sizing: border-box;">$template_dir</i>,&nbsp;<i style="box-sizing: border-box;">$compile_dir</i>,&nbsp;<i style="box-sizing: border-box;">$config_dir</i>, and&nbsp;<i style="box-sizing: border-box;">$cache_dir</i>&nbsp;respectively。强烈推荐你为每个用到smarty的应用程序设置单一的目录!</p> 
+  <p style="box-sizing: border-box; margin: 0px 0px 10px; color: rgb(83, 91, 96); line-height: 20px; Verdana, arial, helvetica,  font-size: 13px;"> 确定你已经知道了你的web服务器文件根目录。在我们的例子里,文件根目录是:"/web/www.mydomain.com/docs/"Smarty的4个目录 只可以被那些库文件访问,不可以被网络上的浏览器访问的目录。因此为避免任何安全问题,要求将那4个目录和网页文件目录(就是浏览器看的)分开来。</p> 
+  <p style="box-sizing: border-box; margin: 0px 0px 10px; color: rgb(83, 91, 96); line-height: 20px; Verdana, arial, helvetica,  font-size: 13px;"> <br style="box-sizing: border-box;"> 在我们的安装例子里,我们将为一个留言板程序配置smarty环境。我们挑选应用程序只为了实现目录命名约定。你可以对任何程序使用相同的环境,只要将"guestbook"改成你要的名字就可以了。我们将把Smarty目录放在 "/web/www.mydomain.com/smarty/guestbook/"下。</p> 
+  <p style="box-sizing: border-box; margin: 0px 0px 10px; color: rgb(83, 91, 96); line-height: 20px; Verdana, arial, helvetica,  font-size: 13px;"> 在你的文档目录下至少得有一个文件,这个文件可以被浏览器访问.我们叫它 "index.php"好了.把它放到"/guestbook/"目录下.</p> 
+  <div style="box-sizing: border-box; color: rgb(83, 91, 96); line-height: 20px; Verdana, arial, helvetica,  font-size: 13px;"> 
+   <blockquote style="box-sizing: border-box; padding: 10px; margin: 10px 0px; font-size: 14px; border-width: 1px 1px 1px 5px;  border-color: rgb(238, 238, 238) rgb(238, 238, 238) rgb(238, 238, 238) rgb(91, 192, 222); border-top-left-radius: 2px; border-top-right-radius: 2px; border-bottom-right-radius: 2px; border-bottom-left-radius: 2px;"> 
+    <p style="box-sizing: border-box; margin: 0px;"> <span style="box-sizing: border-box; font-weight: 700;">技术提示：</span>建立web服务器很方便，这个文件可以被web服务器自动识别。如果你访问"http://www.mydomain.com/guestbook/"，你不需要在URL上输入"index.php"，index.php脚本就可以被执行。在Apache服务器中，可以通过在DirectoryIndex的后面添加"index.php" 文件(用反斜杠分开每个入口)来完成设置。</p> 
+   </blockquote> 
+  </div> 
+  <p style="box-sizing: border-box; margin: 0px 0px 10px; color: rgb(83, 91, 96); line-height: 20px; Verdana, arial, helvetica,  font-size: 13px;"> <br style="box-sizing: border-box;"> 现在我们看看这些文件结构:</p> 
+  <p style="box-sizing: border-box; margin: 0px 0px 10px;"> <span style="box-sizing: border-box; font-weight: 700;">Smarty手册范例 2-6.例子的文件结构</span></p> 
+  <pre class="SCREEN" style="box-sizing: border-box; overflow: auto; Menlo, Monaco, Consolas, 'Courier New', monospace; font-size: 13px; padding: 9.5px; line-height: 1.42857143; word-break: break-all; word-wrap: break-word; color: rgb(51, 51, 51); border-color: rgb(204, 204, 204); border-top-left-radius: 4px; border-top-right-radius: 4px; border-bottom-right-radius: 4px; border-bottom-left-radius: 4px; background-color: rgb(245, 245, 245);">
+/usr/local/lib/php/Smarty/Smarty.class.php
+/usr/local/lib/php/Smarty/Smarty_Compiler.class.php
+/usr/local/lib/php/Smarty/Config_File.class.php
+/usr/local/lib/php/Smarty/debug.tpl
+/usr/local/lib/php/Smarty/core/*.php
+/usr/local/lib/php/Smarty/plugins/*.php
+
+/web/www.mydomain.com/smarty/guestbook/templates/
+/web/www.mydomain.com/smarty/guestbook/templates_c/
+/web/www.mydomain.com/smarty/guestbook/configs/
+/web/www.mydomain.com/smarty/guestbook/cache/
+
+/web/www.mydomain.com/docs/guestbook/index.php</pre> 
+  <p style="box-sizing: border-box; margin: 0px 0px 10px; color: rgb(83, 91, 96); line-height: 20px; Verdana, arial, helvetica,  font-size: 13px;"> Smarty的&nbsp;<i style="box-sizing: border-box;">$compile_dir</i>&nbsp;<i style="box-sizing: border-box;">和$cache_dir</i>必须可写。通常是user "nobody" 和 group "nobody"。如果是 OSX用户,默认为user "web" 和 group "web"。如果你在使用Apache,你可以看看httpd.conf 文件 (通常在"/usr/local/apache/conf/"目录下)哪些user和group正在被使用。</p> 
+  <p style="box-sizing: border-box; margin: 0px 0px 10px;"> <span style="box-sizing: border-box; font-weight: 700;">Smarty手册范例 2-7 文件权限设置</span></p>   
+  <pre class="SCREEN" style="box-sizing: border-box; overflow: auto; Menlo, Monaco, Consolas, 'Courier New', monospace; font-size: 13px; padding: 9.5px; line-height: 1.42857143; word-break: break-all; word-wrap: break-word; color: rgb(51, 51, 51); border-color: rgb(204, 204, 204); border-top-left-radius: 4px; border-top-right-radius: 4px; border-bottom-right-radius: 4px; border-bottom-left-radius: 4px; background-color: rgb(245, 245, 245);">
+chown nobody:nobody /web/www.mydomain.com/smarty/guestbook/templates_c/
+chmod 770 /web/www.mydomain.com/smarty/guestbook/templates_c/
+
+chown nobody:nobody /web/www.mydomain.com/smarty/guestbook/cache/
+chmod 770 /web/www.mydomain.com/smarty/guestbook/cache/</pre> 
+  <div style="box-sizing: border-box; color: rgb(83, 91, 96); line-height: 20px; Verdana, arial, helvetica,  font-size: 13px;"> 
+   <blockquote style="box-sizing: border-box; padding: 10px; margin: 10px 0px; font-size: 14px; border-width: 1px 1px 1px 5px;  border-color: rgb(238, 238, 238) rgb(238, 238, 238) rgb(238, 238, 238) rgb(91, 192, 222); border-top-left-radius: 2px; border-top-right-radius: 2px; border-bottom-right-radius: 2px; border-bottom-left-radius: 2px;"> 
+    <p style="box-sizing: border-box; margin: 0px;"> <span style="box-sizing: border-box; font-weight: 700;">技术提示:</span>&nbsp;<br style="box-sizing: border-box;"> chmod 770相当安全了,它只让user "nobody" 和 group "nobody" 读/写 访问。如果你要对任何人开放读取访问权限(大多是为了你自己查看文件),你可以使用 775。</p> 
+   </blockquote> 
+  </div> 
+  <p style="box-sizing: border-box; margin: 0px 0px 10px; color: rgb(83, 91, 96); line-height: 20px; Verdana, arial, helvetica,  font-size: 13px;"> 我们需要创建index.tpl文件让smarty载入.这个文件放在 $template_dir目录里。</p> 
+  <p style="box-sizing: border-box; margin: 0px 0px 10px;"> <span style="box-sizing: border-box; font-weight: 700;">Smarty手册范例 2-8 编辑/web/www.mydomain.com/smarty/templates/index.tpl</span></p> 
+  <pre class="SCREEN" style="box-sizing: border-box; overflow: auto; Menlo, Monaco, Consolas, 'Courier New', monospace; font-size: 13px; padding: 9.5px; line-height: 1.42857143; word-break: break-all; word-wrap: break-word; color: rgb(51, 51, 51); border-color: rgb(204, 204, 204); border-top-left-radius: 4px; border-top-right-radius: 4px; border-bottom-right-radius: 4px; border-bottom-left-radius: 4px; background-color: rgb(245, 245, 245);">
+{* Smarty *}
+
+Hello, {$name}!</pre> 
+  <div style="box-sizing: border-box; color: rgb(83, 91, 96); line-height: 20px; Verdana, arial, helvetica,  font-size: 13px;"> 
+   <blockquote style="box-sizing: border-box; padding: 10px; margin: 10px 0px; font-size: 14px; border-width: 1px 1px 1px 5px;  border-color: rgb(238, 238, 238) rgb(238, 238, 238) rgb(238, 238, 238) rgb(91, 192, 222); border-top-left-radius: 2px; border-top-right-radius: 2px; border-bottom-right-radius: 2px; border-bottom-left-radius: 2px;"> 
+    <p style="box-sizing: border-box; margin: 0px;"> 技术提示:<br style="box-sizing: border-box;"> {* Smarty *} 是一个模板注释。虽然并不是必须的,但是这可以很好的锻炼你在模板文件里加入注释的习惯。它可以使文件便于识别。例如，一些文本编辑器可以识别这个文件,并加以语法高亮显示。</p> 
+   </blockquote> 
+  </div> 
+  <p style="box-sizing: border-box; margin: 0px 0px 10px; color: rgb(83, 91, 96); line-height: 20px; Verdana, arial, helvetica,  font-size: 13px;"> 现在来编辑index.php。我们将创建一个Smarty的实例,指派模板变量,显示 index.tpl文件。在我们的例子的环境里, "/usr/local/lib/php/Smarty"已经包括在了 include_path里了。</p> 
+  <p style="box-sizing: border-box; margin: 0px 0px 10px;"> <span style="box-sizing: border-box; font-weight: 700;">Smarty手册范例 2-9.编辑/web/www.mydomain.com/docs/guestbook/index.php</span></p> 
+  <pre class="SCREEN" style="box-sizing: border-box; overflow: auto; Menlo, Monaco, Consolas, 'Courier New', monospace; font-size: 13px; padding: 9.5px; line-height: 1.42857143; word-break: break-all; word-wrap: break-word; color: rgb(51, 51, 51); border-color: rgb(204, 204, 204); border-top-left-radius: 4px; border-top-right-radius: 4px; border-bottom-right-radius: 4px; border-bottom-left-radius: 4px; background-color: rgb(245, 245, 245);">
+// load Smarty library
+require('Smarty.class.php');
+
+$smarty = new Smarty;
+
+$smarty-&gt;template_dir = '/web/www.mydomain.com/smarty/guestbook/templates/';
+$smarty-&gt;compile_dir = '/web/www.mydomain.com/smarty/guestbook/templates_c/';
+$smarty-&gt;config_dir = '/web/www.mydomain.com/smarty/guestbook/configs/';
+$smarty-&gt;cache_dir = '/web/www.mydomain.com/smarty/guestbook/cache/';
+
+$smarty-&gt;assign('name','Ned');
+
+$smarty-&gt;display('index.tpl');</pre> 
+  <div style="box-sizing: border-box; color: rgb(83, 91, 96); line-height: 20px; Verdana, arial, helvetica,  font-size: 13px;"> 
+   <blockquote style="box-sizing: border-box; padding: 10px; margin: 10px 0px; font-size: 14px; border-width: 1px 1px 1px 5px;  border-color: rgb(238, 238, 238) rgb(238, 238, 238) rgb(238, 238, 238) rgb(91, 192, 222); border-top-left-radius: 2px; border-top-right-radius: 2px; border-bottom-right-radius: 2px; border-bottom-left-radius: 2px;"> 
+    <p style="box-sizing: border-box; margin: 0px;"> 技术提示:<br style="box-sizing: border-box;"> 在我们的例子里,已经设置了所有Smarty目录的绝对目录。如果 '/web/www.mydomain.com/smarty/guestbook/' 已经包括在 include_path里了,那么这些设置则没有必要。但是,从经验和通用性看来,为避免发生错误,还是配置一下为好。</p> 
+   </blockquote> 
+  </div> 
+  <p> 现在在浏览器打开 index.php,你应该看到"Hello, Porky!"</p> 
+  <p> 你现在已经完成了Smarty的基本设置,恭喜!!</p> 
+ </div> 
+ <br> 
+ <br>      
+</div></body></html>

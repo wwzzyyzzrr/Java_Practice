@@ -1,0 +1,77 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">cat命令</h1><div style="width:100%;float:left;" class="article-content">   
+ <p><code>cat</code>命令的用途是连接文件或标准输入并打印。这个命令常用来显示文件内容，或者将几个文件连接起来显示，或者从标准输入读取内容并显示，它常与重定向符号配合使用。 </p> 
+ <h2 id="h2-1-"><a name="1．命令格式" class="reference-link"></a><span class="header-link octicon octicon-link"></span>1．命令格式</h2>
+ <p>cat [选项] [文件]…</p> 
+ <h2 id="h2-2-"><a name="2．命令功能" class="reference-link"></a><span class="header-link octicon octicon-link"></span>2．命令功能</h2>
+ <p><code>cat</code>主要有三大功能：</p> 
+ <ol> 
+  <li>一次显示整个文件:<code>cat filename</code></li>
+  <li>从键盘创建一个文件:<code>cat &gt; filename</code> 只能创建新文件,不能编辑已有文件.</li>
+  <li>将几个文件合并为一个文件:<code>cat file1 file2 &gt; file</code><br>命令参数：
+   <ul> 
+    <li><code>-A</code>, <code>--show-all</code> 等价于 <code>-vET</code></li>
+    <li><code>-b</code>, <code>--number-nonblank</code> 对非空输出行编号</li>
+    <li><code>-e</code> 等价于 <code>-vE</code></li>
+    <li><code>-E</code>, <code>--show-ends</code> 在每行结束处显示<code>$</code></li>
+    <li><code>-n</code>, <code>--number</code> 对输出的所有行编号,由1开始对所有输出的行数编号</li>
+    <li><code>-s</code>, <code>--squeeze-blank</code> 有连续两行以上的空白行，就代换为一行的空白行 </li>
+    <li><code>-t</code> 与 <code>-vT</code> 等价</li>
+    <li><code>-T</code>, <code>--show-tabs</code> 将跳格字符显示为 <code>^I</code></li>
+    <li><code>-u</code> (被忽略)</li>
+    <li><code>-v</code>, <code>--show-nonprinting</code> 使用 <code>^</code> 和 <code>M-</code> 引用，除了 <code>LFD</code> 和 <code>TAB</code> 之外</li>
+   </ul> </li>
+ </ol> 
+ <h2 id="h2-4-"><a name="4．使用实例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>4．使用实例</h2>
+ <h3 id="h3-u5B9Eu4F8Bu4E00"><a name="实例一" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实例一</h3>
+ <p>把 <code>mylog1.log</code> 的文件内容加上行号后输入 <code>mylog2.log</code> 这个文件里。<br>命令：</p> 
+ <pre><code class="lang-shell">cat -n mylog1.log mylog2.log
+</code></pre> 
+ <p>输出：</p> 
+ <pre><code class="lang-shell">[yiibai@localhost test]$ cat mylog1.log
+this is line 1
+this is line 2
+[yiibai@localhost test]$ cat mylog2.log
+log2 this is line 1
+log2 this is line 2
+log2 this is line 3
+[yiibai@localhost test]$ cat -n mylog1.log mylog2.log
+     1  this is line 1
+     2  this is line 2
+     3  log2 this is line 1
+     4  log2 this is line 2
+     5  log2 this is line 3
+[yiibai@localhost test]$
+</code></pre> 
+ <h3 id="h3-u5B9Eu4F8Bu4E8C"><a name="实例二" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实例二</h3>
+ <p>把 <code>mylog1.log</code> 和 <code>mylog2.log</code> 的文件内容加上行号(空白行不加)之后将内容附加到 <code>log.log</code> 里。<br>命令：</p>   
+ <pre><code class="lang-shell">cat -b mylog1.log mylog2.log log.log
+</code></pre> 
+ <p>输出：</p> 
+ <pre><code class="lang-shell">yiibai@localhost test]$ cat -b mylog1.log mylog2.log &gt;&gt; log.log
+[yiibai@localhost test]$ cat log.log
+     1  this is line 1
+     2  this is line 2
+     3  log2 this is line 1
+     4  log2 this is line 2
+     5  log2 this is line 3
+[yiibai@localhost test]$
+</code></pre> 
+ <h3 id="h3-u5B9Eu4F8Bu4E09"><a name="实例三" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实例三</h3>
+ <p>使用here doc来生成文件</p> 
+ <pre><code class="lang-shell">[yiibai@localhost test]$ cat &gt;log.txt &lt;&lt;EOF
+&gt; Hello
+&gt; World
+&gt; Linux command
+&gt; PWD=$(pwd)
+&gt; EOF
+[yiibai@localhost test]$ ls -l log.txt
+-rw-rw-r--. 1 yiibai yiibai 49 Feb 13 03:20 log.txt
+[yiibai@localhost test]$ cat log.txt
+Hello
+World
+Linux command
+PWD=/home/yiibai/test
+[yiibai@localhost test]$
+</code></pre>
+ <br>      
+</div></body></html>

@@ -1,0 +1,218 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Struts2 &lt;s:sort&gt;标签示例</h1><div style="width:100%;float:left;" class="article-content">   
+ <p> <span style="line-height:1.5;">Struts2的&lt;s:sort&gt;标签使用&nbsp;java.util.Comparator&nbsp;来排序列表，这里创建一个Web工程：struts2sorttag，来演示在多个复选框如何设置的默认值，整个项目的结构如下图所示：</span> </p> 
+ <p> <img src="/uploads/tutorial/20151116/1-151116205SB30.png" alt=""> </p> 
+ <p> <br> </p> 
+ <p> <br> </p> 
+ <p> <img src="file://E:/data/youdao/qq24B39E2329F08D9F4C3146A571A415EF/478f5cc400fb4a2899153047ebcf0b39/clipboard.png"> </p> 
+ <p> 在本教程中，将创建6个&nbsp;Person对象并添加到一个ArrayList，并使用排序标签基于Person属性的ArrayList进行排序。 </p> 
+ <div>
+   要使用这个Struts2的&lt;s:sort&gt;标签，&nbsp;必须了解了java.util.Comparator 是如何工作的 
+ </div> 
+ <h2> 1. Person 对象 </h2> 
+ <div>
+   创建一个有"firstName”,&nbsp;“lastName”&nbsp;和&nbsp;“age”属性的Person对象。 
+ </div> 
+ <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:16px;"> <strong>Person.java</strong> </p> 
+ <pre>package com.yiibai.common;
+
+public class Person{
+	
+	private String firstName;
+	private String lastName;
+	private int age;
+	
+	public Person(String firstName, String lastName, int age) {
+		super();
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.age = age;
+	}
+	
+	public String getFirstName() {
+		return firstName;
+	}
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+	public String getLastName() {
+		return lastName;
+	}
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
+	public int getAge() {
+		return age;
+	}
+	public void setAge(int age) {
+		this.age = age;
+	}
+}</pre> 
+ <h2 style="color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:24px;font-weight:500;"> 2. Comparator </h2> 
+ <div style="background-color:inherit;">
+   创建2个Comparator类，对Person的“firstName”&nbsp;和&nbsp;“age”&nbsp;属性进行排序。 
+ </div> 
+ <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:16px;"> <strong>FirstNameComparator.java</strong> </p> 
+ <pre>package com.yiibai.common;
+
+import java.util.Comparator;
+import com.yiibai.common.Person;
+
+public class FirstNameComparator implements Comparator&lt;Person&gt; {
+
+	public int compare(Person p1, Person p2) {
+		
+		String firstName1 = p1.getFirstName().toUpperCase();
+		String firstName2 = p2.getFirstName().toUpperCase();
+		
+		return firstName1.compareTo(firstName2);
+	}
+}</pre> 
+ <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:16px;"> <strong>AgeComparator.java</strong> </p> 
+ <pre>package com.yiibai.common;
+
+import java.util.Comparator;
+import com.yiibai.common.Person;
+
+public class AgeComparator implements Comparator&lt;Person&gt; {
+
+	public int compare(Person p1, Person p2) {
+		
+		return p1.getAge() - p2.getAge();
+		
+	}	
+}</pre> 
+ <h2> 3. 动作-Action </h2> 
+ <div>
+   Action类，初始化6个&nbsp;Person&nbsp;对象，并把它添加到一个ArrayList。 
+ </div> 
+ <pre>package com.yiibai.common.action;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import com.yiibai.common.Person;
+import com.opensymphony.xwork2.ActionSupport;
+ 
+public class SortTagAction extends ActionSupport{
+	
+	private List&lt;Person&gt; persons = new ArrayList&lt;Person&gt;();
+	
+	public String execute() {
+		
+		Person p1 = new Person("C-First", "C-Last", 40);
+		Person p2 = new Person("A-First", "A-Last", 20);
+		Person p3 = new Person("B-First", "B-Last", 10);
+		Person p4 = new Person("F-First", "F-Last", 33);
+		Person p5 = new Person("E-First", "E-Last", 22);
+		Person p6 = new Person("D-First", "D-Last", 11);
+		
+		persons.add(p1);
+		persons.add(p2);
+		persons.add(p3);
+		persons.add(p4);
+		persons.add(p5);
+		persons.add(p6);
+ 
+		return SUCCESS;
+	}
+
+	public List&lt;Person&gt; getPersons() {
+		return persons;
+	}
+	public void setPersons(List&lt;Person&gt; persons) {
+		this.persons = persons;
+	}
+}</pre> 
+ <h2> 4. &lt;s:sort&gt;标签示例 </h2> 
+ <div>
+   JSP页面使用sort标签与“FirstNameComparator”和“AgeComparator”对列表进行排序。 
+ </div> 
+ <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:16px;"> <strong>sort.jsp</strong> </p> 
+ <pre>&lt;%@ taglib prefix="s" uri="/struts-tags" %&gt;
+ &lt;html&gt;
+&lt;head&gt;&lt;title&gt;struts2 sort标签示例 - www.yiibai.com&lt;/title&gt;
+&lt;/head&gt;
+ 
+&lt;body&gt;
+&lt;h1&gt;Struts 2 Sort标签示例&lt;/h1&gt;
+
+&lt;s:bean name="com.yiibai.common.FirstNameComparator" var="firstNameComparator" /&gt;
+&lt;s:bean name="com.yiibai.common.AgeComparator" var="ageComparator" /&gt;
+
+&lt;table&gt;
+&lt;tr&gt;
+&lt;td&gt;
+1. Display all persons (unsort).
+&lt;ol&gt;
+&lt;s:iterator value="persons"&gt;
+     &lt;li&gt;&lt;s:property value="firstName" /&gt;, 
+         &lt;s:property value="lastName" /&gt;, 
+         &lt;s:property value="age" /&gt;
+     &lt;/li&gt;
+&lt;/s:iterator&gt;
+&lt;/ol&gt;
+&lt;/td&gt;
+
+&lt;td&gt;
+2. Display all persons (sort with firstName).
+&lt;s:sort comparator="#firstNameComparator" source="persons"&gt;
+&lt;ol&gt;
+&lt;s:iterator&gt;
+     &lt;li&gt;&lt;s:property value="firstName" /&gt;, 
+         &lt;s:property value="lastName" /&gt;, 
+         &lt;s:property value="age" /&gt;
+     &lt;/li&gt;
+&lt;/s:iterator&gt;
+&lt;/ol&gt;
+&lt;/s:sort&gt;
+&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td colspan="2"&gt;
+3. Display all persons (sort with age).
+&lt;s:sort comparator="#ageComparator" source="persons"&gt;
+&lt;ol&gt;
+&lt;s:iterator&gt;
+     &lt;li&gt;&lt;s:property value="firstName" /&gt;, 
+         &lt;s:property value="lastName" /&gt;, 
+         &lt;s:property value="age" /&gt;
+     &lt;/li&gt;
+&lt;/s:iterator&gt;
+&lt;/ol&gt;
+&lt;/s:sort&gt;
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/table&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;</pre> 
+ <h2 style="color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:24px;font-weight:500;"> 5. struts.xml </h2>   
+ <pre>&lt;?xml version="1.0" encoding="UTF-8" ?&gt;
+&lt;!DOCTYPE struts PUBLIC
+"-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+"http://struts.apache.org/dtds/struts-2.0.dtd"&gt;
+ 
+&lt;struts&gt;
+ 	&lt;constant name="struts.devMode" value="true" /&gt;
+	&lt;package name="default" namespace="/" extends="struts-default"&gt;
+		&lt;action name="sortTagAction" 
+			class="com.yiibai.common.action.SortTagAction" &gt;
+			&lt;result name="success"&gt;pages/sort.jsp&lt;/result&gt;
+		&lt;/action&gt;
+	&lt;/package&gt;
+&lt;/struts&gt;</pre> 
+ <h2> 4. 示例 </h2> 
+ <p> http://localhost:8080/strut2sorttag/sortTagAction.action </p> 
+ <p> 在浏览器打开上面的URL，显示结果如下： </p> 
+ <p> <img src="/uploads/tutorial/20151116/1-151116210059510.png" alt=""> </p> 
+ <h2 style="color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:24px;font-weight:500;"> 参考 </h2> 
+ <ol style="color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:16px;"> 
+  <li style="background-color:inherit;"> <a target="_blank" href="http://struts.apache.org/2.1.8/docs/sort.html">Struts 2 Sort 标签文档</a> </li> 
+  <li style="background-color:inherit;"> <a target="_blank" href="http://struts.apache.org/2.1.8/docs/bean.html">Struts 2 Bean 标签文档</a> </li> 
+  <li style="background-color:inherit;"> <a target="_blank" href="http://www.yiibai.com/java/java-object-sorting-example-comparable-and-comparator/">Java object sorting 示例</a> </li> 
+ </ol> 
+ <p> <br> </p> 下载代码 -&nbsp;
+ <a target="_blank" href="http://pan.baidu.com/s/1pJy6dth">http://pan.baidu.com/s/1pJy6dth</a>
+ <br>      
+</div></body></html>

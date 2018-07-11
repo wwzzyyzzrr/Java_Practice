@@ -1,0 +1,43 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Kotlin与OSGi</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>要启用 Kotlin OSGi 支持，你需要引入 <code>kotlin-osgi-bundle</code> 而不是常规的 Kotlin 库。<br>建议删除 <code>kotlin-runtime</code>、 <code>kotlin-stdlib</code> 和 <code>kotlin-reflect</code> 依赖，因为 <code>kotlin-osgi-bundle</code><br>已经包含了所有这些。当引入外部 Kotlin 库时你也应该注意。<br>大多数常规 Kotlin 依赖不是 OSGi-就绪的，所以你不应该使用它们，且应该从你的项目中删除它们。</p> 
+ <h2 id="h2-maven"><a name="Maven" class="reference-link"></a><span class="header-link octicon octicon-link"></span>Maven</h2>
+ <p>将 Kotlin OSGi 包引入到 Maven 项目中：</p> 
+ <pre><code class="lang-xml">   &lt;dependencies&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.jetbrains.kotlin&lt;/groupId&gt;
+            &lt;artifactId&gt;kotlin-osgi-bundle&lt;/artifactId&gt;
+            &lt;version&gt;${kotlin.version}&lt;/version&gt;
+        &lt;/dependency&gt;
+    &lt;/dependencies&gt;
+</code></pre> 
+ <p>从外部库中排除标准库(注意“星排除”只在 Maven 3 中有效)</p> 
+ <pre><code class="lang-xml">        &lt;dependency&gt;
+            &lt;groupId&gt;some.group.id&lt;/groupId&gt;
+            &lt;artifactId&gt;some.library&lt;/artifactId&gt;
+            &lt;version&gt;some.library.version&lt;/version&gt;
+
+            &lt;exclusions&gt;
+                &lt;exclusion&gt;
+                    &lt;groupId&gt;org.jetbrains.kotlin&lt;/groupId&gt;
+                    &lt;artifactId&gt;*&lt;/artifactId&gt;
+                &lt;/exclusion&gt;
+            &lt;/exclusions&gt;
+        &lt;/dependency&gt;
+</code></pre> 
+ <h2 id="h2-gradle"><a name="Gradle" class="reference-link"></a><span class="header-link octicon octicon-link"></span>Gradle</h2>
+ <p>将 <code>kotlin-osgi-bundle</code> 引入到 gradle 项目中：</p>   
+ <pre><code class="lang-groovy">compile "org.jetbrains.kotlin:kotlin-osgi-bundle:$kotlinVersion"
+</code></pre> 
+ <p>要排除作为传递依赖的默认 Kotlin 库，你可以使用以下方法</p> 
+ <pre><code class="lang-groovy">dependencies {
+ compile (
+   [group: 'some.group.id', name: 'some.library', version: 'someversion'],
+   ……) {
+  exclude group: 'org.jetbrains.kotlin'
+}
+</code></pre> 
+ <h2 id="h2-faq"><a name="FAQ" class="reference-link"></a><span class="header-link octicon octicon-link"></span>FAQ</h2>
+ <h4 id="h4--kotlin-"><a name="为什么不只是添加必需的清单选项到所有 Kotlin 库" class="reference-link"></a><span class="header-link octicon octicon-link"></span>为什么不只是添加必需的清单选项到所有 Kotlin 库</h4>
+ <p>尽管它是提供 OSGi 支持的最好的方式，遗憾的是现在做不到，是因为不能轻易消除的所谓的<br><a target="_blank" href="http://wiki.osgi.org/wiki/Split_Packages">“包拆分”问题</a>并且这么大的变化<br>不可能现在规划。有 <code>Require-Bundle</code> 功能，但它也不是最好的选择，不推荐使用。<br>所以决定为 OSGi 做一个单独的构件。</p>
+ <br>      
+</div></body></html>

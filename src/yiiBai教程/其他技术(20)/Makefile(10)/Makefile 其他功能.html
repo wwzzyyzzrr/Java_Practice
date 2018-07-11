@@ -1,0 +1,138 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Makefile 其他功能</h1><div style="width:100%;float:left;" class="article-content">   
+ <h2> make&nbsp;递归使用</h2> 
+ <p> 递归使用的手段使用，make在makefile作为命令。这种技术是非常有用的，当你想要的makefile各种子系统组成一个更大的系统。例如，假设你有一个子目录，子目录都有其自己的makefile，并且您希望所在目录的makefile中运行make子目录。可以做到这一点如以下：</p> 
+ <table class="ex" style="font-family: verdana, helvetica, arial, sans-serif;  border-color: rgb(170, 170, 170); width: 552px; background-color: rgb(241, 241, 241); border-collapse: collapse; padding-left: 5px;" tr="" width="100%"> 
+  <tbody> 
+   <tr> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse;  border-color: rgb(170, 170, 170);"> <pre style="font-family: 'Courier New', monospace; font-size: 12px; margin-bottom: 0px;">
+subsystem:
+        cd subdir &amp;&amp; $(MAKE)
+
+or, equivalently
+ 	
+subsystem:
+        $(MAKE) -C subdir
+</pre> </td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p> &nbsp;</p> 
+ <p> 可以编写递归复制这个例子只是通过make命令，但有很多事情，了解他们是如何和为什么工作的，以及如何子涉及到顶层make。</p> 
+ <hr> 
+ <h2> 通信变量到子make</h2> 
+ <p> 顶层make变量的值可以被传递到子通过环境，通过显式请求。这些变数定义子作为默认值，但不会覆盖子的makefile使用makefile中所指定的，除非使用`-e'开关</p> 
+ <p> 向下传递，或导出，一个变量，变量和其值的环境中运行每个命令添加。子make反过来，make使用环境变量值来初始化它的表格</p> 
+ <p> 特殊变量SHELL和MAKEFLAGS总是导出（除非取消导出）。 MAKEFILES导出，如果把它设置到任何东西。</p> 
+ <p> 如果想导出特定变量的一个子制造，使用导出指令，像这样：</p> 
+ <table class="ex" style="font-family: verdana, helvetica, arial, sans-serif;  border-color: rgb(170, 170, 170); width: 552px; background-color: rgb(241, 241, 241); border-collapse: collapse; padding-left: 5px;" tr="" width="100%"> 
+  <tbody> 
+   <tr> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse;  border-color: rgb(170, 170, 170);"> <pre style="font-family: 'Courier New', monospace; font-size: 12px; margin-bottom: 0px;">
+export variable ...
+</pre> </td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> 如果想阻止一个变量被导出的，使用撤消导出的指令，像这样：</p> 
+ <table class="ex" style="font-family: verdana, helvetica, arial, sans-serif;  border-color: rgb(170, 170, 170); width: 552px; background-color: rgb(241, 241, 241); border-collapse: collapse; padding-left: 5px;" tr="" width="100%"> 
+  <tbody> 
+   <tr> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse;  border-color: rgb(170, 170, 170);"> <pre style="font-family: 'Courier New', monospace; font-size: 12px; margin-bottom: 0px;">
+unexport variable ...
+</pre> </td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <hr style="color: rgb(0, 0, 0); height: 1px; font-family: verdana, helvetica, arial, sans-serif;"> 
+ <h2> MAKEFILES 变量</h2> 
+ <p> MAKEFILES如果环境变量的定义，make额外的makefile 名称列表（由空格分隔）之前被读取别人认为其值。这很像include指令：不同的目录中查找这些文件。</p> 
+ <p> makefile的主要用途是MAKE递归调用之间的通信</p> 
+ <hr> 
+ <h2> 头文件包含在不同的目录</h2> 如果已经把你的头文件在不同的目录，在不同的目录中运行make，那么它需要告诉头文件的路径。这是可以做到的makefile中使用-I选项。假设该functions.h文件可在/home/yiibai/header头和其他文件/home/yiibai/src/然后进行文件将被写入如下。&nbsp; 
+ <table class="ex" style="font-family: verdana, helvetica, arial, sans-serif;  border-color: rgb(170, 170, 170); width: 552px; background-color: rgb(241, 241, 241); border-collapse: collapse; padding-left: 5px;" tr="" width="100%"> 
+  <tbody> 
+   <tr> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse;  border-color: rgb(170, 170, 170);"> <pre style="font-family: 'Courier New', monospace; font-size: 12px; margin-bottom: 0px;">
+INCLUDES = -I "/home/yiibai/header"
+CC = gcc
+LIBS =  -lm
+CFLAGS = -g -Wall
+OBJ =  main.o factorial.o hello.o
+
+hello: ${OBJ}
+   ${CC} ${CFLAGS} ${INCLUDES} -o $@ ${OBJS} ${LIBS}
+.cpp.o:
+   ${CC} ${CFLAGS} ${INCLUDES} -c $&lt;
+
+</pre> </td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <br style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;"> 
+ <hr style="color: rgb(0, 0, 0); height: 1px; font-family: verdana, helvetica, arial, sans-serif;"> 
+ <h2> 追加更多的文本变量</h2> 
+ <p> 通常，它用于添加更多的文字，已定义的变量的值。make 这行包含'+ ='，像这样：</p> 
+ <table class="ex" style="font-family: verdana, helvetica, arial, sans-serif;  border-color: rgb(170, 170, 170); width: 552px; background-color: rgb(241, 241, 241); border-collapse: collapse; padding-left: 5px;" tr="" width="100%"> 
+  <tbody> 
+   <tr> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse;  border-color: rgb(170, 170, 170);">   <pre style="font-family: 'Courier New', monospace; font-size: 12px; margin-bottom: 0px;">
+objects += another.o
+</pre> </td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> 这需要值的变量对象，并添加文字`another.o'（前面由一个单一的空间）。因此：</p> 
+ <table class="ex" style="font-family: verdana, helvetica, arial, sans-serif;  border-color: rgb(170, 170, 170); width: 552px; background-color: rgb(241, 241, 241); border-collapse: collapse; padding-left: 5px;" tr="" width="100%"> 
+  <tbody> 
+   <tr> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse;  border-color: rgb(170, 170, 170);"> <pre style="font-family: 'Courier New', monospace; font-size: 12px; margin-bottom: 0px;">
+objects = main.o hello.o factorial.o
+objects += another.o
+</pre> </td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p> 设置`文件main.o hello.o factorial.o another.o'的对象。</p> 
+ <p> 使用'+ ='是类似于：</p> 
+ <table class="ex" style="font-family: verdana, helvetica, arial, sans-serif;  border-color: rgb(170, 170, 170); width: 552px; background-color: rgb(241, 241, 241); border-collapse: collapse; padding-left: 5px;" tr="" width="100%"> 
+  <tbody> 
+   <tr> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse;  border-color: rgb(170, 170, 170);"> <pre style="font-family: 'Courier New', monospace; font-size: 12px; margin-bottom: 0px;">
+objects = main.o hello.o factorial.o
+objects := $(objects) another.o
+</pre> </td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <br style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;"> 
+ <hr style="color: rgb(0, 0, 0); height: 1px; font-family: verdana, helvetica, arial, sans-serif;"> 
+ <h2> Makefile中的续行</h2> 
+ <p> 如果不喜欢太大的行，在Makefile中，然后你可以打破线使用反斜杠“\”，如下图所示</p> 
+ <table class="ex" style="font-family: verdana, helvetica, arial, sans-serif;  border-color: rgb(170, 170, 170); width: 552px; background-color: rgb(241, 241, 241); border-collapse: collapse; padding-left: 5px;" tr="" width="100%"> 
+  <tbody> 
+   <tr> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse;  border-color: rgb(170, 170, 170);"> <pre style="font-family: 'Courier New', monospace; font-size: 12px; margin-bottom: 0px;">
+OBJ =  main.o factorial.o \
+	hello.o
+
+is equivalent to
+
+OBJ =  main.o factorial.o hello.o
+</pre> </td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <br style="color: rgb(0, 0, 0); font-family: verdana, helvetica, arial, sans-serif;"> 
+ <hr> 
+ <h2> 从命令提示符下运行的Makefile</h2> 如果已经准备好请示的Makefile的名称为“Makefile”文件，然后简单地写在命令提示符下，它将运行Makefile文件。但是，如果有任何其他的名字的Makefile，然后使用以下命令 
+ <table class="ex" style="font-family: verdana, helvetica, arial, sans-serif;  border-color: rgb(170, 170, 170); width: 552px; background-color: rgb(241, 241, 241); border-collapse: collapse; padding-left: 5px;" tr="" width="100%"> 
+  <tbody> 
+   <tr> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse;  border-color: rgb(170, 170, 170);"> <pre style="font-family: 'Courier New', monospace; font-size: 12px; margin-bottom: 0px;">
+make -f your-makefile-name</pre> </td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p> &nbsp;</p> 
+ <br>      
+</div></body></html>

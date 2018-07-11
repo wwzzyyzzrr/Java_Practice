@@ -1,0 +1,103 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Yii创建行为</h1><div style="width:100%;float:left;" class="article-content">   
+ <div> 
+  <div>
+    假设我们要创建一个行为，将行为连接到的组件的&nbsp;“name”&nbsp;属性转换为大写。 
+  </div> 
+ </div> 
+ <div> 
+  <div>
+    第1步&nbsp;-&nbsp;在&nbsp;components&nbsp;文件夹中，创建一个&nbsp;UppercaseBehavior.php&nbsp;文件并使用下面的代码。 
+  </div> 
+  <pre>&lt;?php
+   namespace app\components;
+   use yii\base\Behavior;
+   use yii\db\ActiveRecord;
+   class UppercaseBehavior extends Behavior {
+      public function events() {
+         return [
+            ActiveRecord::EVENT_BEFORE_VALIDATE =&gt; 'beforeValidate',
+         ];
+      }
+      public function beforeValidate($event) {
+         $this-&gt;owner-&gt;name = strtoupper($this-&gt;owner-&gt;name);
+     }
+   }
+?&gt;</pre> 
+  <div>
+    在上面的代码中，我们创建了&nbsp;UppercaseBehavior&nbsp;，在触发&nbsp;“beforeValidate”事件后将&nbsp;name&nbsp;属性的值大写。 
+  </div> 
+  <div>
+    第2步&nbsp;-&nbsp;要附加这个行为到 models/MyUser.php 模型，修改如下代码： 
+  </div> 
+  <pre>&lt;?php
+   namespace app\models;
+   use app\components\UppercaseBehavior;
+   use Yii;
+   /**
+   * This is the model class for table "user".
+   *
+   * @property integer $id
+   * @property string $name
+   * @property string $email
+   */
+   class MyUser extends \yii\db\ActiveRecord {
+      public function behaviors() {
+         return [
+            // anonymous behavior, behavior class name only
+            UppercaseBehavior::className(),
+         ];
+      }
+      /**
+      * @inheritdoc
+      */
+      public static function tableName() {
+         return 'user';
+      }
+      /**
+      * @inheritdoc
+      */
+      public function rules() {
+         return [
+            [['name', 'email'], 'string', 'max' =&gt; 255]
+         ];
+      }
+      /**
+      * @inheritdoc
+      */
+      public function attributeLabels() {
+         return [
+            'id' =&gt; 'ID',
+            'name' =&gt; 'Name',
+            'email' =&gt; 'Email',
+         ];
+      }
+   }
+?&gt;</pre> 
+  <div>
+    现在，当我们创建或更新的用户，它的&nbsp;name&nbsp;属性将会自动转换为大写。 
+  </div> 
+  <div>
+    第3步&nbsp;-&nbsp;添加&nbsp;actionTestBehavior()&nbsp;函数到&nbsp;SiteController。 
+  </div>   
+  <pre>public function actionTestBehavior() {
+   //creating a new user
+   $model = new MyUser();
+   $model-&gt;name = "Yiibai";
+   $model-&gt;email = "yiibai.com@gmail.com";
+   if($model-&gt;save()){
+      var_dump(MyUser::find()-&gt;asArray()-&gt;all());
+   }
+}</pre> 
+  <div>
+    第4步&nbsp;-&nbsp;访问URL：&nbsp;
+   <a target="_blank" href="http://localhost:8080/index.php?r=site/test-behavior">http://localhost:8080/index.php?r=site/test-behavior</a>&nbsp;，会看到新创建的&nbsp;MyUser&nbsp;模型的&nbsp;name&nbsp;属性的值是大写。 
+  </div> 
+ </div> 
+ <div style="font-family:微软雅黑;font-size:14px;background-color:#FFFFFF;"> 
+  <span style="background-color:inherit;"><img src="/uploads/tutorial/20160604/1-160604143349327.png" width="647" height="523" title="Yii创建行为" alt="Yii创建行为"><br> </span> 
+ </div> 
+ <div style="font-family:微软雅黑;font-size:14px;background-color:#FFFFFF;"> 
+  <span style="background-color:inherit;"><br> </span> 
+ </div>
+ <br>      
+</div></body></html>

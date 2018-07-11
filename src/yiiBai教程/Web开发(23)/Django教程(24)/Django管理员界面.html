@@ -1,0 +1,116 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Django管理员界面</h1><div style="width:100%;float:left;" class="article-content">   
+ <div> 
+  <div> 
+   <span style="line-height:1.5;">Django为管理活动提供随时可以使用的用户界面。</span>
+   <span style="line-height:1.5;">我们都知道，管理界面对于一个Web项目是十分重要的。</span>
+   <span style="line-height:1.5;">Django根据您的项目模型自动生成管理界面。</span> 
+  </div> 
+ </div> 
+ <div> 
+  <h2> 
+   <div>
+     启动管理界面 
+   </div> </h2> 
+  <p style="text-align:justify;"> 管理界面依赖于 django.contrib 模块。若需它工作，需要确保一些模块是否导入在&nbsp;myproject/settings.py&nbsp;文件中的INSTALLED_APPS和MIDDLEWARE_CLASSES元组。 </p> 
+  <div>
+    对于 INSTALLED_APPS 确保有&nbsp;- 
+  </div> 
+  <pre>INSTALLED_APPS = (
+   'django.contrib.admin',
+   'django.contrib.auth',
+   'django.contrib.contenttypes',
+   'django.contrib.sessions',
+   'django.contrib.messages',
+   'django.contrib.staticfiles',
+   'myapp',
+)</pre> 
+  <p style="text-align:justify;"> 对于 MIDDLEWARE_CLASSES 有− </p> 
+  <pre>MIDDLEWARE_CLASSES = (
+   'django.contrib.sessions.middleware.SessionMiddleware',
+   'django.middleware.common.CommonMiddleware',
+   'django.middleware.csrf.CsrfViewMiddleware',
+   'django.contrib.auth.middleware.AuthenticationMiddleware',
+   'django.contrib.messages.middleware.MessageMiddleware',
+   'django.middleware.clickjacking.XFrameOptionsMiddleware',
+)</pre> 
+  <div>
+    在启动服务器，我们来访问管理界面，可能还需要启动数据库&nbsp;- 
+  </div> 
+  <pre>c:\myproject&gt; python manage.py syncdb&nbsp;</pre> 
+  <p> syncdb将创建必要的表，或根据您的数据库类型的集合，以及必要的管理界面来运行。&nbsp;即使你不是一个超级用户，系统会提示创建一个。 </p> 
+  <p> 如果你已经有一个超级用户或忘记了，可以用下面的代码来直接创建一个&nbsp;− </p> 
+  <pre><span style="background-color:inherit;font-family:微软雅黑;font-size:14px;line-height:1.5;">c:\myproject&gt;</span> python manage.py createsuperuser&nbsp;</pre> 
+  <p> 现在就开始启动管理界面，我们需要确保已经为管理界面配置URL。打开 myproject/url.py，应该有这样的东西&nbsp;− </p> 
+  <pre class="prettyprint lang-bsh">"""myproject URL Configuration
+The `urlpatterns` list routes URLs to views. For more information please see:
+    https://docs.djangoproject.com/en/1.9/topics/http/urls/ 
+Examples:
+Function views
+    1. Add an import:  from my_app import views
+    2. Add a URL to urlpatterns:  url(r'^$', views.home, name='home')
+Class-based views
+    1. Add an import:  from other_app.views import Home
+    2. Add a URL to urlpatterns:  url(r'^$', Home.as_view(), name='home')
+Including another URLconf
+    1. Import the include() function: from django.conf.urls import url, include
+    2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
+"""
+from django.conf.urls import url
+from django.contrib import admin
+urlpatterns = [
+    url(r'^admin/', admin.site.urls),
+]</pre> 
+  <p> <br> </p> 
+  <div> 
+   <div>
+     整个执行命令过程：
+    <br> 
+    <pre class="prettyprint lang-bsh"># 创建必要的数据库表，并初始化相关数据
+C:\myproject&gt;python manage.py migrate
+Operations to perform:
+  Apply all migrations: admin, contenttypes, auth, sessions
+Running migrations:
+  Rendering model states... DONE
+  Applying contenttypes.0001_initial... OK
+  Applying auth.0001_initial... OK
+  Applying admin.0001_initial... OK
+  Applying admin.0002_logentry_remove_auto_add... OK
+  Applying contenttypes.0002_remove_content_type_name... OK
+  Applying auth.0002_alter_permission_name_max_length... OK
+  Applying auth.0003_alter_user_email_max_length... OK
+  Applying auth.0004_alter_user_username_opts... OK
+  Applying auth.0005_alter_user_last_login_null... OK
+  Applying auth.0006_require_contenttypes_0002... OK
+  Applying auth.0007_alter_validators_add_error_messages... OK
+  Applying sessions.0001_initial... OK
+C:\myproject&gt;python manage.py createsuperuser
+Username (leave blank to use 'administrator'): admin
+Email address: admin@yiibai.com 
+Password:
+Password (again):
+This password is too short. It must contain at least 8 characters.
+This password is too common.
+This password is entirely numeric.
+Password:
+Password (again):
+Superuser created successfully.
+C:\myproject&gt;</pre> 
+   </div> 
+  </div> 
+  <div>
+    现在，只需使用下面的命令运行启动服务器。 
+  </div>   
+  <pre><span style="background-color:inherit;font-family:微软雅黑;font-size:14px;line-height:1.5;">c:\myproject&gt;</span> python manage.py runserver&nbsp;</pre> 
+  <p> 管理界面如下URL，应该是可以访问：http://127.0.0.1:8000/admin/ </p> 
+  <img src="/uploads/tutorial/20160127/1-16012H22000150.png" alt="">
+  <br> 
+  <p> 使用超级用户帐号登陆，会看到如下界面&nbsp;− </p> 
+  <img src="/uploads/tutorial/20160127/1-16012H22024349.png" alt="">
+  <br> 
+  <p> 这个界面可以让我们管理 Django 中的组和用户，以及所有在应用程序中注册的模型。这个界面使您能够至少做到“CRUD”(创建，读取，更新，删除)模型操作。 </p> 
+  <div> 
+   <span style="background-color:inherit;font-family:微软雅黑;font-size:14px;line-height:1.5;"><br> </span> 
+  </div> 
+ </div>
+ <br>      
+</div></body></html>

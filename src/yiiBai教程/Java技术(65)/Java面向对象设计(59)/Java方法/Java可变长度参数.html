@@ -1,0 +1,122 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Java可变长度参数</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>术语“varargs”是”variable-length arguments”(可变长度参数)的缩写。<br>可变长度参数声明一个接受可变数量的参数（或参数）的方法或构造函数。</p> 
+ <h3 id="h3-u58F0u660Eu53EFu53D8u957Fu5EA6u53C2u6570u65B9u6CD5"><a name="声明可变长度参数方法" class="reference-link"></a><span class="header-link octicon octicon-link"></span>声明可变长度参数方法</h3>
+ <p>要声明可变长度参数，在方法参数的数据类型之后添加一个省略号<code>...</code>。下面的代码显示了一个带有一个可变长度参数<code>num</code> 的 <code>max（）</code>方法声明，它是<code>int</code>数据类型。</p> 
+ <pre><code class="lang-java">public static  int max(int... num) {
+
+}
+</code></pre> 
+ <p>省略号<code>...</code>之前和之后添加空格是可选的。可变长度参数方法可以有多个参数。 下面的代码显示<code>aMethod（）</code>接受三个参数，其中一个是可变长度参数：</p> 
+ <pre><code class="lang-java">public static int aMethod(String str, double   d1,   int...num)  {
+
+}
+</code></pre> 
+ <p>方法最多可以有一个可变长度参数。可变长度参数方法的可变长度参数必须是参数列表中的最后一个参数。</p> 
+ <pre><code class="lang-java">void  m2(String str, int...n1) {
+
+}
+</code></pre> 
+ <h3 id="h3-u793Au4F8B"><a name="示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例</h3>
+ <p>重写上面的 <code>max（）</code>方法，使其成为可变长度参数方法：</p> 
+ <pre><code class="lang-java">public class Main {
+  public static int max(int... num) {
+    int max = Integer.MIN_VALUE;
+    for (int i = 0; i &lt; num.length; i++) {
+      if (num[i] &gt; max) {
+        max = num[i];
+      }
+    }
+    return max;
+  }
+}
+</code></pre> 
+ <h3 id="h3-u4F7Fu7528u53EFu53D8u957Fu5EA6u53C2u6570u65B9u6CD5"><a name="使用可变长度参数方法" class="reference-link"></a><span class="header-link octicon octicon-link"></span>使用可变长度参数方法</h3>
+ <p>可以使用<code>for</code>循环来处理可变长度参数的参数列表。<code>length</code>属性给出了可变长度参数传递的值的数量。</p> 
+ <p>要获取可变长度参数中的第<code>n</code>个值，需要使用<code>varArgsName [n-1]</code>。可以使用<code>foreach</code>循环来处理可变长度参数。</p> 
+ <pre><code class="lang-java">public class Main {
+  // 求参数列表中的最大值...
+  public static int max2(int... num) {
+    int max = Integer.MIN_VALUE;
+    for (int currentNumber : num) {
+      if (currentNumber &gt; max) {
+        max = currentNumber;
+      }
+    }
+    return max;
+  }
+}
+</code></pre> 
+ <p>可以调用<code>Main.max（）</code>方法如下：</p> 
+ <pre><code class="lang-java">int max1 = Main.max(1, 8);
+int max2 = Main.max(1, 1, 3);
+</code></pre> 
+ <p>对于方法中的可变长度参数，可以使用零个或多个参数。 以下代码是对<code>max（）</code>方法的有效调用：</p> 
+ <pre><code class="lang-java">int max = Main.max(); // Passing no  argument  is ok
+</code></pre> 
+ <p><code>max（）</code>方法的以下声明将强制其调用者至少传递两个整数：</p> 
+ <pre><code class="lang-java">// Argumenets  n1  and  n2  are   mandatory
+public static int max(int n1,  int n2,   int... num) {
+
+}
+</code></pre> 
+ <p>编译器会将前两个参数<code>n1</code>和<code>n2</code>视为强制性参数，将第三个参数<code>num</code>作为可选参数。</p> 
+ <pre><code class="lang-java">public class Main {
+  public static int max(int n1, int n2, int... num) {
+    // Initialize max to the maximum of n1 and n2
+    int max = (n1 &gt; n2 ? n1 : n2);
+
+    for (int i = 0; i &lt; num.length; i++) {
+      if (num[i] &gt; max) {
+        max = num[i];
+      }
+    }
+    return max;
+  }
+
+  public static void main(String[] args) {
+    System.out.println(max(77, 99));
+    System.out.println(max(77, 99, 1010));
+    System.out.println(max(77, 99, 1010, 1313));
+  }
+}
+</code></pre> 
+ <p>上面的代码生成以下结果。</p> 
+ <h3 id="h3-u91CDu8F7Du53EFu53D8u957Fu5EA6u53C2u6570u65B9u6CD5"><a name="重载可变长度参数方法" class="reference-link"></a><span class="header-link octicon octicon-link"></span>重载可变长度参数方法</h3>
+ <p>方法重载规则适用于可变长度参数方法。可以使用可变长度参数重载一个方法，只要方法的参数在类型，顺序或数字上不同。</p> 
+ <p>例如，以下是一个重载的<code>max（）</code>方法的有效示例：</p>   
+ <pre><code class="lang-java">public  class  Main {
+    public static int max(int x, int  y)  {
+    }
+
+    public static int max(int...num)  {
+    }
+}
+</code></pre> 
+ <p>考虑下面的代码 - </p> 
+ <pre><code class="lang-java">int max = Main.max(12, 13);  // which  max()  will be  called?
+</code></pre> 
+ <p>Java将调用<code>max（int x，int y）</code>。 Java首先尝试使用对参数数量的精确匹配来找到方法声明。 如果没有找到完全匹配，它将使用可变长度参数查找匹配。<br>如果可变长度参数方法重载，Java使用该方法的其它特定版本，而不使用可变长度参数方法。 java使用可变长度参数方法作为解决方法调用的最后手段。<br>方法本身的重载可能是有效的。 但是，调用它可能会导致问题。</p> 
+ <pre><code class="lang-java">public class Main {
+  public static int max(int... num) {
+    return 0;
+  }
+
+  public static int max(double... num) {
+    return 0;
+  }
+}
+</code></pre> 
+ <p>下面的代码调用哪个<code>max（）</code>方法？</p> 
+ <pre><code class="lang-java">int max = Main.max(); // Which max()  to call?
+</code></pre> 
+ <p>上面的语句将生成一个编译时错误。</p> 
+ <h3 id="h3--main-"><a name="可变长度参数方法和main（）方法" class="reference-link"></a><span class="header-link octicon octicon-link"></span>可变长度参数方法和main（）方法</h3>
+ <p><code>main（）</code>方法的签名必须是<code>main（String [] args）</code>。<code>Main</code>类的<code>main（）</code>方法的以下声明是有效的。</p> 
+ <pre><code class="lang-java">public class Main {
+  public static void main(String... args) {
+    System.out.println("Hello from  varargs main()...");
+  }
+}
+</code></pre>
+ <br>      
+</div></body></html>

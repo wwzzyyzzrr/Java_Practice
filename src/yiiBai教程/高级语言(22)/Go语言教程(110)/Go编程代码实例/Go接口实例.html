@@ -1,0 +1,82 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Go接口实例</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>Go支持在<code>struct</code>类型上定义的方法。<code>area</code> 方法有一个 <code>* rect</code>类型的接收器。可以为指针或值接收器类型定义方法。这里是一个值接收器的例子。<br>这里调用<code>struct</code>定义的<code>2</code>个方法。</p> 
+ <p>接口是方法签名的命名集合。这里是几何形状(<code>geometry</code>)的基本接口。<br>对于这个例子，将在<code>rect</code>和<code>circle</code>类型上实现这个接口。</p> 
+ <p>要在Go中实现一个接口，需要实现接口中的所有方法。 这里在<code>rect</code>上实现<code>geometry</code>的一个实例。</p> 
+ <p>以及 <code>circles</code> 的实现。</p> 
+ <p>如果变量具有接口类型，那么可以调用命名接口中的方法。这里是一个通用 <code>measure()</code> 函数，任何几何形状都有这个函数。</p> 
+ <p><code>circle</code>和<code>rect</code>结构类型都实现了几何(<code>geometry</code>)接口，因此可以使用这些结构体的实例上调用<code>measure()</code>函数。</p> 
+ <blockquote> 
+  <p>所有的示例代码，都放在 <code>F:\worksp\golang</code> 目录下。安装Go编程环境请参考：<a target="_blank" href="http://www.yiibai.com/go/go_environment.html">http://www.yiibai.com/go/go_environment.html</a> </p> 
+ </blockquote> 
+ <p><code>structs.go</code>的完整代码如下所示 -</p> 
+ <pre><code class="lang-go">package main
+
+import "fmt"
+import "math"
+
+// Here's a basic interface for geometric shapes.
+type geometry interface {
+    area() float64
+    perim() float64
+}
+
+// For our example we'll implement this interface on
+// `rect` and `circle` types.
+type rect struct {
+    width, height float64
+}
+type circle struct {
+    radius float64
+}
+
+// To implement an interface in Go, we just need to
+// implement all the methods in the interface. Here we
+// implement `geometry` on `rect`s.
+func (r rect) area() float64 {
+    return r.width * r.height
+}
+func (r rect) perim() float64 {
+    return 2*r.width + 2*r.height
+}
+
+// The implementation for `circle`s.
+func (c circle) area() float64 {
+    return math.Pi * c.radius * c.radius
+}
+func (c circle) perim() float64 {
+    return 2 * math.Pi * c.radius
+}
+
+// If a variable has an interface type, then we can call
+// methods that are in the named interface. Here's a
+// generic `measure` function taking advantage of this
+// to work on any `geometry`.
+func measure(g geometry) {
+    fmt.Println(g)
+    fmt.Println(g.area())
+    fmt.Println(g.perim())
+}
+
+func main() {
+    r := rect{width: 3, height: 4}
+    c := circle{radius: 5}
+
+    // The `circle` and `rect` struct types both
+    // implement the `geometry` interface so we can use
+    // instances of
+    // these structs as arguments to `measure`.
+    measure(r)
+    measure(c)
+}
+</code></pre> 
+ <p>执行上面代码，将得到以下输出结果 - </p>   
+ <pre><code class="lang-go">F:\worksp\golang&gt;go run interfaces.go
+{3 4}
+12
+14
+{5}
+78.53981633974483
+31.41592653589793
+</code></pre>
+ <br>      
+</div></body></html>

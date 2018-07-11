@@ -1,0 +1,78 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Gson版本支持</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>Gson提供了<code><a target="_blank" href="https://github.com/Since" title="@Since" class="at-link">@Since</a></code>注解来控制基于其各种版本的类的Json序列化/反序列化。 考虑以下具有版本支持的类。 在这个类中，我们最初定义了两个变量<code>rollNo</code>和<code>name</code>，稍后将其添加为一个新变量。 使用<code><a target="_blank" href="https://github.com/Since" title="@Since" class="at-link">@Since</a></code>定义了<code>rollNo</code>，名称从版本<code>1.0</code>开始并经过验证，版本为<code>1.1</code>。</p> 
+ <pre><code class="lang-java">class Student { 
+   @Since(1.0) 
+   private int rollNo; 
+
+   @Since(1.0) 
+   private String name; 
+
+   @Since(1.1) 
+   private boolean verified;  
+}
+</code></pre> 
+ <p>GsonBuilder提供了<code>setVersion()</code>方法来序列化这样的版本化类。</p> 
+ <pre><code class="lang-java">GsonBuilder builder = new GsonBuilder(); 
+builder.setVersion(1.0);   
+Gson gson = builder.create();
+</code></pre> 
+ <p>让我们来看一个实际版本支持的例子。 创建一个名为<code>GsonTester</code>的Java类文件:<em>GsonTester.java</em> - </p> 
+ <pre><code class="lang-java">import com.google.gson.Gson; 
+import com.google.gson.GsonBuilder; 
+import com.google.gson.annotations.Since;  
+
+public class GsonTester { 
+   public static void main(String args[]) { 
+      GsonBuilder builder = new GsonBuilder(); 
+      builder.setVersion(1.0);   
+      Gson gson = builder.create();
+
+      Student student = new Student(); 
+      student.setRollNo(1); 
+      student.setName("Maxsu"); 
+      student.setVerified(true);  
+
+      String jsonString = gson.toJson(student); 
+      System.out.println(jsonString);  
+
+      gson = new Gson();     
+      jsonString = gson.toJson(student); 
+      System.out.println(jsonString); 
+   }      
+} 
+class Student { 
+   @Since(1.0) 
+   private int rollNo; 
+
+   @Since(1.0) 
+   private String name; 
+
+   @Since(1.1) 
+   private boolean verified;   
+
+   public int getRollNo() { 
+      return rollNo; 
+   }  
+   public void setRollNo(int rollNo) { 
+      this.rollNo = rollNo; 
+   }  
+   public String getName() { 
+      return name; 
+   }  
+   public void setName(String name) { 
+      this.name = name; 
+   }
+   public void setVerified(boolean verified) { 
+      this.verified = verified; 
+   }  
+   public boolean isVerified() { 
+      return verified; 
+   } 
+}
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 - </p>   
+ <pre><code class="lang-shell">{"rollNo":1,"name":"Maxsu"} 
+{"rollNo":1,"name":"Maxsu","verified":true}
+</code></pre>
+ <br>      
+</div></body></html>

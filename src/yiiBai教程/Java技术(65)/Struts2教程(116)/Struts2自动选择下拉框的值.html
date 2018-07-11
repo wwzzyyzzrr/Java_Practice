@@ -1,0 +1,46 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Struts2自动选择下拉框的值</h1><div style="width:100%;float:left;" class="article-content">   
+ <p> 在Struts2中，HTML下拉框可以通过&lt;s:select&gt;标签呈现。要自动选择一个下拉框的默认值，只是声明&lt;s:select&gt;值”属性标记，并设置相应的默认值。 </p> 
+ <p> 这里创建一个Web工程：strut2autoselectdropdown，来演示在多个复选框如何设置的默认值，整个项目的结构如下图所示： </p> 
+ <p> <img src="/uploads/tutorial/20151115/1-15111511032V25.png" alt=""> </p> 
+ <h2> 1. Java List 示例 </h2> 
+ <p> Java列表生成选择选项的下拉框。 </p> 
+ <pre>//...
+public class SelectAction extends ActionSupport{
+
+	private List&lt;String&gt; searchEngine;
+	private String yourSearchEngine;
+	
+	//set default value
+	public String getDefaultSearchEngine() {
+		return "yahoo.com";
+	}
+	public SelectAction(){	
+		searchEngine = new ArrayList&lt;String&gt;();
+		searchEngine.add("google.com");
+		searchEngine.add("bing.com");
+		searchEngine.add("yahoo.com");
+		searchEngine.add("baidu.com");
+	}
+	//...
+}</pre> 
+ <p> &lt;s:select&gt;标记呈现HTML下拉框。value=“defaultSearchEngine”将调用对应动作类的getDefaultSearchEngine()方法返回一个默认搜索引擎的值。 </p> 
+ <pre>&lt;s:select label="What's your favor search engine" 
+		headerKey="-1" headerValue="Select Search Engines"
+		list="searchEngine" 
+		name="yourSearchEngine" 
+		value="defaultSearchEngine" /&gt;</pre> 
+ <p> 在这个例子中，下拉框将自动选择“yahoo.com”作为默认选项。 </p> 
+ <h2> 2. OGNL List 实例 </h2> 
+ <p> 通过创建OGNL表达式一个下拉框，并直接在“value”属性设置的默认值。 </p>   
+ <pre>&lt;s:select label="Select a month" 
+		headerKey="-1" headerValue="Select Month"
+		list="#{'1':'Jan', '2':'Feb', '3':'Mar', '4':'Apr'}" 
+		name="yourMonth" 
+		value="2" /&gt;</pre> 
+ <p> 在这个例子中，下拉框将自动选择“2” (Feb)为默认选项。 </p> 
+ <div class="download" style="padding:40px 85px;border:1px solid #CEEBCE;color:#333333;font-family:'Helvetica Neue', Helvetica,  background:url(http://www.yiibai.com/wp-content/themes/yiibai/images/download.png) 25px 25px no-repeat #DFF7DF;">
+   下载代码 –&nbsp;
+  <a target="_blank" href="http://pan.baidu.com/s/1mgq49nU">http://pan.baidu.com/s/1mgq49nU</a> 
+ </div>
+ <br>      
+</div></body></html>

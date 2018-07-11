@@ -1,0 +1,73 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">COBOL环境安装</h1><div style="width:100%;float:left;" class="article-content">   
+ <h2> 在Windows/Linux上安装COBOL</h2> 
+ <p> 有适用于Windows，很多免费的主机模拟器可用于书写和学习简单的COBOL程序。</p> 
+ <p> 一个这样的仿真器，可以按照下面给出几个简单的步骤，很容易地安装在Windows中：</p> 
+ <p> <a target="_blank" href="http://www.jaymoseley.com/hercules/installmvs/instmvs2.htm">http://www.jaymoseley.com/hercules/installmvs/instmvs2.htm</a></p> 
+ <ol> 
+  <li> <p> 下载并安装Hercules模拟器，它可以从Hercules“主页- ：www.hercules-390.eu</p> </li> 
+  <li> <p> 一旦在Windows机器上安装包，它会创建这样一个文件夹&nbsp;C:/hercules/mvs/cobol.</p> </li> 
+  <li> <p> 运行命令提示符(CMD)，进入目录C:/hercules/mvs/cobol on CMD.</p> </li> 
+  <li> <p> 对各种命令编写和执行JCL与COBOL程序的完整指南可在网址上找到</p> </li> 
+ </ol> 
+ <p> Hercules是一个开源软件实现主机System/370 和ESA/390 架构，除了最新的64位Z/架构。Hercules可以在Linux，Windows，Solaris和FreeBSD和Mac OS X上运行</p> 
+ <p> 用户可以连接到主机服务器，使用的方法有很多，例如瘦客户端，虚拟终端，虚拟客户端系统(VCS)或虚拟桌面系统(VDS)。每个有效用户提供的登录ID进入到Z/OS界面(TSO/ E或ISPF)。</p> 
+ <h2> 编译COBOL程序</h2> 
+ <p> 为了执行使用JCL在批处理模式下的COBOL程序，该程序需要编译和负载模块与所有的子程序创建。JCL使用加载模块，而不是实际程序在执行时。负载库连接起来，并提供给JCL在使用JCLLIB或STEPLIB执行的时候。</p> 
+ <p> 有许多可用的编译COBOL程序的主机编译器工具。有些企业公司使用变更管理工具，如Endevor，其中编译并存储每个版本的程序。这是在追踪到的程序的修改是有用的。</p> 
+ <pre class="prettyprint" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+//COMPILE   JOB ,CLASS=6,MSGCLASS=X,NOTIFY=&amp;SYSUID             
+//*            
+//STEP1     EXEC IGYCRCTL,PARM=RMODE,DYNAM,SSRANGE
+//SYSIN     DD DSN=MYDATA.URMI.SOURCES(MYCOBB),DISP=SHR
+//SYSLIB    DD DSN=MYDATA.URMI.COPYBOOK(MYCOPY),DISP=SHR
+//SYSLMOD   DD DSN=MYDATA.URMI.LOAD(MYCOBB),DISP=SHR
+//SYSPRINT  DD SYSOUT=*
+//*</pre> 
+ <p> IGYCRCTL是IBM COBOL编译器工具。编译器选项使用PARM参数传递。在上面的例子中，RMODE指示在程序中使用相对寻址模式的编译器。 COBOL程序正在使用SYSIN参数传递和复写簿使用由在SYSLIB程序库提供。</p> 
+ <h2> 执行COBOL程序</h2> 
+ <p> 下面，说明使用该输入文件MYDATA.URMI.INPUT执行该程序MYPROG并产生写入卷轴两个输出文件的JCL例子。</p> 
+ <pre class="prettyprint" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+//COBBSTEP  JOB CLASS=6,NOTIFY=&amp;SYSUID
+//
+//STEP10    EXEC PGM=MYPROG,PARM=ACCT5000
+//STEPLIB   DD DSN=MYDATA.URMI.LOADLIB,DISP=SHR
+//INPUT1    DD DSN=MYDATA.URMI.INPUT,DISP=SHR
+//OUT1      DD SYSOUT=*
+//OUT2      DD SYSOUT=*
+//SYSIN     DD *
+//CUST1     1000
+//CUST2     1001
+/*</pre> 
+ <p> MYPROG负载模块位于MYDATA.URMI.LOADLIB。这是很重要，要注意的是，上述的JCL可以用于只是一个非DB2 COBOL模块。</p> 
+ <h2> 执行COBOL-DB2程序</h2> 
+ <p> 对于运行的COBOL DB2 程序，IBM的专业工具被用在JCL程序; DB2区域和所需的参数作为输入传递给该实用程序。</p> 
+ <p> 运行的COBOL-DB2程序的步骤如下面：</p> 
+ <ul> 
+  <li> <p> 当一个COBOL-DB2程序被编译一个DBRM（数据库请求模块）一起装入模块创建的。该DBRM包含了COBOL程序的SQL语句的语法正确检查。</p> </li> 
+  <li> <p> DBRM绑定到DB2的区域（环境），其中COBOL运行。这可以通过使用IKJEFT01实用的JCL来完成。</p> </li> 
+  <li> <p> 绑定步骤之后，COBOL-DB2 程序正在使用IKJEFT01（再次）与负载库和DBRM库作为输入到JCL运行。</p> </li> 
+ </ul>   
+ <pre class="prettyprint" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+//STEP001  EXEC PGM=IKJEFT01
+//*
+//STEPLIB  DD DSN=MYDATA.URMI.DBRMLIB,DISP=SHR
+//*
+//input files
+//output files
+//SYSPRINT DD SYSOUT=*
+//SYSABOUT DD SYSOUT=*
+//SYSDBOUT DD SYSOUT=*
+//SYSUDUMP DD SYSOUT=*
+//DISPLAY  DD SYSOUT=*
+//SYSOUT   DD SYSOUT=*
+//SYSTSPRT DD SYSOUT=*
+//SYSTSIN  DD *
+    DSN SYSTEM(SSID)
+    RUN PROGRAM(MYCOBB) PLAN(PLANNAME) PARM(parameters to cobol program) -
+    LIB('MYDATA.URMI.LOADLIB')
+    END
+/*</pre> 
+ <p> 在上面的例子中，MYCOBB使用IKJEFT01的COBOL-DB2程序运行。请注意，该程序的名称，DB2子系统名称（SSID），DB2的程序名称是通过在SYSTSIN DD语句指定。该DBRM库指定STEPLIB。</p> 
+ <h2> &nbsp;</h2> 
+ <br>      
+</div></body></html>

@@ -1,0 +1,200 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Nginx配置Web服务器</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>本文介绍如何将NGINX配置作为Web服务器，并包括以下部分：</p> 
+ <ul> 
+  <li>设置虚拟服务器</li>
+  <li>配置位置</li>
+  <li>使用变量</li>
+  <li>返回特定状态码</li>
+  <li>重写请求中的URI</li>
+  <li>重写HTTP响应</li>
+  <li>处理错误</li>
+ </ul> 
+ <p>在高层次上，将NGINX配置作为Web服务器有一些问题需要了解，定义它处理哪些URL以及如何处理这些URL上的资源的HTTP请求。 在较低层次上，配置定义了一组控制对特定域或IP地址的请求的处理的虚拟服务器。</p> 
+ <p>用于HTTP流量的每个虚拟服务器定义了称为位置的特殊配置实例，它们控制特定URI集合的处理。 每个位置定义了自己的映射到此位置的请求发生的情况。 NGINX可以完全控制这个过程。 每个位置都可以代理请求或返回一个文件。 此外，可以修改URI，以便将请求重定向到另一个位置或虚拟服务器。 此外，可以返回特定的错误代码，也可以配置特定的页面以对应于每个错误代码。</p> 
+ <h2 id="h2-1-"><a name="1. 设置虚拟服务器" class="reference-link"></a><span class="header-link octicon octicon-link"></span>1. 设置虚拟服务器</h2>
+ <p>NGINX配置文件必须至少包含一个服务器指令来定义虚拟服务器。 当NGINX处理请求时，它首先选择提供请求的虚拟服务器。<br>虚拟服务器由<code>http</code>上下文中的服务器指令定义，例如：</p> 
+ <pre><code>http {
+    server {
+        # Server configuration
+    }
+}
+</code></pre>
+ <p>可以将多个<code>server</code>指令添加到<code>http</code>上下文中以定义多个虚拟服务器。<br><code>server</code>配置块通常包括一个<code>listen</code>指令，用于指定服务器侦听请求的IP地址和端口(或Unix域套接字和路径)。IPv4和IPv6地址均被接受; 将方括号(。<br>下面的示例显示了监听IP地址<code>127.0.0.1</code>和端口<code>8080</code>的服务器的配置：</p> 
+ <pre><code>server {
+    listen 127.0.0.1:8080;
+    # The rest of server configuration
+}
+</code></pre>
+ <p>如果省略端口，则使用标准端口。 同样地，如果省略一个地址，服务器将侦听所有地址。 如果没有包含listen指令，则“标准”端口为<code>80/tcp</code>，“default”端口为<code>8000/tcp</code>，具体取决于超级用户权限。</p> 
+ <p>如果有多个服务器与请求的IP地址和端口相匹配，则NGINX将根据服务器块中的<code>server_name</code>指令测试请求的主机头域。 <code>server_name</code>的参数可以是完整(精确)名称，通配符或正则表达式。 通配符是一个字符串，其开头，结尾或两者都包含星号(<code>*</code>); 星号匹配任何字符序列。 NGINX将Perl语法用于正则表达式; 在它们之前使用波浪号(<code>〜</code>)。 此示例说明了一个确切的名称。</p> 
+ <pre><code>server {
+    listen      80;
+    server_name example.org www.example.org;
+    ...
+}
+</code></pre>
+ <p>如果匹配主机头几个名称，则NGINX通过按以下顺序搜索名称并使用其找到的第一个匹配来选择一个：</p> 
+ <ol> 
+  <li>确切的名字(完整准确的名称)</li>
+  <li>以星号开头的最长通配符，例如:<code>*.example.org</code></li>
+  <li>以星号结尾的最长通配符，如：<code>mail.*</code></li>
+  <li>第一个匹配正则表达式(按照出现在配置文件中的顺序)</li>
+ </ol> 
+ <p>如果主机头字段与服务器名称不匹配，则NGINX会将请求路由到请求到达端口的默认服务器。 默认服务器是<code>nginx.conf</code>文件中列出的第一个服务器，除非您将<code>listen_server</code>参数包含在<code>listen</code>指令中以明确指定服务器为默认值。</p> 
+ <pre><code>server {
+    listen    80    default_server;
+    ...
+}
+</code></pre>
+ <p>一个完整的Nginx虚拟机配置示例，这里我们演示配置两个虚拟机，对应域名分别为：<code>vhost1.com</code> 和 <code>vhost2.com</code>，<code>vhost1.com</code>网站的主目录在<code>/data/www/vhost1</code>，<code>vhost2.com</code>网站的主目录在<code>/data/www/vhost2</code>：</p> 
+ <pre><code>server {
+    listen       80;
+    server_name vhost1.com www.vhost1.com;
+    index index.html index.html;
+    root  /data/www/vhost1;
+    access_log  /var/log/vhost1.com.log;
+}
+
+server {
+    listen       80;
+    server_name vhost2.com www.vhost2.com;
+    index index.html index.html;
+    root  /data/www/vhost2;
+    access_log  /var/log/vhost2.com.log;
+}
+</code></pre>
+ <h2 id="h2-2-"><a name="2. 配置位置" class="reference-link"></a><span class="header-link octicon octicon-link"></span>2. 配置位置</h2>
+ <p>NGINX可以根据请求URI向不同的代理发送流量或提供不同的文件。 这些块是使用放置在<code>server</code>指令中的<code>location</code>指令来定义的。</p> 
+ <p>例如，您可以定义三个<code>location</code>块，以指示虚拟服务器向一个代理服务器发送一些请求，将其他请求发送到不同的代理服务器，并通过从本地文件系统传递文件来提供其余请求。</p> 
+ <p>NGINX测试根据所有<code>location</code>指令的参数请求URI，并应用匹配<code>location</code>中定义的指令。 在每个<code>location</code>块内，通常可能(除了一些例外)放置更多的<code>location</code>指令以进一步细化特定组请求的处理。</p> 
+ <blockquote> 
+  <p>注意：在本教程文章中，单词<code>location</code>是指单个<code>location</code>上下文。</p> 
+ </blockquote> 
+ <p><code>location</code>指令有两种类型的参数：前缀字符串(路径名)和正则表达式。 对于要匹配前缀字符串的请求URI，必须以前缀字符串开头。</p> 
+ <p>具有<code>pathname</code>参数的以下示例位置匹配以<code>/some/path/</code>开头的请求URI，例如<code>/some/path/document.html</code>，它不匹配<code>/my-site/some/path</code>，因为<code>/some/path</code>不在该URI的开头出现。</p> 
+ <pre><code>location /some/path/ {
+    ...
+}
+</code></pre>
+ <p>正则表达式之前是区分大小写匹配的波形符号(<code>~</code>)，或者不区分大小写匹配的波形符号(<code>~*</code>)。 以下示例将包含字符串<code>.html</code>或<code>.html</code>的URI与任何位置相匹配。</p> 
+ <pre><code>location ~ \.html? {
+    ...
+}
+</code></pre>
+ <p>要找到最符合URI的位置，NGINX首先将URI与前缀字符串的位置进行比较。然后用正则表达式搜索位置。<br>除非使用<code>^~</code>修饰符对正则表达式给予更高的优先级。在前缀字符串中，NGINX选择最具体的字符串(也就是最长和最完整的字符串)。 下面给出了选择处理请求的位置的确切逻辑：</p> 
+ <ol> 
+  <li>测试所有URI的前缀字符串。</li>
+  <li><code>=</code>(等号)修饰符定义了URI和前缀字符串完全匹配。如果找到完全匹配，则搜索停止。</li>
+  <li>如果<code>^~</code>(插入符号)修饰符预先添加最长匹配前缀字符串，则不会检查正则表达式。</li>
+  <li>存储最长匹配的前缀字符串。</li>
+  <li>根据正则表达式测试URI。</li>
+  <li>断开第一个匹配的正则表达式并使用相应的位置。</li>
+  <li>如果没有正则表达式匹配，则使用与存储的前缀字符串相对应的位置。</li>
+ </ol> 
+ <p><code>=</code>修饰符的典型用例是<code>/</code>(正斜杠)的请求。 如果请求<code>/</code>是频繁的，则指定<code>=/</code>作为<code>location</code>指令的参数加速处理，因为搜索匹配在第一次比较之后停止。</p> 
+ <pre><code>location = / {
+    ...
+}
+</code></pre>
+ <p><code>location</code>上下文可以包含定义如何解析请求的指令 - 提供静态文件或将请求传递给代理的服务器。 在以下示例中，匹配第一个<code>location</code>上下文的请求将从<code>/data/images</code>目录中提供文件，并将匹配第二个位置的请求传递给承载 <code>www.example.com</code> 域内容的代理服务器。</p> 
+ <pre><code>server {
+    location /images/ {
+        root /data;
+    }
+
+    location / {
+        proxy_pass http://www.example.com;
+    }
+}
+</code></pre>
+ <p><code>root</code>指令指定要在其中搜索要提供的静态文件的文件系统路径。 与该位置相关联的请求URI将附加到路径，以获取要提供的静态文件的全名。 在上面的示例中，要响应<code>/images/logo.png</code>的请求，NGINX提供服务器本地实际对应文件是：<code>/data/images/logo.png</code>。</p> 
+ <p><code>proxy_pass</code>指令将请求传递给使用配置的URL访问代理服务器。然后将代理服务器的响应传回客户端。在上面的示例中，所有不以<code>/images/</code>开头的URI的请求都将被传递给代理的服务器(也就是：<code>www.example.com</code>)。</p> 
+ <h2 id="h2-3-"><a name="3. 使用变量" class="reference-link"></a><span class="header-link octicon octicon-link"></span>3. 使用变量</h2>
+ <p>可以使用配置文件中的变量，使NGINX进程的请求根据定义的情况而有所不同。 变量是在运行时计算的命名值，用作指令的参数。 一个变量由它的名字开头的<code>$</code>(美元)符号表示。 变量根据NGINX的状态定义信息，例如正在处理的请求的属性。</p> 
+ <p>有许多预定义的变量，如核心HTTP变量，您可以使用<code>set</code>，<code>map</code>和<code>geo</code>指令定义自定义变量。 大多数变量在运行时计算的，并包含与特定请求相关的信息。 例如，<code>$remote_addr</code>包含客户端IP地址，<code>$uri</code>保存当前的URI值。</p> 
+ <h2 id="h2-4-"><a name="4. 返回特定状态码" class="reference-link"></a><span class="header-link octicon octicon-link"></span>4. 返回特定状态码</h2>
+ <p>一些网站URI需要立即返回具有特定错误或重定向代码的响应，例如当页面被暂时移动或永久移动时。 最简单的方法是使用<code>return</code>指令。 例如返回未找到的<code>404</code>状态码：</p> 
+ <pre><code>location /wrong/url {
+    return 404;
+}
+</code></pre>
+ <p>返回的第一个参数是响应代码。可选的第二个参数可以是重定向的URL(代码<code>301</code>,<code>302</code>,<code>303</code>和<code>307</code>)或在响应体中返回文本。 例如：</p> 
+ <pre><code>location /permanently/moved/url {
+    return 301 http://www.example.com/moved/here;
+}
+</code></pre>
+ <p>返回指令可以包含在 <code>location</code> 和 <code>server</code> 上下文中。</p> 
+ <h2 id="h2--uri-"><a name="重写URI请求" class="reference-link"></a><span class="header-link octicon octicon-link"></span>重写URI请求</h2>
+ <p>可以通过使用<code>rewrite</code>指令在请求处理期间多次修改请求URI，该指令具有一个可选参数和两个必需参数。 第一个(必需)参数是请求URI必须匹配的正则表达式。 第二个参数是用于替换匹配URI的URI。 可选的第三个参数是可以停止进一步重写指令的处理或发送重定向(代码<code>301</code>或<code>302</code>)的标志。例如：</p>   
+ <pre><code>location /users/ {
+    rewrite ^/users/(.*)$ /show?user=$1 break;
+}
+</code></pre>
+ <p>如该示例所示，用户通过匹配正则表达式捕获第二个参数。</p> 
+ <p>您可以在<code>location</code> 和 <code>server</code>上下文中包含多个<code>rewrite</code>指令。 NGINX按照它们发生的顺序逐个执行指令。 当选择该上下文时，<code>server</code>上下文中的<code>rewrite</code>指令将被执行一次。<br>在NGINX处理一组<code>rewrite</code>指令之后，它根据新的URI选择一个<code>location</code>上下文。 如果所选<code>location</code>块包含<code>rewrite</code>指令，则依次执行它们。 如果URI与其中任何一个匹配，则在处理所有定义的<code>rewrite</code>指令之后，将搜索新<code>location</code>块。</p> 
+ <p>以下示例显示了与返回指令相结合的<code>rewrite</code>指令。</p> 
+ <pre><code>server {
+    ...
+    rewrite ^(/download/.*)/media/(.*)\..*$ $1/mp3/$2.mp3 last;
+    rewrite ^(/download/.*)/audio/(.*)\..*$ $1/mp3/$2.ra  last;
+    return  403;
+    ...
+}
+</code></pre>
+ <p>此示例配置区分两组URI。 诸如<code>/download/some/media/file</code>之类的URI更改为<code>/download/some/mp3/file.mp3</code>。由于最后一个标志，所以跳过后续指令(第二次<code>rewrite</code>和<code>return</code>指令)，但NGINX继续处理该请求，该请求现在具有不同的URI。类似地，诸如<code>/download/some/audio/file</code>的URI被替换为<code>/download/some/mp3/file.ra</code>。 如果URI与<code>rewrite</code>指令不匹配，则NGINX将<code>403</code>错误代码返回给客户端。</p> 
+ <p>有两个中断处理重写指令的参数：</p> 
+ <ul> 
+  <li><code>last</code> - 停止执行当前服务器或位置上下文中的重写指令，但是NGINX会搜索与重写的URI匹配的位置，并且应用新位置中的任何重写指令(URI可以再次更改，往下继续匹配)。</li>
+  <li><code>break</code> - 像<code>break</code>指令一样，在当前上下文中停止处理重写指令，并取消搜索与新URI匹配的位置。新位置(<code>location</code>)块中的<code>rewrite</code>指令不执行。</li>
+ </ul> 
+ <h2 id="h2-5-http-"><a name="5. 重写HTTP响应" class="reference-link"></a><span class="header-link octicon octicon-link"></span>5. 重写HTTP响应</h2>
+ <p>有时您需要重写或更改HTTP响应中的内容，将一个字符串替换为另一个字符串。 您可以使用<code>sub_filter</code>指令来定义要应用的重写。 该指令支持变量和替代链，使更复杂的更改成为可能。<br>例如，您可以更改引用除代理服务器之外的绝对链接：</p> 
+ <pre><code>location / {
+    sub_filter      /blog/ /blog-staging/;
+    sub_filter_once off;
+}
+</code></pre>
+ <p>另一个示例将方法从<code>http://</code>更改为<code>http://</code>，并从请求头域替换本地主机地址到主机名。 <code>sub_filter_once</code>指令告诉NGINX在一个位置(<code>location</code>)内连续应用<code>sub_filter</code>伪指令：</p> 
+ <pre><code>location / {
+    sub_filter     'href="http://127.0.0.1:8080/'    'href="http://$host/';
+    sub_filter     'img src="http://127.0.0.1:8080/' 'img src="http://$host/';
+    sub_filter_once on;
+}
+</code></pre>
+ <p>请注意，如果发生另一个<code>sub_filter</code>匹配，则使用<code>sub_filter</code>修改的响应部分将不再被替换。</p> 
+ <ol> 
+  <li>处理错误</li>
+ </ol> 
+ <p>使用<code>error_page</code>指令，您可以配置NGINX返回自定义页面以及错误代码，替换响应中的其他错误代码，或将浏览器重定向到其他URI。 在以下示例中，<code>error_page</code>指令指定要返回<code>404</code>页面错误代码的页面(<code>/404.html</code>)。</p> 
+ <pre><code>error_page 404 /404.html;
+</code></pre>
+ <p>请注意，此伪指令并不立即返回该错误(返回指令执行该操作)，而仅仅是指定发生时如何处理错误。 错误代码可以来自代理服务器，或者在NGINX处理期间发生(例如，当NGINX找不到客户端请求的文件时，显示<code>404</code>对应的结果)。</p> 
+ <p>在以下示例中，当NGINX找不到页面时，它会将代码<code>301</code>替换为代码<code>404</code>，并将客户端重定向到<code>http:/example.com/new/path.html</code>。 当客户端仍尝试访问其旧URI的页面时，此配置非常有用。 <code>301</code>代码通知浏览器页面已经永久移动，并且需要在返回时自动替换旧地址。</p> 
+ <pre><code>location /old/path.html {
+    error_page 404 =301 http:/example.com/new/path.html;
+}
+</code></pre>
+ <p>以下配置是在未找到文件时将请求传递给后端的示例。 因为在<code>error_page</code>指令的等号之后没有指定状态代码，所以对客户机的响应具有代理服务器返回的状态代码(不一定是<code>404</code>)。</p> 
+ <pre><code>server {
+    ...
+    location /images/ {
+        # Set the root directory to search for the file
+        root /data/www;
+
+        # Disable logging of errors related to file existence
+        open_file_cache_errors off;
+
+        # Make an internal redirect if the file is not found
+        error_page 404 = /fetch$uri;
+    }
+
+    location /fetch/ {
+        proxy_pass http://backend/;
+    }
+}
+</code></pre>
+ <p>当没有找到文件时，<code>error_page</code>指令指示NGINX进行内部重定向。 <code>error_page</code>指令的最终参数中的<code>$uri</code>变量保存当前请求的URI，该URI在重定向中被传递。</p> 
+ <p>例如，如果没有找到<code>/images/some/file</code>，它将被替换为<code>/fetch/images/some/file</code>，并且新的搜索位置(<code>location</code>)开始。最后请求最终在第二个<code>location</code>上下文中，并被代理到<code>http://backend/</code>。</p> 
+ <p>如果没有找到文件，则<a target="_blank" href="http://nginx.org/en/docs/http/ngx_http_core_module.html?&amp;_ga=1.114984391.1509956953.1490042234#open_file_cache_errors" title="open_file_cache_errors">open_file_cache_errors</a>指令可防止写入错误消息。 因为丢失的文件可被正确地处理，但这不是必需的。</p>
+ <br>      
+</div></body></html>

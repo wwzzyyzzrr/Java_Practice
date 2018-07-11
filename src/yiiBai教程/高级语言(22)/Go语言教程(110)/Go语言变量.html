@@ -1,0 +1,127 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Go语言变量</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>变量只是给程序可以操作的存储区域的名字。Go中的每个变量都有一个特定的类型，它决定了变量的内存大小和布局; 可以存储在存储器内的值的范围; 以及可以应用于该变量的一组操作。</p> 
+ <p>变量的名称可以由字母，数字和下划线字符组成。它必须以字母或下划线开头。大写和小写字母是不同的名称，因为Go是区分大小写的。基于前一章中解释的基本类型，有以下基本变量类型：</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>类型</th> 
+    <th>描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>byte</td> 
+    <td>通常为单个八位字节(一个字节)，这是一个字节类型。</td> 
+   </tr> 
+   <tr> 
+    <td>int</td> 
+    <td>机器最自然的整数大小。</td> 
+   </tr> 
+   <tr> 
+    <td>float32</td> 
+    <td>单精度浮点值。</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p>Go编程语言还允许定义各种其他类型的变量，我们将在后续章节中介绍如枚举，指针，数组，结构，联合等。在本章中，只学习研究基本变量类型。</p> 
+ <h2 id="h2-go-"><a name="Go变量定义" class="reference-link"></a><span class="header-link octicon octicon-link"></span>Go变量定义</h2>
+ <p>变量定义意味着告诉编译器为变量创建存储的位置和大小。变量定义需要指定数据类型，并包含该类型的一个或多个变量的列表，如下所示：</p> 
+ <pre><code class="lang-go">var variable_list optional_data_type;
+</code></pre> 
+ <p>这里，<code>optional_data_type</code>是有效的Go数据类型，包括：<code>byte</code>，<code>int</code>，<code>float32</code>，<code>complex64</code>，<code>boolean</code>等或任何用户定义的对象等，并且<code>variable_list</code>可以包括一个或多个用逗号分隔的标识符变量名称。一些有效的声明如下所示：</p> 
+ <pre><code class="lang-go">var    i, j, k int;
+var   c, ch byte;
+var  f, salary float32;
+d = 42;
+</code></pre> 
+ <p><code>var i，j，k;</code>这一行，声明和定义变量<code>i</code>，<code>j</code>和<code>k</code>; 它指示编译器创建名称为<code>i</code>，<code>j</code>和<code>k</code>的类型为<code>int</code>的变量。</p> 
+ <p>变量可以在它们的声明时初始化(赋值一个初始值)。变量的类型由编译器基于传递给它的值自动判断。初始化器由一个等号和一个常量表达式组成，如下所示：</p> 
+ <pre><code class="lang-go">variable_name = value;
+</code></pre> 
+ <p>一些例子是：</p> 
+ <pre><code class="lang-go">d = 3, f = 5;    // declaration of d and f. Here d and f are int
+</code></pre> 
+ <p>对于没有初始化器的定义：具有静态存储的变量使用<code>nil</code>隐式初始化(所有字节都为<code>0</code>); 所有其他变量的初始值为其数据类型的零值。</p> 
+ <h2 id="h2-u9759u6001u7C7Bu578Bu58F0u660E"><a name="静态类型声明" class="reference-link"></a><span class="header-link octicon octicon-link"></span>静态类型声明</h2>
+ <p>静态类型变量声明为编译器提供了保证，即一个给定类型和名称的变量，以便编译器继续进行进一步编译，而不需要有关变量的完整详细信息。变量声明仅在编译时有其意义，编译器需要在链接程序时按实际的变量声明执行。</p> 
+ <h3 id="h3-u793Au4F8B"><a name="示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例</h3>
+ <p>尝试下面的示例，其中变量已声明为一个类型，并已在<code>main</code>函数中定义和初始化：</p> 
+ <pre><code class="lang-go">package main
+
+import "fmt"
+
+func main() {
+   var x float64
+   x = 20.0
+   fmt.Println(x)
+   fmt.Printf("x is of type %T\n", x)
+}
+</code></pre> 
+ <p>当上述代码编译和执行后，它产生以下结果：</p> 
+ <pre><code class="lang-go">20
+x is of type float64
+</code></pre> 
+ <h2 id="h2--"><a name="动态类型声明/类型推断" class="reference-link"></a><span class="header-link octicon octicon-link"></span>动态类型声明/类型推断</h2>
+ <p>动态类型变量声明要求编译器根据传递给它的值来解释变量的类型。但编译器并不需要指定一个变量为静态类型。</p> 
+ <h3 id="h3-u793Au4F8B"><a name="示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例</h3>
+ <p>看看下面的示例，这里的变量声明没有任何类型，并已在<code>main</code>函数中定义和初始化。注意，在类型推断的情况下，已经将变量<code>y</code>初始化为 <code>:=</code> 运算符，其中<code>x</code>使用<code>=</code>运算符初始化。</p>   
+ <pre><code class="lang-go">package main
+
+import "fmt"
+
+func main() {
+   var x float64 = 20.0
+
+   y := 42 
+   fmt.Println(x)
+   fmt.Println(y)
+   fmt.Printf("x is of type %T\n", x)
+   fmt.Printf("y is of type %T\n", y)    
+}
+</code></pre> 
+ <p>当上述代码被编译和执行时，它产生以下结果：</p> 
+ <pre><code class="lang-go">20
+42
+x is of type float64
+y is of type int
+</code></pre> 
+ <h2 id="h2-u6DF7u5408u53D8u91CFu58F0u660E"><a name="混合变量声明" class="reference-link"></a><span class="header-link octicon octicon-link"></span>混合变量声明</h2>
+ <p>不同类型的变量可以在一次声明中使用类型推断。</p> 
+ <h3 id="h3-u793Au4F8B"><a name="示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例</h3>
+ <pre><code class="lang-go">package main
+
+import "fmt"
+
+func main() {
+   var a, b, c = 3, 4, "foo"  
+
+   fmt.Println(a)
+   fmt.Println(b)
+   fmt.Println(c)
+   fmt.Printf("a is of type %T\n", a)
+   fmt.Printf("b is of type %T\n", b)
+   fmt.Printf("c is of type %T\n", c)
+}
+</code></pre> 
+ <p>当上述代码被编译和执行时，它产生以下结果：</p> 
+ <pre><code class="lang-go">3
+4
+foo
+a is of type int
+b is of type int
+c is of type string
+</code></pre> 
+ <h3 id="h3-go-"><a name="Go中的左值和右值：" class="reference-link"></a><span class="header-link octicon octicon-link"></span>Go中的左值和右值：</h3>
+ <p>Go中有两种表达式：</p> 
+ <ol> 
+  <li><p>左值(<code>lvalue</code>)：引用存储器位置的表达式称为“<code>lvalue</code>”表达式。左值可能出现在作业的左侧或右侧。</p> </li>
+  <li><p>右值(<code>rvalue</code>)：术语<strong>右值</strong>(<code>rvalue</code>)是指存储在内存中某个地址的数据值。右值是不能赋值给它的值的表达式，右值只可能出现在赋值的右侧而不是左侧。</p> </li>
+ </ol> 
+ <p>变量是左值，因此可能出现在赋值的左侧。数字文字是右值，因此不可能分配，也不能出现在左侧。以下是有效的语句：</p> 
+ <pre><code class="lang-go">x = 20.0
+</code></pre> 
+ <p>但以下不是有效的语句，并会生成编译时错误：</p> 
+ <pre><code class="lang-go">10 = 20
+</code></pre>
+ <br>      
+</div></body></html>

@@ -1,0 +1,67 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">LISP - 结构</h1><div style="width:100%;float:left;" class="article-content">   
+ <p> 结构是用户定义的数据类型，它让用户可以合并不同种类的数据项。</p> 
+ <p> 结构被用于表示记录。假设要跟踪图书馆中的书籍。可能希望跟踪了解每本书的以下属性：</p> 
+ <ul> 
+  <li> <p> 标题 - Title</p> </li> 
+  <li> <p> 作者 - Author</p> </li> 
+  <li> <p> 科目 - Subject</p> </li> 
+  <li> <p> 书籍编号 -&nbsp;Book ID</p> </li> 
+ </ul> 
+ <h2> 定义一个结构</h2> 
+ <p> LISP的defstruct宏允许定义一个抽象的记录结构。defstruct语句定义了一个新的数据类型，项目结构中不止一个成员。</p> 
+ <p> 讨论defstruct宏的格式，编写本书的结构的定义。可以定义本书的结构为：</p> 
+ <pre class="prettyprint prettyprinted" style="font-size: 12px; overflow: auto;">
+<span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="pln" style="margin: 0px; padding: 0px;">defstruct book 
+  title 
+  author 
+  subject 
+  book</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">-</span><span class="pln" style="margin: 0px; padding: 0px;">id 
+ </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">)</span></pre> 
+ <p> 请注意:</p> 
+ <ul> 
+  <li> <p> 上述声明创建一个本书结构有四个命名组件。因此，创建的每一个本书将是这个结构的对象。</p> </li> 
+  <li> <p> 它定义了一个名为book-title，book-subject，book-book-id的书籍，这将需要一个参数，书的结构，并且将返回的字段标题，作者，主题和本书的book-book-id对象。这些函数被称为接入功能。</p> </li> 
+  <li> <p> 符号书成为一个数据类型，它可以使用typep谓词检查。</p> </li> 
+  <li> <p> 也将命名为book-p隐函数，这是一个谓词，将为true，如果它的参数是本、书，则返回false。</p> </li> 
+  <li> <p> 另一个名为make-book 隐函数将被创建，这是一种构造方法，其中，当被调用时，将创建一个数据结构具有四个组件，适于与所述接入功能的使用。</p> </li> 
+  <li> <p> #S语法指的是一个结构，可以用它来读取或打印一本书的实例</p> </li> 
+  <li> <p> copy-book书本参数还定义了隐函数。这需要书的对象，并创建另一个书的对象，这是第一个副本。调用此函数复印机功能。</p> </li> 
+  <li> <p> 可以使用setf改变书籍的组成结构，例如</p> </li> 
+ </ul> 
+ <pre class="prettyprint prettyprinted" style="font-size: 12px; overflow: auto;">
+<span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="pln" style="margin: 0px; padding: 0px;">setf </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="pln" style="margin: 0px; padding: 0px;">book</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">-</span><span class="pln" style="margin: 0px; padding: 0px;">book</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">-</span><span class="pln" style="margin: 0px; padding: 0px;">id book3</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">)</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">100</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">)</span></pre> 
+ <p style="margin: 0.8em 0px 1em; padding: 0px; text-align: justify; color: rgb(0, 0, 0); font-family: Helvetica, Arial, sans-serif;"> <b style="margin: 0px; padding: 0px;">示例</b></p> 
+ <p> 创建一个名为main.lisp一个新的源代码文件，并在其中输入如下代码：</p> 
+ <div style="float:left;margin-bottom: 10px;">  
+ </div>
+ <div style="float:left;margin-bottom: 10px;">  
+ </div>
+ <pre class="prettyprint prettyprinted" style="font-size: 12px; overflow: auto;">
+<span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="pln" style="margin: 0px; padding: 0px;">defstruct book 
+  title 
+  author 
+  subject 
+  book</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">-</span><span class="pln" style="margin: 0px; padding: 0px;">id 
+ </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">)</span><span class="pln" style="margin: 0px; padding: 0px;">
+</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="pln" style="margin: 0px; padding: 0px;"> setq book1 </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="pln" style="margin: 0px; padding: 0px;">make</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">-</span><span class="pln" style="margin: 0px; padding: 0px;">book </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">:</span><span class="pln" style="margin: 0px; padding: 0px;">title </span><span class="str" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"C Programming"</span><span class="pln" style="margin: 0px; padding: 0px;">
+                       </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">:</span><span class="pln" style="margin: 0px; padding: 0px;">author </span><span class="str" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"Nuha Ali"</span><span class="pln" style="margin: 0px; padding: 0px;"> 
+                       </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">:</span><span class="pln" style="margin: 0px; padding: 0px;">subject </span><span class="str" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"C-Programming Tutorial"</span><span class="pln" style="margin: 0px; padding: 0px;">
+                       </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">:</span><span class="pln" style="margin: 0px; padding: 0px;">book</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">-</span><span class="pln" style="margin: 0px; padding: 0px;">id </span><span class="str" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"478"</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">))</span><span class="pln" style="margin: 0px; padding: 0px;">
+</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="pln" style="margin: 0px; padding: 0px;"> setq book2 </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="pln" style="margin: 0px; padding: 0px;">make</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">-</span><span class="pln" style="margin: 0px; padding: 0px;">book </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">:</span><span class="pln" style="margin: 0px; padding: 0px;">title </span><span class="str" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"Telecom Billing"</span><span class="pln" style="margin: 0px; padding: 0px;">
+                       </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">:</span><span class="pln" style="margin: 0px; padding: 0px;">author </span><span class="str" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"Zara Ali"</span><span class="pln" style="margin: 0px; padding: 0px;"> 
+                       </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">:</span><span class="pln" style="margin: 0px; padding: 0px;">subject </span><span class="str" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"C-Programming Tutorial"</span><span class="pln" style="margin: 0px; padding: 0px;">
+                       </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">:</span><span class="pln" style="margin: 0px; padding: 0px;">book</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">-</span><span class="pln" style="margin: 0px; padding: 0px;">id </span><span class="str" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"501"</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">))</span><span class="pln" style="margin: 0px; padding: 0px;"> 
+</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="pln" style="margin: 0px; padding: 0px;">write book1</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">)</span><span class="pln" style="margin: 0px; padding: 0px;">
+</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="pln" style="margin: 0px; padding: 0px;">terpri</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">)</span><span class="pln" style="margin: 0px; padding: 0px;">
+</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="pln" style="margin: 0px; padding: 0px;">write book2</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">)</span><span class="pln" style="margin: 0px; padding: 0px;">
+</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="pln" style="margin: 0px; padding: 0px;">setq book3</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="pln" style="margin: 0px; padding: 0px;"> copy</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">-</span><span class="pln" style="margin: 0px; padding: 0px;">book book1</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">))</span><span class="pln" style="margin: 0px; padding: 0px;">
+</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="pln" style="margin: 0px; padding: 0px;">setf </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="pln" style="margin: 0px; padding: 0px;">book</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">-</span><span class="pln" style="margin: 0px; padding: 0px;">book</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">-</span><span class="pln" style="margin: 0px; padding: 0px;">id book3</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">)</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">100</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">)</span><span class="pln" style="margin: 0px; padding: 0px;"> 
+</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="pln" style="margin: 0px; padding: 0px;">terpri</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">)</span><span class="pln" style="margin: 0px; padding: 0px;">
+</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="pln" style="margin: 0px; padding: 0px;">write book3</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">)</span></pre> 
+ <p> 当执行代码，它返回以下结果：</p>   
+ <pre class="prettyprint prettyprinted" style="font-size: 12px; overflow: auto;">
+<span class="com" style="margin: 0px; padding: 0px; color: rgb(136, 0, 0);">#S(BOOK :TITLE "C Programming" :AUTHOR "Nuha Ali" :SUBJECT "C-Programming Tutorial" :BOOK-ID "478")</span><span class="pln" style="margin: 0px; padding: 0px;">
+</span><span class="com" style="margin: 0px; padding: 0px; color: rgb(136, 0, 0);">#S(BOOK :TITLE "Telecom Billing" :AUTHOR "Zara Ali" :SUBJECT "C-Programming Tutorial" :BOOK-ID "501")</span><span class="pln" style="margin: 0px; padding: 0px;">
+</span><span class="com" style="margin: 0px; padding: 0px; color: rgb(136, 0, 0);">#S(BOOK :TITLE "C Programming" :AUTHOR "Nuha Ali" :SUBJECT "C-Programming Tutorial" :BOOK-ID</span></pre> 
+ <br>      
+</div></body></html>

@@ -1,0 +1,85 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">PDFBox添加矩形</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>本章将演示如何在PDF文档的页面中创建颜色框。</p> 
+ <h2 id="h2--pdf-"><a name="在PDF文档中创建框" class="reference-link"></a><span class="header-link octicon octicon-link"></span>在PDF文档中创建框</h2>
+ <p>使用<code>PDPageContentStream</code>类的<code>addRect()</code>方法在PDF页面中添加矩形框。</p> 
+ <p>以下是在PDF文档的页面中创建矩形形状的步骤。</p> 
+ <pre><code class="lang-java">File file = new File("path of the document") 
+PDDocument document = PDDocument.load(file);
+</code></pre> 
+ <p><strong>第2步:获取页面对象</strong><br>需要使用<code>PDDocument</code>类的<code>getPage()</code>方法检索要添加矩形的所需页面的<code>PDPage</code>对象。 对于此方法，传递要添加矩形的页面的索引。</p> 
+ <pre><code class="lang-java">PDPage page = document.getPage(0);
+</code></pre> 
+ <p><strong>第3步:准备内容流</strong></p> 
+ <p>使用<code>PDPageContentStream</code>类的对象来插入各种数据元素。 因此，需要将文档对象和页面对象传递给此类的构造函数，通过传递在前面的步骤中创建的这两个对象来实例化此类，如下所示。</p> 
+ <pre><code class="lang-java">PDPageContentStream contentStream = new PDPageContentStream(document, page);
+</code></pre> 
+ <p><strong>第4步:设置不划线颜色</strong></p> 
+ <p>使用<code>PDPageContentStream</code>类的<code>setNonStrokingColor()</code>方法将非划线颜色设置为矩形。 对于这个方法，需要将所需的颜色作为参数传递，如下所示。</p> 
+ <pre><code class="lang-java">contentStream.setNonStrokingColor(Color.DARK_GRAY);
+</code></pre> 
+ <p><strong>第5步:绘制矩形</strong></p> 
+ <p>使用<code>addRect()</code>方法绘制具有所需尺寸的矩形。 对于此方法，需要传递要添加的矩形的尺寸，如下所示。</p> 
+ <pre><code class="lang-java">contentStream.addRect(200, 650, 100, 100);
+</code></pre> 
+ <p><strong>第6步:填充矩形</strong></p> 
+ <p><code>PDPageContentStream</code>类的<code>fill()</code>方法使用所需的颜色填充指定尺寸之间的路径，如下所示。</p> 
+ <pre><code class="lang-java">contentStream.fill();
+</code></pre> 
+ <p><strong>第7步:关闭文档</strong></p> 
+ <p>最后使用<code>PDDocument</code>类的<code>close()</code>方法关闭文档，如下所示。</p> 
+ <pre><code class="lang-java">document.close();
+</code></pre> 
+ <h2 id="h2-u793Au4F8B"><a name="示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>　示例</h2>
+ <p>假设在目录:<em>F:\worksp\pdfbox</em> 中有一个名称为:<em>blank-doc.pdf</em> 的PDF文档，它包含一个空白页面，如下所示。<br><img src="http://www.yiibai.com/uploads/images/201803/1103/318110355_17312.png" alt=""></p> 
+ <p>这个例子演示了如何在PDF文档中创建/插入矩形。 在这里，将在空白PDF中创建一个框。 将此代码保存为<code>AddRectangles.java</code>。</p>   
+ <pre><code class="lang-java">package com.yiibai;
+
+import java.awt.Color;
+import java.io.File;
+
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
+public class ShowColorBoxes {
+
+   public static void main(String args[]) throws Exception {
+
+      //Loading an existing document
+      File file = new File("F:/worksp/pdfbox/bank_doc.pdf");
+      PDDocument document = PDDocument.load(file);
+
+      //Retrieving a page of the PDF Document
+      PDPage page = document.getPage(0);
+
+      //Instantiating the PDPageContentStream class
+      PDPageContentStream contentStream = new PDPageContentStream(document, page);
+
+      //Setting the non stroking color
+      contentStream.setNonStrokingColor(Color.DARK_GRAY);
+
+      //Drawing a rectangle 
+      contentStream.addRect(200, 650, 100, 100);
+
+      //Drawing a rectangle
+      contentStream.fill();
+
+      System.out.println("rectangle added");
+
+      //Closing the ContentStream object
+      contentStream.close();
+
+      //Saving the document
+      File file1 = new File("F:/worksp/pdfbox/colorbox.pdf");
+      document.save(file1);
+
+      //Closing the document
+      document.close();
+   }
+}
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 - </p> 
+ <pre><code class="lang-shell">Rectangle created
+</code></pre> 
+ <p>打开生成的文件:<em>colorbox.pdf</em> ，显示如下 -<br><img src="http://www.yiibai.com/uploads/images/201803/1103/777110357_61071.png" alt=""></p>
+ <br>      
+</div></body></html>

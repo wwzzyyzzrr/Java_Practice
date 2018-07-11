@@ -1,0 +1,36 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">SQL唯一约束</h1><div style="width:100%;float:left;" class="article-content">   
+ <p> 唯一约束防止在特定的列有相同的两个纪录值。 在CUSTOMERS表，例如，可能希望以防止两个或更多的人有相同的年龄。</p> 
+ <h2> 实例:</h2> 
+ <p> 例如，下面的SQL创建一个新的表名为CUSTOMERS，并添加了五列。在这里，AGE列设置为唯一的，所以不能有两个记录使用相同的年龄：</p> 
+ <pre class="prettyprint prettyprinted" style="border-radius: 0px; font-size: 12px; overflow: auto;">
+<span class="pln" style="margin: 0px; padding: 0px;">CREATE TABLE CUSTOMERS</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="pln" style="margin: 0px; padding: 0px;">
+       ID   INT              NOT NULL</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">,</span><span class="pln" style="margin: 0px; padding: 0px;">
+       NAME VARCHAR </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">20</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">)</span><span class="pln" style="margin: 0px; padding: 0px;">     NOT NULL</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">,</span><span class="pln" style="margin: 0px; padding: 0px;">
+       AGE  INT              NOT NULL UNIQUE</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">,</span><span class="pln" style="margin: 0px; padding: 0px;">
+       ADDRESS  CHAR </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">25</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">)</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">,</span><span class="pln" style="margin: 0px; padding: 0px;">
+       SALARY   DECIMAL </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">18</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">,</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">2</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">),</span><span class="pln" style="margin: 0px; padding: 0px;">       
+       PRIMARY KEY </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="pln" style="margin: 0px; padding: 0px;">ID</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">)</span><span class="pln" style="margin: 0px; padding: 0px;">
+</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">);</span></pre> 
+ <p> 如果CUSTOMERS表已经创建，然后要将唯一约束添加到AGE列，类似如下的声明：</p> 
+ <pre class="prettyprint prettyprinted" style="border-radius: 0px; font-size: 12px; overflow: auto;">
+<span class="pln" style="margin: 0px; padding: 0px;">ALTER TABLE CUSTOMERS
+   MODIFY AGE INT NOT NULL UNIQUE</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">;</span></pre> 
+ <p style="margin: 0.8em 0px 1em; padding: 0px; text-align: justify; color: rgb(0, 0, 0); "> 还可以使用下面的语法，它支持命名的多个列的约束：</p>   
+ <pre class="prettyprint prettyprinted" style="border-radius: 0px; font-size: 12px; overflow: auto;">
+<span class="pln" style="margin: 0px; padding: 0px;">ALTER TABLE CUSTOMERS
+   ADD CONSTRAINT myUniqueConstraint UNIQUE</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="pln" style="margin: 0px; padding: 0px;">AGE</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">,</span><span class="pln" style="margin: 0px; padding: 0px;"> SALARY</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">);</span></pre> 
+ <h2> 删除唯一约束：</h2> 
+ <p> 要删除UNIQUE约束，请使用以下SQL：</p> 
+ <div style="float:left;margin-bottom: 10px;">  
+ </div>
+ <div style="float:left;margin-bottom: 10px;">  
+ </div>
+ <pre class="prettyprint prettyprinted" style="border-radius: 0px; font-size: 12px; overflow: auto;">
+<span class="pln" style="margin: 0px; padding: 0px;">ALTER TABLE CUSTOMERS
+   DROP CONSTRAINT myUniqueConstraint</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">;</span></pre> 
+ <p> 如果正在使用MySQL，那么可以使用下面的语法：</p> 
+ <pre class="prettyprint prettyprinted" style="border-radius: 0px; font-size: 12px; overflow: auto;">
+<span class="pln" style="margin: 0px; padding: 0px;">ALTER TABLE CUSTOMERS
+   DROP INDEX myUniqueConstraint</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">;</span></pre> 
+ <br>      
+</div></body></html>

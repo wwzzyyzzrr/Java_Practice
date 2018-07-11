@@ -1,0 +1,565 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Pandas快速入门</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>这是一个<em>Pandas</em>快速入门教程，主要面向新用户。这里主要是为那些喜欢“短平快”的读者准备的，有兴趣的读者可通过其它教程文章来一步一步地更复杂的应用知识。</p> 
+ <p>首先，假设您安装好了<em>Anaconda</em>，现在启动<em>Anaconda</em>开始学始本教程中的示例。工作界面如下所示 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/3110/853151046_43371.png" alt=""></p> 
+ <p>测试工作环境是否有安装好了<em>Pandas</em>，导入相关包如下：</p> 
+ <pre><code class="lang-python">import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+print("Hello, Pandas")
+</code></pre> 
+ <p>然后执行一下，看有没有问题，如果正常应该会在终端输出区看到以下结果 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/3110/833151050_42278.png" alt=""></p> 
+ <h2 id="h2-u5BF9u8C61u521Bu5EFA"><a name="对象创建" class="reference-link"></a><span class="header-link octicon octicon-link"></span>对象创建</h2>
+ <p>通过传递值列表来创建一个系列，让<em>Pandas</em>创建一个默认的整数索引：</p> 
+ <pre><code class="lang-python">import pandas as pd
+import numpy as np
+
+s = pd.Series([1,3,5,np.nan,6,8])
+
+print(s)
+</code></pre> 
+ <p>执行后输出结果如下 - </p> 
+ <pre><code class="lang-shell">runfile('C:/Users/Administrator/.spyder-py3/temp.py', wdir='C:/Users/Administrator/.spyder-py3')
+0    1.0
+1    3.0
+2    5.0
+3    NaN
+4    6.0
+5    8.0
+dtype: float64
+</code></pre> 
+ <p>通过传递<code>numpy</code>数组，使用<code>datetime</code>索引和标记列来创建<code>DataFrame</code>：</p> 
+ <pre><code class="lang-python">import pandas as pd
+import numpy as np
+
+dates = pd.date_range('20170101', periods=7)
+print(dates)
+
+print("--"*16)
+df = pd.DataFrame(np.random.randn(7,4), index=dates, columns=list('ABCD'))
+print(df)
+</code></pre> 
+ <p>执行后输出结果如下 - </p> 
+ <pre><code class="lang-shell">runfile('C:/Users/Administrator/.spyder-py3/temp.py', wdir='C:/Users/Administrator/.spyder-py3')
+DatetimeIndex(['2017-01-01', '2017-01-02', '2017-01-03', '2017-01-04',
+               '2017-01-05', '2017-01-06', '2017-01-07'],
+              dtype='datetime64[ns]', freq='D')
+--------------------------------
+                   A         B         C         D
+2017-01-01 -0.732038  0.329773 -0.156383  0.270800
+2017-01-02  0.750144  0.722037 -0.849848 -1.105319
+2017-01-03 -0.786664 -0.204211  1.246395  0.292975
+2017-01-04 -1.108991  2.228375  0.079700 -1.738507
+2017-01-05  0.348526 -0.960212  0.190978 -2.223966
+2017-01-06 -0.579689 -1.355910  0.095982  1.233833
+2017-01-07  1.086872  0.664982  0.377787  1.012772
+</code></pre> 
+ <p>通过传递可以转换为类似系列的对象的字典来创建DataFrame。参考以下示例代码 - </p> 
+ <pre><code class="lang-python">import pandas as pd
+import numpy as np
+
+df2 = pd.DataFrame({ 'A' : 1.,
+                     'B' : pd.Timestamp('20170102'),
+                     'C' : pd.Series(1,index=list(range(4)),dtype='float32'),
+                     'D' : np.array([3] * 4,dtype='int32'),
+                     'E' : pd.Categorical(["test","train","test","train"]),
+                     'F' : 'foo' })
+
+print(df2)
+</code></pre> 
+ <p>执行上面示例代码后，输出结果如下 - </p> 
+ <pre><code class="lang-shell">runfile('C:/Users/Administrator/.spyder-py3/temp.py', wdir='C:/Users/Administrator/.spyder-py3')
+     A          B    C  D      E    F
+0  1.0 2017-01-02  1.0  3   test  foo
+1  1.0 2017-01-02  1.0  3  train  foo
+2  1.0 2017-01-02  1.0  3   test  foo
+3  1.0 2017-01-02  1.0  3  train  foo
+</code></pre> 
+ <p>有指定<code>dtypes</code>，参考以下示例代码 - </p> 
+ <pre><code class="lang-python">runfile('C:/Users/Administrator/.spyder-py3/temp.py', wdir='C:/Users/Administrator/.spyder-py3')
+A           float64
+B    datetime64[ns]
+C           float32
+D             int32
+E          category
+F            object
+dtype: object
+</code></pre> 
+ <p>执行上面示例代码后，输出结果如下 - </p> 
+ <pre><code class="lang-shell">runfile('C:/Users/Administrator/.spyder-py3/temp.py', wdir='C:/Users/Administrator/.spyder-py3')
+A           float64
+B    datetime64[ns]
+C           float32
+D             int32
+E          category
+F            object
+dtype: object
+</code></pre> 
+ <p>如果使用IPython，则会自动启用列名(以及公共属性)的选项完成。 以下是将要完成的属性的一个子集：</p> 
+ <pre><code class="lang-python">In [13]: df2.&lt;TAB&gt;
+df2.A                  df2.bool
+df2.abs                df2.boxplot
+df2.add                df2.C
+df2.add_prefix         df2.clip
+df2.add_suffix         df2.clip_lower
+df2.align              df2.clip_upper
+df2.all                df2.columns
+df2.any                df2.combine
+df2.append             df2.combine_first
+df2.apply              df2.compound
+df2.applymap           df2.consolidate
+df2.D
+</code></pre> 
+ <p>可以看到，列<code>A</code>，<code>B</code>，<code>C</code>和<code>D</code>自动标签完成。<code>E</code>也在一样。其余的属性为了简洁而被截短。</p> 
+ <h2 id="h2-u67E5u770Bu6570u636E"><a name="查看数据" class="reference-link"></a><span class="header-link octicon octicon-link"></span>查看数据</h2>
+ <p>查看框架的顶部和底部的数据行。参考以下示例代码 - </p> 
+ <pre><code class="lang-python">import pandas as pd
+import numpy as np
+
+dates = pd.date_range('20170101', periods=7)
+df = pd.DataFrame(np.random.randn(7,4), index=dates, columns=list('ABCD'))
+print(df.head())
+print("--------------" * 10)
+print(df.tail(3))
+</code></pre> 
+ <p>执行上面示例代码后，输出结果如下 - </p> 
+ <pre><code class="lang-shell">runfile('C:/Users/Administrator/.spyder-py3/temp.py', wdir='C:/Users/Administrator/.spyder-py3')
+                   A         B         C         D
+2017-01-01 -0.520856 -0.555019 -2.286424  1.745681
+2017-01-02  1.114030  0.861933  0.795958  0.420670
+2017-01-03 -0.343605 -0.937356  0.052693 -0.540735
+2017-01-04  1.587684 -0.743756  0.021738 -0.702190
+2017-01-05  1.243403  0.930299  0.234343  1.604182
+------------------------------------------------------------
+                   A         B         C         D
+2017-01-05  1.243403  0.930299  0.234343  1.604182
+2017-01-06 -0.087004 -0.368055  1.434022  0.464193
+2017-01-07 -1.248981  0.973724 -0.288384 -0.577388
+</code></pre> 
+ <p>显示索引，列和底层numpy数据，参考以下代码 - </p> 
+ <pre><code class="lang-python">import pandas as pd
+import numpy as np
+
+dates = pd.date_range('20170101', periods=7)
+df = pd.DataFrame(np.random.randn(7,4), index=dates, columns=list('ABCD'))
+print("index is :" )
+print(df.index)
+print("columns is :" )
+print(df.columns)
+print("values is :" )
+print(df.values)
+</code></pre> 
+ <p>执行上面示例代码后，输出结果如下 - </p> 
+ <pre><code class="lang-shell">runfile('C:/Users/Administrator/.spyder-py3/temp.py', wdir='C:/Users/Administrator/.spyder-py3')
+index is :
+DatetimeIndex(['2017-01-01', '2017-01-02', '2017-01-03', '2017-01-04',
+               '2017-01-05', '2017-01-06', '2017-01-07'],
+              dtype='datetime64[ns]', freq='D')
+columns is :
+Index(['A', 'B', 'C', 'D'], dtype='object')
+values is :
+[[ 2.23820398  0.18440123  0.08039084 -0.27751926]
+ [-0.12335513  0.36641304 -0.28617579  0.34383109]
+ [-0.85403491  0.63876989  1.26032173 -1.27382333]
+ [-0.07262661 -0.01788962  0.28748668  1.12715561]
+ [-1.14293392 -0.88263364  0.72250762 -1.64051326]
+ [ 0.41864083  0.40545953 -0.14591541 -0.57168728]
+ [ 1.01383531 -0.22793823 -0.44045634  1.04799829]]
+</code></pre> 
+ <p>描述显示数据的快速统计摘要，参考以下示例代码 - </p> 
+ <pre><code class="lang-python">import pandas as pd
+import numpy as np
+
+dates = pd.date_range('20170101', periods=7)
+df = pd.DataFrame(np.random.randn(7,4), index=dates, columns=list('ABCD'))
+print(df.describe())
+</code></pre> 
+ <p>执行上面示例代码后，输出结果如下 - </p> 
+ <pre><code class="lang-shell">runfile('C:/Users/Administrator/.spyder-py3/temp.py', wdir='C:/Users/Administrator/.spyder-py3')
+              A         B         C         D
+count  7.000000  7.000000  7.000000  7.000000
+mean  -0.675425 -0.257835  0.144049  0.275621
+std    1.697957  0.793953  1.301520  1.412291
+min   -2.595040 -1.200401 -1.230538 -0.976166
+25%   -1.992393 -0.723464 -0.897041 -0.800919
+50%   -1.050666 -0.445612  0.004719 -0.705840
+75%    0.592677  0.068574  0.874195  1.398337
+max    1.717166  1.150948  2.279856  2.416514
+</code></pre> 
+ <p>调换数据，参考以下示例代码 - </p> 
+ <pre><code class="lang-python">import pandas as pd
+import numpy as np
+
+dates = pd.date_range('20170101', periods=6)
+df = pd.DataFrame(np.random.randn(6,4), index=dates, columns=list('ABCD'))
+print(df.T)
+</code></pre> 
+ <p>执行上面示例代码后，输出结果如下 - </p> 
+ <pre><code class="lang-shell">runfile('C:/Users/Administrator/.spyder-py3/temp.py', wdir='C:/Users/Administrator/.spyder-py3')
+   2017-01-01  2017-01-02  2017-01-03  2017-01-04  2017-01-05  2017-01-06
+A    0.932454   -2.148503    1.398975    1.565676   -0.167527   -0.242041
+B    0.584585    1.373330   -0.069801   -0.102857    1.286432   -0.703491
+C   -0.345119   -0.680955    1.686750    1.184996    0.016170   -0.663963
+D    0.431751    0.444830   -1.524739    0.040007    0.220172    1.423627
+</code></pre> 
+ <p>通过轴排序，参考以下示例程序 - </p> 
+ <pre><code class="lang-python">import pandas as pd
+import numpy as np
+
+dates = pd.date_range('20170101', periods=6)
+df = pd.DataFrame(np.random.randn(6,4), index=dates, columns=list('ABCD'))
+print(df.sort_index(axis=1, ascending=False))
+`
+</code></pre> 
+ <p>执行上面示例代码后，输出结果如下 - </p> 
+ <pre><code class="lang-shell">runfile('C:/Users/Administrator/.spyder-py3/temp.py', wdir='C:/Users/Administrator/.spyder-py3')
+                   D         C         B         A
+2017-01-01  0.426359  2.542352 -0.324047  0.418973
+2017-01-02 -0.834625 -1.356709  0.150744 -1.690500
+2017-01-03 -0.018274  0.900801  1.072851  0.149830
+2017-01-04 -1.075027 -0.889379 -0.663223 -1.404002
+2017-01-05 -1.273966 -1.335761 -1.356561 -1.135199
+2017-01-06 -1.590793  0.693430 -0.504164  0.143386
+</code></pre> 
+ <p>按值排序，参考以下示例程序 - </p> 
+ <pre><code class="lang-python">import pandas as pd
+import numpy as np
+
+dates = pd.date_range('20170101', periods=6)
+df = pd.DataFrame(np.random.randn(6,4), index=dates, columns=list('ABCD'))
+print(df.sort_values(by='B'))
+`
+</code></pre> 
+ <p>执行上面示例代码后，输出结果如下 - </p> 
+ <pre><code class="lang-shell">                   A         B         C         D
+2017-01-06  0.764517 -1.526019  0.400456 -0.182082
+2017-01-05 -0.177845 -1.269836 -0.534676  0.796666
+2017-01-04 -0.981485 -0.082572 -1.272123  0.508929
+2017-01-02 -0.290117  0.053005 -0.295628 -0.346965
+2017-01-03  0.941131  0.799280  2.054011 -0.684088
+2017-01-01  0.597788  0.892008  0.903053 -0.821024
+</code></pre> 
+ <h2 id="h2-u9009u62E9u533Au5757"><a name="选择区块" class="reference-link"></a><span class="header-link octicon octicon-link"></span>选择区块</h2>
+ <blockquote> 
+  <p>注意虽然用于选择和设置的标准Python/Numpy表达式是直观的，可用于交互式工作，但对于生产代码，但建议使用优化的<em>Pandas</em>数据访问方法<code>.at</code>，<code>.iat</code>，<code>.loc</code>，<code>.iloc</code>和<code>.ix</code>。</p> 
+ </blockquote> 
+ <h3 id="h3-u83B7u53D6"><a name="获取" class="reference-link"></a><span class="header-link octicon octicon-link"></span>获取</h3>
+ <p>选择一列，产生一个系列，相当于<code>df.A</code>，参考以下示例程序 - </p> 
+ <pre><code class="lang-python">import pandas as pd
+import numpy as np
+
+dates = pd.date_range('20170101', periods=6)
+df = pd.DataFrame(np.random.randn(6,4), index=dates, columns=list('ABCD'))
+
+print(df['A'])
+`
+</code></pre> 
+ <p>执行上面示例代码后，输出结果如下 - </p> 
+ <pre><code class="lang-shell">runfile('C:/Users/Administrator/.spyder-py3/temp.py', wdir='C:/Users/Administrator/.spyder-py3')
+2017-01-01    0.317460
+2017-01-02   -0.933726
+2017-01-03    0.167860
+2017-01-04    0.816184
+2017-01-05   -0.745503
+2017-01-06    0.505319
+Freq: D, Name: A, dtype: float64
+</code></pre> 
+ <p>选择通过<code>[]</code>操作符，选择切片行。参考以下示例程序 - </p> 
+ <pre><code class="lang-python">import pandas as pd
+import numpy as np
+
+dates = pd.date_range('20170101', periods=6)
+df = pd.DataFrame(np.random.randn(6,4), index=dates, columns=list('ABCD'))
+
+print(df[0:3])
+
+print("========= 指定选择日期 ========")
+
+print(df['20170102':'20170103'])
+`
+</code></pre> 
+ <p>执行上面示例代码后，输出结果如下 - </p> 
+ <pre><code class="lang-shell">runfile('C:/Users/Administrator/.spyder-py3/temp.py', wdir='C:/Users/Administrator/.spyder-py3')
+                   A         B         C         D
+2017-01-01  1.103449  0.926571 -1.649978 -0.309270
+2017-01-02  0.516404 -0.734076 -0.081163 -0.528497
+2017-01-03  0.240356  0.231224 -1.463315 -1.157256
+========= 指定选择日期 ========
+                   A         B         C         D
+2017-01-02  0.516404 -0.734076 -0.081163 -0.528497
+2017-01-03  0.240356  0.231224 -1.463315 -1.157256
+</code></pre> 
+ <h3 id="h3-u6309u6807u7B7Eu9009u62E9"><a name="按标签选择" class="reference-link"></a><span class="header-link octicon octicon-link"></span>按标签选择</h3>
+ <p>使用标签获取横截面，参考以下示例程序 - </p> 
+ <pre><code class="lang-python">import pandas as pd
+import numpy as np
+
+dates = pd.date_range('20170101', periods=6)
+df = pd.DataFrame(np.random.randn(6,4), index=dates, columns=list('ABCD'))
+
+print(df.loc[dates[0]])
+`
+</code></pre> 
+ <p>执行上面示例代码后，输出结果如下 - </p> 
+ <pre><code class="lang-shell">runfile('C:/Users/Administrator/.spyder-py3/temp.py', wdir='C:/Users/Administrator/.spyder-py3')
+A   -0.483292
+B   -0.536987
+C   -0.889947
+D    1.250857
+Name: 2017-01-01 00:00:00, dtype: float64
+</code></pre> 
+ <p>通过标签选择多轴，参考以下示例程序 - </p>   
+ <pre><code class="lang-python">import pandas as pd
+import numpy as np
+
+dates = pd.date_range('20170101', periods=6)
+df = pd.DataFrame(np.random.randn(6,4), index=dates, columns=list('ABCD'))
+
+print(df.loc[:,['A','B']])
+`
+</code></pre> 
+ <p>执行上面示例代码后，输出结果如下 - </p> 
+ <pre><code class="lang-shell">                   A         B
+2017-01-01  0.479048 -0.105106
+2017-01-02  0.172920  0.086570
+2017-01-03 -1.302485 -0.593550
+2017-01-04 -0.595438  1.304054
+2017-01-05  0.154267  1.336219
+2017-01-06 -0.341204  0.781300
+</code></pre> 
+ <p>显示标签切片，包括两个端点，参考以下示例程序 - </p> 
+ <pre><code class="lang-python">import pandas as pd
+import numpy as np
+
+dates = pd.date_range('20170101', periods=6)
+df = pd.DataFrame(np.random.randn(6,4), index=dates, columns=list('ABCD'))
+
+print(df.loc['20170102':'20170104',['A','B']])
+`
+</code></pre> 
+ <p>执行上面示例代码后，输出结果如下 - </p> 
+ <pre><code class="lang-shell">                   A         B
+2017-01-02  1.062995 -0.108277
+2017-01-03  1.962106 -0.294664
+2017-01-04 -0.128576  0.717738
+</code></pre> 
+ <p>减少返回对象的尺寸(大小)，参考以下示例程序 - </p> 
+ <pre><code class="lang-python">import pandas as pd
+import numpy as np
+
+dates = pd.date_range('20170101', periods=6)
+df = pd.DataFrame(np.random.randn(6,4), index=dates, columns=list('ABCD'))
+
+print(df.loc['20170102',['A','B']])
+`
+</code></pre> 
+ <p>执行上面示例代码后，输出结果如下 - </p> 
+ <pre><code class="lang-shell">A    0.252749
+B    0.119747
+Name: 2017-01-02 00:00:00, dtype: float64
+</code></pre> 
+ <p>获得标量值，参考以下示例程序 - </p> 
+ <pre><code class="lang-python">import pandas as pd
+import numpy as np
+
+dates = pd.date_range('20170101', periods=6)
+df = pd.DataFrame(np.random.randn(6,4), index=dates, columns=list('ABCD'))
+
+print(df.loc[dates[0],'A'])
+`
+</code></pre> 
+ <p>执行上面示例代码后，输出结果如下 - </p> 
+ <pre><code class="lang-shell">-0.0839903627822
+</code></pre> 
+ <p>快速访问标量(等同于先前的方法)，参考以下示例程序 - </p> 
+ <pre><code class="lang-python">import pandas as pd
+import numpy as np
+
+dates = pd.date_range('20170101', periods=6)
+df = pd.DataFrame(np.random.randn(6,4), index=dates, columns=list('ABCD'))
+
+print(df.at[dates[0],'A'])
+`
+</code></pre> 
+ <p>执行上面示例代码后，输出结果如下 - </p> 
+ <pre><code class="lang-shell">-0.0839903627822
+</code></pre> 
+ <h2 id="h2-u901Au8FC7u4F4Du7F6Eu9009u62E9"><a name="通过位置选择" class="reference-link"></a><span class="header-link octicon octicon-link"></span>通过位置选择</h2>
+ <p>通过传递的整数的位置选择，参考以下示例程序 - </p> 
+ <pre><code class="lang-python">import pandas as pd
+import numpy as np
+
+dates = pd.date_range('20170101', periods=6)
+df = pd.DataFrame(np.random.randn(6,4), index=dates, columns=list('ABCD'))
+
+print(df.iloc[3])
+`
+</code></pre> 
+ <p>执行上面示例代码后，输出结果如下 - </p> 
+ <pre><code class="lang-shell">A    0.944506
+B    1.035781
+C    0.421373
+D    0.017660
+Name: 2017-01-04 00:00:00, dtype: float64
+</code></pre> 
+ <p>通过整数切片，类似于<em>numpy/python</em>，参考以下示例程序 - </p> 
+ <pre><code class="lang-python">import pandas as pd
+import numpy as np
+
+dates = pd.date_range('20170101', periods=6)
+df = pd.DataFrame(np.random.randn(6,4), index=dates, columns=list('ABCD'))
+
+print(df.iloc[3:5,0:2])
+`
+</code></pre> 
+ <p>执行上面示例代码后，输出结果如下 - </p> 
+ <pre><code class="lang-shell">                   A         B
+2017-01-04 -1.617068  0.548090
+2017-01-05 -0.864247  0.419743
+</code></pre> 
+ <p>通过整数位置的列表，类似于<em>numpy/python</em>样式，参考以下示例程序 - </p> 
+ <pre><code class="lang-python">import pandas as pd
+import numpy as np
+
+dates = pd.date_range('20170101', periods=6)
+df = pd.DataFrame(np.random.randn(6,4), index=dates, columns=list('ABCD'))
+
+print(df.iloc[[1,2,4],[0,2]])
+`
+</code></pre> 
+ <p>执行上面示例代码后，输出结果如下 - </p> 
+ <pre><code class="lang-shell">                   A         C
+2017-01-02  0.085091  0.568128
+2017-01-03  0.729076 -0.451151
+2017-01-05 -1.281975 -0.190119
+</code></pre> 
+ <p>明确切片行，参考以下示例程序 - </p> 
+ <pre><code class="lang-python">import pandas as pd
+import numpy as np
+
+dates = pd.date_range('20170101', periods=6)
+df = pd.DataFrame(np.random.randn(6,4), index=dates, columns=list('ABCD'))
+
+print(df.iloc[1:3,:])
+`
+</code></pre> 
+ <p>执行上面示例代码后，输出结果如下 - </p> 
+ <pre><code class="lang-shell">                   A         B         C         D
+2017-01-02 -1.123970 -0.010969 -1.076657 -0.538908
+2017-01-03 -0.314408  0.004415 -0.356924  0.337539
+</code></pre> 
+ <p>明确切片列，参考以下示例程序 - </p> 
+ <pre><code class="lang-python">import pandas as pd
+import numpy as np
+
+dates = pd.date_range('20170101', periods=6)
+df = pd.DataFrame(np.random.randn(6,4), index=dates, columns=list('ABCD'))
+
+print(df.iloc[:,1:3])
+`
+</code></pre> 
+ <p>执行上面示例代码后，输出结果如下 - </p> 
+ <pre><code class="lang-shell">                   B         C
+2017-01-01  0.323663  1.027599
+2017-01-02 -0.176624 -0.959683
+2017-01-03  0.689698  0.622540
+2017-01-04  1.864511  1.023157
+2017-01-05  0.964123  2.062503
+2017-01-06 -0.375143  0.231328
+</code></pre> 
+ <p>要明确获取值，参考以下示例程序 - </p> 
+ <pre><code class="lang-python">import pandas as pd
+import numpy as np
+
+dates = pd.date_range('20170101', periods=6)
+df = pd.DataFrame(np.random.randn(6,4), index=dates, columns=list('ABCD'))
+
+print(df.iloc[1,1])
+`
+</code></pre> 
+ <p>执行上面示例代码后，输出结果如下 - </p> 
+ <pre><code class="lang-shell">0.829950900219
+</code></pre> 
+ <p>要快速访问标量(等同于先前的方法)，参考以下示例程序 - </p> 
+ <pre><code class="lang-python">import pandas as pd
+import numpy as np
+
+dates = pd.date_range('20170101', periods=6)
+df = pd.DataFrame(np.random.randn(6,4), index=dates, columns=list('ABCD'))
+
+print(df.iat[1,1])
+`
+</code></pre> 
+ <p>执行上面示例代码后，输出结果如下 - </p> 
+ <pre><code class="lang-shell">-0.170996002652
+</code></pre> 
+ <h3 id="h3-u5E03u5C14u7D22u5F15"><a name="布尔索引" class="reference-link"></a><span class="header-link octicon octicon-link"></span>布尔索引</h3>
+ <p>使用单列的值来选择数据，参考以下示例程序 - </p> 
+ <pre><code class="lang-python">import pandas as pd
+import numpy as np
+
+dates = pd.date_range('20170101', periods=6)
+df = pd.DataFrame(np.random.randn(6,4), index=dates, columns=list('ABCD'))
+
+print(df[df.A &gt; 0])
+`
+</code></pre> 
+ <p>执行上面示例代码后，输出结果如下 - </p> 
+ <pre><code class="lang-shell">                   A         B         C         D
+2017-01-03  0.276486 -1.003779  0.721863 -0.558061
+2017-01-04  1.177206 -0.464778 -0.116442 -0.385712
+2017-01-06  0.846665 -1.398207 -0.145356  0.924342
+</code></pre> 
+ <p>从满足布尔条件的DataFrame中选择值。，参考以下示例程序 - </p> 
+ <pre><code class="lang-python">import pandas as pd
+import numpy as np
+
+dates = pd.date_range('20170101', periods=6)
+df = pd.DataFrame(np.random.randn(6,4), index=dates, columns=list('ABCD'))
+
+print(df[df &gt; 0])
+`
+</code></pre> 
+ <p>执行上面示例代码后，输出结果如下 - </p> 
+ <pre><code class="lang-shell">                   A         B         C         D
+2017-01-01       NaN  1.963213  0.643244  0.945643
+2017-01-02  0.364237  0.917368       NaN       NaN
+2017-01-03  0.702624       NaN  0.088565       NaN
+2017-01-04  1.274313       NaN  2.313910       NaN
+2017-01-05  2.586315  0.588273       NaN  1.482597
+2017-01-06       NaN  0.405928  0.309201       NaN
+</code></pre> 
+ <p>使用<code>isin()</code>方法进行过滤，参考以下示例程序 - </p> 
+ <pre><code class="lang-python">import pandas as pd
+import numpy as np
+
+dates = pd.date_range('20170101', periods=6)
+df = pd.DataFrame(np.random.randn(6,4), index=dates, columns=list('ABCD'))
+
+df2 = df.copy()
+df2['E'] = ['one', 'one','two','three','four','three']
+
+print(df2)
+
+print("============= start to filter =============== ")
+
+print(df2[df2['E'].isin(['two','four'])])
+
+`
+</code></pre> 
+ <p>执行上面示例代码后，输出结果如下 - </p> 
+ <pre><code class="lang-shell">                   A         B         C         D      E
+2017-01-01  0.723399 -0.369247  0.863941 -1.910875    one
+2017-01-02 -0.047573 -0.609780  2.130650 -0.019281    one
+2017-01-03 -0.566122 -0.850374 -0.031516  0.362023    two
+2017-01-04  0.903819 -0.513673  0.118850 -0.351811  three
+2017-01-05 -0.485232 -0.864457  1.396835 -1.696083   four
+2017-01-06  0.272145 -0.644449 -1.319063 -0.201354  three
+============= start to filter =============== 
+                   A         B         C         D     E
+2017-01-03 -0.566122 -0.850374 -0.031516  0.362023   two
+2017-01-05 -0.485232 -0.864457  1.396835 -1.696083  four
+</code></pre>
+ <br>      
+</div></body></html>

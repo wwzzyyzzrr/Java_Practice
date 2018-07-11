@@ -1,0 +1,40 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Java9 Process API</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>在负责控制和管理操作系统进程的Java 9 Process API中已经有了相当大的改进。 ProcessHandle类提供进程本机进程ID，开始时间，累计CPU时间，参数，命令，用户，父进程和子进程。 <code>ProcessHandle</code>类还提供了检查进程活性并销毁进程的方法。 它具有<code>onExit</code>方法，当进程退出时，<code>CompletableFuture</code>类可以异步执行操作。</p> 
+ <p>参考以下实现代码(<em>Tester.java</em>)- </p> 
+ <pre><code class="lang-java">import java.time.ZoneId;
+import java.util.stream.Stream;
+import java.util.stream.Collectors;
+import java.io.IOException;
+
+public class Tester {
+   public static void main(String[] args) throws IOException {
+      ProcessBuilder pb = new ProcessBuilder("notepad.exe");
+      String np = "Not Present";
+      Process p = pb.start();
+      ProcessHandle.Info info = p.info();
+      System.out.printf("Process ID : %s%n", p.pid());
+      System.out.printf("Command name : %s%n", info.command().orElse(np));
+      System.out.printf("Command line : %s%n", info.commandLine().orElse(np));
+
+      System.out.printf("Start time: %s%n",
+         info.startInstant().map(i -&gt; i.atZone(ZoneId.systemDefault())
+         .toLocalDateTime().toString()).orElse(np));
+
+      System.out.printf("Arguments : %s%n",
+         info.arguments().map(a -&gt; Stream.of(a).collect(
+         Collectors.joining(" "))).orElse(np));
+
+      System.out.printf("User : %s%n", info.user().orElse(np));
+   } 
+}
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 - </p>   
+ <pre><code class="lang-shell">Process ID : 5800
+Command name : C:\Windows\System32\notepad.exe
+Command line : Not Present
+Start time: 2018-01-04T21:35:03.626
+Arguments : Not Present
+User: administrator
+</code></pre>
+ <br>      
+</div></body></html>

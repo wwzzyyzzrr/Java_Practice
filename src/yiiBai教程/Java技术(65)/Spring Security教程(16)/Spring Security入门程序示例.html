@@ -1,0 +1,318 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Spring Security入门程序示例</h1><div style="width:100%;float:left;" class="article-content">   
+ <div> 
+  <div>
+    在本教程中，我们将向您展示如何通过Spring&nbsp;Security使用Spring&nbsp;MVC的Web应用程序来集成一个URL访问。使用&nbsp;Spring&nbsp;Security&nbsp;来实现一个“admin”页面的内容后，验证用户输入正确的“用户名”和“密码”。 
+  </div> 
+ </div> 
+ <div> 
+  <p> 使用到的技术包括： </p> 
+  <blockquote> 
+   <ol> 
+    <li> Spring 3.2.8.RELEASE </li> 
+    <li> Spring Security 3.2.3.RELEASE </li> 
+    <li> Eclipse 4.2 </li> 
+    <li> JDK 1.6 </li> 
+    <li> Maven 3 </li> 
+   </ol> 
+  </blockquote> 
+  <div>
+    注意：
+   <br> 
+   <div>
+     Spring&nbsp;Security&nbsp;3.0&nbsp;需要&nbsp;Java5.0&nbsp;或更高版本的运行环境，由于在这一系列教程中使用的是Maven来创建工程，如果不了解 Mave 如何使用的，可以参考：
+    <a target="_blank" href="http://www.yiibai.com/maven/create-a-maven-web-project-with-eclipse.html">http://www.yiibai.com/maven/create-a-maven-web-project-with-eclipse.html</a> 
+   </div> 
+  </div> 
+ </div> 
+ <div> 
+  <h2> 1. 目录结构 </h2> 
+  <div>
+    下面先来看看本教程的最终目录结构，如下图所示 -
+   <br> 
+   <img src="/uploads/tutorial/20160817/160qh14035_1_b7.png" alt="">
+   <br> 
+  </div> 
+  <h2> 2. Spring Security依懒 </h2> 
+  <p> 要使用 Spring security 你需要&nbsp;spring-security-web&nbsp;和&nbsp;spring-security-config. </p> 
+  <div>
+    pom.xml 
+  </div> 
+  <pre>&lt;properties&gt;
+		&lt;jdk.version&gt;1.6&lt;/jdk.version&gt;
+		&lt;spring.version&gt;3.2.8.RELEASE&lt;/spring.version&gt;
+		&lt;spring.security.version&gt;3.2.3.RELEASE&lt;/spring.security.version&gt;
+		&lt;jstl.version&gt;1.2&lt;/jstl.version&gt;
+	&lt;/properties&gt;
+
+	&lt;dependencies&gt;
+
+		&lt;!-- Spring dependencies --&gt;
+		&lt;dependency&gt;
+			&lt;groupId&gt;org.springframework&lt;/groupId&gt;
+			&lt;artifactId&gt;spring-core&lt;/artifactId&gt;
+			&lt;version&gt;${spring.version}&lt;/version&gt;
+		&lt;/dependency&gt;
+
+		&lt;dependency&gt;
+			&lt;groupId&gt;org.springframework&lt;/groupId&gt;
+			&lt;artifactId&gt;spring-web&lt;/artifactId&gt;
+			&lt;version&gt;${spring.version}&lt;/version&gt;
+		&lt;/dependency&gt;
+
+		&lt;dependency&gt;
+			&lt;groupId&gt;org.springframework&lt;/groupId&gt;
+			&lt;artifactId&gt;spring-webmvc&lt;/artifactId&gt;
+			&lt;version&gt;${spring.version}&lt;/version&gt;
+		&lt;/dependency&gt;
+
+		&lt;!-- Spring Security --&gt;
+		&lt;dependency&gt;
+			&lt;groupId&gt;org.springframework.security&lt;/groupId&gt;
+			&lt;artifactId&gt;spring-security-web&lt;/artifactId&gt;
+			&lt;version&gt;${spring.security.version}&lt;/version&gt;
+		&lt;/dependency&gt;
+
+		&lt;dependency&gt;
+			&lt;groupId&gt;org.springframework.security&lt;/groupId&gt;
+			&lt;artifactId&gt;spring-security-config&lt;/artifactId&gt;
+			&lt;version&gt;${spring.security.version}&lt;/version&gt;
+		&lt;/dependency&gt;
+
+		&lt;!-- jstl for jsp page --&gt;
+		&lt;dependency&gt;
+			&lt;groupId&gt;jstl&lt;/groupId&gt;
+			&lt;artifactId&gt;jstl&lt;/artifactId&gt;
+			&lt;version&gt;${jstl.version}&lt;/version&gt;
+		&lt;/dependency&gt;
+
+	&lt;/dependencies&gt;</pre> 
+  <h2> 4. Spring MVC Web应用程序 </h2> 
+  <p> 一个简单的控制器： </p> 
+  <ol> 
+   <li> 如果URL =&nbsp;/welcome&nbsp;或 &nbsp;/&nbsp;, 返回 hello 页面； </li> 
+   <li> 如果&nbsp;URL =&nbsp;/admin&nbsp;,&nbsp;返回&nbsp;admin&nbsp;页面； </li> 
+  </ol> 
+  <div>
+    稍后，我们将学习如何使用Spring&nbsp;Security&nbsp;实现&nbsp;“/admin”&nbsp;网址页面显示用户登录表单。 
+  </div> 
+  <div>
+    HelloController.java 
+  </div> 
+  <pre>package com.yiibai.web.controller;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
+
+@Controller
+public class HelloController {
+
+	@RequestMapping(value = { "/", "/welcome**" }, method = RequestMethod.GET)
+	public ModelAndView welcomePage() {
+
+		ModelAndView model = new ModelAndView();
+		model.addObject("title", "Spring Security Hello World");
+		model.addObject("message", "This is welcome page!");
+		model.setViewName("hello");
+		return model;
+
+	}
+
+	@RequestMapping(value = "/admin**", method = RequestMethod.GET)
+	public ModelAndView adminPage() {
+
+		ModelAndView model = new ModelAndView();
+		model.addObject("title", "Spring Security Hello World");
+		model.addObject("message", "This is protected page!");
+		model.setViewName("admin");
+
+		return model;
+
+	}
+
+}</pre> 
+  <p> 需要用到两个JSP 页面，如下所示 -&nbsp; </p> 
+  <div> 
+   <strong>hello.jsp</strong> 
+  </div> 
+  <pre>&lt;%@page session="false"%&gt;
+&lt;html&gt;
+&lt;body&gt;
+	&lt;h1&gt;标题: ${title}&lt;/h1&gt;	
+	&lt;h1&gt;消息 : ${message}&lt;/h1&gt;	
+&lt;/body&gt;
+&lt;/html&gt;</pre> 
+  <div> 
+   <strong>admin.jsp</strong> 
+  </div> 
+  <pre>&lt;%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%&gt;
+&lt;%@page session="true"%&gt;
+&lt;html&gt;
+&lt;body&gt;
+	&lt;h1&gt;标题: ${title}&lt;/h1&gt;
+	&lt;h1&gt;消息 : ${message}&lt;/h1&gt;
+
+	&lt;c:if test="${pageContext.request.userPrincipal.name != null}"&gt;
+	   &lt;h2&gt;欢迎: ${pageContext.request.userPrincipal.name} 
+           | &lt;a href="&lt;c:url value="/j_spring_security_logout" /&gt;" &gt; Logout&lt;/a&gt;&lt;/h2&gt;  
+	&lt;/c:if&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre> 
+  <div> 
+   <strong>mvc-dispatcher-servlet.xml</strong> 
+  </div> 
+  <pre>&lt;beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+        http://www.springframework.org/schema/beans     
+        http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+        http://www.springframework.org/schema/context 
+        http://www.springframework.org/schema/context/spring-context-3.0.xsd"&gt;
+
+	&lt;context:component-scan base-package="com.yiibai.*" /&gt;
+
+	&lt;bean
+	  class="org.springframework.web.servlet.view.InternalResourceViewResolver"&gt;
+	  &lt;property name="prefix"&gt;
+		&lt;value&gt;/WEB-INF/pages/&lt;/value&gt;
+	  &lt;/property&gt;
+	  &lt;property name="suffix"&gt;
+		&lt;value&gt;.jsp&lt;/value&gt;
+	  &lt;/property&gt;
+	&lt;/bean&gt;
+
+&lt;/beans&gt;</pre> 
+  <h2> 5. Spring Security : 用户身份验证 </h2> 
+  <p> 创建一个 Spring Security XML文件，如下所示 - </p> 
+  <div>
+    spring-security.xml 
+  </div> 
+  <pre>&lt;beans:beans xmlns="http://www.springframework.org/schema/security"
+	xmlns:beans="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	http://www.springframework.org/schema/security
+	http://www.springframework.org/schema/security/spring-security-3.2.xsd"&gt;
+
+	&lt;http auto-config="true"&gt;
+		&lt;intercept-url pattern="/admin**" access="ROLE_USER" /&gt;
+	&lt;/http&gt;
+
+	&lt;authentication-manager&gt;
+	  &lt;authentication-provider&gt;
+	    &lt;user-service&gt;
+		&lt;user name="yiibai" password="123456" authorities="ROLE_USER" /&gt;
+	    &lt;/user-service&gt;
+	  &lt;/authentication-provider&gt;
+	&lt;/authentication-manager&gt;
+
+&lt;/beans:beans&gt;</pre> 
+  <div>
+    这里要说明的是：只有用户“yiibai”才能允许访问URL：/admin 。 
+  </div> 
+  <h2> 6. 集成Spring Security </h2> 
+  <div>
+    通过Spring&nbsp;Security使用Spring&nbsp;MVC&nbsp;Web应用程序集成，只是声明&nbsp;DelegatingFilterProxy&nbsp;作为一个Servlet过滤器来拦截任何传入的请求。 
+  </div> 
+  <div>
+    web.xml 
+  </div>   
+  <pre>&lt;web-app id="WebApp_ID" version="2.4"
+	xmlns="http://java.sun.com/xml/ns/j2ee" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee 
+	http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"&gt;
+
+	&lt;display-name&gt;Spring MVC Application&lt;/display-name&gt;
+
+	&lt;!-- Spring MVC --&gt;
+	&lt;servlet&gt;
+		&lt;servlet-name&gt;mvc-dispatcher&lt;/servlet-name&gt;
+		&lt;servlet-class&gt;org.springframework.web.servlet.DispatcherServlet
+		&lt;/servlet-class&gt;
+		&lt;load-on-startup&gt;1&lt;/load-on-startup&gt;
+	&lt;/servlet&gt;
+	&lt;servlet-mapping&gt;
+		&lt;servlet-name&gt;mvc-dispatcher&lt;/servlet-name&gt;
+		&lt;url-pattern&gt;/&lt;/url-pattern&gt;
+	&lt;/servlet-mapping&gt;
+
+	&lt;listener&gt;
+		&lt;listener-class&gt;org.springframework.web.context.ContextLoaderListener
+		&lt;/listener-class&gt;
+	&lt;/listener&gt;
+
+        &lt;!-- Loads Spring Security config file --&gt;
+	&lt;context-param&gt;
+		&lt;param-name&gt;contextConfigLocation&lt;/param-name&gt;
+		&lt;param-value&gt;
+			/WEB-INF/spring-security.xml
+		&lt;/param-value&gt;
+	&lt;/context-param&gt;
+
+	&lt;!-- Spring Security --&gt;
+	&lt;filter&gt;
+		&lt;filter-name&gt;springSecurityFilterChain&lt;/filter-name&gt;
+		&lt;filter-class&gt;org.springframework.web.filter.DelegatingFilterProxy
+		&lt;/filter-class&gt;
+	&lt;/filter&gt;
+
+	&lt;filter-mapping&gt;
+		&lt;filter-name&gt;springSecurityFilterChain&lt;/filter-name&gt;
+		&lt;url-pattern&gt;/*&lt;/url-pattern&gt;
+	&lt;/filter-mapping&gt;
+
+&lt;/web-app&gt;</pre> 
+  <h2> 7. 示例 </h2> 
+  <div>
+    首先要创建一个 Maven 的 j2ee 工程，然后编写代码完成后，再发布 Maven 工程。按照如下操作，在工程名称：spsecurity-helloworld-xml 上右键，选择 Run As -&gt; Maven install 如下图中所示： 
+  </div> 
+  <div> 
+   <img src="/uploads/tutorial/20160817/160qh14137_1_n2.png" alt=""> 
+  </div> 
+  <div> 
+   <br> 
+  </div> 
+  <div>
+    Eclipse 开始下载相关联的依懒包，如下图中所示 -&nbsp;
+   <br> 
+   <img src="/uploads/tutorial/20160817/160qh14159_1_4k.png" alt="">
+   <br> 
+  </div> 
+  <div> 
+   <br> 
+  </div> 
+  <div>
+    全部就这些，但是等等...登录表单哪来？不用担心，如果不定制定义登录表单，Spring会自动创建一个简单的登录表单。 
+  </div> 
+  <div>
+    定义登录表单
+   <br> 请阅读 “
+   <a target="_blank" href="http://www.yiibai.com/spring-security/spring-security-form-login-example.html">Spring Security登录实例</a>” 以了解如何创建Spring&nbsp;Security中的自定义登录表单。 
+  </div> 
+  <p> 1. 欢迎页面 –&nbsp;http://localhost:8080/spsecurity-helloworld-xml/welcome<br> <img src="/uploads/tutorial/20160817/160qh14221_1_455.png" alt=""> </p> 
+  <p> 2.&nbsp;现在尝试访问&nbsp;http://localhost:8080/spsecurity-helloworld-xml/admin&nbsp;页面，Spring&nbsp;Security将拦截请求并重定向到&nbsp;/spring_security_login，并显示一个预定义的登录表单。<br> <img src="/uploads/tutorial/20160817/160qh14242_1_648.png" alt=""> </p> 
+  <p> 3.&nbsp;如果用户名和密码不正确，那么将会显示错误信息，并且&nbsp;Spring&nbsp;将重定向到以下网址：/spring_security_login?login_error.<br> <img src="/uploads/tutorial/20160817/160qh14257_1_c6.png" alt=""> </p> 
+  <div>
+    4.如果用户名和密码都正确，Spring将请求重定向到原来请求的URL并显示该网页内容。
+   <br> 
+   <img src="/uploads/tutorial/20160817/160qh14315_1_4o.png" alt="">
+   <br> 
+  </div> 
+  <h2> 下载源代码 </h2> 
+  <div>
+    请点击以下链接下载示例代码 –&nbsp;
+   <a target="_blank" href="https://share.weiyun.com/4ec5130e6f27691214a5e6ac1d3eddb8">spsecurity-helloworld-xml.zip</a>&nbsp;(9 KB) 
+  </div> 
+  <h2> 参考 </h2> 
+  <ol> 
+   <li> <a target="_blank" href="http://projects.spring.io/spring-security/">Spring Security官方网站</a> </li> 
+   <li> <a target="_blank" href="http://www.yiibai.com/spring_mvc/">Spring 3 MVC hello world实例</a> </li> 
+   <li> <a target="_blank" href="http://www.yiibai.com/spring-security/spring-security-form-login-example.html">Spring Security登录实例(身份验证)</a> </li> 
+  </ol> 
+ </div>
+ <br>      
+</div></body></html>

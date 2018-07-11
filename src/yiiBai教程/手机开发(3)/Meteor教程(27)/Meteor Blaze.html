@@ -1,0 +1,202 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Meteor Blaze</h1><div style="width:100%;float:left;" class="article-content">   
+ <div> 
+  <div>
+    Blaze是Meteor&nbsp;软件包用于构建现场反应模板。 
+  </div> 
+ </div> 
+ <div> 
+  <h2> 
+   <div>
+     Render方法 
+   </div> </h2> 
+  <p style="text-align:justify;"> 这种方法被用于绘制模板到DOM。首先，我们将创建&nbsp;myNewTemplate&nbsp;之后渲染。&nbsp;我们增加&nbsp;myContainer&nbsp;这将用来作为父元素的容器，所以render方法知道在何处呈现我们的模板。 </p> 
+  <p> meteorApp/client/app.html </p> 
+  <pre>&lt;head&gt;
+   &lt;title&gt;meteorApp&lt;/title&gt;
+&lt;/head&gt;
+ 
+&lt;body&gt;
+   &lt;div id = "myContainer"&gt;
+   &lt;/div&gt;
+&lt;/body&gt;
+
+&lt;template name = "myNewTemplate"&gt;
+   &lt;p&gt;Text from my new template...&lt;/p&gt;
+&lt;/template&gt;&nbsp;</pre> 
+  <p style="text-align:justify;"> 下一步，我们将创建渲染功能这将需要两个参数。第一个是将要渲染的模板，第二个是，我们上面提到的父元素。 </p> 
+  <h3> </h3> 
+  <p> meteorApp/client/app.js </p> 
+  <pre>Meteor.startup(function () {
+   if(Meteor.isClient) {
+      var myNewTemplate = Template.myNewTemplate;
+      var myContainer = document.getElementById('myContainer');
+      Blaze.render(myNewTemplate, myContainer);
+   }
+});</pre> 
+  <img src="/uploads/tutorial/20160425/1-1604252155232E.png" alt="">
+  <img src="file://E:/data/youdao/qq24B39E2329F08D9F4C3146A571A415EF/1f586fab86664794b7e4afaa17719e87/clipboard.png">
+  <br> 
+  <h2> 
+   <div>
+     渲染数据 
+   </div> </h2> 
+  <p style="text-align:justify;"> 如果需要被动地传递一些数据，你可以使用 renderWithData 方法。&nbsp;HTML和前面的例子完全相同。 </p> 
+  <h3> </h3> 
+  <p> meteorApp/client/app.html </p> 
+  <pre>&lt;head&gt;
+   &lt;title&gt;meteorApp&lt;/title&gt;
+&lt;/head&gt;
+ 
+&lt;body&gt;
+   &lt;div id = "myContainer"&gt;
+   &lt;/div&gt;
+&lt;/body&gt;
+
+&lt;template name = "myNewTemplate"&gt;
+   &lt;p&gt;Text from my new template...&lt;/p&gt;
+&lt;/template&gt;&nbsp;</pre> 
+  <p style="text-align:justify;"> 我们可以在Meteor.renderWithData方法的第二个参数添加数据。其它两个参数和之前的实例相同，在这个例子中我们的数据将用于记录一些文本的功能。 </p> 
+  <h3> </h3> 
+  <p> meteorApp/client/app.js </p> 
+  <pre>Meteor.startup(function () {
+
+   if(Meteor.isClient) {
+      var myNewTemplate = Template.myNewTemplate;
+		
+      var myData = function() {
+         console.log('Log from the data object...')
+      }
+		
+      var myContainer = document.getElementById('myContainer');
+      Blaze.renderWithData(myNewTemplate, myData, myContainer);
+   }
+	
+});</pre> 
+  <img src="/uploads/tutorial/20160425/1-160425215600b5.png" alt="">
+  <img src="file://E:/data/youdao/qq24B39E2329F08D9F4C3146A571A415EF/37f4d39e0a7544d3b1bf69e6bb60928e/clipboard.png">
+  <br> 
+  <h2> 
+   <div>
+     删除方法 
+   </div> </h2> 
+  <p style="text-align:justify;"> 我们可以添加&nbsp;remove </p> 
+  <p> meteorApp/client/app.html </p> 
+  <pre>&lt;head&gt;
+   &lt;title&gt;meteorApp&lt;/title&gt;
+&lt;/head&gt;
+ 
+&lt;body&gt;
+   &lt;div id = "myContainer"&gt;
+   &lt;/div&gt;
+&lt;/body&gt;
+
+&lt;template name = "myNewTemplate"&gt;
+   &lt;p&gt;Text from my new template...&lt;/p&gt;
+&lt;/template&gt;&nbsp;</pre> 
+  <p style="text-align:justify;"> 在这个例子中，我们将在三秒钟后移除模板。请注意，我们使用&nbsp;Blaze.Remove方法&nbsp;除去模板。 </p> 
+  <p> meteorApp/client/app.js </p> 
+  <pre>Meteor.startup(function () {
+   if(Meteor.isClient) {
+      var myNewTemplate = Template.myNewTemplate;
+      var myContainer = document.getElementById('myContainer');
+      var myRenderedTemplate = Blaze.render(myNewTemplate, myContainer);
+
+      Meteor.setTimeout(function() {
+         Blaze.remove(myRenderedTemplate);}, 3000);
+   }
+});</pre> 
+  <div style="background-color:inherit;">
+    下表显示了可使用的其他方法。 
+  </div> 
+  <table border="1" cellpadding="2" cellspacing="0" style="font-size:14px;color:#313131;font-family:Verdana, Geneva, Tahoma,  Helvetica, background-color:inherit;"> 
+   <tbody> 
+    <tr> 
+     <th style="border:1px solid #999999;background-color:#EEEEEE;"> S.No. </th> 
+     <th style="border:1px solid #999999;background-color:#EEEEEE;text-align:center;"> 
+      <div style="background-color:inherit;">
+        方法与细则 
+      </div> </th> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 1 </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>Blaze.getData([elementOrView])</b> </p> 
+      <div style="background-color:inherit;">
+        用于从渲染元素检索数据。 
+      </div> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 2 </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>Blaze.toHTML(templateOrView)</b> </p> 
+      <div style="background-color:inherit;">
+        用于渲染模板或视图字符串。 
+      </div> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 3 </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>Blaze.toHTMLWithData(templateOrView, data)</b> </p> 
+      <div style="background-color:inherit;">
+        用于渲染模板或视图字符串附加数据。 
+      </div> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 4 </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>new Blaze.View([name], renderFunction)</b> </p> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <span style="background-color:inherit;font-size:inherit;color:#313131;line-height:1.5;">用于创建新&nbsp;<span style="color:#000000;font-family:Verdana, Geneva, Tahoma,  Helvetica,;">Blaze<span style="background-color:inherit;">&nbsp;</span></span>反应性<span style="font-family:Verdana, Geneva, Tahoma,  Helvetica,;">的DOM</span>部分。</span>&nbsp; </p> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 5 </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>Blaze.currentView</b> </p> 
+      <div style="background-color:inherit;">
+        用于获取当前视图。 
+      </div> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 6 </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>Blaze.getView([element])</b> </p> 
+      <div style="background-color:inherit;">
+        用于获取当前视图。 
+      </div> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 7 </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>Blaze.With(data, contentFunc)</b> </p> 
+      <div style="background-color:inherit;">
+        用于构造呈现一些内容与上下文的视图。 
+      </div> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 8 </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>Blaze.If(conditionFunc, contentFunc, [elseFunc])</b> </p> 
+      <div style="background-color:inherit;">
+        用于构造呈现一些有条件的内容的视图。 
+      </div> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 9 </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>Blaze.Unless(conditionFunc, contentFunc, [elseFunc])</b> </p> 
+      <div style="background-color:inherit;">
+        用于构造呈现一些有条件的内容(反转Blaze.if)的视图。 
+      </div> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 10 </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>Blaze.Each(argFunc, contentFunc, [elseFunc])</b> </p> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <span style="background-color:inherit;font-size:inherit;color:#313131;line-height:1.5;">用于构建为每个项目<span style="font-family:Verdana, Geneva, Tahoma,  Helvetica,;">呈现</span>&nbsp;<b>contentFunct</b><span style="color:#000000;font-family:Verdana, Geneva, Tahoma,  Helvetica,;">&nbsp;<span style="color:#313131;">的视图</span></span>。</span> </p> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 11 </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>new Blaze.Template([viewName], renderFunction)</b> </p> 
+      <div style="background-color:inherit;">
+        使用名称和内容构建新的Blaze视图。 
+      </div> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 12 </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>Blaze.isTemplate(value)</b> </p> 
+      <div style="background-color:inherit;">
+        如果值是一个模板对象则返回true。 
+      </div> </td> 
+    </tr> 
+   </tbody> 
+  </table> 
+ </div>
+ <br>      
+</div></body></html>

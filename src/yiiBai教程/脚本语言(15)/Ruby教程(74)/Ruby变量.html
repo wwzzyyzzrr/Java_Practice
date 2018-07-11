@@ -1,0 +1,162 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Ruby变量</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>Ruby变量是用于保存在程序中使用的数据的位置。 每个变量都有不同的名称。 这些变量名称基于一些命名约定。 不像其他编程语言，在<a target="_blank" href="http://www.yiibai.com/ruby/" title="Ruby">Ruby</a>中不必先声明变量再使用。 只需要一个前缀来指示它就可以了。</p> 
+ <p>Ruby中有四种类型的变量：</p> 
+ <ul> 
+  <li>局部变量</li>
+  <li>类变量</li>
+  <li>实例变量</li>
+  <li>全局变量</li>
+ </ul> 
+ <h2 id="h2-1-"><a name="1. 局部变量" class="reference-link"></a><span class="header-link octicon octicon-link"></span>1. 局部变量</h2>
+ <p>局部变量名以小写字母或下划线(<code>_</code>)开头。变量可在它的初始化块内或范围内访问。代码块完成后，变量就不在作用域存在了。</p> 
+ <p>当未初始化的局部变量被调用时，它们被解释为对没有参数的方法的调用。</p> 
+ <h2 id="h2-2-"><a name="2. 类变量" class="reference-link"></a><span class="header-link octicon octicon-link"></span>2. 类变量</h2>
+ <p>类变量名以<code>@@</code>符号开头。需要在使用前进行初始化。 类变量属于整个类，可以从类中的任何位置访问。 如果在一个实例中该值将被更改，则它将在每个实例中被改变。</p> 
+ <p>类变量由类的所有后代共享，未初始化的类变量将导致错误。</p> 
+ <p><strong>示例：</strong></p> 
+ <p>创建一个Ruby文件：<em>class-variables.rb</em>，编写以下代码 - </p> 
+ <pre><code class="lang-ruby">#!/usr/bin/ruby   
+
+class States   
+   @@no_of_states=0   
+   def initialize(name)   
+      @states_name=name   
+      @@no_of_states += 1   
+   end   
+   def display()   
+     puts "State name #@state_name"   
+    end   
+    def total_no_of_states()   
+       puts "Total number of states written: #@@no_of_states"   
+    end   
+end   
+
+# Create Objects   
+first=States.new("Assam")   
+second=States.new("Meghalaya")   
+third=States.new("Maharashtra")   
+fourth=States.new("Pondicherry")   
+
+# Call Methods   
+first.total_no_of_states()   
+second.total_no_of_states()   
+third.total_no_of_states()   
+fourth.total_no_of_states()
+</code></pre> 
+ <p>在上面的例子中，<code>@<a target="_blank" href="https://github.com/no_of_states" title="@no_of_states" class="at-link">@no_of_states</a></code>是一个类变量。</p> 
+ <p>执行上面代码，输出结果如下：</p> 
+ <pre><code class="lang-shell">F:\worksp\ruby&gt;ruby class-variables.rb
+Total number of states written: 4
+Total number of states written: 4
+Total number of states written: 4
+Total number of states written: 4
+
+F:\worksp\ruby&gt;
+</code></pre> 
+ <h2 id="h2-3-"><a name="3. 实例变量" class="reference-link"></a><span class="header-link octicon octicon-link"></span>3. 实例变量</h2>
+ <p>实例变量名以<code>@</code>符号开头。 它属于类的一个实例，可以从方法中的类的任何实例访问。 它们只能访问一个特定的类的实例。</p> 
+ <p>它们不需要初始化，未初始化的实例变量的值是：<code>nil</code> 。</p> 
+ <p><strong>示例：</strong></p> 
+ <p>创建一个Ruby文件：<em>instance-variables.rb</em>，编写以下代码 - </p> 
+ <pre><code class="lang-ruby">#!/usr/bin/ruby   
+
+class States   
+   def initialize(name)   
+      @states_name=name   
+   end   
+   def display()   
+      puts "States name #@states_name"   
+    end   
+end   
+
+# Create Objects   
+first=States.new("Hainan")   
+second=States.new("GuangDong")   
+third=States.new("Beijing")   
+fourth=States.new("ShangDong")   
+
+# Call Methods   
+first.display()   
+second.display()   
+third.display()   
+fourth.display()
+</code></pre> 
+ <p>执行上面代码，输出结果如下：</p> 
+ <pre><code class="lang-shell">F:\worksp\ruby&gt;ruby instance-variables.rb
+States name Hainan
+States name GuangDong
+States name Beijing
+States name ShangDong
+
+F:\worksp\ruby&gt;
+</code></pre> 
+ <h2 id="h2-4-"><a name="4. 全局变量" class="reference-link"></a><span class="header-link octicon octicon-link"></span>4. 全局变量</h2>
+ <p>全局变量名以<code>$</code>号开头。在全局范围内可访问，可以从程序中的任何位置访问它。</p> 
+ <p>未初始化的全局变量的值会被初始化为：<code>nil</code>。建议不要使用全局变量，因为它们使程序变得秘密和复杂。</p> 
+ <p>Ruby中有一些预定义的全局变量。</p> 
+ <p><strong>示例：</strong></p> 
+ <p>创建一个Ruby文件：<em>global-variables.rb</em>，编写以下代码 - </p>   
+ <pre><code class="lang-ruby">#!/usr/bin/ruby   
+
+$global_var = "GLOBAL"   
+class One   
+  def display   
+     puts "Global variable in One is #$global_var"   
+  end   
+end   
+class Two   
+  def display   
+     puts "Global variable in Two is #$global_var"   
+  end   
+end   
+
+oneobj = One.new   
+oneobj.display   
+twoobj = Two.new   
+twoobj.display
+</code></pre> 
+ <p>执行上面代码，输出结果如下：</p> 
+ <pre><code class="lang-shell">F:\worksp\ruby&gt;ruby global-variables.rb
+Global variable in One is GLOBAL
+Global variable in Two is GLOBAL
+
+F:\worksp\ruby&gt;
+</code></pre> 
+ <h2 id="h2-u603Bu7ED3"><a name="总结" class="reference-link"></a><span class="header-link octicon octicon-link"></span>总结</h2>
+ <p>以下是上面几种类型变量的概括 - </p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>特性</th> 
+    <th>局部变量</th> 
+    <th>全局变量</th> 
+    <th>实例变量</th> 
+    <th>类变量</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>范围</td> 
+    <td>仅限于初始化块内</td> 
+    <td>全局范围</td> 
+    <td>属于一个类的一个实例</td> 
+    <td>仅限于创建它们的整个类</td> 
+   </tr> 
+   <tr> 
+    <td>命名约定</td> 
+    <td>以小写字母或下划线(<code>_</code>)开头</td> 
+    <td>以<code>$</code>符号开头</td> 
+    <td>以<code>@</code>符号开头</td> 
+    <td>以<code>@@</code>符号开头</td> 
+   </tr> 
+   <tr> 
+    <td>初始化</td> 
+    <td>不需要初始化，未初始化的局部变量被解释为没有参数的方法</td> 
+    <td>不需要初始化，未初始化的全局变量的值为:<code>nil</code>。</td> 
+    <td>不需要初始化,未初始化的实例变量的值为:<code>nil</code>。</td> 
+    <td>需要在使用前进行初始化,未初始化的全局变量会导致错误。</td> 
+   </tr> 
+  </tbody> 
+ </table>
+ <br>      
+</div></body></html>

@@ -1,0 +1,44 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Go panic错误处理实例</h1><div style="width:100%;float:left;" class="article-content">   
+ <p><code>Panic</code>通常意味着事情出乎意料地错了。大多数情况下，使用它来正常运行时不应该出现的错误，或者不准备妥善处理。</p> 
+ <p>在程序中可使用<code>panic</code>来检查意外错误。</p> 
+ <p>如果一个函数返回一个我们不知道如何(或想要)处理的错误值，那么<code>panic</code>的常见用法就是中止。这里有一个例子，如果在创建一个新文件时遇到意外错误。</p> 
+ <p>运行此程序将导致程序出错，打印错误消息和<code>goroutine</code>跟踪，并退出非零状态。</p> 
+ <p>注意，与一些使用异常处理许多错误的语言不同，在Go中，尽可能使用返回值指示错误。</p> 
+ <blockquote> 
+  <p>所有的示例代码，都放在 <code>F:\worksp\golang</code> 目录下。安装Go编程环境请参考：<a target="_blank" href="http://www.yiibai.com/go/go_environment.html">http://www.yiibai.com/go/go_environment.html</a> </p> 
+ </blockquote> 
+ <p><code>panic.go</code>的完整代码如下所示 -</p> 
+ <pre><code class="lang-go">package main
+
+import "os"
+
+func main() {
+
+    // We'll use panic throughout this site to check for
+    // unexpected errors. This is the only program on the
+    // site designed to panic.
+    panic("a problem")
+
+    // A common use of panic is to abort if a function
+    // returns an error value that we don't know how to
+    // (or want to) handle. Here's an example of
+    // `panic`king if we get an unexpected error when creating a new file.
+    _, err := os.Create("/tmp/file")
+    if err != nil {
+        panic(err)
+    }
+}
+</code></pre> 
+ <p>执行上面代码，将得到以下输出结果 - </p>   
+ <pre><code class="lang-go">F:\worksp\golang&gt;go run panic.go
+panic: a problem
+
+goroutine 1 [running]:
+panic(0x4679c0, 0xc042044180)
+        D:/software/golang/src/runtime/panic.go:500 +0x1af
+main.main()
+        F:/worksp/golang/panic.go:10 +0x74
+exit status 2
+</code></pre>
+ <br>      
+</div></body></html>

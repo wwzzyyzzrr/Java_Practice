@@ -1,0 +1,166 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Spring bean配置继承</h1><div style="width:100%;float:left;" class="article-content">   
+ <div> 
+  <div>
+    在 Spring，继承是用为支持bean设置一个 bean 来分享共同的值，属性或配置。 
+  </div> 
+ </div> 
+ <div> 
+  <div>
+    一个子 bean 或继承的bean可以继承其父 bean 的配置，属性和一些属性。另外，子 Bean 允许覆盖继承的值。 
+  </div> 
+  <div>
+    请参见下面的完整的例子来告诉你如何配置 bean 继承在 Spring 中工作。 
+  </div> 
+  <pre>package com.yiibai.common;
+
+public class Customer {
+
+	private int type;
+	private String action;
+	private String Country;
+
+	//...
+
+}</pre> 
+  <div>
+    Bean配置文件 
+  </div> 
+  <pre>&lt;beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-2.5.xsd"&gt;
+
+	&lt;bean id="BaseCustomerMalaysia" class="com.yiibai.common.Customer"&gt;
+		&lt;property name="country" value="Malaysia" /&gt;
+	&lt;/bean&gt;
+
+	&lt;bean id="CustomerBean" parent="BaseCustomerMalaysia"&gt;
+		&lt;property name="action" value="buy" /&gt;
+		&lt;property name="type" value="1" /&gt;
+	&lt;/bean&gt;
+	
+&lt;/beans&gt;</pre> 
+  <div>
+    以上就是“BaseCustomerMalaysia”&nbsp;Bean中含有的 country&nbsp;属性的值，而“CustomerBean”&nbsp;Bean&nbsp;继承其父('BaseCustomerMalaysia')这个值。 
+  </div> 
+  <p> 执行它 </p> 
+  <pre>package com.yiibai.common;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+public class App 
+{
+    public static void main( String[] args )
+    {
+    	ApplicationContext context = 
+			new ClassPathXmlApplicationContext("applicationContext.xml");
+
+    	Customer cust = (Customer)context.getBean("CustomerBean");
+    	System.out.println(cust);
+    	
+    }
+}</pre> 
+  <p> 输出结果 </p> 
+  <pre>Customer [type=1, action=buy, Country=Malaysia]</pre> 
+  <div>
+    CustomerBean&nbsp;Bean 只从它的父(“BaseCustomerMalaysia”)继承&nbsp;country&nbsp;属性。 
+  </div> 
+  <h2> 
+   <div>
+     继承抽象 
+   </div> </h2> 
+  <div>
+    在上面的例子中，'BaseCustomerMalaysia' 仍然能够实例化，例如， 
+  </div> 
+  <pre>Customer cust = (Customer)context.getBean("BaseCustomerMalaysia");</pre> 
+  <div>
+    如果你要让这个&nbsp;bean&nbsp;作为一个基础模板，不允许别人来实例化它，可以在一个&lt;bean&gt;元素中添加一个“abstract”的属性。&nbsp;例如 
+  </div> 
+  <pre>&lt;beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-2.5.xsd"&gt;
+
+	&lt;bean id="BaseCustomerMalaysia" class="com.yiibai.common.Customer" abstract="true"&gt;
+		&lt;property name="country" value="Malaysia" /&gt;
+	&lt;/bean&gt;
+
+	&lt;bean id="CustomerBean" parent="BaseCustomerMalaysia"&gt;
+		&lt;property name="action" value="buy" /&gt;
+		&lt;property name="type" value="1" /&gt;
+	&lt;/bean&gt;
+	
+&lt;/beans&gt;</pre> 
+  <div>
+    现在，“BaseCustomerMalaysia'&nbsp;Bean是一个纯粹的模板，因为Bean只能继承它，如果试图实例化它，你会遇到以下错误消息。 
+  </div> 
+  <pre>Customer cust = (Customer)context.getBean("BaseCustomerMalaysia");</pre> 
+  <pre>org.springframework.beans.factory.BeanIsAbstractException: 
+	Error creating bean with name 'BaseCustomerMalaysia': 
+	Bean definition is abstract</pre> 
+  <h2> 
+   <div>
+     纯继承模板 
+   </div> </h2> 
+  <div>
+    其实，父 bean 是不需要定义类的属性，很多时候，你可能只需要一个共同的属性共享。这里的是一个例子 
+  </div>   
+  <pre>&lt;beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-2.5.xsd"&gt;
+
+	&lt;bean id="BaseCustomerMalaysia" abstract="true"&gt;
+		&lt;property name="country" value="Malaysia" /&gt;
+	&lt;/bean&gt;
+
+	&lt;bean id="CustomerBean" parent="BaseCustomerMalaysia" 
+	    class="com.yiibai.common.Customer"&gt;
+	    
+		&lt;property name="action" value="buy" /&gt;
+		&lt;property name="type" value="1" /&gt;
+	&lt;/bean&gt;
+	
+&lt;/beans&gt;</pre> 
+  <div>
+    在这种情况下，“BaseCustomerMalaysia' Bean 是一个纯粹的模板，只分享其 ”country“属性。 
+  </div> 
+  <h2> 
+   <div>
+     覆盖它 
+   </div> </h2> 
+  <div>
+    但是，仍然可以指定的子bean的新值覆盖继承的值。让我们来看看这个例子 
+  </div> 
+  <pre>&lt;beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-2.5.xsd"&gt;
+
+	&lt;bean id="BaseCustomerMalaysia" class="com.yiibai.common.Customer" abstract="true"&gt;
+		&lt;property name="country" value="Malaysia" /&gt;
+	&lt;/bean&gt;
+
+	&lt;bean id="CustomerBean" parent="BaseCustomerMalaysia"&gt;
+	    &lt;property name="country" value="Japan" /&gt;
+		&lt;property name="action" value="buy" /&gt;
+		&lt;property name="type" value="1" /&gt;
+	&lt;/bean&gt;
+	
+&lt;/beans&gt;</pre> 
+  <div>
+    在“CustomerBean”&nbsp;Bean只是覆盖父(“BaseCustomerMalaysia”)country&nbsp;属性，从&nbsp;‘Malaysia’&nbsp;修改为&nbsp;‘Japan’. 
+  </div> 
+  <pre>Customer [Country=Japan, action=buy, type=1]</pre> 
+  <h2> 总结 </h2> 
+  <div>
+    Spring&nbsp;bean配置继承是为了避免多个Bean有重复共同的值或配置是非常有用的。 
+  </div> 
+  <div>
+    下载代码 – 
+   <a target="_blank" href="http://pan.baidu.com/s/1blOgAq">http://pan.baidu.com/s/1blOgAq</a> 
+  </div> 
+ </div>
+ <br>      
+</div></body></html>

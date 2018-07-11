@@ -1,0 +1,75 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Go字符串函数实例</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>标准库的字符串包提供了许多有用的字符串相关函数。这里有一些例子就像使用一个包的感觉。<br>将<code>fmt.Println</code>别名缩写为一个较短的名称，因为将在下面示例代码中使用它。</p> 
+ <p>下面是字符串中可用函数的示例。因为这些是来自包的函数，而不是字符串对象本身的方法，所以我们需要将有问题的字符串作为函数的第一个参数传递。可以在<a target="_blank" href="http://golang.org/pkg/strings/" title="字符串">字符串</a>包<code>docs</code>中找到更多的函数。</p> 
+ <p>不是字符串的一部分，但值得一提的是，以字节为单位获取字符串长度并按索引获取字节的机制。</p> 
+ <p>注意<code>len</code>和索引在字节级上工作的。 Go使用<code>UTF-8</code>编码字符串，因此这通常是有用的。如果使用潜在的多字节字符，将需要使用编码转换操作。有关详细信息，请参阅Go中的字符串，字节，符文和字符(<a target="_blank" href="http://blog.golang.org/strings)。">http://blog.golang.org/strings)。</a></p> 
+ <blockquote> 
+  <p>所有的示例代码，都放在 <code>F:\worksp\golang</code> 目录下。安装Go编程环境请参考：<a target="_blank" href="http://www.yiibai.com/go/go_environment.html">http://www.yiibai.com/go/go_environment.html</a> </p> 
+ </blockquote> 
+ <p><code>string-functions.go</code>的完整代码如下所示 -</p> 
+ <pre><code class="lang-go">package main
+
+import s "strings"
+import "fmt"
+
+// We alias `fmt.Println` to a shorter name as we'll use
+// it a lot below.
+var p = fmt.Println
+
+func main() {
+
+    // Here's a sample of the functions available in
+    // `strings`. Since these are functions from the
+    // package, not methods on the string object itself,
+    // we need pass the string in question as the first
+    // argument to the function. You can find more
+    // functions in the [`strings`](http://golang.org/pkg/strings/)
+    // package docs.
+    p("Contains:  ", s.Contains("test", "es"))
+    p("Count:     ", s.Count("test", "t"))
+    p("HasPrefix: ", s.HasPrefix("test", "te"))
+    p("HasSuffix: ", s.HasSuffix("test", "st"))
+    p("Index:     ", s.Index("test", "e"))
+    p("Join:      ", s.Join([]string{"a", "b"}, "-"))
+    p("Repeat:    ", s.Repeat("a", 5))
+    p("Replace:   ", s.Replace("foo", "o", "0", -1))
+    p("Replace:   ", s.Replace("foo", "o", "0", 1))
+    p("Split:     ", s.Split("a-b-c-d-e", "-"))
+    p("ToLower:   ", s.ToLower("TEST"))
+    p("ToUpper:   ", s.ToUpper("test"))
+    p()
+
+    // Not part of `strings`, but worth mentioning here, are
+    // the mechanisms for getting the length of a string in
+    // bytes and getting a byte by index.
+    p("Len: ", len("hello"))
+    p("Char:", "hello"[1])
+}
+
+// Note that `len` and indexing above work at the byte level.
+// Go uses UTF-8 encoded strings, so this is often useful
+// as-is. If you're working with potentially multi-byte
+// characters you'll want to use encoding-aware operations.
+// See [strings, bytes, runes and characters in Go](http://blog.golang.org/strings)
+// for more information.
+</code></pre> 
+ <p>执行上面代码，将得到以下输出结果 - </p>   
+ <pre><code class="lang-go">F:\worksp\golang&gt;go run string-functions.go
+Contains:   true
+Count:      2
+HasPrefix:  true
+HasSuffix:  true
+Index:      1
+Join:       a-b
+Repeat:     aaaaa
+Replace:    f00
+Replace:    f0o
+Split:      [a b c d e]
+ToLower:    test
+ToUpper:    TEST
+
+Len:  5
+Char: 101
+</code></pre>
+ <br>      
+</div></body></html>

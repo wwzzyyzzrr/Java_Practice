@@ -1,0 +1,92 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">TestNG忽略测试</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>有时，我们编写的代码并没有准备就绪，并且测试用例要测试该方法/代码是否失败(或成功)。 在本示例中，注释<code><a target="_blank" href="https://github.com/Test" title="@Test" class="at-link">@Test</a>(enabled = false)</code>有助于禁用此测试用例。</p> 
+ <p>如果使用<code><a target="_blank" href="https://github.com/Test" title="@Test" class="at-link">@Test</a>(enabled = false)</code>注释在测试方法上，则会绕过这个未准备好测试的测试用例。</p> 
+ <p>在本教程中，我们将演示如何使用<code><a target="_blank" href="https://github.com/Test" title="@Test" class="at-link">@Test</a>(enabled = false)</code>来忽略测试方法。</p> 
+ <p>创建一个Maven项目，其结构如下所示 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201705/0205/204150511_34557.png" alt=""></p> 
+ <p><em>pom.xml</em> 依懒包配置 - </p> 
+ <pre><code class="lang-xml">&lt;project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"&gt;
+    &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
+
+    &lt;groupId&gt;com.yiibai&lt;/groupId&gt;
+    &lt;artifactId&gt;IgnoreTest&lt;/artifactId&gt;
+    &lt;version&gt;0.0.1-SNAPSHOT&lt;/version&gt;
+    &lt;packaging&gt;jar&lt;/packaging&gt;
+
+    &lt;name&gt;IgnoreTest&lt;/name&gt;
+    &lt;url&gt;http://maven.apache.org&lt;/url&gt;
+
+    &lt;properties&gt;
+        &lt;project.build.sourceEncoding&gt;UTF-8&lt;/project.build.sourceEncoding&gt;
+    &lt;/properties&gt;
+
+    &lt;dependencies&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.testng&lt;/groupId&gt;
+            &lt;artifactId&gt;testng&lt;/artifactId&gt;
+            &lt;version&gt;6.8.7&lt;/version&gt;
+            &lt;scope&gt;test&lt;/scope&gt;
+        &lt;/dependency&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;junit&lt;/groupId&gt;
+            &lt;artifactId&gt;junit&lt;/artifactId&gt;
+            &lt;version&gt;3.8.1&lt;/version&gt;
+            &lt;scope&gt;test&lt;/scope&gt;
+        &lt;/dependency&gt;
+    &lt;/dependencies&gt;
+
+&lt;/project&gt;
+</code></pre> 
+ <p>创建一个测试类：<em>TestIgnore.java</em>，其代码如下所示 -</p>   
+ <pre><code class="lang-java">package com.yiibai;
+
+import org.testng.Assert;
+import org.testng.annotations.Test;
+
+public class TestIgnore {
+
+    @Test // default enable=true
+    public void test1() {
+        Assert.assertEquals(true, true);
+    }
+
+    @Test(enabled = true)
+    public void test2() {
+        Assert.assertEquals(true, true);
+    }
+
+    @Test(enabled = false)
+    public void test3() {
+        Assert.assertEquals(true, true);
+    }
+
+}
+</code></pre> 
+ <p>运行上面代码，得到以下结果 -</p> 
+ <pre><code class="lang-shell">[TestNG] Running:
+  C:\Users\Administrator\AppData\Local\Temp\testng-eclipse-834820920\testng-customsuite.xml
+
+PASSED: test1
+PASSED: test2
+
+===============================================
+    Default test
+    Tests run: 2, Failures: 0, Skips: 0
+===============================================
+
+
+===============================================
+Default suite
+Total tests run: 2, Failures: 0, Skips: 0
+===============================================
+
+[TestNG] Time taken by org.testng.reporters.XMLReporter@1b40d5f0: 12 ms
+[TestNG] Time taken by org.testng.reporters.SuiteHTMLReporter@6ea6d14e: 33 ms
+[TestNG] Time taken by org.testng.reporters.EmailableReporter2@4563e9ab: 4 ms
+[TestNG] Time taken by [FailedReporter passed=0 failed=0 skipped=0]: 0 ms
+[TestNG] Time taken by org.testng.reporters.jq.Main@2aaf7cc2: 42 ms
+[TestNG] Time taken by org.testng.reporters.JUnitReportReporter@45c8e616: 4 ms
+</code></pre>
+ <br>      
+</div></body></html>

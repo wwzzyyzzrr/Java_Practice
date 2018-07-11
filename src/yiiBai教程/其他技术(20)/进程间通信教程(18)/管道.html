@@ -1,0 +1,195 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">管道</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>管道是两个或更多相关或相关进程之间的通信媒介。 它可以在一个进程内，也可以在子进程和父进程之间进行通信。 通信也可以是多层次的，如父进程，子进程和子进程之间的沟通等。通信是通过一个过程写入管道和从管道读取来实现的。 要实现管道系统调用，请创建两个文件，一个写入文件，另一个从文件读取。</p> 
+ <p>管道机制可以用一个实时的场景来看，比如用管子把水灌进一个容器里。 填充过程可以理解为是写入管道，读取过程只不过是从管道中取出。 这意味着一个输出(水)是为另一个(桶)输入的。参考下图 -<br><img src="http://www.yiibai.com/uploads/images/201802/0802/488170214_24433.jpg" alt=""></p> 
+ <pre><code class="lang-cpp">#include&lt;unistd.h&gt;
+
+int pipe(int pipedes[2]);
+</code></pre> 
+ <p>这个系统调用将创建一个单向通信的管道，即它创建两个描述符，第一个连接从管道读取，另一个连接写入管道。</p> 
+ <p>描述符<code>pipedes [0]</code>用于读取，<code>pipedes [1]</code>用于写入。 无论写入<code>pipedes [1]</code>什么都可以从<code>pipedes [0]</code>中读取。</p> 
+ <p>这个调用在成功时将返回<code>0</code>，在失败的情况下为<code>-1</code>。 要知道失败的原因，请检查<code>errno</code>变量或<code>perror()</code>函数。</p> 
+ <pre><code class="lang-cpp">#include &lt;sys/types.h&gt;
+#include &lt;sys/stat.h&gt;
+#include &lt;fcntl.h&gt;
+
+int open(const char *pathname, int flags);
+int open(const char *pathname, int flags, mode_t mode);
+</code></pre> 
+ <p>即使文件的基本操作是读写，在完成所需的操作之后，在执行操作和关闭文件之前，必须打开文件。 通常，默认情况下，为每个进程打开<code>3</code>个描述符，分别用于输入(标准输入 - 标准输入)，输出(标准输出 - 标准输出)和错误(标准错误 - 标准错误)，分别具有文件描述符<code>0</code>,<code>1</code>和<code>2</code>。</p> 
+ <p>这个系统调用将返回一个文件描述符，用于读/写/查找(lseek)的进一步文件操作。 通常文件描述符从<code>3</code>开始，随着打开的文件数量增加一个数字。</p> 
+ <p>传递给开放系统调用的参数是路径名(相对路径或绝对路径)，标志提到了打开文件的目的(比如打开<code>O_RDONLY</code>进行读取，<code>O_RDONR</code>，读写<code>O_RDWR</code>，以追加到现有的文件 <code>O_APPEND</code>，创建文件，如果不存在与O_CREAT等)和所需的模式提供读/写/执行权限的用户或所有者/组/其他人。 模式可以用符号来描述。</p> 
+ <p>读使用<code>4</code>表示，写使用<code>2</code>表示和执行使用<code>1</code>表示。</p> 
+ <p>例如:八进制值(以0开头)，0764表示拥有者拥有读取，写入和执行权限，组拥有读写权限，其他拥有读权限。 这也可以表示为<code>S_IRWXU | S_IRGRP | S_IWGRP | S_IROTH</code>，表示或操作<code>0700 | 0040 | 0004</code>→<code>0764</code>。</p> 
+ <p>这个系统调用在成功时返回新的文件描述符<code>id</code>和<code>-1</code>以防出错。 错误的原因可以用<code>errno</code>变量或<code>perror()</code>函数来标识。</p> 
+ <pre><code class="lang-cpp">#include&lt;unistd.h&gt;
+
+int close(int fd)
+</code></pre> 
+ <p>上面的系统调用关闭已经打开的文件描述符。 这意味着文件不再被使用，相关的资源可以被任何其他进程重用。 这个系统调用在成功时返回零，在出错时返回<code>-1</code>。 错误的原因可以用<code>errno</code>变量或<code>perror()</code>函数来标识。</p> 
+ <pre><code class="lang-cpp">#include&lt;unistd.h&gt;
+
+ssize_t read(int fd, void *buf, size_t count)
+</code></pre> 
+ <p>上面的系统调用是从指定的文件中读取文件描述符fd的参数，具有分配内存(静态或动态)的正确缓冲区以及缓冲区的大小。</p> 
+ <p>文件描述符ID用于标识在调用<code>open()</code>或<code>pipe()</code>系统调用之后返回的相应文件。 从文件中读取文件之前，需要打开该文件。 它会在调用<code>pipe()</code>系统调用的情况下自动打开。</p> 
+ <p>这个调用将返回成功时读取的字节数(或在遇到文件结尾的情况下为零)，在失败的情况下返回<code>-1</code>。 返回字节可以小于请求的字节数，以防万一没有数据可用或文件关闭。 </p> 
+ <p>要知道失败的原因，请检查<code>errno</code>变量或<code>perror()</code>函数。</p> 
+ <pre><code class="lang-cpp">#include&lt;unistd.h&gt;
+
+ssize_t write(int fd, void *buf, size_t count)
+</code></pre> 
+ <p>上面的系统调用是使用文件描述符<code>fd</code>的参数，具有已分配内存(静态或动态)和缓冲区大小的适当缓冲区来写入指定文件。</p> 
+ <p>文件描述符ID用于标识在调用<code>open()</code>或<code>pipe()</code>系统调用之后返回的相应文件。</p> 
+ <p>在写入文件之前需要打开该文件。 它会在调用<code>pipe()</code>系统调用的情况下自动打开。</p> 
+ <p>这个调用将返回成功写入的字节数(或者在没有写入的情况下为零)，如果失败则返回<code>-1</code>。 正确的错误码设置在失败的情况下。</p> 
+ <p>要知道失败的原因，请检查<code>errno</code>变量或<code>perror()</code>函数。</p> 
+ <h2 id="h2-u793Au4F8Bu7A0Bu5E8F"><a name="示例程序" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例程序</h2>
+ <p>以下是一些示例程序。</p> 
+ <p>示例程序1 - 使用管道编写和读取两条消息的程序。</p> 
+ <p><strong>算法</strong></p> 
+ <p>第1步 - 创建一个管道。<br>第2步 - 发送消息到管道。<br>第3步 - 从管道中检索消息并将其写入标准输出。<br>第4步 - 发送另一条消息到管道。<br>第5步 - 从管道中检索消息并将其写入标准输出。<br>注 - 检索消息也可以在发送所有消息之后完成。</p> 
+ <p>源代码:<em>simplepipe.c</em> </p> 
+ <pre><code class="lang-cpp">#include&lt;stdio.h&gt;
+#include&lt;unistd.h&gt;
+
+int main() {
+   int pipefds[2];
+   int returnstatus;
+   char writemessages[2][20]={"Hi", "Hello"};
+   char readmessage[20];
+   returnstatus = pipe(pipefds);
+
+   if (returnstatus == -1) {
+      printf("Unable to create pipe\n");
+      return 1;
+   }
+
+   printf("Writing to pipe - Message 1 is %s\n", writemessages[0]);
+   write(pipefds[1], writemessages[0], sizeof(writemessages[0]));
+   read(pipefds[0], readmessage, sizeof(readmessage));
+   printf("Reading from pipe – Message 1 is %s\n", readmessage);
+   printf("Writing to pipe - Message 2 is %s\n", writemessages[0]);
+   write(pipefds[1], writemessages[1], sizeof(writemessages[0]));
+   read(pipefds[0], readmessage, sizeof(readmessage));
+   printf("Reading from pipe – Message 2 is %s\n", readmessage);
+   return 0;
+}
+</code></pre> 
+ <blockquote> 
+  <p>注 - 理想情况下，每个系统调用都需要检查返回状态。 为了简化这个过程，所有的调用都没有进行检查。</p> 
+ </blockquote> 
+ <p><strong>执行步骤</strong></p> 
+ <p>首先编译 - </p> 
+ <pre><code class="lang-shell">$ gcc -o simplepipe simplepipe.c
+</code></pre> 
+ <p>执行输出结果如下 - </p> 
+ <pre><code class="lang-shell">Writing to pipe - Message 1 is Hi
+Reading from pipe – Message 1 is Hi
+Writing to pipe - Message 2 is Hi
+Reading from pipe – Message 2 is Hell
+</code></pre> 
+ <p><strong>示例程序2</strong> - 使用父进程和子进程通过管道写入和读取两条消息的程序。</p> 
+ <p><strong>算法</strong><br>第1步 - 创建一个管道。<br>第2步 - 创建一个子进程。<br>第3步 - 父进程写入管道。<br>第4步 - 子进程从管道中检索消息并将其写入标准输出。<br>第5步 - 再次重复步骤3和步骤4。</p> 
+ <p>源代码:<em>pipewithprocesses.c</em> - </p> 
+ <pre><code class="lang-cpp">#include&lt;stdio.h&gt;
+#include&lt;unistd.h&gt;
+
+int main() {
+   int pipefds[2];
+   int returnstatus;
+   int pid;
+   char writemessages[2][20]={"Hi", "Hello"};
+   char readmessage[20];
+   returnstatus = pipe(pipefds);
+   if (returnstatus == -1) {
+      printf("Unable to create pipe\n");
+      return 1;
+   }
+   pid = fork();
+
+   // Child process
+   if (pid == 0) {
+      read(pipefds[0], readmessage, sizeof(readmessage));
+      printf("Child Process - Reading from pipe – Message 1 is %s\n", readmessage);
+      read(pipefds[0], readmessage, sizeof(readmessage));
+      printf("Child Process - Reading from pipe – Message 2 is %s\n", readmessage);
+   } else { //Parent process
+      printf("Parent Process - Writing to pipe - Message 1 is %s\n", writemessages[0]);
+      write(pipefds[1], writemessages[0], sizeof(writemessages[0]));
+      printf("Parent Process - Writing to pipe - Message 2 is %s\n", writemessages[1]);
+      write(pipefds[1], writemessages[1], sizeof(writemessages[1]));
+   }
+   return 0;
+}
+</code></pre> 
+ <p><strong>执行步骤</strong></p> 
+ <p>首先编译 - </p>   
+ <pre><code class="lang-shell">$ gcc pipewithprocesses.c –o pipewithprocesses
+</code></pre> 
+ <p>执行输出结果如下 - </p> 
+ <pre><code class="lang-shell">Parent Process - Writing to pipe - Message 1 is Hi
+Parent Process - Writing to pipe - Message 2 is Hello
+Child Process - Reading from pipe – Message 1 is Hi
+Child Process - Reading from pipe – Message 2 is Hello
+</code></pre> 
+ <h2 id="h2-u4F7Fu7528u7BA1u9053u53CCu5411u901Au4FE1"><a name="使用管道双向通信" class="reference-link"></a><span class="header-link octicon octicon-link"></span>使用管道双向通信</h2>
+ <p>管道通信仅被视为单向通信，即，父进程写入和子进程读取，或者相反，但不是两者。 但是，如果父子进程双方都需要同时写入和读取管道，那么解决方案就是使用管道的双向通信。 建立双向通信需要两根管道。</p> 
+ <p>以下是实现双向通信的步骤 -</p> 
+ <p>第1步 - 创建两个管道。 第一个是父进程写入和子进程读取，如:pipe1。 第二个是为子进程写入和父进程读取，如:pipe2。<br>第2步 - 创建一个子进程。<br>第3步 - 关闭不需要的结束，因为每个通信只需要一端。<br>第4步 - 在父进程中关闭不需要的结束，读取<code>pipe1</code>的结尾并写入<code>pipe2</code>的结尾。<br>第5步 - 关闭子进程中的不需要的结束，写入<code>pipe1</code>的结尾和读取<code>pipe2</code>的结束。<br>第6步 - 根据需要进行通讯。<br><img src="http://www.yiibai.com/uploads/images/201802/0802/313170229_33331.jpg" alt=""></p> 
+ <p><strong>示例程序</strong><br>示例程序1 - 使用管道实现双向通信。</p> 
+ <p><strong>算法</strong><br>第1步 - 创建<code>pipe1</code>为父进程写和子进程读取。<br>第2步 - 为要写入的子进程和要读取的父进程创建<code>pipe2</code>。<br>第3步 - 关闭从父进程和子进程一侧管道不需要的一端。<br>第4步 - 父进程写一个消息和子进程读取并显示在屏幕上。<br>第5步 - 子进程写入消息和父进程读取并显示在屏幕上。</p> 
+ <p>源代码:<em>twowayspipe.c</em> - </p> 
+ <pre><code class="lang-cpp">#include&lt;stdio.h&gt;
+#include&lt;unistd.h&gt;
+
+int main() {
+   int pipefds1[2], pipefds2[2];
+   int returnstatus1, returnstatus2;
+   int pid;
+   char pipe1writemessage[20] = "Hi";
+   char pipe2writemessage[20] = "Hello";
+   char readmessage[20];
+   returnstatus1 = pipe(pipefds1);
+
+   if (returnstatus1 == -1) {
+      printf("Unable to create pipe 1 \n");
+      return 1;
+   }
+   returnstatus2 = pipe(pipefds2);
+
+   if (returnstatus2 == -1) {
+      printf("Unable to create pipe 2 \n");
+      return 1;
+   }
+   pid = fork();
+
+   if (pid != 0) // Parent process {
+      close(pipefds1[0]); // Close the unwanted pipe1 read side
+      close(pipefds2[1]); // Close the unwanted pipe2 write side
+      printf("In Parent: Writing to pipe 1 – Message is %s\n", pipe1writemessage);
+      write(pipefds1[1], pipe1writemessage, sizeof(pipe1writemessage));
+      read(pipefds2[0], readmessage, sizeof(readmessage));
+      printf("In Parent: Reading from pipe 2 – Message is %s\n", readmessage);
+   } else { //child process
+      close(pipefds1[1]); // Close the unwanted pipe1 write side
+      close(pipefds2[0]); // Close the unwanted pipe2 read side
+      read(pipefds1[0], readmessage, sizeof(readmessage));
+      printf("In Child: Reading from pipe 1 – Message is %s\n", readmessage);
+      printf("In Child: Writing to pipe 2 – Message is %s\n", pipe2writemessage);
+      write(pipefds2[1], pipe2writemessage, sizeof(pipe2writemessage));
+   }
+   return 0;
+}
+</code></pre> 
+ <p><strong>执行步骤</strong></p> 
+ <p>首先编译 - </p> 
+ <pre><code class="lang-shell">$ gcc twowayspipe.c –o twowayspipe
+</code></pre> 
+ <p>执行输出结果如下 - </p> 
+ <pre><code class="lang-shell">In Parent: Writing to pipe 1 – Message is Hi
+In Child: Reading from pipe 1 – Message is Hi
+In Child: Writing to pipe 2 – Message is Hello
+In Parent: Reading from pipe 2 – Message is Hello
+</code></pre>
+ <br>      
+</div></body></html>

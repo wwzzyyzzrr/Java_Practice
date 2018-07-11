@@ -1,0 +1,324 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">VB.Net数组</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>数组存储相同类型的元素的固定大小的顺序集合。数组用于存储数据集合，但将数组视为相同类型的变量集合通常更有用。</p> 
+ <p>所有数组都由连续的内存位置组成。最低地址对应于第一个元素，最高地址对应最后一个元素。如下图示 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201711/0811/857191154_63373.jpg" alt=""></p> 
+ <h2 id="h2--vb-net-"><a name="在VB.Net中创建数组" class="reference-link"></a><span class="header-link octicon octicon-link"></span>在VB.Net中创建数组</h2>
+ <p>要在VB.Net中声明一个数组，可以使用<code>Dim</code>语句。 例如，</p> 
+ <pre><code class="lang-vb">Dim intData(30)  ' an array of 31 elements'
+Dim strData(20) As String  ' an array of 21 strings'
+Dim twoDarray(10, 20) As Integer 'a two dimensional array of integers'
+Dim ranges(10, 100) 'a two dimensional array'
+</code></pre> 
+ <p>也可以在声明数组的同时初始化数组元素。 例如，</p> 
+ <pre><code class="lang-vb">Dim intData() As Integer = {12, 16, 20, 24, 28, 32}
+Dim names() As String = {"Karthik", "Sandhya", "Shivangi", "Ashwitha", "Somnath"}
+Dim miscData() As Object = {"Hello World", 12d, 16ui, "A"c}
+</code></pre> 
+ <p>可以使用数组的索引来存储和访问数组中的元素。以下程序演示了这一点：</p> 
+ <pre><code class="lang-vb">Module arrayApl
+   Sub Main()
+      Dim n(10) As Integer  ' n is an array of 11 integers '
+      Dim i, j As Integer
+      ' initialize elements of array n '         
+      For i = 0 To 10
+          n(i) = i + 100 ' set element at location i to i + 100 '
+      Next i
+      ' output each array element's value '
+      For j = 0 To 10
+          Console.WriteLine("Element({0}) = {1}", j, n(j))
+      Next j
+      Console.ReadKey()
+   End Sub
+End Module
+</code></pre> 
+ <p>当上面的代码被编译并执行时，会产生以下结果：</p> 
+ <pre><code class="lang-shell">Element(0) = 100
+Element(1) = 101
+Element(2) = 102
+Element(3) = 103
+Element(4) = 104
+Element(5) = 105
+Element(6) = 106
+Element(7) = 107
+Element(8) = 108
+Element(9) = 109
+Element(10) = 110
+</code></pre> 
+ <h2 id="h2-u52A8u6001u6570u7EC4"><a name="动态数组" class="reference-link"></a><span class="header-link octicon octicon-link"></span>动态数组</h2>
+ <p>动态数组是可以按照程序的需要进行标注和重新定义的数组。可以使用<code>ReDim</code>语句声明动态数组。</p> 
+ <p><code>ReDim</code>语句的语法：</p> 
+ <pre><code class="lang-vb">ReDim [Preserve] arrayname(subscripts)
+</code></pre> 
+ <p>其中，</p> 
+ <ul> 
+  <li><em>Preserve</em>关键字有助于在调整大小时保留现有数组中的数据。</li>
+  <li><em>arrayname</em>是要重新维度的数组的名称。</li>
+  <li><em>subscripts</em>指定新的维度。</li>
+ </ul> 
+ <pre><code class="lang-vb">Module arrayApl
+   Sub Main()
+      Dim marks() As Integer
+      ReDim marks(2)
+      marks(0) = 85
+      marks(1) = 75
+      marks(2) = 90
+      ReDim Preserve marks(10)
+      marks(3) = 80
+      marks(4) = 76
+      marks(5) = 92
+      marks(6) = 99
+      marks(7) = 79
+      marks(8) = 75
+      For i = 0 To 10
+          Console.WriteLine(i &amp; vbTab &amp; marks(i))
+      Next i
+      Console.ReadKey()
+   End Sub
+End Module
+</code></pre> 
+ <p>当上面的代码被编译并执行时，会产生以下结果：</p> 
+ <pre><code class="lang-vb">0    85
+1    75
+2    90
+3    80
+4    76
+5    92
+6    99
+7    79
+8    75
+9    0
+10    0
+</code></pre> 
+ <h2 id="h2-u591Au7EF4u6570u7EC4"><a name="多维数组" class="reference-link"></a><span class="header-link octicon octicon-link"></span>多维数组</h2>
+ <p>VB.Net允许多维数组，多维数组也被称为矩形数组。可以声明一个<code>2</code>维的字符串数组：</p> 
+ <pre><code class="lang-vb">Dim twoDStringArray(10, 20) As String
+</code></pre> 
+ <p>或者是一个整数变量的三维数组：</p> 
+ <pre><code class="lang-vb">Dim threeDIntArray(10, 10, 10) As Integer
+</code></pre> 
+ <p>以下程序演示了如何创建和使用二维数组：</p> 
+ <pre><code class="lang-vb">Module arrayApl
+   Sub Main()
+      ' an array with 5 rows and 2 columns
+      Dim a(,) As Integer = {{0, 0}, {1, 2}, {2, 4}, {3, 6}, {4, 8}}
+      Dim i, j As Integer
+      ' output each array element's value '
+      For i = 0 To 4
+          For j = 0 To 1
+              Console.WriteLine("a[{0},{1}] = {2}", i, j, a(i, j))
+          Next j
+      Next i
+      Console.ReadKey()
+   End Sub
+End Module
+</code></pre> 
+ <p>当上面的代码被编译并执行时，会产生以下结果：</p> 
+ <pre><code class="lang-shell">a[0,0]: 0
+a[0,1]: 0
+a[1,0]: 1
+a[1,1]: 2
+a[2,0]: 2
+a[2,1]: 4
+a[3,0]: 3
+a[3,1]: 6
+a[4,0]: 4
+a[4,1]: 8
+</code></pre> 
+ <h2 id="h2-u952Fu9F7Fu72B6u7684u6570u7EC4"><a name="锯齿状的数组" class="reference-link"></a><span class="header-link octicon octicon-link"></span>锯齿状的数组</h2>
+ <p>锯齿状(<em>Jagged</em>)数组是数组的数组。下面的代码显示了声明一个名为 <em>scores</em> 的锯齿状数组：</p> 
+ <pre><code class="lang-vb">Dim scores As Integer()() = New Integer(5)(){}
+</code></pre> 
+ <p>以下示例说明如何使用锯齿状数组：</p> 
+ <pre><code class="lang-vb">Module arrayApl
+   Sub Main()
+   'a jagged array of 5 array of integers '
+      Dim a As Integer()() = New Integer(4)() {}
+      a(0) = New Integer() {0, 0}
+      a(1) = New Integer() {1, 2}
+      a(2) = New Integer() {2, 4}
+      a(3) = New Integer() {3, 6}
+      a(4) = New Integer() {4, 8}
+      Dim i, j As Integer
+      ' output each array element's value '
+      For i = 0 To 4
+          For j = 0 To 1
+              Console.WriteLine("a[{0},{1}] = {2}", i, j, a(i)(j))
+          Next j
+      Next i
+      Console.ReadKey()
+   End Sub
+End Module
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 - </p> 
+ <pre><code class="lang-shell">a[0][0]: 0
+a[0][1]: 0
+a[1][0]: 1
+a[1][1]: 2
+a[2][0]: 2
+a[2][1]: 4
+a[3][0]: 3
+a[3][1]: 6
+a[4][0]: 4
+a[4][1]: 8
+</code></pre> 
+ <h2 id="h2-array-"><a name="Array类" class="reference-link"></a><span class="header-link octicon octicon-link"></span>Array类</h2>
+ <p><code>Array</code>类是VB.Net中所有数组的基类。它在<code>System</code>命名空间中定义。<code>Array</code>类提供了各种属性和方法来处理数组。</p> 
+ <p><strong>数组类的属性</strong></p> 
+ <p>下表提供了<code>Array</code>类的一些最常用的属性：</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>编号</th> 
+    <th>属性</th> 
+    <th>描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>1</td> 
+    <td><code>IsFixedSize</code></td> 
+    <td>获取一个值，指示<code>Array</code>是否具有固定大小。</td> 
+   </tr> 
+   <tr> 
+    <td>2</td> 
+    <td><code>IsReadOnly</code></td> 
+    <td>获取一个值，指示数组是否是只读。</td> 
+   </tr> 
+   <tr> 
+    <td>3</td> 
+    <td><code>Length</code></td> 
+    <td>获取一个<code>32</code>位整数，表示数组所有维度中的元素总数。</td> 
+   </tr> 
+   <tr> 
+    <td>4</td> 
+    <td><code>LongLength</code></td> 
+    <td>获取一个<code>64</code>位整数，它表示数组中所有维的元素总数。</td> 
+   </tr> 
+   <tr> 
+    <td>5</td> 
+    <td><code>Rank</code></td> 
+    <td>获取数组的等级(维数)。</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h2 id="h2-array-"><a name="Array类的方法" class="reference-link"></a><span class="header-link octicon octicon-link"></span>Array类的方法</h2>
+ <p>下表提供了一些最常用的<code>Array</code>类的方法：</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>编号</th> 
+    <th>方法</th> 
+    <th>描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>1</td> 
+    <td><code>Public Shared Sub Clear (array As Array, index As Integer, length As Integer)</code></td> 
+    <td>根据元素类型，将数组中的元素范围设置为零，为<code>false</code>或为<code>null</code>。</td> 
+   </tr> 
+   <tr> 
+    <td>2</td> 
+    <td><code>Public Shared Sub Copy (sourceArray As Array, destinationArray As Array, length As Integer)</code></td> 
+    <td>从第一个元素开始，从<code>Array</code>中复制一系列元素，并将它们粘贴到第一个元素开始的另一个<code>Array</code>中。长度被指定为<code>32</code>位整数。</td> 
+   </tr> 
+   <tr> 
+    <td>3</td> 
+    <td><code>Public Sub CopyTo (array As Array, index As Integer)</code></td> 
+    <td>将当前一维数组的所有元素复制到指定的一维数组，从指定的目标数组索引开始。该索引被指定为一个<code>32</code>位整数。</td> 
+   </tr> 
+   <tr> 
+    <td>4</td> 
+    <td><code>Public Function GetLength (dimension As Integer) As Integer</code></td> 
+    <td>获取一个<code>32</code>位整数，该整数表示<code>Array</code>的指定维度中的元素数。</td> 
+   </tr> 
+   <tr> 
+    <td>5</td> 
+    <td><code>Public Function GetLongLength (dimension As Integer) As Long</code></td> 
+    <td>获取一个<code>64</code>位整数，它表示<code>Array</code>的指定维度中的元素数。</td> 
+   </tr> 
+   <tr> 
+    <td>6</td> 
+    <td><code>Public Function GetLowerBound (dimension As Integer) As Integer</code></td> 
+    <td>获取数组中指定维度的下限。</td> 
+   </tr> 
+   <tr> 
+    <td>7</td> 
+    <td><code>Public Function GetType As Type</code></td> 
+    <td>获取当前实例的Type(从<code>Object</code>继承)。</td> 
+   </tr> 
+   <tr> 
+    <td>8</td> 
+    <td><code>Public Function GetUpperBound (dimension As Integer) As Integer</code></td> 
+    <td>获取数组中指定维的上界。</td> 
+   </tr> 
+   <tr> 
+    <td>9</td> 
+    <td><code>Public Function GetValue (index As Integer) As Object</code></td> 
+    <td>获取一维数组中指定位置的值。该索引被指定为一个<code>32</code>位整数。</td> 
+   </tr> 
+   <tr> 
+    <td>10</td> 
+    <td><code>Public Shared Function IndexOf (array As Array,value As Object) As Integer</code></td> 
+    <td>搜索指定的对象并返回整个一维数组中第一个匹配项的索引。</td> 
+   </tr> 
+   <tr> 
+    <td>11</td> 
+    <td><code>Public Shared Sub Reverse (array As Array)</code></td> 
+    <td>颠倒整个一维数组中元素的顺序。</td> 
+   </tr> 
+   <tr> 
+    <td>12</td> 
+    <td><code>Public Sub SetValue (value As Object, index As Integer)</code></td> 
+    <td>将值设置为一维数组中指定位置的元素。索引被指定为一个<code>32</code>位整数。</td> 
+   </tr> 
+   <tr> 
+    <td>13</td> 
+    <td><code>Public Shared Sub Sort (array As Array)</code></td> 
+    <td>使用<code>Array</code>的每个元素的<code>IComparable</code>实现对整个一维Array中的元素进行排序。</td> 
+   </tr> 
+   <tr> 
+    <td>14</td> 
+    <td><code>Public Overridable Function ToString As String</code></td> 
+    <td>返回表示当前对象的字符串(从Object继承)。</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p>有关<code>Array</code>类属性和方法的完整列表，请参阅Microsoft文档。</p> 
+ <p><strong>示例</strong></p> 
+ <p>以下程序演示如何使用<code>Array</code>类的一些方法：</p>   
+ <pre><code class="lang-vb">Module arrayApl
+   Sub Main()
+      Dim list As Integer() = {34, 72, 13, 44, 25, 30, 10}
+      Dim temp As Integer() = list
+      Dim i As Integer
+      Console.Write("Original Array: ")
+      For Each i In list
+          Console.Write("{0} ", i)
+      Next i
+      Console.WriteLine()
+      ' reverse the array'
+      Array.Reverse(temp)
+      Console.Write("Reversed Array: ")
+      For Each i In temp
+          Console.Write("{0} ", i)
+      Next i
+      Console.WriteLine()
+      'sort the array'
+      Array.Sort(list)
+      Console.Write("Sorted Array: ")
+      For Each i In list
+          Console.Write("{0} ", i)
+      Next i
+      Console.WriteLine()
+      Console.ReadKey()
+   End Sub
+End Module
+</code></pre> 
+ <p>当上面的代码被编译并执行时，会产生以下结果：</p> 
+ <pre><code class="lang-shell">Original Array: 34 72 13 44 25 30 10
+Reversed Array: 10 30 25 44 13 72 34
+Sorted Array: 10 13 25 30 34 44 72
+</code></pre>
+ <br>      
+</div></body></html>

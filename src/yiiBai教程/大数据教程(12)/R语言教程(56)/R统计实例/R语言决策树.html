@@ -1,0 +1,83 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">R语言决策树</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>决策树是以树的形式表示选择及其结果的图形。图中的节点表示事件或选择，并且图形的边缘表示决策规则或条件。它主要用于使用R的机器学习和数据挖掘应用程序。</p> 
+ <p>使用决策的例子是 - 将接收的邮件预测是否为垃圾邮件，根据这些信息中的因素，预测肿瘤是癌症或预测贷款作为良好或不良的信用风险。 通常，使用观察数据也称为训练数据创建模型。 然后使用一组验证数据来验证和改进模型。 R具有用于创建和可视化决策树的包。 对于新的预测变量，我们使用该模型来确定数据的类别(是/否，垃圾邮件/非垃圾邮件)。</p> 
+ <p>R包<code>“party”</code>用于创建决策树。</p> 
+ <h2 id="h2--r-"><a name="安装R包" class="reference-link"></a><span class="header-link octicon octicon-link"></span>安装R包</h2>
+ <p>在R控制台中使用以下命令安装软件包，还必须安装依赖软件包(如果有的话)。</p> 
+ <pre><code class="lang-r">install.packages("party")
+</code></pre> 
+ <p>包<code>“party”</code>中包含用于创建和分析决策树的<code>ctree()</code>函数。</p> 
+ <h2 id="h2-u8BEDu6CD5"><a name="语法" class="reference-link"></a><span class="header-link octicon octicon-link"></span>语法</h2>
+ <p>在R中创建决策树的基本语法是 -</p> 
+ <pre><code class="lang-r">ctree(formula, data)
+</code></pre> 
+ <p>以下是使用的参数的描述 -</p> 
+ <ul> 
+  <li><em>formula</em> - 是描述预测变量和响应变量的公式。</li>
+  <li><em>data</em> - 是使用的数据集的名称。</li>
+ </ul> 
+ <h2 id="h2-u8F93u5165u6570u636E"><a name="输入数据" class="reference-link"></a><span class="header-link octicon octicon-link"></span>输入数据</h2>
+ <p>我们将使用一个名为<code>readingSkills</code>的R内置数据集创建一个决策树。如果要知道变量：<code>"age"</code>,<code>"shoesize"</code>,<code>"score"</code>以及该人员是否是母语者，则描述某人员的阅读技能的得分。</p> 
+ <p>以下是样本数据 - </p> 
+ <pre><code class="lang-r"># Load the party package. It will automatically load other dependent packages.
+library("party")
+
+# Print some records from data set readingSkills.
+print(head(readingSkills))
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 - </p> 
+ <pre><code class="lang-shell">  nativeSpeaker age shoeSize    score
+1           yes   5 24.83189 32.29385
+2           yes   6 25.95238 36.63105
+3            no  11 30.42170 49.60593
+4           yes   7 28.66450 40.28456
+5           yes  11 31.88207 55.46085
+6           yes  10 30.07843 52.83124
+</code></pre> 
+ <h2 id="h2-u4F8Bu5B50"><a name="例子" class="reference-link"></a><span class="header-link octicon octicon-link"></span>例子</h2>
+ <p>我们将使用<code>ctree()</code>函数创建决策树并查看其生成的图表。</p>   
+ <pre><code class="lang-r"># Load the party package. It will automatically load other dependent packages.
+library(party)
+
+# Create the input data frame.
+input.dat &lt;- readingSkills[c(1:105),]
+
+# Give the chart file a name.
+png(file = "decision_tree.png")
+
+# Create the tree.
+  output.tree &lt;- ctree(
+  nativeSpeaker ~ age + shoeSize + score, 
+  data = input.dat)
+
+# Plot the tree.
+plot(output.tree)
+
+# Save the file.
+dev.off()
+</code></pre> 
+ <p>当我们执行上述代码时，会产生以下结果 -</p> 
+ <pre><code class="lang-shell">null device 
+          1 
+Loading required package: methods
+Loading required package: grid
+Loading required package: mvtnorm
+Loading required package: modeltools
+Loading required package: stats4
+Loading required package: strucchange
+Loading required package: zoo
+
+Attaching package: ‘zoo’
+
+The following objects are masked from ‘package:base’:
+
+    as.Date, as.Date.numeric
+
+Loading required package: sandwich
+</code></pre> 
+ <p>生成如下图形 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201708/2508/582160822_94147.png" alt=""></p> 
+ <p><strong>结论</strong></p> 
+ <p>从上面所示的决策树，我们可以得出结论，任何阅读技巧(<code>readingSkills</code>)评分小于<code>38.3</code>，年龄超过<code>6</code>岁的人不是本地(使用母语)演讲者。</p>
+ <br>      
+</div></body></html>

@@ -1,0 +1,86 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Javascript Array.filter()方法</h1><div style="width:100%;float:left;" class="article-content">   
+ <p> JavaScript数组过filter()方法创建一个新的数组提供的函数来实现测试的所有元素。</p> 
+ <h2> 语法</h2> 
+ <pre style="'Courier New', monospace; font-size: 12px; ">
+<i>array</i>.filter(callback[, thisObject]);</pre> 
+ <p> 下面是参数的详细信息：</p> 
+ <ul> 
+  <li> <p> <strong>callback&nbsp;: </strong>函数用来测试数组的每个元素</p> </li> 
+  <li> <p> <strong>thisObject&nbsp;: </strong>对象作为该执行回调时使用</p> </li> 
+ </ul> 
+ <h2> 返回值:</h2> 
+ <p> 返回所创建数组</p> 
+ <h2> 兼容性：</h2> 
+ <p> 这种方法是一个JavaScript扩展到ECMA-262标准;因此它可能不存在在标准的其他实现。为了使它工作，你需要添加下面的脚本的顶部代码：</p> 
+ <pre style="'Courier New', monospace; font-size: 12px; ">
+if (!Array.prototype.filter)
+{
+  Array.prototype.filter = function(fun /*, thisp*/)
+  {
+    var len = this.length;
+    if (typeof fun != "function")
+      throw new TypeError();
+
+    var res = new Array();
+    var thisp = arguments[1];
+    for (var i = 0; i &lt; len; i++)
+    {
+      if (i in this)
+      {
+        var val = this[i]; // in case fun mutates this
+        if (fun.call(thisp, val, i, this))
+          res.push(val);
+      }
+    }
+
+    return res;
+  };
+}</pre> 
+ <h2 style="font-stretch: normal; font-size: 16px; line-height: 1.5; Helvetica,  'Liberation Sans', FreeSans,  margin-bottom: 10px; margin-top: 10px; color: rgb(0, 0, 0);"> 例子：</h2> 
+ <pre style="'Courier New', monospace; font-size: 12px; ">
+&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;JavaScript Array filter Method&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;script type="text/javascript"&gt;
+if (!Array.prototype.filter)
+{
+  Array.prototype.filter = function(fun /*, thisp*/)
+  {
+    var len = this.length;
+    if (typeof fun != "function")
+      throw new TypeError();
+
+    var res = new Array();
+    var thisp = arguments[1];
+    for (var i = 0; i &lt; len; i++)
+    {
+      if (i in this)
+      {
+        var val = this[i]; // in case fun mutates this
+        if (fun.call(thisp, val, i, this))
+          res.push(val);
+      }
+    }
+
+    return res;
+  };
+}
+
+function isBigEnough(element, index, array) {
+  return (element &gt;= 10);
+}
+
+var filtered  = [12, 5, 8, 130, 44].filter(isBigEnough);
+document.write("Filtered Value : " + filtered ); 
+  
+&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre> 
+ <p> 这将产生以下结果：</p>   
+ <pre style="'Courier New', monospace; font-size: 12px; ">
+Filtered Value : 12,130,44 </pre> 
+ <p style="text-align: justify; verdana, helvetica, arial,  color: rgb(0, 0, 0);"> &nbsp;</p> 
+ <br>      
+</div></body></html>

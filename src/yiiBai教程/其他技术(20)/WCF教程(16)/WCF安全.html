@@ -1,0 +1,89 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">WCF安全</h1><div style="width:100%;float:left;" class="article-content">   
+ <p> 一个强大的WCF服务安全系统，拥有两种安全模式或级别预期的客户端可以访问的服务。这是常见的分布式事务的安全威胁正在放缓，在很大程度上由WCF决定。</p> 
+ <h2> 关键的安全功能</h2> 
+ <p> WCF服务有四个主要的安全功能，如下图所示。</p> 
+ <img alt="Wcf Security" src="/uploads/allimg/141116/1K35T122-0.jpg" style="box-sizing: border-box; vertical-align: middle; display: block; margin-left: auto; margin-right: auto; padding-bottom: 10px; max-width: 100%; color: rgb(49, 49, 49); font-family: 'Open Sans', Arial, sans-serif; font-size: 14px; line-height: 22px;"> 
+ <ul> 
+  <li> <p> <strong>认证</strong>- 这里认证是不限定于识别消息的发送者，但是相互的，即消息接收器的认证是必需的，以排除任何种类的中间人攻击的可能性。</p> </li> 
+  <li> <p> <strong>授权</strong>- 这是采取了一个WCF服务，以确保安全性的下一步骤，并在此确定服务是否应授权调用方进一步或不会进行。虽然授权不依赖于身份验证时，它通常如下认证。</p> </li> 
+  <li> <p> <strong>保密</strong>&nbsp;- 调用者和服务之间的信息交流是保密的，限制其解释并不打算为其他人公开消息。为了使这成为可能，加密与各种各样的其他机制一起使用。</p> </li> 
+  <li> <p> <strong>完整性</strong>- 最后一个关键概念是保持完整性，即提供了保证，该消息尚未从发送者到接收者不被任何人在这一过程篡改。</p> </li> 
+ </ul> 
+ <h2> 传输安全模式</h2> 
+ <p> WCF提供以下传输安全模式，以确保在客户机和服务器之间的安全通信。多样传输安全模式如下所述。</p> 
+ <ul> 
+  <li> <p> <strong>None&nbsp;</strong>- 此模式不能保证任何消息安全和服务不获取有关客户端的任何凭据。这种模式是非常危险的，因为它可以使信息被篡改，因此不推荐使用。</p> </li> 
+ </ul> 
+ <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+<span class="tag" style="box-sizing: border-box; color: rgb(0, 0, 136);">&lt;wsHttpBinding&gt;</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+   </span><span class="tag" style="box-sizing: border-box; color: rgb(0, 0, 136);">&lt;binding</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="atn" style="box-sizing: border-box; color: rgb(127, 0, 85);">name</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">=</span><span class="atv" style="box-sizing: border-box; color: rgb(0, 136, 0);">"WCFSecurityExample"</span><span class="tag" style="box-sizing: border-box; color: rgb(0, 0, 136);">&gt;</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+      </span><span class="tag" style="box-sizing: border-box; color: rgb(0, 0, 136);">&lt;security</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="atn" style="box-sizing: border-box; color: rgb(127, 0, 85);">mode</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">=</span><span class="atv" style="box-sizing: border-box; color: rgb(0, 136, 0);">"None"</span><span class="tag" style="box-sizing: border-box; color: rgb(0, 0, 136);">/&gt;</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+   </span><span class="tag" style="box-sizing: border-box; color: rgb(0, 0, 136);">&lt;/binding&gt;</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+</span><span class="tag" style="box-sizing: border-box; color: rgb(0, 0, 136);">&lt;/wsHttpBinding&gt;</span></pre> 
+ <ul> 
+  <li> <p> <strong><b style="box-sizing: border-box; color: rgb(0, 0, 0); font-family: 'Open Sans', Arial, sans-serif; font-size: 14px; line-height: 24px; text-align: justify;">Transport&nbsp;</b></strong>- 这种模式是实现信息通过使用通信协议，如TCP，IPC，HTTPS和MSMQ一个安全的传输的最简单方法。这种模式是比较有效的，当在传输点至点，并主要是用于在受控环境中，也就是说，内部网应用。</p> </li> 
+ </ul> 
+ <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+<span class="tag" style="box-sizing: border-box; color: rgb(0, 0, 136);">&lt;wsHttpBinding&gt;</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+   </span><span class="tag" style="box-sizing: border-box; color: rgb(0, 0, 136);">&lt;binding</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="atn" style="box-sizing: border-box; color: rgb(127, 0, 85);">name</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">=</span><span class="atv" style="box-sizing: border-box; color: rgb(0, 136, 0);">"WCFSecurityExample"</span><span class="tag" style="box-sizing: border-box; color: rgb(0, 0, 136);">&gt;</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+      </span><span class="tag" style="box-sizing: border-box; color: rgb(0, 0, 136);">&lt;security</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="atn" style="box-sizing: border-box; color: rgb(127, 0, 85);">mode</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">=</span><span class="atv" style="box-sizing: border-box; color: rgb(0, 136, 0);">"Transport"</span><span class="tag" style="box-sizing: border-box; color: rgb(0, 0, 136);">/&gt;</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+   </span><span class="tag" style="box-sizing: border-box; color: rgb(0, 0, 136);">&lt;/binding&gt;</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+</span><span class="tag" style="box-sizing: border-box; color: rgb(0, 0, 136);">&lt;/wsHttpBinding&gt;</span></pre> 
+ <ul> 
+  <li> <p> <strong>Message&nbsp;</strong>- 安全模式可以相互验证，并提供隐私的消息进行加密，并且可以通过http，这不被认为是一种安全协议被传输在很大程度上。这里的安全性提供了端 - 端，而不考虑有多少中介参与消息传送和是否有一个安全的运输或没有。该模式是通过互联网应用程序通常使用。</p> </li> 
+ </ul> 
+ <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+<span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> 
+</span><span class="tag" style="box-sizing: border-box; color: rgb(0, 0, 136);">&lt;wsHttpBinding&gt;</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+   </span><span class="tag" style="box-sizing: border-box; color: rgb(0, 0, 136);">&lt;binding</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="atn" style="box-sizing: border-box; color: rgb(127, 0, 85);">name</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">=</span><span class="atv" style="box-sizing: border-box; color: rgb(0, 136, 0);">"WCFSecurityExample"</span><span class="tag" style="box-sizing: border-box; color: rgb(0, 0, 136);">&gt;</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+      </span><span class="tag" style="box-sizing: border-box; color: rgb(0, 0, 136);">&lt;security</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="atn" style="box-sizing: border-box; color: rgb(127, 0, 85);">mode</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">=</span><span class="atv" style="box-sizing: border-box; color: rgb(0, 136, 0);">"Message"</span><span class="tag" style="box-sizing: border-box; color: rgb(0, 0, 136);">/&gt;</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+   </span><span class="tag" style="box-sizing: border-box; color: rgb(0, 0, 136);">&lt;/binding&gt;</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+</span><span class="tag" style="box-sizing: border-box; color: rgb(0, 0, 136);">&lt;/wsHttpBinding&gt;</span></pre> 
+ <ul> 
+  <li> <p> <strong>Mixed&nbsp;</strong>- 这种安全模式是不经常使用，客户端身份验证仅在客户端级别提供。</p> </li> 
+ </ul> 
+ <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+<span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> 
+</span><span class="tag" style="box-sizing: border-box; color: rgb(0, 0, 136);">&lt;wsHttpBinding&gt;</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+   </span><span class="tag" style="box-sizing: border-box; color: rgb(0, 0, 136);">&lt;binding</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="atn" style="box-sizing: border-box; color: rgb(127, 0, 85);">name</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">=</span><span class="atv" style="box-sizing: border-box; color: rgb(0, 136, 0);">"WCFSecurityExample"</span><span class="tag" style="box-sizing: border-box; color: rgb(0, 0, 136);">&gt;</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+      </span><span class="tag" style="box-sizing: border-box; color: rgb(0, 0, 136);">&lt;security</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="atn" style="box-sizing: border-box; color: rgb(127, 0, 85);">mode</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">=</span><span class="atv" style="box-sizing: border-box; color: rgb(0, 136, 0);">"TransportWithMessageCredential"</span><span class="tag" style="box-sizing: border-box; color: rgb(0, 0, 136);">/&gt;</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+   </span><span class="tag" style="box-sizing: border-box; color: rgb(0, 0, 136);">&lt;/binding&gt;</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+</span><span class="tag" style="box-sizing: border-box; color: rgb(0, 0, 136);">&lt;/wsHttpBinding&gt;</span></pre> 
+ <ul> 
+  <li> <p> <strong>Both&nbsp;</strong>- 此安全方式包括两种传输安全性和信息的安全性，提供了健壮的安全盖，但通常会导致超载的整体性能。这一个仅由MSMQ支持。</p> </li> 
+ </ul> 
+ <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+<span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> 
+</span><span class="tag" style="box-sizing: border-box; color: rgb(0, 0, 136);">&lt;netMsmqBinding&gt;</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+   </span><span class="tag" style="box-sizing: border-box; color: rgb(0, 0, 136);">&lt;binding</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="atn" style="box-sizing: border-box; color: rgb(127, 0, 85);">name</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">=</span><span class="atv" style="box-sizing: border-box; color: rgb(0, 136, 0);">"WCFSecurityExample"</span><span class="tag" style="box-sizing: border-box; color: rgb(0, 0, 136);">&gt;</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+      </span><span class="tag" style="box-sizing: border-box; color: rgb(0, 0, 136);">&lt;security</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="atn" style="box-sizing: border-box; color: rgb(127, 0, 85);">mode</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">=</span><span class="atv" style="box-sizing: border-box; color: rgb(0, 136, 0);">"Both"</span><span class="tag" style="box-sizing: border-box; color: rgb(0, 0, 136);">/&gt;</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+   </span><span class="tag" style="box-sizing: border-box; color: rgb(0, 0, 136);">&lt;/binding&gt;</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+</span><span class="tag" style="box-sizing: border-box; color: rgb(0, 0, 136);">&lt;/netMsmqBinding&gt;</span></pre> 
+ <p> 所有的WCF绑定，除非有basicHttpBinding传输安全性默认情况下有一定关系。</p> 
+ <h2> 消息安全级别</h2> 
+ <p> 消息级安全性不依赖于WCF协议。它是通过使用一个标准的算法对数据进行加密采用与消息数据本身。有若干客户端凭证可用于不同的绑定的消息的安全级别，这些将在下面讨论。</p> 
+ <p> WCF消息级安全性的客户端证书</p> 
+ <p> None :在此，使用加密来保护该消息而被执行，这意味着，该服务可以由一个匿名客户访问没有客户机认证。除了basicHttpBinding，所有的WCF绑定支持此客户端凭据。然而，应当注意的是，对于NetNamedPipeBinding客户端凭证不可用。</p> 
+ <ul> 
+  <li> <p> Windows&nbsp;- 在这里无论是信息的加密和认证的客户端发生了一个实时登录的用户。在此情况下，也不同于所有其他的WCF绑定，NetNamedPipeBinding不可用以及basicHttpBinding不提供支持。</p> </li> 
+  <li> <p> UserName&nbsp;- 这里消息被加密，以及通过提供用户名固定，而客户端进行认证，因为它们需要提供密码。 basicHttpBinding就像上面的两个客户端凭证，不支持用户名和它不适用于NetNamedPipeBinding。</p> </li> 
+  <li> <p> Certificate&nbsp;- 随着信息加密，客户端和服务获得与证书的身份验证。此客户端证书可用，并且支持所有的WCF绑定，除了NetNamedPipeBinding。</p> </li> 
+  <li> <p> IssuedToken&nbsp;- 类似CardSpace从一个机构颁发的令牌用于验证的消息。这里也进行消息的加密。</p> </li> 
+ </ul> 
+ <p> 下面的代码显示了客户端凭据如何配置WCF的信息安全等级/模式。</p>   
+ <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+<span class="tag" style="box-sizing: border-box; color: rgb(0, 0, 136);">&lt;netTcpBinding&gt;</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+   </span><span class="tag" style="box-sizing: border-box; color: rgb(0, 0, 136);">&lt;binding</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="atn" style="box-sizing: border-box; color: rgb(127, 0, 85);">name</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">=</span><span class="atv" style="box-sizing: border-box; color: rgb(0, 136, 0);">"WCFMessageSecurityExample"</span><span class="tag" style="box-sizing: border-box; color: rgb(0, 0, 136);">&gt;</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+      </span><span class="tag" style="box-sizing: border-box; color: rgb(0, 0, 136);">&lt;security</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="atn" style="box-sizing: border-box; color: rgb(127, 0, 85);">mode</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">=</span><span class="atv" style="box-sizing: border-box; color: rgb(0, 136, 0);">"Message"</span><span class="tag" style="box-sizing: border-box; color: rgb(0, 0, 136);">&gt;</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+         </span><span class="tag" style="box-sizing: border-box; color: rgb(0, 0, 136);">&lt;message</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="atn" style="box-sizing: border-box; color: rgb(127, 0, 85);">clientCredentialType</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">=</span><span class="atv" style="box-sizing: border-box; color: rgb(0, 136, 0);">"None"</span><span class="tag" style="box-sizing: border-box; color: rgb(0, 0, 136);">/&gt;</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+      </span><span class="tag" style="box-sizing: border-box; color: rgb(0, 0, 136);">&lt;/security&gt;</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">   
+   </span><span class="tag" style="box-sizing: border-box; color: rgb(0, 0, 136);">&lt;/binding&gt;</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+</span><span class="tag" style="box-sizing: border-box; color: rgb(0, 0, 136);">&lt;/netTcpBinding&gt;</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+
+</span><span class="tag" style="box-sizing: border-box; color: rgb(0, 0, 136);">&lt;netMsmqBinding&gt;</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">...</span><span class="tag" style="box-sizing: border-box; color: rgb(0, 0, 136);">&lt;/netMsmqBinding&gt;</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+</span><span class="tag" style="box-sizing: border-box; color: rgb(0, 0, 136);">&lt;/bindings&gt;</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+</span><span class="tag" style="box-sizing: border-box; color: rgb(0, 0, 136);">&lt;behaviors&gt;</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">...</span><span class="tag" style="box-sizing: border-box; color: rgb(0, 0, 136);">&lt;/behaviors&gt;</span></pre> 
+ <p> 这里，必须指出的是，传输安全模式具有超过该消息的安全级别的边缘，因为前者是更快。它不需要任何额外的编码，并提供互操作性的支持，并且因此不会降低整体性能。</p> 
+ <p> 然而，从安全角度考虑，将消息安全模式是更加健壮，并且独立的协议，并提供端到端的安全性。</p> 
+ <br>      
+</div></body></html>

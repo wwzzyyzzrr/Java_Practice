@@ -1,0 +1,115 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">JPA查找实体</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>要找到一个实体，<code>EntityManger</code>接口提供了<code>find()</code>方法，该方法根据主键搜索一个元素。</p> 
+ <h2 id="h2-jpa-"><a name="JPA实体查找示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>JPA实体查找示例</h2>
+ <p>在这里，我们将搜索指定的记录并在控制台输出它的值。</p> 
+ <p>完整的项目代码如下所示 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201806/0806/472140611_47374.png" alt=""></p> 
+ <p>这个例子包含以下步骤 -</p> 
+ <p><strong>第1步:</strong> 在<code>com.yiibai.jpa.student</code>包下创建一个名为<code>StudentEntity.java</code>的实体类，它包含属性:<code>s_id</code>，<code>s_name</code>和<code>s_age</code>。</p> 
+ <p>文件:<em>StudentEntity.java</em> 的代码如下 - </p> 
+ <pre><code class="lang-java">package com.yiibai.jpa.student;
+
+import javax.persistence.*;
+
+@Entity
+@Table(name = "student")
+public class StudentEntity {
+
+    @Id
+    private int s_id;
+    private String s_name;
+    private int s_age;
+
+    public StudentEntity(int s_id, String s_name, int s_age) {
+        super();
+        this.s_id = s_id;
+        this.s_name = s_name;
+        this.s_age = s_age;
+    }
+
+    public StudentEntity() {
+        super();
+    }
+
+    public int getS_id() {
+        return s_id;
+    }
+
+    public void setS_id(int s_id) {
+        this.s_id = s_id;
+    }
+
+    public String getS_name() {
+        return s_name;
+    }
+
+    public void setS_name(String s_name) {
+        this.s_name = s_name;
+    }
+
+    public int getS_age() {
+        return s_age;
+    }
+
+    public void setS_age(int s_age) {
+        this.s_age = s_age;
+    }
+
+}
+</code></pre> 
+ <p><strong>第2步:</strong> 将实体类和其他数据库配置映射到<code>persistence.xml</code>文件中。</p> 
+ <p>文件:<em>persistence.xml</em> 的代码如下 - </p> 
+ <pre><code class="lang-xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;persistence version="2.1"
+    xmlns="http://xmlns.jcp.org/xml/ns/persistence"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd"&gt;
+    &lt;persistence-unit name="Student_details"&gt;
+        &lt;class&gt;com.yiibai.jpa.student.StudentEntity&lt;/class&gt;
+        &lt;properties&gt;
+            &lt;property name="javax.persistence.jdbc.driver"
+                value="com.mysql.jdbc.Driver" /&gt;
+            &lt;property name="javax.persistence.jdbc.url"
+                value="jdbc:mysql://localhost:3306/testdb?serverTimezone=UTC" /&gt;
+            &lt;property name="javax.persistence.jdbc.user" value="root" /&gt;
+            &lt;property name="javax.persistence.jdbc.password" value="123456" /&gt;
+            &lt;property name="eclipselink.logging.level" value="SEVERE" /&gt;
+            &lt;property name="eclipselink.ddl-generation"
+                value="create-or-extend-tables" /&gt;
+        &lt;/properties&gt;
+    &lt;/persistence-unit&gt;
+
+&lt;/persistence&gt;
+</code></pre> 
+ <p>在<code>com.yiibai.jpa.student</code>包下创建一个名为<code>FindStudent.java</code>的持久化类，以便将实体对象与数据保持一致。</p> 
+ <p>文件:<em>FindStudent.java</em> 的代码如下 - </p>   
+ <pre><code class="lang-java">package com.yiibai.jpa.student;
+
+import javax.persistence.*;
+
+import com.yiibai.jpa.student.*;
+
+public class FindStudent {
+    public static void main(String args[]) {
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("Student_details");
+        EntityManager em = emf.createEntityManager();
+
+        StudentEntity s = em.find(StudentEntity.class, 1001);
+
+        System.out.println("Student id = " + s.getS_id());
+        System.out.println("Student Name = " + s.getS_name());
+        System.out.println("Student Age = " + s.getS_age());
+
+    }
+}
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 - </p> 
+ <pre><code class="lang-shell">Loading class `com.mysql.jdbc.Driver'. This is deprecated. The new driver class is `com.mysql.cj.jdbc.Driver'. The driver is automatically registered via the SPI and manual loading of the driver class is generally unnecessary.
+Fri Jun 08 14:09:45 CST 2018 WARN: Establishing SSL connection without server's identity verification is not recommended. According to MySQL 5.5.45+, 5.6.26+ and 5.7.6+ requirements SSL connection must be established by default if explicit option isn't set. For compliance with existing applications not using SSL the verifyServerCertificate property is set to 'false'. You need either to explicitly disable SSL by setting useSSL=false, or set useSSL=true and provide truststore for server certificate verification.
+Fri Jun 08 14:09:45 CST 2018 WARN: Establishing SSL connection without server's identity verification is not recommended. According to MySQL 5.5.45+, 5.6.26+ and 5.7.6+ requirements SSL connection must be established by default if explicit option isn't set. For compliance with existing applications not using SSL the verifyServerCertificate property is set to 'false'. You need either to explicitly disable SSL by setting useSSL=false, or set useSSL=true and provide truststore for server certificate verification.
+Student id = 1001
+Student Name = Maxsu
+Student Age = 26
+</code></pre>
+ <br>      
+</div></body></html>

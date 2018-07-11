@@ -1,0 +1,299 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Euphoria 文件I/O</h1><div style="width:100%;float:left;" class="article-content">   
+ <p> 使用Euphoria编程语言，你可以写程序读取和改变你的软盘驱动器或硬盘驱动器上的文件数据，或者创建新的文件形式输出。你甚至可以访问计算机上的设备，如打印机和调制解调器。</p> 
+ <p> 本章将覆盖所有 Euphoria 的基本I/O功能。如需使用更多的功能，请的参考标准的 Euphoria&nbsp;文档。</p> 
+ <h1> 打印到屏幕上：</h1> 
+ <p> 产生输出最简单的方法是使用puts()&nbsp;语句，在这里您可以通过任何屏幕上要显示的字符串。还有另一种方法&nbsp;printf()&nbsp;的情况下，也可用于使用动态值来格式化一个字符串。</p> 
+ <p> 这些方法可以把你把它们传递给一个字符串，并写入到标准输出的结果如下表达式：</p> 
+ <table cellpadding="5" class="src" style="font-family: verdana, helvetica, arial, sans-serif; border-style: solid; border-color: rgb(170, 170, 170); width: 552px; background-color: rgb(241, 241, 241); border-collapse: collapse; padding-left: 5px; vertical-align: top; color: rgb(0, 0, 0);"> 
+  <tbody> 
+   <tr> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border-style: solid; border-color: rgb(170, 170, 170);"> <pre style="font-family: 'Courier New', monospace; font-size: 12px; margin-bottom: 0px;">
+#!/home/euphoria-4.0b2/bin/eui
+ 
+puts(1, "Euphoria is really a great language, isn't it?" )
+</pre> </td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> 标准屏幕上，这将产生以下结果：</p> 
+ <table cellpadding="5" class="src" style="font-family: verdana, helvetica, arial, sans-serif; border-style: solid; border-color: rgb(170, 170, 170); width: 552px; background-color: rgb(241, 241, 241); border-collapse: collapse; padding-left: 5px; vertical-align: top; color: rgb(0, 0, 0);"> 
+  <tbody> 
+   <tr> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border-style: solid; border-color: rgb(170, 170, 170);"> <pre style="font-family: 'Courier New', monospace; font-size: 12px; margin-bottom: 0px;">
+Euphoria is really a great language, isn't it?
+</pre> </td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h1> 打开和关闭文件：</h1> 
+ <p> Euphoria&nbsp;提供必要的基本方法，默认情况下对文件进行操作。你可以做你大多数的文件操作，使用 open(), close(), printf(), gets() and getc() methods.</p> 
+ <h2> open&nbsp;方法:</h2> 
+ <p> 读取或写入文件之前，必须打开它使用欣快内置的open() 方法。这个函数创建一个文件描述符，这将被用来调用与它相关联的其他支持方式。</p> 
+ <h2> 语法:</h2> 
+ <table cellpadding="5" class="src" style="font-family: verdana, helvetica, arial, sans-serif; border-style: solid; border-color: rgb(170, 170, 170); width: 552px; background-color: rgb(241, 241, 241); border-collapse: collapse; padding-left: 5px; vertical-align: top; color: rgb(0, 0, 0);"> 
+  <tbody> 
+   <tr> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border-style: solid; border-color: rgb(170, 170, 170);"> <pre style="font-family: 'Courier New', monospace; font-size: 12px; margin-bottom: 0px;">
+integer file_num = open(file_name, access_mode)
+</pre> </td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p> 以上方法返回-1的情况下有一个错误打开给定的文件名。下面是详细的参数研究：</p> 
+ <ul> 
+  <li> <p> file_name:&nbsp;&nbsp;file_name 参数是一个字符串值，其中包含要访问的文件的名称。</p> </li> 
+  <li> <p> access_mode:&nbsp;access_mode决定模式，即打开文件。读，写追加等可能值的完整列表在下面的表中给出。</p> </li> 
+ </ul> 
+ <p> 下面是一个清单的不同的模式打开一个文件：</p> 
+ <table border="1" cellpadding="5" cellspacing="5" class="src" style="font-family: verdana, helvetica, arial, sans-serif; border: 1px solid rgb(170, 170, 170); width: 552px; background-color: rgb(241, 241, 241); border-collapse: collapse; padding-left: 5px; vertical-align: top; color: rgb(0, 0, 0);"> 
+  <tbody> 
+   <tr> 
+    <th style="background-color: rgb(205, 205, 205); border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> 模式</th> 
+    <th style="background-color: rgb(205, 205, 205); border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> 描述</th> 
+   </tr> 
+   <tr> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> r</td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> Opens a text file for reading only. The file pointer is placed at the beginning of the file.</td> 
+   </tr> 
+   <tr> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> rb</td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> Opens a file for reading only in binary format. The file pointer is placed at the beginning of the file.</td> 
+   </tr> 
+   <tr> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> w</td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> Opens a text file for writing only. Overwrites the file if the file exists. If the file does not exist, creates a new file for writing.</td> 
+   </tr> 
+   <tr> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> wb</td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> Opens a file for writing only in binary format. Overwrites the file if the file exists. If the file does not exist, creates a new file for writing.</td> 
+   </tr> 
+   <tr> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> u</td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> Opens a file for both reading and writing. The file pointer will be at the beginning of the file.</td> 
+   </tr> 
+   <tr> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> ub</td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> Opens a file for both reading and writing in binary format. The file pointer will be at the beginning of the file.</td> 
+   </tr> 
+   <tr> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> a</td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> Opens a file for appending. The file pointer is at the end of the file if the file exists. That is, the file is in the append mode. If the file does not exist, it creates a new file for writing.</td> 
+   </tr> 
+   <tr> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> ab</td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> Opens a file for appending in binary format. The file pointer is at the end of the file if the file exists. That is, the file is in the append mode. If the file does not exist, it creates a new file for writing.</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h2> 例子:</h2> 
+ <p> 下面的例子在你的Linux创建一个新的文本文件在当前目录：</p> 
+ <table cellpadding="5" class="src" style="font-family: verdana, helvetica, arial, sans-serif; border-style: solid; border-color: rgb(170, 170, 170); width: 552px; background-color: rgb(241, 241, 241); border-collapse: collapse; padding-left: 5px; vertical-align: top; color: rgb(0, 0, 0);"> 
+  <tbody> 
+   <tr> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border-style: solid; border-color: rgb(170, 170, 170);"> <pre style="font-family: 'Courier New', monospace; font-size: 12px; margin-bottom: 0px;">
+#!/home/euphoria-4.0b2/bin/eui
+
+integer file_num
+constant ERROR = 2
+constant STDOUT = 1
+
+file_num = open("myfile,txt", "w")
+if file_num = -1 then
+    puts(ERROR, "couldn't open myfile\n")
+else
+     puts(STDOUT, "File opend successfully\n")
+end if
+</pre> </td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p> 如果文件成功打开，那么它会在当前目录下创建“myfile.txt”，并会产生以下结果：</p> 
+ <table cellpadding="5" class="src" style="font-family: verdana, helvetica, arial, sans-serif; border-style: solid; border-color: rgb(170, 170, 170); width: 552px; background-color: rgb(241, 241, 241); border-collapse: collapse; padding-left: 5px; vertical-align: top; color: rgb(0, 0, 0);"> 
+  <tbody> 
+   <tr> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border-style: solid; border-color: rgb(170, 170, 170);"> <pre style="font-family: 'Courier New', monospace; font-size: 12px; margin-bottom: 0px;">
+File opend successfully
+</pre> </td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h2> close()&nbsp;方法:</h2> 
+ <p> close() 方法刷新不成文的任何信息，并关闭该文件后，没有更多的读取或写入文件可以做。</p> 
+ <p> 幸福感会自动关闭一个文件一个文件时的参考对象被重新分配到另一个文件。这是一个很好的做法，使用close（）方法关闭文件。</p> 
+ <h2> 语法:</h2> 
+ <table cellpadding="5" class="src" style="font-family: verdana, helvetica, arial, sans-serif; border-style: solid; border-color: rgb(170, 170, 170); width: 552px; background-color: rgb(241, 241, 241); border-collapse: collapse; padding-left: 5px; vertical-align: top; color: rgb(0, 0, 0);"> 
+  <tbody> 
+   <tr> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border-style: solid; border-color: rgb(170, 170, 170);"> <pre style="font-family: 'Courier New', monospace; font-size: 12px; margin-bottom: 0px;">
+close( file_num );
+</pre> </td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p> 这里传递的参数是打开一个文件时收到的文件描述符。</p> 
+ <h2> 例子:</h2> 
+ <p> 以下的例子将创建一个文件上面，然后将现有的程序之前关闭它：</p> 
+ <table cellpadding="5" class="src" style="font-family: verdana, helvetica, arial, sans-serif; border-style: solid; border-color: rgb(170, 170, 170); width: 552px; background-color: rgb(241, 241, 241); border-collapse: collapse; padding-left: 5px; vertical-align: top; color: rgb(0, 0, 0);"> 
+  <tbody> 
+   <tr> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border-style: solid; border-color: rgb(170, 170, 170);"> <pre style="font-family: 'Courier New', monospace; font-size: 12px; margin-bottom: 0px;">
+#!/home/euphoria-4.0b2/bin/eui
+
+integer file_num
+constant ERROR = 2
+constant STDOUT = 1
+
+file_num = open("myfile.txt", "w")
+if file_num = -1 then
+    puts(ERROR, "couldn't open myfile\n")
+else
+     puts(STDOUT, "File opend successfully\n")
+end if
+
+if file_num = -1 then
+    puts(ERROR, "No need to close the file\n")
+else
+     close( file_num )
+     puts(STDOUT, "File closed successfully\n")
+end if
+</pre> </td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> 这将产生以下结果：</p> 
+ <table cellpadding="5" class="src" style="font-family: verdana, helvetica, arial, sans-serif; border-style: solid; border-color: rgb(170, 170, 170); width: 552px; background-color: rgb(241, 241, 241); border-collapse: collapse; padding-left: 5px; vertical-align: top; color: rgb(0, 0, 0);"> 
+  <tbody> 
+   <tr> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border-style: solid; border-color: rgb(170, 170, 170);">   <pre style="font-family: 'Courier New', monospace; font-size: 12px; margin-bottom: 0px;">
+File opend successfully
+File closed successfully
+</pre> </td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h1> 读取和写入文件：</h1> 
+ <p> Euphoria 提供了一套访问方法，使我们的生活更轻松，同时读取或写入一个文件，无论是在文本模式或二进制模式。我们将看到如何使用printf()&nbsp;和&nbsp;gets()方法来读取和写入文件。&nbsp;</p> 
+ <h2> printf()&nbsp;方法:</h2> 
+ <p> printf（）的方法写入一个打开的文件的任何字符串。</p> 
+ <h2> 语法:</h2> 
+ <table cellpadding="5" class="src" style="font-family: verdana, helvetica, arial, sans-serif; border-style: solid; border-color: rgb(170, 170, 170); width: 552px; background-color: rgb(241, 241, 241); border-collapse: collapse; padding-left: 5px; vertical-align: top; color: rgb(0, 0, 0);"> 
+  <tbody> 
+   <tr> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border-style: solid; border-color: rgb(170, 170, 170);"> <pre style="font-family: 'Courier New', monospace; font-size: 12px; margin-bottom: 0px;">
+printf(fn, st, x) 
+</pre> </td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p> 下面是详细参数：</p> 
+ <ul> 
+  <li> <p> fn:&nbsp;文件描述符收到open（）方法。</p> </li> 
+  <li> <p> st:&nbsp;十进制或原子将被格式化％d和字符串或字符序列的格式字符串将被格式化，用％s。</p> </li> 
+  <li> <p> x:&nbsp;如果x是一个序列，然后从st再配上相应元素的x格式说明符。如果x是一个原子，那么通常st将只包含一个格式说明符，它将被应用于x，但是如果st包含多种格式说明符，每一个都将被应用到相同的值x。</p> </li> 
+ </ul> 
+ <h2> 例子:</h2> 
+ <p> 以下示例将打开一个文件，将写在这个文件中，一个人的姓名和年龄：</p> 
+ <table cellpadding="5" class="src" style="font-family: verdana, helvetica, arial, sans-serif; border-style: solid; border-color: rgb(170, 170, 170); width: 552px; background-color: rgb(241, 241, 241); border-collapse: collapse; padding-left: 5px; vertical-align: top; color: rgb(0, 0, 0);"> 
+  <tbody> 
+   <tr> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border-style: solid; border-color: rgb(170, 170, 170);"> <pre style="font-family: 'Courier New', monospace; font-size: 12px; margin-bottom: 0px;">
+#!/home/euphoria-4.0b2/bin/eui
+
+integer file_num
+constant ERROR = 2
+constant STDOUT = 1
+
+file_num = open("myfile.txt", "w")
+if file_num = -1 then
+    puts(ERROR, "couldn't open myfile\n")
+else
+     puts(STDOUT, "File opend successfully\n")
+end if
+
+printf(file_num, "My name is %s and age is %d\n", {"Zara", 8})
+
+if file_num = -1 then
+    puts(ERROR, "No need to close the file\n")
+else
+     close( file_num )
+     puts(STDOUT, "File closed successfully\n")
+end if
+</pre> </td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p> 上述方法示例创建 myfile.txt 文件，会写在该文件中的内容，并最终将关闭该文件。如果你想打开这个文件，它有以下内容</p> 
+ <table cellpadding="5" class="src" style="font-family: verdana, helvetica, arial, sans-serif; border-style: solid; border-color: rgb(170, 170, 170); width: 552px; background-color: rgb(241, 241, 241); border-collapse: collapse; padding-left: 5px; vertical-align: top; color: rgb(0, 0, 0);"> 
+  <tbody> 
+   <tr> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border-style: solid; border-color: rgb(170, 170, 170);"> <pre style="font-family: 'Courier New', monospace; font-size: 12px; margin-bottom: 0px;">
+My name is Zara and age is 8
+</pre> </td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h2> gets()&nbsp;方法:</h2> 
+ <p> gets()&nbsp;方法从一个打开的文件中读取字符串。</p> 
+ <h2> 语法:</h2> 
+ <table cellpadding="5" class="src" style="font-family: verdana, helvetica, arial, sans-serif; border-style: solid; border-color: rgb(170, 170, 170); width: 552px; background-color: rgb(241, 241, 241); border-collapse: collapse; padding-left: 5px; vertical-align: top; color: rgb(0, 0, 0);"> 
+  <tbody> 
+   <tr> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border-style: solid; border-color: rgb(170, 170, 170);"> <pre style="font-family: 'Courier New', monospace; font-size: 12px; margin-bottom: 0px;">
+gets(file_num)
+</pre> </td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> 这里传递的参数文件说明 opend()&nbsp;方法返回。这种方法的文件一行行从一开始就开始读。字符将具有从0到255的值。原子文件结束时返回-1。</p> 
+ <h2 style="font-size: 16px; line-height: 1.5; font-family: Helvetica, Arial, 'Liberation Sans', FreeSans, sans-serif; margin-bottom: 10px; margin-top: 10px; color: rgb(0, 0, 0);"> 例子:</h2> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> 让我们采取上面我们已经创建了一个文件myfile.txt。</p> 
+ <table cellpadding="5" class="src" style="font-family: verdana, helvetica, arial, sans-serif; border-style: solid; border-color: rgb(170, 170, 170); width: 552px; background-color: rgb(241, 241, 241); border-collapse: collapse; padding-left: 5px; vertical-align: top; color: rgb(0, 0, 0);"> 
+  <tbody> 
+   <tr> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border-style: solid; border-color: rgb(170, 170, 170);"> <pre style="font-family: 'Courier New', monospace; font-size: 12px; margin-bottom: 0px;">
+#!/home/euphoria-4.0b2/bin/eui
+
+integer file_num
+object line
+
+constant ERROR = 2
+constant STDOUT = 1
+
+file_num = open("myfile.txt", "r")
+if file_num = -1 then
+    puts(ERROR, "couldn't open myfile\n")
+else
+     puts(STDOUT, "File opend successfully\n")
+end if
+
+line = gets(file_num)
+
+printf( STDOUT, "Read content : %s\n", {line})
+
+if file_num = -1 then
+    puts(ERROR, "No need to close the file\n")
+else
+     close( file_num )
+     puts(STDOUT, "File closed successfully\n")
+end if
+</pre> </td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> 这将产生以下结果：</p> 
+ <table cellpadding="5" class="src" style="font-family: verdana, helvetica, arial, sans-serif; border-style: solid; border-color: rgb(170, 170, 170); width: 552px; background-color: rgb(241, 241, 241); border-collapse: collapse; padding-left: 5px; vertical-align: top; color: rgb(0, 0, 0);"> 
+  <tbody> 
+   <tr> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border-style: solid; border-color: rgb(170, 170, 170);"> <pre style="font-family: 'Courier New', monospace; font-size: 12px; margin-bottom: 0px;">
+File opend successfully
+Read content : My name is Zara and age is 8
+
+File closed successfully
+</pre> </td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h1> 文件和目录的方法：</h1> 
+ <p> Euphoria 提供了许多方法，它可以帮助处理文件的列表。</p> 
+ <br>      
+</div></body></html>

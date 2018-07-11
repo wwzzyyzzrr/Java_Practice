@@ -1,0 +1,35 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">PHP下载文件</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>在PHP中，可使用内置的<code>readfile()</code>函数来实现文件下载。 <code>readfile()</code>函数读取一个文件并将其写入输出缓冲区。</p> 
+ <h2 id="h2-php-readfile-"><a name="PHP readfile()函数" class="reference-link"></a><span class="header-link octicon octicon-link"></span>PHP readfile()函数</h2>
+ <p><strong>语法</strong></p> 
+ <pre><code class="lang-php">int readfile ( string $filename [, bool $use_include_path = false [, resource $context ]] )
+</code></pre> 
+ <ul> 
+  <li><code>$filename</code>：表示文件名</li>
+  <li><code>$use_include_path</code>：它是可选参数。它默认为<code>false</code>。可以将其设置为<code>true</code>以搜索<code>included_path</code>中的文件。</li>
+  <li><code>$context</code>：表示上下文流资源。</li>
+  <li><code>int</code>：它返回从文件读取的字节数。</li>
+ </ul> 
+ <h2 id="h2-hp-"><a name="HP下载文件示例：文本文件" class="reference-link"></a><span class="header-link octicon octicon-link"></span>HP下载文件示例：文本文件</h2>
+ <p>在您的网站目录下(我使用的是 <code>D:/wamp/www</code>)创建一个文本文件： <code>text.txt</code> 。</p> 
+ <p><em>文件: download1.php</em></p> 
+ <pre><code class="lang-php">&lt;?php  
+$file_url = 'http://localhost/text.txt';  
+header('Content-Type: application/octet-stream');  
+header("Content-Transfer-Encoding: utf-8");   
+header("Content-disposition: attachment; filename=\"" . basename($file_url) . "\"");   
+readfile($file_url);  
+?&gt;
+</code></pre> 
+ <h2 id="h2-php-"><a name="PHP下载文件示例：二进制文件" class="reference-link"></a><span class="header-link octicon octicon-link"></span>PHP下载文件示例：二进制文件</h2>
+ <p><em>文件：download2.php</em></p>   
+ <pre><code class="lang-php">&lt;?php  
+$file_url = 'http://www.myremoteserver.com/file.exe';  
+header('Content-Type: application/octet-stream');  
+header("Content-Transfer-Encoding: Binary");   
+header("Content-disposition: attachment; filename=\"" . basename($file_url) . "\"");   
+readfile($file_url);  
+?&gt;
+</code></pre>
+ <br>      
+</div></body></html>

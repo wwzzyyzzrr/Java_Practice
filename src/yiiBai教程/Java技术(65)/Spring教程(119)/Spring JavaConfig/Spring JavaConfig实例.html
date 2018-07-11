@@ -1,0 +1,125 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Spring JavaConfig实例</h1><div style="width:100%;float:left;" class="article-content">   
+ <div> 
+  <div>
+    从Spring&nbsp;3起，JavaConfig功能已经包含在Spring核心模块，它允许开发者将bean定义和在Spring配置XML文件到Java类中。 
+  </div> 
+ </div> 
+ <div> 
+  <div>
+    但是，仍然允许使用经典的XML方式来定义bean和配置，JavaConfig是另一种替代解决方案。 
+  </div> 
+  <div>
+    看来看经典的XML定义和JavaConfig的不同，如下定义在Spring容器中的bean。 
+  </div> 
+  <p> Spring XML file -&nbsp;applicationContext.xml&nbsp;: </p> 
+  <pre>&lt;beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd"&gt;
+ 
+	&lt;bean id="helloBean" class="com.yiibai.hello.impl.HelloWorldImpl"&gt;
+		
+&lt;/beans&gt;</pre> 
+  <div>
+    等效于以下JavaConfig的配置： 
+  </div> 
+  <pre>package com.yiibai.config;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import com.yiibai.hello.HelloWorld;
+import com.yiibai.hello.impl.HelloWorldImpl;
+
+@Configuration
+public class AppConfig {
+	
+    @Bean(name="helloBean")
+    public HelloWorld helloWorld() {
+        return new HelloWorldImpl();
+    }
+	
+}</pre> 
+  <h2> Spring JavaConfig Hello World </h2> 
+  <div>
+    现在，看到一个完整的Spring&nbsp;JavaConfig例子。 
+  </div> 
+  <h2> 1. 工程目录结构 </h2> 
+  <div>
+    这个例子的目录结构如下。 
+  </div> 
+  <div style="text-align:center;"> 
+   <img src="file://E:/data/youdao/qq24B39E2329F08D9F4C3146A571A415EF/4a1bd6f4eeb649c4a0bb8f11a540ef29/clipboard.png"> 
+  </div> 
+  <h2> 3. Spring Bean </h2> 
+  <p> 一个简单的Bean </p> 
+  <pre>package com.yiibai.hello;
+ 
+public interface HelloWorld {
+	
+	void printHelloWorld(String msg);
+ 
+}</pre> 
+  <pre>package com.yiibai.hello.impl;
+
+import com.yiibai.hello.HelloWorld;
+
+public class HelloWorldImpl implements HelloWorld {
+
+	@Override
+	public void printHelloWorld(String msg) {
+
+		System.out.println("Hello : " + msg);
+	}
+
+}</pre> 
+  <h2> 4. JavaConfig 注解 </h2> 
+  <div>
+    使用 @Configuration 注释告诉 Spring，这是核心的 Spring 配置文件，并通过 @Bean 定义 bean。 
+  </div>   
+  <pre>package com.yiibai.config;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import com.yiibai.hello.HelloWorld;
+import com.yiibai.hello.impl.HelloWorldImpl;
+
+@Configuration
+public class AppConfig {
+	
+    @Bean(name="helloBean")
+    public HelloWorld helloWorld() {
+        return new HelloWorldImpl();
+    }
+	
+}</pre> 
+  <h2> 5. 执行结果 </h2> 
+  <p> 使用&nbsp;AnnotationConfigApplicationContext&nbsp;加载您的JavaConfig类 </p> 
+  <pre>package com.yiibai.core;
+ 
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import com.yiibai.config.AppConfig;
+import com.yiibai.hello.HelloWorld;
+ 
+public class App {
+	public static void main(String[] args) {
+	    
+            ApplicationContext context = new AnnotationConfigApplicationContext(AppConfig.class);
+	    HelloWorld obj = (HelloWorld) context.getBean("helloBean");
+	    
+	    obj.printHelloWorld("Spring Java Config");
+
+	}
+}</pre> 
+  <p> 输出结果 </p> 
+  <pre>Hello : Spring Java Config</pre> 
+  <div>
+    下载代码 –&nbsp;
+   <a target="_blank" href="http://pan.baidu.com/s/1kTToPSF">http://pan.baidu.com/s/1kTToPSF</a> 
+  </div> 
+  <div> 
+   <br> 
+  </div> 
+ </div>
+ <br>      
+</div></body></html>

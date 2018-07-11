@@ -1,0 +1,281 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">JSP客户端请求</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>在本章中，我们将在JSP中讨论和学习客户端请求。当浏览器请求网页时，它会向Web服务器发送大量信息。这些信息不能直接读取，因为这些信息作为HTTP请求标头的一部分。可以通过<a target="_blank" href="http://www.yiibai.com/http/index.html" title="HTTP协议">HTTP协议</a>以了解更多信息。</p> 
+ <p>下表列出了浏览器中的重要HTTP请求头信息。这些信息经常在Web编程中使用 -</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>编号</th> 
+    <th>请求头</th> 
+    <th>描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>1</td> 
+    <td><code>Accept</code></td> 
+    <td>此请求头指定浏览器或其他客户端可以处理的<code>MIME</code>类型。 <code>image/png</code>或<code>image/jpeg</code>是两种最常见的值。</td> 
+   </tr> 
+   <tr> 
+    <td>2</td> 
+    <td><code>Accept-Charset</code></td> 
+    <td>此请求头指定浏览器可用于显示信息的字符集。 例如：<code>ISO-8859-1</code>，<code>UTF-8</code>和<code>GB2312</code>等。</td> 
+   </tr> 
+   <tr> 
+    <td>3</td> 
+    <td><code>Accept-Encoding</code></td> 
+    <td>此请求头指定浏览器知道如何处理的编码类型。<code>gzip</code>或<code>compress</code>是两种最常见的值。</td> 
+   </tr> 
+   <tr> 
+    <td>4</td> 
+    <td><code>Accept-Language</code></td> 
+    <td>此请求头指定客户端的首选语言，以防servlet可以使用多种语言生成结果。例如：<code>en</code>，<code>en-us</code>，<code>ru</code>等</td> 
+   </tr> 
+   <tr> 
+    <td>5</td> 
+    <td><code>Authorization</code></td> 
+    <td>访问受密码保护的网页时，客户端使用此请求头来标识自己。</td> 
+   </tr> 
+   <tr> 
+    <td>6</td> 
+    <td><code>Connection</code></td> 
+    <td>此请求头指示客户端是否可以处理持久的HTTP连接。 持久连接允许客户端或其他浏览器通过单个请求检索多个文件。如果是<code>Keep-Alive</code>值表示使用持久连接。</td> 
+   </tr> 
+   <tr> 
+    <td>7</td> 
+    <td><code>Content-Length</code></td> 
+    <td>此请求头仅适用于<code>POST</code>请求，并以字节为单位给出<code>POST</code>数据的大小。</td> 
+   </tr> 
+   <tr> 
+    <td>8</td> 
+    <td><code>Cookie</code></td> 
+    <td>此请求头将返回给先前发送到服务器的<code>cookie</code>到浏览器。</td> 
+   </tr> 
+   <tr> 
+    <td>9</td> 
+    <td><code>Host</code></td> 
+    <td>此请求头指定原始URL中给出的主机和端口。</td> 
+   </tr> 
+   <tr> 
+    <td>10</td> 
+    <td><code>If-Modified-Since</code></td> 
+    <td>此请求头表示客户端仅在指定日期之后更改页面。 服务器发送代码<code>304</code>，表示如果没有较新的结果可用，则不修改标题。</td> 
+   </tr> 
+   <tr> 
+    <td>11</td> 
+    <td><code>If-Unmodified-Since</code></td> 
+    <td>该请求头与<code>If-Modified-Since</code>相反; 它指定只有当文档比指定日期更早时，动作才能成功。</td> 
+   </tr> 
+   <tr> 
+    <td>12</td> 
+    <td><code>Referer</code></td> 
+    <td>此请求头指示引荐网页的URL。 例如，如果位于网页<code>A</code>并单击链接到网页<code>B</code>，则当浏览器请求网页<code>B</code>时，网页<code>A</code>的URL包含在<code>Referer</code>标头中。</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h2 id="h2-httpservletrequest-"><a name="HttpServletRequest对象" class="reference-link"></a><span class="header-link octicon octicon-link"></span>HttpServletRequest对象</h2>
+ <p><code>request</code>对象是<code>javax.servlet.http.HttpServletRequest</code>对象的一个实例。 每当客户端请求页面时，JSP引擎将创建一个新对象来表示该请求。</p> 
+ <p>请求对象提供了获取包括表单数据，Cookie，HTTP方法等HTTP头信息的方法。</p> 
+ <p>下表列出了可用于在JSP程序中读取HTTP头的重要方法。 <code>HttpServletRequest</code>对象可以使用这些方法，该对象代表Web服务器的客户端请求。</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>编号</th> 
+    <th>方法</th> 
+    <th>描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>1</td> 
+    <td><code>Cookie[] getCookies()</code></td> 
+    <td>返回一个数组，其中包含客户端使用此请求发送的所有<code>Cookie</code>对象。</td> 
+   </tr> 
+   <tr> 
+    <td>2</td> 
+    <td><code>Enumeration getAttributeNames()</code></td> 
+    <td>返回枚举，其中包含此请求可用属性的名称。</td> 
+   </tr> 
+   <tr> 
+    <td>3</td> 
+    <td><code>Enumeration getHeaderNames()</code></td> 
+    <td>返回此请求包含的所有头名称的枚举。</td> 
+   </tr> 
+   <tr> 
+    <td>4</td> 
+    <td><code>Enumeration getParameterNames()</code></td> 
+    <td>返回此请求中包含的参数名称的String对象的枚举。</td> 
+   </tr> 
+   <tr> 
+    <td>5</td> 
+    <td><code>HttpSession getSession()</code></td> 
+    <td>返回与此请求相关联的当前会话，或者如果请求没有会话，则自动创建一个会话。</td> 
+   </tr> 
+   <tr> 
+    <td>6</td> 
+    <td><code>HttpSession getSession(boolean create)</code></td> 
+    <td>返回与此请求相关联的当前<code>HttpSession</code>，或者如果没有当前会话，并且<code>create</code>为<code>true</code>，则返回创建一个新会话。</td> 
+   </tr> 
+   <tr> 
+    <td>7</td> 
+    <td><code>Locale getLocale()</code></td> 
+    <td>根据<code>Accept-Language</code>标头返回客户端将接受内容的首选区域设置。</td> 
+   </tr> 
+   <tr> 
+    <td>8</td> 
+    <td><code>Object getAttribute(String name)</code></td> 
+    <td>作为<code>Object</code>返回命名属性的值，如果不存在给定名称的属性，则返回<code>null</code>。</td> 
+   </tr> 
+   <tr> 
+    <td>9</td> 
+    <td><code>ServletInputStream getInputStream()</code></td> 
+    <td>使用<code>ServletInputStream</code>将请求的正文作为二进制数据检索。</td> 
+   </tr> 
+   <tr> 
+    <td>10</td> 
+    <td><code>String getAuthType()</code></td> 
+    <td>返回用于保护servlet的认证方案的名称，例如<code>“BASIC”</code>或<code>“SSL”</code>，如果JSP未受保护，则返回<code>null</code>。</td> 
+   </tr> 
+   <tr> 
+    <td>11</td> 
+    <td><code>String getCharacterEncoding()</code></td> 
+    <td>返回此请求正文中使用的字符编码的名称。</td> 
+   </tr> 
+   <tr> 
+    <td>12</td> 
+    <td><code>String getContentType()</code></td> 
+    <td>返回请求主体的<code>MIME</code>类型，如果类型不知道，则返回<code>null</code>。</td> 
+   </tr> 
+   <tr> 
+    <td>13</td> 
+    <td><code>String getContextPath()</code></td> 
+    <td>返回指示请求上下文的请求URI的部分。</td> 
+   </tr> 
+   <tr> 
+    <td>14</td> 
+    <td><code>String getHeader(String name)</code></td> 
+    <td>以<code>String</code>形式返回指定的请求头的值。</td> 
+   </tr> 
+   <tr> 
+    <td>15</td> 
+    <td><code>String getMethod()</code></td> 
+    <td>返回发出此请求的HTTP方法的名称，例如：<code>GET</code>，<code>POST</code>或<code>PUT</code>。</td> 
+   </tr> 
+   <tr> 
+    <td>16</td> 
+    <td><code>String getParameter(String name)</code></td> 
+    <td>以<code>String</code>形式返回请求参数的值，如果该参数不存在，则返回<code>null</code>。</td> 
+   </tr> 
+   <tr> 
+    <td>17</td> 
+    <td><code>String getPathInfo()</code></td> 
+    <td>返回与客户端发出此请求时发送的URL相关联的任何额外的路径信息。</td> 
+   </tr> 
+   <tr> 
+    <td>18</td> 
+    <td><code>String getProtocol()</code></td> 
+    <td>返回请求使用的协议的名称和版本。</td> 
+   </tr> 
+   <tr> 
+    <td>19</td> 
+    <td><code>String getQueryString()</code></td> 
+    <td>返回路径后请求URL中包含的查询字符串。</td> 
+   </tr> 
+   <tr> 
+    <td>20</td> 
+    <td><code>String getRemoteAddr()</code></td> 
+    <td>返回发送请求的客户端的Internet协议(IP)地址。</td> 
+   </tr> 
+   <tr> 
+    <td>21</td> 
+    <td><code>String getRemoteHost()</code></td> 
+    <td>返回发送请求的客户端的完全限定名称。</td> 
+   </tr> 
+   <tr> 
+    <td>22</td> 
+    <td><code>String getRemoteUser()</code></td> 
+    <td>如果用户已通过身份验证，则返回进行此请求的用户的登录名，如果用户未通过身份验证，则返回<code>null</code>。</td> 
+   </tr> 
+   <tr> 
+    <td>23</td> 
+    <td><code>String getRequestURI()</code></td> 
+    <td>将该请求URL的一部分从协议名称返回到HTTP请求的第一行中的查询字符串。</td> 
+   </tr> 
+   <tr> 
+    <td>24</td> 
+    <td><code>String getRequestedSessionId()</code></td> 
+    <td>返回客户端指定的会话ID。</td> 
+   </tr> 
+   <tr> 
+    <td>25</td> 
+    <td><code>String getServletPath()</code></td> 
+    <td>返回调用JSP的请求的URL部分。</td> 
+   </tr> 
+   <tr> 
+    <td>26</td> 
+    <td><code>String[] getParameterValues(String name)</code></td> 
+    <td>返回包含给定请求参数的所有值的<code>String</code>对象数组，如果该参数不存在，则返回<code>null</code>。</td> 
+   </tr> 
+   <tr> 
+    <td>27</td> 
+    <td><code>boolean isSecure()</code></td> 
+    <td>返回一个布尔值，指示此请求是否使用安全通道(如HTTPS)进行通信。</td> 
+   </tr> 
+   <tr> 
+    <td>28</td> 
+    <td><code>int getContentLength()</code></td> 
+    <td>返回请求主体的长度(以字节为单位)，并由输入流提供;如果长度未知，返回<code>-1</code>。</td> 
+   </tr> 
+   <tr> 
+    <td>29</td> 
+    <td><code>int getIntHeader(String name)</code></td> 
+    <td>将指定的请求头的值作为<code>int</code>类型返回。</td> 
+   </tr> 
+   <tr> 
+    <td>30</td> 
+    <td><code>int getServerPort()</code></td> 
+    <td>返回接收到此请求的端口号。</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h2 id="h2-http-"><a name="HTTP头请求示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>HTTP头请求示例</h2>  
+ <p>以下是使用<code>HttpServletRequest</code>对象的<code>getHeaderNames()</code>方法来读取HTTP头信息的示例。此方法返回包含与当前HTTP请求相关联的头信息的枚举。</p> 
+ <p>使用枚举，可以以标准的方式循环枚举。这里使用<code>hasMoreElements()</code>方法来确定何时停止，然后使用<code>nextElement()</code>方法来获取每个参数名称的名称。</p> 
+ <p>首先打开Eclipse，创建一个动态Web项目：<em>ClientRequest</em>，其项目结构如下所示 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/1910/701141035_62482.png" alt=""></p> 
+ <p>创建一个JSP文件：<em>index.jsp</em>，其代码如下所示 - </p> 
+ <pre><code class="lang-html">&lt;%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%&gt;
+&lt;%@ page import="java.io.*,java.util.*"%&gt;
+&lt;!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;meta http-equiv="Content-Type" content="text/html; charset=UTF-8"&gt;
+&lt;title&gt;客户端请求参数数据&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div style="margin: auto; width: 80%;"&gt;
+        &lt;h2&gt;客户端请求头参数数据示例&lt;/h2&gt;
+
+        &lt;table width="100%" border="1" align="center"&gt;
+            &lt;tr bgcolor="#949494"&gt;
+                &lt;th&gt;Header Name&lt;/th&gt;
+                &lt;th&gt;Header Value(s)&lt;/th&gt;
+            &lt;/tr&gt;
+            &lt;%
+                Enumeration headerNames = request.getHeaderNames();
+                while (headerNames.hasMoreElements()) {
+                    String paramName = (String) headerNames.nextElement();
+                    out.print("&lt;tr&gt;&lt;td&gt;" + paramName + "&lt;/td&gt;\n");
+                    String paramValue = request.getHeader(paramName);
+                    out.println("&lt;td&gt; " + paramValue + "&lt;/td&gt;&lt;/tr&gt;\n");
+                }
+            %&gt;
+        &lt;/table&gt;
+    &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>执行上面示例代码，打开浏览器访问URL: <a target="_blank" href="http://localhost:8080/ClientRequest/index.jsp">http://localhost:8080/ClientRequest/index.jsp</a> ，得到以下结果 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/1910/262141034_54066.png" alt=""></p>
+ <br>      
+</div></body></html>

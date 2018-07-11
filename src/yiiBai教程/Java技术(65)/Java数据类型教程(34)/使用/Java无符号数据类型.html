@@ -1,0 +1,71 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Java无符号数据类型</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>Java不支持无符号数据类型。<code>byte</code>，<code>short</code>，<code>int</code>和<code>long</code>都是有符号数据类型。对于有符号数据类型，值范围的一半存储正数，一半用于负数，因为一个位用于存储有符号值的符号。</p> 
+ <p>例如，一个字节需要<code>8</code>位; 其范围是<code>-128``到127</code>。如果只在一个字节中存储正数，则其范围将为<code>0</code>到<code>255</code>。</p> 
+ <p>Java在包装器类中有一些静态方法，以支持处理带符号值中的位的操作，就像它们是无符号整数一样。</p> 
+ <p><code>Byte</code> 类包含两个静态方法：</p> 
+ <pre><code class="lang-java">int  toUnsignedInt(byte x)
+long  toUnsignedLong(byte x)
+</code></pre> 
+ <p>这些方法将指定的字节参数转换为<code>int</code>和<code>long</code>，就像该字节存储为无符号值一样。如果指定的字节为零或正，则转换的<code>int</code>和<code>long</code>值将相同。如果参数是负数，则转换的数字将为<code>2^8 + x</code>。</p> 
+ <p>例如，对于输入<code>-10</code>，返回的值将是<code>2^8 +(-10)</code>,也就是<code>246</code>。负数以<code>2</code>的补码形式存储。 值<code>-10</code>将被存储为<code>11110110</code>。最高有效位<code>1</code>表示它是一个负数。</p> 
+ <p>前7位(<code>1110110</code>)的<code>2</code>的补码是<code>001010</code>，十进制为<code>10</code>。</p> 
+ <p>如果考虑实际位<code>11110110</code>，在一个字节中作为无符号整数，其值为<code>246(128 + 64 + 32 + 16 + 0 + 4 + 2 + 0)</code>。</p> 
+ <h2 id="h2--1"><a name="示例-1" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例-1</h2>
+ <p>以下代码显示了如何将存储在字节中的值作为无符号整数：</p> 
+ <pre><code class="lang-java">public class Main {
+  public static void main(String[] args) {
+    byte b = -10;
+    int x = Byte.toUnsignedInt(b);
+    System.out.println("Signed value in byte   = " + b);
+    System.out.println("Unsigned value in  byte   = " + x);
+
+  }
+}
+</code></pre> 
+ <p>上面的代码生成以下结果。</p> 
+ <pre><code class="lang-java">Signed value in byte   = -10
+Unsigned value in  byte   = 246
+</code></pre> 
+ <h2 id="h2--2"><a name="实例-2" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实例-2</h2>
+ <p><code>Integer</code>类包含以下静态方法以支持无符号运算和转换：</p>   
+ <pre><code class="lang-java">int compareUnsigned(int x, int y)
+int  divideUnsigned(int dividend, int divisor)
+int  parseUnsignedInt(String s)
+int  parseUnsignedInt(String s, int radix)
+int  remainderUnsigned(int dividend,  int divisor)
+long  toUnsignedLong(int x)
+String toUnsignedString(int i)
+String toUnsignedString(int i, int radix)
+</code></pre> 
+ <p>以下代码显示了对两个<code>int</code>变量的除法运算，如同它们的位表示无符号值一样：</p> 
+ <pre><code class="lang-java">public class Main {
+  public static void main(String[] args) {
+    // Two negative integer values
+    int x = -1;
+    int y = -2;//
+
+    // Performs signed division
+    System.out.println("Signed x = " + x);
+    System.out.println("Signed y = " + y);
+    System.out.println("Signed x/y  = " + (x / y));
+
+    // Performs unsigned division by treating x and y holding unsigned values
+    long ux = Integer.toUnsignedLong(x);
+    long uy = Integer.toUnsignedLong(y);
+    int uQuotient = Integer.divideUnsigned(x, y);
+    System.out.println("Unsigned x  = " + ux);
+    System.out.println("Unsigned y  = " + uy);
+    System.out.println("Unsigned x/y  = " + uQuotient);
+  }
+}
+</code></pre> 
+ <p>上面的代码生成以下结果。</p> 
+ <pre><code class="lang-java">Signed x = -1
+Signed y = -2
+Signed x/y  = 0
+Unsigned x  = 4294967295
+Unsigned y  = 4294967294
+Unsigned x/y  = 1
+</code></pre>
+ <br>      
+</div></body></html>

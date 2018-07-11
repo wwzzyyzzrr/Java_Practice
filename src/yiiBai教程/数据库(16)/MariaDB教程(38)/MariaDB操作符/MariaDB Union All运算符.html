@@ -1,0 +1,157 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">MariaDB Union All运算符</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>MariaDB <code>UNION ALL</code>操作符与<code>UNION</code>操作符相同，但不会删除重复的记录。它返回查询中的所有行，并且不删除各种<code>SELECT</code>语句之间的重复行。</p> 
+ <p><strong>语法</strong></p> 
+ <pre><code class="lang-sql">SELECT expression1, expression2, ... expression_n  
+FROM tables  
+[WHERE conditions]  
+UNION ALL  
+SELECT expression1, expression2, ... expression_n  
+FROM tables  
+[WHERE conditions];
+</code></pre> 
+ <blockquote> 
+  <p>注意：<code>UNION All</code>运算符中的每个<code>SELECT</code>语句在具有相似数据类型的结果集中必须具有相同数量的字段。</p> 
+ </blockquote> 
+ <h4 id="h4-1-union-all-"><a name="1. 使用UNION ALL操作符返回单个字段" class="reference-link"></a><span class="header-link octicon octicon-link"></span>1. 使用UNION ALL操作符返回单个字段</h4>
+ <p>下面来看一个从多个<code>SELECT</code>语句返回一个字段的<code>UNION</code>运算符的例子。(两个表具有相同的公共字段)。</p> 
+ <p>假设有两张表:<code>students</code>和<code>teachers</code>。对应的表结构和数据如下 - </p> 
+ <p><code>students</code>表中的数据：</p> 
+ <pre><code class="lang-sql">MariaDB [testdb]&gt; select * from students;
++------------+--------------+-----------------+----------------+
+| student_id | student_name | student_address | admission_date |
++------------+--------------+-----------------+----------------+
+|          1 | Maxsu        | Haikou          | 2017-01-07     |
+|          2 | JMaster      | Beijing         | 2016-05-07     |
+|          3 | Mahesh       | Guangzhou       | 2016-06-07     |
+|          4 | Kobe         | Shanghai        | 2016-02-07     |
+|          5 | Blaba        | Shenzhen        | 2016-08-07     |
++------------+--------------+-----------------+----------------+
+5 rows in set (0.00 sec)
+</code></pre> 
+ <p><code>teachers</code>表中的数据：</p> 
+ <pre><code class="lang-sql">USE testdb;
+DROP TABLE teachers;
+CREATE TABLE teachers(  
+    teacher_id INT NOT NULL AUTO_INCREMENT,  
+    name VARCHAR(100) NOT NULL,  
+    address VARCHAR(40) NOT NULL,  
+    admission_date DATE,  
+    PRIMARY KEY ( teacher_id )
+);
+-- 插入数据
+INSERT INTO teachers  
+(teacher_id, name, address, admission_date)  
+VALUES(1,'Maxsu','Haikou','2013-06-07 00:00:00');
+
+INSERT INTO teachers  
+(teacher_id, name, address, admission_date)  
+VALUES(2,'张天经','广州','2013-08-08 00:00:00');
+
+INSERT INTO teachers  
+(teacher_id, name, address, admission_date)  
+VALUES(3,'李四光','三亚','2014-09-07 00:00:00');
+</code></pre> 
+ <p>经过上创建和插入数据，现在<code>teachers</code>表中拥有以下数据记录 - </p> 
+ <pre><code class="lang-sql">MariaDB [testdb]&gt; select * from teachers;
++------------+--------+---------+----------------+
+| teacher_id | name   | address | admission_date |
++------------+--------+---------+----------------+
+|          1 | Maxsu  | Haikou  | 2013-06-07     |
+|          2 | 张天经 | 广州    | 2013-08-08     |
+|          3 | 李四光 | 三亚    | 2014-09-07     |
++------------+--------+---------+----------------+
+3 rows in set (0.00 sec)
+</code></pre> 
+ <p>假设现在要查询所有学生和老师的姓名，以及他们的地址，可参考以下查询语句 - </p> 
+ <pre><code class="lang-sql">SELECT student_name AS name, student_address as address
+FROM Students
+UNION ALL
+SELECT name,address
+FROM teachers;
+</code></pre> 
+ <p>执行上面查询语句，得到以下结果 - </p> 
+ <pre><code class="lang-shell">MariaDB [testdb]&gt; SELECT student_name AS name, student_address as address
+    -&gt; FROM Students
+    -&gt; UNION ALL
+    -&gt; SELECT name,address
+    -&gt; FROM teachers;
++---------+-----------+
+| name    | address   |
++---------+-----------+
+| Maxsu   | Haikou    |
+| JMaster | Beijing   |
+| Mahesh  | Guangzhou |
+| Kobe    | Shanghai  |
+| Blaba   | Shenzhen  |
+| Maxsu   | Haikou    |
+| 张天经  | 广州      |
+| 李四光  | 三亚      |
++---------+-----------+
+8 rows in set (0.00 sec)
+</code></pre> 
+ <blockquote> 
+  <p>注：如果这里不使用<code>UNION ALL</code>，而是使用<code>UNION</code>，那么查询结果是什么？</p> 
+ </blockquote> 
+ <p>它显示了两个表中重复的<code>name</code>列的值 - <code>'Maxsu'</code>。</p> 
+ <h4 id="h4-2-order-by-union-"><a name="2. 具有ORDER BY子句的UNION运算符" class="reference-link"></a><span class="header-link octicon octicon-link"></span>2. 具有ORDER BY子句的UNION运算符</h4>
+ <p>使用<code>ORDER BY</code>子句的<code>UNION</code>运算符从两个表中检索多个列。参考以下语句 - </p>   
+ <pre><code class="lang-sql">SELECT student_id, student_name  
+FROM Students  
+WHERE student_name = 'Maxsu'  
+UNION  ALL
+SELECT teacher_id, address
+FROM teachers  
+WHERE teacher_id &lt; 3 
+ORDER BY 1;
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 - </p> 
+ <pre><code class="lang-shell">MariaDB [testdb]&gt; SELECT student_id, student_name
+    -&gt; FROM Students
+    -&gt; WHERE student_name = 'Maxsu'
+    -&gt; UNION  ALL
+    -&gt; SELECT teacher_id, address
+    -&gt; FROM teachers
+    -&gt; WHERE teacher_id &lt; 3
+    -&gt; ORDER BY 1;
++------------+--------------+
+| student_id | student_name |
++------------+--------------+
+|          1 | Haikou       |
+|          1 | Maxsu        |
+|          2 | 广州         |
++------------+--------------+
+3 rows in set (0.00 sec)
+</code></pre> 
+ <h4 id="h4-3-"><a name="3. 一些其它的用法" class="reference-link"></a><span class="header-link octicon octicon-link"></span>3. 一些其它的用法</h4>
+ <p>具有不同列名的表之间的UNION：</p> 
+ <pre><code class="lang-sql">(SELECT e_name AS name, email FROM employees)
+UNION ALL
+(SELECT c_name AS name, email FROM customers);
+</code></pre> 
+ <p>指定UNION的全局顺序并限制总行数：</p> 
+ <pre><code class="lang-sql">(SELECT name, email FROM employees)
+UNION ALL
+(SELECT name, email FROM customers)
+ORDER BY name LIMIT 10;
+</code></pre> 
+ <p>添加一个常数行：</p> 
+ <pre><code class="lang-sql">(SELECT 'John Doe' AS name, 'john.doe@example.net' AS email)
+UNION ALL
+(SELECT name, email FROM customers);
+</code></pre> 
+ <p>不同的类型：</p> 
+ <pre><code class="lang-sql">SELECT CAST('x' AS CHAR(1)) UNION ALL SELECT REPEAT('y',4);
++----------------------+
+| CAST('x' AS CHAR(1)) |
++----------------------+
+| x                    |
+| yyyy                 |
++----------------------+
+</code></pre> 
+ <p>按照每个SELECT使用排序列的顺序返回结果：</p> 
+ <pre><code class="lang-sql">(SELECT 1 AS sort_column, e_name AS name, email FROM employees)
+UNION ALL
+(SELECT 2, c_name AS name, email FROM customers) ORDER BY sort_column;
+</code></pre>
+ <br>      
+</div></body></html>

@@ -1,0 +1,174 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Gson序列化示例</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>在本章中，我们将讨论和学习如何使用数组，集合和泛型的序列化/反序列化。</p> 
+ <h2 id="h2-1-"><a name="1. 数组" class="reference-link"></a><span class="header-link octicon octicon-link"></span>1. 数组</h2>
+ <pre><code class="lang-java">int[] marks = {100,90,85}; 
+
+//Serialization 
+System.out.println("marks:" + gson.toJson(marks));        
+
+//De-serialization 
+marks = gson.fromJson("[100,90,85]", int[].class); 
+System.out.println("marks:" + Arrays.toString(marks));
+</code></pre> 
+ <p><strong>示例</strong></p> 
+ <p>我们来看看数组的序列化/反序列化。 创建一个名为<code>GsonTester</code>的Java类文件:<em>GsonTester.java</em> - </p> 
+ <pre><code class="lang-java">import java.util.Arrays; 
+import com.google.gson.Gson;  
+
+public class GsonTester { 
+   public static void main(String args[]) { 
+      Gson gson = new Gson(); 
+      int[] marks = {100,90,85}; 
+      String[] names = {"Maxsu","Yiibai","Mohan"}; 
+
+      //Serialization 
+      System.out.print("{"); 
+      System.out.print("marks:" + gson.toJson(marks) + ",");       
+      System.out.print("names:" + gson.toJson(names));       
+      System.out.println("}");  
+
+      //De-serialization 
+      marks = gson.fromJson("[100,90,85]", int[].class); 
+      names = gson.fromJson("[\"Maxsu\",\"Yiibai\",\"Mohan\"]", String[].class);
+      System.out.println("marks:" + Arrays.toString(marks)); 
+      System.out.println("names:" + Arrays.toString(names));     
+   }      
+}
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 - </p> 
+ <pre><code class="lang-shell">{marks:[100,90,85],names:["Maxsu","Yiibai","Mohan"]} 
+marks:[100, 90, 85] 
+names:[Maxsu, Yiibai, Mohan]
+</code></pre> 
+ <h2 id="h2-2-"><a name="2. 集合" class="reference-link"></a><span class="header-link octicon octicon-link"></span>2. 集合</h2>
+ <pre><code class="lang-java">List marks = new ArrayList(); 
+
+//Serialization 
+System.out.println("marks:" + gson.toJson(marks));        
+
+//De-serialization 
+//get the type of the collection. 
+Type listType = new TypeToken&lt;list&gt;(){}.getType(); 
+
+//pass the type of collection 
+marks = gson.fromJson("[100,90,85]", listType); 
+System.out.println("marks:" +marks);&lt;/list&gt;
+</code></pre> 
+ <p>让我们看看集合(<code>Collection</code>)序列化/反序列化的实际操作。 创建一个名为<code>GsonTester</code>的Java类文件: <em>GsonTester.java</em> - </p> 
+ <pre><code class="lang-java">import java.lang.reflect.Type; 
+import java.util.ArrayList; 
+import java.util.Collection;  
+
+import com.google.gson.Gson; 
+import com.google.gson.reflect.TypeToken;  
+
+public class GsonTester { 
+   public static void main(String args[]) { 
+      Gson gson = new Gson(); 
+      Collection&lt;Integer&gt; marks = new ArrayList&lt;Integer&gt;();  
+      marks.add(100); 
+      marks.add(90); 
+      marks.add(85);  
+
+      //Serialization 
+      System.out.print("{"); 
+      System.out.print("marks:" + gson.toJson(marks));             
+      System.out.println("}");  
+
+      //De-serialization 
+      Type listType = new TypeToken&lt;Collection&lt;Integer&gt;&gt;(){}.getType(); 
+      marks = gson.fromJson("[100,90,85]", listType); 
+      System.out.println("marks:" +marks);     
+   }      
+}
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 - </p> 
+ <pre><code class="lang-shell">{marks:[100,90,85]} 
+marks:[100, 90, 85]
+</code></pre> 
+ <h2 id="h2-3-"><a name="3. 泛型" class="reference-link"></a><span class="header-link octicon octicon-link"></span>3. 泛型</h2>
+ <p>Gson使用Java反射API来获取要将Json文本映射到的对象的类型。 但是在泛型中，这些信息在序列化过程中丢失了。 为了解决这个问题，Gson提供了一个<code>com.google.gson.reflect.TypeToken</code>类来存储通用对象的类型。</p> 
+ <p><strong>示例</strong></p> 
+ <p>让我们来看看泛型序列化/反序列化。 创建一个名为<code>GsonTester</code>的Java类文件:<em>GsonTester.java</em> - </p>   
+ <pre><code class="lang-java">import java.lang.reflect.Type; 
+
+import com.google.gson.Gson; 
+import com.google.gson.reflect.TypeToken;  
+
+public class GsonTester { 
+   public static void main(String args[]) { 
+      // create a shape class of type circle. 
+      Shape&lt;Circle&gt; shape = new Shape&lt;Circle&gt;();  
+
+      // Create a Circle object 
+      Circle circle = new Circle(5.0);  
+
+      //assign circle to shape 
+      shape.setShape(circle);  
+      Gson gson = new Gson(); 
+
+      // Define a Type shapeType of type circle. 
+      Type shapeType = new TypeToken&lt;Shape&lt;Circle&gt;&gt;() {}.getType();  
+
+      //Serialize the json as ShapeType 
+      String jsonString = gson.toJson(shape, shapeType); 
+      System.out.println(jsonString);  
+      Shape shape1 = gson.fromJson(jsonString, Shape.class); 
+
+      System.out.println(shape1.get().getClass()); 
+      System.out.println(shape1.get().toString()); 
+      System.out.println(shape1.getArea());  
+      Shape shape2 = gson.fromJson(jsonString, shapeType); 
+      System.out.println(shape2.get().getClass()); 
+      System.out.println(shape2.get().toString()); 
+      System.out.println(shape2.getArea()); 
+   }      
+}  
+class Shape &lt;T&gt; { 
+   public T shape;  
+
+   public void setShape(T shape) { 
+      this.shape = shape; 
+   }  
+   public T get() { 
+      return shape; 
+   }  
+   public double getArea() { 
+      if(shape instanceof Circle) { 
+         return ((Circle) shape).getArea(); 
+      } else { 
+         return 0.0; 
+      } 
+   } 
+}  
+class Circle { 
+   private double radius;  
+
+   public Circle(double radius){ 
+      this.radius = radius; 
+   }  
+   public String toString() { 
+      return "Circle"; 
+   }  
+   public double getRadius() { 
+      return radius; 
+   }  
+   public void setRadius(double radius) { 
+      this.radius = radius; 
+   }  
+   public double getArea() { 
+      return (radius*radius*3.14); 
+   } 
+}
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 - </p> 
+ <pre><code class="lang-shell">{"shape":{"radius":5.0}} 
+class com.google.gson.internal.LinkedTreeMap 
+{radius = 5.0} 
+0.0 
+class Circle 
+Circle 
+78.5
+</code></pre>
+ <br>      
+</div></body></html>

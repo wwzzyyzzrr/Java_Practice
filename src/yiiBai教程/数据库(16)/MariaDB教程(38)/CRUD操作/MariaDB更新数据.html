@@ -1,0 +1,88 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">MariaDB更新数据</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>在MariaDB中，<code>UPDATE</code>语句用于通过更改表中的值来修改现有字段。</p> 
+ <p><strong>语法：</strong></p> 
+ <pre><code class="lang-sql">UPDATE table_name SET field=new_value, field2=new_value2,...  
+[WHERE ...]
+</code></pre> 
+ <p><strong>或者</strong>，<code>UPDATE</code>语句可以与<code>WHERE</code>，<code>ORDER BY</code>和<code>LIMIT</code>子句一起使用。</p> 
+ <pre><code class="lang-sql">UPDATE table  
+SET column1 = expression1,  
+    column2 = expression2,  
+    ...  
+[WHERE conditions]  
+[ORDER BY expression [ ASC | DESC ]]  
+[LIMIT number_rows];
+</code></pre> 
+ <h4 id="h4-1-"><a name="1. 更新单个列" class="reference-link"></a><span class="header-link octicon octicon-link"></span>1. 更新单个列</h4>
+ <p>假设我们有一个表 - <code>students</code>，并具有以下数据记录：</p> 
+ <pre><code class="lang-sql">MariaDB [testdb]&gt; select * from students;
++------------+--------------+-----------------+----------------+
+| student_id | student_name | student_address | admission_date |
++------------+--------------+-----------------+----------------+
+|          1 | Maxsu        | Haikou          | 2017-01-07     |
+|          3 | JMaster      | Beijing         | 2016-05-07     |
+|          4 | Mahesh       | Guangzhou       | 2016-06-07     |
+|          5 | Kobe         | Shanghai        | 2016-02-07     |
+|          6 | Blaba        | Shengzheng      | 2016-08-07     |
++------------+--------------+-----------------+----------------+
+5 rows in set (0.00 sec)
+</code></pre> 
+ <p>现在，更改<code>student_id</code>列的值为 <code>6</code>的行记录，把<code>student_address</code>列的值更新为：<code>Shenzhen</code>。</p> 
+ <pre><code class="lang-sql">UPDATE Students  
+SET student_address = 'Shenzhen'
+WHERE student_id = '6';
+</code></pre> 
+ <p>执行上面更新语句后，查询更新的结果 - </p> 
+ <pre><code class="lang-sql">MariaDB [testdb]&gt; UPDATE Students
+    -&gt; SET student_address = 'Shenzhen'
+    -&gt; WHERE student_id = '6';
+Query OK, 1 row affected (0.21 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MariaDB [testdb]&gt; select * from students where student_id=6;
++------------+--------------+-----------------+----------------+
+| student_id | student_name | student_address | admission_date |
++------------+--------------+-----------------+----------------+
+|          6 | Blaba        | Shenzhen        | 2016-08-07     |
++------------+--------------+-----------------+----------------+
+1 row in set (0.08 sec)
+</code></pre> 
+ <h4 id="h4-2-"><a name="2. 更新多列" class="reference-link"></a><span class="header-link octicon octicon-link"></span>2. 更新多列</h4>
+ <p>还可以使用MariaDB数据库中的<code>UPDATE</code>语句来更新多个列。 在以下示例中，将更新表<code>students</code>中<code>student_name</code>为<code>Kobe</code>的两列 - <code>student_name</code>和<code>student_address</code>的值。参考以下更新语句 - </p>   
+ <pre><code class="lang-sql">UPDATE Students  
+SET student_name = '科比', student_address = 'Haikou'
+WHERE student_name = 'Kobe';
+</code></pre> 
+ <p>执行上面语句，得到以下结果 - </p> 
+ <pre><code class="lang-shell">MariaDB [testdb]&gt; UPDATE Students
+    -&gt; SET student_name = '科比', student_address = 'Haikou'
+    -&gt; WHERE student_name = 'Kobe';
+Query OK, 1 row affected (0.09 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+-- 查询更新的结果
+MariaDB [testdb]&gt; select * from students;
++------------+--------------+-----------------+----------------+
+| student_id | student_name | student_address | admission_date |
++------------+--------------+-----------------+----------------+
+|          1 | Maxsu        | Haikou          | 2017-01-07     |
+|          3 | JMaster      | Beijing         | 2016-05-07     |
+|          4 | Mahesh       | Guangzhou       | 2016-06-07     |
+|          5 | 科比         | Haikou          | 2016-02-07     |
+|          6 | Blaba        | Shenzhen        | 2016-08-07     |
++------------+--------------+-----------------+----------------+
+5 rows in set (0.02 sec)
+</code></pre> 
+ <p><strong>注意事项</strong></p> 
+ <p>在执行语句时，经常要指定更新的条件，如果忘记了指定了<code>WHERE</code>子句中的条件，那么将会更新所有行记录。想象一下，以下两个语句执行的效果 - </p> 
+ <pre><code class="lang-sql">-- 语句1
+UPDATE Students  
+SET student_name = '科比', student_address = 'Haikou'
+WHERE student_name = 'Kobe';
+
+-- 语句2
+UPDATE Students  
+SET student_name = '科比', student_address = 'Haikou';
+</code></pre>
+ <br>      
+</div></body></html>

@@ -1,0 +1,160 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Spring JavaConfig @Import实例</h1><div style="width:100%;float:left;" class="article-content">   
+ <div> 
+  <div>
+    一般来说, 需要按模块或类别&nbsp;
+   <span style="line-height:1.5;"><a target="_blank" href="http://www.yiibai.com/spring/load-multiple-spring-bean-configuration-file.html">分割Spring XML bean文件</a></span>&nbsp;成多个小文件,&nbsp;使事情更容易维护和模块化。&nbsp;例如， 
+  </div> 
+ </div> 
+ <div> 
+  <pre>&lt;beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-2.5.xsd"&gt;
+ 
+	&lt;import resource="config/customer.xml"/&gt;
+        &lt;import resource="config/scheduler.xml"/&gt;
+ 
+&lt;/beans&gt;</pre> 
+  <div>
+    Spring3&nbsp;JavaConfig它等效于&nbsp;@Import&nbsp;功能 
+  </div> 
+  <pre>package com.yiibai.config;
+
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
+
+@Configuration
+@Import({ CustomerConfig.class, SchedulerConfig.class })
+public class AppConfig {
+
+}</pre> 
+  <h2> @Import实例 </h2> 
+  <div>
+    请参阅使用
+   <a target="_blank" href="mailto:JavaConfig@Import">JavaConfig @Import</a>的一个完整的例子。 
+  </div> 
+  <h2> 1. 目录结构 </h2> 
+  <div>
+    本实例目录结构。 
+  </div> 
+  <div style="text-align:center;"> 
+   <img src="file://E:/data/youdao/qq24B39E2329F08D9F4C3146A571A415EF/35d12044f03e4bfd91cbcaeef1ebf33a/clipboard.png"> 
+  </div> 
+  <h2> 2. Spring Beans </h2> 
+  <div>
+    两个简单的Spring&nbsp;bean。 
+  </div> 
+  <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:16px;"> <em>File : CustomerBo.java</em> </p> 
+  <pre>package com.yiibai.core;
+
+public class CustomerBo {
+
+	public void printMsg(String msg) {
+
+		System.out.println("CustomerBo : " + msg);
+	}
+
+}</pre> 
+  <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:16px;"> <em>File : SchedulerBo.java</em> </p> 
+  <pre>package com.yiibai.core;
+
+public class SchedulerBo {
+
+	public void printMsg(String msg) {
+
+		System.out.println("SchedulerBo : " + msg);
+	}
+
+}</pre> 
+  <h2> 3. @Configuration示例 </h2> 
+  <div>
+    现在，使用JavaConfig&nbsp;@Configuration声明上述Bean类。 
+  </div> 
+  <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:16px;"> <em>File : CustomerConfig.java</em> </p> 
+  <pre>package com.yiibai.config;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+import com.yiibai.core.CustomerBo;
+
+@Configuration
+public class CustomerConfig {
+	
+	@Bean(name="customer")
+	public CustomerBo customerBo(){
+		
+		return new CustomerBo();
+		
+	}
+}</pre> 
+  <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:16px;"> <em>File : SchedulerConfig.java</em> </p>   
+  <pre>package com.yiibai.config;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import com.yiibai.core.SchedulerBo;
+
+@Configuration
+public class SchedulerConfig {
+	
+	@Bean(name="scheduler")
+	public SchedulerBo suchedulerBo(){
+		
+		return new SchedulerBo();
+		
+	}
+	
+}</pre> 
+  <h2> 4. @Import示例 </h2> 
+  <div>
+    使用@Import加载多个配置文件。 
+  </div> 
+  <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:16px;"> <em>File : AppConfig.java</em> </p> 
+  <pre>package com.yiibai.config;
+
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
+
+@Configuration
+@Import({ CustomerConfig.class, SchedulerConfig.class })
+public class AppConfig {
+
+}</pre> 
+  <h2> 5. 执行程序 </h2> 
+  <div>
+    加载主配置文件，并进行测试。 
+  </div> 
+  <pre>package com.yiibai.core;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import com.yiibai.config.AppConfig;
+
+public class App {
+	public static void main(String[] args) {
+
+		ApplicationContext context = new AnnotationConfigApplicationContext(
+				AppConfig.class);
+
+		CustomerBo customer = (CustomerBo) context.getBean("customer");
+		customer.printMsg("Hello 11");
+
+		SchedulerBo scheduler = (SchedulerBo) context.getBean("scheduler");
+		scheduler.printMsg("Hello 22");
+
+	}
+}</pre> 
+  <p> 输出结果 </p> 
+  <pre>CustomerBo : Hello 11
+SchedulerBo : Hello 22</pre> 
+  <div>
+    下载代码 –&nbsp;
+   <a target="_blank" href="http://pan.baidu.com/s/1basJTk">http://pan.baidu.com/s/1basJTk</a> 
+  </div> 
+  <div> 
+   <br> 
+  </div> 
+ </div>
+ <br>      
+</div></body></html>

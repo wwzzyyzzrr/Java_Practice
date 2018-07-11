@@ -1,0 +1,61 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Yii Asset转换</h1><div style="width:100%;float:left;" class="article-content">   
+ <div> 
+  <div>
+    不同于写CSS或JS代码，开发人员经常使用扩展语法，如&nbsp;LESS, SCSS,&nbsp;手写CSS和TypeScript，CoffeeScript。&nbsp;然后需要使用专用工具将这些文件转换成真正的CSS和JS。 
+  </div> 
+ </div> 
+ <div> 
+  <p style="text-align:justify;"> Yii中 assets 资源管理转换扩展语法自动注入CSS和JS。当视图显示，它将在页面包函&nbsp;CSS和JS文件，而不是在扩展语法原有&nbsp;assets&nbsp;资源。 </p> 
+  <div>
+    第1步-&nbsp;以下面这种方式修改&nbsp;DemoAsset.php&nbsp;文件 
+  </div> 
+  <pre>&lt;?php
+   namespace app\assets;
+   use yii\web\AssetBundle;
+   use yii\web\View;
+   class DemoAsset extends AssetBundle {
+      public $basePath = '@webroot';
+      public $baseUrl = '@web';
+      public $js = [
+         'js/demo.js',
+         'js/greeting.ts'
+      ];
+      public  $jsOptions = ['position' =&gt; View::POS_HEAD];
+   }
+?&gt;</pre> 
+  <div style="background-color:inherit;">
+    我们只是增加了一个&nbsp;typescript&nbsp;文件。 
+  </div> 
+  <div style="background-color:inherit;">
+    第2步&nbsp;-&nbsp;在&nbsp;web/js 目录下，创建一个名为&nbsp;greeting.js&nbsp;文件并使用下面的代码。 
+  </div> 
+  <pre>class Greeter {
+   constructor(greeting:string) { }
+   greet() {
+      return this.greeting;
+   }
+};
+var greeter = new Greeter("Hello From TypeScript!");
+console.log(greeter.greet());&nbsp;</pre> 
+  <p style="font-family:Verdana, Geneva, Tahoma,  Helvetica, text-align:justify;font-size:15px !important;background-color:inherit;"> <span style="background-color:inherit;font-family:微软雅黑;font-size:14px;line-height:1.5;">在上面的代码中，我们定义了一个Greeter类并有一个&nbsp;greet()方法。</span><span style="background-color:inherit;font-family:微软雅黑;font-size:14px;line-height:1.5;">我们写的问候语在Chrome控制台中输出。</span> </p> 
+  <p style="background-color:inherit;"> 注：需要安装好 typescript 环境，执行类似命令： </p>   
+  <pre>tsc --sourcemap greeter.ts</pre> 
+  <div style="background-color:inherit;">
+    第3步-&nbsp;打开URL：
+   <a target="_blank" href="http://localhost:8080/index.php">http://localhost:8080/index.php</a>&nbsp;。你会发现，greeting.js&nbsp;文件会转换为&nbsp;greeting.js&nbsp;文件，如下面的屏幕截图。
+   <br> 
+   <img src="/uploads/tutorial/20160519/1-160519211259106.png" width="691" height="319" title="Yii Asset转换" alt="Yii Asset转换">
+   <br> 
+  </div> 
+  <img src="file://E:/data/youdao/qq24B39E2329F08D9F4C3146A571A415EF/324f261f086c4f5bb5f34d640a09df4f/ing_ts_file.jpeg" alt="Greeting Ts File"> 
+  <div style="background-color:inherit;">
+    将输出以下内容：
+   <br> 
+   <img src="/uploads/tutorial/20160519/1-16051921131RQ.jpeg" alt="">
+   <br> 
+  </div> 
+  <img src="file://E:/data/youdao/qq24B39E2329F08D9F4C3146A571A415EF/c5ed1f8724c24c0b90f81b5eae6377bc/file_output.jpeg" alt="Greeting Ts File Output">
+  <br> 
+ </div>
+ <br>      
+</div></body></html>

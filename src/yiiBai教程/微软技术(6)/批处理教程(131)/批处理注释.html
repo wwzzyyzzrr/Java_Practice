@@ -1,0 +1,88 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">批处理注释</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>为创建的脚本添加注释或文档总是一个好习惯。 这是一个维护脚本用来理解脚本实际所做的事情所必需的注释。</p> 
+ <p>例如，考虑下面这段没有注释形式的代码。 如果一个没有任何注释的脚本，普通人试图理解脚本，那么需要很多时间来理解脚本做些什么工作。</p> 
+ <pre><code class="lang-bat">ECHO OFF 
+IF NOT "%OS%"=="Windows_NT" GOTO Syntax 
+ECHO.%* | FIND "?" &gt;NUL 
+IF NOT ERRORLEVEL 1 GOTO Syntax 
+IF NOT [%2]==[] GOTO Syntax 
+SETLOCAL 
+SET WSS= 
+IF NOT [%1]==[] FOR /F "tokens = 1 delims = \ " %%A IN ('ECHO.%~1') DO SET WSS = %%A 
+FOR /F "tokens = 1 delims = \ " %%a IN ('NET VIEW ^| FIND /I "\\%WSS%"') DO FOR /F 
+"tokens = 1 delims = " %%A IN ('NBTSTAT -a %%a ^| FIND /I /V "%%a" ^| FIND "&lt;03&gt;"') 
+DO ECHO.%%a %%A 
+ENDLOCAL 
+GOTO:EOF 
+ECHO Display logged on users and their workstations. 
+ECHO Usage: ACTUSR [ filter ] 
+IF "%OS%"=="Windows_NT" ECHO Where: filter is the first part 
+of the computer name^(s^) to be displayed
+</code></pre> 
+ <h2 id="h2--rem-"><a name="使用Rem语句注释" class="reference-link"></a><span class="header-link octicon octicon-link"></span>使用Rem语句注释</h2>
+ <p>有两种方法可以在批处理脚本中创建注释; 一个是通过<code>Rem</code>命令。 <code>Rem</code>语句后的任何文本都将被视为注释，不会被执行。 以下是此声明的一般语法。</p> 
+ <p><strong>语法</strong></p> 
+ <pre><code class="lang-bat">Rem Remarks
+</code></pre> 
+ <p>其中<code>“Remarks”</code>是需要添加的注释。</p> 
+ <p>以下示例显示了可以使用<code>Rem</code>命令的简单方法。</p> 
+ <p><strong>示例</strong></p> 
+ <pre><code class="lang-bat">@echo off 
+Rem This program just displays Hello World 
+set message=Hello World 
+echo %message%
+</code></pre> 
+ <p>以上命令产生以下输出。注意：<code>Rem</code>语句行不会被执行。</p> 
+ <pre><code class="lang-bat">Hello World
+</code></pre> 
+ <h2 id="h2--"><a name="注释使用::声明" class="reference-link"></a><span class="header-link octicon octicon-link"></span>注释使用::声明</h2>
+ <p>在批处理脚本中创建注释的另一种方法是通过<code>::</code>命令。任何遵循<code>::</code>语句的文本都将被视为注释，不会被执行。 以下是此声明的一般语法。</p> 
+ <p><strong>语法</strong></p> 
+ <pre><code class="lang-bat">:: Remarks
+</code></pre> 
+ <p>其中<code>“Remarks”</code>是需要添加的注释。</p> 
+ <p>以下示例显示了可以使用<code>Rem</code>命令的简单方法。</p> 
+ <p><strong>示例</strong></p> 
+ <pre><code class="lang-bat">@echo off 
+:: This program just displays Hello World 
+set message=Hello World 
+echo %message%
+</code></pre> 
+ <p>以上命令产生以下输出。 注意，具有<code>::</code>语句的行将不会被执行。</p>   
+ <pre><code class="lang-shell">Hello World
+</code></pre> 
+ <p><strong>注</strong> - 如果<code>Rem</code>的行数太多，可能会使代码变慢，因为最后还是需要执行批处理文件中的每行代码。</p> 
+ <p>让我们来看一下在本主题开始时看到的大脚本的例子，看看它在添加注释文档时的样子。</p> 
+ <pre><code class="lang-bat">::===============================================================
+:: The below example is used to find computer and logged on users
+::
+::===============================================================
+ECHO OFF 
+:: Windows version check 
+IF NOT "%OS%"=="Windows_NT" GOTO Syntax 
+ECHO.%* | FIND "?" &gt;NUL 
+:: Command line parameter check 
+IF NOT ERRORLEVEL 1 GOTO Syntax
+IF NOT [%2]==[] GOTO Syntax 
+:: Keep variable local 
+SETLOCAL 
+:: Initialize variable 
+SET WSS= 
+:: Parse command line parameter 
+IF NOT [%1]==[] FOR /F "tokens = 1 delims = \ " %%A IN ('ECHO.%~1') DO SET WSS = %%A 
+:: Use NET VIEW and NBTSTAT to find computers and logged on users 
+FOR /F "tokens = 1 delims = \ " %%a IN ('NET VIEW ^| FIND /I "\\%WSS%"') DO FOR /F 
+"tokens = 1 delims = " %%A IN ('NBTSTAT -a %%a ^| FIND /I /V "%%a" ^| FIND 
+"&lt;03&gt;"') DO ECHO.%%a %%A 
+:: Done 
+ENDLOCAL
+GOTO:EOF 
+:Syntax 
+ECHO Display logged on users and their workstations. 
+ECHO Usage: ACTUSR [ filter ] 
+IF "%OS%"=="Windows_NT" ECHO Where: filter is the first part of the 
+computer name^(s^) to be displayed
+</code></pre> 
+ <p>现在可以看到，对于没有开发代码的用户来说，代码变得更加易于理解，因此更易于维护。</p>
+ <br>      
+</div></body></html>

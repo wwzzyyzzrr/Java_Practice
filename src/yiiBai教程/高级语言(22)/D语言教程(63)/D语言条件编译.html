@@ -1,0 +1,129 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">D语言条件编译</h1><div style="width:100%;float:left;" class="article-content">   
+ <h2> 条件编译：</h2> 
+ <p> 条件编译是选择编译以及代码，代码无法编译类似的＃if/＃其他/＃endif在C和C ++中。未在编译的任何声明仍然必须是语法正确。条件编译涉及到条件检查是在编译时计算。就像如果运行条件语句，为，而不是条件编译的功能。以下是D程序专门为条件编译的功能。</p> 
+ <ul> 
+  <li> <p> debug</p> </li> 
+  <li> <p> version/p&gt;</p> </li> 
+  <li> <p> static if</p> </li> 
+ </ul> 
+ <h2> debug</h2> 
+ <p> 调试程序开发过程中是非常有用的。标记为调试的表达式和语句被编译成只在调试编译器开关启用程序。</p> 
+ <pre class="prettyprint prettyprinted" style="font-size: 12px; overflow: auto;">
+<span class="pln" style="margin: 0px; padding: 0px;">debug a_conditionally_compiled_expression</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">;</span><span class="pln" style="margin: 0px; padding: 0px;"> 
+
+debug 
+</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">{</span><span class="pln" style="margin: 0px; padding: 0px;">
+   </span><span class="com" style="margin: 0px; padding: 0px; color: rgb(136, 0, 0);">// ... conditionally compiled code ...</span><span class="pln" style="margin: 0px; padding: 0px;">
+</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">}</span><span class="pln" style="margin: 0px; padding: 0px;"> 
+</span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">else</span><span class="pln" style="margin: 0px; padding: 0px;"> 
+</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">{</span><span class="pln" style="margin: 0px; padding: 0px;">
+   </span><span class="com" style="margin: 0px; padding: 0px; color: rgb(136, 0, 0);">// ... code that is compiled otherwise ...</span><span class="pln" style="margin: 0px; padding: 0px;">
+</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">}</span></pre> 
+ <p> else子句是可选的。无论是单个表达式和上面的代码块只有当调试编译器开关启用编译。</p> 
+ <p> 而不是完全取消的，该行可以代替被标记为调试。</p> 
+ <pre class="prettyprint prettyprinted" style="font-size: 12px; overflow: auto;">
+<span class="pln" style="margin: 0px; padding: 0px;">debug writefln</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="str" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"%s debug only statement"</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">,</span><span class="pln" style="margin: 0px; padding: 0px;"> value</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">);</span></pre> 
+ <p> 这样的行都包含在仅在调试编译器开关启用程序。</p> 
+ <pre class="prettyprint prettyprinted" style="font-size: 12px; overflow: auto;">
+<span class="pln" style="margin: 0px; padding: 0px;">dmd test</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">.</span><span class="pln" style="margin: 0px; padding: 0px;">d </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">-</span><span class="pln" style="margin: 0px; padding: 0px;">oftest </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">-</span><span class="pln" style="margin: 0px; padding: 0px;">w </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">-</span><span class="pln" style="margin: 0px; padding: 0px;">debug	</span></pre> 
+ <h2> debug(tag)</h2> 
+ <p> 调试语句可以给出的名称(标签)被列入程序选择性。</p> 
+ <pre class="prettyprint prettyprinted" style="font-size: 12px; overflow: auto;">
+<span class="pln" style="margin: 0px; padding: 0px;">debug</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="pln" style="margin: 0px; padding: 0px;">mytag</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">)</span><span class="pln" style="margin: 0px; padding: 0px;"> writefln</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="str" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"%s not found"</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">,</span><span class="pln" style="margin: 0px; padding: 0px;"> value</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">);</span></pre> 
+ <p style="margin: 0.8em 0px 1em; padding: 0px; text-align: justify; color: rgb(0, 0, 0); font-family: Helvetica, Arial, sans-serif;"> 这样的行包含仅在调试编译器开关启用程序。</p> 
+ <pre class="prettyprint prettyprinted" style="font-size: 12px; overflow: auto;">
+<span class="pln" style="margin: 0px; padding: 0px;">dmd test</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">.</span><span class="pln" style="margin: 0px; padding: 0px;">d </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">-</span><span class="pln" style="margin: 0px; padding: 0px;">oftest </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">-</span><span class="pln" style="margin: 0px; padding: 0px;">w </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">-</span><span class="pln" style="margin: 0px; padding: 0px;">debug</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">=</span><span class="pln" style="margin: 0px; padding: 0px;">mytag</span></pre> 
+ <p> 调试块也可以有标签。</p> 
+ <pre class="prettyprint prettyprinted" style="font-size: 12px; overflow: auto;">
+<span class="pln" style="margin: 0px; padding: 0px;">debug</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="pln" style="margin: 0px; padding: 0px;">mytag</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">)</span><span class="pln" style="margin: 0px; padding: 0px;">
+</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">{</span><span class="pln" style="margin: 0px; padding: 0px;">
+   </span><span class="com" style="margin: 0px; padding: 0px; color: rgb(136, 0, 0);">// </span><span class="pln" style="margin: 0px; padding: 0px;">
+</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">}</span></pre> 
+ <p> 这是可能的，以使多个调试标记的时间。</p> 
+ <pre class="prettyprint prettyprinted" style="font-size: 12px; overflow: auto;">
+<span class="pln" style="margin: 0px; padding: 0px;">dmd test</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">.</span><span class="pln" style="margin: 0px; padding: 0px;">d </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">-</span><span class="pln" style="margin: 0px; padding: 0px;">oftest </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">-</span><span class="pln" style="margin: 0px; padding: 0px;">w </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">-</span><span class="pln" style="margin: 0px; padding: 0px;">debug</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">=</span><span class="pln" style="margin: 0px; padding: 0px;">mytag1 </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">-</span><span class="pln" style="margin: 0px; padding: 0px;">debug</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">=</span><span class="pln" style="margin: 0px; padding: 0px;">mytag2</span></pre> 
+ <h2> debug(level)</h2> 
+ <p> 有时，调试语句通过数值级别关联是比较有用的。提高级别可以提供更详细的信息。</p> 
+ <pre class="prettyprint prettyprinted" style="font-size: 12px; overflow: auto;">
+<span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">import</span><span class="pln" style="margin: 0px; padding: 0px;"> std</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">.</span><span class="pln" style="margin: 0px; padding: 0px;">stdio</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">;</span><span class="pln" style="margin: 0px; padding: 0px;">
+
+</span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">void</span><span class="pln" style="margin: 0px; padding: 0px;"> myFunction</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">()</span><span class="pln" style="margin: 0px; padding: 0px;">
+</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">{</span><span class="pln" style="margin: 0px; padding: 0px;">
+   debug</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">1</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">)</span><span class="pln" style="margin: 0px; padding: 0px;"> writeln</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="str" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"debug1"</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">);</span><span class="pln" style="margin: 0px; padding: 0px;">
+   debug</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">2</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">)</span><span class="pln" style="margin: 0px; padding: 0px;"> writeln</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="str" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"debug2"</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">);</span><span class="pln" style="margin: 0px; padding: 0px;">    
+</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">}</span><span class="pln" style="margin: 0px; padding: 0px;">
+
+</span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">void</span><span class="pln" style="margin: 0px; padding: 0px;"> main</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">()</span><span class="pln" style="margin: 0px; padding: 0px;">
+</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">{</span><span class="pln" style="margin: 0px; padding: 0px;">
+   myFunction</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">();</span><span class="pln" style="margin: 0px; padding: 0px;">
+</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">}</span></pre> 
+ <p style="margin: 0.8em 0px 1em; padding: 0px; text-align: justify; color: rgb(0, 0, 0); font-family: Helvetica, Arial, sans-serif;"> 调试表达式和块为低于或等于指定级别会被编译。</p> 
+ <pre class="result" style="margin-bottom: 0px; background-color: rgb(241, 241, 241); font-size: 12px; overflow: auto;">
+$ dmd test.d -oftest -w -debug=1
+$ ./test
+debug1
+</pre> 
+ <h2> version(tag)and version(level)</h2> 
+ <p> 版本是类似于调试，并用于以相同的方式。else子句是可选的。虽然版本的作品本质上是相同的调试，有单独的关键字可以帮助区分他们无关的用途。与调试，多个版本可以启用。</p> 
+ <pre class="prettyprint prettyprinted" style="font-size: 12px; overflow: auto;">
+<span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">import</span><span class="pln" style="margin: 0px; padding: 0px;"> std</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">.</span><span class="pln" style="margin: 0px; padding: 0px;">stdio</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">;</span><span class="pln" style="margin: 0px; padding: 0px;">
+
+</span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">void</span><span class="pln" style="margin: 0px; padding: 0px;"> myFunction</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">()</span><span class="pln" style="margin: 0px; padding: 0px;">
+</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">{</span><span class="pln" style="margin: 0px; padding: 0px;">
+   version</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">1</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">)</span><span class="pln" style="margin: 0px; padding: 0px;"> writeln</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="str" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"version1"</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">);</span><span class="pln" style="margin: 0px; padding: 0px;">
+   version</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">2</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">)</span><span class="pln" style="margin: 0px; padding: 0px;"> writeln</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="str" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"version2"</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">);</span><span class="pln" style="margin: 0px; padding: 0px;">    
+</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">}</span><span class="pln" style="margin: 0px; padding: 0px;">
+
+</span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">void</span><span class="pln" style="margin: 0px; padding: 0px;"> main</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">()</span><span class="pln" style="margin: 0px; padding: 0px;">
+</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">{</span><span class="pln" style="margin: 0px; padding: 0px;">
+   myFunction</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">();</span><span class="pln" style="margin: 0px; padding: 0px;">
+</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">}</span></pre> 
+ <p> 调试表达式和块为低于或等于指定级别会被编译。</p>   
+ <pre class="result" style="margin-bottom: 0px; background-color: rgb(241, 241, 241); font-size: 12px; overflow: auto;">
+$ dmd test.d -oftest -w -version=1
+$ ./test
+version1
+</pre> 
+ <h2> static if</h2> 
+ <p> static if 是编译时相当于if语句中。就像if语句，static if 需要一个逻辑表达式，并计算它。不同的是if语句，static if 不是关于执行流程;更确切地说，它确定一块代码是否应当包括在程序或不包括。</p> 
+ <p> 表达是无关的是运算符，我们已经看到在空值和操作是段落，既语法和语义。下表达式是在编译时计算。它产生一个int值，0或1;取决于在括号中指定的表达式。虽然，它需要表达的是不是一个逻辑表达式，该表达式是本身被用作一个编译时逻辑表达式。它是静态的特别有用的，如果条件和模板的约束。</p> 
+ <div style="float:left;margin-bottom: 10px;">  
+ </div>
+ <div style="float:left;margin-bottom: 10px;">  
+ </div>
+ <pre class="prettyprint tryit prettyprinted" style="font-size: 12px; overflow: auto; cursor: default; background-image: url(http://www.yiibai.com/images/link.png) !important; background-position: 100% 0%; background-repeat: no-repeat no-repeat !important;">
+<span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">import</span><span class="pln" style="margin: 0px; padding: 0px;"> std</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">.</span><span class="pln" style="margin: 0px; padding: 0px;">stdio</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">;</span><span class="pln" style="margin: 0px; padding: 0px;">
+
+</span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">enum</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="typ" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">Days</span><span class="pln" style="margin: 0px; padding: 0px;">
+</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">{</span><span class="pln" style="margin: 0px; padding: 0px;">
+   sun</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">,</span><span class="pln" style="margin: 0px; padding: 0px;">
+   mon</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">,</span><span class="pln" style="margin: 0px; padding: 0px;">
+   tue</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">,</span><span class="pln" style="margin: 0px; padding: 0px;">
+   wed</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">,</span><span class="pln" style="margin: 0px; padding: 0px;">
+   thu</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">,</span><span class="pln" style="margin: 0px; padding: 0px;">
+   fri</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">,</span><span class="pln" style="margin: 0px; padding: 0px;">
+   sat
+</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">};</span><span class="pln" style="margin: 0px; padding: 0px;">
+
+</span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">void</span><span class="pln" style="margin: 0px; padding: 0px;"> myFunction</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="pln" style="margin: 0px; padding: 0px;">T</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">)(</span><span class="pln" style="margin: 0px; padding: 0px;">T mytemplate</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">)</span><span class="pln" style="margin: 0px; padding: 0px;">
+</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">{</span><span class="pln" style="margin: 0px; padding: 0px;">
+   </span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">static</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">if</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">is</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="pln" style="margin: 0px; padding: 0px;">T </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">==</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">class</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">))</span><span class="pln" style="margin: 0px; padding: 0px;">
+   </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">{</span><span class="pln" style="margin: 0px; padding: 0px;">
+      writeln</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="str" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"This is a class type"</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">);</span><span class="pln" style="margin: 0px; padding: 0px;">
+   </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">}</span><span class="pln" style="margin: 0px; padding: 0px;">
+   </span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">else</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">static</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">if</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">is</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="pln" style="margin: 0px; padding: 0px;">T </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">==</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">enum</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">))</span><span class="pln" style="margin: 0px; padding: 0px;">
+   </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">{</span><span class="pln" style="margin: 0px; padding: 0px;">
+      writeln</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="str" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"This is an enum type"</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">);</span><span class="pln" style="margin: 0px; padding: 0px;">
+   </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">}</span><span class="pln" style="margin: 0px; padding: 0px;">
+</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">}</span><span class="pln" style="margin: 0px; padding: 0px;">
+
+</span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">void</span><span class="pln" style="margin: 0px; padding: 0px;"> main</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">()</span><span class="pln" style="margin: 0px; padding: 0px;">
+</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">{</span><span class="pln" style="margin: 0px; padding: 0px;">
+   </span><span class="typ" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">Days</span><span class="pln" style="margin: 0px; padding: 0px;"> day</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">;</span><span class="pln" style="margin: 0px; padding: 0px;">
+   myFunction</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="pln" style="margin: 0px; padding: 0px;">day</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">);</span><span class="pln" style="margin: 0px; padding: 0px;">
+</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">}</span></pre> 
+ <p> 当我们编译和运行，我们将如下得到一些输出。</p> 
+ <pre class="result" style="margin-bottom: 0px; background-color: rgb(241, 241, 241); font-size: 12px; overflow: auto;">
+This is an enum type</pre> 
+ <br>      
+</div></body></html>

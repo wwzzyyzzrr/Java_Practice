@@ -1,0 +1,205 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">top命令详解示例</h1><div style="width:100%;float:left;" class="article-content">   
+ <p><strong>top</strong>命令是Linux下常用的性能分析工具，能够实时显示系统中各个进程的资源占用状况，类似于Windows的任务管理器。下面详细介绍它的使用方法。<code>top</code>是一个动态显示过程,即可以通过用户按键来不断刷新当前状态.如果在前台执行该命令,它将独占前台,直到用户终止该程序为止。比较准确的说,<code>top</code>命令提供了实时的对系统处理器的状态监视。它将显示系统中CPU最“敏感”的任务列表.该命令可以按CPU使用。内存使用和执行时间对任务进行排序；而且该命令的很多特性都可以通过交互式命令或者在个人定制文件中进行设定.</p> 
+ <h2 id="h2-1-"><a name="1．命令格式" class="reference-link"></a><span class="header-link octicon octicon-link"></span>1．命令格式</h2>
+ <pre><code class="lang-shell">top [参数]
+</code></pre> 
+ <h2 id="h2-2-"><a name="2．命令功能" class="reference-link"></a><span class="header-link octicon octicon-link"></span>2．命令功能</h2>
+ <p>显示当前系统正在执行的进程的相关信息，包括进程ID、内存占用率、CPU占用率等</p> 
+ <h2 id="h2-3-"><a name="3．命令参数" class="reference-link"></a><span class="header-link octicon octicon-link"></span>3．命令参数</h2>
+ <ul> 
+  <li><code>-b</code> 批处理</li>
+  <li><code>-c</code> 显示完整的治命令</li>
+  <li><code>-I</code> 忽略失效过程</li>
+  <li><code>-s</code> 保密模式</li>
+  <li><code>-S</code> 累积模式</li>
+  <li><code>-i</code>&lt;时间&gt; 设置间隔时间</li>
+  <li><code>-u</code>&lt;用户名&gt; 指定用户名</li>
+  <li><code>-p</code>&lt;进程号&gt; 指定进程</li>
+  <li><code>-n</code>&lt;次数&gt; 循环显示的次数</li>
+ </ul> 
+ <h2 id="h2-4-"><a name="4．使用实例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>4．使用实例</h2>
+ <h3 id="h3--1-"><a name="实例1：显示进程信息" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实例1：显示进程信息</h3>
+ <p>命令：</p> 
+ <pre><code class="lang-shell">top
+</code></pre> 
+ <p>输出：</p> 
+ <pre><code class="lang-shell">top - 04:23:18 up  2:34,  2 users,  load average: 0.00, 0.01, 0.05
+Tasks: 115 total,   1 running, 114 sleeping,   0 stopped,   0 zombie
+%Cpu(s):  0.0 us,  0.3 sy,  0.0 ni, 99.7 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem :   999936 total,   603084 free,   144560 used,   252292 buff/cache
+KiB Swap:  2097148 total,  2097148 free,        0 used.   631400 avail Mem
+
+   PID USER      PR  NI    VIRT    RES    SHR S %CPU %MEM     TIME+ COMMAND
+  3186 yiibai    20   0  157676   2164   1528 R  0.7  0.2   0:00.10 top
+   653 root      20   0  302436   6016   4648 S  0.3  0.6   1:07.99 vmtoolsd
+  1011 root      20   0  553156  18448   5792 S  0.3  1.8   0:04.25 tuned
+  2250 root      20   0       0      0      0 S  0.3  0.0   0:23.23 kworker/0:0
+  2276 yiibai    20   0  142972   2332   1048 S  0.3  0.2   0:06.39 sshd
+     1 root      20   0  128092   6708   3956 S  0.0  0.7   0:05.17 systemd
+     2 root      20   0       0      0      0 S  0.0  0.0   0:00.01 kthreadd
+     3 root      20   0       0      0      0 S  0.0  0.0   0:01.03 ksoftirqd/0
+     7 root      rt   0       0      0      0 S  0.0  0.0   0:00.00 migration/0
+     8 root      20   0       0      0      0 S  0.0  0.0   0:00.00 rcu_bh
+     9 root      20   0       0      0      0 S  0.0  0.0   0:03.06 rcu_sched
+    10 root      rt   0       0      0      0 S  0.0  0.0   0:00.68 watchdog/0
+    12 root       0 -20       0      0      0 S  0.0  0.0   0:00.00 khelper
+    13 root      20   0       0      0      0 S  0.0  0.0   0:00.00 kdevtmpfs
+    14 root       0 -20       0      0      0 S  0.0  0.0   0:00.00 netns
+......
+</code></pre> 
+ <p><strong>说明：</strong><br>统计信息区：<br>前五行是当前系统情况整体的统计信息区。下面我们看每一行信息的具体意义。</p> 
+ <ul> 
+  <li><p>第一行，任务队列信息，同 uptime 命令的执行结果，具体参数说明情况如下：</p> 
+   <ul> 
+    <li><code>04:23:18</code> — 当前系统时间</li>
+    <li><code>up 2:34</code> — 系统已经运行了2小时34分钟(在这期间系统没有重启过！)</li>
+    <li><code>2 users</code> — 当前有<code>2</code>个用户登录系统</li>
+    <li><code>load average: 0.00, 0.01, 0.05</code> — <strong>load average</strong>后面的三个数分别是1分钟、5分钟、15分钟的负载情况。</li>
+    <li><strong>load average</strong>数据是每隔5秒钟检查一次活跃的进程数，然后按特定算法计算出的数值。如果这个数除以逻辑CPU的数量，结果高于<code>5</code>的时候就表明系统在超负荷运转了。</li>
+   </ul> </li>
+  <li><p>第二行，Tasks — 任务(进程)，具体信息说明如下：<br>系统现在共有<code>115</code>个进程，其中处于运行中的有<code>1</code>个，<code>114</code>个在休眠(sleep)，stoped状态的有<code>0</code>个，<code>zombie</code>状态(僵尸)的有<code>0</code>个。</p> </li>
+  <li><p>第三行，<code>cpu</code>状态信息，具体属性说明如下：</p> 
+   <ul> 
+    <li><code>0.0 us</code> — 用户空间占用CPU的百分比。</li>
+    <li><code>0.3 sy</code> — 内核空间占用CPU的百分比。</li>
+    <li><code>0.0 ni</code> — 改变过优先级的进程占用CPU的百分比</li>
+    <li><code>99.7 id</code> — 空闲CPU百分比</li>
+    <li><code>0.0 wa</code> — IO等待占用CPU的百分比</li>
+    <li><code>0.0 hi</code> — 硬中断(Hardware IRQ)占用CPU的百分比</li>
+    <li><code>0.0 si</code> — 软中断(Software Interrupts)占用CPU的百分比<br>备注：在这里CPU的使用比率和windows概念不同，需要理解linux系统用户空间和内核空间的相关知识！</li>
+   </ul> </li>
+  <li><p>第四行,内存状态，具体信息如下：</p> 
+   <ul> 
+    <li>999936 total — 物理内存总量(1GB)</li>
+    <li>144560 used — 使用中的内存总量(140M)</li>
+    <li>603084 free — 空闲内存总量(600M)</li>
+    <li>252292 buffers/cache — 缓存的内存量 (169M)</li>
+   </ul> </li>
+  <li><p>第五行，swap交换分区信息，具体信息说明如下：</p> 
+   <ul> 
+    <li>2097148 total — 交换区总量</li>
+    <li>0k used — 使用的交换区总量</li>
+    <li>2097148 free — 空闲交换区总量</li>
+    <li>631400 avail Mem — 缓冲的交换区可用内存量</li>
+   </ul> 
+   <blockquote> 
+    <p>备注：第四行中使用中的内存总量(used)指的是现在系统内核控制的内存数，空闲内存总量(free)是内核还未纳入其管控范围的数量。纳入内核管理的内存不见得都在使用中，还包括过去使用过的现在可以被重复利用的内存，内核并不把这些可被重新使用的内存交还到free中去，因此在linux上free内存会越来越少，但不用为此担心。<br>如果出于习惯去计算可用内存数，这里有个近似的计算公式：第四行的free + 第四行的buffers + 第五行的cached，按这个公式此台服务器的可用内存。<br>对于内存监控，在top里我们要时刻监控第五行swap交换分区的used，如果这个数值在不断的变化，说明内核在不断进行内存和swap的数据交换，这是真正的内存不够用了。</p> 
+   </blockquote> </li>
+  <li><p>第六行，空行。</p> </li>
+ </ul> 
+ <ul> 
+  <li>第七行以下：各进程(任务)的状态监控，项目列信息说明如下：
+   <ul> 
+    <li><code>PID</code> — 进程id</li>
+    <li><code>USER</code> — 进程所有者</li>
+    <li><code>PR</code> — 进程优先级</li>
+    <li><code>NI</code> — nice值。负值表示高优先级，正值表示低优先级</li>
+    <li><code>VIRT</code> — 进程使用的虚拟内存总量，单位<code>kb</code>。<code>VIRT=SWAP+RES</code></li>
+    <li><code>- RES</code> — 进程使用的、未被换出的物理内存大小，单位kb。<code>RES=CODE+DATA</code></li>
+    <li><code>SHR</code> — 共享内存大小，单位kb</li>
+    <li><code>S</code> — 进程状态。D=不可中断的睡眠状态 R=运行 S=睡眠 T=跟踪/停止 Z=僵尸进程</li>
+    <li><code>%CPU</code> — 上次更新到现在的CPU时间占用百分比</li>
+    <li><code>%MEM</code> — 进程使用的物理内存百分比</li>
+    <li><code>TIME+</code> — 进程使用的CPU时间总计，单位<code>1/100</code>秒</li>
+    <li><code>COMMAND</code> — 进程名称(命令名/命令行)</li>
+   </ul> </li>
+ </ul> 
+ <h2 id="h2--"><a name="其他使用技巧：" class="reference-link"></a><span class="header-link octicon octicon-link"></span>其他使用技巧：</h2>
+ <ul> 
+  <li><p><strong>1.多U多核CPU监控</strong><br>在<code>top</code>基本视图中，按键盘数字“<code>1</code>”，可监控每个逻辑CPU的状况：<br><img src="http://www.yiibai.com/uploads/images/201702/1702/464170248_23597.png" alt=""><br>观察上图，服务器有<code>0</code>个逻辑CPU，实际上是<code>1</code>个物理CPU。再按数字键<code>1</code>，返回到top基本视图界面。</p> </li>
+  <li><p><strong>2.高亮显示当前运行进程</strong><br>敲击键盘“b”(打开/关闭加亮效果)，<code>top</code>的视图变化如下：<br><img src="http://www.yiibai.com/uploads/images/201702/1702/504170250_24508.png" alt=""></p> </li>
+ </ul> 
+ <p>如上图中，进程<code>id</code>为<code>9</code>，<code>3211</code>的“top”进程被加亮了，<code>top</code>进程就是视图第二行显示的唯一的运行态(runing)的那个进程，可以通过敲击“y”键关闭或打开运行态进程的加亮效果。</p> 
+ <ul> 
+  <li><strong>3.进程字段排序</strong><br>默认进入<code>top</code>时，各进程是按照CPU的占用量来排序的，在下图中进程ID为<code>32374</code>的python进程排在第一(cpu占用<code>94%</code>)，进程ID为<code>653</code>的<code>vmtools</code>进程排在第二(cpu占用<code>2.0%</code>)。<br><img src="http://www.yiibai.com/uploads/images/201702/1702/676170259_72555.png" alt=""></li>
+ </ul> 
+ <p>敲击键盘“x”(打开/关闭排序列的加亮效果)，top的视图变化如下：</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201702/1702/346180201_32585.png" alt=""></p> 
+ <p>可以看到，top默认的排序列是“<code>%CPU</code>”。</p> 
+ <ul> 
+  <li><strong>4. 通过”shift + &gt;”或”shift + &lt;”可以向右或左改变排序列</strong></li>
+ </ul> 
+ <p>下图是按一次”<code>shift + &gt;</code>”的效果图,视图现在已经按照<code>%MEM</code>来排序。<br><img src="http://www.yiibai.com/uploads/images/201702/1902/804100236_85866.png" alt=""></p> 
+ <h3 id="h3--2-"><a name="实例2：显示 完整命令" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实例2：显示 完整命令</h3>
+ <p>命令：</p>   
+ <pre><code class="lang-shell">top -c
+</code></pre> 
+ <p>输出：</p> 
+ <pre><code class="lang-shell">top - 09:38:06 up  3:23,  2 users,  load average: 2.40, 2.19, 1.37
+Tasks: 112 total,   4 running, 107 sleeping,   1 stopped,   0 zombie
+%Cpu(s): 97.2 us,  1.8 sy,  0.0 ni,  0.0 id,  0.0 wa,  0.0 hi,  1.1 si,  0.0 st
+KiB Mem :   999936 total,    74648 free,   130200 used,   795088 buff/cache
+KiB Swap:  2097148 total,  2097148 free,        0 used.   672960 avail Mem
+
+   PID USER      PR  NI    VIRT    RES    SHR S %CPU %MEM     TIME+ COMMAND
+  3237 yiibai    20   0  123156   4376   1904 R 42.5  0.4  10:45.19 python run+
+  3753 yiibai    20   0  123152   4380   1908 R 42.5  0.4   1:38.90 python run+
+   653 root      20   0  302436   6024   4648 S  2.3  0.6   1:50.29 /usr/bin/v+
+  3709 root      20   0       0      0      0 S  2.0  0.0   0:05.93 [kworker/u+
+   652 chrony    20   0  115848   1892   1496 S  1.7  0.2   0:00.53 /usr/sbin/+
+   476 root      20   0   34876   3152   2828 S  0.3  0.3   0:00.92 /usr/lib/s+
+  2250 root      20   0       0      0      0 S  0.3  0.0   0:38.98 [kworker/0+
+     1 root      20   0  128092   6708   3956 S  0.0  0.7   0:05.51 /usr/lib/s+
+     2 root      20   0       0      0      0 S  0.0  0.0   0:00.02 [kthreadd]
+     3 root      20   0       0      0      0 S  0.0  0.0   0:15.97 [ksoftirqd+
+     7 root      rt   0       0      0      0 S  0.0  0.0   0:00.00 [migration+
+     8 root      20   0       0      0      0 S  0.0  0.0   0:00.00 [rcu_bh]
+     9 root      20   0       0      0      0 R  0.0  0.0   0:07.42 [rcu_sched]
+    10 root      rt   0       0      0      0 S  0.0  0.0   0:05.48 [watchdog/+
+</code></pre> 
+ <h3 id="h3--3-"><a name="实例3：以批处理模式显示程序信息" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实例3：以批处理模式显示程序信息</h3>
+ <p>命令：</p> 
+ <pre><code class="lang-shell">top -b
+</code></pre> 
+ <h3 id="h3--4-"><a name="实例4：以累积模式显示程序信息" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实例4：以累积模式显示程序信息</h3>
+ <p>命令：</p> 
+ <pre><code class="lang-shell">top -S
+</code></pre> 
+ <h3 id="h3--5-"><a name="实例5：设置信息更新次数" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实例5：设置信息更新次数</h3>
+ <p>命令：</p> 
+ <pre><code class="lang-shell">top -n 2
+</code></pre> 
+ <p>说明：表示更新两次后终止更新显示</p> 
+ <h3 id="h3--6-"><a name="实例6：设置信息更新时间" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实例6：设置信息更新时间</h3>
+ <p>命令：</p> 
+ <pre><code class="lang-shell">top -d 3
+</code></pre> 
+ <p><strong>说明：</strong>表示更新周期为3秒</p> 
+ <h3 id="h3--7-"><a name="实例7：显示指定的进程信息" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实例7：显示指定的进程信息</h3>
+ <p>命令：</p> 
+ <pre><code class="lang-shell">top -p 3237
+</code></pre> 
+ <pre><code class="lang-shell">top - 09:40:32 up  3:26,  2 users,  load average: 3.07, 2.53, 1.62
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 91.8 us,  2.4 sy,  0.0 ni,  0.0 id,  0.0 wa,  0.0 hi,  5.8 si,  0.0 st
+KiB Mem :   999936 total,    71276 free,   130352 used,   798308 buff/cache
+KiB Swap:  2097148 total,  2097148 free,        0 used.   672960 avail Mem
+
+   PID USER      PR  NI    VIRT    RES    SHR S %CPU %MEM     TIME+ COMMAND
+  3237 yiibai    20   0  123156   4376   1904 R 34.1  0.4  11:46.46 python
+</code></pre> 
+ <ul> 
+  <li>5.top交互命令</li>
+ </ul> 
+ <p>在 <code>top</code> 命令执行过程中可以使用的一些交互命令。这些命令都是单字母的，如果在命令行中使用了s 选项， 其中一些命令可能会被屏蔽。</p> 
+ <ul> 
+  <li><code>h</code> 显示帮助画面，给出一些简短的命令总结说明</li>
+  <li><code>k</code> 终止一个进程。</li>
+  <li><code>i</code> 忽略闲置和僵死进程。这是一个开关式命令。</li>
+  <li><code>q</code> 退出程序</li>
+  <li><code>r</code> 重新安排一个进程的优先级别</li>
+  <li><code>S</code> 切换到累计模式</li>
+  <li><code>s</code> 改变两次刷新之间的延迟时间(单位为<code>s</code>)，如果有小数，就换算成<code>m s</code>。输入0值则系统将不断刷新，默认值是<code>5s</code></li>
+  <li><code>f</code>或者<code>F</code> 从当前显示中添加或者删除项目</li>
+  <li><code>o</code>或者<code>O</code> 改变显示项目的顺序</li>
+  <li><code>l</code> 切换显示平均负载和启动时间信息</li>
+  <li><code>m</code> 切换显示内存信息</li>
+  <li><code>t</code> 切换显示进程和CPU状态信息</li>
+  <li><code>c</code> 切换显示命令名称和完整命令行</li>
+  <li><code>M</code> 根据驻留内存大小进行排序</li>
+  <li><code>P</code> 根据CPU使用百分比大小进行排序</li>
+  <li><code>T</code> 根据时间/累计时间进行排序</li>
+  <li><code>W</code> 将当前设置写入<code>~/.toprc</code>文件中 </li>
+ </ul>
+ <br>      
+</div></body></html>

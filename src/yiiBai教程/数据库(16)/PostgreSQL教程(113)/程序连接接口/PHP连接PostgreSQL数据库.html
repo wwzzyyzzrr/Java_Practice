@@ -1,0 +1,305 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">PHP连接PostgreSQL数据库</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>PostgreSQL扩展在默认情况下在最新版本的<code>PHP 5.3.x</code>中是启用的。 可以在编译时使用<code>--without-pgsql</code>来禁用它。仍然可以使用<code>yum</code>命令来安装<code>PHP-PostgreSQL</code>接口：</p> 
+ <pre><code class="lang-shell">yum install php-pgsql
+</code></pre> 
+ <p>在开始使用PHP连接PostgreSQL接口之前，请先在<strong>PostgreSQL</strong>安装目录中找到<code>pg_hba.conf</code>文件，并添加以下行：</p> 
+ <pre><code class="lang-shell"># IPv4 local connections:
+host    all         all         127.0.0.1/32          md5
+</code></pre> 
+ <p>您可以启动/重新启动postgres服务器，使用以下命令运行：</p> 
+ <pre><code class="lang-shell">[root@host]# service postgresql restart
+Stopping postgresql service:                               [  OK  ]
+Starting postgresql service:                               [  OK  ]
+</code></pre> 
+ <p>Windows用户必须启用<code>php_pgsql.dll</code>才能使用此扩展名。这个DLL包含在最新版本的<code>PHP 5.3.x</code>中的Windows发行版中。</p> 
+ <h2 id="h2-php-postgresql-"><a name="PHP连接到PostgreSQL数据库" class="reference-link"></a><span class="header-link octicon octicon-link"></span>PHP连接到PostgreSQL数据库</h2>
+ <p>以下PHP代码显示如何连接到本地机器上的现有数据库，最后将返回数据库连接对象。</p> 
+ <pre><code class="lang-php">&lt;?php
+   $host        = "host=127.0.0.1";
+   $port        = "port=5432";
+   $dbname      = "dbname=testdb";
+   $credentials = "user=postgres password=pass123";
+
+   $db = pg_connect( "$host $port $dbname $credentials"  );
+   if(!$db){
+      echo "Error : Unable to open database\n";
+   } else {
+      echo "Opened database successfully\n";
+   }
+?&gt;
+</code></pre> 
+ <p>现在，让我们运行上面的程序打开数据库:<code>testdb</code>，如果成功打开数据库连接，那么它将给出以下消息：</p> 
+ <pre><code class="lang-shell">Opened database successfully
+</code></pre> 
+ <h2 id="h2-u521Bu5EFAu8868"><a name="创建表" class="reference-link"></a><span class="header-link octicon octicon-link"></span>创建表</h2>
+ <p>以下PHP程序将用于在之前创建的数据库(<code>testdb</code>)中创建一个表：</p> 
+ <pre><code class="lang-php">&lt;?php
+   $host        = "host=127.0.0.1";
+   $port        = "port=5432";
+   $dbname      = "dbname=testdb";
+   $credentials = "user=postgres password=pass123";
+
+   $db = pg_connect( "$host $port $dbname $credentials"  );
+   if(!$db){
+      echo "Error : Unable to open database\n";
+   } else {
+      echo "Opened database successfully\n";
+   }
+
+   $sql =&lt;&lt;&lt;EOF
+      CREATE TABLE COMPANY
+      (ID INT PRIMARY KEY     NOT NULL,
+      NAME           TEXT    NOT NULL,
+      AGE            INT     NOT NULL,
+      ADDRESS        CHAR(50),
+      SALARY         REAL);
+EOF;
+
+   $ret = pg_query($db, $sql);
+   if(!$ret){
+      echo pg_last_error($db);
+   } else {
+      echo "Table created successfully\n";
+   }
+   pg_close($db);
+?&gt;
+</code></pre> 
+ <p>当执行上述程序时，它将在<code>testdb</code>数据库中创建<code>COMPANY</code>表，并显示以下消息：</p> 
+ <pre><code class="lang-sql">Opened database successfully
+Table created successfully
+</code></pre> 
+ <h2 id="h2-u63D2u5165u64CDu4F5C"><a name="插入操作" class="reference-link"></a><span class="header-link octicon octicon-link"></span>插入操作</h2>
+ <p>以下PHP程序显示了如何在上述示例中创建的<code>COMPANY</code>表中创建记录：</p> 
+ <pre><code class="lang-php">&lt;?php
+   $host        = "host=127.0.0.1";
+   $port        = "port=5432";
+   $dbname      = "dbname=testdb";
+   $credentials = "user=postgres password=pass123";
+
+   $db = pg_connect( "$host $port $dbname $credentials"  );
+   if(!$db){
+      echo "Error : Unable to open database\n";
+   } else {
+      echo "Opened database successfully\n";
+   }
+
+   $sql =&lt;&lt;&lt;EOF
+      INSERT INTO COMPANY (ID,NAME,AGE,ADDRESS,SALARY)
+      VALUES (1, 'Paul', 32, 'California', 20000.00 );
+
+      INSERT INTO COMPANY (ID,NAME,AGE,ADDRESS,SALARY)
+      VALUES (2, 'Allen', 25, 'Texas', 15000.00 );
+
+      INSERT INTO COMPANY (ID,NAME,AGE,ADDRESS,SALARY)
+      VALUES (3, 'Teddy', 23, 'Norway', 20000.00 );
+
+      INSERT INTO COMPANY (ID,NAME,AGE,ADDRESS,SALARY)
+      VALUES (4, 'Mark', 25, 'Rich-Mond ', 65000.00 );
+EOF;
+
+   $ret = pg_query($db, $sql);
+   if(!$ret){
+      echo pg_last_error($db);
+   } else {
+      echo "Records created successfully\n";
+   }
+   pg_close($db);
+?&gt;
+</code></pre> 
+ <p>当执行上述程序时，它将在<code>COMPANY</code>表中创建给定的记录，并显示以下两行：</p> 
+ <pre><code class="lang-shell">Opened database successfully
+Records created successfully
+</code></pre> 
+ <h2 id="h2-select-"><a name="SELECT操作" class="reference-link"></a><span class="header-link octicon octicon-link"></span>SELECT操作</h2>
+ <p>以下PHP程序显示了如何从上述示例中创建的<code>COMPANY</code>表中获取和显示记录：</p> 
+ <pre><code class="lang-php">&lt;?php
+   $host        = "host=127.0.0.1";
+   $port        = "port=5432";
+   $dbname      = "dbname=testdb";
+   $credentials = "user=postgres password=pass123";
+
+   $db = pg_connect( "$host $port $dbname $credentials"  );
+   if(!$db){
+      echo "Error : Unable to open database\n";
+   } else {
+      echo "Opened database successfully\n";
+   }
+
+   $sql =&lt;&lt;&lt;EOF
+      SELECT * from COMPANY;
+EOF;
+
+   $ret = pg_query($db, $sql);
+   if(!$ret){
+      echo pg_last_error($db);
+      exit;
+   } 
+   while($row = pg_fetch_row($ret)){
+      echo "ID = ". $row[0] . "\n";
+      echo "NAME = ". $row[1] ."\n";
+      echo "ADDRESS = ". $row[2] ."\n";
+      echo "SALARY =  ".$row[4] ."\n\n";
+   }
+   echo "Operation done successfully\n";
+   pg_close($db);
+?&gt;
+</code></pre> 
+ <p>当执行上述程序时，将产生以下结果。 请记下，在创建表时按照它们使用的顺序返回字段。</p>   
+ <pre><code class="lang-shell">Opened database successfully
+ID = 1
+NAME = Paul
+ADDRESS = California
+SALARY =  20000
+
+ID = 2
+NAME = Allen
+ADDRESS = Texas
+SALARY =  15000
+
+ID = 3
+NAME = Teddy
+ADDRESS = Norway
+SALARY =  20000
+
+ID = 4
+NAME = Mark
+ADDRESS = Rich-Mond
+SALARY =  65000
+
+Operation done successfully
+</code></pre> 
+ <h2 id="h2-u66F4u65B0u64CDu4F5C"><a name="更新操作" class="reference-link"></a><span class="header-link octicon octicon-link"></span>更新操作</h2>
+ <p>以下PHP代码显示了如何使用<code>UPDATE</code>语句来更新指定记录，然后从<code>COMPANY</code>表中获取并显示更新的记录：</p> 
+ <pre><code class="lang-php">&lt;?php
+   $host        = "host=127.0.0.1";
+   $port        = "port=5432";
+   $dbname      = "dbname=testdb";
+   $credentials = "user=postgres password=pass123";
+
+   $db = pg_connect( "$host $port $dbname $credentials"  );
+   if(!$db){
+      echo "Error : Unable to open database\n";
+   } else {
+      echo "Opened database successfully\n";
+   }
+   $sql =&lt;&lt;&lt;EOF
+      UPDATE COMPANY set SALARY = 25000.00 where ID=1;
+EOF;
+   $ret = pg_query($db, $sql);
+   if(!$ret){
+      echo pg_last_error($db);
+      exit;
+   } else {
+      echo "Record updated successfully\n";
+   }
+
+   $sql =&lt;&lt;&lt;EOF
+      SELECT * from COMPANY;
+EOF;
+
+   $ret = pg_query($db, $sql);
+   if(!$ret){
+      echo pg_last_error($db);
+      exit;
+   } 
+   while($row = pg_fetch_row($ret)){
+      echo "ID = ". $row[0] . "\n";
+      echo "NAME = ". $row[1] ."\n";
+      echo "ADDRESS = ". $row[2] ."\n";
+      echo "SALARY =  ".$row[4] ."\n\n";
+   }
+   echo "Operation done successfully\n";
+   pg_close($db);
+?&gt;
+</code></pre> 
+ <p>执行上述程序时，会产生以下结果：</p> 
+ <pre><code class="lang-shell">Opened database successfully
+Record updated successfully
+ID = 2
+NAME = Allen
+ADDRESS = 25
+SALARY =  15000
+
+ID = 3
+NAME = Teddy
+ADDRESS = 23
+SALARY =  20000
+
+ID = 4
+NAME = Mark
+ADDRESS = 25
+SALARY =  65000
+
+ID = 1
+NAME = Paul
+ADDRESS = 32
+SALARY =  25000
+
+Operation done successfully
+</code></pre> 
+ <h2 id="h2-u5220u9664u64CDu4F5C"><a name="删除操作" class="reference-link"></a><span class="header-link octicon octicon-link"></span>删除操作</h2>
+ <p>以下PHP代码显示了如何使用<code>DELETE</code>语句删除指定记录，然后从<code>COMPANY</code>表中获取并显示剩余的记录：</p> 
+ <pre><code class="lang-php">&lt;?php
+   $host        = "host=127.0.0.1";
+   $port        = "port=5432";
+   $dbname      = "dbname=testdb";
+   $credentials = "user=postgres password=pass123";
+
+   $db = pg_connect( "$host $port $dbname $credentials"  );
+   if(!$db){
+      echo "Error : Unable to open database\n";
+   } else {
+      echo "Opened database successfully\n";
+   }
+   $sql =&lt;&lt;&lt;EOF
+      DELETE from COMPANY where ID=2;
+EOF;
+   $ret = pg_query($db, $sql);
+   if(!$ret){
+      echo pg_last_error($db);
+      exit;
+   } else {
+      echo "Record deleted successfully\n";
+   }
+
+   $sql =&lt;&lt;&lt;EOF
+      SELECT * from COMPANY;
+EOF;
+
+   $ret = pg_query($db, $sql);
+   if(!$ret){
+      echo pg_last_error($db);
+      exit;
+   } 
+   while($row = pg_fetch_row($ret)){
+      echo "ID = ". $row[0] . "\n";
+      echo "NAME = ". $row[1] ."\n";
+      echo "ADDRESS = ". $row[2] ."\n";
+      echo "SALARY =  ".$row[4] ."\n\n";
+   }
+   echo "Operation done successfully\n";
+   pg_close($db);
+?&gt;
+</code></pre> 
+ <p>执行上述程序时，会产生以下结果：</p> 
+ <pre><code class="lang-shell">Opened database successfully
+Record deleted successfully
+ID = 3
+NAME = Teddy
+ADDRESS = 23
+SALARY =  20000
+
+ID = 4
+NAME = Mark
+ADDRESS = 25
+SALARY =  65000
+
+ID = 1
+NAME = Paul
+ADDRESS = 32
+SALARY =  25000
+
+Operation done successfully
+</code></pre>
+ <br>      
+</div></body></html>

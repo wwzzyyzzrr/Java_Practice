@@ -1,0 +1,230 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Makefile 宏</h1><div style="width:100%;float:left;" class="article-content">   
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> make程序允许您使用宏，这是类似的变量。 = 一对一个Makefile中定义的宏。例如：</p> 
+ <table class="ex" style="font-family: verdana, helvetica, arial, sans-serif;  border-color: rgb(170, 170, 170); width: 552px; background-color: rgb(241, 241, 241); border-collapse: collapse; padding-left: 5px;" tr="" width="100%"> 
+  <tbody> 
+   <tr> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse;  border-color: rgb(170, 170, 170);"> <pre style="font-family: 'Courier New', monospace; font-size: 12px; margin-bottom: 0px;">
+MACROS=  -me
+PSROFF=  groff -Tps
+DITROFF= groff -Tdvi
+CFLAGS= -O -systype bsd43
+LIBS = "-lncurses -lm -lsdl"
+MYFACE = ":*)"
+</pre> </td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <ul style="font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> 
+  <li> 特殊的宏</li> 
+ </ul> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> 目标规则集发出任何命令之前，有一些特殊的预定义宏。</p> 
+ <ul style="font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> 
+  <li> <p style="text-align: justify;"> $@ 到的文件的名称。</p> </li> 
+  <li> <p style="text-align: justify;"> $? 是改变的眷属的名字。</p> </li> 
+ </ul> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> 因此，举例来说，我们可以使用一个规则</p> 
+ <table class="ex" style="font-family: verdana, helvetica, arial, sans-serif;  border-color: rgb(170, 170, 170); width: 552px; background-color: rgb(241, 241, 241); border-collapse: collapse; padding-left: 5px;" tr="" width="100%"> 
+  <tbody> 
+   <tr> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse;  border-color: rgb(170, 170, 170);"> <pre style="font-family: 'Courier New', monospace; font-size: 12px; margin-bottom: 0px;">
+hello: main.cpp hello.cpp factorial.cpp
+	$(CC) $(CFLAGS) $? $(LDFLAGS) -o $@
+
+alternatively:
+
+hello: main.cpp hello.cpp factorial.cpp
+        $(CC) $(CFLAGS) $@.cpp $(LDFLAGS) -o $@
+</pre> </td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p> 在这个例子中$@代表 hello，&nbsp;$?&nbsp;或$@.cpp将拾取所有更改的源文件。</p> 
+ <p> 有两个比较特殊的隐含规则中使用的宏。它们是</p> 
+ <ul> 
+  <li> <p> $&lt; 导致该操作的相应的文件中的名称。</p> </li> 
+  <li> <p> $* 前缀共享目标和相关文件。</p> </li> 
+ </ul> 
+ <p> 常见的隐含规则的构造 .o（对象）文件，.cpp（源文件）。</p> 
+ <table class="ex" style="font-family: verdana, helvetica, arial, sans-serif;  border-color: rgb(170, 170, 170); width: 552px; background-color: rgb(241, 241, 241); border-collapse: collapse; padding-left: 5px;" tr="" width="100%"> 
+  <tbody> 
+   <tr> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse;  border-color: rgb(170, 170, 170);"> <pre style="font-family: 'Courier New', monospace; font-size: 12px; margin-bottom: 0px;">
+.o.cpp:
+        $(CC) $(CFLAGS) -c $&lt;
+
+alternatively
+
+.o.cpp:
+        $(CC) $(CFLAGS) -c $*.c</pre> </td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p> 注意：要获得更详细的关于Makefile规则，在另一部分。</p> 
+ <ul> 
+  <li> 传统宏</li> 
+ </ul> 
+ <p> 有很多默认的宏（输入“make -p”打印出来的默认值）。大多数使用它们的规则是很明显的：</p> 
+ <p> 这些预定义变量，即。在隐含规则中使用的宏分为两大类：那些程序名（例如CC）和那些含有参数的程序（如CFLAGS）。</p> 
+ <p> 下面是一些比较常见的变量用作内置规则：makefile文件的程序名称的表。</p> 
+ <table cellpadding="5"> 
+  <tbody> 
+   <tr> 
+    <td> AR</td> 
+    <td> Archive-maintaining program; default `ar'.</td> 
+   </tr> 
+   <tr> 
+    <td> AS</td> 
+    <td> Program for compiling assembly files; default `as'.</td> 
+   </tr> 
+   <tr> 
+    <td> CC</td> 
+    <td> Program for compiling C programs; default `cc'.</td> 
+   </tr> 
+   <tr> 
+    <td> CO</td> 
+    <td> Program for checking out files from RCS; default `co'.</td> 
+   </tr> 
+   <tr> 
+    <td> CXX</td> 
+    <td> Program for compiling C++ programs; default `g++'.</td> 
+   </tr> 
+   <tr> 
+    <td> CPP</td> 
+    <td> Program for running the C preprocessor, with results to standard output; default `$(CC) -E'.</td> 
+   </tr> 
+   <tr> 
+    <td> FC</td> 
+    <td> Program for compiling or preprocessing Fortran and Ratfor programs; default `f77'.</td> 
+   </tr> 
+   <tr> 
+    <td> GET</td> 
+    <td> Program for extracting a file from SCCS; default `get'.</td> 
+   </tr> 
+   <tr> 
+    <td> LEX</td> 
+    <td> Program to use to turn Lex grammars into source code; default `lex'.</td> 
+   </tr> 
+   <tr> 
+    <td> YACC</td> 
+    <td> Program to use to turn Yacc grammars into source code; default `yacc'.</td> 
+   </tr> 
+   <tr> 
+    <td> LINT</td> 
+    <td> Program to use to run lint on source code; default `lint'.</td> 
+   </tr> 
+   <tr> 
+    <td> M2C</td> 
+    <td> Program to use to compile Modula-2 source code; default `m2c'.</td> 
+   </tr> 
+   <tr> 
+    <td> PC</td> 
+    <td> Program for compiling Pascal programs; default `pc'.</td> 
+   </tr> 
+   <tr> 
+    <td> MAKEINFO</td> 
+    <td> Program to convert a Texinfo source file into an Info file; default `makeinfo'.</td> 
+   </tr> 
+   <tr> 
+    <td> TEX</td> 
+    <td> Program to make TeX dvi files from TeX source; default `tex'.</td> 
+   </tr> 
+   <tr> 
+    <td> TEXI2DVI</td> 
+    <td> Program to make TeX dvi files from Texinfo source; default `texi2dvi'.</td> 
+   </tr> 
+   <tr> 
+    <td> WEAVE</td> 
+    <td> Program to translate Web into TeX; default `weave'.</td> 
+   </tr> 
+   <tr> 
+    <td> CWEAVE</td> 
+    <td> Program to translate C Web into TeX; default `cweave'.</td> 
+   </tr> 
+   <tr> 
+    <td> TANGLE</td> 
+    <td> Program to translate Web into Pascal; default `tangle'.</td> 
+   </tr> 
+   <tr> 
+    <td> CTANGLE</td> 
+    <td> Program to translate C Web into C; default `ctangle'.</td> 
+   </tr> 
+   <tr> 
+    <td> RM</td> 
+    <td> Command to remove a file; default `rm -f'.</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> 这里是一个变量，其值是上述程序的额外的参数表。所有这些的默认值是空字符串，除非另有说明。</p> 
+ <table cellpadding="5"> 
+  <tbody> 
+   <tr> 
+    <td> ARFLAGS</td> 
+    <td> Flags to give the archive-maintaining program; default `rv'.</td> 
+   </tr> 
+   <tr> 
+    <td> ASFLAGS</td> 
+    <td> Extra flags to give to the assembler (when explicitly invoked on a `.s' or `.S' file).</td> 
+   </tr> 
+   <tr> 
+    <td> CFLAGS</td> 
+    <td> Extra flags to give to the C compiler.</td> 
+   </tr> 
+   <tr> 
+    <td> CXXFLAGS</td> 
+    <td> Extra flags to give to the C compiler.</td> 
+   </tr> 
+   <tr> 
+    <td> COFLAGS</td> 
+    <td> Extra flags to give to the RCS co program.</td> 
+   </tr> 
+   <tr> 
+    <td> CPPFLAGS</td> 
+    <td> Extra flags to give to the C preprocessor and programs that use it (the C and Fortran compilers).</td> 
+   </tr> 
+   <tr> 
+    <td> FFLAGS</td> 
+    <td> Extra flags to give to the Fortran compiler.</td> 
+   </tr> 
+   <tr> 
+    <td> GFLAGS</td> 
+    <td> Extra flags to give to the SCCS get program.</td> 
+   </tr> 
+   <tr> 
+    <td> LDFLAGS</td> 
+    <td> Extra flags to give to compilers when they are supposed to invoke the linker, `ld'.</td> 
+   </tr> 
+   <tr> 
+    <td> LFLAGS</td> 
+    <td> Extra flags to give to Lex.</td> 
+   </tr> 
+   <tr> 
+    <td> YFLAGS</td> 
+    <td> Extra flags to give to Yacc.</td> 
+   </tr> 
+   <tr> 
+    <td> PFLAGS</td> 
+    <td> Extra flags to give to the Pascal compiler.</td> 
+   </tr> 
+   <tr> 
+    <td> RFLAGS</td> 
+    <td> Extra flags to give to the Fortran compiler for Ratfor programs.</td> 
+   </tr> 
+   <tr> 
+    <td> LINTFLAGS</td> 
+    <td> Extra flags to give to lint.</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p> 注：您可以取消`-R'或`&nbsp;--no-builtin-variables“选项隐含规则使用的所有变量。</p> 
+ <p> 如，也可以在命令行中定义的宏</p> 
+ <table tr=""> 
+  <tbody> 
+   <tr> 
+    <td>   <pre>
+          make CPP = /home/courses/cop4530/spring02</pre> </td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p> &nbsp;</p> 
+ <br>      
+</div></body></html>

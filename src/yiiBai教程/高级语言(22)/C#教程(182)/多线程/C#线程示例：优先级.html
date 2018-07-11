@@ -1,0 +1,52 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">C#线程示例：优先级</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>我们来看下面的一个例子，演示如何改变线程的优先级。高优先级线程优先执行。但是不能完全保证，因为线程是高度依赖系统的。它只提高了优先级较高的线程在低优先级线程之前执行的机会。</p> 
+ <pre><code class="lang-csharp">using System;
+using System.Threading;
+public class MyThread
+{
+    public void Thread1()
+    {
+        for(int i=0; i&lt;3; i++)
+        {
+            Thread t = Thread.CurrentThread;
+            Console.WriteLine(t.Name + " is running");
+        }
+
+
+    }
+}
+public class ThreadExample
+{
+    public static void Main()
+    {
+        MyThread mt = new MyThread();
+        Thread t1 = new Thread(new ThreadStart(mt.Thread1));
+        Thread t2 = new Thread(new ThreadStart(mt.Thread1));
+        Thread t3 = new Thread(new ThreadStart(mt.Thread1));
+        t1.Name = "Highest-Thread ";
+        t2.Name = "Normal-Thread ";
+        t3.Name = "Lowest-Thread ";
+        t1.Priority = ThreadPriority.Highest;
+        t2.Priority = ThreadPriority.Normal;
+        t3.Priority = ThreadPriority.Lowest;
+
+        t1.Start();
+        t2.Start();
+        t3.Start();
+    }
+}
+</code></pre> 
+ <p>输出是不可预测的，因为线程系统依赖性高。它可以遵循任何算法抢先或非抢占式来执行。</p> 
+ <p>执行上面示例代码，得到以下结果 - </p>   
+ <pre><code class="lang-shell">Highest-Thread  is running
+Normal-Thread  is running
+Normal-Thread  is running
+Normal-Thread  is running
+Lowest-Thread  is running
+Lowest-Thread  is running
+Lowest-Thread  is running
+Highest-Thread  is running
+Highest-Thread  is running
+</code></pre>
+ <br>      
+</div></body></html>

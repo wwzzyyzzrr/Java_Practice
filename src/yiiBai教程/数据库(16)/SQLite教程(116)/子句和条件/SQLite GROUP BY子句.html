@@ -1,0 +1,74 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">SQLite GROUP BY子句</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>SQLite <code>GROUP BY</code>子句与<code>SELECT</code>语句一起使用，将相同的相同元素合并成一个组。</p> 
+ <p><code>GROUP BY</code>子句与<code>SELECT</code>语句中的<code>WHERE</code>子句一起使用，并且<code>WHERE</code>子句在<code>ORDER BY</code>子句之前。</p> 
+ <p><strong>语法：</strong></p> 
+ <pre><code class="lang-sql">SELECT column-list  
+FROM table_name  
+WHERE [ conditions ]  
+GROUP BY column1, column2....columnN  
+ORDER BY column1, column2....columnN
+</code></pre> 
+ <p>下面举个例子来说明如何使用<code>GROUP BY</code>子句。 假设有一个名为<code>student</code>的表，具有以下数据：</p> 
+ <pre><code class="lang-sql">sqlite&gt; select * from student;
+1|Maxsu|27|Shengzhen|20000.0
+2|Minsu|25|Beijing|15000.0
+3|Avgsu|23|Shanghai|2000.0
+4|Linsu|25|Guangzhou|65000.0
+5|Sqlsu|26|Haikou|25000.0
+6|Javasu|21|Shengzhen|18000.0
+sqlite&gt;
+</code></pre> 
+ <p>使用<code>GROUP BY</code>查询每位学生的费用总额：</p> 
+ <pre><code class="lang-sql">SELECT NAME, SUM(FEES) FROM STUDENT GROUP BY NAME;
+</code></pre> 
+ <p>执行上面代码，得到以下结果 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201705/2305/745090526_27091.png" alt=""></p> 
+ <p>现在，使用以下<code>INSERT</code>语句向<code>student</code>表中创建一些记录，为了更好演示，插入的部分列的数据值是相同的：</p> 
+ <pre><code class="lang-sql">INSERT INTO STUDENT VALUES (7, 'Linsu', 27, 'Haikou', 10000.00 );  
+INSERT INTO STUDENT VALUES (8, 'Minsu', 23, 'Guangzhou', 5000.00 );  
+INSERT INTO STUDENT VALUES (9, 'Maxsu', 23, 'Shenzhen', 9000.00 );
+</code></pre> 
+ <p>执行上面语句插入数据后，现在表中存在的数据如下 -</p> 
+ <pre><code class="lang-shell">sqlite&gt; select * from student;
+1|Maxsu|27|Shengzhen|20000.0
+2|Minsu|25|Beijing|15000.0
+3|Avgsu|23|Shanghai|2000.0
+4|Linsu|25|Guangzhou|65000.0
+5|Sqlsu|26|Haikou|25000.0
+6|Javasu|21|Shengzhen|18000.0
+7|Linsu|27|Haikou|10000.0
+8|Minsu|23|Guangzhou|5000.0
+9|Maxsu|23|Shenzhen|9000.0
+sqlite&gt;
+</code></pre> 
+ <p>如上所示，现在有几个字段：<code>name</code>,<code>age</code>和<code>city</code>中的值是相同的。</p> 
+ <p>现在，使用<code>GROUP BY</code>语句按<code>NAME</code>列来分组并对同分组内的所有的记录的<code>fees</code>列求和：</p>   
+ <pre><code class="lang-sql"> select name, sum(fees) from student group by name;
+</code></pre> 
+ <p>执行上面代码，得到以下结果 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201705/2305/403090534_89571.png" alt=""></p> 
+ <p>可以使用<code>ORDER BY</code>子句和<code>GROUP BY</code>按升序或降序排列数据。</p> 
+ <pre><code class="lang-sql">SELECT NAME, SUM(FEES) AS total_fees FROM STUDENT GROUP BY NAME ORDER BY NAME DESC;
+-- 或者
+SELECT NAME, SUM(FEES) AS total_fees FROM STUDENT GROUP BY NAME ORDER BY total_fees DESC;
+</code></pre> 
+ <p>执行上面代码，得到以下结果 - </p> 
+ <pre><code class="lang-sql">sqlite&gt; SELECT NAME, SUM(FEES) AS total_fees FROM STUDENT GROUP BY NAME ORDER BY NAME DESC;
+Sqlsu|25000.0
+Minsu|20000.0
+Maxsu|29000.0
+Linsu|75000.0
+Javasu|18000.0
+Avgsu|2000.0
+sqlite&gt;
+sqlite&gt; SELECT NAME, SUM(FEES) AS total_fees FROM STUDENT GROUP BY NAME ORDER BY total_fees DESC;
+Linsu|75000.0
+Maxsu|29000.0
+Sqlsu|25000.0
+Minsu|20000.0
+Javasu|18000.0
+Avgsu|2000.0
+sqlite&gt;
+</code></pre>
+ <br>      
+</div></body></html>

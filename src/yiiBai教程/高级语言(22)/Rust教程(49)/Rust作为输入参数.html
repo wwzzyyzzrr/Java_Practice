@@ -1,0 +1,71 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Rust作为输入参数</h1><div style="width:100%;float:left;" class="article-content">   
+ <h3 id="822-as-input-parameters" style="box-sizing: border-box; -webkit-tap-highlight-color: transparent; -webkit-font-smoothing: antialiased; margin-bottom: 16px; line-height: 1.43; font-size: 1.5em; position: relative; color: rgb(51, 51, 51);  'Clear Sans', 'Helvetica Neue', Helvetica,   margin-top: 0px !important;"> 作为输入参数</h3> 
+ <p style="box-sizing: border-box; -webkit-tap-highlight-color: transparent; -webkit-font-smoothing: antialiased; margin-top: 0px; margin-bottom: 16px; color: rgb(51, 51, 51);  'Clear Sans', 'Helvetica Neue', Helvetica,   font-size: 16px; line-height: 25.6000003814697px;"> 大家已经注意到，Rust选择无需注解在运行时捕捉变量。这在正常使用时很方便，但是编写函数时，这种模糊性是不允许的。封闭的类型齐全，包括其捕获类型必须注明。<span style="color: rgb(34, 34, 34);  Verdana,  font-size: 12px;">捕获封闭使用被注释为以下特征之一的方式：</span></p> 
+ <ul style="box-sizing: border-box; -webkit-tap-highlight-color: transparent; -webkit-font-smoothing: antialiased; padding-right: 0px; padding-left: 2em; margin-top: 0px; margin-bottom: 16px; color: rgb(51, 51, 51);  'Clear Sans', 'Helvetica Neue', Helvetica,   font-size: 16px; line-height: 25.6000003814697px;"> 
+  <li style="box-sizing: border-box; -webkit-tap-highlight-color: transparent; -webkit-font-smoothing: antialiased;"> <code style="box-sizing: border-box; -webkit-tap-highlight-color: transparent; -webkit-font-smoothing: antialiased; Consolas, 'Liberation Mono', Menlo, Courier, monospace; font-size: 13.6000003814697px; padding: 0.2em 0px; margin: 0px; border-radius: 3px; background-color: rgb(247, 247, 247);">Fn</code>: 通过引用以捕获 (<code style="box-sizing: border-box; -webkit-tap-highlight-color: transparent; -webkit-font-smoothing: antialiased; Consolas, 'Liberation Mono', Menlo, Courier, monospace; font-size: 13.6000003814697px; padding: 0.2em 0px; margin: 0px; border-radius: 3px; background-color: rgb(247, 247, 247);">&amp;T</code>)</li> 
+  <li style="box-sizing: border-box; -webkit-tap-highlight-color: transparent; -webkit-font-smoothing: antialiased;"> <code style="box-sizing: border-box; -webkit-tap-highlight-color: transparent; -webkit-font-smoothing: antialiased; Consolas, 'Liberation Mono', Menlo, Courier, monospace; font-size: 13.6000003814697px; padding: 0.2em 0px; margin: 0px; border-radius: 3px; background-color: rgb(247, 247, 247);">FnMut</code>: 通过可变引用需要捕获 (<code style="box-sizing: border-box; -webkit-tap-highlight-color: transparent; -webkit-font-smoothing: antialiased; Consolas, 'Liberation Mono', Menlo, Courier, monospace; font-size: 13.6000003814697px; padding: 0.2em 0px; margin: 0px; border-radius: 3px; background-color: rgb(247, 247, 247);">&amp;mut T</code>)</li> 
+  <li style="box-sizing: border-box; -webkit-tap-highlight-color: transparent; -webkit-font-smoothing: antialiased;"> <code style="box-sizing: border-box; -webkit-tap-highlight-color: transparent; -webkit-font-smoothing: antialiased; Consolas, 'Liberation Mono', Menlo, Courier, monospace; font-size: 13.6000003814697px; padding: 0.2em 0px; margin: 0px; border-radius: 3px; background-color: rgb(247, 247, 247);">FnOnce</code>: 通过值捕获 (<code style="box-sizing: border-box; -webkit-tap-highlight-color: transparent; -webkit-font-smoothing: antialiased; Consolas, 'Liberation Mono', Menlo, Courier, monospace; font-size: 13.6000003814697px; padding: 0.2em 0px; margin: 0px; border-radius: 3px; background-color: rgb(247, 247, 247);">T</code>)</li> 
+ </ul> 
+ <p style="box-sizing: border-box; -webkit-tap-highlight-color: transparent; -webkit-font-smoothing: antialiased; margin-top: 0px; margin-bottom: 16px; color: rgb(51, 51, 51);  'Clear Sans', 'Helvetica Neue', Helvetica,   font-size: 16px; line-height: 25.6000003814697px;"> 即使是注释，这些都是非常灵活：&nbsp;FnOnce的一个参数指定封闭可以通过T或 &amp;mut T 或 &amp;T在将捕获(如果此举是可能的，任何类型的借还应该是可能的)。&nbsp;<span style="color: rgb(34, 34, 34);  Verdana,  font-size: 12px;">反向并非如此：如果该参数为Fn，那么什么都降低是允许的。因此，规则是：</span></p> 
+ <ul style="box-sizing: border-box; -webkit-tap-highlight-color: transparent; -webkit-font-smoothing: antialiased; padding-right: 0px; padding-left: 2em; margin-top: 0px; margin-bottom: 16px; color: rgb(51, 51, 51);  'Clear Sans', 'Helvetica Neue', Helvetica,   font-size: 16px; line-height: 25.6000003814697px;"> 
+  <li style="box-sizing: border-box; -webkit-tap-highlight-color: transparent; -webkit-font-smoothing: antialiased;"> 任何注释的参数限制捕捉到自身</li> 
+ </ul> 
+ <p style="box-sizing: border-box; -webkit-tap-highlight-color: transparent; -webkit-font-smoothing: antialiased; margin-top: 0px; margin-bottom: 16px; color: rgb(51, 51, 51);  'Clear Sans', 'Helvetica Neue', Helvetica,   font-size: 16px; line-height: 25.6000003814697px;"> 此外，Rust会优先捕捉，可变通过变量基础变量限制最少的方式：</p> 
+ <pre>
+// A function which takes a closure as an argument and calls
+// it. The closure takes no input and returns nothing.
+fn apply
+  <f>
+   (f: F) where
+    F: FnOnce() {
+    // ^ TODO: Try changing this to `Fn` or `FnMut`.
+
+    f()
+}
+
+// A function which takes a closure and returns an `i32`.
+fn apply_to_3
+   <f>
+    (f: F) -&gt; i32 where
+    // The closure takes an `i32` and returns an `i32`.
+    F: Fn(i32) -&gt; i32 {
+
+    f(3)
+}
+
+fn main() {
+    let greeting = "hello";
+    // A non-copy type.
+    let mut farewell = "goodbye".to_owned();
+
+    // Capture 2 variables: `greeting` by reference and
+    // `farewell` by value.
+    let diary = || {
+        // `greeting` is by reference: requires `Fn`.
+        println!("I said {}.", greeting);
+
+        // Mutation forces `farewell` to be captured by
+        // mutable reference. Now requires `FnMut`.
+        farewell.push_str("!!!");
+        println!("Then I screamed {}.", farewell);
+        println!("Now I can sleep. zzzzz");
+
+        // Manually calling drop forces `farewell` to
+        // be captured by value. Now requires `FnOnce`.
+        drop(farewell);
+    };
+
+    // Call the function which applies the closure.
+    apply(diary);
+
+    let double = |x| 2 * x;
+
+    println!("3 doubled: {}", apply_to_3(double));
+}
+
+   </f>
+  </f></pre> 
+ <h3 id="see-also"> 也可以参考:</h3> 
+ <p> <a target="_blank" href="http://doc.rust-lang.org/std/mem/fn.drop.html">std::mem::drop</a>,&nbsp;<a target="_blank" href="http://doc.rust-lang.org/std/ops/trait.Fn.html">Fn</a>,&nbsp;<a target="_blank" href="http://doc.rust-lang.org/std/ops/trait.FnMut.html">FnMut</a>, 和&nbsp;<a target="_blank" href="http://doc.rust-lang.org/std/ops/trait.FnOnce.html">FnOnce</a></p> 
+ <br>      
+</div></body></html>

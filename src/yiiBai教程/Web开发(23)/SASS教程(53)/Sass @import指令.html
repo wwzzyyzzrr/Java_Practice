@@ -1,0 +1,156 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Sass @import指令</h1><div style="width:100%;float:left;" class="article-content">   
+ <div> 
+  <div>
+    导入指令，导入SASS或者SCSS文件。它直接需要导入文件名。所有这一切都是导入SASS文件将在一个CSS文件中结合。但是也有一些编译为CSS，当我们使用@import规则，有几件事情需要注意： 
+  </div> 
+ </div> 
+ <div> 
+  <ul> 
+   <li> <p style="text-align:justify;"> 文件扩展名为&nbsp;.css </p> </li> 
+   <li> <p style="text-align:justify;"> 文件名以&nbsp;http:// 开始 </p> </li> 
+   <li> <p style="text-align:justify;"> 文件名是&nbsp;url() </p> </li> 
+   <li> <p style="text-align:justify;"> @import&nbsp;构成任何媒体查询 </p> </li> 
+  </ul> 
+  <div>
+    例如，创建一个SASS文件，用下面的代码： 
+  </div> 
+  <pre>@import "style.css";
+@import "http://www.yiibai.com/bar.css";
+@import url(style);
+@import "style" screen;</pre> 
+  <div>
+    可以告诉SASS监视文件，并随时使用下面的命令更新SASS文件来修改CSS： 
+  </div> 
+  <pre>sass --watch <span style="font-family:Monaco, Consolas, Courier, 'Lucida Console', monospace;line-height:1.5;">C:\Ruby22-x64</span><span style="font-family:Monaco, Consolas, Courier, 'Lucida Console', monospace;line-height:1.5;">\style.scss:style.css</span></pre> 
+  <div>
+    上面的代码会编译为CSS文件，如下所示： 
+  </div> 
+  <pre>@import url(style.css);
+@import "http://www.yiibai.com/bar.css";
+@import url(style);
+@import "style" screen;</pre> 
+  <div>
+    以下是使用@import规则导入文件的方式： 
+  </div> 
+  <h3> 
+   <div>
+     偏导 
+   </div> </h3> 
+  <p style="text-align:justify;"> 偏导是其中使用下划线(_partials.scss)开头SASS或SCSS文件名称。该部分文件名可以在SASS文件中，而无需使用下划线导入。SASS不会编译CSS文件，但使用下划线，这不仅使得SASS了解到局部的不会生成CSS文件。 </p> 
+  <h3> 内嵌 @import </h3> 
+  <div>
+    @import指令可以被包括在@media规则和CSS规则内。基本级别的文件导入文件的内容。导入规则获取嵌套在同一个地方作为第一个@import 
+  </div> 
+  <div>
+    例如，创建一个SASS文件，用下面的代码： 
+  </div> 
+  <pre>.container
+{
+background: #ffff;
+}</pre> 
+  <div style="background-color:inherit;">
+    导入上述文件到以下SASS文件，如下所示。 
+  </div> 
+  <pre>h4 {
+  @import "example";
+}</pre> 
+  <div style="background-color:inherit;">
+    上面的代码将被编译到CSS文件，如下所示： 
+  </div> 
+  <pre>h4 .container {
+  background: #ffff; }</pre> 
+  <h2> 语法 </h2> 
+  <div>
+    下面是一个用于在SCSS文件中导入文件的语法： 
+  </div> 
+  <pre>@import 'stylesheet'</pre> 
+  <h2> 示例 </h2> 
+  <div>
+    下面的例子演示了在SCSS文件中使用@import： 
+  </div> 
+  <h3> import.html </h3> 
+  <pre>&lt;html&gt;
+&lt;head&gt;<span style="font-family:Monaco, Consolas, Courier, 'Lucida Console', monospace;line-height:1.5;">&lt;meta&nbsp;charset="UTF-8"&gt;</span> &lt;title&gt;Import指令示例 - www.yiibai.com&lt;/title&gt;
+   &lt;link rel="stylesheet" type="text/css" href="style.css"/&gt;
+&lt;/head&gt;
+&lt;body class="container"&gt;
+   &lt;h1&gt;@Import指令示例&lt;/h1&gt;
+   &lt;h4&gt;Import the files in SASS&lt;/h4&gt;
+   &lt;ul&gt;
+   	&lt;li&gt;Red&lt;/li&gt;
+   	&lt;li&gt;Green&lt;/li&gt;
+   &lt;/ul&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre> 
+  <div>
+    接下来，创建文件_partial.scss。 
+  </div> 
+  <h3> _partial.scss </h3>   
+  <pre>ul{
+    margin: 0;
+    padding: 1;
+}
+
+li{
+    color: #680000;
+}</pre> 
+  <div>
+    接下来，创建文件 style.scss。 
+  </div> 
+  <h3> style.scss </h3> 
+  <pre>@import "partial";
+.container
+{
+background: #ffff;
+}
+
+h1
+{
+color: #77C1EF;
+}
+
+h4
+{
+color: #B98D25;
+}</pre> 
+  <div>
+    可以告诉SASS监视文件，并随时使用下面的命令更新SASS文件来修改CSS： 
+  </div> 
+  <pre>sass --watch <span style="font-family:Monaco, Consolas, Courier, 'Lucida Console', monospace;line-height:1.5;">C:\Ruby22-x64</span><span style="font-family:Monaco, Consolas, Courier, 'Lucida Console', monospace;line-height:1.5;">\style.scss:style.css</span></pre> 
+  <div>
+    接着执行上面的命令，它会自动创建style.css文件，如下面的代码： 
+  </div> 
+  <h3> style.css </h3> 
+  <pre>ul {
+  margin: 0;
+  padding: 1; }
+
+li {
+  color: #680000; }
+
+.container {
+  background: #ffff; }
+
+h1 {
+  color: #77C1EF; }
+
+h4 {
+  color: #B98D25; }</pre> 
+  <h2> 输出 </h2> 
+  <div>
+    让我们来执行以下步骤，看看上面的代码执行结果： 
+  </div> 
+  <ul> 
+   <li> 
+    <div>
+      保存上述的HTML代码到&nbsp;import.html&nbsp;文件 
+    </div> </li> 
+   <li> 
+    <div>
+      在浏览器中打开该HTML文件，得到输出如下显示 
+    </div> </li> 
+  </ul> 
+ </div> 
+ <p> <img src="/uploads/tutorial/20151212/1-151212142T5506.png" alt=""> </p>
+ <br>      
+</div></body></html>

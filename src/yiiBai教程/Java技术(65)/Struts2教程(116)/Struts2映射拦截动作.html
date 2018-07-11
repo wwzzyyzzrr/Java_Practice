@@ -1,0 +1,55 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Struts2映射拦截动作</h1><div style="width:100%;float:left;" class="article-content">   
+ <div>
+   Struts&nbsp;2的开发者用来声明行为属于一个包，扩展&nbsp;“struts-default“,&nbsp;其中包含默认设置的拦截。 
+ </div> 
+ <pre>&lt;package name="default" namespace="/" extends="struts-default"&gt;
+	&lt;action name="testingAction" 
+		class="com.yiibai.common.action.TestingAction" &gt;
+		&lt;result name="success"&gt;pages/result.jsp&lt;/result&gt;
+	&lt;/action&gt;
+&lt;/package&gt;&nbsp;</pre> 
+ <p> 拦截器的默认设置进行分组为“defaultStack”在struts-default.xml文件中，它位于&nbsp;struts2-core.jar&nbsp;文件，“defaultStack”提供所有的核心Struts2功能，这是最适合应用的需要。 </p> 
+ <div> 
+  <div>
+    试着学习struts-default.xml文件，它总是最好的拦截器的参考。 
+  </div> 
+ </div> 
+ <h2> 
+  <div>
+    映射拦截动作 
+  </div> </h2> 
+ <div>
+   为了其它的拦截器映射到动作，请使用“interceptor-ref”元素。 
+ </div> 
+ <pre>&lt;package name="default" namespace="/" extends="struts-default"&gt;
+	&lt;action name="testingAction" 
+		class="com.yiibai.common.action.TestingAction" &gt;
+		&lt;interceptor-ref name="timer"/&gt;
+		&lt;interceptor-ref name="logger"/&gt;
+		&lt;result name="success"&gt;pages/result.jsp&lt;/result&gt;
+	&lt;/action&gt;
+&lt;/package&gt;</pre> 
+ <div>
+   在上面的代码片段，将其映射“timer”&nbsp;和&nbsp;“logger”通过“interceptor-ref”元素拦截到“TestingAction”动作类。 
+ </div> 
+ <div> 
+  <div>
+    拦截器会按它们声明的顺序触发。 
+  </div> 
+ </div> 
+ <p> 由于“TestingAction”它声明自己的拦截器，它的直接失去拦截器的所有继承默认设置，你必须明确才能使用它，见下面声明“defaultStack”的例子。 </p>   
+ <pre>&lt;package name="default" namespace="/" extends="struts-default"&gt;
+	&lt;action name="testingAction" 
+		class="com.yiibai.common.action.TestingAction" &gt;
+		&lt;interceptor-ref name="timer"/&gt;
+		&lt;interceptor-ref name="logger"/&gt;
+		&lt;interceptor-ref name="defaultStack"/&gt;
+		&lt;result name="success"&gt;pages/result.jsp&lt;/result&gt;
+	&lt;/action&gt;
+&lt;/package&gt;</pre> 
+ <h2> 参考 </h2> 
+ <ol> 
+  <li> <a target="_blank" href="http://struts.apache.org/docs/interceptors.htmll">Struts 2 拦截器文档</a> </li> 
+ </ol>
+ <br>      
+</div></body></html>

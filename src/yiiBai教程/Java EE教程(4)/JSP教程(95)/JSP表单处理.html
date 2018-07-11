@@ -1,0 +1,246 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">JSP表单处理</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>在本章中，我们将讨论JSP中的表单处理。当需要从浏览器将一些传递到Web服务器的信息处理并最终传递到后端程序时，可能会遇到一些情况。浏览器使用两种方法将此信息传递到Web服务器。 这些方法是分别是：<code>GET</code>方法和<code>POST</code>方法。</p> 
+ <h2 id="h2-u8868u683Cu6570u636Eu5904u7406u65B9u6CD5"><a name="表格数据处理方法" class="reference-link"></a><span class="header-link octicon octicon-link"></span>表格数据处理方法</h2>
+ <p>现在我们来介绍表单处理中的方法。</p> 
+ <p><strong>GET方法</strong></p> 
+ <p><code>GET</code>方法将附加的用户数据信息编码并发送到请求的页面。页面和编码信息被分隔符 - <code>?</code>字符分隔开，如下 -</p> 
+ <pre><code class="lang-shell">http://www.yiibai.com/hello?key1=value1&amp;key2=value2
+</code></pre> 
+ <p><code>GET</code>方法是将信息从浏览器传递到Web服务器的默认方法，它生成一个长字符串，出现在浏览器的地址栏框中。如果有密码或其他敏感信息传递到服务器，建议最好不要使用<code>GET</code>方法。</p> 
+ <p><code>GET</code>方法具有大小限制：请求字符串中最多只能有<code>1024</code>个字符。</p> 
+ <p>该信息使用<code>QUERY_STRING</code>标头传递，并且可以通过<code>QUERY_STRING</code>环境变量进行访问，该变量可以使用<code>getQueryString()</code>和<code>getParameter()</code>方法来处理请求对象。</p> 
+ <p><strong>POST方法</strong></p> 
+ <p>通常更可靠的将信息传递给后端程序是使用<code>POST</code>方法。</p> 
+ <p><code>POST</code>方法与<code>GET</code>方法将信息打包的方式完全相同，而不是将使用<code>?</code>作为分隔符组成文本字符串并在URL中发送。 此消息以标准输入的形式发送到后端程序，可以解析并用于处理。</p> 
+ <p>JSP使用<code>getParameter()</code>方法处理这种类型的请求，以读取简单参数的值，而<code>getInputStream()</code>方法来读取客户端的二进制数据流。</p> 
+ <p><strong>使用JSP读取表单数据</strong></p> 
+ <p>JSP根据情况使用以下方法自动处理表单数据 -</p> 
+ <ul> 
+  <li><code>getParameter()</code> - 调用<code>request.getParameter()</code>方法来获取表单参数的值。</li>
+  <li><code>getParameterValues()</code> - 如果参数出现多次并返回多个值(例如复选框)，则调用此方法。</li>
+  <li><code>getParameterNames()</code> - 如果想要当前请求中的所有参数的完整列表，则调用此方法。</li>
+  <li><code>getInputStream()</code> - 调用此方法读取客户端的二进制数据流。</li>
+ </ul> 
+ <h2 id="h2-get-url-"><a name="GET方法使用URL示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>GET方法使用URL示例</h2>
+ <p>为了方便演示，打开Eclipse创建一个项目：<em>FormProcessing</em> 。其完整的目录结构如下所示 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/1910/281101057_34467.png" alt=""></p> 
+ <p>以下URL将使用GET方法将两个值传递给<code>HelloForm</code>程序。</p> 
+ <pre><code class="lang-shell">http://localhost:8080/FormProcessing/main.jsp?username=maxsu&amp;email=maxsu@yiibai.com
+</code></pre> 
+ <p>以下是JSP程序(<code>main.jsp</code> )处理由Web浏览器请求给出的输入。这里使用<code>getParameter()</code>方法，这样很容易访问传递的信息 -</p> 
+ <p>文件： <em>main.jsp</em> - </p> 
+ <pre><code class="lang-html">&lt;%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%&gt;
+&lt;!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;meta http-equiv="Content-Type" content="text/html; charset=UTF-8"&gt;
+&lt;title&gt;使用GET方法读取URL请求数据&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h1&gt;使用GET方法读取URL请求数据&lt;/h1&gt;
+    &lt;ul&gt;
+        &lt;li&gt;&lt;p&gt;
+                &lt;b&gt;UserName:&lt;/b&gt;
+                &lt;%=request.getParameter("username")%&gt;
+            &lt;/p&gt;&lt;/li&gt;
+        &lt;li&gt;&lt;p&gt;
+                &lt;b&gt;Email:&lt;/b&gt;
+                &lt;%=request.getParameter("email")%&gt;
+            &lt;/p&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>现在打开浏览器，在地址栏中输入：<code>http://localhost:8080/FormProcessing/main.jsp?username=maxsu&amp;email=<a target="_blank" href="mailto:maxsu@yiibai.com">maxsu@yiibai.com</a></code> 。 这将产生以下结果 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/1910/604091015_78327.png" alt=""></p> 
+ <h2 id="h2-get-"><a name="GET方法处理表单示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>GET方法处理表单示例</h2>
+ <p>以下是使用HTML FORM和提交按钮传递两个值的示例。这里使用<code>hello.html</code>来处理这个输入。</p> 
+ <p>文件：<em>hello.html</em> - </p> 
+ <pre><code class="lang-html">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;meta charset="UTF-8"&gt;
+&lt;title&gt;用户表单处理&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div style="margin: auto; width: 80%;"&gt;
+        &lt;form action="main.jsp" method="GET"&gt;
+            用户名: &lt;input type="text" name="username"&gt;  Email: &lt;input
+                type="text" name="email" /&gt; &lt;input type="submit" value="提交" /&gt;
+        &lt;/form&gt;
+    &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>现在打开浏览器，在地址栏中输入：<code>http://localhost:8080/FormProcessing/hello.html</code> 。 这将产生以下结果 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/1910/540091032_93767.png" alt=""></p> 
+ <p>填入信息，提交表单，看到以下结果 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/1910/264091036_95269.png" alt=""></p> 
+ <h2 id="h2-post-"><a name="POST方法处理表单示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>POST方法处理表单示例</h2>
+ <p>在上面的JSP中进行一些修改来处理<code>GET</code>和<code>POST</code>方法。以下是使用<code>GET</code>或<code>POST</code>方法处理由Web浏览器给出的输入JSP程序：<code>post.jsp</code>。</p> 
+ <p>因为上述JSP代码实现没有变化，但是传递参数的方法需要改变为<code>POST</code>，也不是将二进制数据被传递给JSP程序。文件处理相关概念将在单独的章节中进行说明，我们需要读取二进制数据流。</p> 
+ <p>文件：<em>post.jsp</em> - </p> 
+ <pre><code class="lang-html">&lt;%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%&gt;
+&lt;!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;meta http-equiv="Content-Type" content="text/html; charset=UTF-8"&gt;
+&lt;title&gt;使用Post方读取请求数据&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h1&gt;使用Post方读取表单数据&lt;/h1&gt;
+    &lt;ul&gt;
+        &lt;li&gt;&lt;p&gt;
+                &lt;b&gt;UserName:&lt;/b&gt;
+                &lt;%=request.getParameter("username")%&gt;
+            &lt;/p&gt;&lt;/li&gt;
+        &lt;li&gt;&lt;p&gt;
+                &lt;b&gt;Email:&lt;/b&gt;
+                &lt;%=request.getParameter("email")%&gt;
+            &lt;/p&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>以下是<em>post.html</em>文件的内容 -</p> 
+ <pre><code class="lang-html">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;meta charset="UTF-8"&gt;
+&lt;title&gt;用户表单处理&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div style="margin: auto; width: 80%;"&gt;
+        &lt;form action="post.jsp" method="post"&gt;
+            用户名: &lt;input type="text" name="username"&gt;  Email: &lt;input
+                type="text" name="email" /&gt; &lt;input type="submit" value="提交" /&gt;
+        &lt;/form&gt;
+    &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>部署运行以上项目，然后打开浏览器访问URL：　<a target="_blank" href="http://localhost:8080/FormProcessing/post.html">http://localhost:8080/FormProcessing/post.html</a> ，看到结果如下 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/1910/162101015_23643.png" alt=""></p> 
+ <p>分别填写用户名和Email，然后提交表单，结果如下所示 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/1910/992101017_96451.png" alt=""></p> 
+ <h2 id="h2-jsp-"><a name="JSP程序处理复选框数据" class="reference-link"></a><span class="header-link octicon octicon-link"></span>JSP程序处理复选框数据</h2>
+ <p>当表单数据需要多个选项时，可使用复选框。以下是具有两个复选框的表单的示例HTML代码：<em>checkbox.html</em> 。</p> 
+ <p>文件：<em>checkbox.html</em> - </p> 
+ <pre><code class="lang-html">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;meta charset="UTF-8"&gt;
+&lt;title&gt;复选框数据处理示例&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div style="margin: auto; width: 80%;"&gt;
+        &lt;h2&gt;选择课程(多选)&lt;/h2&gt;
+        &lt;form action="checkbox.jsp" method="POST"&gt;
+            &lt;input type="checkbox" name="maths" checked="checked" /&gt; 数学 &lt;input
+                type="checkbox" name="physics" /&gt; 物理 &lt;input type="checkbox"
+                name="chemistry" checked="checked" /&gt; 化学 &lt;input
+                type="submit" value="选择提交" /&gt;
+        &lt;/form&gt;
+    &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>文件：<em>checkbox.jsp</em> - </p>   
+ <pre><code class="lang-html">&lt;%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%&gt;
+&lt;!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;meta http-equiv="Content-Type" content="text/html; charset=UTF-8"&gt;
+&lt;title&gt;复选框数据处理示例&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div style="margin: auto; width: 80%;"&gt;
+        &lt;h2&gt;复选框数据处理示例&lt;/h2&gt;
+        &lt;ul&gt;
+            &lt;li&gt;&lt;p&gt;
+                    &lt;b&gt;数学:&lt;/b&gt;
+                    &lt;%=request.getParameter("maths")%&gt;
+                &lt;/p&gt;&lt;/li&gt;
+            &lt;li&gt;&lt;p&gt;
+                    &lt;b&gt;物理:&lt;/b&gt;
+                    &lt;%=request.getParameter("physics")%&gt;
+                &lt;/p&gt;&lt;/li&gt;
+            &lt;li&gt;&lt;p&gt;
+                    &lt;b&gt;化学:&lt;/b&gt;
+                    &lt;%=request.getParameter("chemistry")%&gt;
+                &lt;/p&gt;&lt;/li&gt;
+        &lt;/ul&gt;
+    &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>部署运行以上项目，然后打开浏览器访问URL：　<a target="_blank" href="http://localhost:8080/FormProcessing/checkbox.html">http://localhost:8080/FormProcessing/checkbox.html</a> ，看到结果如下 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/1910/729101026_19397.png" alt=""></p> 
+ <p>选择对应选项然后提交，上述程序将产生以下结果 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/1910/750101029_11910.png" alt=""></p> 
+ <h2 id="h2-u8BFBu53D6u6240u6709u8868u5355u53C2u6570"><a name="读取所有表单参数" class="reference-link"></a><span class="header-link octicon octicon-link"></span>读取所有表单参数</h2>
+ <p>以下是使用<code>HttpServletRequest</code>的<code>getParameterNames()</code>方法读取所有可用的表单参数的通用示例。此方法返回一个枚举，其中包含未指定顺序的参数名称。</p> 
+ <p>当有了这个枚举后，就可以使用标准方式循环枚举，使用<code>hasMoreElements()</code>方法来确定何时停止并使用<code>nextElement()</code>方法来获取每个参数名称。</p> 
+ <p>文件：<em>allFormParameters.html</em> - </p> 
+ <pre><code class="lang-html">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;meta charset="UTF-8"&gt;
+&lt;title&gt;获取所有表单数据&lt;/title&gt;
+&lt;!-- file: allFormParameters.jsp --&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;body&gt;
+    &lt;div style="margin: auto; width: 80%;"&gt;
+        &lt;h2&gt;选择课程(多选)&lt;/h2&gt;
+        &lt;form action="allFormParameters.jsp" method="POST"&gt;
+            &lt;input type="checkbox" name="maths" checked="checked" value="math"/&gt; 数学 &lt;input
+                type="checkbox" name="physics" value="phys"/&gt; 物理 &lt;input type="checkbox"
+                name="chemistry" checked="checked" value="chem"/&gt; 化学 &lt;input type="submit"
+                value="选择提交" /&gt;
+        &lt;/form&gt;
+    &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>文件：<em>allFormParameters.jsp</em> - </p> 
+ <pre><code class="lang-html">&lt;%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%&gt;
+&lt;%@ page import="java.io.*,java.util.*"%&gt;
+&lt;!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;meta http-equiv="Content-Type" content="text/html; charset=UTF-8"&gt;
+&lt;title&gt;获取所有表单数据&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div style="margin: auto; width: 80%;"&gt;
+        &lt;h2&gt;获取所有表单数据&lt;/h2&gt;
+        &lt;table width="100%" border="1" align="center"&gt;
+            &lt;tr bgcolor="#949494"&gt;
+                &lt;th&gt;Param Name&lt;/th&gt;
+                &lt;th&gt;Param Value(s)&lt;/th&gt;
+            &lt;/tr&gt;
+            &lt;%
+                Enumeration paramNames = request.getParameterNames();
+                while (paramNames.hasMoreElements()) {
+                    String paramName = (String) paramNames.nextElement();
+                    out.print("&lt;tr&gt;&lt;td&gt;" + paramName + "&lt;/td&gt;\n");
+                    String paramValue = request.getParameter(paramName);
+                    out.println("&lt;td&gt; " + paramValue + "&lt;/td&gt;&lt;/tr&gt;\n");
+                }
+            %&gt;
+        &lt;/table&gt;
+    &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>部署运行以上项目，然后打开浏览器访问URL：　<a target="_blank" href="http://localhost:8080/FormProcessing/allFormParameters.html">http://localhost:8080/FormProcessing/allFormParameters.html</a> ，看到结果如下 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/1910/531101054_62929.png" alt=""></p> 
+ <p>选择对应选项然后提交，上述程序将产生以下结果 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/1910/983101054_86627.png" alt=""></p>
+ <br>      
+</div></body></html>

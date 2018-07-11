@@ -1,0 +1,114 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Java NIO分散/聚集或向量I/O</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>在Java NIO中，通道提供了称为分散/聚集或向量I/O的重要功能。 这是一种简单但功能强大的技术，通过这种技术，使用单个<code>write()</code>函数将字节从一组缓冲区写入流，并且可以使用单个<code>read()</code>函数将字节从流读取到一组缓冲区中。</p> 
+ <p>Java NIO已经内置了分散/聚集支持。它可以用于从频道读取和写入频道。</p> 
+ <h2 id="h2-u5206u6563u8BFBu53D6"><a name="分散读取" class="reference-link"></a><span class="header-link octicon octicon-link"></span>分散读取</h2>
+ <p>“分散读取”用于将数据从单个通道读取多个缓冲区中的数据。</p> 
+ <p>下面来看看分散原理的说明：</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201709/2809/705100927_11990.png" alt=""></p> 
+ <p>下面是执行分射读取操作的代码示例：</p> 
+ <pre><code class="lang-java">public interface ScatteringByteChannel extends ReadableByteChannel  
+{  
+    public long read (ByteBuffer [] argv) throws IOException;  
+    public long read (ByteBuffer [] argv, int length, int offset) throws IOException;  
+}
+</code></pre> 
+ <h2 id="h2-u805Au96C6u5199u5165"><a name="聚集写入" class="reference-link"></a><span class="header-link octicon octicon-link"></span>聚集写入</h2>
+ <p><em>“聚集写入”</em>用于将数据从多个缓冲区写入单个通道。</p> 
+ <p>下面来看看聚集原则的简单说明：</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201709/2809/184100931_96335.png" alt=""></p> 
+ <p>下面来看看看执行聚集写入操作的代码示例：</p> 
+ <pre><code class="lang-java">public interface GatheringByteChannel extends WritableByteChannel  
+{  
+    public long write(ByteBuffer[] argv) throws IOException;  
+    public long write(ByteBuffer[] argv, int length, int offset) throws IOException;  
+}
+</code></pre> 
+ <h2 id="h2--"><a name="基本散点/聚集示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>基本散点/聚集示例</h2>
+ <p>下面来看看两个缓冲区的简单例子。 第一个缓冲区保存随机数，第二个缓冲区使用分散/聚集机制保存写入的数据：</p> 
+ <pre><code class="lang-java">package com.yiibai;
+
+import java.io.FileOutputStream;
+import java.io.FileInputStream;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
+import java.nio.channels.ScatteringByteChannel;
+import java.nio.channels.GatheringByteChannel;
+
+public class ScatterGatherIO {
+    public static void main(String params[]) {
+        String data = "Scattering and Gathering example shown in yiibai.com";
+        gatherBytes(data);
+        scatterBytes();
+    }
+
+    /*
+     * gatherBytes() is used for reading the bytes from the buffers and write it
+     * to a file channel.
+     */
+    public static void gatherBytes(String data) {
+        String relativelyPath = System.getProperty("user.dir");
+        // The First Buffer is used for holding a random number
+        ByteBuffer buffer1 = ByteBuffer.allocate(8);
+        // The Second Buffer is used for holding a data that we want to write
+        ByteBuffer buffer2 = ByteBuffer.allocate(400);
+        buffer1.asIntBuffer().put(420);
+        buffer2.asCharBuffer().put(data);
+        GatheringByteChannel gatherer = createChannelInstance(relativelyPath+"/testout.txt", true);
+        // Write the data into file
+        try {
+            gatherer.write(new ByteBuffer[] { buffer1, buffer2 });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /*
+     * scatterBytes() is used for reading the bytes from a file channel into a
+     * set of buffers.
+     */
+    public static void scatterBytes() {
+        String relativelyPath = System.getProperty("user.dir");
+        // The First Buffer is used for holding a random number
+        ByteBuffer buffer1 = ByteBuffer.allocate(8);
+        // The Second Buffer is used for holding a data that we want to write
+        ByteBuffer buffer2 = ByteBuffer.allocate(400);
+        ScatteringByteChannel scatter = createChannelInstance(relativelyPath+"/testout.txt", false);
+        // Reading a data from the channel
+        try {
+            scatter.read(new ByteBuffer[] { buffer1, buffer2 });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        // Read the two buffers seperately
+        buffer1.rewind();
+        buffer2.rewind();
+
+        int bufferOne = buffer1.asIntBuffer().get();
+        String bufferTwo = buffer2.asCharBuffer().toString();
+        // Verification of content
+        System.out.println(bufferOne);
+        System.out.println(bufferTwo);
+    }
+
+    public static FileChannel createChannelInstance(String file, boolean isOutput) {
+        FileChannel FChannel = null;
+        try {
+            if (isOutput) {
+                FChannel = new FileOutputStream(file).getChannel();
+            } else {
+                FChannel = new FileInputStream(file).getChannel();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return FChannel;
+    }
+}
+</code></pre> 
+ <p>在上述程序中，第一个缓冲区在控制台上打印随机输出，第二个缓冲区在控制台上打印<code>“Scattering and Gathering example shown in yiibai.com”</code>。</p> 
+ <p>它还用<code>“Scattering and Gathering example shown in yiibai.com”</code>替换<code>testout.txt</code>文件的内容。</p>   
+ <pre><code class="lang-shell">420
+Scattering and Gathering example shown in yiibai.com
+</code></pre>
+ <br>      
+</div></body></html>

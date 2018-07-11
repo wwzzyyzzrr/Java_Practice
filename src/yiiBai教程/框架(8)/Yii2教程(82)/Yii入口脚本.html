@@ -1,0 +1,113 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Yii入口脚本</h1><div style="width:100%;float:left;" class="article-content">   
+ <div> 
+  <div>
+    入口脚本是负责启动一个请求处理周期。用户访问只是通过PHP脚本。 
+  </div> 
+ </div> 
+ <div> 
+  <div>
+    下图显示了一个应用程序的结构&nbsp;-
+   <br> 
+   <img src="/uploads/tutorial/20160517/1-16051H2264OK.jpg" width="600" height="475" title="Yii入口脚本" alt="Yii入口脚本">
+   <br> 
+  </div> 
+  <img src="file://E:/data/youdao/qq24B39E2329F08D9F4C3146A571A415EF/41ef8b14dddb4e3c99925fad370d012f/s_structure.jpeg" alt="Entry Scripts Structure"> 
+  <p style="text-align:justify;"> Web应用程序(以及控制台应用程序)具有一个单一入口脚本。终端用户从入口脚本发起一个请求。然后，入口脚本实例化应用实例并将请求转发给它们。 </p> 
+  <p style="text-align:justify;"> 控制台应用程序入口脚本通常存储在一个项目基本路径并命名为yii.php。Web应用程序入口脚本必须存储在Web访问的目录下。它通常是index.php。 </p> 
+  <div>
+    入口脚本执行以下操作&nbsp;- 
+  </div> 
+  <ul> 
+   <li> 
+    <div>
+      定义常量 
+    </div> </li> 
+   <li> 
+    <div>
+      注册&nbsp;Composer&nbsp;自动加载 
+    </div> </li> 
+   <li> 
+    <div>
+      包括 Yii 文件 
+    </div> </li> 
+   <li> 
+    <div>
+      加载配置 
+    </div> </li> 
+   <li> 
+    <div>
+      创建和配置一个应用程序实例 
+    </div> </li> 
+   <li> 
+    <div>
+      处理传入的请求 
+    </div> </li> 
+  </ul> 
+  <div>
+    以下是基本的应用程序入口脚本的模板- 
+  </div> 
+  <pre>&lt;?php
+   //defining global constants
+   defined('YII_DEBUG') or define('YII_DEBUG', true);
+   defined('YII_ENV') or define('YII_ENV', 'dev');
+ 
+   //register composer autoloader
+   require(__DIR__ . '/../vendor/autoload.php');
+   //include yii files
+   require(__DIR__ . '/../vendor/yiisoft/yii2/Yii.php');
+  
+   //load application config
+   $config = require(__DIR__ . '/../config/web.php');
+  
+   //create, config, and process reques
+   (new yii\web\Application($config))-&gt;run();
+?&gt;</pre> 
+  <div>
+    以下是控制台应用程序的入口脚本&nbsp;- 
+  </div> 
+  <pre>#!/usr/bin/env php
+&lt;?php
+   /** 
+   * Yii console bootstrap file. 
+   * @link http://www.yiiframework.com/ 
+   * @copyright Copyright (c) 2008 Yii Software LLC 
+   * @license http://www.yiiframework.com/license/ 
+   */
+   //defining global constants
+   defined('YII_DEBUG') or define('YII_DEBUG', true);
+  
+   //register composer autoloader
+   require(__DIR__ . '/vendor/autoload.php');
+   require(__DIR__ . '/vendor/yiisoft/yii2/Yii.php');
+  
+   //load config
+   $config = require(__DIR__ . '/config/console.php');
+  
+   //apply config the application instance 
+   $application = new yii\console\Application($config);  
+
+   //process request
+   $exitCode = $application-&gt;run();
+   exit($exitCode);
+?&gt;</pre> 
+  <div>
+    定义全局常量最好的地方是入口脚本。有三个Yii常量被定义- 
+  </div> 
+  <ul> 
+   <li> <p style="text-align:justify;"> <strong>YII_DEBUG</strong>&nbsp;−&nbsp;定义是否在调试模式。如果设置为true，那么将看到更多的日志数据和细节错误的调用堆栈。 </p> </li> 
+   <li> <p style="text-align:justify;"> <strong>YII_ENV</strong>&nbsp;−&nbsp;定义环境模式。默认值是prod。 </p> <p style="text-align:justify;"> 可用值为&nbsp;prod, dev 和 test.&nbsp;它们在配置文件中用来定义：例如，一个不同的数据库连接(本地和远程)或其它值。 </p> </li> 
+   <li> <p style="text-align:justify;"> <strong>YII_ENABLE_ERROR_HANDLER</strong>&nbsp;−&nbsp;指定是否启用默认Yii的错误处理程序。 </p> </li> 
+  </ul> 
+  <div>
+    定义一个全局常数，常用下面的代码- 
+  </div>   
+  <pre>//defining global constants 
+defined('YII_DEBUG') or define('YII_DEBUG', true); 
+which is equivalent to: 
+if(!defined('YII_DEBUG')) { 
+   define('YII_DEBUG', true); 
+} </pre> 
+  <p style="text-align:justify;"> <strong>注 -</strong> 全局常量应在入口脚本的开头定义，以便包含其他PHP文件时生效。 </p> 
+ </div>
+ <br>      
+</div></body></html>

@@ -1,0 +1,103 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Docker Java应用程序示例</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>正如前面教程文章所提到的，Docker可以执行任何应用程序。</p> 
+ <p>在这里，创建一个Java应用程序并使用<code>docker</code>进行运行。此示例分以下几个步骤完成。</p> 
+ <ol> 
+  <li>创建一个目录</li>
+ </ol> 
+ <p>目录是组织文件所必需的，所以首先使用以下命令创建目录一个目录。</p> 
+ <pre><code class="lang-shell">$ mkdir -p /home/yiibai/docker/java-docker-app
+</code></pre> 
+ <ol> 
+  <li>创建一个Java文件</li>
+ </ol> 
+ <p>现在创建一个Java文件，将此文件保存为<code>Hello.java</code>。这个 <code>Hello.java</code> 的代码内容如下 - </p> 
+ <pre><code class="lang-java">class Hello{  
+    public static void main(String[] args){  
+        System.out.println("This is first java app \n by using Docker");  
+    }  
+}
+</code></pre> 
+ <p>将其保存在文件<code>Hello.java</code>中，并放置在 <code>/home/yiibai/docker/java-docker-app</code> 目录下。</p> 
+ <ol> 
+  <li>创建一个Dockerfile文件</li>
+ </ol> 
+ <p>创建Java文件后，还需要创建一个Dockerfile文件，其中包含了Docker的说明。 Dockerfile不包含任何文件扩展名。 所以这个文件简单使用<code>Dockerfile</code>作为名称保存即可。此 <em>Dockerfile</em> 文件的内容如下 - </p> 
+ <pre><code class="lang-shell">FROM java:8
+COPY . /var/www/java  
+WORKDIR /var/www/java  
+RUN javac Hello.java  
+CMD ["java", "Hello"]
+</code></pre> 
+ <p>所有指令要使用大写字母编写，因为这是它的惯例(约定)。将此文件放在<code>/home/yiibai/docker/java-docker-app</code>目录中。 现在将<code>Dockerfile</code>也放置在在<code>/home/yiibai/docker/java-docker-app</code>目录中，与<code>Hello.java</code>放在同一个目录。</p> 
+ <p>如下 - </p> 
+ <pre><code class="lang-shell">yiibai@ubuntu:~/docker/java-docker-app$ ll
+total 16
+-rw-rw-r-- 1 yiibai yiibai  104 Jun  2 23:33 Dockerfile
+-rw-rw-r-- 1 yiibai yiibai  135 Jun  2 23:33 Hello.java
+yiibai@ubuntu:~/docker/java-docker-app$
+</code></pre> 
+ <ol> 
+  <li>构建Docker映像</li>
+ </ol> 
+ <p>创建Dockerfile后，需要更改工作目录。</p> 
+ <pre><code class="lang-shell">$ cd  /home/yiibai/docker/java-docker-app
+</code></pre> 
+ <p>现在，按照以下命令创建一个映像。这里必须以root身份登录才能创建映像。 在这个例子中，我们已经切换为root用户的身份。 在以下命令中，<code>java-app</code>是的映像名称。当然Docker的映像名称可以是任意的。</p> 
+ <pre><code class="lang-shell">yiibai@ubuntu:~/docker/java-docker-app$ -rw-rw-r-- 1 yiibai yiibai  135 Jun  2 23:33 Hello.java
+-rw-rw-r--: command not found
+yiibai@ubuntu:~/docker/java-docker-app$
+yiibai@ubuntu:~/docker/java-docker-app$
+yiibai@ubuntu:~/docker/java-docker-app$
+yiibai@ubuntu:~/docker/java-docker-app$ docker build -t java-app .
+Got permission denied while trying to connect to the Docker daemon socket at unix:///var/run/docker.sock: Post http://%2Fvar%2Frun%2Fdocker.sock/v1.29/build?buildargs=%7B%7D&amp;cachefrom=%5B%5D&amp;cgroupparent=&amp;cpuperiod=0&amp;cpuquota=0&amp;cpusetcpus=&amp;cpusetmems=&amp;cpushares=0&amp;dockerfile=Dockerfile&amp;labels=%7B%7D&amp;memory=0&amp;memswap=0&amp;networkmode=default&amp;rm=1&amp;shmsize=0&amp;t=java-app&amp;target=&amp;ulimits=null: dial unix /var/run/docker.sock: connect: permission denied
+yiibai@ubuntu:~/docker/java-docker-app$ sudo docker build -t java-app .
+[sudo] password for yiibai:
+Sending build context to Docker daemon  3.072kB
+Step 1/5 : FROM java:8
+8: Pulling from library/java
+5040bd298390: Pull complete
+fce5728aad85: Pull complete
+76610ec20bf5: Pull complete
+60170fec2151: Pull complete
+e98f73de8f0d: Pull complete
+11f7af24ed9c: Pull complete
+49e2d6393f32: Pull complete
+bb9cdec9c7f3: Pull complete
+Digest: sha256:c1ff613e8ba25833d2e1940da0940c3824f03f802c449f3d1815a66b7f8c0e9d
+Status: Downloaded newer image for java:8
+ ---&gt; d23bdf5b1b1b
+Step 2/5 : COPY . /var/www/java
+ ---&gt; f7bd63fd32bf
+Removing intermediate container 39420a84d3eb
+Step 3/5 : WORKDIR /var/www/java
+ ---&gt; 5006feada9ef
+Removing intermediate container 85c71c02d8c7
+Step 4/5 : RUN javac Hello.java
+ ---&gt; Running in 6027643fedc0
+ ---&gt; 3b54e4630178
+Removing intermediate container 6027643fedc0
+Step 5/5 : CMD java Hello
+ ---&gt; Running in 22da1569aa2c
+ ---&gt; bd61e7f49911
+Removing intermediate container 22da1569aa2c
+Successfully built bd61e7f49911
+Successfully tagged java-app:latest
+yiibai@ubuntu:~/docker/java-docker-app$
+</code></pre> 
+ <p>如果未安装<em>Java 8</em>，那么会自动下载<em>Java 8</em>安装再执行。在成功构建映像后。 现在，我们可以运行Docker映像了。</p> 
+ <ol> 
+  <li>运行Docker映像</li>
+ </ol> 
+ <p>成功创建映像后 现在可以使用<code>run</code>命令运行docker。以下命令用于运行<code>java-app</code>。</p>   
+ <pre><code class="lang-shell">yiibai@ubuntu:~/docker/java-docker-app$ sudo docker run java-app
+</code></pre> 
+ <p>上面命令的运行输出结果如下 - </p> 
+ <pre><code class="lang-shell">yiibai@ubuntu:~/docker/java-docker-app$ sudo docker run java-app
+This is first java app
+ by using Docker
+yiibai@ubuntu:~/docker/java-docker-app$
+</code></pre> 
+ <p>在这里可以看到，在运行<code>sudo docker run java-app</code>之后，它产生了一个输出。</p> 
+ <p>在经过上<strong>5</strong>个步骤之后，您应该已经可在系统上成功运行docker映像了。除了所有这些以外，还可以在接下来的文章中学习和使用其他命令。</p>
+ <br>      
+</div></body></html>

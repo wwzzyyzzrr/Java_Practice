@@ -1,0 +1,85 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">PostgreSQL别名</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>PostgreSQL别名(Alias)用于为列或表提供临时名称。您可以使用PostgreSQL别名为列或表创建一个临时名称。</p> 
+ <p>通常来说，当您执行自联接时，会创建一个临时表。</p> 
+ <h2 id="h2-postgresql-"><a name="PostgreSQL列别名" class="reference-link"></a><span class="header-link octicon octicon-link"></span>PostgreSQL列别名</h2>
+ <p><strong>语法：</strong></p> 
+ <pre><code class="lang-sql">SELECT column_name AS alias_name  
+FROM table_name  
+conditions...  ;
+</code></pre> 
+ <h3 id="h3-u53C2u6570u8BF4u660E"><a name="参数说明" class="reference-link"></a><span class="header-link octicon octicon-link"></span>参数说明</h3>
+ <ul> 
+  <li><code>column_name</code>: 它指定要进行别名的列的原始名称。</li>
+  <li><code>alias_name</code>: 它指定分配给列的临时名称。</li>
+  <li><code>table_name</code>：它指定表的名称。</li>
+  <li><code>AS</code>：这是可选的。大多数程序员将在对列名进行别名时指定<code>AS</code>关键字，但在别名表名时不指定。</li>
+ </ul> 
+ <p><strong>注意：</strong></p> 
+ <ul> 
+  <li>如果<code>alias_name</code>包含空格，则必须将<code>alias_name</code>包含在引号中。</li>
+  <li>在别名列名时，可以使用空格。 但是使用表名时，使用空格通常不是一个好习惯。</li>
+  <li><code>alias_name</code>仅在SQL语句的范围内有效。</li>
+ </ul> 
+ <h2 id="h2--1"><a name="示例-1" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例-1</h2>
+ <p>我们来看一下表“<code>EMPLOYEES</code>”，具有以下数据。</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201704/1004/296170423_47606.png" alt=""></p> 
+ <p>执行以下查询使用别名的语句：</p> 
+ <pre><code class="lang-sql">SELECT NAME, MAX(SALARY) AS PACKAGE  
+FROM EMPLOYEES  
+GROUP BY NAME;
+</code></pre> 
+ <p>执行上面查询语句，输出结果如下 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201704/1004/883170428_89594.png" alt=""></p> 
+ <h2 id="h2-postgresql-"><a name="PostgreSQL表别名" class="reference-link"></a><span class="header-link octicon octicon-link"></span>PostgreSQL表别名</h2>
+ <p><strong>语法：</strong></p> 
+ <pre><code class="lang-sql">SELECT column1, column2....  
+FROM table_name AS alias_name  
+conditions....  ;
+</code></pre> 
+ <h3 id="h3--"><a name="参数说明：" class="reference-link"></a><span class="header-link octicon octicon-link"></span>参数说明：</h3>
+ <ul> 
+  <li><code>table_name</code>：它指定要进行别名的表的原始名称。</li>
+  <li><code>alias_name</code>：它指定分配给表的临时名称。</li>
+  <li><code>AS</code>：这是可选的。大多数程序员将在对列名进行别名时指定<code>AS</code>关键字，但在别名表名时不指定。</li>
+ </ul> 
+ <p><strong>注意：</strong></p> 
+ <ul> 
+  <li>如果<code>alias_name</code>包含空格，则必须将<code>alias_name</code>包含在引号中。</li>
+  <li>在别名列名时，可以使用空格。 但是，当您使用表名时，使用空格通常不是一个好习惯。</li>
+  <li><code>alias_name</code>仅在SQL语句的范围内有效。</li>
+ </ul> 
+ <h2 id="h2--2"><a name="示例-2" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例-2</h2>
+ <p>我们来看一下表“<code>EMPLOYEES</code>”，具有以下数据。</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201704/1004/296170423_47606.png" alt=""></p> 
+ <p>创建另一个表“<code>DEPARTMENT</code>”，并插入以下数据。</p>   
+ <pre><code class="lang-sql">-- Table: public.department
+
+-- DROP TABLE public.department;
+
+CREATE TABLE public.department
+(
+  id integer,
+  dept text,
+  fac_id integer
+)
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE public.department
+  OWNER TO postgres;
+
+-- 插入数据
+INSERT INTO department VALUES(1,'IT', 1);
+INSERT INTO department VALUES(2,'Engineering', 2);
+INSERT INTO department VALUES(3,'HR', 7);
+</code></pre> 
+ <p>执行上面查询语句后，<code>DEPARTMENT</code>有以下数据 -<br><img src="http://www.yiibai.com/uploads/images/201704/0904/518110401_49928.png" alt=""></p> 
+ <p>执行以下查询使用别名的语句：</p> 
+ <pre><code class="lang-sql">SELECT E.ID, E.NAME, E.AGE, D.DEPT  
+FROM EMPLOYEES AS E, DEPARTMENT AS D  
+WHERE  E.ID = D.ID;
+</code></pre> 
+ <p>执行上面查询语句，输出结果如下 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201704/1004/204170437_51345.png" alt=""></p>
+ <br>      
+</div></body></html>

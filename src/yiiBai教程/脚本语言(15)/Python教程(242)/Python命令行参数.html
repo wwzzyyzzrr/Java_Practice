@@ -1,0 +1,87 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Python命令行参数</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>Python提供了一个<code>getopt</code>模块，用于解析命令行选项和参数。</p> 
+ <pre><code class="lang-shell">$ python test.py arg1 arg2 arg3
+</code></pre> 
+ <p>Python <code>sys</code>模块通过<code>sys.argv</code>提供对任何命令行参数的访问。主要有两个参数变量 -</p> 
+ <ul> 
+  <li><code>sys.argv</code>是命令行参数的列表。</li>
+  <li><code>len(sys.argv)</code>是命令行参数的数量。</li>
+ </ul> 
+ <p>这里<code>sys.argv [0]</code>是程序名称，即脚本的名称。比如在上面示例代码中，<code>sys.argv [0]</code>的值就是 <code>test.py</code>。</p> 
+ <h2 id="h2-u793Au4F8B"><a name="示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例</h2>
+ <p>看看以下脚本<code>command_line_arguments.py</code>的代码 -</p> 
+ <pre><code class="lang-python">#!/usr/bin/python3
+
+import sys
+
+print ('Number of arguments:', len(sys.argv), 'arguments.')
+print ('Argument List:', str(sys.argv))
+</code></pre> 
+ <p>现在运行上面的脚本，这将产生以下结果 -</p> 
+ <pre><code class="lang-python">F:\&gt;python F:\worksp\python\command_line_arguments.py
+Number of arguments: 1 arguments.
+Argument List: ['F:\\worksp\\python\\command_line_arguments.py']
+
+F:\&gt;python F:\worksp\python\command_line_arguments.py arg1 arg2 arg3 arg4
+Number of arguments: 5 arguments.
+Argument List: ['F:\\worksp\\python\\command_line_arguments.py', 'arg1', 'arg2', 'arg3', 'arg4']
+
+F:\&gt;
+</code></pre> 
+ <blockquote> 
+  <p>注意 - 如上所述，第一个参数始终是脚本名称，它也被计入参数的数量。</p> 
+ </blockquote> 
+ <h2 id="h2-u89E3u6790u547Du4EE4u884Cu53C2u6570"><a name="解析命令行参数" class="reference-link"></a><span class="header-link octicon octicon-link"></span>解析命令行参数</h2>
+ <p>Python提供了一个<code>getopt</code>模块，可用于解析命令行选项和参数。该模块提供了两个功能和异常，以启用命令行参数解析。</p> 
+ <p><strong>getopt.getopt方法</strong></p> 
+ <p>此方法解析命令行选项和参数列表。以下是此方法的简单语法 -</p> 
+ <pre><code class="lang-python">getopt.getopt(args, options, [long_options])
+</code></pre> 
+ <p><strong>getopt.GetoptError异常</strong></p> 
+ <p>当在参数列表中有一个无法识别的选项，或者当需要一个参数的选项不为任何参数时，会引发这个异常。<br>异常的参数是一个字符串，指示错误的原因。 属性<code>msg</code>和<code>opt</code>给出错误消息和相关选项。</p> 
+ <h2 id="h2-u793Au4F8B"><a name="示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例</h2>
+ <p>假设想通过命令行传递两个文件名，也想给出一个选项用来显示脚本的用法。脚本的用法如下 -</p>   
+ <pre><code class="lang-shell">usage: file.py -i &lt;inputfile&gt; -o &lt;outputfile&gt;
+</code></pre> 
+ <p>以下是<code>command_line_usage.py</code>的以下脚本 -</p> 
+ <pre><code class="lang-python">#!/usr/bin/python3
+
+import sys, getopt
+
+def main(argv):
+   inputfile = ''
+   outputfile = ''
+   try:
+      opts, args = getopt.getopt(argv,"hi:o:",["ifile=","ofile="])
+   except getopt.GetoptError:
+      print ('GetoptError, usage: command_line_usage.py -i &lt;inputfile&gt; -o &lt;outputfile&gt;')
+      sys.exit(2)
+   for opt, arg in opts:
+      if opt == '-h':
+         print ('usage: command_line_usage.py -i &lt;inputfile&gt; -o &lt;outputfile&gt;')
+         sys.exit()
+      elif opt in ("-i", "--ifile"):
+         inputfile = arg
+      elif opt in ("-o", "--ofile"):
+         outputfile = arg
+   print ('Input file is "', inputfile)
+   print ('Output file is "', outputfile)
+
+if __name__ == "__main__":
+   main(sys.argv[1:])
+</code></pre> 
+ <p>现在，使用以下几种方式运行来脚本，输出如下所示：</p> 
+ <pre><code class="lang-shell">F:\worksp\python&gt;python command_line_usage.py -h
+usage: command_line_usage.py -i &lt;inputfile&gt; -o &lt;outputfile&gt;
+
+F:\worksp\python&gt;python command_line_usage.py -i inputfile.txt -o
+GetoptError, usage: command_line_usage.py -i &lt;inputfile&gt; -o &lt;outputfile&gt;
+
+F:\worksp\python&gt;python command_line_usage.py -i inputfile.txt -o outputfile.txt
+Input file is " inputfile.txt
+Output file is " outputfile.txt
+
+F:\worksp\python&gt;
+</code></pre>
+ <br>      
+</div></body></html>

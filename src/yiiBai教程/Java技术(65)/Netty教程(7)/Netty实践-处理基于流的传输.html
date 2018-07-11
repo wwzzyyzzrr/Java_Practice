@@ -1,0 +1,102 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Netty实践-处理基于流的传输</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>在<strong>TCP/IP</strong>的基于流的传输中，接收的数据被存储到套接字接收缓冲器中。不幸的是，基于流的传输的缓冲器不是分组的队列，而是字节的队列。 这意味着，即使将两个消息作为两个独立的数据包发送，操作系统也不会将它们视为两个消息，而只是一组字节(有点悲剧)。 因此，不能保证读的是您在远程定入的行数据。 例如，假设操作系统的<code>TCP/IP</code>堆栈已收到三个数据包：</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201703/0203/748140356_71637.png" alt=""></p> 
+ <p>由于基于流的协议的这种通用属性，在应用程序中以下面的碎片形式(只是其中的一种)读取它们的机会很高：</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201703/0203/847140356_58816.png" alt=""></p> 
+ <p>因此，接收部分，无论是服务器侧还是客户端侧，都应该将接收到的数据碎片整理成逻辑可由应用容易地理解的一个或多个有意义的帧。 在上述示例的情况下，接收的数据应该如下成帧：</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201703/0203/748140356_71637.png" alt=""></p> 
+ <p>针对上面的问题，下面列出了两个解决方案。</p> 
+ <h3 id="h3-u7B2Cu4E00u4E2Au89E3u51B3u65B9u6848"><a name="第一个解决方案" class="reference-link"></a><span class="header-link octicon octicon-link"></span>第一个解决方案</h3>
+ <p>现在我们回到TIME客户端示例。在这里有同样的问题。 <code>32</code>位整数可以算是非常少量的数据量了，并且不可能经常被分段。 然而，问题是它可以分割，并且碎片的可能性将随着流量增加而增加。</p> 
+ <p>简单的解决方案是创建一个内部累积缓冲区，并等待所有<code>4</code>个字节被接收到内部缓冲区。 以下是修正的<code>TimeClientHandler</code>实现，它修复了问题：</p> 
+ <pre><code class="lang-java">package com.yiibai.netty.time;
+
+import java.util.Date;
+
+public class TimeClientHandler extends ChannelInboundHandlerAdapter {
+    private ByteBuf buf;
+
+    @Override
+    public void handlerAdded(ChannelHandlerContext ctx) {
+        buf = ctx.alloc().buffer(4); // (1)
+    }
+
+    @Override
+    public void handlerRemoved(ChannelHandlerContext ctx) {
+        buf.release(); // (1)
+        buf = null;
+    }
+
+    @Override
+    public void channelRead(ChannelHandlerContext ctx, Object msg) {
+        ByteBuf m = (ByteBuf) msg;
+        buf.writeBytes(m); // (2)
+        m.release();
+
+        if (buf.readableBytes() &gt;= 4) { // (3)
+            long currentTimeMillis = (buf.readUnsignedInt() - 2208988800L) * 1000L;
+            System.out.println(new Date(currentTimeMillis));
+            ctx.close();
+        }
+    }
+
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
+        cause.printStackTrace();
+        ctx.close();
+    }
+}
+</code></pre> 
+ <ol> 
+  <li><p><code>ChannelHandler</code>有两个生命周期侦听器方法：<code>handlerAdded()</code>和<code>handlerRemoved()</code>。 只要不会阻塞很长时间，您就可以执行任意初始化任务。</p> </li>
+  <li><p>首先，所有接收到的数据应累加到<code>buf</code>中。</p> </li>
+  <li><p>然后，处理程序必须检查<code>buf</code>是否有足够的数据(在此示例中为<code>4</code>个字节)，当足够时就继续进行实际的业务逻辑。否则，在有更多数据到达时Netty将再次调用<code>channelRead()</code>方法，最终累积到达<code>4</code>个字节再执行实际的业务。</p> </li>
+ </ol> 
+ <h3 id="h3-u7B2Cu4E8Cu4E2Au89E3u51B3u65B9u6848"><a name="第二个解决方案" class="reference-link"></a><span class="header-link octicon octicon-link"></span>第二个解决方案</h3>
+ <p>虽然第一个解决方案已经解决了TIME客户端的问题，但修改的处理程序看起来不那么干净。想象如果一个更复杂的协议，它由多个字段组成，例如：可变长度字段等。上面的<code>ChannelInboundHandler</code>实现很快就无法维护了。</p> 
+ <p>可能已经注意到，可以向<code>ChannelPipeline</code>添加多个<code>ChannelHandler</code>，因此，可将一个单片的<code>ChannelHandler</code>拆分为多个模块，以降低应用程序的复杂性。 例如，可将<code>TimeClientHandler</code>拆分为两个处理程序：</p> 
+ <ul> 
+  <li>TimeDecoder处理碎片问题</li>
+  <li>TimeClientHandler的初始简单版本</li>
+ </ul> 
+ <p>幸运的是，Netty提供了一个可扩展类，可以帮助我们方便地编写：</p>   
+ <pre><code class="lang-java">package com.yiibai.netty.time;
+
+public class TimeDecoder extends ByteToMessageDecoder { // (1)
+    @Override
+    protected void decode(ChannelHandlerContext ctx, ByteBuf in, List&lt;Object&gt; out) { // (2)
+        if (in.readableBytes() &lt; 4) {
+            return; // (3)
+        }
+
+        out.add(in.readBytes(4)); // (4)
+    }
+}
+</code></pre> 
+ <ol> 
+  <li><p><code>ByteToMessageDecoder</code>是<code>ChannelInboundHandler</code>的一个实现，它使得处理碎片问题变得容易。</p> </li>
+  <li><p><code>ByteToMessageDecoder</code>在接收到新数据时，使用内部维护的累积缓冲区调用<code>decode()</code>方法。</p> </li>
+  <li><p><code>decode()</code>可以决定在累积缓冲区中没有足够数据的情况下不添加任何东西。 当接收到更多数据时，<code>ByteToMessageDecoder</code>将再次调用<code>decode()</code>。</p> </li>
+  <li><p>如果<code>decode()</code>将对象添加到<code>out</code>，则意味着解码器成功地解码了消息。 <code>ByteToMessageDecoder</code>将丢弃累积缓冲区的读取部分。要记住，不需要解码多个消息。 <code>ByteToMessageDecoder</code>将继续调用<code>decode()</code>方法，直到它没有再有任何东西添加。</p> </li>
+ </ol> 
+ <p>现在我们有另一个处理程序插入<code>ChannelPipeline</code>，应该在<code>TimeClient</code>中修改<code>ChannelInitializer</code>实现：</p> 
+ <pre><code class="lang-java">b.handler(new ChannelInitializer&lt;SocketChannel&gt;() {
+    @Override
+    public void initChannel(SocketChannel ch) throws Exception {
+        ch.pipeline().addLast(new TimeDecoder(), new TimeClientHandler());
+    }
+});
+</code></pre> 
+ <p>如果您喜欢折腾，也可以想尝试使用<code>ReplayDecoder</code>，这简化了解码器更多的工作。但需要参考API参考以获得更多信息。</p> 
+ <pre><code class="lang-java">public class TimeDecoder extends ReplayingDecoder&lt;Void&gt; {
+    @Override
+    protected void decode(
+            ChannelHandlerContext ctx, ByteBuf in, List&lt;Object&gt; out) {
+        out.add(in.readBytes(4));
+    }
+}
+</code></pre> 
+ <p>此外，Netty提供了现成的解码器，使我们能够非常容易地实现大多数的协议，并帮助您避免使用一个单一的不可维护的处理程序实现。有关更多详细示例，请参阅以下示例：</p> 
+ <p><strong>二进制协议实现：</strong> Netty实践-factorial服务器<br><strong>基于文本行的协议实现：</strong> Netty实践-telnet服务器</p>
+ <br>      
+</div></body></html>

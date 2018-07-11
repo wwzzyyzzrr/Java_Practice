@@ -1,0 +1,61 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">readv()函数 Unix/Linux</h1><div style="width:100%;float:left;" class="article-content">   
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> readv, writev - 读取或写入数据到多个缓冲区</p> 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> 内容简介</h1> 
+ <table cellpadding="5" cellspacing="5" class="src" style="font-family: verdana, helvetica, arial, sans-serif;  border-color: rgb(170, 170, 170); width: 552px; background-color: rgb(241, 241, 241); border-collapse: collapse; padding-left: 5px; vertical-align: top; color: rgb(0, 0, 0);"> 
+  <tbody> 
+   <tr> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse;  border-color: rgb(170, 170, 170);"> <pre style="font-family: 'Courier New', monospace; font-size: 12px; margin-bottom: 0px;">
+<b>#include &lt;sys/uio.h&gt;</b> 
+</pre> <p style="text-align: justify;"> <b>ssize_t readv(int </b><i>fd</i><b>, const struct iovec *</b><i>vector</i><b>, int </b><i>count</i><b>);</b></p> <p style="text-align: justify;"> <b>ssize_t writev(int </b><i>fd</i><b>, const struct iovec *</b><i>vector</i><b>, int </b><i>count</i><b>);</b></p> </td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> 描述</h1> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> The<b>readv</b>() function reads&nbsp;<i>count</i>&nbsp;blocks from the file associated with the file descriptor&nbsp;<i>fd</i>into the multiple buffers described by&nbsp;<i>vector</i>.</p> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> The&nbsp;<b>writev</b>() function writes at most&nbsp;<i>count</i>&nbsp;blocks described by&nbsp;<i>vector</i>&nbsp;to the file associated with the file descriptor&nbsp;<i>fd</i>.</p> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> The pointer&nbsp;<i>vector</i>&nbsp;points to a&nbsp;<i>struct iovec</i>&nbsp;defined in&nbsp;<i>&lt;sys/uio.h&gt;</i>&nbsp;as :</p> 
+ <table cellpadding="5" cellspacing="5" class="src" style="font-family: verdana, helvetica, arial, sans-serif;  border-color: rgb(170, 170, 170); width: 552px; background-color: rgb(241, 241, 241); border-collapse: collapse; padding-left: 5px; vertical-align: top; color: rgb(0, 0, 0);"> 
+  <tbody> 
+   <tr> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse;  border-color: rgb(170, 170, 170);"> <pre style="font-family: 'Courier New', monospace; font-size: 12px; margin-bottom: 0px;">
+struct iovec {
+    void *iov_base;   /* Starting address */
+    size_t iov_len;   /* Number of bytes */
+};
+</pre> </td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> Buffers are processed in the order specified. The&nbsp;<b>readv</b>() function works just like<b>read</b>(2) except that multiple buffers are filled.</p> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> The&nbsp;<b>writev</b>() function works just like&nbsp;<b>write</b>(2) except that multiple buffers are written out.</p> 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> 返回值</h1> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> On success, the&nbsp;<b>readv</b>() function returns the number of bytes read; the&nbsp;<b>writev</b>() function returns the number of bytes written. On error, -1 is returned, and&nbsp;<i>errno</i>&nbsp;is set appropriately.</p> 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> 错误</h1> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> The errors are as given for&nbsp;<b>read</b>(2) and&nbsp;<b>write</b>(2). Additionally the following error is defined:</p> 
+ <table border="1" cellpadding="5" cellspacing="0" class="src" style="font-family: verdana, helvetica, arial, sans-serif; border: 1px solid rgb(170, 170, 170); width: 552px; background-color: rgb(241, 241, 241); border-collapse: collapse; padding-left: 5px; vertical-align: top; color: rgb(0, 0, 0);"> 
+  <tbody> 
+   <tr> 
+    <th style="background-color: rgb(205, 205, 205); border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" width="25%"> 标签</th> 
+    <th style="background-color: rgb(205, 205, 205); border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> 描述</th> 
+   </tr> 
+   <tr valign="top"> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);"> <b>EINVAL</b></td> 
+    <td style="vertical-align: top; margin-bottom: 0px; border-collapse: collapse; border: 1px solid rgb(170, 170, 170);" valign="bottom"> The sum of the&nbsp;<i>iov_len</i>&nbsp;values overflows an&nbsp;<i>ssize_t</i>&nbsp;value. Or, the vector count&nbsp;<i>count</i>&nbsp;is less than zero or greater than the permitted maximum.</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> 遵循于</h1> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> 4.4BSD (the&nbsp;<b>readv</b>() and&nbsp;<b>writev</b>() functions first appeared in 4.2BSD), POSIX.1-2001. Linux libc5 used&nbsp;<i>size_t</i>&nbsp;as the type of the&nbsp;<i>count</i>&nbsp;parameter, and&nbsp;<i>int</i>&nbsp;as return type for these functions.</p> 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> LINUX 注意</h1> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> POSIX.1-2001 allows an implementation to place a limit on the number of items that can be passed in&nbsp;<i>vector</i>. An implementation can advertise its limit by defining&nbsp;<b>IOV_MAX</b>&nbsp;in<i>&lt;limits.h&gt;</i>&nbsp;or at run time via the return value from&nbsp;<i>sysconf(_SC_IOV_MAX)</i>. On Linux, the limit advertised by these mechanisms is 1024, which is the true kernel limit.</p> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> However, the glibc wrapper functions do some extra work if they detect that the underlying kernel system call failed because this limit was exceeded. In the case of<b>readv</b>() the wrapper function allocates a temporary buffer large enough for all of the items specified by&nbsp;<i>vector</i>, passes that buffer in a call to&nbsp;<b>read</b>(), copies data from the buffer to the locations specified by the&nbsp;<i>iov_base</i>&nbsp;fields of the elements of&nbsp;<i>vector</i>, and then frees the buffer.</p> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> The wrapper function for&nbsp;<b>writev</b>() performs the analogous task using a temporary buffer and a call to&nbsp;<b>write</b>().</p> 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> BUGS</h1> 
+ <p style="text-align: justify; font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> It is not advisable to mix calls to functions like&nbsp;<b>readv</b>() or&nbsp;<b>writev</b>(), which operate on file descriptors, with the functions from the stdio library; the results will be undefined and probably not what you want.</p> 
+ <h1 class="manpages" style="font-weight: normal; font-size: 18px; line-height: 1.5; font-family: Calibri; margin-bottom: 0px; color: rgb(0, 0, 0);"> 另请参阅</h1> 
+ <ul style="font-family: verdana, helvetica, arial, sans-serif; color: rgb(0, 0, 0);"> 
+  <li> <p style="text-align: justify;"> <a target="_blank" href="http://www.yiibai.com/unix_system_calls/read.html" style="color: rgb(144, 11, 9); background-color: transparent;">read (2)</a></p> </li> 
+  <li> <p style="text-align: justify;"> <a target="_blank" href="http://www.yiibai.com/unix_system_calls/write.html" style="color: rgb(144, 11, 9); background-color: transparent;">write (2)</a></p> </li> 
+ </ul> 
+ <br>      
+</div></body></html>

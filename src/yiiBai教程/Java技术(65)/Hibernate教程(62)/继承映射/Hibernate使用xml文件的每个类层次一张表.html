@@ -1,0 +1,293 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Hibernate使用xml文件的每个类层次一张表</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>通过这种继承策略，我们可以通过单表映射整个层次结构。 这里，在表中创建一个额外的列(也称为<code>discriminator</code>列)来标识该类。</p> 
+ <p>让我们先了解问题。下面给出的整个层次类映射到数据库的一个表中图解说明。</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201703/2503/943230305_71288.jpg" alt=""></p> 
+ <p>这个层次结构中有三个类。<code>Employee</code>是<code>Regular_Employee</code>和<code>Contract_Employee</code>类的超类(父类)。 让我们来看看这个层次结构类的映射文件。</p> 
+ <pre><code class="lang-xml">&lt;?xml version='1.0' encoding='UTF-8'?&gt;
+&lt;!DOCTYPE hibernate-mapping PUBLIC
+          "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+          "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd"&gt;
+
+&lt;hibernate-mapping&gt;
+    &lt;class name="com.yiibai.Employee" table="emp121"
+        discriminator-value="emp"&gt;
+        &lt;id name="id"&gt;
+            &lt;generator class="increment"&gt;&lt;/generator&gt;
+        &lt;/id&gt;
+        &lt;discriminator column="type" type="string"&gt;&lt;/discriminator&gt;
+        &lt;property name="name"&gt;&lt;/property&gt;
+
+        &lt;subclass name="com.yiibai.Regular_Employee"
+            discriminator-value="reg_emp"&gt;
+            &lt;property name="salary"&gt;&lt;/property&gt;
+            &lt;property name="bonus"&gt;&lt;/property&gt;
+        &lt;/subclass&gt;
+
+        &lt;subclass name="com.yiibai.Contract_Employee"
+            discriminator-value="con_emp"&gt;
+            &lt;property name="pay_per_hour"&gt;&lt;/property&gt;
+            &lt;property name="contract_duration"&gt;&lt;/property&gt;
+        &lt;/subclass&gt;
+    &lt;/class&gt;
+
+&lt;/hibernate-mapping&gt;
+</code></pre> 
+ <p>在每个类层次结构一个表的情况下，hibernate框架添加了一个标识符列，该框架指定了记录的类型。 它主要用于区分记录。要指定它，必须指定类的 <code>discriminator</code> 子元素。<br>类的子类<code>subelement</code>指定子类。 在这种情况下，<code>Regular_Employee</code>和<code>Contract_Employee</code>是<code>Employee</code>类的子类。</p> 
+ <p>此层次结构的表结构如下所示：</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>列名</th> 
+    <th>数据类型</th> 
+    <th>是否为空</th> 
+    <th>默认值</th> 
+    <th>是否主键</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>id</td> 
+    <td>int(10)</td> 
+    <td>否</td> 
+    <td>-</td> 
+    <td>是</td> 
+   </tr> 
+   <tr> 
+    <td>type</td> 
+    <td>varchar(254)</td> 
+    <td>否</td> 
+    <td>-</td> 
+    <td>-</td> 
+   </tr> 
+   <tr> 
+    <td>name</td> 
+    <td>varchar(254)</td> 
+    <td>是</td> 
+    <td>-</td> 
+    <td>-</td> 
+   </tr> 
+   <tr> 
+    <td>salary</td> 
+    <td>float</td> 
+    <td>是</td> 
+    <td>-</td> 
+    <td>-</td> 
+   </tr> 
+   <tr> 
+    <td>bonus</td> 
+    <td>int(10)</td> 
+    <td>是</td> 
+    <td>-</td> 
+    <td>-</td> 
+   </tr> 
+   <tr> 
+    <td>pay_per_hour</td> 
+    <td>float</td> 
+    <td>是</td> 
+    <td>-</td> 
+    <td>-</td> 
+   </tr> 
+   <tr> 
+    <td>contract_duration</td> 
+    <td></td> 
+    <td>是</td> 
+    <td>-</td> 
+    <td>-</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h2 id="h2-u6BCFu4E2Au7C7Bu5C42u6B21u7ED3u6784u4E00u4E2Au8868u793Au4F8B"><a name="每个类层次结构一个表示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>每个类层次结构一个表示例</h2>
+ <p>在这个例子中，我们创建了三个类，并在<code>employee.hbm.xml</code>文件中提供了这些类的映射。</p> 
+ <p>完整的工程目录如下所示 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201703/2503/819230330_24913.png" alt=""></p> 
+ <p>下载代码的项目名称：<code>table-per-hierarchy-example-using-xml-file</code></p> 
+ <h3 id="h3-1-"><a name="1)创建持久类" class="reference-link"></a><span class="header-link octicon octicon-link"></span>1)创建持久类</h3>
+ <p>您需要创建表示继承的持久化类。让我们为上面的层次结构创建三个类：</p> 
+ <p><em>文件: Employee.java</em></p> 
+ <pre><code class="lang-java">package com.yiibai;
+
+public class Employee {
+    private int id;
+    private String name;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+}
+</code></pre> 
+ <p><em>文件: Regular_Employee.java</em></p> 
+ <pre><code class="lang-java">package com.yiibai;
+
+public class Regular_Employee extends Employee {
+    private float salary;
+    private int bonus;
+
+    public float getSalary() {
+        return salary;
+    }
+
+    public void setSalary(float salary) {
+        this.salary = salary;
+    }
+
+    public int getBonus() {
+        return bonus;
+    }
+
+    public void setBonus(int bonus) {
+        this.bonus = bonus;
+    }
+
+}
+</code></pre> 
+ <p><em>文件: Contract_Employee.java</em></p> 
+ <pre><code class="lang-java">package com.yiibai;
+
+public class Contract_Employee extends Employee {
+    private float pay_per_hour;
+    private String contract_duration;
+
+    public float getPay_per_hour() {
+        return pay_per_hour;
+    }
+
+    public void setPay_per_hour(float payPerHour) {
+        pay_per_hour = payPerHour;
+    }
+
+    public String getContract_duration() {
+        return contract_duration;
+    }
+
+    public void setContract_duration(String contractDuration) {
+        contract_duration = contractDuration;
+    }
+
+}
+</code></pre> 
+ <h3 id="h3-2-"><a name="2)创建持久化类的映射文件" class="reference-link"></a><span class="header-link octicon octicon-link"></span>2)创建持久化类的映射文件</h3>
+ <p>上面我们已经了解了层次结构，下面来看看如何配置映射文件。</p> 
+ <p><em>文件: employee.hbm.xml</em></p> 
+ <pre><code class="lang-xml">&lt;?xml version='1.0' encoding='UTF-8'?&gt;
+&lt;!DOCTYPE hibernate-mapping PUBLIC
+          "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+          "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd"&gt;
+
+&lt;hibernate-mapping&gt;
+    &lt;class name="com.yiibai.Employee" table="emp121"
+        discriminator-value="emp"&gt;
+        &lt;id name="id"&gt;
+            &lt;generator class="increment"&gt;&lt;/generator&gt;
+        &lt;/id&gt;
+        &lt;discriminator column="type" type="string"&gt;&lt;/discriminator&gt;
+        &lt;property name="name"&gt;&lt;/property&gt;
+
+        &lt;subclass name="com.yiibai.Regular_Employee"
+            discriminator-value="reg_emp"&gt;
+            &lt;property name="salary"&gt;&lt;/property&gt;
+            &lt;property name="bonus"&gt;&lt;/property&gt;
+        &lt;/subclass&gt;
+
+        &lt;subclass name="com.yiibai.Contract_Employee"
+            discriminator-value="con_emp"&gt;
+            &lt;property name="pay_per_hour"&gt;&lt;/property&gt;
+            &lt;property name="contract_duration"&gt;&lt;/property&gt;
+        &lt;/subclass&gt;
+
+    &lt;/class&gt;
+
+&lt;/hibernate-mapping&gt;
+</code></pre> 
+ <h3 id="h3-3-hbm-"><a name="3)在配置文件中添加hbm文件的映射" class="reference-link"></a><span class="header-link octicon octicon-link"></span>3)在配置文件中添加hbm文件的映射</h3>
+ <p>打开<code>hibernate.cfg.xml</code>文件，并添加如下映射资源的条目：</p>   
+ <pre><code class="lang-xml">&lt;mapping resource="employee.hbm.xml"/&gt;
+</code></pre> 
+ <p>现在配置文件将如下所示：</p> 
+ <p><em>文件：hibernate.cfg.xml</em></p> 
+ <pre><code class="lang-xml">&lt;?xml version='1.0' encoding='UTF-8'?&gt;
+&lt;!DOCTYPE hibernate-configuration PUBLIC
+          "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+          "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd"&gt;
+
+&lt;!-- Generated by MyEclipse Hibernate Tools.                   --&gt;
+&lt;hibernate-configuration&gt;
+
+    &lt;session-factory&gt;
+        &lt;property name="hbm2ddl.auto"&gt;update&lt;/property&gt;
+        &lt;property name="connection.driver_class"&gt;com.mysql.jdbc.Driver&lt;/property&gt;
+        &lt;property name="connection.url"&gt;jdbc:mysql://localhost:3306/test&lt;/property&gt;
+        &lt;property name="connection.username"&gt;root&lt;/property&gt;
+        &lt;property name="connection.password"&gt;123456&lt;/property&gt;
+        &lt;property name="dialect"&gt;org.hibernate.dialect.MySQL5InnoDBDialect&lt;/property&gt;
+        &lt;property name="show_sql"&gt;true&lt;/property&gt;
+
+         &lt;mapping resource="employee.hbm.xml"/&gt;
+    &lt;/session-factory&gt;
+
+&lt;/hibernate-configuration&gt;
+</code></pre> 
+ <p><code>hbm2ddl.auto</code>属性定义是用于在数据库中创建自动表。</p> 
+ <h2 id="h2-4-"><a name="4)创建存储持久对象的类" class="reference-link"></a><span class="header-link octicon octicon-link"></span>4)创建存储持久对象的类</h2>
+ <p>在这个类中，我们只是将<code>Employee</code>对象存储到数据库表中。</p> 
+ <p><em>文件：StoreData.java</em></p> 
+ <pre><code class="lang-java">package com.yiibai;
+
+import org.hibernate.*;
+import org.hibernate.boot.MetadataSources;
+import org.hibernate.boot.registry.StandardServiceRegistry;
+import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
+import org.hibernate.cfg.*;
+
+public class StoreData {
+    public static void main(String[] args) {
+        // Session session = new
+        // AnnotationConfiguration().configure().buildSessionFactory().openSession();
+        final StandardServiceRegistry registry = new StandardServiceRegistryBuilder()
+                .configure("hibernate.cfg.xml").build();
+        // 2. 根据服务注册类创建一个元数据资源集，同时构建元数据并生成应用一般唯一的的session工厂
+        SessionFactory sessionFactory = new MetadataSources(registry)
+                .buildMetadata().buildSessionFactory();
+
+        /**** 上面是配置准备，下面开始我们的数据库操作 ******/
+        Session session = sessionFactory.openSession();// 从会话工厂获取一个session
+        Transaction t = session.beginTransaction();
+
+        Employee e1 = new Employee();
+        e1.setName("Yiibai");
+
+        Regular_Employee e2 = new Regular_Employee();
+        e2.setName("Max su");
+        e2.setSalary(50000);
+        e2.setBonus(5);
+
+        Contract_Employee e3 = new Contract_Employee();
+        e3.setName("Hippo su");
+        e3.setPay_per_hour(1000);
+        e3.setContract_duration("15 hours");
+
+        session.persist(e1);
+        session.persist(e2);
+        session.persist(e3);
+
+        t.commit();
+        session.close();
+        System.out.println("success");
+    }
+}
+</code></pre> 
+ <p>运行上面程序，并打数据库表查看执行结果。</p>
+ <br>      
+</div></body></html>

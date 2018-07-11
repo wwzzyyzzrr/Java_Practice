@@ -1,0 +1,73 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Java泛型约束</h1><div style="width:100%;float:left;" class="article-content">   
+ <h2 id="h2-u65E0u9650u901Au914Du7B26"><a name="无限通配符" class="reference-link"></a><span class="header-link octicon octicon-link"></span>无限通配符</h2>
+ <p>通配符类型由问号表示，如 <code>&lt;?&gt;</code> 中所示。对于通用类型，通配符类型为对象类型用于原始类型。<br>可以将任何已知类型的泛型分配为通配符类型。<br>参考以下示例代码：</p> 
+ <pre><code class="lang-java">// MyBag  of  String type
+MyBag&lt;String&gt; stringMyBag  = new MyBag&lt;String&gt;("Hi");
+
+// You can  assign a  MyBag&lt;String&gt; to  MyBag&lt;?&gt; type
+MyBag&lt;?&gt; wildCardMyBag  = stringMyBag;
+</code></pre> 
+ <p>通配符通配类型中的问号(例如，<code>&lt;?&gt;</code>)表示未知类型。当使用通配符声明参数化类型作为参数类型时，这意味着不知道它的类型。</p> 
+ <pre><code class="lang-java">MyBag&lt;?&gt; unknownMyBag = new MyBag&lt;String&gt;("Hello");
+</code></pre> 
+ <h2 id="h2-u4E0Au8FB9u754Cu901Au914Du7B26"><a name="上边界通配符" class="reference-link"></a><span class="header-link octicon octicon-link"></span>上边界通配符</h2>
+ <p>上边界通配符表示通配符的上限，如下语法</p> 
+ <pre><code class="lang-java">&lt;? extends T&gt;
+</code></pre> 
+ <p>这里，<code>T</code>是一种类型。 <code>&lt;? extends T&gt;</code>表示任何类型为<code>T</code>或其子类是可接受的。<br>例如，上限可以是数字类型。</p> 
+ <p>如果传递任何其他类型，是<code>Number</code>类型或它的子类，没有问题。 但是，如果不是<code>Number</code>类型或其子类型的任何东西都会在编译时被拒绝。</p> 
+ <p>使用上限作为数字值(<code>Number</code>)，可以将方法定义为 - </p> 
+ <pre><code class="lang-java">class MyBag&lt;T&gt; {
+  private T ref;
+
+  public MyBag(T ref) {
+    this.ref = ref;
+  }
+
+  public T get() {
+    return ref;
+  }
+
+  public void set(T a) {
+    this.ref = a;
+  }
+}
+
+public class Main {
+  public static double sum(MyBag&lt;? extends Number&gt; n1,
+      MyBag&lt;? extends Number&gt; n2) {
+    Number num1 = n1.get();
+    Number num2 = n2.get();
+    double sum = num1.doubleValue() + num2.doubleValue();
+    return sum;
+  }
+
+}
+</code></pre> 
+ <p>不管为<code>n1</code>和<code>n2</code>传递的是什么，它们将始终与<code>Number</code>的赋值兼容，因为编译器确保传递给<code>sum()</code>方法的参数遵循其声明中指定的规则 <code>&lt;? extends Number&gt;</code> 。</p> 
+ <h2 id="h2-u4E0Bu9650u901Au914Du7B26"><a name="下限通配符" class="reference-link"></a><span class="header-link octicon octicon-link"></span>下限通配符</h2>
+ <p>指定下限通配符与指定上限通配符相反。使用下限通配符的语法是<code>&lt;? super T&gt;</code>，这表示“任何<code>T</code>的超类型”。</p>   
+ <pre><code class="lang-java">class MyBag&lt;T&gt; {
+  private T ref;/*from w  w w. j ava 2  s  .co  m*/
+
+  public MyBag(T ref) {
+    this.ref = ref;
+  }
+
+  public T get() {
+    return ref;
+  }
+
+  public void set(T a) {
+    this.ref = a;
+  }
+}
+public class Main {
+  public static &lt;T&gt; void copy(MyBag&lt;T&gt; source, MyBag&lt;? super T&gt; dest) {
+    T value = source.get();
+    dest.set(value);
+  }
+}
+</code></pre>
+ <br>      
+</div></body></html>

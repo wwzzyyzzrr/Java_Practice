@@ -1,0 +1,87 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Java.io.PipedInputStream类</h1><div style="width:100%;float:left;" class="article-content">   
+ <p> <strong>Java.io.PipedInputStream</strong>类是一个管道输入流，可以连接到一个管道输出流，管道输入流提供的所有数据字节写入管道输出流。以下是有关PipedInputStream的要点：</p> 
+ <ul> 
+  <li> <p> 该管道输入流包含一个缓冲区，解耦读操作和写操作限制之内。</p> </li> 
+  <li> <p> 不推荐试图从单个线程使用这两个对象，因为它可能会死锁的线程。</p> </li> 
+  <li> <p> 管道，如果被提供的数据字节连接的管道输出流线程不再处于活动状态被打破。</p> </li> 
+ </ul> 
+ <h2> 类声明</h2> 
+ <p> 以下是java.io.PipedInputStream类的声明：</p> 
+ <pre class="prettyprint prettyprinted" style="font-size: 12px; overflow: auto;">
+<span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">public</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">class</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="typ" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">PipedInputStream</span><span class="pln" style="margin: 0px; padding: 0px;">
+  </span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">extends</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="typ" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">InputStream</span></pre> 
+ <h2> 字段</h2> 
+ <p> 以下是java.io.PipedInputStream类中的字段：</p> 
+ <ul> 
+  <li> <p> protected byte[] buffer&nbsp;-- 一个循环缓冲区在其中输入数据被放置。</p> </li> 
+  <li> <p> protected int in&nbsp;-- 在循环缓冲区的数据的下一个字节从连接的管道输出流中接收时将存储的位置的索引。</p> </li> 
+  <li> <p> protected int out&nbsp;-- 在循环缓冲区的位置，在该数据的下一个字节将通过这个管道输入流中读取的索引。</p> </li> 
+  <li> <p> protected static int PIPE_SIZE&nbsp;-- 管道的循环输入缓冲区的默认大小。</p> </li> 
+ </ul> 
+ <h2> 类构造函数</h2> 
+ <table class="src" style="margin: 8px 0px; padding: 0px;  border-color: rgb(214, 214, 214); width: 560px; border-collapse: collapse; vertical-align: top; background-color: rgb(247, 247, 247); color: rgb(0, 0, 0); font-family: Helvetica, Arial, sans-serif;"> 
+  <tbody style="margin: 0px; padding: 0px;"> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <th style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214); background-color: rgb(238, 238, 238); width: 22px;"> S.N.</th> 
+    <th style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214); background-color: rgb(238, 238, 238);"> 构造函数 &amp; 描述</th> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 1</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> <b style="margin: 0px; padding: 0px;">PipedInputStream()&nbsp;</b><br style="margin: 0px; padding: 0px;"> 这创建了一个管道输入流，以便它尚未连接。</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 2</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> <b style="margin: 0px; padding: 0px;">PipedInputStream(int pipeSize)&nbsp;</b><br style="margin: 0px; padding: 0px;"> 这创建了一个管道输入流，以便它尚未连接，并使用指定的管道大小为管道缓冲区。</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 3</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> <b style="margin: 0px; padding: 0px;">PipedInputStream(PipedOutputStream src)&nbsp;</b><br style="margin: 0px; padding: 0px;"> 这将创建一个管道输入流，使其连接到管道输出流src中。</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 4</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> <b style="margin: 0px; padding: 0px;">PipedInputStream(PipedOutputStream src, int pipeSize)&nbsp;</b><br style="margin: 0px; padding: 0px;"> 这创建了一个管道输入流，以便它被连接到管道输出流src和使用指定的管道尺寸为管道缓冲区。</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h2> 类方法</h2>   
+ <table class="src" style="margin: 8px 0px; padding: 0px;  border-color: rgb(214, 214, 214); width: 560px; border-collapse: collapse; vertical-align: top; background-color: rgb(247, 247, 247); color: rgb(0, 0, 0); font-family: Helvetica, Arial, sans-serif;"> 
+  <tbody style="margin: 0px; padding: 0px;"> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <th style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214); background-color: rgb(238, 238, 238); width: 22px;"> S.N.</th> 
+    <th style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214); background-color: rgb(238, 238, 238);"> 方法 &amp; 描述</th> 
+   </tr> 
+   <tr> 
+    <td> 1</td> 
+    <td> <a target="_blank" href="http://www.yiibai.com/java/io/pipedinputstream_available.html">int available()&nbsp;</a><br> 此方法返回可以从此输入流中可无阻塞读取的字节数。</td> 
+   </tr> 
+   <tr> 
+    <td> 2</td> 
+    <td> <a target="_blank" href="http://www.yiibai.com/java/io/pipedinputstream_close.html">void close()&nbsp;</a><br> 此方法关闭此管道输入流并释放与该流关联的所有系统资源。</td> 
+   </tr> 
+   <tr> 
+    <td> 3</td> 
+    <td> <a target="_blank" href="http://www.yiibai.com/java/io/pipedinputstream_connect.html">void connect(PipedOutputStream src)&nbsp;</a><br> 此方法使该管道输入流连接到管道输出流src中。</td> 
+   </tr> 
+   <tr> 
+    <td> 4</td> 
+    <td> <a target="_blank" href="http://www.yiibai.com/java/io/pipedinputstream_read.html">int read()&nbsp;</a><br> 此方法从这个管道输入流中读取下一个数据字节。</td> 
+   </tr> 
+   <tr> 
+    <td> 5</td> 
+    <td> <a target="_blank" href="http://www.yiibai.com/java/io/pipedinputstream_read_byte.html">int read(byte[] b, int off, int len)&nbsp;</a><br> 此方法读取了从该管道输入流中len个字节数据到一个字节数组。</td> 
+   </tr> 
+   <tr> 
+    <td> 6</td> 
+    <td> <a target="_blank" href="http://www.yiibai.com/java/io/pipedinputstream_receive.html">protected void receive(int b)</a><br> 这个方法接收一个字节的数据。</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <br style="margin: 0px; padding: 0px; color: rgb(0, 0, 0); font-family: Helvetica, Arial, sans-serif;"> 
+ <h2> 继承的方法</h2> 
+ <p> 这个类继承自以下类方法：</p> 
+ <ul> 
+  <li> <p> Java.io.InputStream</p> </li> 
+  <li> <p> Java.io.Object</p> </li> 
+ </ul> 
+ <br>      
+</div></body></html>

@@ -1,0 +1,97 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Struts2 &lt;s:textarea&gt;文本域实例</h1><div style="width:100%;float:left;" class="article-content">   
+ <p> <span style="line-height:1.5;">在Struts2，你可以使用&lt;s:textarea&gt;创建HTML textarea文本域。</span><span style="color:#535B60;line-height:22px;background-color:#FFFFFF;">为了比较直观的学习，这里创建一个web工程为：struts2textarea。整个工程的目录结构如下：</span> </p> 
+ <p> <span style="color:#535B60;line-height:22px;background-color:#FFFFFF;"><img src="/uploads/tutorial/20151114/1-1511141Q62a58.png" alt=""><br> </span> </p> 
+ <pre>&lt;s:textarea label="Address" name="address" cols="40" rows="10"/&gt;</pre> 
+ <p> 它会呈现为如下面的HTML代码。 </p> 
+ <pre>&lt;textarea name="address" cols="40" rows="10" id="formaction_address"&gt;&lt;/textarea&gt;</pre> 
+ <h2> Struts 2 &lt;s:textarea&gt; 示例 </h2> 
+ <p> 页面包含一个地址textarea字段域，并显示 textarea的值在表单提交后。 </p> 
+ <h2> 1. Action </h2> 
+ <p> <strong>TextAreaAction.java</strong> </p> 
+ <pre>package com.yiibai.common.action;
+
+import com.opensymphony.xwork2.ActionSupport;
+
+public class TextAreaAction extends ActionSupport{
+
+	private String address;
+
+	public String getAddress() {
+		return address;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
+	}
+
+	public String execute() {
+		return SUCCESS;
+	}
+
+}</pre> 
+ <h2> 2. 视图页面 </h2> 
+ <p> Struts2的“s:textarea”标签来创建一个textarea文本域字段。 </p> 
+ <p> <strong>textarea.jsp</strong> </p> 
+ <pre>&lt;%@ taglib prefix="s" uri="/struts-tags" %&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;/head&gt;
+
+&lt;body&gt;
+&lt;h1&gt;Struts2 文本域实例&lt;/h1&gt;
+
+&lt;s:form action="helloTextarea" namespace="/"&gt;
+
+&lt;h2&gt;
+  &lt;s:textarea label="Address" name="address" cols="40" rows="10"/&gt;
+&lt;/h2&gt; 
+
+&lt;s:submit value="submit" name="submit" /&gt;
+	
+&lt;/s:form&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;</pre> 
+ <p> <strong>welcome.jsp</strong> </p> 
+ <pre>&lt;%@ taglib prefix="s" uri="/struts-tags" %&gt;
+&lt;html&gt;
+
+&lt;body&gt;
+&lt;h1&gt;Struts2文本域实例&lt;/h1&gt;
+
+&lt;h2&gt;
+  &lt;s:property value="address"/&gt;
+&lt;/h2&gt; 
+
+&lt;/body&gt;
+&lt;/html&gt;</pre> 
+ <h2 style="font-family:inherit;font-weight:500;color:inherit;font-size:24px;"> 3. struts.xml </h2>   
+ <pre>&lt;?xml version="1.0" encoding="UTF-8" ?&gt;
+&lt;!DOCTYPE struts PUBLIC
+"-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+"http://struts.apache.org/dtds/struts-2.0.dtd"&gt;
+ 
+&lt;struts&gt;
+
+ &lt;constant name="struts.devMode" value="true" /&gt;
+ 	
+ &lt;package name="" namespace="/" extends="struts-default"&gt;
+	&lt;action name="textarea"&gt;
+	      &lt;result&gt;/pages/textarea.jsp&lt;/result&gt;
+	&lt;/action&gt;
+	&lt;action name="helloTextarea" 
+              class="com.yiibai.common.action.TextAreaAction"&gt;
+	      &lt;result name="success"&gt;/pages/welcome.jsp&lt;/result&gt;
+	&lt;/action&gt;
+  &lt;/package&gt;
+	
+&lt;/struts&gt;</pre> 
+ <h2 style="font-family:inherit;font-weight:500;color:inherit;font-size:24px;"> 4. 运行结果 </h2> 
+ <p> <em>http://localhost:8080/struts2textarea/textarea.action</em> </p> 
+ <p> <em><img src="/uploads/tutorial/20151114/1-1511141Q545291.png" alt=""><br> </em> </p> 
+ <h2 style="font-family:inherit;font-weight:500;color:inherit;font-size:24px;"> 参考 </h2> 
+ <ol> 
+  <li> <a target="_blank" href="http://struts.apache.org/2.x/docs/textarea.html">Struts 2 textarea文档</a> </li> 
+ </ol>
+ <br>      
+</div></body></html>

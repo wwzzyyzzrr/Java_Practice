@@ -1,0 +1,63 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Gradle构建脚本</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>Gradle构建脚本文件用来处理两件事情：一个是项目和另一个的任务。每个<code>Gradle</code>生成表示一个或多个项目。一个项目表示一个JAR库或Web应用程序，也可能表示由其他项目产生的JAR文件组装的ZIP。 简单地说，一个项目是由不同的任务组成。一个任务是指构建执行的一块工作。任务可能是编译一些类，创建一个<code>JAR</code>，产生的<code>Javadoc</code>或发布一些归档文件库。</p> 
+ <blockquote> 
+  <p>注：Gradle使用Groovy语言编写脚本。</p> 
+ </blockquote> 
+ <h1 id="h1-u7F16u5199u6784u5EFAu811Au672C"><a name="编写构建脚本" class="reference-link"></a><span class="header-link octicon octicon-link"></span>编写构建脚本</h1>
+ <p>Gradle提供了一个域特定语言（DSL），用于描述构建。 它使用 Groovy 语言，使其更容易来形容和构建。Gradle 中的每一个构建脚本使用UTF-8进行编码保存，并命名为 <code>build.gradle</code> 。</p> 
+ <h3 id="h3--build-gradle-"><a name="创建build.gradle文件" class="reference-link"></a><span class="header-link octicon octicon-link"></span>创建build.gradle文件</h3>
+ <p>看看下面的例子演示一个小脚本，它将打印 “<code>Yiibai gradle qick start</code>“。复制并保存以下脚本到文件：<code>D:workspyiibai.comgradle-3.1studyscriptbuild.gradle</code>。脚本中定义一个任务名称 <code>helloword</code>，这是用来打印”<code>Yiibai gradle qick start</code>“ 字符串。</p> 
+ <p>在命令提示符下，进入存储 <code>build.gradle</code> 文件的目录并执行以下命令，得到结果如下所示 -</p> 
+ <pre><code class="lang-shell">D:workspyiibai.comgradle-3.1studyscript&gt;gradle -q helloword
+Yiibai gradle qick start
+</code></pre> 
+ <p>可以通过指定一个快捷键（&lt;&lt;符号表示）到 doLast 语句来简化 <code>helloword</code> 任务。 如果将快捷方式添加到上述 <code>helloword</code> 任务，它看起来如下面脚本。</p> 
+ <pre><code>task helloword &lt;&lt; {
+   println 'Yiibai gradle qick start'
+}
+</code></pre>
+ <p>使用 <code>gradle -q helloword</code> 命令执行上面的脚本，也会得到同样的输出结果。</p> 
+ <h2 id="h2-gradle-groovy"><a name="Gradle如何使用Groovy" class="reference-link"></a><span class="header-link octicon octicon-link"></span>Gradle如何使用Groovy</h2>
+ <p>Gradle 构建脚本使用 Groovy API。 作为一个入门，我们来来看看下面的例子。以下示例演示将字符串转换为大写。<br>复制并保存下面的代码到 <code>build.gradle</code> 文件。</p> 
+ <pre><code class="lang-groovy">task upper &lt;&lt; {
+   String expString = 'YiiBai gradle tutorials'
+   println "Original: " + expString
+   println "Upper case: " + expString.toUpperCase()}
+</code></pre> 
+ <p>使用 <code>gradle –q upper</code> 执行上面的代码，如果命令执行成功，会得到下面的输出。</p>   
+ <pre><code class="lang-shell">D:workspyiibai.comgradle-3.1studyscript&gt;gradle -q upper
+Original: YiiBai gradle tutorials
+Upper case: YIIBAI GRADLE TUTORIALS
+</code></pre> 
+ <p>下面的例子 4 次打印隐式参数 (<code>$it</code>) 的值。复制并保存下面的代码到 <code>build.gradle</code> 文件。</p> 
+ <pre><code class="lang-groovy">task count &lt;&lt; {
+   4.times { 
+      print "$it " 
+   }
+}
+</code></pre> 
+ <p>使用 <code>gradle –q count</code> 执行上面的代码，如果命令执行成功，会得到下面的输出。</p> 
+ <pre><code class="lang-shell">D:workspyiibai.comgradle-3.1studyscript&gt;gradle -q count
+0 1 2 3
+</code></pre> 
+ <h2 id="h2-groovy-jdk-"><a name="Groovy的JDK方法" class="reference-link"></a><span class="header-link octicon octicon-link"></span>Groovy的JDK方法</h2>
+ <p>Groovy增加了很多有用的方法到标准的Java类。 例如，从Java API可迭代实现它遍历Iterable接口的元素的<code>each()</code> 方法。</p> 
+ <p>复制并保存下面的代码到 <code>build.gradle</code> 文件。</p> 
+ <pre><code class="lang-groovy">task groovyJDKMethod &lt;&lt; {
+   String myName = "Yiibai";
+   myName.each() { 
+      println "${it}" 
+   };
+}
+</code></pre> 
+ <p>使用 <code>gradle –q groovyJDKMethod</code> 执行上面的代码，如果命令执行成功，会得到下面的输出。</p> 
+ <pre><code class="lang-shell">D:workspyiibai.comgradle-3.1studyscript&gt;gradle -q groovyJDKMethod
+Y
+i
+i
+b
+a
+i
+</code></pre>
+ <br>      
+</div></body></html>

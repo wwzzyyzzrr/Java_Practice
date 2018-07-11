@@ -1,0 +1,75 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">git diff命令</h1><div style="width:100%;float:left;" class="article-content">   
+ <p><code>git diff</code>命令用于显示提交和工作树等之间的更改。此命令比较的是工作目录中当前文件和暂存区域快照之间的差异,也就是修改之后还没有暂存起来的变化内容。</p> 
+ <p><strong>简介</strong></p> 
+ <pre><code class="lang-shell">git diff [options] [&lt;commit&gt;] [--] [&lt;path&gt;…​]
+git diff [options] --cached [&lt;commit&gt;] [--] [&lt;path&gt;…​]
+git diff [options] &lt;commit&gt; &lt;commit&gt; [--] [&lt;path&gt;…​]
+git diff [options] &lt;blob&gt; &lt;blob&gt;
+git diff [options] [--no-index] [--] &lt;path&gt; &lt;path&gt;
+</code></pre> 
+ <h2 id="h2-u63CFu8FF0"><a name="描述" class="reference-link"></a><span class="header-link octicon octicon-link"></span>描述</h2>
+ <p>在工作树和索引或树之间显示更改，索引和树之间的更改，两个树之间的更改，两个blob对象之间的更改或两个文件在磁盘上的更改。</p> 
+ <p>为了防止异常情况发生，请注意，上述描述中的所有<code>&lt;commit&gt;</code>除了使用“<code>..</code>”符号的最后两种形式之外，都可以是任何<code>&lt;tree&gt;</code>。</p> 
+ <h2 id="h2-u793Au4F8B"><a name="示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例</h2>
+ <p>以下是一些示例 -</p> 
+ <pre><code class="lang-shell">git diff &lt;file&gt; # 比较当前文件和暂存区文件差异 git diff
+
+git diff &lt;id1&gt;&lt;id1&gt;&lt;id2&gt; # 比较两次提交之间的差异
+
+git diff &lt;branch1&gt; &lt;branch2&gt; # 在两个分支之间比较
+git diff --staged # 比较暂存区和版本库差异
+
+git diff --cached # 比较暂存区和版本库差异
+
+git diff --stat # 仅仅比较统计信息
+</code></pre> 
+ <p><strong>1. 检查工作树的几种方式</strong></p> 
+ <pre><code class="lang-shell">$ git diff            #(1)
+$ git diff --cached   #(2)
+$ git diff HEAD       #(3)
+</code></pre> 
+ <ol> 
+  <li>工作树中的更改尚未分段进行下一次提交。</li>
+  <li>索引和最后一次提交之间的变化; 查看已经<code>git add</code> ，但没有<code>git commit</code> 的改动。</li>
+  <li>自上次提交以来工作树中的更改；如果运行“<code>git commit -a</code>”，查看将会提交什么。</li>
+ </ol> 
+ <p>查看尚未暂存的文件更新了哪些部分，不加参数直接输入 - </p> 
+ <pre><code class="lang-shell">$ git diff
+</code></pre> 
+ <p>此命令比较的是工作目录(Working tree)和暂存区域快照(index)之间的差异<br>也就是修改之后还没有暂存起来的变化内容。</p> 
+ <p>查看已经暂存起来的文件(staged)和上次提交时的快照之间(HEAD)的差异 -</p>   
+ <pre><code class="lang-shell">$ git diff --cached
+$ git diff --staged
+</code></pre> 
+ <p>显示的是下一次提交时会提交到HEAD的内容(不带<code>-a</code>情况下)</p> 
+ <p>显示工作版本(Working tree)和HEAD的差别</p> 
+ <pre><code class="lang-shell">$ git diff HEAD
+</code></pre> 
+ <p>直接将两个分支上最新的提交做diff</p> 
+ <pre><code class="lang-shell">$ git diff topic master
+$ #或 
+$ git diff topic..master
+</code></pre> 
+ <p>输出自<code>topic</code>和<code>master</code>分别开发以来，<code>master</code>分支上的变更。</p> 
+ <pre><code class="lang-shell">$ git diff topic...master
+</code></pre> 
+ <p>查看简单的diff结果，可以加上<code>--stat</code>参数</p> 
+ <pre><code class="lang-shell">$ git diff --stat
+</code></pre> 
+ <p>查看当前目录和另外一个分支(<code>test</code>)的差别</p> 
+ <pre><code class="lang-shell">$ git diff test
+</code></pre> 
+ <p>显示当前目录和另一个叫’<code>test</code>‘分支的差别</p> 
+ <pre><code class="lang-shell">$ git diff HEAD -- ./lib
+</code></pre> 
+ <p>显示当前目录下的lib目录和上次提交之间的差别(更准确的说是在当前分支下)<br>比较上次提交和上上次提交</p> 
+ <pre><code class="lang-shell">$ git diff HEAD^ HEAD
+</code></pre> 
+ <p>比较两个历史版本之间的差异</p> 
+ <pre><code class="lang-shell">$ git diff SHA1 SHA2
+</code></pre> 
+ <blockquote> 
+  <p>提示：SHA1，SHA2是类似 COMMIT ID 的32位长度的值。</p> 
+ </blockquote>
+ <br>      
+</div></body></html>

@@ -1,0 +1,73 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Solr检索数据</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>在本章中，我们将讨论如何使用Java Client API检索数据。假设有一个名为sample.csv的.csv文档，其中包含以下内容。</p> 
+ <pre><code>001,9848022337,Hyderabad,Rajiv,Reddy  
+002,9848022338,Kolkata,Siddarth,Battacharya 
+003,9848022339,Delhi,Rajesh,Khanna
+</code></pre>
+ <p>可以使用<code>post</code>命令在核心-<code>solr_sample</code>下对此数据编制索引。</p> 
+ <pre><code class="lang-r">[yiibai@ubuntu:/usr/local/solr]$ ./post -c solr_sample sample.csv
+</code></pre> 
+ <p>以下是向<strong>Apache Solr</strong>索引添加文档的Java程序代码。将此代码保存在<code>RetrievingData.java</code>的文件中。</p> 
+ <pre><code class="lang-java">import java.io.IOException;  
+
+import org.apache.Solr.client.Solrj.SolrClient; 
+import org.apache.Solr.client.Solrj.SolrQuery; 
+import org.apache.Solr.client.Solrj.SolrServerException; 
+import org.apache.Solr.client.Solrj.impl.HttpSolrClient; 
+import org.apache.Solr.client.Solrj.response.QueryResponse; 
+import org.apache.Solr.common.SolrDocumentList;  
+
+public class RetrievingData { 
+   public static void main(String args[]) throws SolrServerException, IOException  { 
+      //Preparing the Solr client 
+      String urlString = "http://localhost:8983/Solr/my_core"; 
+      SolrClient Solr = new HttpSolrClient.Builder(urlString).build();  
+
+      //Preparing Solr query 
+      SolrQuery query = new SolrQuery();  
+      query.setQuery("*:*");  
+
+      //Adding the field to be retrieved 
+      query.addField("*");  
+
+      //Executing the query 
+      QueryResponse queryResponse = Solr.query(query);  
+
+      //Storing the results of the query 
+      SolrDocumentList docs = queryResponse.getResults();    
+      System.out.println(docs); 
+      System.out.println(docs.get(0)); 
+      System.out.println(docs.get(1)); 
+      System.out.println(docs.get(2));   
+
+      //Saving the operations 
+      Solr.commit();         
+   } 
+}
+</code></pre> 
+ <p>通过在终端中执行以下命令编译上述代码 -</p>   
+ <pre><code class="lang-shell">[yiibai@ubuntu:/usr/local/solr]$ javac RetrievingData.java
+[yiibai@ubuntu:/usr/local/solr]$ java RetrievingData
+</code></pre> 
+ <p>执行上述命令后，将得到以下输出。</p> 
+ <pre><code class="lang-shell">{numFound = 3,start = 0,docs = [SolrDocument{id=001, phone = [9848022337], 
+city = [Hyderabad], first_name = [Rajiv], last_name = [Reddy], 
+_version_ = 1547262806014820352}, SolrDocument{id = 002, phone = [9848022338], 
+city = [Kolkata], first_name = [Siddarth], last_name = [Battacharya], 
+
+_version_ = 1547262806026354688}, SolrDocument{id = 003, phone = [9848022339], 
+city = [Delhi], first_name = [Rajesh], last_name = [Khanna], 
+
+_version_ = 1547262806029500416}]} 
+
+SolrDocument{id = 001, phone = [9848022337], city = [Hyderabad], first_name = [Rajiv], 
+last_name = [Reddy], _version_ = 1547262806014820352} 
+
+SolrDocument{id = 002, phone = [9848022338], city = [Kolkata], first_name = [Siddarth], 
+last_name = [Battacharya], _version_ = 1547262806026354688} 
+
+SolrDocument{id = 003, phone = [9848022339], city = [Delhi], first_name = [Rajesh], 
+last_name = [Khanna], _version_ = 1547262806029500416}
+</code></pre>
+ <br>      
+</div></body></html>

@@ -1,0 +1,119 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Java责任链模式</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>顾名思义，责任模式链为请求创建一系列接收者对象。 此模式基于请求的类型将请求的发送方和接收方分离。 这种模式是行为模式。</p> 
+ <p>在这种模式中，通常每个接收器包含对另一个接收器的引用。如果一个对象不能处理请求，则它将相同的对象传递给下一个接收者等等。</p> 
+ <h2 id="h2-u5B9Eu73B0u5B9Eu4F8B"><a name="实现实例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实现实例</h2>
+ <p>在这个示例中，创建了一个具有日志级别的抽象类<code>AbstractLogger</code>。 然后创建了三种类型的扩展<code>AbstractLogger</code>的日志记录器。 每个记录器检查消息的级别到其级别并相应地打印消息，否则不打印并将消息传递到其下一个记录器。</p> 
+ <p>责任链模式的实现实例结构如下图中所示 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201612/08/357151223_61598.jpg" alt=""></p> 
+ <h3 id="h3--1-"><a name="第1步" class="reference-link"></a><span class="header-link octicon octicon-link"></span>第1步</h3>
+ <p>创建一个抽象记录器类。如下代码所示 - </p> 
+ <p><em>AbstractLogger.java</em></p> 
+ <pre><code class="lang-java">public abstract class AbstractLogger {
+   public static int INFO = 1;
+   public static int DEBUG = 2;
+   public static int ERROR = 3;
+
+   protected int level;
+
+   //next element in chain or responsibility
+   protected AbstractLogger nextLogger;
+
+   public void setNextLogger(AbstractLogger nextLogger){
+      this.nextLogger = nextLogger;
+   }
+
+   public void logMessage(int level, String message){
+      if(this.level &lt;= level){
+         write(message);
+      }
+      if(nextLogger !=null){
+         nextLogger.logMessage(level, message);
+      }
+   }
+
+   abstract protected void write(String message);
+
+}
+</code></pre> 
+ <h3 id="h3--2-"><a name="第2步" class="reference-link"></a><span class="header-link octicon octicon-link"></span>第2步</h3>
+ <p>创建几个扩展记录器的具体类。<br><em>ConsoleLogger.java</em></p> 
+ <pre><code class="lang-java">public class ConsoleLogger extends AbstractLogger {
+
+   public ConsoleLogger(int level){
+      this.level = level;
+   }
+
+   @Override
+   protected void write(String message) {        
+      System.out.println("Standard Console::Logger: " + message);
+   }
+}
+</code></pre> 
+ <p><em>ErrorLogger.java</em></p> 
+ <pre><code class="lang-java">public class ErrorLogger extends AbstractLogger {
+
+   public ErrorLogger(int level){
+      this.level = level;
+   }
+
+   @Override
+   protected void write(String message) {        
+      System.out.println("Error Console::Logger: " + message);
+   }
+}
+</code></pre> 
+ <p><em>FileLogger.java</em></p> 
+ <pre><code class="lang-java">public class FileLogger extends AbstractLogger {
+
+   public FileLogger(int level){
+      this.level = level;
+   }
+
+   @Override
+   protected void write(String message) {        
+      System.out.println("File::Logger: " + message);
+   }
+}
+</code></pre> 
+ <h3 id="h3--3-"><a name="第3步" class="reference-link"></a><span class="header-link octicon octicon-link"></span>第3步</h3>
+ <p>创建不同类型的记录器。 为它们分配错误级别，并在每个记录器中设置下一个记录器。 每个记录器中的下一个记录器表示链的一部分。</p> 
+ <p><em>ChainPatternDemo.java</em></p>   
+ <pre><code class="lang-java">public class ChainPatternDemo {
+
+   private static AbstractLogger getChainOfLoggers(){
+
+      AbstractLogger errorLogger = new ErrorLogger(AbstractLogger.ERROR);
+      AbstractLogger fileLogger = new FileLogger(AbstractLogger.DEBUG);
+      AbstractLogger consoleLogger = new ConsoleLogger(AbstractLogger.INFO);
+
+      errorLogger.setNextLogger(fileLogger);
+      fileLogger.setNextLogger(consoleLogger);
+
+      return errorLogger;    
+   }
+
+   public static void main(String[] args) {
+      AbstractLogger loggerChain = getChainOfLoggers();
+
+      loggerChain.logMessage(AbstractLogger.INFO, 
+         "This is an information.");
+
+      loggerChain.logMessage(AbstractLogger.DEBUG, 
+         "This is an debug level information.");
+
+      loggerChain.logMessage(AbstractLogger.ERROR, 
+         "This is an error information.");
+   }
+}
+</code></pre> 
+ <h3 id="h3--4-"><a name="第4步" class="reference-link"></a><span class="header-link octicon octicon-link"></span>第4步</h3>
+ <p>验证输出，执行上面的代码得到以下结果 -</p> 
+ <pre><code class="lang-java">Standard Console::Logger: This is an information.
+File::Logger: This is an debug level information.
+Standard Console::Logger: This is an debug level information.
+Error Console::Logger: This is an error information.
+File::Logger: This is an error information.
+Standard Console::Logger: This is an error information.
+</code></pre>
+ <br>      
+</div></body></html>

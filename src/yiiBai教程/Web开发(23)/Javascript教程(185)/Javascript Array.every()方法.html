@@ -1,0 +1,79 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Javascript Array.every()方法</h1><div style="width:100%;float:left;" class="article-content">   
+ <p> JavaScript 数组中的每个方法测试数组中的所有元素是否经过所提供的函数来实现测试。</p> 
+ <h2> 语法</h2> 
+ <pre style="'Courier New', monospace; font-size: 12px; ">
+<i>array</i>.every(callback[, thisObject]);</pre> 
+ <p> 下面是参数的详细信息：</p> 
+ <ul> 
+  <li> <p> <strong>callback&nbsp;: </strong>函数用来测试每个元素</p> </li> 
+  <li> <p> <strong>thisObject&nbsp;: </strong>对象作为该执行回调时使用</p> </li> 
+ </ul> 
+ <h2> 返回值:</h2> 
+ <p> 返回true，如果此数组中的每个元素满足所提供的测试函数。</p> 
+ <h2> 兼容性：</h2> 
+ <p> 这种方法是一个JavaScript扩展到ECMA-262标准;因此它可能不存在在标准的其他实现。为了使它工作，你需要添加下面的脚本的代码在顶部：</p> 
+ <pre style="'Courier New', monospace; font-size: 12px; ">
+if (!Array.prototype.every)
+{
+  Array.prototype.every = function(fun /*, thisp*/)
+  {
+    var len = this.length;
+    if (typeof fun != "function")
+      throw new TypeError();
+
+    var thisp = arguments[1];
+    for (var i = 0; i &lt; len; i++)
+    {
+      if (i in this &amp;&amp;
+          !fun.call(thisp, this[i], i, this))
+        return false;
+    }
+
+    return true;
+  };
+}</pre> 
+ <h2> 例子：</h2> 
+ <pre style="'Courier New', monospace; font-size: 12px; ">
+&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;JavaScript Array every Method&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;script type="text/javascript"&gt;
+if (!Array.prototype.every)
+{
+  Array.prototype.every = function(fun /*, thisp*/)
+  {
+    var len = this.length;
+    if (typeof fun != "function")
+      throw new TypeError();
+
+    var thisp = arguments[1];
+    for (var i = 0; i &lt; len; i++)
+    {
+      if (i in this &amp;&amp;
+          !fun.call(thisp, this[i], i, this))
+        return false;
+    }
+
+    return true;
+  };
+}
+function isBigEnough(element, index, array) {
+  return (element &gt;= 10);
+}
+
+var passed = [12, 5, 8, 130, 44].every(isBigEnough);
+document.write("First Test Value : " + passed ); 
+  
+passed = [12, 54, 18, 130, 44].every(isBigEnough);
+document.write("Second Test Value : " + passed ); 
+&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre> 
+ <p> 这将产生以下结果：</p>   
+ <pre style="'Courier New', monospace; font-size: 12px; ">
+First Test Value : falseSecond Test Value : true</pre> 
+ <p style="text-align: justify; verdana, helvetica, arial,  color: rgb(0, 0, 0);"> &nbsp;</p> 
+ <br>      
+</div></body></html>

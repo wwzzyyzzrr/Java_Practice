@@ -1,0 +1,78 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Rust枚举</h1><div style="width:100%;float:left;" class="article-content">   
+ <h2 id="32-enums" style="box-sizing: border-box; -webkit-tap-highlight-color: transparent; -webkit-font-smoothing: antialiased; margin-bottom: 16px; line-height: 1.225; font-size: 1.75em; position: relative; padding-bottom: 0.3em; border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: rgb(238, 238, 238); color: rgb(51, 51, 51);  'Clear Sans', 'Helvetica Neue', Helvetica,   margin-top: 0px !important;"> Rust枚举</h2> 
+ <p style="box-sizing: border-box; -webkit-tap-highlight-color: transparent; -webkit-font-smoothing: antialiased; margin-top: 0px; margin-bottom: 16px; color: rgb(51, 51, 51);  'Clear Sans', 'Helvetica Neue', Helvetica,   font-size: 16px; line-height: 25.6000003814697px;"> <span style="font-size:16px;"><span style="color: rgb(34, 34, 34);  Verdana, ">enum关键字允许创建标签联合，</span>&nbsp;它可以被用作代数数据类型 (<a target="_blank" href="http://en.wikipedia.org/wiki/Algebraic_data_type" style="box-sizing: border-box; -webkit-tap-highlight-color: transparent; -webkit-font-smoothing: antialiased; text-decoration: none; color: rgb(65, 131, 196); background: transparent;">ADT</a>)。</span></p> 
+ <pre>
+// Allow Cons and Nil to be referred to without namespacing
+use List::{Cons, Nil};
+
+// A linked list node, which can take on any of these two variants
+enum List {
+    // Cons: Tuple struct that wraps an element and a pointer to the next node
+    Cons(u32, Box
+  <list>
+   ),
+    // Nil: A node that signifies the end of the linked list
+    Nil,
+}
+
+// Methods can be attached to an enum
+impl List {
+    // Create an empty list
+    fn new() -&gt; List {
+        // `Nil` has type `List`
+        Nil
+    }
+
+    // Consume a list, and return the same list with a new element at its front
+    fn prepend(self, elem: u32) -&gt; List {
+        // `Cons` also has type List
+        Cons(elem, Box::new(self))
+    }
+
+    // Return the length of the list
+    fn len(&amp;self) -&gt; u32 {
+        // `self` has to be matched, because the behavior of this method
+        // depends on the variant of `self`
+        // `self` has type `&amp;List`, and `*self` has type `List`, matching on a
+        // concrete type `T` is preferred over a match on a reference `&amp;T`
+        match *self {
+            // Can't take ownership of the tail, because `self` is borrowed;
+            // instead take a reference to the tail
+            Cons(_, ref tail) =&gt; 1 + tail.len(),
+            // Base Case: An empty list has zero length
+            Nil =&gt; 0
+        }
+    }
+
+    // Return representation of the list as a (heap allocated) string
+    fn stringify(&amp;self) -&gt; String {
+        match *self {
+            Cons(head, ref tail) =&gt; {
+                // `format!` is similar to `print!`, but returns a heap
+                // allocated string instead of printing to the console
+                format!("{}, {}", head, tail.stringify())
+            },
+            Nil =&gt; {
+                format!("Nil")
+            },
+        }
+    }
+}
+
+fn main() {
+    // Create an empty linked list
+    let mut list = List::new();
+
+    // Append some elements
+    list = list.prepend(1);
+    list = list.prepend(2);
+    list = list.prepend(3);
+
+    // Show the final state of the list
+    println!("linked list has length: {}", list.len());
+    println!("{}", list.stringify());
+}
+
+  </list></pre> 
+ <br>      
+</div></body></html>

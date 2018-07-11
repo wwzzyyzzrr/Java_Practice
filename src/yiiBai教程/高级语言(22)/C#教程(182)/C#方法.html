@@ -1,0 +1,184 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">C#方法</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>C#中的方法是一组执行任务的语句。 每个 C# 程序至少有一个类包含一个名称为<code>Main()</code>的方法。</p> 
+ <p>要使用方法，需要：</p> 
+ <ul> 
+  <li>定义方法</li>
+  <li>调用方法</li>
+ </ul> 
+ <h2 id="h2-c-"><a name="C# 中定义方法" class="reference-link"></a><span class="header-link octicon octicon-link"></span>C# 中定义方法</h2>
+ <p>当要定义一个方法时，需要声明它的结构元素。 C# 中定义方法的语法如下：</p> 
+ <pre><code class="lang-csharp">&lt;Access Specifier&gt; &lt;Return Type&gt; &lt;Method Name&gt;(Parameter List)
+{
+   Method Body
+}
+</code></pre> 
+ <p>以下是方法中的各种元素说明：</p> 
+ <ul> 
+  <li>访问说明符(<em>Access Specifier</em>)：这决定了一个类的变量或方法的可见性。</li>
+  <li>返回类型(<em>Return type</em>)：方法可能返回一个值。返回类型是方法返回的值的数据类型。 如果方法没有返回任何值，则返回类型为<code>void</code>。</li>
+  <li>方法名称(<em>Method Name</em>)：方法名称是唯一标识符，区分大小写。它不能与在类中声明的任何其他标识符相同。</li>
+  <li>参数列表(<em>Parameter list</em>)：括号内的参数用于从方法传递和接收数据。参数列表是指方法参数的类型，顺序和编号。参数是可选的; 也就是说，方法可能不使用参数。</li>
+  <li>方法体(<em>Method body</em>)：这包含完成所需操作的一组代码语句和具体实现。</li>
+ </ul> 
+ <h2 id="h2-u4F8Bu5B50"><a name="例子" class="reference-link"></a><span class="header-link octicon octicon-link"></span>例子</h2>
+ <p>以下代码片段显示了一个函数<code>FindMax</code>，它使用两个整数值，并返回两者中较大的一个。 它具有公共访问说明符，因此可以使用类的实例从类外部访问它。</p> 
+ <pre><code class="lang-csharp">class NumberManipulator
+{
+   public int FindMax(int num1, int num2)
+   {
+      /* local variable declaration */
+      int result;
+
+      if (num1 &gt; num2)
+         result = num1;
+      else
+         result = num2;
+
+      return result;
+   }
+   ...
+}
+</code></pre> 
+ <h2 id="h2-c-"><a name="C# 中的调用方法" class="reference-link"></a><span class="header-link octicon octicon-link"></span>C# 中的调用方法</h2>
+ <p>可以使用方法的名称调用方法。以下示例说明了这一点：</p> 
+ <pre><code class="lang-csharp">using System;
+namespace CalculatorApplication
+{
+   class NumberManipulator
+   {
+      public int FindMax(int num1, int num2)
+      {
+         /* local variable declaration */
+         int result;
+
+         if (num1 &gt; num2)
+            result = num1;
+         else
+            result = num2;
+         return result;
+      }
+      static void Main(string[] args)
+      {
+         /* local variable definition */
+         int a = 101;
+         int b = 199;
+         int ret;
+         NumberManipulator n = new NumberManipulator();
+
+         //calling the FindMax method
+         ret = n.FindMax(a, b);
+         Console.WriteLine("Max value is : {0}", ret );
+         Console.ReadLine();
+      }
+   }
+}
+</code></pre> 
+ <p>当编译和执行上述代码时，会产生以下结果：</p> 
+ <pre><code class="lang-shell">Max value is : 199
+</code></pre> 
+ <p>还可以使用该类的实例从其他类调用<code>public</code>方法。 例如，<code>FindMax</code>方法属于<code>NumberManipulator</code>类的成员，可以从另一个类<code>Test</code>中调用它。</p> 
+ <pre><code class="lang-csharp">using System;
+namespace CalculatorApplication
+{
+   class NumberManipulator
+   {
+      public int FindMax(int num1, int num2)
+      {
+         /* local variable declaration */
+         int result;
+
+         if(num1 &gt; num2)
+            result = num1;
+         else
+            result = num2;
+
+         return result;
+      }
+   }
+
+   class Test
+   {
+      static void Main(string[] args)
+      {
+         /* local variable definition */
+         int a = 100;
+         int b = 200;
+         int ret;
+         NumberManipulator n = new NumberManipulator();
+
+         //calling the FindMax method
+         ret = n.FindMax(a, b);
+         Console.WriteLine("Max value is : {0}", ret );
+         Console.ReadLine();
+      }
+   }
+}
+</code></pre> 
+ <p>当编译和执行上述代码时，会产生以下结果：</p>   
+ <pre><code class="lang-shell">Max value is : 200
+</code></pre> 
+ <h2 id="h2-u9012u5F52u65B9u6CD5u8C03u7528"><a name="递归方法调用" class="reference-link"></a><span class="header-link octicon octicon-link"></span>递归方法调用</h2>
+ <p>递归方法是一种可以调用自身的方法。以下是使用递归函数来计算给定数值的阶乘的示例：</p> 
+ <pre><code class="lang-csharp">using System;
+namespace CalculatorApplication
+{
+   class NumberManipulator
+   {
+      public int factorial(int num)
+      {
+         /* local variable declaration */
+         int result;
+         if (num == 1)
+         {
+            return 1;
+         }
+         else
+         {
+            result = factorial(num - 1) * num;
+            return result;
+         }
+      }
+
+      static void Main(string[] args)
+      {
+         NumberManipulator n = new NumberManipulator();
+         //calling the factorial method
+         Console.WriteLine("Factorial of 6 is : {0}", n.factorial(6));
+         Console.WriteLine("Factorial of 7 is : {0}", n.factorial(7));
+         Console.WriteLine("Factorial of 8 is : {0}", n.factorial(8));
+         Console.ReadLine();
+      }
+   }
+}
+</code></pre> 
+ <p>当编译和执行上述代码时，会产生以下结果：</p> 
+ <pre><code class="lang-shell">Factorial of 6 is: 720
+Factorial of 7 is: 5040
+Factorial of 8 is: 40320
+</code></pre> 
+ <h2 id="h2-u5C06u53C2u6570u4F20u9012u7ED9u65B9u6CD5"><a name="将参数传递给方法" class="reference-link"></a><span class="header-link octicon octicon-link"></span>将参数传递给方法</h2>
+ <p>调用参数的方法时，需要将参数传递给方法。有三种方式可以将参数传递给方法，分别如下表格中所列：</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>机制</th> 
+    <th>简介</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td><a target="_blank" href="http://www.yiibai.com/csharp/csharp_value_parameters.html" title="按值传递参数">按值传递参数</a></td> 
+    <td>将参数的实际值复制到函数的形式参数中。在函数内对参数所做的更改对参数没有影响。</td> 
+   </tr> 
+   <tr> 
+    <td><a target="_blank" href="http://www.yiibai.com/csharp/csharp_reference_parameters.html" title="按引用传递参数">按引用传递参数</a></td> 
+    <td>将对参数的内存位置的引用复制到形式参数中，在函数内对参数的更改会影响参数值。</td> 
+   </tr> 
+   <tr> 
+    <td><a target="_blank" href="http://www.yiibai.com/csharp/csharp_output_parameters.html" title="输出参数">输出参数</a></td> 
+    <td>此方法用于返回多个值。</td> 
+   </tr> 
+  </tbody> 
+ </table>
+ <br>      
+</div></body></html>

@@ -1,0 +1,432 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Kotlin调用Java代码</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>Kotlin 在设计时就考虑了 Java 互操作性。可以从 Kotlin 中自然地调用现存的 Java 代码，并且在 Java 代码中也可以<br>很顺利地调用 Kotlin 代码。在本节中我们会介绍从 Kotlin 中调用 Java 代码的一些细节。</p> 
+ <p>几乎所有 Java 代码都可以使用而没有任何问题</p> 
+ <pre><code class="lang-kotlin">import java.util.*
+
+fun demo(source: List&lt;Int&gt;) {
+    val list = ArrayList&lt;Int&gt;()
+    // “for”-循环用于 Java 集合：
+    for (item in source) {
+        list.add(item)
+    }
+    // 操作符约定同样有效：
+    for (i in 0..source.size() - 1) {
+        list[i] = source[i] // 调用 get 和 set
+    }
+}
+</code></pre> 
+ <h2 id="h2-getter-setter"><a name="Getter 和 Setter" class="reference-link"></a><span class="header-link octicon octicon-link"></span>Getter 和 Setter</h2>
+ <p>遵循 Java 约定的 getter 和 setter 的方法(名称以 <code>get</code> 开头的无参数方法和<br>以 <code>set</code> 开头的单参数方法)在 Kotlin 中表示为属性。 例如：</p> 
+ <pre><code class="lang-kotlin">import java.util.Calendar
+
+fun calendarDemo() {
+    val calendar = Calendar.getInstance()
+    if (calendar.firstDayOfWeek == Calendar.SUNDAY) {  // 调用 getFirstDayOfWeek()
+        calendar.firstDayOfWeek = Calendar.MONDAY       // 调用 setFirstDayOfWeek()
+    }
+}
+</code></pre> 
+ <p>请注意，如果 Java 类只有一个 setter，它在 Kotlin 中不会作为属性可见，因为 Kotlin 目前不支持只写(set-only)属性。</p> 
+ <h2 id="h2--void-"><a name="返回 void 的方法" class="reference-link"></a><span class="header-link octicon octicon-link"></span>返回 void 的方法</h2>
+ <p>如果一个 Java 方法返回 void，那么从 Kotlin 调用时中返回 <code>Unit</code>。<br>万一有人使用其返回值，它将由 Kotlin 编译器在调用处赋值，<br>因为该值本身是预先知道的(是 <code>Unit</code>)。</p> 
+ <h2 id="h2--kotlin-java-"><a name="将 Kotlin 中是关键字的 Java 标识符进行转义" class="reference-link"></a><span class="header-link octicon octicon-link"></span>将 Kotlin 中是关键字的 Java 标识符进行转义</h2>
+ <p>一些 Kotlin 关键字在 Java 中是有效标识符：<em>in</em>{: .keyword }、 <em>object</em>{: .keyword }、 <em>is</em>{: .keyword } 等等。<br>如果一个 Java 库使用了 Kotlin 关键字作为方法，你仍然可以通过反引号(`)字符转义它<br>来调用该方法</p> 
+ <pre><code class="lang-kotlin">foo.`is`(bar)
+</code></pre> 
+ <h2 id="h2-u7A7Au5B89u5168u548Cu5E73u53F0u7C7Bu578B"><a name="空安全和平台类型" class="reference-link"></a><span class="header-link octicon octicon-link"></span>空安全和平台类型</h2>
+ <p>Java 中的任何引用都可能是 <em>null</em>{: .keyword }，这使得 Kotlin 对来自 Java 的对象要求严格空安全是不现实的。<br>Java 声明的类型在 Kotlin 中会被特别对待并称为<em>平台类型</em>。对这种类型的空检查会放宽，<br>因此它们的安全保证与在 Java 中相同(更多请参见<a target="_blank" href="#已映射类型">下文</a>)。</p> 
+ <p>考虑以下示例：</p> 
+ <pre><code class="lang-kotlin">val list = ArrayList&lt;String&gt;() // 非空(构造函数结果)
+list.add("Item")
+val size = list.size() // 非空(原生 int)
+val item = list[0] // 推断为平台类型(普通 Java 对象)
+</code></pre> 
+ <p>当我们调用平台类型变量的方法时，Kotlin 不会在编译时报告可空性错误，<br>但在运行时调用可能会失败，因为空指针异常或者 Kotlin 生成的阻止空值传播的断言：</p> 
+ <pre><code class="lang-kotlin">item.substring(1) // 允许，如果 item == null 可能会抛出异常
+</code></pre> 
+ <p>平台类型是<em>不可标示</em>的，意味着不能在语言中明确地写下它们。<br>当把一个平台值赋值给一个 Kotlin 变量时，可以依赖类型推断(该变量会具有推断出的的平台类型，<br>如上例中 <code>item</code> 所具有的类型)，或者我们可以选择我们期望的类型(可空或非空类型均可)：</p> 
+ <pre><code class="lang-kotlin">val nullable: String? = item // 允许，没有问题
+val notNull: String = item // 允许，运行时可能失败
+</code></pre> 
+ <p>如果我们选择非空类型，编译器会在赋值时触发一个断言。这防止 Kotlin 的非空变量保存<br>空值。当我们把平台值传递给期待非空值等的 Kotlin 函数时，也会触发断言。<br>总的来说，编译器尽力阻止空值通过程序向远传播(尽管鉴于泛型的原因，有时这<br>不可能完全消除)。</p> 
+ <h3 id="h3-u5E73u53F0u7C7Bu578Bu8868u793Au6CD5"><a name="平台类型表示法" class="reference-link"></a><span class="header-link octicon octicon-link"></span>平台类型表示法</h3>
+ <p>如上所述，平台类型不能在程序中显式表述，因此在语言中没有相应语法。<br>然而，编译器和 IDE 有时需要(在错误信息中、参数信息中等)显示他们，所以我们用<br>一个助记符来表示他们：</p> 
+ <ul> 
+  <li><code>T!</code> 表示“<code>T</code> 或者 <code>T?</code>”，</li>
+  <li><code>(Mutable)Collection&lt;T&gt;!</code> 表示“可以可变或不可变、可空或不可空的 <code>T</code> 的 Java 集合”，</li>
+  <li><code>Array&lt;(out) T&gt;!</code> 表示“可空或者不可空的 <code>T</code>(或 <code>T</code> 的子类型)的 Java 数组”</li>
+ </ul> 
+ <h3 id="h3-u53EFu7A7Au6027u6CE8u89E3"><a name="可空性注解" class="reference-link"></a><span class="header-link octicon octicon-link"></span>可空性注解</h3>
+ <p>具有可空性注解的Java类型并不表示为平台类型，而是表示为实际可空或非空的<br>Kotlin 类型。编译器支持多种可空性注解，包括：</p> 
+ <ul> 
+  <li><a target="_blank" href="https://www.jetbrains.com/idea/help/nullable-and-notnull-annotations.html">JetBrains</a><br>(<code>org.jetbrains.annotations</code> 包中的 <code><a target="_blank" href="https://github.com/Nullable" title="@Nullable" class="at-link">@Nullable</a></code> 和 <code><a target="_blank" href="https://github.com/NotNull" title="@NotNull" class="at-link">@NotNull</a></code>)</li>
+  <li>Android(<code>com.android.annotations</code> 和 <code>android.support.annotations</code>)</li>
+  <li>JSR-305(<code>javax.annotation</code>)</li>
+  <li>FindBugs(<code>edu.umd.cs.findbugs.annotations</code>)</li>
+  <li>Eclipse(<code>org.eclipse.jdt.annotation</code>)</li>
+  <li>Lombok(<code>lombok.NonNull</code>)。</li>
+ </ul> 
+ <p>你可以在 <a target="_blank" href="https://github.com/JetBrains/kotlin/blob/master/core/descriptor.loader.java/src/org/jetbrains/kotlin/load/java/JvmAnnotationNames.kt">Kotlin 编译器源代码</a>中找到完整的列表。</p> 
+ <h2 id="h2-u5DF2u6620u5C04u7C7Bu578B"><a name="已映射类型" class="reference-link"></a><span class="header-link octicon octicon-link"></span>已映射类型</h2>
+ <p>Kotlin 特殊处理一部分 Java 类型。这样的类型不是“按原样”从 Java 加载，而是 <em>映射</em> 到相应的 Kotlin 类型。<br>映射只发生在编译期间，运行时表示保持不变。<br>Java 的原生类型映射到相应的 Kotlin 类型(请记住<a target="_blank" href="#空安全和平台类型">平台类型</a>)：</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th><strong>Java 类型</strong></th> 
+    <th><strong>Kotlin 类型</strong></th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td><code>byte</code></td> 
+    <td><code>kotlin.Byte</code></td> 
+   </tr> 
+   <tr> 
+    <td><code>short</code></td> 
+    <td><code>kotlin.Short</code></td> 
+   </tr> 
+   <tr> 
+    <td><code>int</code></td> 
+    <td><code>kotlin.Int</code></td> 
+   </tr> 
+   <tr> 
+    <td><code>long</code></td> 
+    <td><code>kotlin.Long</code></td> 
+   </tr> 
+   <tr> 
+    <td><code>char</code></td> 
+    <td><code>kotlin.Char</code></td> 
+   </tr> 
+   <tr> 
+    <td><code>float</code></td> 
+    <td><code>kotlin.Float</code></td> 
+   </tr> 
+   <tr> 
+    <td><code>double</code></td> 
+    <td><code>kotlin.Double</code></td> 
+   </tr> 
+   <tr> 
+    <td><code>boolean</code></td> 
+    <td><code>kotlin.Boolean</code></td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p>{:.zebra}</p> 
+ <p>一些非原生的内置类型也会作映射：</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th><strong>Java 类型</strong></th> 
+    <th><strong>Kotlin 类型</strong></th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td><code>java.lang.Object</code></td> 
+    <td><code>kotlin.Any!</code></td> 
+   </tr> 
+   <tr> 
+    <td><code>java.lang.Cloneable</code></td> 
+    <td><code>kotlin.Cloneable!</code></td> 
+   </tr> 
+   <tr> 
+    <td><code>java.lang.Comparable</code></td> 
+    <td><code>kotlin.Comparable!</code></td> 
+   </tr> 
+   <tr> 
+    <td><code>java.lang.Enum</code></td> 
+    <td><code>kotlin.Enum!</code></td> 
+   </tr> 
+   <tr> 
+    <td><code>java.lang.Annotation</code></td> 
+    <td><code>kotlin.Annotation!</code></td> 
+   </tr> 
+   <tr> 
+    <td><code>java.lang.Deprecated</code></td> 
+    <td><code>kotlin.Deprecated!</code></td> 
+   </tr> 
+   <tr> 
+    <td><code>java.lang.CharSequence</code></td> 
+    <td><code>kotlin.CharSequence!</code></td> 
+   </tr> 
+   <tr> 
+    <td><code>java.lang.String</code></td> 
+    <td><code>kotlin.String!</code></td> 
+   </tr> 
+   <tr> 
+    <td><code>java.lang.Number</code></td> 
+    <td><code>kotlin.Number!</code></td> 
+   </tr> 
+   <tr> 
+    <td><code>java.lang.Throwable</code></td> 
+    <td><code>kotlin.Throwable!</code></td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p>{:.zebra}</p> 
+ <p>Java 的装箱原始类型映射到可空的 Kotlin 类型：</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th><strong>Java type</strong></th> 
+    <th><strong>Kotlin type</strong></th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td><code>java.lang.Byte</code></td> 
+    <td><code>kotlin.Byte?</code></td> 
+   </tr> 
+   <tr> 
+    <td><code>java.lang.Short</code></td> 
+    <td><code>kotlin.Short?</code></td> 
+   </tr> 
+   <tr> 
+    <td><code>java.lang.Integer</code></td> 
+    <td><code>kotlin.Int?</code></td> 
+   </tr> 
+   <tr> 
+    <td><code>java.lang.Long</code></td> 
+    <td><code>kotlin.Long?</code></td> 
+   </tr> 
+   <tr> 
+    <td><code>java.lang.Char</code></td> 
+    <td><code>kotlin.Char?</code></td> 
+   </tr> 
+   <tr> 
+    <td><code>java.lang.Float</code></td> 
+    <td><code>kotlin.Float?</code></td> 
+   </tr> 
+   <tr> 
+    <td><code>java.lang.Double</code></td> 
+    <td><code>kotlin.Double?</code></td> 
+   </tr> 
+   <tr> 
+    <td><code>java.lang.Boolean</code></td> 
+    <td><code>kotlin.Boolean?</code></td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p>{:.zebra}</p> 
+ <p>请注意，用作类型参数的装箱原始类型映射到平台类型：<br>例如，<code>List&lt;java.lang.Integer&gt;</code> 在 Kotlin 中会成为 <code>List&lt;Int!&gt;</code>。</p> 
+ <p>集合类型在 Kotlin 中可以是只读的或可变的，因此 Java 集合类型作如下映射：<br>(下表中的所有 Kotlin 类型都驻留在 <code>kotlin.collections</code>包中):</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th><strong>Java 类型</strong></th> 
+    <th><strong>Kotlin 只读类型</strong></th> 
+    <th><strong>Kotlin 可变类型</strong></th> 
+    <th><strong>加载的平台类型</strong></th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td><code>Iterator&lt;T&gt;</code></td> 
+    <td><code>Iterator&lt;T&gt;</code></td> 
+    <td><code>MutableIterator&lt;T&gt;</code></td> 
+    <td><code>(Mutable)Iterator&lt;T&gt;!</code></td> 
+   </tr> 
+   <tr> 
+    <td><code>Iterable&lt;T&gt;</code></td> 
+    <td><code>Iterable&lt;T&gt;</code></td> 
+    <td><code>MutableIterable&lt;T&gt;</code></td> 
+    <td><code>(Mutable)Iterable&lt;T&gt;!</code></td> 
+   </tr> 
+   <tr> 
+    <td><code>Collection&lt;T&gt;</code></td> 
+    <td><code>Collection&lt;T&gt;</code></td> 
+    <td><code>MutableCollection&lt;T&gt;</code></td> 
+    <td><code>(Mutable)Collection&lt;T&gt;!</code></td> 
+   </tr> 
+   <tr> 
+    <td><code>Set&lt;T&gt;</code></td> 
+    <td><code>Set&lt;T&gt;</code></td> 
+    <td><code>MutableSet&lt;T&gt;</code></td> 
+    <td><code>(Mutable)Set&lt;T&gt;!</code></td> 
+   </tr> 
+   <tr> 
+    <td><code>List&lt;T&gt;</code></td> 
+    <td><code>List&lt;T&gt;</code></td> 
+    <td><code>MutableList&lt;T&gt;</code></td> 
+    <td><code>(Mutable)List&lt;T&gt;!</code></td> 
+   </tr> 
+   <tr> 
+    <td><code>ListIterator&lt;T&gt;</code></td> 
+    <td><code>ListIterator&lt;T&gt;</code></td> 
+    <td><code>MutableListIterator&lt;T&gt;</code></td> 
+    <td><code>(Mutable)ListIterator&lt;T&gt;!</code></td> 
+   </tr> 
+   <tr> 
+    <td><code>Map&lt;K, V&gt;</code></td> 
+    <td><code>Map&lt;K, V&gt;</code></td> 
+    <td><code>MutableMap&lt;K, V&gt;</code></td> 
+    <td><code>(Mutable)Map&lt;K, V&gt;!</code></td> 
+   </tr> 
+   <tr> 
+    <td><code>Map.Entry&lt;K, V&gt;</code></td> 
+    <td><code>Map.Entry&lt;K, V&gt;</code></td> 
+    <td><code>MutableMap.MutableEntry&lt;K,V&gt;</code></td> 
+    <td><code>(Mutable)Map.(Mutable)Entry&lt;K, V&gt;!</code></td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p>{:.zebra}</p> 
+ <p>Java 的数组按<a target="_blank" href="java-interop.html#java-数组">下文</a>所述映射：</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th><strong>Java 类型</strong></th> 
+    <th><strong>Kotlin 类型</strong></th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td><code>int[]</code></td> 
+    <td><code>kotlin.IntArray!</code></td> 
+   </tr> 
+   <tr> 
+    <td><code>String[]</code></td> 
+    <td><code>kotlin.Array&lt;(out) String&gt;!</code></td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p>{:.zebra}</p> 
+ <h2 id="h2-kotlin-java-"><a name="Kotlin 中的 Java 泛型" class="reference-link"></a><span class="header-link octicon octicon-link"></span>Kotlin 中的 Java 泛型</h2>
+ <p>Kotlin 的泛型与 Java 有点不同(参见<a target="_blank" href="generics.html">泛型</a>)。当将 Java 类型导入 Kotlin 时，我们会执行一些转换：</p> 
+ <ul> 
+  <li><p>Java 的通配符转换成类型投影</p> 
+   <ul> 
+    <li><code>Foo&lt;? extends Bar&gt;</code> 转换成 <code>Foo&lt;out Bar!&gt;!</code></li>
+    <li><code>Foo&lt;? super Bar&gt;</code> 转换成 <code>Foo&lt;in Bar!&gt;!</code></li>
+   </ul> </li>
+  <li><p>Java的原始类型转换成星投影</p> 
+   <ul> 
+    <li><code>List</code> 转换成 <code>List&lt;*&gt;!</code>，即 <code>List&lt;out Any?&gt;!</code></li>
+   </ul> </li>
+ </ul> 
+ <p>和 Java 一样，Kotlin 在运行时不保留泛型，即对象不携带传递到他们构造器中的那些类型参数的实际类型。<br>即 <code>ArrayList&lt;Integer&gt;()</code> 和 <code>ArrayList&lt;Character&gt;()</code> 是不能区分的。<br>这使得执行 <em>is</em>{: .keyword }-检测不可能照顾到泛型。<br>Kotlin 只允许 <em>is</em>{: .keyword }-检测星投影的泛型类型：</p> 
+ <pre><code class="lang-kotlin">if (a is List&lt;Int&gt;) // 错误：无法检查它是否真的是一个 Int 列表
+// but
+if (a is List&lt;*&gt;) // OK：不保证列表的内容
+</code></pre> 
+ <h3 id="h3-java-"><a name="Java 数组" class="reference-link"></a><span class="header-link octicon octicon-link"></span>Java 数组</h3>
+ <p>与 Java 不同，Kotlin 中的数组是不型变的。这意味着 Kotlin 不允许我们把一个 <code>Array&lt;String&gt;</code> 赋值给一个 <code>Array&lt;Any&gt;</code>，<br>从而避免了可能的运行时故障。Kotlin 也禁止我们把一个子类的数组当做超类的数组传递给 Kotlin 的方法，<br>但是对于 Java 方法，这是允许的(通过 <code>Array&lt;(out) String&gt;!</code> 这种形式的<a target="_blank" href="#空安全和平台类型">平台类型</a>)。</p> 
+ <p>Java 平台上，数组会使用原生数据类型以避免装箱/拆箱操作的开销。<br>由于 Kotlin 隐藏了这些实现细节，因此需要一个变通方法来与 Java 代码进行交互。<br>对于每种原生类型的数组都有一个特化的类(<code>IntArray</code>、 <code>DoubleArray</code>、 <code>CharArray</code> 等等)来处理这种情况。<br>它们与 <code>Array</code> 类无关，并且会编译成 Java 原生类型数组以获得最佳性能。</p> 
+ <p>假设有一个接受 int 数组索引的 Java 方法：</p>   
+ <pre><code class="lang-java">public class JavaArrayExample {
+
+    public void removeIndices(int[] indices) {
+        // 在此编码……
+    }
+}
+</code></pre> 
+ <p>在 Kotlin 中你可以这样传递一个原生类型的数组：</p> 
+ <pre><code class="lang-kotlin">val javaObj = JavaArrayExample()
+val array = intArrayOf(0, 1, 2, 3)
+javaObj.removeIndices(array)  // 将 int[] 传给方法
+</code></pre> 
+ <p>当编译为 JVM 字节代码时，编译器会优化对数组的访问，这样就不会引入任何开销：</p> 
+ <pre><code class="lang-kotlin">val array = arrayOf(1, 2, 3, 4)
+array[x] = array[x] * 2 // 不会实际生成对 get() 和 set() 的调用
+for (x in array) { // 不会创建迭代器
+    print(x)
+}
+</code></pre> 
+ <p>即使当我们使用索引定位时，也不会引入任何开销</p> 
+ <pre><code class="lang-kotlin">for (i in array.indices) {// 不会创建迭代器
+    array[i] += 2
+}
+</code></pre> 
+ <p>最后，<em>in</em>{: .keyword }-检测也没有额外开销</p> 
+ <pre><code class="lang-kotlin">if (i in array.indices) { // 同 (i &gt;= 0 &amp;&amp; i &lt; array.size)
+    print(array[i])
+}
+</code></pre> 
+ <h2 id="h2-java-"><a name="Java 可变参数" class="reference-link"></a><span class="header-link octicon octicon-link"></span>Java 可变参数</h2>
+ <p>Java 类有时声明一个具有可变数量参数(varargs)的方法来使用索引。</p> 
+ <pre><code class="lang-java">public class JavaArrayExample {
+
+    public void removeIndices(int... indices) {
+        // 在此编码……
+    }
+}
+</code></pre> 
+ <p>在这种情况下，你需要使用展开运算符 <code>*</code> 来传递 <code>IntArray</code>：</p> 
+ <pre><code class="lang-kotlin">val javaObj = JavaArray()
+val array = intArrayOf(0, 1, 2, 3)
+javaObj.removeIndicesVarArg(*array)
+</code></pre> 
+ <p>目前无法传递 <em>null</em>{: .keyword } 给一个声明为可变参数的方法。</p> 
+ <h2 id="h2-u64CDu4F5Cu7B26"><a name="操作符" class="reference-link"></a><span class="header-link octicon octicon-link"></span>操作符</h2>
+ <p>由于 Java 无法标记用于运算符语法的方法，Kotlin 允许<br>具有正确名称和签名的任何 Java 方法作为运算符重载和其他约定(<code>invoke()</code> 等)使用。<br>不允许使用中缀调用语法调用 Java 方法。</p> 
+ <h2 id="h2-u53D7u68C0u5F02u5E38"><a name="受检异常" class="reference-link"></a><span class="header-link octicon octicon-link"></span>受检异常</h2>
+ <p>在 Kotlin 中，所有异常都是非受检的，这意味着编译器不会强迫你捕获其中的任何一个。<br>因此，当你调用一个声明受检异常的 Java 方法时，Kotlin 不会强迫你做任何事情：</p> 
+ <pre><code class="lang-kotlin">fun render(list: List&lt;*&gt;, to: Appendable) {
+    for (item in list) {
+        to.append(item.toString()) // Java 会要求我们在这里捕获 IOException
+    }
+}
+</code></pre> 
+ <h2 id="h2-u5BF9u8C61u65B9u6CD5"><a name="对象方法" class="reference-link"></a><span class="header-link octicon octicon-link"></span>对象方法</h2>
+ <p>当 Java 类型导入到 Kotlin 中时，类型 <code>java.lang.Object</code> 的所有引用都成了 <code>Any</code>。<br>而因为 <code>Any</code> 不是平台指定的，它只声明了 <code>toString()</code>、<code>hashCode()</code> 和 <code>equals()</code> 作为其成员，<br>所以为了能用到 <code>java.lang.Object</code> 的其他成员，Kotlin 要用到<a target="_blank" href="extensions.html">扩展函数</a>。</p> 
+ <h3 id="h3-wait-notify-"><a name="wait()/notify()" class="reference-link"></a><span class="header-link octicon octicon-link"></span>wait()/notify()</h3>
+ <p><a target="_blank" href="http://www.oracle.com/technetwork/java/effectivejava-136174.html">Effective Java</a> 第 69 条善意地建议优先使用并发工具(concurrency utilities)而不是 <code>wait()</code> 和 <code>notify()</code>。<br>因此，类型 <code>Any</code> 的引用不提供这两个方法。<br>如果你真的需要调用它们的话，你可以将其转换为 <code>java.lang.Object</code>：</p> 
+ <pre><code class="lang-kotlin">(foo as java.lang.Object).wait()
+</code></pre> 
+ <h3 id="h3-getclass-"><a name="getClass()" class="reference-link"></a><span class="header-link octicon octicon-link"></span>getClass()</h3>
+ <p>要取得对象的 Java 类，请在<a target="_blank" href="reflection.html#类引用">类引用</a>上使用 <code>java</code> 扩展属性。</p> 
+ <pre><code class="lang-kotlin">val fooClass = foo::class.java
+</code></pre> 
+ <p>上面的代码使用了自 Kotlin 1.1 起支持的<a target="_blank" href="reflection.html#绑定的类引用(自-11-起)">绑定的类引用</a>。你也可以使用 <code>javaClass</code> 扩展属性。</p> 
+ <pre><code class="lang-kotlin">val fooClass = foo.javaClass
+</code></pre> 
+ <h3 id="h3-clone-"><a name="clone()" class="reference-link"></a><span class="header-link octicon octicon-link"></span>clone()</h3>
+ <p>要覆盖 <code>clone()</code>，需要继承 <code>kotlin.Cloneable</code>：</p> 
+ <pre><code class="lang-kotlin">
+class Example : Cloneable {
+    override fun clone(): Any { …… }
+}
+</code></pre> 
+ <p>不要忘记 <a target="_blank" href="http://www.oracle.com/technetwork/java/effectivejava-136174.html">Effective Java</a> 的第 11 条: <em>谨慎地改写clone</em>。</p> 
+ <h3 id="h3-finalize-"><a name="finalize()" class="reference-link"></a><span class="header-link octicon octicon-link"></span>finalize()</h3>
+ <p>要覆盖 <code>finalize()</code>，所有你需要做的就是简单地声明它，而不需要 <em>override</em>{:.keyword} 关键字：</p> 
+ <pre><code class="lang-kotlin">class C {
+    protected fun finalize() {
+        // 终止化逻辑
+    }
+}
+</code></pre> 
+ <p>根据 Java 的规则，<code>finalize()</code> 不能是 <em>private</em>{: .keyword } 的。</p> 
+ <h2 id="h2--java-"><a name="从 Java 类继承" class="reference-link"></a><span class="header-link octicon octicon-link"></span>从 Java 类继承</h2>
+ <p>在 kotlin 中，类的超类中最多只能有一个 Java 类(以及按你所需的多个 Java 接口)。</p> 
+ <h2 id="h2-u8BBFu95EEu9759u6001u6210u5458"><a name="访问静态成员" class="reference-link"></a><span class="header-link octicon octicon-link"></span>访问静态成员</h2>
+ <p>Java 类的静态成员会形成该类的“伴生对象”。我们无法将这样的“伴生对象”作为值来传递，<br>但可以显式访问其成员，例如：</p> 
+ <pre><code class="lang-kotlin">if (Character.isLetter(a)) {
+    // ……
+}
+</code></pre> 
+ <h2 id="h2-java-"><a name="Java 反射" class="reference-link"></a><span class="header-link octicon octicon-link"></span>Java 反射</h2>
+ <p>Java 反射适用于 Kotlin 类，反之亦然。如上所述，你可以使用 <code>instance::class.java</code>,<br><code>ClassName::class.java</code> 或者 <code>instance.javaClass</code> 通过 <code>java.lang.Class</code> 来进入 Java 反射。</p> 
+ <p>其他支持的情况包括为一个 Kotlin 属性获取一个 Java 的 getter/setter 方法或者幕后字段、为一个 Java 字段获取一个 <code>KProperty</code>、为一个 <code>KFunction</code> 获取一个 Java 方法或者构造函数，反之亦然。</p> 
+ <h2 id="h2-sam-"><a name="SAM 转换" class="reference-link"></a><span class="header-link octicon octicon-link"></span>SAM 转换</h2>
+ <p>就像 Java 8 一样，Kotlin 支持 SAM 转换。这意味着 Kotlin 函数字面值可以被自动的转换成<br>只有一个非默认方法的 Java 接口的实现，只要这个方法的参数类型<br>能够与这个 Kotlin 函数的参数类型相匹配。</p> 
+ <p>你可以这样创建 SAM 接口的实例：</p> 
+ <pre><code class="lang-kotlin">val runnable = Runnable { println("This runs in a runnable") }
+</code></pre> 
+ <p>……以及在方法调用中：</p> 
+ <pre><code class="lang-kotlin">val executor = ThreadPoolExecutor()
+// Java 签名：void execute(Runnable command)
+executor.execute { println("This runs in a thread pool") }
+</code></pre> 
+ <p>如果 Java 类有多个接受函数式接口的方法，那么可以通过使用<br>将 lambda 表达式转换为特定的 SAM 类型的适配器函数来选择需要调用的方法。这些适配器函数也会按需<br>由编译器生成。</p> 
+ <pre><code class="lang-kotlin">executor.execute(Runnable { println("This runs in a thread pool") })
+</code></pre> 
+ <p>请注意，SAM 转换只适用于接口，而不适用于抽象类，即使这些抽象类也只有一个<br>抽象方法。</p> 
+ <p>还要注意，此功能只适用于 Java 互操作；因为 Kotlin 具有合适的函数类型，所以不需要将函数自动转换<br>为 Kotlin 接口的实现，因此不受支持。</p> 
+ <h2 id="h2--kotlin-jni"><a name="在 Kotlin 中使用 JNI" class="reference-link"></a><span class="header-link octicon octicon-link"></span>在 Kotlin 中使用 JNI</h2>
+ <p>要声明一个在本地(C 或 C++)代码中实现的函数，你需要使用 <code>external</code> 修饰符来标记它：</p> 
+ <pre><code class="lang-kotlin">external fun foo(x: Int): Double
+</code></pre> 
+ <p>其余的过程与 Java 中的工作方式完全相同。</p>
+ <br>      
+</div></body></html>

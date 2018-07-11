@@ -1,0 +1,180 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Django发送E-mail</h1><div style="width:100%;float:left;" class="article-content">   
+ <div> 
+  <div>
+    Django提供了一个现成的，易于使用发送电子邮件的轻型引擎。类似Python，你需要导入 smtplib。在Django中只需要导入django.core.mail。&nbsp;要发送电子邮件，编辑项目settings.py文件，并设置下列选项&nbsp;− 
+  </div> 
+ </div> 
+ <div> 
+  <ul> 
+   <li> <p style="text-align:justify;"> <strong>EMAIL_HOST</strong>&nbsp;− smtp 服务器 </p> </li> 
+   <li> <p style="text-align:justify;"> <strong>EMAIL_HOST_USER</strong>&nbsp;−&nbsp;登录凭证SMTP服务器 </p> </li> 
+   <li> <p style="text-align:justify;"> <strong>EMAIL_HOST_PASSWORD</strong>&nbsp;−&nbsp;SMTP服务器密码凭证 </p> </li> 
+   <li> <p style="text-align:justify;"> <strong>EMAIL_PORT</strong>&nbsp;− smtp服务器端口 </p> </li> 
+   <li> <p style="text-align:justify;"> <strong>EMAIL_USE_TLS</strong> 或 <strong>_SSL</strong>&nbsp;−&nbsp;如果设置为True则为安全连接。 </p> </li> 
+  </ul> 
+  <h2> 发送一个简单的电子邮件 </h2> 
+  <div>
+    让我们创建一个“sendSimpleEmail”视图发送一个简单的电子邮件。 
+  </div> 
+  <pre>from django.core.mail import send_mail
+from django.http import HttpResponse
+
+def sendSimpleEmail(request,emailto):
+   res = send_mail("hello paul", "comment tu vas?", "paul@yiibai.com", [emailto])
+   return HttpResponse('%s'%res)&nbsp;</pre> 
+  <p style="text-align:justify;"> 这里是 send_mail 参数的细节&nbsp;− </p> 
+  <ul> 
+   <li> <p style="text-align:justify;"> <strong>subject&nbsp;</strong>− E-mail 标题 </p> </li> 
+   <li> <p style="text-align:justify;"> <strong>message</strong>&nbsp;− E-mail 主题内容 </p> </li> 
+   <li> <p style="text-align:justify;"> <strong>from_email</strong>&nbsp;− E-mail 发送方 </p> </li> 
+   <li> <p style="text-align:justify;"> <strong>recipient_list&nbsp;</strong>−&nbsp;接收者的电子邮件地址列表 </p> </li> 
+   <li> <p style="text-align:justify;"> <strong>fail_silently</strong>&nbsp;−&nbsp;布尔，如果是false，send_mail将在出现错误时引发异常 </p> </li> 
+   <li> <p style="text-align:justify;"> <strong>auth_user</strong>&nbsp;−&nbsp;用户登录，如果不在&nbsp;settings.py&nbsp;中设置 </p> </li> 
+   <li> <p style="text-align:justify;"> <strong>auth_password</strong>&nbsp;−&nbsp;用户密码，如果不在 settings.py 设置 </p> </li> 
+   <li> <p style="text-align:justify;"> <strong>connection</strong>&nbsp;− E-mail&nbsp;后端 </p> </li> 
+   <li> <p style="text-align:justify;"> <strong>html_message</strong>&nbsp;−&nbsp;(Django1.7中新增功能)，如果存在的话，该邮件将为&nbsp;multipart/alternative。 </p> </li> 
+  </ul> 
+  <div>
+    让我们访问我们视图的网址&nbsp;- 
+  </div> 
+  <pre>from django.conf.urls import patterns, url
+
+urlpatterns = paterns('myapp.views', url(r'^simpleemail/(?P&lt;emailto&gt;
+   [\w.%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4})/', 
+   'sendSimpleEmail' , name = 'sendSimpleEmail'),)&nbsp;</pre> 
+  <p> 所以，在访问 /myapp/simpleemail/<a target="_blank" href="mailto:polo@gmail.com">polo@gmail.com</a>/&nbsp;的时候，会进入以下页面&nbsp;−<br> <img src="/uploads/tutorial/20160130/1-1601301I12Q42.jpg" alt=""> </p> 
+  <h2> </h2> 
+  <h2> 发送带有 send_mass_mail 多个邮件 </h2> 
+  <p> 方法返回的消息成功传递的数量。&nbsp;这与 send_mail&nbsp;一样但需要一个额外的参数;&nbsp;datatuple，我们 sendMassEmail 视图为− </p> 
+  <pre>from django.core.mail import send_mass_mail
+from django.http import HttpResponse
+
+def sendMassEmail(request,emailto):
+   msg1 = ('subject 1', 'message 1', 'polo@polo.com', [emailto1])
+   msg2 = ('subject 2', 'message 2', 'polo@polo.com', [emailto2])
+   res = send_mass_mail((msg1, msg2), fail_silently = False)
+   return HttpResponse('%<b>s</b>'%res)&nbsp;</pre> 
+  <p> 让我们创建访问我们的视图网址&nbsp;− </p> 
+  <pre>from django.conf.urls import patterns, url
+
+urlpatterns = paterns('myapp.views', url(r'^massEmail/(?P&lt;emailto1&gt;
+   [\w.%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4})/(?P&lt;emailto2&gt;
+   [\w.%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4})', 'sendMassEmail' , name = 'sendMassEmail'),)</pre> 
+  <p> 当我们访问 /myapp/massemail/polo@gmail.com/sorex@gmail.com/, 我们得到 −<br> <img src="/uploads/tutorial/20160130/1-1601301I350632.jpg" alt=""> </p> 
+  <p> send_mass_mail 参数详细如下 − </p> 
+  <ul> 
+   <li> <p style="text-align:justify;"> <strong>datatuples</strong><strong>&nbsp;</strong>−&nbsp;元组，每个元素都是像&nbsp;(subject, message, from_email, recipient_list) </p> </li> 
+   <li> <p style="text-align:justify;"> <strong>fail_silently</strong>&nbsp;−&nbsp;布尔，如果为false，send_mail将在出现错误时引发异常 </p> </li> 
+   <li> <p style="text-align:justify;"> <strong>auth_user</strong>&nbsp;−&nbsp;用户登录，如果不在 settings.py 设置 </p> </li> 
+   <li> <p style="text-align:justify;"> <strong>auth_password</strong>&nbsp;−&nbsp;用户密码，如果不在 settings.py 中设置 </p> </li> 
+   <li> <p style="text-align:justify;"> <strong>connection</strong>&nbsp;− E-mail&nbsp;后端 </p> </li> 
+  </ul> 
+  <div>
+    正如你可以在上面的图片看到，两条消息已成功发送。 
+  </div> 
+  <p> 注&nbsp;-&nbsp;在这个例子中，我们使用Python的smtpd&nbsp;debuggingserver，可以使用下面命令启动&nbsp;− </p> 
+  <pre>$python -m smtpd -n -c DebuggingServer localhost:1025</pre> 
+  <div>
+    这意味着所有已发送的邮件将被打印在stdout和虚拟服务器运行在localhost:1025。 
+  </div> 
+  <div>
+    发送使用mail_admins和mail_managers方法电子邮件给管理员和管理人员 
+  </div> 
+  <p> 这些方法发送电子邮件给网站管理员作为settings.py文件的ADMINS选项定义，网站管理人员在settings.py文件MANAGERS项中定义。假设我们的ADMINS和MANAGERS的看起来如下- </p> 
+  <p> <strong>ADMINS</strong><strong>&nbsp;</strong>= (('polo', 'polo@polo.com'),) </p> 
+  <p> <strong>MANAGERS</strong>&nbsp;= (('popoli', 'popoli@polo.com'),) </p> 
+  <pre>from django.core.mail import mail_admins
+from django.http import HttpResponse
+
+def sendAdminsEmail(request):
+   res = mail_admins('my subject', 'site is going down.')
+   return HttpResponse('<b>%s</b>'%res)</pre> 
+  <div>
+    上面的代码将发送一封电子邮件，在ADMINS部分定义的每个管理员。 
+  </div> 
+  <pre>from django.core.mail import mail_managers
+from django.http import HttpResponse
+
+def sendManagersEmail(request):
+   res = mail_managers('my subject 2', 'Change date on the site.')
+   return HttpResponse('<b>%s</b>'%res)</pre> 
+  <div>
+    上面的代码会发邮件到MANAGERS&nbsp;部分定义的每个管理员。 
+  </div> 
+  <p> 参数详细信息&nbsp;− </p> 
+  <ul> 
+   <li> <p style="text-align:justify;"> <strong>Subject</strong>&nbsp;− E-mail 标题. </p> </li> 
+   <li> <p style="text-align:justify;"> <strong>message</strong>&nbsp;− E-mail 主题. </p> </li> 
+   <li> <p style="text-align:justify;"> <strong>fail_silently</strong>&nbsp;−&nbsp;布尔，如果为false，send_mail将在出现错误时引发异常 </p> </li> 
+   <li> <p style="text-align:justify;"> <strong>connection</strong>&nbsp;− E-mail后端. </p> </li> 
+   <li> <p style="text-align:justify;"> <strong>html_message</strong>&nbsp;−&nbsp;(Django1.7中新增功能)，如果存在的话，该邮件将为&nbsp;multipart/alternative。 </p> </li> 
+  </ul> 
+  <h2> 发送HTML E-mail </h2> 
+  <div>
+    在Django&gt;=1.7发送HTML消息一样简单&nbsp;- 
+  </div>   
+  <pre>from django.core.mail import send_mail
+
+from django.http import HttpResponse
+   res = send_mail("hello paul", "comment tu vas?", "paul@polo.com", 
+         ["polo@gmail.com"], html_message=")</pre> 
+  <div>
+    这将产生一个 multipart/alternative 的邮件。 
+  </div> 
+  <p> 但对于 Django&lt;1.7 发送HTML邮件是通过 django.core.mail.mailMessage 类来完成，然后调用“send”对象− </p> 
+  <div>
+    让我们创建一个“sendHTMLEmail”视图来发送HTML电子邮件。 
+  </div> 
+  <pre>from django.core.mail import EmailMessage
+from django.http import HttpResponse
+
+def sendHTMLEmail(request , emailto):
+   html_content = "&lt;strong&gt;Comment tu vas?&lt;/strong&gt;"
+   email = EmailMessage("my subject", html_content, "paul@polo.com", [emailto])
+   email.content_subtype = "html"
+   res = email.send()
+   return HttpResponse('<b>%s</b>'%res)&nbsp;</pre> 
+  <p> 参数的详细信息的电子邮件消息创建类&nbsp;− </p> 
+  <ul> 
+   <li> <p style="text-align:justify;"> <strong>Subject</strong>&nbsp;− E-mail 标题. </p> </li> 
+   <li> <p style="text-align:justify;"> <strong>message</strong>&nbsp;− E-mail 在HTML主体. </p> </li> 
+   <li> <p style="text-align:justify;"> <strong>from_email</strong>&nbsp;− E-mail 发送方. </p> </li> 
+   <li> <p style="text-align:justify;"> <strong>to</strong>&nbsp;−&nbsp;接收者的电子邮件地址列表。 </p> </li> 
+   <li> <p style="text-align:justify;"> <strong>bcc</strong>&nbsp;−&nbsp;“密件抄送”收件人的电子邮件地址列表。 </p> </li> 
+   <li> <p style="text-align:justify;"> <strong>connection</strong>&nbsp;− E-mail 后端. </p> </li> 
+  </ul> 
+  <p> 让我们创建访问视图网址&nbsp;− </p> 
+  <pre>from django.conf.urls import patterns, url
+
+urlpatterns = paterns('myapp.views', url(r'^htmlemail/(?P&lt;emailto&gt;
+   [\w.%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4})/', 
+   'sendHTMLEmail' , name = 'sendHTMLEmail'),)</pre> 
+  <p> 当我们访问 /myapp/htmlemail/polo@gmail.com, 会得到以下内容 −<br> <img src="/uploads/tutorial/20160130/1-1601301I429227.jpg" alt=""> </p> 
+  <h2> </h2> 
+  <h2> 发送带附件的电子邮件 </h2> 
+  <div>
+    这是通过使用所述EmailMessage对象上的“attach”方法进行。 
+  </div> 
+  <p> 一个视图用于发送一封电子邮件，附件如下&nbsp;− </p> 
+  <pre>from django.core.mail import EmailMessage
+from django.http import HttpResponse
+
+def sendEmailWithAttach(request, emailto):
+   html_content = "<b>Comment tu vas?</b>"
+   email = EmailMessage("my subject", html_content, "paul@polo.com", emailto])
+   email.content_subtype = "html"
+   
+   fd = open('manage.py', 'r')
+   email.attach('manage.py', fd.read(), 'text/plain')
+   
+   res = email.send()
+   return HttpResponse('<b>%s</b>'%res)&nbsp;</pre> 
+  <p> 在附件中的详细参数&nbsp;− </p> 
+  <ul> 
+   <li> <p style="text-align:justify;"> <strong>filename</strong>&nbsp;−&nbsp;附加的文件的名称 </p> </li> 
+   <li> <p style="text-align:justify;"> <strong>content</strong>&nbsp;−&nbsp;该文件的内容，以附加。 </p> </li> 
+   <li> <p style="text-align:justify;"> <strong>mimetype</strong>&nbsp;−&nbsp;附件的内容MIME类型。 </p> </li> 
+  </ul> 
+ </div>
+ <br>      
+</div></body></html>

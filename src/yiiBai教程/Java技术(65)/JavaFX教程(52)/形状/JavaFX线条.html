@@ -1,0 +1,145 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">JavaFX线条</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>为了在<strong>JavaFX</strong>场景上渲染图形，我们需要基本的形状和颜色。</p> 
+ <p><code>Node</code>类是所有<strong>JavaFX</strong>场景图形节点的基本基类。它提供了转换和应用效果到任何节点的能力。</p> 
+ <p><code>javafx.scene.shape.Shape</code>类是<code>Node</code>类的子类。所有较旧的<strong>JavaFX 2.x Builder</strong>中使用，但在<strong>JavaFX 8</strong>中这个类已弃用。</p> 
+ <h2 id="h2-javafx-"><a name="JavaFX线条" class="reference-link"></a><span class="header-link octicon octicon-link"></span>JavaFX线条</h2>
+ <p>当在JavaFX场景图形上绘制时，使用屏幕坐标空间(系统)渲染线。<br>屏幕坐标系将(<code>0，0</code>)放在左上角。<code>x</code>坐标沿着<code>x</code>轴移动点。从上到下移动点时，<code>y</code>坐标值增加。</p> 
+ <p>下图显示了右侧的屏幕坐标系。</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201701/11/726100113_40522.png" alt=""></p> 
+ <p>在JavaFX中，场景图形对象(如线，圆和矩形)是<code>Shape</code>类的派生类。所有形状对象可以在两个成形区域之间执行几何操作，例如减法，相交和并集。要在JavaFX中绘制线条，我们将使用<code>javafx.scene.shape.Line</code>类。<br>要创建一个<code>Line</code>对象，我们需要指定一个<code>start(x，y)</code>坐标和一个结束坐标。<br>在创建线节点时，有两种方法来设置起点和终点。</p> 
+ <p>第一种方法使用具有参数：<code>startX</code>，<code>startY</code>，<code>endX</code>和<code>endY</code>的构造函数。所有参数的数据类型为<code>double</code>。</p> 
+ <p>以下代码使用构造函数创建一个起点(<code>100</code>,<code>10</code>)和终点(<code>10</code>,<code>110</code>)的线条。</p> 
+ <pre><code class="lang-java">Line line = new Line(100, 10,   10,   110);
+</code></pre> 
+ <p>创建线节点的第二种方法是使用空构造函数来实例化一个<code>Line</code>类，然后使用<code>setter</code>方法设置每个属性。<br>以下代码显示如何创建一个线对象，并使用<code>setter</code>方法设置线的起点和终点。</p> 
+ <pre><code class="lang-java">Line line = new Line(); 
+line.setStartX(100); 
+line.setStartY(10); 
+line.setEndX(10); 
+line.setEndY(110);
+</code></pre> 
+ <p>在场景图上绘制的线节点默认为<code>1.0</code>的笔触宽度和黑色的笔触颜色。所有形状的笔触颜色为<code>null</code>，这意味着除了<code>Line</code>，<code>Polyline</code>和<code>Path</code>节点之外没有颜色。</p> 
+ <p>要创建不同类型的线条，可以设置继承自父<code>javafx.scene.shape.Shape</code>类的属性。下表显示了可以在一个线条上设置的属性。</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>属性</th> 
+    <th>数据类型/说明</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>fill</td> 
+    <td><code>javafx.scene.paint.Paint</code> - 用于填充形状内的颜色。</td> 
+   </tr> 
+   <tr> 
+    <td>smooth</td> 
+    <td><code>Boolean</code> - <code>true</code> - 表示打开反锯齿，<code>false</code>表示关闭反锯齿。</td> 
+   </tr> 
+   <tr> 
+    <td>strokeDashOffset</td> 
+    <td><code>Double</code> - 将距离设置为虚线模式。</td> 
+   </tr> 
+   <tr> 
+    <td>strokeLineCap</td> 
+    <td><code>javafx.scene.shape.StrokeLineCap</code> - 在线或路径的末尾设置帽样式。 有三种风格：1.<code>StrokeLineCap.BUTT</code> 2. <code>StrokeLineCap.ROUND</code> 3. <code>StrokeLineCap.SQUARE</code></td> 
+   </tr> 
+   <tr> 
+    <td>strokeLineJoin</td> 
+    <td><code>javafx.scene.shape.StrokeLineJoin</code> - 当线相遇时设置装饰。 有三种类型：1. <code>StrokeLineJoin.MITER</code> 2. <code>StrokeLineJoin.BEVEL</code> 3. <code>StrokeLineJoin.ROUND</code></td> 
+   </tr> 
+   <tr> 
+    <td>strokeMiterLimit</td> 
+    <td><code>Double</code> - 设置斜角连接的限制以及斜角连接装饰<code>StrokeLineJoin.MITER</code>。</td> 
+   </tr> 
+   <tr> 
+    <td>stroke</td> 
+    <td><code>javafx.scene.paint.Paint</code> - 设置形状的笔划线的颜色。</td> 
+   </tr> 
+   <tr> 
+    <td>strokeType</td> 
+    <td><code>javafx.scene.shape.StrokeType</code> - 设置在<code>Shape</code>节点的边界周围绘制描边的位置。有三种类型： 1. <code>StrokeType.CENTERED</code> 2. <code>StrokeType.INSIDE</code> 3. <code>StrokeType.OUTSIDE</code></td> 
+   </tr> 
+   <tr> 
+    <td>strokeWidth</td> 
+    <td><code>Double</code> - 设置线的宽度。</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h2 id="h2--1"><a name="示例 - 1" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例 - 1</h2>
+ <p>以下代码创建一个<code>Line</code>对象，并使用<code>setter</code>方法设置开始和结束坐标。</p>   
+ <pre><code class="lang-java">import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.scene.layout.VBox;
+import javafx.scene.shape.Line;
+import javafx.stage.Stage;
+// at  Ww W.y iIB A i .CO M
+public class Main extends Application {
+
+    @Override
+    public void start(Stage stage) {
+        VBox box = new VBox();
+        final Scene scene = new Scene(box,300, 250);
+        scene.setFill(null);
+
+        Line line = new Line();
+        line.setStartX(0.0f);
+        line.setStartY(0.0f);
+        line.setEndX(100.0f);
+        line.setEndY(100.0f);
+
+        box.getChildren().add(line);
+
+        stage.setScene(scene);
+        stage.show();
+    }
+
+    public static void main(String[] args) {
+        launch(args);
+    }
+}
+</code></pre> 
+ <p>上面的代码生成以下结果。</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201701/11/917100141_55109.png" alt=""></p> 
+ <h2 id="h2--2"><a name="示例 - 2" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例 - 2</h2>
+ <p>以下代码设置更多的线属性，包括笔触颜色，笔触宽度和线帽。之后，它还设置了线的破折号样式。</p> 
+ <pre><code class="lang-java">import javafx.application.Application;
+import javafx.scene.Group;
+import javafx.scene.Scene;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Line;
+import javafx.scene.shape.StrokeLineCap;
+import javafx.stage.Stage;
+
+// =&gt; W w W.y I  I b Ai .c O  M
+public class Main extends Application {
+  @Override
+  public void start(Stage primaryStage) {
+    primaryStage.setTitle("Drawing Lines");
+
+    Group root = new Group();
+    Scene scene = new Scene(root, 300, 150, Color.GRAY);
+
+    Line redLine = new Line(10, 10, 200, 10);
+
+    redLine.setStroke(Color.RED);
+    redLine.setStrokeWidth(10);
+    redLine.setStrokeLineCap(StrokeLineCap.BUTT);
+
+    redLine.getStrokeDashArray().addAll(15d, 5d, 15d, 15d, 20d);
+    redLine.setStrokeDashOffset(10);
+
+    root.getChildren().add(redLine);
+
+    primaryStage.setScene(scene);
+    primaryStage.show();
+  }
+  public static void main(String[] args) {
+    launch(args);
+  }
+}
+</code></pre> 
+ <p>上面的代码生成以下结果。</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201701/11/209100142_82066.png" alt=""></p>
+ <br>      
+</div></body></html>

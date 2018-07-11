@@ -1,0 +1,126 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Cordova InAppBrowser打开Web浏览器</h1><div style="width:100%;float:left;" class="article-content">   
+ <div> 
+  <div>
+    这个插件用于Cordova&nbsp;应用程序内打开Web浏览器。 
+  </div> 
+ </div> 
+ <div> 
+  <h2> 
+   <div>
+     第1步&nbsp;-&nbsp;安装插件 
+   </div> </h2> 
+  <div>
+    我们能够使用这个插件之前，需要在命令提示符窗口中安装这个插件。 
+  </div> 
+  <pre>C:\Users\username\Desktop\CordovaProject&gt;cordova plugin add cordova-plugin-inappbrowser</pre> 
+  <h2> 
+   <div>
+     第2步&nbsp;-&nbsp;添加按钮 
+   </div> </h2> 
+  <div>
+    我们将在 index.html&nbsp;添加一个按钮将用于打开&nbsp;inAppBrowser&nbsp;窗口。 
+  </div> 
+  <h2> 
+   <div>
+     第3步&nbsp;-&nbsp;添加事件监听器 
+   </div> </h2> 
+  <div>
+    现在让我们在index.j为我们的按钮添加事件侦听器到&nbsp;onDeviceReady&nbsp;函数中。 
+  </div> 
+  <pre>document.getElementById("openBrowser").addEventListener("click", openBrowser);</pre> 
+  <h2> 
+   <div>
+     第4步&nbsp;-&nbsp;创建函数 
+   </div> </h2> 
+  <p> 在这一步中，我们创建一个功能，在应用程序内打开浏览器。我们将其分配给之后可以用它来添加事件侦听器的 ref 变量。 </p> 
+  <pre>function openBrowser() {
+   var url = 'https://cordova.apache.org';
+   var target = '_blank';
+   var options = "location=yes"
+   var ref = cordova.InAppBrowser.open(url, target, options);
+
+   ref.addEventListener('loadstart', loadstartCallback);
+   ref.addEventListener('loadstop', loadstopCallback);
+   ref.addEventListener('loadloaderror', loaderrorCallback);
+   ref.addEventListener('exit', exitCallback);
+
+   function loadstartCallback(event) {
+      console.log('Loading started: '  + event.url)
+   }
+
+   function loadstopCallback(event) {
+      console.log('Loading finished: ' + event.url)
+   }
+
+   function loaderrorCallback(error) {
+      console.log('Loading error: ' + error.message)
+   }
+
+   function exitCallback() {
+      console.log('Browser is closed...')
+   }
+}</pre> 
+  <div>
+    如果我们按下&nbsp;BROWSER&nbsp;按钮，将看到屏幕上的以下输出。
+   <br> 
+   <img src="/uploads/tutorial/20160220/1-1602201143302T.jpg" alt="">
+   <br> 
+  </div> 
+  <p> 控制台也将监听事件。loadstart事件将触发当URL开始加载以及loadstop加载URL将闪光。我们可以控制台中看到它在。 </p> 
+  <div>
+    当关闭浏览器，退出事件将触发。 
+  </div> 
+  <div>
+    InAppBrowser窗口其它可能的选择。我们将在下面的表解释。 
+  </div> 
+  <table border="1" cellpadding="2" cellspacing="0" style="font-size:14px;color:#313131;font-family:Verdana, Geneva, Tahoma,  Helvetica, background-color:inherit;"> 
+   <tbody> 
+    <tr> 
+     <th style="border:1px solid #999999;background-color:#EEEEEE;"> option </th> 
+     <th style="border:1px solid #999999;background-color:#EEEEEE;"> details </th> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> location </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <span style="background-color:inherit;font-size:inherit;line-height:1.5;">用来打开浏览器地址栏中打开或关闭。</span>它的值是&nbsp;<b>yes 或</b>&nbsp;<b>no</b> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> hidden </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <span style="background-color:inherit;font-size:inherit;line-height:1.5;">用于隐藏或显示inAppBrowser。</span>&nbsp;<span style="font-family:Verdana, Geneva, Tahoma,  Helvetica, font-size:14px;">它的值是&nbsp;</span><b>yes 或</b><span style="font-family:Verdana, Geneva, Tahoma,  Helvetica, font-size:14px;">&nbsp;</span><b>no</b> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> clearCache </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <span style="background-color:inherit;font-size:inherit;line-height:1.5;">用于清除浏览器的cookie缓存。</span>&nbsp;<span style="font-family:Verdana, Geneva, Tahoma,  Helvetica, font-size:14px;">它的值是&nbsp;</span><b>yes 或</b><span style="font-family:Verdana, Geneva, Tahoma,  Helvetica, font-size:14px;">&nbsp;</span><b>no</b> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> clearsessioncache </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <span style="background-color:inherit;font-size:inherit;line-height:1.5;">用于清除会话cookie缓存。</span><span style="font-family:Verdana, Geneva, Tahoma,  Helvetica, font-size:14px;">它的值是&nbsp;</span><b>yes 或</b><span style="font-family:Verdana, Geneva, Tahoma,  Helvetica, font-size:14px;">&nbsp;</span><b>no</b> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> zoom </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <span style="background-color:inherit;font-size:inherit;line-height:1.5;">用于隐藏或显示Android浏览器的缩放控制。</span><span style="font-family:Verdana, Geneva, Tahoma,  Helvetica, font-size:14px;">它的值是&nbsp;</span><b>yes 或</b><span style="font-family:Verdana, Geneva, Tahoma,  Helvetica, font-size:14px;">&nbsp;</span><b>no</b> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> hardwareback </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <span style="background-color:inherit;font-size:inherit;line-height:1.5;">yes使用于硬件后退按钮导航回到通过浏览器历史记录。</span>&nbsp;<span style="background-color:inherit;font-size:inherit;line-height:1.5;">no用于关闭浏览器，当后退按钮被点击</span> </td> 
+    </tr> 
+   </tbody> 
+  </table> 
+  <p style="font-family:Verdana, Geneva, Tahoma,  Helvetica, text-align:justify;font-size:15px !important;background-color:inherit;"> <span style="background-color:inherit;font-family:微软雅黑;font-size:14px;line-height:1.5;">我们可以用&nbsp;ref(参考)变量为一些其他功能。</span><span style="background-color:inherit;font-family:微软雅黑;font-size:14px;line-height:1.5;">对于删除事件侦听器，可以使用</span><span style="background-color:inherit;line-height:1.5;">&nbsp;−</span> </p>   
+  <pre>ref.removeEventListener(eventname, callback);&nbsp;</pre> 
+  <p> 对于关闭 InAppBrowser 可以使用&nbsp;− </p> 
+  <pre>ref.close();</pre> 
+  <div>
+    如果我们打开了隐藏的窗口，我们可以显示它&nbsp;- 
+  </div> 
+  <pre>ref.show();&nbsp;</pre> 
+  <p> 即使是JavaScript代码可以被注入到InAppBrowser&nbsp;− </p> 
+  <pre>var details = "javascript/file/url"
+ref.executeScript(details, callback);</pre> 
+  <div>
+    可用于注入 CSS&nbsp;- 
+  </div> 
+  <pre>var details = "css/file/url"
+ref.inserCSS(details, callback);</pre> 
+ </div>
+ <br>      
+</div></body></html>

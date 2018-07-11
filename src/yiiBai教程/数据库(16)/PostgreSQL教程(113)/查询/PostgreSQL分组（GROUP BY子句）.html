@@ -1,0 +1,41 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">PostgreSQL分组（GROUP BY子句）</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>PostgreSQL <code>GROUP BY</code>子句用于将具有相同数据的表中的这些行分组在一起。 它与<code>SELECT</code>语句一起使用。</p> 
+ <p><code>GROUP BY</code>子句通过多个记录收集数据，并将结果分组到一个或多个列。 它也用于减少输出中的冗余。</p> 
+ <p><strong>语法：</strong></p> 
+ <pre><code class="lang-sql">SELECT column-list  
+FROM table_name  
+WHERE [conditions ]  
+GROUP BY column1, column2....columnN  
+ORDER BY column1, column2....columnN
+</code></pre> 
+ <blockquote> 
+  <p>注意：在<code>GROUP BY</code>多个列的情况下，您使用的任何列进行分组时，要确保这些列应在列表中可用。</p> 
+ </blockquote> 
+ <p><strong>看看下面的例子：</strong></p> 
+ <p>我们来看一下表“<code>EMPLOYEES</code>”，具有以下数据。</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201704/0804/619090435_86509.png" alt=""></p> 
+ <p>执行以下查询：</p> 
+ <pre><code class="lang-sql">SELECT NAME, SUM(SALARY)   
+FROM EMPLOYEES   
+GROUP BY NAME;
+</code></pre> 
+ <p>查询得到如下结果 -<br><img src="http://www.yiibai.com/uploads/images/201704/0804/665090438_23631.png" alt=""></p> 
+ <h2 id="h2--"><a name="如何减少冗余数据：" class="reference-link"></a><span class="header-link octicon octicon-link"></span>如何减少冗余数据：</h2>
+ <p>再来看看下面这个例子：</p> 
+ <p>我们在“<code>EMPLOYEES</code>”表中插入一些重复的记录。添加以下数据：</p> 
+ <pre><code class="lang-sql">INSERT INTO EMPLOYEES VALUES (6, '李洋', 24, '深圳市福田区中山路', 135000);  
+INSERT INTO EMPLOYEES VALUES (7, 'Manisha', 19, 'Noida', 125000);  
+INSERT INTO EMPLOYEES VALUES (8, 'Larry', 45, 'Texas', 165000);
+</code></pre> 
+ <p>现在有以下数据，有一些数据是重复的 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201704/0804/137090442_65916.png" alt=""></p> 
+ <p>执行以下查询以消除冗余：</p>   
+ <pre><code class="lang-sql">SELECT NAME, SUM(SALARY)   
+FROM EMPLOYEES   
+GROUP BY NAME;
+</code></pre> 
+ <p>上面的SQL语句是按名字(<code>NAME</code>)执行分组统计每个名字的薪水总额，如：两个名字叫作<strong>李洋</strong>的薪水总额是：<code>320000</code>等等，得到结果如下 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201704/0804/582090445_67541.png" alt=""></p> 
+ <p>在上面的例子中，当我们使用<code>GROUP BY NAME</code>时，可以看到重复的名字数据记录被合并。 它指定<code>GROUP BY</code>减少冗余。</p>
+ <br>      
+</div></body></html>

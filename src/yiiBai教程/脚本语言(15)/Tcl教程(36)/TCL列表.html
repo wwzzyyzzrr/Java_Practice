@@ -1,0 +1,144 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">TCL列表</h1><div style="width:100%;float:left;" class="article-content">   
+ <p> 列表是Tcl的基本可用数据类型之一。它是用于表示项目的有序集合。它可以包括不同类型的在同一列表的项目。此外，一个列表可以包含另一个列表。</p> 
+ <p> 需要注意的一个重要的事情是，列表表示为完全串并处理在需要时，形成的各个项目。所以要避免大的列表，在这种情况下，可使用数组代替。</p> 
+ <h2> 创建一个列表</h2> 
+ <p> 列表的一般语法如下。</p> 
+ <pre class="prettyprint notranslate" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+set listName { item1 item2 item3 .. itemn }
+# or
+set listName [list item1 item2 item3]
+# or 
+set listName [split "items separated by a character" split_character]</pre> 
+ <p> 一些例子如下面给出。</p> 
+ <pre class="prettyprint notranslate tryit" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); cursor: default; background-image: url(http://www.yiibai.com/images/link.png) !important; background-attachment: initial !important; background-size: initial !important; background-origin: initial !important; background-clip: initial !important; background-position: 100% 0%; background-repeat: no-repeat !important;">
+#!/usr/bin/tclsh
+
+set colorList1 {red green blue}
+set colorList2 [list red green blue]
+set colorList3 [split "red_green_blue" _]
+puts $colorList1
+puts $colorList2
+puts $colorList3</pre> 
+ <p> 当上述代码被执行时，它会产生以下结果。</p> 
+ <pre class="prettyprint notranslate" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+red green blue
+red green blue
+red green blue</pre> 
+ <h2> 追加项目到列表</h2> 
+ <p> 追加项目到列表的语法如下。</p> 
+ <pre class="prettyprint notranslate" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+append listName split_character value
+# or
+lappend listName value</pre> 
+ <p> 一些例子如下面给出。</p> 
+ <pre class="prettyprint notranslate tryit" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); background-image: url(http://www.yiibai.com/images/link.png) !important; background-attachment: initial !important; background-size: initial !important; background-origin: initial !important; background-clip: initial !important; background-position: 100% 0%; background-repeat: no-repeat !important;">
+#!/usr/bin/tclsh
+
+set var orange
+append var " " "blue"
+lappend var "red" 
+lappend var "green" 
+puts $var</pre> 
+ <p> 当上述代码被执行时，它会产生以下结果。</p> 
+ <pre class="prettyprint notranslate" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+orange blue red green</pre> 
+ <h2> 列表长度</h2> 
+ <p> 列表长度的语法如下。</p> 
+ <pre class="prettyprint notranslate" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+llength listName</pre> 
+ <p> 例如，列表长度如下例所示。</p> 
+ <pre class="prettyprint notranslate tryit" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); background-image: url(http://www.yiibai.com/images/link.png) !important; background-attachment: initial !important; background-size: initial !important; background-origin: initial !important; background-clip: initial !important; background-position: 100% 0%; background-repeat: no-repeat !important;">
+#!/usr/bin/tclsh
+
+set var {orange blue red green}
+puts [llength $var] </pre> 
+ <p> 当执行上面的代码，产生以下结果：</p> 
+ <pre class="prettyprint notranslate" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+4</pre> 
+ <h2> 列表索引项</h2> 
+ <p> 用于选择在指定索引的列表项如下。</p> 
+ <pre class="prettyprint notranslate" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+lindex listname index</pre> 
+ <p> 例如，列表索引项目如下所示。</p> 
+ <pre class="prettyprint notranslate tryit" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); background-image: url(http://www.yiibai.com/images/link.png) !important; background-attachment: initial !important; background-size: initial !important; background-origin: initial !important; background-clip: initial !important; background-position: 100% 0%; background-repeat: no-repeat !important;">
+#!/usr/bin/tclsh
+
+set var {orange blue red green}
+puts [lindex $var  1]</pre> 
+ <p> 当执行上面的代码，产生以下结果：</p> 
+ <pre class="prettyprint notranslate" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+blue</pre> 
+ <h2> 插入索引项目</h2> 
+ <p> 在列表特定索引插入项目的语法如下。</p> 
+ <pre class="prettyprint notranslate" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+linsert listname index value1 value2..valuen</pre> 
+ <p> 例如，在列表特定的索引插入项目如下。</p> 
+ <pre class="prettyprint notranslate tryit" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); background-image: url(http://www.yiibai.com/images/link.png) !important; background-attachment: initial !important; background-size: initial !important; background-origin: initial !important; background-clip: initial !important; background-position: 100% 0%; background-repeat: no-repeat !important;">
+#!/usr/bin/tclsh
+
+set var {orange blue red green}
+set var [linsert  $var 3 black white]
+puts $var</pre> 
+ <p style="box-sizing: border-box; color: rgb(0, 0, 0); line-height: 24px; margin: 0em 0.2em 1em; padding: 0px; text-align: justify; font-family: 'Open Sans', Arial, sans-serif; font-size: 14px;"> 当执行上面的代码，产生以下结果：</p> 
+ <pre class="prettyprint notranslate" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+orange blue red black white green</pre> 
+ <h2> 更换项目索引</h2> 
+ <p> 用于替换列表项以特定索引的语法如下。</p> 
+ <pre class="prettyprint notranslate" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+lreplace listname firstindex lastindex value1 value2..valuen</pre> 
+ <p> 例如用于替换列表项以特定的索引如下。</p>   
+ <pre class="prettyprint notranslate tryit" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); background-image: url(http://www.yiibai.com/images/link.png) !important; background-attachment: initial !important; background-size: initial !important; background-origin: initial !important; background-clip: initial !important; background-position: 100% 0%; background-repeat: no-repeat !important;">
+#!/usr/bin/tclsh
+
+set var {orange blue red green}
+set var [lreplace $var 2 3 black white]
+puts $var</pre> 
+ <p style="box-sizing: border-box; color: rgb(0, 0, 0); line-height: 24px; margin: 0em 0.2em 1em; padding: 0px; text-align: justify; font-family: 'Open Sans', Arial, sans-serif; font-size: 14px;"> 当执行上面的代码，产生以下结果：</p> 
+ <pre class="prettyprint notranslate" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+orange blue black white</pre> 
+ <h2> 设置指数项目</h2> 
+ <p> 用于设置列表项在特定索引下面的语法给出。</p> 
+ <pre class="prettyprint notranslate" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+lset listname index value </pre> 
+ <p> 例如设置列表项的索引具体如下。</p> 
+ <pre class="prettyprint notranslate tryit" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); background-image: url(http://www.yiibai.com/images/link.png) !important; background-attachment: initial !important; background-size: initial !important; background-origin: initial !important; background-clip: initial !important; background-position: 100% 0%; background-repeat: no-repeat !important;">
+#!/usr/bin/tclsh
+
+set var {orange blue red green}
+lset var 0 black 
+puts $var</pre> 
+ <p> 当执行上面的代码，产生以下结果：</p> 
+ <pre class="prettyprint notranslate" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+black blue red green</pre> 
+ <h2> 转换列表变量</h2> 
+ <p> 复制值到变量的语法如下。</p> 
+ <pre class="prettyprint notranslate" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+lassign listname variable1 variable2.. variablen</pre> 
+ <p> 例如，用于将列表到变量如下。</p> 
+ <pre class="prettyprint notranslate tryit" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); cursor: default; background-image: url(http://www.yiibai.com/images/link.png) !important; background-attachment: initial !important; background-size: initial !important; background-origin: initial !important; background-clip: initial !important; background-position: 100% 0%; background-repeat: no-repeat !important;">
+#!/usr/bin/tclsh
+
+set var {orange blue red green}
+lassign $var colour1 colour2
+puts $colour1
+puts $colour2</pre> 
+ <p> 当执行上面的代码，产生以下结果：</p> 
+ <pre class="prettyprint notranslate" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+orange
+blue</pre> 
+ <h2> 排序列表</h2> 
+ <p> 排序列表的语法如下。</p> 
+ <pre class="prettyprint notranslate" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+lsort listname</pre> 
+ <p> 进行列表的排序如下例子。</p> 
+ <pre class="prettyprint notranslate tryit" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); cursor: default; background-image: url(http://www.yiibai.com/images/link.png) !important; background-attachment: initial !important; background-size: initial !important; background-origin: initial !important; background-clip: initial !important; background-position: 100% 0%; background-repeat: no-repeat !important;">
+#!/usr/bin/tclsh
+
+set var {orange blue red green}
+set var [lsort $var]
+puts $var</pre> 
+ <p> 当执行上面的代码，产生以下结果：</p> 
+ <pre class="result notranslate" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+blue green orange red</pre> 
+ <br>      
+</div></body></html>

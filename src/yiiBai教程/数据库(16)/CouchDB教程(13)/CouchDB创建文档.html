@@ -1,0 +1,60 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">CouchDB创建文档</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>在CouchDB中，数据库的数据以文档的形式而不是表格存储。</p> 
+ <h2 id="h2--couchdb-fauxton-"><a name="在CouchDB数据库中使用Fauxton创建文档" class="reference-link"></a><span class="header-link octicon octicon-link"></span>在CouchDB数据库中使用Fauxton创建文档</h2>
+ <p>要在CouchDB数据库中创建文档，请打开Fauxton url：</p> 
+ <pre><code>http://localhost:5984/_utils/
+</code></pre>
+ <p>选择特定的数据库，假设在数据库：<code>yiibai_db</code>上创建文档，先点击<code>yiibai_db</code>数据库链接进入数据概览。 点击<strong>新文档(New Document)</strong>，如下图所示：</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201705/1605/772140555_22008.png" alt=""></p> 
+ <p>然后就会打开一个页面，默认只有一个字段：<code>_id</code>，但是可以通点击”<strong>Add Field</strong>“来新增更多的字段：</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201705/1605/321140557_21678.png" alt=""></p> 
+ <p>填入所有数据项后，单击保存更改选项卡。现在就成功创建文档。</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201705/1605/564150502_71342.png" alt=""></p> 
+ <p>创建一个文档成功后，详细信息如下所示 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201705/1605/291150506_79090.png" alt=""></p> 
+ <h2 id="h2-couchdb-curl-"><a name="CouchDB使用cURL实用程序创建文档" class="reference-link"></a><span class="header-link octicon octicon-link"></span>CouchDB使用cURL实用程序创建文档</h2>
+ <p>要在CouchDB中创建文档，也可以通过cURL实用程序向服务器发送HTTP PUT方法请求。</p> 
+ <p>以下是创建文档的语法。</p> 
+ <p><strong>语法：</strong></p> 
+ <pre><code>curl -X PUT http://localhost:5984/database_name/"id" -d ' { document} '
+</code></pre>
+ <blockquote> 
+  <p><strong>注意</strong>：<code>-X</code>用于指定与HTTP服务器进行通信的HTTP的自定义请求方法。 在这种情况下使用的是PUT方法。当使用PUT方法时，HTTP请求指定url的内容是用来创建对象名称。</p> 
+ </blockquote> 
+ <ul> 
+  <li><code>database_name</code>指定要在其中创建文档的数据库的名称。</li>
+  <li><code>id</code>用来指定文档ID。</li>
+  <li>要创建的文档的数据，<code>-d</code>选项用于通过HTTP请求发送数据/文档。</li>
+ </ul> 
+ <pre><code class="lang-shell">{  
+   name : minsu  
+   age : 24  
+   address : No. 112 ZhongShangRoad GuangZhou
+}
+</code></pre> 
+ <p><strong>示例：</strong></p> 
+ <p>在数据库<code>yiibai_db</code>中，创建一个<code>id</code>为“<code>10010</code>”的文档。</p> 
+ <pre><code class="lang-shell">curl -H 'Content-Type: application/json' -X PUT http://localhost:5984/yiibai_db/"10010" -d'{"name":"minsu", "age":"24" , "address" : "No. 112 ZhongShangRoad GuangZhou" }'
+</code></pre> 
+ <p>执行结果如下 - </p>   
+ <pre><code class="lang-shell">yiibai@ubuntu:~$ curl -H 'Content-Type: application/json' -X PUT http://localhost:5984/yiibai_db/"10010" -d'{"name":"minsu", "age":"24" , "address" : "No. 112 ZhongShangRoad GuangZhou" }'
+{"ok":true,"id":"10010","rev":"1-384d2bc91a881c6f9509b974573707bb"}
+yiibai@ubuntu:~$
+</code></pre> 
+ <p>CouchDB对上面创建命令的响应包含<code>3</code>个字段：</p> 
+ <ul> 
+  <li>“<strong>ok</strong>”：它表示操作成功。</li>
+  <li>“<strong>id</strong>”：存储文档的id。</li>
+  <li>“<strong>rev</strong>”：表示修订ID。 每次修改(更新或修改)文档时，CouchDB将生成<code>_rev</code>值。 如果要更新或删除文档，CouchDB希望您包含要更改的修订版本的<code>_rev</code>字段。 当CouchDB接受更改时，它将生成一个新的修订版本号。</li>
+ </ul> 
+ <p><strong>验证：</strong></p> 
+ <p>可以使用以下命令验证文档是否已创建：</p> 
+ <pre><code class="lang-shell">curl -X GET http://localhost:5984/yiibai_db/10010
+</code></pre> 
+ <p>执行上面命令，得到以下结果 - </p> 
+ <pre><code class="lang-shell">yiibai@ubuntu:~$ curl -X GET http://localhost:5984/yiibai_db/10010
+{"_id":"10010","_rev":"1-384d2bc91a881c6f9509b974573707bb","name":"minsu","age":"24","address":"No. 112 ZhongShangRoad GuangZhou"}
+yiibai@ubuntu:~$
+</code></pre>
+ <br>      
+</div></body></html>

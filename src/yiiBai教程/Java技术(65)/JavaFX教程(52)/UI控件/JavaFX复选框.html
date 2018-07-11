@@ -1,0 +1,74 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">JavaFX复选框</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>复选框允许用户进行多项选择。例如，当订购披萨时，可以添加多个调味料。单选按钮或切换按钮用于单选或无选择。</p> 
+ <h2 id="h2-u521Bu5EFAu590Du9009u6846"><a name="创建复选框" class="reference-link"></a><span class="header-link octicon octicon-link"></span>创建复选框</h2>
+ <p>我们可以使用<code>CheckBox</code>中的构造函数来创建<code>CheckBox</code>的对象。</p> 
+ <p>创建不带标题的复选框，如下代码所示 - </p> 
+ <pre><code class="lang-java">CheckBox checkBox = new CheckBox();
+</code></pre> 
+ <p>要创建带有字符串标题的复选框，如下代码所示 - </p> 
+ <pre><code class="lang-java">CheckBox checkBox = new CheckBox("Second");
+</code></pre> 
+ <p>创建复选框后，我们可以更改其文本并将其选中。</p> 
+ <pre><code class="lang-java">checkBox.setText("First");
+checkBox.setSelected(true);
+</code></pre> 
+ <h2 id="h2-u590Du9009u6846u72B6u6001"><a name="复选框状态" class="reference-link"></a><span class="header-link octicon octicon-link"></span>复选框状态</h2>
+ <p>可以使用<code>CheckBox</code>来表示三个状态：</p> 
+ <ul> 
+  <li>Yes</li>
+  <li>No</li>
+  <li>Not Applicable(不适用)</li>
+ </ul> 
+ <p>“不适用”状态是调用不确定。 如果复选框不在不确定中，可以选择或不选择。 选择表示<strong>是</strong>，未选择表示<strong>否</strong>。</p> 
+ <p>我们可以通过设置<code>CheckBox</code>对象的<code>allowIndeterminate</code>属性来选择支持<code>Indeterminate</code>。</p> 
+ <p>如果设置为<code>true</code>，则复选框应该循环选择所有三个状态：<code>选中</code>，<code>取消选择</code>和<code>未定义</code>。</p> 
+ <p>如果设置为<code>false</code>，复选框将循环选择和取消选择的状态。</p> 
+ <h2 id="h2-u793Au4F8B"><a name="示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例</h2>
+ <p>以下代码显示了如何向<code>CheckBox</code>添加工具提示。</p> 
+ <pre><code class="lang-java">import javafx.application.Application;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.geometry.Insets;
+import javafx.scene.Group;
+import javafx.scene.Scene;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
+import javafx.stage.Stage;
+
+public class Main extends Application {
+    public static void main(String[] args) {
+        launch(args);
+    }
+
+    @Override
+    public void start(Stage stage) {
+        Scene scene = new Scene(new Group());
+        stage.setTitle("Tooltip Sample");
+        stage.setWidth(300);
+        stage.setHeight(150);
+        final CheckBox cb = new CheckBox("checkBox");
+        final Tooltip tooltip = new Tooltip("$ tooltip");
+        tooltip.setFont(new Font("Arial", 16));
+        cb.setTooltip(tooltip);
+        cb.selectedProperty().addListener(new ChangeListener&lt;Boolean&gt;() {
+           public void changed(ObservableValue&lt;? extends Boolean&gt; ov,
+             Boolean old_val, Boolean new_val) {
+             System.out.println(cb.isSelected());
+          }
+        });
+
+        ((Group) scene.getRoot()).getChildren().add(cb);
+
+        stage.setScene(scene);
+        stage.show();
+    }
+}
+</code></pre> 
+ <p>上面的代码生成以下结果。</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201701/16/721140106_62889.png" alt=""></p>
+ <br>      
+</div></body></html>

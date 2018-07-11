@@ -1,0 +1,70 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Go关闭通道实例</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>关闭通道表示不会再发送更多值。这对于将完成通信到通道的接收器是很有用的。</p> 
+ <p>在这个例子中，我们将使用一个作业通道来完成从<code>main()</code>goroutine到<code>worker</code> goroutine的工作。当没有更多的工作时，则将关闭工作通道。</p> 
+ <p>这里是工作程序<code>goroutine</code>。 它反复从<code>j</code>的工作接收<code>more := &lt;-jobs</code>。在这种特殊的<code>2</code>值形式的接收中，如果作业已关闭并且已经接收到通道中的所有值，则 <code>more</code> 的值将为 <code>false</code>。当已经完成了所有的工作时，使用这个通知。</p> 
+ <p>这会通过作业通道向工作线程发送<code>3</code>个作业，然后关闭它。</p> 
+ <p>等待工作程序，可使用前面看到的同步方法。</p> 
+ <blockquote> 
+  <p>所有的示例代码，都放在 <code>F:\worksp\golang</code> 目录下。安装Go编程环境请参考：<a target="_blank" href="http://www.yiibai.com/go/go_environment.html">http://www.yiibai.com/go/go_environment.html</a> </p> 
+ </blockquote> 
+ <p><code>closing-channels.go</code>的完整代码如下所示 -</p> 
+ <pre><code class="lang-go">package main
+
+import "fmt"
+
+// In this example we'll use a `jobs` channel to
+// communicate work to be done from the `main()` goroutine
+// to a worker goroutine. When we have no more jobs for
+// the worker we'll `close` the `jobs` channel.
+func main() {
+    jobs := make(chan int, 5)
+    done := make(chan bool)
+
+    // Here's the worker goroutine. It repeatedly receives
+    // from `jobs` with `j, more := &lt;-jobs`. In this
+    // special 2-value form of receive, the `more` value
+    // will be `false` if `jobs` has been `close`d and all
+    // values in the channel have already been received.
+    // We use this to notify on `done` when we've worked
+    // all our jobs.
+    go func() {
+        for {
+            j, more := &lt;-jobs
+            if more {
+                fmt.Println("received job", j)
+            } else {
+                fmt.Println("received all jobs")
+                done &lt;- true
+                return
+            }
+        }
+    }()
+
+    // This sends 3 jobs to the worker over the `jobs`
+    // channel, then closes it.
+    for j := 1; j &lt;= 3; j++ {
+        jobs &lt;- j
+        fmt.Println("sent job", j)
+    }
+    close(jobs)
+    fmt.Println("sent all jobs")
+
+    // We await the worker using the
+    // [synchronization](channel-synchronization) approach
+    // we saw earlier.
+    &lt;-done
+}
+</code></pre> 
+ <p>执行上面代码，将得到以下输出结果 - </p>   
+ <pre><code class="lang-go">F:\worksp\golang&gt;go run closing-channels.go
+sent job 1
+sent job 2
+sent job 3
+sent all jobs
+received job 1
+received job 2
+received job 3
+received all jobs
+</code></pre>
+ <br>      
+</div></body></html>

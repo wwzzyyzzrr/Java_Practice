@@ -1,0 +1,45 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">ios::tie()函数</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>它用于获取/设置绑定流。</p> 
+ <h3 id="h3-c-98"><a name="C++98" class="reference-link"></a><span class="header-link octicon octicon-link"></span>C++98</h3>
+ <p>默认情况下，<code>cin</code>绑定到<code>cout</code>，<code>wcin</code>绑定到<code>wcout</code>。库实现可以在初始化时绑定其他标准流。</p> 
+ <h3 id="h3-c-11"><a name="C++11" class="reference-link"></a><span class="header-link octicon octicon-link"></span>C++11</h3>
+ <p>默认情况下，标准窄流<code>cin</code>和<code>cerr</code>与<code>cout</code>绑定，它们的宽字符对应（<code>wcin</code>和<code>wcerr</code>）绑定到<code>wcout</code>。 库实现也可以绑定<code>clog</code>和<code>wclog</code>。</p> 
+ <h2 id="h2-u58F0u660E"><a name="声明" class="reference-link"></a><span class="header-link octicon octicon-link"></span>声明</h2>
+ <p>以下是<code>ios::tie</code>函数的声明。</p> 
+ <pre><code class="lang-cpp">get (1)    ostream* tie() const;
+set (2)    ostream* tie (ostream* tiestr);
+</code></pre> 
+ <p>第一种形式（1）返回指向绑定输出流的指针。</p> 
+ <p>第二种形式（2）将对象绑定到<code>tiestr</code>，并返回一个指向调用之前绑定的流的指针（如果有的话）。</p> 
+ <h2 id="h2-u8FD4u56DEu503C"><a name="返回值" class="reference-link"></a><span class="header-link octicon octicon-link"></span>返回值</h2>
+ <ul> 
+  <li>指向在调用之前绑定的流对象的指针，或者在流未绑定的情况下，则为空指针。</li>
+ </ul> 
+ <h2 id="h2-u793Au4F8B"><a name="示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例</h2>
+ <p>在下面的例子中演示了<code>ios::tie</code>函数的使用。</p>   
+ <pre><code class="lang-cpp">#include &lt;iostream&gt;     
+#include &lt;fstream&gt;      
+
+int main () {
+   std::ostream *prevstr;
+   std::ofstream ofs;
+   ofs.open ("test.txt");
+
+   std::cout &lt;&lt; "tie example:/n";
+
+   *std::cin.tie() &lt;&lt; "This is inserted into cout";
+   prevstr = std::cin.tie (&amp;ofs);
+   *std::cin.tie() &lt;&lt; "This is inserted into the file";
+   std::cin.tie (prevstr);
+
+   ofs.close();
+
+   return 0;
+}
+</code></pre> 
+ <p>编译和运行上面的程序，将产生以下结果 -</p> 
+ <pre><code class="lang-shell">tie example:
+This is inserted into cout
+</code></pre>
+ <br>      
+</div></body></html>

@@ -1,0 +1,233 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Objective-C 预处理器</h1><div style="width:100%;float:left;" class="article-content">   
+ <p style="margin: 0.8em 0px 1em; padding: 0px; text-align: justify; color: rgb(0, 0, 0); font-family: Helvetica, Arial, sans-serif;"> Objective-C的预处理器是不是编译器的一部分，但是在编译过程中是一个单独的步骤。在简单的条件，是一个Objective-C预处理器只是一个文本替换工具，它指示编译器做实际的编译之前需要预先处理。我们会参考Objective-C的预处理为OCPP。</p> 
+ <p style="margin: 0.8em 0px 1em; padding: 0px; text-align: justify; color: rgb(0, 0, 0); font-family: Helvetica, Arial, sans-serif;"> 井号（＃）开头的所有预处理命令。它必须是第一个非空字符，可读性，预处理器指令应在第一列开始。下节列出了所有重要的预处理指令：</p> 
+ <table class="src" style="margin: 8px 0px; padding: 0px; border-style: solid; border-color: rgb(214, 214, 214); width: 560px; border-collapse: collapse; vertical-align: top; background-color: rgb(247, 247, 247); color: rgb(0, 0, 0); font-family: Helvetica, Arial, sans-serif;"> 
+  <tbody style="margin: 0px; padding: 0px;"> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <th style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214); background-color: rgb(238, 238, 238); width: 101px;"> 指示</th> 
+    <th style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214); background-color: rgb(238, 238, 238);"> 描述</th> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> #define</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> 替代预处理宏</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> #include</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> 从另一个文件中插入一个特定的头</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> #undef</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> 取消定义预处理宏</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> #ifdef</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> 如果定义了这个宏返回true</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> #ifndef</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> 返回true，如果该宏没有被定义</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> #if</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> 编译时间条件下的测试，如果是true</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> #else</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> #if&nbsp;替代方案</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> #elif</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> #else 和&nbsp;#if 在一个语句</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> #endif</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> 结束预处理条件</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> #error</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> stderr上打印错误消息</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> #pragma</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> 编译器使用一个标准化的方法发出特殊命令</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h2> 预处理器实例</h2> 
+ <p> 分析下面的例子来了解各种指令。</p> 
+ <pre class="prettyprint prettyprinted" style="font-size: 12px;">
+<span class="com" style="margin: 0px; padding: 0px; color: rgb(136, 0, 0);">#define</span><span class="pln" style="margin: 0px; padding: 0px;"> MAX_ARRAY_LENGTH </span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">20</span></pre> 
+ <p> 该指令告诉OCPP，以取代实例MAX_ARRAY_LENGTH为20。使用＃定义常数，以增加可读性。</p> 
+ <pre class="prettyprint prettyprinted" style="font-size: 12px;">
+<span class="com" style="margin: 0px; padding: 0px; color: rgb(136, 0, 0);">#import &lt;Foundation/Foundation.h&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">
+</span><span class="com" style="margin: 0px; padding: 0px; color: rgb(136, 0, 0);">#include</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="str" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"myheader.h"</span></pre> 
+ <p> 这些的指令告诉OCPP得到 foundation.h 基础框架和文本添加到当前源文件。下一行告诉 OCPP 从本地目录得到 myheader.h 的内容添加到当前源文件。</p> 
+ <pre class="prettyprint prettyprinted" style="font-size: 12px;">
+<span class="com" style="margin: 0px; padding: 0px; color: rgb(136, 0, 0);">#undef</span><span class="pln" style="margin: 0px; padding: 0px;">  FILE_SIZE
+</span><span class="com" style="margin: 0px; padding: 0px; color: rgb(136, 0, 0);">#define</span><span class="pln" style="margin: 0px; padding: 0px;"> FILE_SIZE </span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">42</span></pre> 
+ <p> 告诉OCPP&nbsp;取消对现有 FILE_SIZE 的定义，并把它定义为42 。</p> 
+ <pre class="prettyprint prettyprinted" style="font-size: 12px;">
+<span class="com" style="margin: 0px; padding: 0px; color: rgb(136, 0, 0);">#ifndef</span><span class="pln" style="margin: 0px; padding: 0px;"> MESSAGE
+   </span><span class="com" style="margin: 0px; padding: 0px; color: rgb(136, 0, 0);">#define</span><span class="pln" style="margin: 0px; padding: 0px;"> MESSAGE </span><span class="str" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"You wish!"</span><span class="pln" style="margin: 0px; padding: 0px;">
+</span><span class="com" style="margin: 0px; padding: 0px; color: rgb(136, 0, 0);">#endif</span></pre> 
+ <p> 这告诉OCPP定义消息，如果消息没有被定义。</p> 
+ <pre class="prettyprint prettyprinted" style="font-size: 12px;">
+<span class="com" style="margin: 0px; padding: 0px; color: rgb(136, 0, 0);">#ifdef</span><span class="pln" style="margin: 0px; padding: 0px;"> DEBUG
+   </span><span class="com" style="margin: 0px; padding: 0px; color: rgb(136, 0, 0);">/* Your debugging statements here */</span><span class="pln" style="margin: 0px; padding: 0px;">
+</span><span class="com" style="margin: 0px; padding: 0px; color: rgb(136, 0, 0);">#endif</span></pre> 
+ <p> 这告诉OCPP如果DEBUG被定义语句随附过程。如果传递 DDEBUG标志，gcc编译器在编译时，这是非常有用的。这将定义DEBUG，所以可以在编译过程中打开调试和关闭。</p> 
+ <h2> 预定义宏</h2> 
+ <p> ANSI C定义了一些宏。虽然每一个都是供编程使用，预定义宏不应该被直接修改。</p> 
+ <table class="src" style="margin: 8px 0px; padding: 0px; border-style: solid; border-color: rgb(214, 214, 214); width: 560px; border-collapse: collapse; vertical-align: top; background-color: rgb(247, 247, 247); color: rgb(0, 0, 0); font-family: Helvetica, Arial, sans-serif;"> 
+  <tbody style="margin: 0px; padding: 0px;"> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <th style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214); background-color: rgb(238, 238, 238); width: 101px;"> Macro</th> 
+    <th style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214); background-color: rgb(238, 238, 238);"> 描述</th> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> __DATE__</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> The current date as a character literal in "MMM DD YYYY" format</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> __TIME__</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> The current time as a character literal in "HH:MM:SS" format</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> __FILE__</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> This contains the current filename as a string literal.</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> __LINE__</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> This contains the current line number as a decimal constant.</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> __STDC__</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse; border-style: solid; border-color: rgb(214, 214, 214);"> Defined as 1 when the compiler complies with the ANSI standard.</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p> 让我们试试下面的例子：</p> 
+ <pre class="prettyprint tryit prettyprinted" style="font-size: 12px; cursor: default; background-image: url(http://www.yiibai.com/images/link.png) !important; background-position: 100% 0%; background-repeat: no-repeat no-repeat !important;">
+<span class="com" style="margin: 0px; padding: 0px; color: rgb(136, 0, 0);">#import &lt;Foundation/Foundation.h&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">
+
+</span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">int</span><span class="pln" style="margin: 0px; padding: 0px;"> main</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">()</span><span class="pln" style="margin: 0px; padding: 0px;">
+</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">{</span><span class="pln" style="margin: 0px; padding: 0px;">
+   </span><span class="typ" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">NSLog</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(@</span><span class="str" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"File :%s
+"</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">,</span><span class="pln" style="margin: 0px; padding: 0px;"> __FILE__ </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">);</span><span class="pln" style="margin: 0px; padding: 0px;">
+   </span><span class="typ" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">NSLog</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(@</span><span class="str" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"Date :%s
+"</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">,</span><span class="pln" style="margin: 0px; padding: 0px;"> __DATE__ </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">);</span><span class="pln" style="margin: 0px; padding: 0px;">
+   </span><span class="typ" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">NSLog</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(@</span><span class="str" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"Time :%s
+"</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">,</span><span class="pln" style="margin: 0px; padding: 0px;"> __TIME__ </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">);</span><span class="pln" style="margin: 0px; padding: 0px;">
+   </span><span class="typ" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">NSLog</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(@</span><span class="str" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"Line :%d
+"</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">,</span><span class="pln" style="margin: 0px; padding: 0px;"> __LINE__ </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">);</span><span class="pln" style="margin: 0px; padding: 0px;">
+   </span><span class="typ" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">NSLog</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(@</span><span class="str" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"ANSI :%d
+"</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">,</span><span class="pln" style="margin: 0px; padding: 0px;"> __STDC__ </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">);</span><span class="pln" style="margin: 0px; padding: 0px;">
+   
+   </span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">return</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">0</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">;</span><span class="pln" style="margin: 0px; padding: 0px;">
+</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">}</span></pre> 
+ <p> 文件 main.m 上面的代码在编译和执行时，它会产生以下结果：</p> 
+ <pre class="result" style="margin-bottom: 0px; background-color: rgb(241, 241, 241); font-size: 12px;">
+2013-09-14 04:46:14.859 demo[20683] File :main.m
+2013-09-14 04:46:14.859 demo[20683] Date :Sep 14 2013
+2013-09-14 04:46:14.859 demo[20683] Time :04:46:14
+2013-09-14 04:46:14.859 demo[20683] Line :8
+2013-09-14 04:46:14.859 demo[20683] ANSI :1
+</pre> 
+ <h2> 预处理运算符</h2> 
+ <p> Objective-C 预处理器提供了运算符，以帮助创建宏：</p> 
+ <h5> 宏延续()</h5> 
+ <p> 宏通常必须包含在一个单一的行。宏延续运算符用于继续宏的一行。例如：</p> 
+ <pre class="prettyprint prettyprinted" style="font-size: 12px;">
+<span class="com" style="margin: 0px; padding: 0px; color: rgb(136, 0, 0);">#define</span><span class="pln" style="margin: 0px; padding: 0px;">  message_for</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="pln" style="margin: 0px; padding: 0px;">a</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">,</span><span class="pln" style="margin: 0px; padding: 0px;"> b</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">)</span><span class="pln" style="margin: 0px; padding: 0px;">  
+    </span><span class="typ" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">NSLog</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(@#</span><span class="pln" style="margin: 0px; padding: 0px;">a </span><span class="str" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">" and "</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="com" style="margin: 0px; padding: 0px; color: rgb(136, 0, 0);">#b ": We love you!
+")</span><span class="pln" style="margin: 0px; padding: 0px;">
+</span></pre> 
+ <h5> Stringize (#)</h5> 
+ <p> stringize或数字符号运算符（'＃'），在宏定义内使用时，一个宏参数转换成一个字符串常量。此操作只可用于在宏具有指定参数或参数列表。例如：</p> 
+ <pre class="prettyprint tryit prettyprinted" style="font-size: 12px; background-image: url(http://www.yiibai.com/images/link.png) !important; background-position: 100% 0%; background-repeat: no-repeat no-repeat !important;">
+<span class="com" style="margin: 0px; padding: 0px; color: rgb(136, 0, 0);">#import &lt;Foundation/Foundation.h&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">
+
+</span><span class="com" style="margin: 0px; padding: 0px; color: rgb(136, 0, 0);">#define</span><span class="pln" style="margin: 0px; padding: 0px;">  message_for</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="pln" style="margin: 0px; padding: 0px;">a</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">,</span><span class="pln" style="margin: 0px; padding: 0px;"> b</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">)</span><span class="pln" style="margin: 0px; padding: 0px;">  
+    </span><span class="typ" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">NSLog</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(@#</span><span class="pln" style="margin: 0px; padding: 0px;">a </span><span class="str" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">" and "</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="com" style="margin: 0px; padding: 0px; color: rgb(136, 0, 0);">#b ": We love you!
+")</span><span class="pln" style="margin: 0px; padding: 0px;">
+
+</span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">int</span><span class="pln" style="margin: 0px; padding: 0px;"> main</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">void</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">)</span><span class="pln" style="margin: 0px; padding: 0px;">
+</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">{</span><span class="pln" style="margin: 0px; padding: 0px;">
+   message_for</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="typ" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">Carole</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">,</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="typ" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">Debra</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">);</span><span class="pln" style="margin: 0px; padding: 0px;">
+   </span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">return</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">0</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">;</span><span class="pln" style="margin: 0px; padding: 0px;">
+</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">}</span></pre> 
+ <p style="margin: 0.8em 0px 1em; padding: 0px; text-align: justify; color: rgb(0, 0, 0); font-family: Helvetica, Arial, sans-serif;"> 让我们编译和运行上面的程序，这将产生以下结果：</p> 
+ <pre class="result" style="margin-bottom: 0px; background-color: rgb(241, 241, 241); font-size: 12px;">
+2013-09-14 05:46:14.859 demo[20683] Carole and Debra: We love you!
+</pre> 
+ <h5> 标记粘贴 (##)</h5> 
+ <p> 标记粘贴运算符（＃＃）在宏定义内结合两个参数。在宏定义，允许两个单独的令牌必须合并成一个单一的令牌。例如：</p> 
+ <pre class="prettyprint tryit prettyprinted" style="font-size: 12px; cursor: default; background-image: url(http://www.yiibai.com/images/link.png) !important; background-position: 100% 0%; background-repeat: no-repeat no-repeat !important;">
+<span class="com" style="margin: 0px; padding: 0px; color: rgb(136, 0, 0);">#import &lt;Foundation/Foundation.h&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">
+
+</span><span class="com" style="margin: 0px; padding: 0px; color: rgb(136, 0, 0);">#define</span><span class="pln" style="margin: 0px; padding: 0px;"> tokenpaster</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="pln" style="margin: 0px; padding: 0px;">n</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">)</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="typ" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">NSLog</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(@</span><span class="str" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"token"</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="com" style="margin: 0px; padding: 0px; color: rgb(136, 0, 0);">#n " = %d", token##n)</span><span class="pln" style="margin: 0px; padding: 0px;">
+
+</span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">int</span><span class="pln" style="margin: 0px; padding: 0px;"> main</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">void</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">)</span><span class="pln" style="margin: 0px; padding: 0px;">
+</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">{</span><span class="pln" style="margin: 0px; padding: 0px;">
+   </span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">int</span><span class="pln" style="margin: 0px; padding: 0px;"> token34 </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">=</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">40</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">;</span><span class="pln" style="margin: 0px; padding: 0px;">
+   
+   tokenpaster</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">34</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">);</span><span class="pln" style="margin: 0px; padding: 0px;">
+   </span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">return</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">0</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">;</span><span class="pln" style="margin: 0px; padding: 0px;">
+</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">}</span></pre> 
+ <p style="margin: 0.8em 0px 1em; padding: 0px; text-align: justify; color: rgb(0, 0, 0); font-family: Helvetica, Arial, sans-serif;"> 让我们编译和运行上面的程序，这将产生以下结果：</p>   
+ <pre class="result" style="margin-bottom: 0px; background-color: rgb(241, 241, 241); font-size: 12px;">
+2013-09-14 05:48:14.859 demo[20683] token34 = 40
+</pre> 
+ <p> 它是如何发生的，因为这个例子中的结果在下面从预处理的实际输出：</p> 
+ <pre class="prettyprint prettyprinted" style="font-size: 12px;">
+<span class="typ" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">NSLog</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(@</span><span class="str" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"token34 = %d"</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">,</span><span class="pln" style="margin: 0px; padding: 0px;"> token34</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">);</span></pre> 
+ <p> 这个例子显示了串联令牌＃n为进token34，这里我们使用stringize和标记粘贴。</p> 
+ <h5> defined() 运算符</h5> 
+ <p> 预处理器定义的常量表达式运算符用于确定是否使用＃define定义一个标识符。如果指定的标识符被定义，该值是真（非零）。如果符号没有定义，这个值是false（零）。定义的运算符规定如下：</p> 
+ <pre class="prettyprint tryit prettyprinted" style="font-size: 12px; cursor: default; background-image: url(http://www.yiibai.com/images/link.png) !important; background-position: 100% 0%; background-repeat: no-repeat no-repeat !important;">
+<span class="com" style="margin: 0px; padding: 0px; color: rgb(136, 0, 0);">#import &lt;Foundation/Foundation.h&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">
+
+</span><span class="com" style="margin: 0px; padding: 0px; color: rgb(136, 0, 0);">#if !defined (MESSAGE)</span><span class="pln" style="margin: 0px; padding: 0px;">
+   </span><span class="com" style="margin: 0px; padding: 0px; color: rgb(136, 0, 0);">#define</span><span class="pln" style="margin: 0px; padding: 0px;"> MESSAGE </span><span class="str" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"You wish!"</span><span class="pln" style="margin: 0px; padding: 0px;">
+</span><span class="com" style="margin: 0px; padding: 0px; color: rgb(136, 0, 0);">#endif</span><span class="pln" style="margin: 0px; padding: 0px;">
+
+</span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">int</span><span class="pln" style="margin: 0px; padding: 0px;"> main</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">void</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">)</span><span class="pln" style="margin: 0px; padding: 0px;">
+</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">{</span><span class="pln" style="margin: 0px; padding: 0px;">
+   </span><span class="typ" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">NSLog</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(@</span><span class="str" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"Here is the message: %s
+"</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">,</span><span class="pln" style="margin: 0px; padding: 0px;"> MESSAGE</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">);</span><span class="pln" style="margin: 0px; padding: 0px;">  
+   </span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">return</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">0</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">;</span><span class="pln" style="margin: 0px; padding: 0px;">
+</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">}</span></pre> 
+ <p style="margin: 0.8em 0px 1em; padding: 0px; text-align: justify; color: rgb(0, 0, 0); font-family: Helvetica, Arial, sans-serif;"> 让我们编译和运行上面的程序，这将产生以下结果：</p> 
+ <pre class="result" style="margin-bottom: 0px; background-color: rgb(241, 241, 241); font-size: 12px;">
+2013-09-14 05:48:19.859 demo[20683] Here is the message: You wish!
+</pre> 
+ <h2> 参数化宏</h2> 
+ <p> OCPP的一个强大功能是能够模拟函数，使用参数化宏。例如，我们可能有一些代码方数字如下：</p> 
+ <pre class="prettyprint prettyprinted" style="font-size: 12px;">
+<span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">int</span><span class="pln" style="margin: 0px; padding: 0px;"> square</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">int</span><span class="pln" style="margin: 0px; padding: 0px;"> x</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">)</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">{</span><span class="pln" style="margin: 0px; padding: 0px;">
+   </span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">return</span><span class="pln" style="margin: 0px; padding: 0px;"> x </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">*</span><span class="pln" style="margin: 0px; padding: 0px;"> x</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">;</span><span class="pln" style="margin: 0px; padding: 0px;">
+</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">}</span></pre> 
+ <p> 我们可以重写上面的代码中使用宏如下：</p> 
+ <pre class="prettyprint prettyprinted" style="font-size: 12px;">
+<span class="com" style="margin: 0px; padding: 0px; color: rgb(136, 0, 0);">#define</span><span class="pln" style="margin: 0px; padding: 0px;"> square</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="pln" style="margin: 0px; padding: 0px;">x</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">)</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">((</span><span class="pln" style="margin: 0px; padding: 0px;">x</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">)</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">*</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="pln" style="margin: 0px; padding: 0px;">x</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">))</span></pre> 
+ <p> 带参数的宏，必须使用才可以使用＃define指令定义。参数列表括在括号中，必须紧跟在宏名。宏名和左括号之间不允许有空格。例如：</p> 
+ <div style="float:left;margin-bottom: 10px;">  
+ </div>
+ <div style="float:left;margin-bottom: 10px;">  
+ </div>
+ <pre class="prettyprint tryit prettyprinted" style="font-size: 12px; background-image: url(http://www.yiibai.com/images/link.png) !important; background-position: 100% 0%; background-repeat: no-repeat no-repeat !important;">
+<span class="com" style="margin: 0px; padding: 0px; color: rgb(136, 0, 0);">#import &lt;Foundation/Foundation.h&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">
+
+</span><span class="com" style="margin: 0px; padding: 0px; color: rgb(136, 0, 0);">#define</span><span class="pln" style="margin: 0px; padding: 0px;"> MAX</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="pln" style="margin: 0px; padding: 0px;">x</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">,</span><span class="pln" style="margin: 0px; padding: 0px;">y</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">)</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">((</span><span class="pln" style="margin: 0px; padding: 0px;">x</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">)</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">&gt;</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="pln" style="margin: 0px; padding: 0px;">y</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">)</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">?</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="pln" style="margin: 0px; padding: 0px;">x</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">)</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">:</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="pln" style="margin: 0px; padding: 0px;">y</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">))</span><span class="pln" style="margin: 0px; padding: 0px;">
+
+</span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">int</span><span class="pln" style="margin: 0px; padding: 0px;"> main</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">void</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">)</span><span class="pln" style="margin: 0px; padding: 0px;">
+</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">{</span><span class="pln" style="margin: 0px; padding: 0px;">
+   </span><span class="typ" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">NSLog</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(@</span><span class="str" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"Max between 20 and 10 is %d
+"</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">,</span><span class="pln" style="margin: 0px; padding: 0px;"> MAX</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">10</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">,</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">20</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">));</span><span class="pln" style="margin: 0px; padding: 0px;">  
+   </span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">return</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">0</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">;</span><span class="pln" style="margin: 0px; padding: 0px;">
+</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">}</span></pre> 
+ <p style="margin: 0.8em 0px 1em; padding: 0px; text-align: justify; color: rgb(0, 0, 0); font-family: Helvetica, Arial, sans-serif;"> 让我们编译和运行上面的程序，这将产生以下结果：</p> 
+ <pre class="result" style="margin-bottom: 0px; background-color: rgb(241, 241, 241); font-size: 12px;">
+2013-09-14 05:52:15.859 demo[20683] Max between 20 and 10 is 20</pre> 
+ <br>      
+</div></body></html>

@@ -1,0 +1,97 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Java并发fork-join框架</h1><div style="width:100%;float:left;" class="article-content">   
+ <p><code>fork-join</code>框架允许在几个工作进程中断某个任务，然后等待结果组合它们。 它在很大程度上利用了多处理器机器的生产能力。 以下是<code>fork-join</code>框架中使用的核心概念和对象。</p> 
+ <h2 id="h2-fork"><a name="Fork" class="reference-link"></a><span class="header-link octicon octicon-link"></span>Fork</h2>
+ <p>Fork是一个进程，其中任务将其分成可以并发执行的较小且独立的子任务。</p> 
+ <p><strong>语法</strong></p> 
+ <pre><code class="lang-java">Sum left  = new Sum(array, low, mid);
+left.fork();
+</code></pre> 
+ <p>这里<code>Sum</code>是<code>RecursiveTask</code>的子类，<code>left.fork()</code>方法将任务分解为子任务。</p> 
+ <h2 id="h2-join"><a name="Join" class="reference-link"></a><span class="header-link octicon octicon-link"></span>Join</h2>
+ <p>连接(<code>Join</code>)是子任务完成执行后任务加入子任务的所有结果的过程，否则它会持续等待。</p> 
+ <p><strong>语法</strong></p> 
+ <pre><code class="lang-java">left.join();
+</code></pre> 
+ <p>这里剩下的是<code>Sum</code>类的一个对象。</p> 
+ <h2 id="h2-forkjoinpool"><a name="ForkJoinPool" class="reference-link"></a><span class="header-link octicon octicon-link"></span>ForkJoinPool</h2>
+ <p>它是一个特殊的线程池，旨在使用<code>fork-and-join</code>任务拆分。</p> 
+ <p><strong>语法</strong></p> 
+ <pre><code class="lang-java">ForkJoinPool forkJoinPool = new ForkJoinPool(4);
+</code></pre> 
+ <p>这里有一个新的<code>ForkJoinPool</code>，并行级别为<code>4</code>个CPU。</p> 
+ <h2 id="h2-recursiveaction"><a name="RecursiveAction" class="reference-link"></a><span class="header-link octicon octicon-link"></span>RecursiveAction</h2>
+ <p><code>RecursiveAction</code>表示不返回任何值的任务。</p> 
+ <p><strong>语法</strong></p> 
+ <pre><code class="lang-java">class Writer extends RecursiveAction {
+   @Override
+   protected void compute() { }
+}
+</code></pre> 
+ <h2 id="h2-u9012u5F52u4EFBu52A1"><a name="递归任务" class="reference-link"></a><span class="header-link octicon octicon-link"></span>递归任务</h2>
+ <p><code>RecursiveTask</code>表示返回值的任务。</p> 
+ <p><strong>语法</strong></p> 
+ <pre><code class="lang-java">class Sum extends RecursiveTask {
+   @Override
+   protected Long compute() { return null; }
+}
+</code></pre> 
+ <h2 id="h2-u5B9Eu4F8B"><a name="实例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实例</h2>
+ <p>以下<code>TestThread</code>程序显示了基于线程的环境中<code>Fork-Join</code>框架的使用。</p>   
+ <pre><code class="lang-java">import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.RecursiveTask;
+
+public class TestThread {
+
+   public static void main(final String[] arguments) throws InterruptedException, ExecutionException {
+      int nThreads = Runtime.getRuntime().availableProcessors();
+      System.out.println(nThreads);
+
+      int[] numbers = new int[1000]; 
+
+      for(int i=0; i&lt; numbers.length; i++){
+         numbers[i] = i;
+      }
+
+      ForkJoinPool forkJoinPool = new ForkJoinPool(nThreads);
+      Long result = forkJoinPool.invoke(new Sum(numbers,0,numbers.length));
+      System.out.println(result);
+   }  
+
+   static class Sum extends RecursiveTask&lt;Long&gt; {
+
+      int low;
+      int high;
+      int[] array;
+
+      Sum(int[] array, int low, int high) {
+         this.array = array;
+         this.low   = low;
+         this.high  = high;
+      }
+
+      protected Long compute() {
+         if(high - low &lt;= 10) {
+            long sum = 0;
+            for(int i=low; i &lt; high; ++i) 
+               sum += array[i];
+               return sum;
+         } else {            
+            int mid = low + (high - low) / 2;
+            Sum left  = new Sum(array, low, mid);
+            Sum right = new Sum(array, mid, high);
+            left.fork();
+            long rightResult = right.compute();
+            long leftResult  = left.join();
+            return leftResult + rightResult;
+         }
+      }
+   }
+}
+</code></pre> 
+ <p>这将产生以下结果 - </p> 
+ <pre><code>4
+499500
+</code></pre>
+ <br>      
+</div></body></html>

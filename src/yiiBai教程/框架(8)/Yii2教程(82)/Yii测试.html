@@ -1,0 +1,210 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Yii测试</h1><div style="width:100%;float:left;" class="article-content">   
+ <div>
+   当我们写一个PHP类，我们一般会一步步或使用&nbsp;die&nbsp;或&nbsp;echo&nbsp;语句来验证它是如何工作的。 
+ </div> 
+ <div> 
+  <div>
+    如果我们开发一个&nbsp;Web&nbsp;应用程序，使用表单来进入测试数据，以确保网页如我们预期的那样工作。 
+  </div> 
+  <div>
+    测试过程可以被自动化。 
+  </div> 
+  <div>
+    对于长期的项目，自动测试方法是有道理的，这是因为&nbsp;- 
+  </div> 
+  <ul> 
+   <li> 
+    <div>
+      项目复杂和巨大 
+    </div> </li> 
+   <li> 
+    <div>
+      不断地增长 
+    </div> </li> 
+   <li> 
+    <div>
+      项目失败的成本过于昂贵 
+    </div> </li> 
+  </ul> 
+  <div>
+    如果项目没有得到复杂和相对简单，又或者它仅仅是一个一次性的项目，那么自动化测试就是大材小用了。 
+  </div> 
+  <h2> 
+   <div>
+     准备测试 
+   </div> </h2> 
+  <div>
+    第1步&nbsp;-&nbsp;安装 Codeception 框架。运行下面的代码。 
+  </div> 
+  <pre>c:\basic&gt;composer global require "codeception/codeception"
+c:\basic&gt;composer global require "codeception/specify"
+c:\basic&gt;composer global require "codeception/verify"</pre> 
+  <div>
+    步骤2&nbsp;-&nbsp;运行如下 
+  </div> 
+  <pre>c:\basic&gt;composer global status</pre> 
+  <div>
+    输出“Changed&nbsp;current&nbsp;directory&nbsp;to&nbsp;&lt;directory&gt;”如下图所示： 
+  </div> 
+  <div> 
+   <img src="/uploads/tutorial/20160604/1-160604212342160.png" alt="">
+   <br> 应该加上'C:/Users/Administrator/AppData/Roaming/Composer/vendor/bin&nbsp;'&nbsp;到&nbsp;PATH&nbsp;环境变量。在本示例中，运行下面的代码&nbsp;- 
+  </div> 
+  <pre>export PATH = $PATH:~/.composer/vendor/bin</pre> 
+  <div>
+    注：windows系统可右键"我的电脑"=&gt;"高级系统设置"=&gt;"环境变量"来添加。 
+  </div> 
+  <div>
+    第3步&nbsp;-&nbsp;创建一个新数据库&nbsp;“yii2_basic_tests”&nbsp; 
+  </div> 
+  <div>
+    第4步&nbsp;-&nbsp;测试&nbsp;tests&nbsp;目录内运行。 
+  </div> 
+  <pre><span style="background-color:inherit;font-family:微软雅黑;font-size:14px;line-height:1.5;">C:\basic\tests&gt;</span>codeception/bin/yii migrate&nbsp;</pre> 
+  <p> 数据库配置可以在这里找到：tests/codeception/config/config.php. </p> 
+  <div>
+    第5步&nbsp;-&nbsp;构建测试套件通过如下命令：
+   <br> 
+   <img src="/uploads/tutorial/20160604/1-160604212409111.png" width="677" height="311" title="Yii测试" alt="Yii测试">
+   <br> 
+  </div> 
+  <pre><span style="background-color:inherit;font-family:微软雅黑;font-size:14px;line-height:1.5;">C:\basic\tests&gt;</span>codecept build</pre> 
+  <h2 style="background-color:inherit;color:#121214;font-family:Verdana, Geneva, Tahoma,  Helvetica, font-size:1.7em;font-weight:normal;"> Fixtures </h2> 
+  <p> fixtures&nbsp;的主要目的是建立环境处于未知状态，这样测试就可以按照预期的方式运行。&nbsp;Yii提供一个接近固定的框架。在Yii&nbsp;fixture框架中的一个关键概念是&nbsp;fixture&nbsp;对象。它代表了测试环境的特定方面。fixture&nbsp;对象是&nbsp;yii\test\Fixture&nbsp;类的一个实例。 </p> 
+  <div>
+    要定义&nbsp;fixture&nbsp;，应该创建一个新的类，并从&nbsp;yii\test\Fixture&nbsp;或&nbsp;yii\test\ActiveFixture&nbsp;扩展。 
+  </div> 
+  <div>
+    前者是为通用目的会更好，而后者是特别设计用数据库和&nbsp;ActiveRecord&nbsp;来工作的。 
+  </div> 
+  <h2> 单元测试 </h2> 
+  <div>
+    单元测试帮助你来测试各项功能。例如，模型的功能或组件类。 
+  </div> 
+  <div>
+    第1步&nbsp;-&nbsp;在&nbsp;tests/codeception/fixtures&nbsp;目录下创建一个新的&nbsp;fixture&nbsp;在&nbsp;ExampleFixture.php&nbsp;文件中。 
+  </div> 
+  <pre>&lt;?php
+   namespace app\tests\codeception\fixtures;
+   use yii\test\ActiveFixture;
+   class ExampleFixture extends ActiveFixture {
+      public $modelClass = 'app/models/MyUser';
+   }
+?&gt;</pre> 
+  <div>
+    第2步&nbsp;-&nbsp;然后，在&nbsp;tests/codeception/unit/models&nbsp;文件夹中创建了一个新的测试文件：ExampleTest.php 。 
+  </div> 
+  <pre>&lt;?php
+   namespace tests\codeception\unit\models;
+   use app\models\MyUser;
+   use yii\codeception\TestCase;
+   class ExampleTest extends TestCase {
+      public function testCreateMyUser() {
+         $m = new MyUser();
+         $m-&gt;name = "myuser";
+         $m-&gt;email = "myser@yiibai.com";
+         $this-&gt;assertTrue($m-&gt;save());
+      }
+      public function testUpdateMyUser() {
+         $m = new MyUser();
+         $m-&gt;name = "myuser2";
+         $m-&gt;email = "myser2@yiibai.com";
+         $this-&gt;assertTrue($m-&gt;save());
+         $this-&gt;assertEquals("myuser2", $m-&gt;name);
+      }
+      public function testDeleteMyUser() {
+         $m = MyUser::findOne(['name' =&gt; 'myuser2']);
+         $this-&gt;assertNotNull($m);
+         MyUser::deleteAll(['name' =&gt; $m-&gt;name]);
+         $m = MyUser::findOne(['name' =&gt; 'myuser2']);
+         $this-&gt;assertNull($m);
+      }
+   }
+?&gt;</pre> 
+  <div>
+    在上面的代码中，我们定义三个测试功能(函数) - 
+  </div> 
+  <ul> 
+   <li> testCreateMyUser </li> 
+   <li> testUpdateMyUser </li> 
+   <li> testDeleteMyUser </li> 
+  </ul> 
+  <div>
+    我们刚刚创建了一个新的用户，更新自己的名字，并试图删除它。 
+  </div> 
+  <div>
+    管理&nbsp;yii2_basic_tests&nbsp;数据库，用户模型是数据库完整副本。 
+  </div> 
+  <div>
+    第3步&nbsp;-&nbsp;要开始测试，进入&nbsp;tests&nbsp;文件夹内并运行。 
+  </div>   
+  <pre><span style="font-family:Monaco, Consolas, Courier, &quot;line-height:1.5;">C:\basic\tests&gt;</span><span style="font-family:Monaco, Consolas, Courier, &quot;line-height:1.5;">codecept run unit models/ExampleTest</span></pre> 
+  <div>
+    它应该通过所有测试。会看到如下输出结果&nbsp;-
+   <br> 
+   <img src="/uploads/tutorial/20160604/1-160604212456311.png" alt="">
+   <br> 
+  </div> 
+  <h2> 
+   <div>
+     功能测试 
+   </div> </h2> 
+  <div>
+    功能测试可以帮助你 &nbsp;- 
+  </div> 
+  <ul> 
+   <li> 
+    <div>
+      使用浏览器模拟器应用测试 
+    </div> </li> 
+   <li> 
+    <div>
+      验证功能的正常使用 
+    </div> </li> 
+   <li> 
+    <div>
+      与数据库进行交互 
+    </div> </li> 
+   <li> 
+    <div>
+      将数据提交到服务器端脚本 
+    </div> </li> 
+  </ul> 
+  <div>
+    在&nbsp;tests&nbsp;测试文件夹中运行&nbsp;- 
+  </div> 
+  <pre>c:\basic\tests&gt;<span style="background-color:inherit;font-family:微软雅黑;font-size:14px;line-height:1.5;">codecept&nbsp;generate:cept&nbsp;functional&nbsp;AboutPageCept</span></pre> 
+  <div>
+    上述命令在&nbsp;tests/codeception/functional&nbsp;文件夹下创建一个&nbsp;AboutPageCept.php&nbsp;文件。
+   <br> 
+  </div> 
+  <div> 
+   <img src="/uploads/tutorial/20160604/1-16060421253CW.png" alt="">
+   <br> 在这个功能测试，我们要检查上面的&nbsp;about&nbsp;页面是否存在。 
+  </div> 
+  <div>
+    第1步&nbsp;-&nbsp;修改&nbsp;AboutPageCept.php&nbsp;文件。 
+  </div> 
+  <pre>&lt;?php
+   $I = new FunctionalTester($scenario);
+   $I-&gt;wantTo('perform actions and see result');
+   $I-&gt;amOnPage('site/about');
+   $I-&gt;see('about');
+   $I-&gt;dontSee('apple');
+?&gt;</pre> 
+  <div>
+    在上述代码中，我们检查是否在&nbsp;about&nbsp;页面上。很显然，我们会看到&nbsp;“about”&nbsp;单词，并在页面上没有显示&nbsp;“apple”。 
+  </div> 
+  <div>
+    第2步&nbsp;-&nbsp;通过以下运行测试。 
+  </div> 
+  <pre>run functional AboutPageCept</pre> 
+  <div>
+    将会看到下面的输出如下 -
+   <br> 
+   <img src="/uploads/tutorial/20160604/1-160604212552W3.png" alt="">
+   <br> 
+  </div> 
+ </div>
+ <br>      
+</div></body></html>

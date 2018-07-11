@@ -1,0 +1,229 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Yii数据库迁移</h1><div style="width:100%;float:left;" class="article-content">   
+ <div>
+   在开发数据库驱动应用程序的过程中，源代码转成数据库结构。&nbsp;Yii提供了数据库迁移功能，可以让您跟踪数据库更改。 
+ </div> 
+ <div> 
+  <div>
+    Yii提供以下迁移命令行工具&nbsp;- 
+  </div> 
+  <ul> 
+   <li> 
+    <div>
+      创建新的迁移 
+    </div> </li> 
+   <li> 
+    <div>
+      恢复迁移 
+    </div> </li> 
+   <li> 
+    <div>
+      应用迁移 
+    </div> </li> 
+   <li> 
+    <div>
+      重新申请迁移 
+    </div> </li> 
+   <li> 
+    <div>
+      显示迁移状态和历史记录 
+    </div> </li> 
+  </ul> 
+  <h2> 
+   <div>
+     创建迁移 
+   </div> </h2> 
+  <div>
+    现在创建一个新的数据库迁移。 
+  </div> 
+  <div>
+    第1步&nbsp;-&nbsp;在基本应用程序模板项目根目录内打开控制台窗口并运行。 
+  </div> 
+  <pre>c:&gt;baisc&gt; yii migrate/create add_news_table</pre> 
+  <div>
+    上面的命令将在migrations文件夹中创建的新的迁移文件(本示例中生成的是：m160605_040139_add_news_table.php)。 
+  </div> 
+  <div>
+    该文件包含下面的代码&nbsp;- 
+  </div> 
+  <pre>&lt;?php
+   use yii\db\Schema;
+   use yii\db\Migration;
+   class <span style="font-family:Monaco, Consolas, Courier, &quot;line-height:1.5;">m160605_040139_add_news_table </span><span style="font-family:Monaco, Consolas, Courier, &quot;line-height:1.5;">extends Migration {</span> public function up() {
+   
+      }
+      public function down() {
+         echo "<span style="font-family:Monaco, Consolas, Courier, &quot;line-height:1.5;">m160605_040139_add_news_table</span><span style="font-family:Monaco, Consolas, Courier, &quot;line-height:1.5;"> cannot be reverted.\n";</span> return false;
+      }
+      /*
+      // Use safeUp/safeDown to run migration code within a transaction
+      public function safeUp() {
+ 
+      }
+      public function safeDown() {
+   
+      }
+      */
+   }
+?&gt;</pre> 
+  <div>
+    每个数据迁移是扩展了&nbsp;yii\db\Migration&nbsp;类的PHP类。类名是按以下格式生成的&nbsp;- 
+  </div> 
+  <pre>m&lt;YYMMDD_HHMMSS&gt;_&lt;Name&gt;</pre> 
+  <div style="background-color:inherit;">
+    其中&lt;YYMMDD_HMMSS&gt;是指迁移命令被执行的UTC日期时间和&lt;Name&gt;是在控制台命令提供的参数。 
+  </div> 
+  <div style="background-color:inherit;">
+    &nbsp;当升级数据库时&nbsp;up()&nbsp;方法被调用，而当降级时&nbsp;down()方法被调用。 
+  </div> 
+  <div style="background-color:inherit;">
+    第2步&nbsp;-&nbsp;对新表添加到数据库，使用以下方式来修改&nbsp;migration&nbsp;文件。 
+  </div> 
+  <pre>&lt;?php
+   use yii\db\Schema;
+   use yii\db\Migration;
+   class <span style="font-family:Monaco, Consolas, Courier, &quot;line-height:1.5;">m160605_040139_add_news_table</span><span style="font-family:Monaco, Consolas, Courier, &quot;line-height:1.5;"> extends Migration {</span> public function up() {
+         $this-&gt;createTable("news", [
+            "id" =&gt; Schema::TYPE_PK,
+            "title" =&gt; Schema::TYPE_STRING,
+            "content" =&gt; Schema::TYPE_TEXT,
+         ]);
+      }
+      public function down() {
+         $this-&gt;dropTable('news');
+      }
+      /*
+      // Use safeUp/safeDown to run migration code within a transaction
+      public function safeUp() {
+	
+      }
+      public function safeDown() {
+
+      }
+      */
+   }
+?&gt;</pre> 
+  <div>
+    在上面的代码中，我们创建了一个&nbsp;news&nbsp;的新表在&nbsp;up()方法，并在&nbsp;down()方法删除此表。 
+  </div> 
+  <div>
+    该&nbsp;news&nbsp;表由三个字段组成：id,&nbsp;title&nbsp;和&nbsp;content 。&nbsp;当创建一个表或列，我们应该用抽象类型以便迁移时它转为数据库的类型。例如，在&nbsp;MySQL&nbsp;中，TYPE_PK将被转换成&nbsp;int(11)&nbsp;NOT&nbsp;NUL&nbsp;AUTO_INCREMETN&nbsp;PRIMARY&nbsp;KEY。 
+  </div> 
+  <div>
+    第3步&nbsp;-&nbsp;升级数据库，运行此命令。 
+  </div> 
+  <pre>c:\&gt;basic&gt; yii migrate</pre> 
+  <div> 
+   <img src="/uploads/tutorial/20160604/1-160604205Z1Z9.png" width="535" height="344" title="Yii数据库迁移" alt="Yii数据库迁移">
+   <br> 上面的命令将列出尚未提交过的所有可用的应用迁移。然后，如果确认提交迁移，它将在所有新的&nbsp;migration&nbsp;类中运行&nbsp;safeUp()或&nbsp;up()。 
+  </div> 
+  <div>
+    第4步&nbsp;-&nbsp;只有三个可用的迁移可以提交运行。 
+  </div> 
+  <pre>c:\&gt;basic&gt; yii migrate 3</pre> 
+  <div>
+    第5步&nbsp;-&nbsp;也可以定义一个特定迁移将数据库迁移。 
+  </div> 
+  <p> #&nbsp;使用时间戳来指定迁移 </p> 
+  <pre>c:\&gt;basic&gt; yii migrate/to 160606_105608</pre> 
+  <p> #&nbsp;使用能够通过&nbsp;strtotime()&nbsp;来解析的字符串。 </p> 
+  <pre>c:\&gt;basic&gt; yii migrate/to "2016-06-06 19:35:21"</pre> 
+  <p> # 使用全名 </p> 
+  <pre>c:&gt;basic&gt; yii migrate/to m160606_193521_create_news_table</pre> 
+  <p> # 使用 UNIX timestamp </p> 
+  <pre>c:\basic&gt; yii migrate/to 1399964718</pre> 
+  <div>
+    第6步&nbsp;-&nbsp;要恢复迁移(执行&nbsp;down()&nbsp;或safeDown()方法)并运行。 
+  </div> 
+  <pre>c:\basic&gt; yii migrate/down</pre> 
+  <div>
+    第7步&nbsp;-&nbsp;只能最多恢复5个最近使用的应用的迁移，可以运行以下命令： 
+  </div> 
+  <pre>c:\&gt;basic&gt; yii migrate/down 5</pre> 
+  <div> 
+   <img src="/uploads/tutorial/20160604/1-16060421001L21.png" alt="">
+   <br> 第8步-&nbsp;要重做(恢复，然后重新提交)迁移，运行。 
+  </div> 
+  <pre>c:\basic&gt; yii migrate/redo</pre> 
+  <div> 
+   <img src="/uploads/tutorial/20160604/1-16060421004QC.png" alt="">
+   <br> 要列出已经应用的迁移，可以使用这些命令&nbsp;- 
+  </div> 
+  <ul> 
+   <li> <p style="text-align:justify;"> yii migrate/new&nbsp;#&nbsp;显示前10个新迁移 </p> </li> 
+   <li> <p style="text-align:justify;"> yii migrate/new 3&nbsp;# 显示出前3个新迁移 </p> </li> 
+   <li> <p style="text-align:justify;"> yii migrate/new all&nbsp;#&nbsp;显示所有新迁移 </p> </li> 
+   <li> <p style="text-align:justify;"> yii migrate/history&nbsp;#&nbsp;显示最近10个提交应用迁移 </p> </li> 
+   <li> <p style="text-align:justify;"> yii migrate/history 20&nbsp;#&nbsp;显示最近20个提交应用迁移 </p> </li> 
+   <li> <p style="text-align:justify;"> yii migrate/history all&nbsp;#&nbsp;显示所有的应用迁移 </p> </li> 
+  </ul> 
+  <div>
+    有时需要添加一列或从一个特定的表中删除列。可以使用&nbsp;addColumn()&nbsp;和&nbsp;dropColumn()&nbsp;方法。 
+  </div> 
+  <div>
+    第1步&nbsp;-&nbsp;创建一个新的迁移。 
+  </div>   
+  <pre>c:\&gt;basic&gt; yii migrate/create add_category_to_news</pre> 
+  <div>
+    第2步&nbsp;-&nbsp;修改新创建的&nbsp;migration&nbsp;文件并使用以下代码。 
+  </div> 
+  <pre>&lt;?php
+   use yii\db\Schema;
+   use yii\db\Migration;
+   class m160113_110909_add_category_to_news extends Migration {
+      public function up() {
+         $this-&gt;addColumn('news', 'category', $this-&gt;integer());
+      }
+      public function down() {
+         $this-&gt;dropColumn('news', 'category');
+      }
+   }
+?&gt;</pre> 
+  <div>
+    现在，如果运行&nbsp;yii&nbsp;migrate，category&nbsp;字段列应该被添加到&nbsp;news&nbsp;表中。 
+  </div> 
+  <div>
+    相反，如果运行&nbsp;yii&nbsp;migrate/down&nbsp;1&nbsp;，category&nbsp;字段栏应被丢弃(删除)。 
+  </div> 
+  <p> 当执行数据库迁移，重要的是要确保每个迁移成功或失败。建议在数据库操作中使用事务处理。要实现事务迁移，需要把迁移代码放在&nbsp;safeUp()和&nbsp;safeDown()方法中。如果这些方法中的任何操作失败，所有以前的操作将被回滚。 </p> 
+  <div>
+    在之前的实例中，使用“事务方式”如下所示： 
+  </div> 
+  <pre>&lt;?php
+   use yii\db\Schema;
+   use yii\db\Migration;
+   class m160113_110909_add_category_to_news extends Migration {
+      public function safeUp() {
+         $this-&gt;addColumn('news', 'category', $this-&gt;integer());
+      }
+      public function safeDown() {
+         $this-&gt;dropColumn('news', 'category');
+      }
+   }
+?&gt;</pre> 
+  <div>
+    yii\db\Migration类为操作数据库提供了下面的方法&nbsp;- 
+  </div> 
+  <ul> 
+   <li> <p style="text-align:justify;"> execute()&nbsp;−&nbsp;执行原始的SQL语句 </p> </li> 
+   <li> <p style="text-align:justify;"> createTable()&nbsp;− 创建一个表 </p> </li> 
+   <li> <p style="text-align:justify;"> renameTable()&nbsp;− 重命名表 </p> </li> 
+   <li> <p style="text-align:justify;"> insert()&nbsp;− 插入一行 </p> </li> 
+   <li> <p style="text-align:justify;"> batchInsert()&nbsp;− 插入多行 </p> </li> 
+   <li> <p style="text-align:justify;"> update()&nbsp;− 更新多行 </p> </li> 
+   <li> <p style="text-align:justify;"> delete()&nbsp;− 删除多行 </p> </li> 
+   <li> <p style="text-align:justify;"> addColumn()&nbsp;− 添加一列 </p> </li> 
+   <li> <p style="text-align:justify;"> renameColumn()&nbsp;− 重命名一列 </p> </li> 
+   <li> <p style="text-align:justify;"> dropColumn()&nbsp;− 删除一列 </p> </li> 
+   <li> <p style="text-align:justify;"> alterColumn()&nbsp;− 修改一列 </p> </li> 
+   <li> <p style="text-align:justify;"> dropTable()&nbsp;− 删除一个表 </p> </li> 
+   <li> <p style="text-align:justify;"> truncateTable()&nbsp;−&nbsp;删除表中的所有行 </p> </li> 
+   <li> <p style="text-align:justify;"> createIndex()&nbsp;− 创建一个索引 </p> </li> 
+   <li> <p style="text-align:justify;"> dropIndex()&nbsp;− 删除一个索引 </p> </li> 
+   <li> <p style="text-align:justify;"> addPrimaryKey()&nbsp;− 添加主键 </p> </li> 
+   <li> <p style="text-align:justify;"> dropPrimaryKey()&nbsp;−&nbsp;删除主键 </p> </li> 
+   <li> <p style="text-align:justify;"> addForeignKey()&nbsp;−&nbsp;添加一个外键 </p> </li> 
+   <li> <p style="text-align:justify;"> dropForeignKey()&nbsp;−&nbsp;删除一个外键 </p> </li> 
+  </ul> 
+ </div>
+ <br>      
+</div></body></html>

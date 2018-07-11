@@ -1,0 +1,67 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">R语言盒形图（箱形图）</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>盒形图是数据集中数据分布情况的衡量标准。它将数据集分为三个四分位数。盒形图表示数据集中的最小值，最大值，中值，第一四分位数和第四四分位数。 通过为每个数据集绘制箱形图，比较数据集中的数据分布也很有用。</p> 
+ <p>R中的盒形图通过使用<code>boxplot()</code>函数来创建。</p> 
+ <h2 id="h2-u8BEDu6CD5"><a name="语法" class="reference-link"></a><span class="header-link octicon octicon-link"></span>语法</h2>
+ <p>在R中创建盒形图的基本语法是 -</p> 
+ <pre><code class="lang-r">boxplot(x, data, notch, varwidth, names, main)
+</code></pre> 
+ <p>以下是使用的参数的描述 - </p> 
+ <ul> 
+  <li><em>x</em> - 是向量或公式。</li>
+  <li><em>data</em> - 是数据帧。</li>
+  <li><em>notch</em> - 是一个逻辑值，设置为<code>TRUE</code>可以画出一个缺口。</li>
+  <li><em>varwidth</em> - 是一个逻辑值。设置为<code>true</code>以绘制与样本大小成比例的框的宽度。</li>
+  <li><em>names</em> - 是将在每个箱形图下打印的组标签。</li>
+  <li><em>main</em> - 用于给图表标题。</li>
+ </ul> 
+ <h2 id="h2-u793Au4F8B"><a name="示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例</h2>
+ <p>我们使用R环境中已经存在的数据集 - <code>mtcars</code>来创建一个基本的盒形图。下面来看看<code>mtcars</code>数据集中的<code>mpg</code>和<code>cyl</code>列。</p> 
+ <pre><code class="lang-r">input &lt;- mtcars[,c('mpg','cyl')]
+print(head(input))
+</code></pre> 
+ <p>当我们执行上面的代码，它产生以下结果 -</p> 
+ <pre><code class="lang-shell">                   mpg cyl
+Mazda RX4         21.0   6
+Mazda RX4 Wag     21.0   6
+Datsun 710        22.8   4
+Hornet 4 Drive    21.4   6
+Hornet Sportabout 18.7   8
+Valiant           18.1   6
+</code></pre> 
+ <h2 id="h2-u521Bu5EFAu76D2u5F62u56FE"><a name="创建盒形图" class="reference-link"></a><span class="header-link octicon octicon-link"></span>创建盒形图</h2>
+ <p>以下脚本将为<code>mpg</code>(每加仑英里)和<code>cyl</code>(气缸数)列之间的关系创建一个盒形图。</p> 
+ <pre><code class="lang-r">setwd("F:/worksp/R")
+# Give the chart file a name.
+png(file = "boxplot.png")
+
+# Plot the chart.
+boxplot(mpg ~ cyl, data = mtcars, xlab = "气缸数",
+   ylab = "每加仑里程", main = "里程数据")
+
+# Save the file.
+dev.off()
+</code></pre> 
+ <p>当我们执行上述代码时，会产生以下结果 -<br><img src="http://www.yiibai.com/uploads/images/201708/2408/968090817_81612.png" alt=""></p> 
+ <h2 id="h2-u76D2u5F62u56FEu4E0Eu51F9u53E3"><a name="盒形图与凹口" class="reference-link"></a><span class="header-link octicon octicon-link"></span>盒形图与凹口</h2>
+ <p>我们可以绘制带有凹槽的盒形图，以了解不同数据组的中位数如何相互匹配。以下脚本将为每个数据组创建一个带有凹槽的盒形图形。</p>   
+ <pre><code class="lang-r">setwd("F:/worksp/R")
+# Give the chart file a name.
+png(file = "boxplot_with_notch.png")
+
+# Plot the chart.
+boxplot(mpg ~ cyl, data = mtcars, 
+   xlab = "气缸数",
+   ylab = "每加仑里程", 
+   main = "里程数据",
+   notch = TRUE, 
+   varwidth = TRUE, 
+   col = c("green","yellow","purple"),
+   names = c("高","中","低")
+)
+# Save the file.
+dev.off()
+</code></pre> 
+ <p>当我们执行上述代码时，会产生以下结果 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201708/2408/194090818_70853.png" alt=""></p>
+ <br>      
+</div></body></html>

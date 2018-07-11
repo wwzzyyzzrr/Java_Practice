@@ -1,0 +1,156 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">ASP.Net MVC路由</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>路由是指向一个控制器的HTTP请求的过程，这个处理的功能是在<code>System.Web.Routing</code>中实现的。 这个程序集不是ASP.NET MVC的一部分。 它实际上是ASP.NET运行时的一部分，并且作为.NET 3.5 SP1正式发布。</p> 
+ <p><code>System.Web.Routing</code>由MVC框架使用，但也被ASP.NET动态数据使用。 MVC框架利用路由将请求引导至控制器。 <code>Global.asax</code>文件是应用程序的一部分，可在其中定义应用程序的路由。</p> 
+ <p>这是在上一章创建的MVC应用程序(<em>FirstMVCApp</em>)中的<code>Global.asax</code>中的应用程序启动事件的代码。</p> 
+ <pre><code class="lang-csharp">using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using System.Web.Routing;
+
+namespace FirstMVCApp
+{
+    public class MvcApplication : System.Web.HttpApplication
+    {
+        protected void Application_Start()
+        {
+            AreaRegistration.RegisterAllAreas();
+            RouteConfig.RegisterRoutes(RouteTable.Routes);
+        }
+    }
+}
+</code></pre> 
+ <p>以下是<code>RouteConfig</code>类的实现，其中包含一个<code>RegisterRoutes</code>方法。</p> 
+ <pre><code class="lang-csharp">using System;
+using System.Collections.Generic;
+using System.Linq;
+
+using System.Web;
+using System.Web.Mvc;
+using System.Web.Routing;
+
+namespace FirstMVCApp {
+   public class RouteConfig {
+      public static void RegisterRoutes(RouteCollection routes){
+         routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
+         routes.MapRoute(
+            name: "Default",
+            url: "{controller}/{action}/{id}",
+            defaults: new{ controller = "Home", action = "Index", id = UrlParameter.Optional});
+      }
+   }
+}
+</code></pre> 
+ <p>您将定义路由，这些路由将URL映射到特定的控制器操作。一个动作只是控制器上的一个方法。它也可以从URL中选择参数并将它们作为参数传递给方法。</p> 
+ <p>所以在应用程序中定义的这个路由是默认路由。从上面的代码可以看出，当你看到一个URL以<code>(something)/(something)/(something)</code>的形式到达的时候，第一个是控制器的名称，第二个是动作的名字，第三个是一个<code>ID</code>参数。</p> 
+ <h2 id="h2-u7406u89E3u8DEFu7531"><a name="理解路由" class="reference-link"></a><span class="header-link octicon octicon-link"></span>理解路由</h2>
+ <p>MVC应用程序使用ASP.NET路由系统，它决定URL如何映射到控制器和操作。</p> 
+ <p>当Visual Studio创建MVC项目时，它会添加一些默认路由来启动。 运行应用程序时，您将看到Visual Studio已将浏览器定向到端口<code>56922</code>。几乎可以肯定地每次在浏览器请求的URL中看到不同的端口号，因为Visual Studio在创建项目时会分配一个随机端口。</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201712/1312/514111225_46023.png" alt=""></p> 
+ <p>在最后一个例子中，我们添加了一个控制器：<em>HomeController</em> ，所以也可以请求任何下面的URL，它们将被定向到<em>HomeController</em>上的<em>Index</em> 操作。如下都是有效的URL - </p> 
+ <pre><code>http://localhost:56922/Home/
+-- 或者 --
+http://localhost:56922/Home/Index
+</code></pre>
+ <p>当浏览器请求 <code>http://mysite/</code> 或 <code>http://mysite/Home</code> 时，它会从<code>HomeController</code>的<code>Index</code>方法获取输出。</p> 
+ <p>也可以通过更改浏览器中的URL来尝试此操作。在这个例子中，它是<code>http://localhost:56922/</code>，除了端口可能不同。</p> 
+ <p>如果将<code>/Home</code>或<code>/Home/Index</code>追加到URL并按下<strong>“Enter”</strong>按钮，将看到与MVC应用程序输出相同的结果。</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201712/1412/581141241_34516.png" alt=""></p> 
+ <p>正如在这种情况下可以看到有一个名为<code>HomeController</code>的控制器，这个<code>HomeController</code>将成为MVC应用程序的起点。</p> 
+ <p>Visual Studio为新项目创建的默认路由。但是如果想遵循自己的约定，那么将需要修改路由。</p> 
+ <h2 id="h2-u81EAu5B9Au4E49u7EA6u5B9A"><a name="自定义约定" class="reference-link"></a><span class="header-link octicon octicon-link"></span>自定义约定</h2>
+ <p>当然可以添加您自己的路由。如果不喜欢这些动作名称，或有不同的ID参数，又或者一般情况下网站的URL结构不同，则可以添加自己的路由项。</p> 
+ <p>下面来看一个简单的例子。考虑有一个包含进程列表的页面，以下是将转到流程页面的代码。</p> 
+ <pre><code class="lang-csharp">routes.MapRoute(
+   "Process",
+   "Process/{action}/{id}",
+   defaults: new{
+      controller = "Process", action = "List ", id = UrlParameter.Optional}
+);
+</code></pre> 
+ <p>当客户端请求进来并寻找具有<code>Process/Action/Id</code>的URL时，它们将会进入到<code>Process</code>控制器。这里可以使动作有点不太一样，默认动作使用的是<code>List</code>而不是<code>Index</code>。</p> 
+ <p>现在到达的请求看起来像<code>localhosts/process</code>。 路由引擎将使用这个路由配置来传递它，所以它将使用<code>List</code>作为的默认行为。</p> 
+ <p>以下是完整的类实现。创建一个名称为：<em>MyRouteConfig</em> 的类，参考代码 - </p> 
+ <pre><code class="lang-csharp">using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Routing;
+using System.Web;
+using System.Web.Mvc;
+using System.Web.Routing;
+
+namespace FirstMVCApp
+{
+
+    public class MyRouteConfig
+    {
+        public static void RegisterRoutes(RouteCollection routes)
+        {
+            routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
+
+            routes.MapRoute(
+               "Process", "Process/{action}/{id}",
+               defaults: new
+               {
+                   controller = "Process",
+                   action = "List",
+                   id =
+                  UrlParameter.Optional
+               });
+
+            routes.MapRoute(
+               name: "Home", url: "{controller}/{action}/{id}",
+               defaults: new
+               {
+                   controller = "Home",
+                   action = "Index",
+                   id =
+                  UrlParameter.Optional
+               });
+        }
+    }
+}
+</code></pre> 
+ <p><strong>第1步</strong> - 运行它并请求一个流程页面，使用以下URL ：<code>http://localhost:63664/Process</code>，应该会看到以下结果 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201712/1412/413151245_86355.png" alt=""></p> 
+ <p>将看到一个HTTP 404，因为路由引擎正在查找<code>ProcessController</code>，但是不可用。</p> 
+ <p><strong>第2步</strong> - 通过右键单击<em>解决方案管理器</em> 中的<code>Controllers</code> 文件夹来创建<code>ProcessController</code>，然后选择：<em>添加</em> -&gt; <em>控制器</em> 。</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201712/1412/501161204_67812.png" alt=""></p> 
+ <p>它将显示<em>“添加基架”</em> 对话框。如下图所示 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201712/1412/833161206_17365.png" alt=""></p> 
+ <p><strong>第3步</strong> - 选择MVC 5控制器 - 空选项，然后单击<em>“添加”</em> 按钮。添加控制器对话框将出现。</p> 
+ <p><strong>第4步</strong> - 将名称设置为<em>ProcessController</em>，然后单击<em>“添加”</em> 按钮。如下图所示 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201712/1412/826161209_78160.png" alt=""></p> 
+ <p>现在，将在<em>Controllers</em>文件夹中看到一个新的 C# 文件：<code>ProcessController.cs</code>，在Visual Studio中打开并进行编辑。如下图所示 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201712/1412/490161211_92916.png" alt=""></p> 
+ <p><strong>第5步</strong> - 将返回类型从<code>ActionResult</code>更改为<code>String</code>，并使用以下代码从此操作方法返回一些字符串。修改后的 <em>ProcessController</em> 文件中的代码如下 - </p>   
+ <pre><code class="lang-csharp">using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+
+namespace FirstMVCApp.Controllers
+{
+    public class ProcessController : Controller
+    {
+        // GET: Process
+        public String Index()
+        {
+            return "ProcessController.Index() Page.";
+        }
+
+        // GET: Process
+        public String List()
+        {
+            return "ProcessController.List() Page.";
+        }
+    }
+}
+</code></pre> 
+ <p><strong>第6步</strong> - 当运行这个应用程序，会看到默认路由的结果。当指定以下URL( <a target="_blank" href="http://localhost:56922/Process/List">http://localhost:56922/Process/List</a> )时，您将看到<code>ProcessController</code>的结果。</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201712/1412/511161217_56463.png" alt=""></p>
+ <br>      
+</div></body></html>

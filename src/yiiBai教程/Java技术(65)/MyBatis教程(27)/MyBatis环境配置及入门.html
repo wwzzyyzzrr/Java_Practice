@@ -1,0 +1,201 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">MyBatis环境配置及入门</h1><div style="width:100%;float:left;" class="article-content">   
+ <p> Mybatis 开发环境搭建，选择: MyEclipse8.5 版本，mysql 5.5, jdk 1.8, mybatis3.2.3.jar 包。这些软件工具均可以到各自的官方网站上下载。 </p> 
+ <p> 整个过程在概如下， </p> 1. 在本教程中，建立 
+ <a target="_blank" href="http://www.yiibai.com/java/">java</a> 工程，但一般都是开发 web 项目，这个系列教程最后是 web，但这里为了方便学习，本教程前面建立的都是 java 工程。
+ <br> 2. 将 mybatis-3.2.3.jar，mysql-connector-java-5.1.25-bin.jar 创建两个用户自定库（User Libary）：mysql-connector 和 mybatis；
+ <br> 3. 创建 
+ <a target="_blank" href="http://www.yiibai.com/mysql/">mysql </a>测试数据库和用户表, 注意，数据库使用的是 utf-8 编码。以解决不必要的中文乱码问题。 
+ <h3> 一、创建 Java 工程 </h3> 
+ <p> 首先建立一个名字为 Helloword 的 java project。选择 "File" -&gt; "New" -&gt;"Java Project"，如下图所示： </p> 
+ <p> <img src="/uploads/tutorial/201509/1-150921203222411.png" alt=""> </p> 
+ <p> 这样就创建了一个 Java 工程了，我们继续下一步。接下来我们在 mybatis-start 项目中加入两个所需的程序库：mysql-connector 和 mybatis，右键点击 "<span>mybatis-start" <span>项目，从弹出的菜单中选择：</span>&nbsp;"Build Path" -&gt; "Add Libaries..." ，如下图所示：</span> </p> 
+ <p> <span><img src="/uploads/tutorial/201509/1-15092120495SW.png" alt=""><br> </span> </p> 
+ <p> <span>从中选择“User Library"，点击“Next&gt;"，创建两个类库为：<span>mysql-connector 和 mybatis，如下所示：</span></span> </p> 
+ <p> <span><span><img src="/uploads/tutorial/201509/1-150921205422340.png" alt=""><br> </span></span> </p> 
+ <p> <span><span>点击“User Libararies..."，继续下一步，创建一个新的类库，如下图所示：</span></span> </p> 
+ <p> <span><span><img src="/uploads/tutorial/201509/1-150921205Fc05.png" alt=""><br> </span></span> </p> 
+ <p> 到此用户的一个类库创建完成，以相同的方式来创建另一个类库： </p> 
+ <p> <span></span> </p> 
+ <h3> 二、创建数据库和 User 表 </h3> 
+ <p> <span>创建所需的数据库和表，要创建的数据库是：yiibai，并在 yiibai 数据库创建一个表：user，如下图所示：</span> </p> 
+ <p> 创建数据库：yiibai，使用 utf-8 编码。 </p> 
+ <p> <img src="/uploads/tutorial/201509/1-150921203J9531.png" alt=""> </p> 
+ <p> 接下我们创建一个表：user，并插入一条记录信息，其结构如下所示： </p> 
+ <pre class="prettyprint">CREATE TABLE `user` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(64) NOT NULL DEFAULT '',
+  `dept` varchar(254) NOT NULL DEFAULT '',
+  `website` varchar(254) DEFAULT '',
+  `phone` varchar(16) NOT NULL DEFAULT '',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+
+-- ----------------------------
+-- Records of user
+-- ----------------------------
+INSERT INTO `user` VALUES ('1', 'yiibai', 'Tech', 'http://www.yiibai.com', '13800009988');</pre> 
+ <h3> 三、创建 Mybatis 配置文件 </h3> 
+ <img src="file://D:/Program%20Files/qq24B39E2329F08D9F4C3146A571A415EF/50400a3e8c7b47dc836f9896aba9dc4a/21112203538.jpeg" style="height:auto;">
+ <br> 
+ <div> 
+  <div> 
+   <img src="file://D:/Program%20Files/qq24B39E2329F08D9F4C3146A571A415EF/bee8d807a7ed4c4486f215cdbec733b7/code.gif" alt="程序代码" style="height:auto;"> 
+  </div> 
+ </div> 到此为止，前期准备工作就完成了。下面开始真正配置 mybatis-start 项目。设置 mybatis 配置文件: Configure.xml, 在 src/config 目录下建立此文件，内容如下:
+ <br> 
+ <pre class="prettyprint lang-xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-config.dtd"&gt;
+&lt;configuration&gt;
+	&lt;typeAliases&gt;
+		&lt;typeAlias alias="User" type="com.yiibai.mybatis.models.User" /&gt;
+	&lt;/typeAliases&gt;
+	&lt;environments default="development"&gt;
+	    &lt;environment id="development"&gt;
+		&lt;transactionManager type="JDBC" /&gt;
+			&lt;dataSource type="POOLED"&gt;  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;property name="driver" value="com.mysql.jdbc.Driver" /&gt;
+			    &lt;property name="url" value="jdbc:mysql://127.0.0.1:3306/yiibai" /&gt;
+			    &lt;property name="username" value="root" /&gt;
+			    &lt;property name="password" value="" /&gt;
+                       &lt;/dataSource&gt;
+		&lt;/environment&gt;
+	&lt;/environments&gt;
+
+	&lt;mappers&gt;
+	     &lt;!-- // power by http://www.yiibai.com --&gt;
+	     &lt;mapper resource="com/yiibai/mybatis/models/User.xml" /&gt;
+	&lt;/mappers&gt;
+&lt;/configuration&gt;</pre> 
+ <h3> 四、创建实体类和映射文件 </h3> 
+ <p> 首先创建一个包：com.yiibai.mybatis.models，并在下创建与数据库表对应的 User.java 类及其映射文件：User.xml，详细如下图所示： </p> 
+ <p> <span><span style="background-color:#FFFFFF;"> </span></span> </p> 
+ <pre class="prettyprint lang-java">package com.yiibai.mybatis.models;
+
+public class User {
+	private int id;
+	private String name;
+	private String dept;
+	private String phone;
+	private String website;
+	
+	public String getWebsite() {
+		return website;
+	}
+	public void setWebsite(String website) {
+		this.website = website;
+	}
+	public int getId() {
+		return id;
+	}
+	public void setId(int id) {
+		this.id = id;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public String getDept() {
+		return dept;
+	}
+	public void setDept(String dept) {
+		this.dept = dept;
+	}
+	public String getPhone() {
+		return phone;
+	}
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
+	
+}</pre> 
+ <div style="font-family:Verdana,  Helvetica, sans-serif, ����;font-size:14px;background-color:#EDEEEF;"> 
+  <div style="background-color:inherit;"> 
+   <img src="file://D:/Program%20Files/qq24B39E2329F08D9F4C3146A571A415EF/bee8d807a7ed4c4486f215cdbec733b7/code.gif" alt="程序代码" style="height:auto;"> 
+  </div> 
+ </div> 
+ <p> 同时建立这个 User 类对应的映射文件 User.xml，详细如下代码所示： </p> 
+ <pre class="prettyprint lang-xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd"&gt;
+
+&lt;mapper namespace="com.yiibai.mybatis.models.UserMapper"&gt;
+	&lt;select id="GetUserByID" parameterType="int" resultType="User"&gt;
+		select * from `user` where id = #{id}
+    &lt;/select&gt;
+&lt;/mapper&gt;</pre> 
+ <span style="font-family:微软雅黑;background-color:#FFFFFF;">下面是对这几个配置文件一点解释说明：</span>
+ <br> 
+ <span style="font-family:微软雅黑;background-color:#FFFFFF;">1、配置文件 Configure.xml 是 mybatis 用来建立 sessionFactory，里面主要包含了数据库连接相关内容，还有 java 类所对应的别名，比如：&lt;typeAlias alias="User" type="com.yiibai.mybatis.models.User"/&gt; 这个别名非常重要，在具体的类的映射中，比如：User.xml 中 resultType 就是对应这个。要保持一致，这里的 resultType 还有另外单独的定义方式，后面学习到我们再详细介绍说明。</span>
+ <br> 
+ <span style="font-family:微软雅黑;background-color:#FFFFFF;">2、<span style="font-family:微软雅黑;background-color:#FFFFFF;">Configure</span>.xml 里面 的&lt;mapper resource="com/yiibai/mybatis/models/User.xml"/&gt;是包含要映射的类的 xml 配置文件。</span>
+ <br> 
+ <span style="font-family:微软雅黑;background-color:#FFFFFF;">3、在User.xml 文件里面主要是定义各种 SQL 语句，以及这些语句的参数，以及要返回的类型等等。</span>
+ <br> 
+ <h3> <span style="font-family:微软雅黑;background-color:#FFFFFF;">五、运行程序测试结果</span> </h3> 
+ <p> <span style="font-family:微软雅黑;background-color:#FFFFFF;">在 src 源码目录下建立 一个类叫作：HelloWord, 来运行测试配置环境是否成功，具体代码如下示：</span> </p> 
+ <p> <span style="font-family:微软雅黑;background-color:#FFFFFF;"> </span> </p>   
+ <pre class="prettyprint lang-java">import java.io.Reader;
+
+import org.apache.ibatis.io.Resources;
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
+import org.apache.ibatis.session.SqlSessionFactoryBuilder;
+
+import com.yiibai.mybatis.models.*;
+
+/**
+ * 
+ * @author yiibai
+ * @copyright http://www.yiibai.com
+ * @date 2015/09/22
+ */
+public class HelloWord {
+	private static SqlSessionFactory sqlSessionFactory;
+	private static Reader reader;
+
+	static {
+		try {
+			reader = Resources.getResourceAsReader("config/Configure.xml");
+			sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	public static SqlSessionFactory getSession() {
+		return sqlSessionFactory;
+	}
+	/**
+	 * @param args
+	 */
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		SqlSession session = sqlSessionFactory.openSession();
+		try {
+			User user = (User) session.selectOne(
+					"com.yiibai.mybatis.models.UserMapper.GetUserByID", 1);
+			if(user!=null){
+				String userInfo = "名字："+user.getName()+", 所属部门："+user.getDept()+", 主页："+user.getWebsite();
+				System.out.println(userInfo);
+			}
+		} finally {
+			session.close();
+		}
+	}
+
+}</pre> 
+ <p> <span style="font-family:微软雅黑;line-height:1.5;background-color:#FFFFFF;">现在运行这个程序，不是得到查询结果了？正确的输出结果应该如下：</span> </p> 
+ <p> <span style="font-family:微软雅黑;line-height:1.5;background-color:#FFFFFF;"> </span> </p> 
+ <pre class="prettyprint">名字：yiibai, 所属部门：Tech, 主页：http://www.yiibai.com</pre> 
+ <img src="/uploads/tutorial/201509/1-150921214351949.png" alt="">
+ <br> 
+ <p> <br> </p> 
+ <p> <span style="font-family:微软雅黑;line-height:1.5;background-color:#FFFFFF;">恭喜你，环境搭建配置成功，在接下来章节，我们将学习 Mybatis 的操作方式：增删改查。</span> </p> 
+ <p> <span style="font-family:微软雅黑;line-height:1.5;background-color:#FFFFFF;"><span style="color:#535B60;font-family: Arial, 'Hiragino Sans GB', 'Microsoft YaHei', 微软雅黑, STHeiti, 'WenQuanYi Micro Hei', SimSun, sans-serif, sans-serif;line-height:22px;background-color:#FFFFFF;">Jar 包下载：</span><a target="_blank" href="http://pan.baidu.com/s/1bnyRJ9H">http://pan.baidu.com/s/1bnyRJ9H</a><br> </span> </p> 
+ <div style="font-family:微软雅黑;background-color:#FFFFFF;"> 
+  <img src="file://D:/Program%20Files/qq24B39E2329F08D9F4C3146A571A415EF/76cf25e109ae4cb09cb9b868d15dbc8d/12111220551.jpeg" style="height:auto;"> 
+ </div>
+ <br>      
+</div></body></html>

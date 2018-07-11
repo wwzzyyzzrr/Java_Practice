@@ -1,0 +1,112 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">SVN修正错误</h1><div style="width:100%;float:left;" class="article-content">   
+ <p> 假设Jerry&nbsp;不小心修改array.c 文件编译错误。现在，他想扔掉的变化。在这种情况下，恢复操作会有所帮助。恢复操作将撤消任何地方到一个文件或目录的更改，并解决任何冲突的状态。</p> 
+ <pre class="result" style="margin-bottom: 0px; background-color: rgb(241, 241, 241); font-size: 12px;">
+[jerry@CentOS trunk]$ svn status
+</pre> 
+ <p> 上面的命令将产生以下结果</p> 
+ <pre class="result" style="margin-bottom: 0px; background-color: rgb(241, 241, 241); font-size: 12px;">
+M       array.c
+</pre> 
+ <p> 让我们 make array 如下:</p> 
+ <pre class="result" style="margin-bottom: 0px; background-color: rgb(241, 241, 241); font-size: 12px;">
+[jerry@CentOS trunk]$ make array
+</pre> 
+ <p> 上面的命令将产生以下结果</p> 
+ <pre class="result" style="margin-bottom: 0px; background-color: rgb(241, 241, 241); font-size: 12px;">
+cc     array.c   -o array
+array.c: In function ‘main’:
+array.c:26: error: ‘n’ undeclared (first use in this function)
+array.c:26: error: (Each undeclared identifier is reported only once
+array.c:26: error: for each function it appears in.)
+array.c:34: error: ‘arr’ undeclared (first use in this function)
+make: *** [array] Error 1
+</pre> 
+ <p> Jerry 对&nbsp;array.c文件进行恢复操作</p> 
+ <pre class="result" style="margin-bottom: 0px; background-color: rgb(241, 241, 241); font-size: 12px;">
+[jerry@CentOS trunk]$ svn revert array.c 
+Reverted 'array.c'
+
+[jerry@CentOS trunk]$ svn status
+[jerry@CentOS trunk]$
+</pre> 
+ <p style="margin: 0.8em 0px 1em; padding: 0px; text-align: justify; color: rgb(0, 0, 0); font-family: Helvetica, Arial, sans-serif;"> 现在编译代码。</p> 
+ <pre class="result" style="margin-bottom: 0px; background-color: rgb(241, 241, 241); font-size: 12px;">
+[jerry@CentOS trunk]$ make array
+cc     array.c   -o array
+</pre> 
+ <p> 恢复操作后，他的工作副本是回到它的原始状态。恢复操作可以恢复单个文件以及完整的目录。恢复目录用户 -r 选项，如下图所示</p> 
+ <pre class="result" style="margin-bottom: 0px; background-color: rgb(241, 241, 241); font-size: 12px;">
+[jerry@CentOS project_repo]$ pwd
+/home/jerry/project_repo
+
+[jerry@CentOS project_repo]$ svn revert -R trunk
+</pre> 
+ <p> 到现在我们已经看到了如何恢复已向工作副本的变化。但是如果你想提交的修订版本恢复。版本控制系统的工具不允许从资源库中删除历史。我们只能追加的历史。它会发生，即使你删除文件，从资源库中。要撤销一个旧的版本，我们必须扭转作出任何改变旧的版本，然后提交一个新的版本。这就是所谓的反向合并。</p> 
+ <p> 让我们假设Jerry&nbsp;添加代码线性搜索操作。经核实后，他提交了他的变化。</p> 
+ <pre class="result" style="margin-bottom: 0px; background-color: rgb(241, 241, 241); font-size: 12px;">
+[jerry@CentOS trunk]$ svn diff
+Index: array.c
+===================================================================
+--- array.c   (revision 21)
++++ array.c   (working copy)
+@@ -2,6 +2,16 @@
+ 
+ #define MAX 16
+ 
++int linear_search(int *arr, int n, int key)
++{
++   int i;
++
++   for (i = 0; i &lt; n; ++i)
++      if (arr[i] == key)
++         return i;
++   return -1;
++}
++
+ void bubble_sort(int *arr, int n)
+ {
+    int i, j, temp, flag = 1;
+
+[jerry@CentOS trunk]$ svn status
+?       array
+M       array.c
+
+[jerry@CentOS trunk]$ svn commit -m "Added code for linear search"
+Sending        trunk/array.c
+Transmitting file data .
+Committed revision 22.
+</pre> 
+ <p> Jerry 对 Tom&nbsp;做什么很好奇，于是，他检查Subversion 的日志消息。</p> 
+ <pre class="result" style="margin-bottom: 0px; background-color: rgb(241, 241, 241); font-size: 12px;">
+[jerry@CentOS trunk]$ svn log
+</pre> 
+ <p style="margin: 0.8em 0px 1em; padding: 0px; text-align: justify; color: rgb(0, 0, 0); font-family: Helvetica, Arial, sans-serif;"> 上面的命令将产生以下结果</p> 
+ <div style="float:left;margin-bottom: 10px;">  
+ </div>
+ <div style="float:left;margin-bottom: 10px;">  
+ </div>  
+ <pre class="result" style="margin-bottom: 0px; background-color: rgb(241, 241, 241); font-size: 12px;">
+------------------------------------------------------------------------
+r5 | tom | 2013-08-24 17:15:28 +0530 (Sat, 24 Aug 2013) | 1 line
+
+Add binary search operation
+------------------------------------------------------------------------
+r4 | jerry | 2013-08-18 20:43:25 +0530 (Sun, 18 Aug 2013) | 1 line
+
+Add function to accept input and to display array contents
+</pre> 
+ <p style="margin: 0.8em 0px 1em; padding: 0px; text-align: justify; color: rgb(0, 0, 0); font-family: Helvetica, Arial, sans-serif;"> 查看日志消息后，Jerry意识到自己做了严重的错误。因为Tom已经实现二进制搜索操作，这是优于线性搜索。意味着他的代码是多余的，现在Jerry有他的变化恢复到以前的版本。所以先找到存储库的当前版本。目前库是在修订22，我们要恢复到以前的版本，即修订21。</p> 
+ <pre class="result" style="margin-bottom: 0px; background-color: rgb(241, 241, 241); font-size: 12px;">
+[jerry@CentOS trunk]$ svn up
+At revision 22.
+
+[jerry@CentOS trunk]$ svn merge -r 22:21 array.c 
+--- Reverse-merging r22 into 'array.c':
+U    array.c
+
+[jerry@CentOS trunk]$ svn commit -m "Reverted to revision 21"
+Sending        trunk/array.c
+Transmitting file data .
+Committed revision 23.</pre> 
+ <br>      
+</div></body></html>

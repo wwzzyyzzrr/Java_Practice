@@ -1,0 +1,121 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">JSF应用程序入门示例</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>要创建一个JSF应用程序，我们在这里使用<strong>NetBeans IDE 8.2</strong>。 当然您也可以使用其他Java IDE。</p> 
+ <p>在这里先创建一个项目，之后我们将运行测试它的配置设置。 所以，让我们首先来创建一个新的项目。</p> 
+ <p><strong>步骤1</strong>：创建一个新项目</p> 
+ <p>打开<strong>NetBeans IDE 8.2</strong>，转到【<strong>文件</strong>】菜单并选择【<strong>新建项目</strong>】。如下图所示 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201704/1904/875090454_65872.png" alt=""></p> 
+ <p>选择类别为【<strong>Java Web</strong>】和项目为【<strong>Web应用程序</strong>】。如下图所示 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201704/1904/726090456_36420.png" alt=""></p> 
+ <p>输入项目名称：<strong>jsf-helloworld</strong><br><img src="http://www.yiibai.com/uploads/images/201704/1904/869100415_40619.png" alt=""></p> 
+ <p>选择服务器和Java EE版本。<br><img src="http://www.yiibai.com/uploads/images/201704/1904/329100416_42879.png" alt=""></p> 
+ <p>选择JSF框架，如下图所示 -<br><img src="http://www.yiibai.com/uploads/images/201704/1904/900100417_35619.png" alt=""></p> 
+ <p>选择首选页面语言：JSF框架的早期版本默认为JSP表示页面。 现在，在最新版本2.0及更高版本中，JSF包含了强大的“Facelets”工具。 所以，这里我们选择了<strong>Facelets</strong>语言作为页面。 我们将在下一章中详细讨论<strong>Facelets</strong>。</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201704/1904/818100421_12883.png" alt=""></p> 
+ <p><strong>运行：</strong>现在，您可以在右键单击项目后选择运行选项来运行应用程序。 它会产生一个默认消息“<code>Hello from Facelets</code>”。如下图所示 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201704/1904/912100423_58608.png" alt=""></p> 
+ <p>我们已经成功创建了JSF项目。 该项目包括以下文件：</p> 
+ <ul> 
+  <li><code>index.xhtml</code>：在<code>F:\worksp\jsf\jsf-helloworld\web</code>目录下。</li>
+  <li><code>web.xml</code>：在<code>F:\worksp\jsf\jsf-helloworld\web\WEB-INF</code>目录下。</li>
+ </ul> 
+ <p>每运行该项目时，它会将<code>index.xhtml</code>作为输出。 现在，我们创建一个包含两个网页，一个bean类和一个配置文件的应用程序。</p> 
+ <p>为了开发新的应用程序，它需要以下步骤：</p> 
+ <ol> 
+  <li>创建用户界面</li>
+  <li>创建托管bean</li>
+  <li>配置和管理FacesServlet</li>
+ </ol> 
+ <h2 id="h2-1-"><a name="1)创建用户界面" class="reference-link"></a><span class="header-link octicon octicon-link"></span>1)创建用户界面</h2>
+ <p>我们将使用默认页面<code>index.xhtml</code>来呈现网页。 修改<code>index.xhtml</code>源代码，如下所示。</p> 
+ <pre><code class="lang-html">&lt;?xml version='1.0' encoding='UTF-8' ?&gt;  
+&lt;!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN""http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"&gt;  
+&lt;html xmlns="http://www.w3.org/1999/xhtml"  
+      xmlns:h="http://xmlns.jcp.org/jsf/html"&gt;  
+    &lt;h:head&gt;  
+        &lt;title&gt;User Form&lt;/title&gt;  
+    &lt;/h:head&gt;  
+    &lt;h:body&gt;  
+        &lt;h:form&gt;  
+            &lt;h:outputLabel for="username"&gt;User Name&lt;/h:outputLabel&gt;  
+            &lt;h:inputText id="username" value="#{user.name}" required="true" requiredMessage="User Name is required" /&gt;&lt;br/&gt;  
+            &lt;h:commandButton id="submit-button" value="Submit" action="response.xhtml"/&gt;  
+        &lt;/h:form&gt;  
+    &lt;/h:body&gt;  
+&lt;/html&gt;
+</code></pre> 
+ <p>创建第二个JSF网页，<code>response.xhtml</code>如下所示 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201704/1904/158100436_21874.png" alt=""></p> 
+ <p><code>response.xhtml</code>的源代码，如下所示</p> 
+ <pre><code class="lang-html">&lt;?xml version='1.0' encoding='UTF-8' ?&gt;  
+&lt;!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN""http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"&gt;  
+&lt;html xmlns="http://www.w3.org/1999/xhtml"  
+      xmlns:h="http://xmlns.jcp.org/jsf/html"&gt;  
+    &lt;h:head&gt;  
+        &lt;title&gt;Welcome Page&lt;/title&gt;  
+    &lt;/h:head&gt;  
+    &lt;h:body&gt;  
+        &lt;h2&gt;Hello, &lt;h:outputText value="#{user.name}"&gt;&lt;/h:outputText&gt;&lt;/h2&gt;  
+    &lt;/h:body&gt;  
+&lt;/html&gt;
+</code></pre> 
+ <h2 id="h2-2-bean"><a name="2)创建托管Bean" class="reference-link"></a><span class="header-link octicon octicon-link"></span>2)创建托管Bean</h2>
+ <p>它是一个包含属性和<code>getter</code>/<code>setter</code>方法的Java类。 JSF使用它作为模型。 所以，您也可以使用它来编写业务逻辑。<br><img src="http://www.yiibai.com/uploads/images/201704/1904/363100445_29004.png" alt=""><br>创建Java类后，将以下代码放入<code>User.java</code>文件中。</p>   
+ <pre><code class="lang-java">/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package com.yiibai;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.RequestScoped;
+
+@ManagedBean
+@RequestScoped
+public class User {
+
+    String name;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+}
+</code></pre> 
+ <h2 id="h2-3-"><a name="3)配置应用程序" class="reference-link"></a><span class="header-link octicon octicon-link"></span>3)配置应用程序</h2>
+ <p>要配置应用程序，打开项目包含的<code>web.xml</code>文件，设置<code>FacesServlet</code>实例。 您还可以设置应用程序欢迎页面和其他。</p> 
+ <p>以下是此应用程序的<code>web.xml</code>代码的代码 - </p> 
+ <pre><code class="lang-xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;  
+&lt;web-app version="3.1" xmlns="http://xmlns.jcp.org/xml/ns/javaee"   
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee   
+http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"&gt;  
+    &lt;context-param&gt;  
+        &lt;param-name&gt;javax.faces.PROJECT_STAGE&lt;/param-name&gt;  
+        &lt;param-value&gt;Development&lt;/param-value&gt;  
+    &lt;/context-param&gt;  
+    &lt;servlet&gt;  
+        &lt;servlet-name&gt;Faces Servlet&lt;/servlet-name&gt;  
+        &lt;servlet-class&gt;javax.faces.webapFacelet Titlep.FacesServlet&lt;/servlet-class&gt;  
+        &lt;load-on-startup&gt;1&lt;/load-on-startup&gt;  
+    &lt;/servlet&gt;  
+    &lt;servlet-mapping&gt;  
+        &lt;servlet-name&gt;Faces Servlet&lt;/servlet-name&gt;  
+        &lt;url-pattern&gt;/faces/*&lt;/url-pattern&gt;  
+    &lt;/servlet-mapping&gt;  
+    &lt;session-config&gt;  
+        &lt;session-timeout&gt;  
+            30  
+        &lt;/session-timeout&gt;  
+    &lt;/session-config&gt;  
+    &lt;welcome-file-list&gt;  
+        &lt;welcome-file&gt;faces/index.xhtml&lt;/welcome-file&gt;  
+    &lt;/welcome-file-list&gt;  
+&lt;/web-app&gt;
+</code></pre> 
+ <p>现在，可以运行应用程序来看看结果(这是应用程序的索引(默认<code>index.xhtml</code>)页。) -<br><img src="http://www.yiibai.com/uploads/images/201704/1904/726110425_27927.png" alt=""></p> 
+ <p>填写一个有效的值 -<br><img src="http://www.yiibai.com/uploads/images/201704/1904/964110426_69658.png" alt=""></p> 
+ <p>完！</p>
+ <br>      
+</div></body></html>

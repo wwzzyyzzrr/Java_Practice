@@ -1,0 +1,64 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">java.lang.SecurityManager.checkMulticast(InetAddress maddr)方法实例</h1><div style="width:100%;float:left;" class="article-content">   
+ <p> <strong>java.lang.SecurityManager.checkMulticast(InetAddress maddr)&nbsp;</strong>方法抛出一个SecurityException如果调用线程不允许使用(加入/离开/发送/接收)IP多播。此方法调用的checkPermission与 <strong>java.net.SocketPermission(maddr.getHostAddress(), "accept,connect") </strong>权限。如果重写此方法，那么调用super.checkMulticast重载方法通常会抛出一个异常。</p> 
+ <h2> 声明</h2> 
+ <p> 以下是<strong>java.lang.SecurityManager.checkMulticast()</strong>方法的声明</p> 
+ <pre class="prettyprint" style="border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; font-size: 12px; overflow: auto;">
+public void checkMulticast(InetAddress maddr)</pre> 
+ <h2> 参数</h2> 
+ <ul> 
+  <li> <p> maddr&nbsp;-- 使用Internet组地址。</p> </li> 
+ </ul> 
+ <h2> 返回值</h2> 
+ <p> 这个方法没有返回值。</p> 
+ <h2> 异常</h2> 
+ <ul> 
+  <li> <p> SecurityException&nbsp;--&nbsp;如果调用者没有权限访问的成员。</p> </li> 
+  <li> <p> NullPointerException&nbsp;-- 如果address 参数为null。</p> </li> 
+ </ul> 
+ <h2> 例子</h2> 
+ <p> 我们的示例，需要为每个命令的权限被阻止。一项新的规则文件设置，仅允许创建和我们的安全管理器的设置。该文件位于C:/java.policy，包含以下文字：</p> 
+ <pre class="prettyprint" style="border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; font-size: 12px; overflow: auto;">
+grant {
+  permission java.lang.RuntimePermission "setSecurityManager";
+  permission java.lang.RuntimePermission "createSecurityManager";
+  permission java.lang.RuntimePermission "usePolicy";
+};</pre> 
+ <p> 下面的例子显示lang.SecurityManager.checkMulticast()方法的使用。</p> 
+ <pre class="prettyprint" style="border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; font-size: 12px; overflow: auto;">
+package com.yiibai;
+
+import java.net.InetAddress;
+
+public class SecurityManagerDemo extends SecurityManager {
+
+   public static void main(String[] args) {
+
+      InetAddress add = null;
+      try {
+         add = InetAddress.getLocalHost();
+      } catch (Exception ex) {
+         ex.printStackTrace();
+      }
+
+      // set the policy file as the system securuty policy
+      System.setProperty("java.security.policy", "file:/C:/java.policy");
+
+      // create a security manager
+      SecurityManagerDemo sm = new SecurityManagerDemo();
+
+      // set the system security manager
+      System.setSecurityManager(sm);
+
+      // perform the check
+      sm.checkMulticast(add);
+
+      // print a message if we passed the check
+      System.out.println("Allowed!");
+   }
+}
+</pre> 
+ <p> 让我们来编译和运行上面的程序，这将产生以下结果：</p>   
+ <pre class="prettyprint" style="border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; font-size: 12px; overflow: auto;">
+Exception in thread "main" java.security.AccessControlException: access denied (java.net.SocketPermission 192.168.1.6 connect,accept,resolve)</pre> 
+ <br>      
+</div></body></html>

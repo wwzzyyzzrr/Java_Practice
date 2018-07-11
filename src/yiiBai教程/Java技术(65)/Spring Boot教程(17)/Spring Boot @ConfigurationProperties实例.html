@@ -1,0 +1,258 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Spring Boot @ConfigurationProperties实例</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>Spring Boot <code><a target="_blank" href="https://github.com/ConfigurationProperties" title="@ConfigurationProperties" class="at-link">@ConfigurationProperties</a></code>是让开发人员比较容易地将整个文件映射成一个对象。</p> 
+ <h2 id="h2-u7B80u5355u5C5Eu6027u6587u4EF6"><a name="简单属性文件" class="reference-link"></a><span class="header-link octicon octicon-link"></span>简单属性文件</h2>
+ <p>通常，我们使用<code><a target="_blank" href="https://github.com/Value" title="@Value" class="at-link">@Value</a></code>注释来逐个注入<code>.properties</code>值，这对于小而简单的结构<code>.properties</code>文件很有用。</p> 
+ <p><em>文件：global.properties</em> </p> 
+ <pre><code>email=test@yiibai.com
+thread-pool=12
+</code></pre>
+ <p><strong><a target="_blank" href="https://github.com/Value" title="@Value" class="at-link">@Value</a> 示例</strong><br><em>文件：GlobalProperties.java</em> </p> 
+ <pre><code class="lang-java">@Component
+@PropertySource("classpath:global.properties")
+public class GlobalProperties {
+
+    @Value("${thread-pool}")
+    private int threadPool;
+
+    @Value("${email}")
+    private String email;
+
+    //getters and setters
+
+}
+</code></pre> 
+ <p><strong><a target="_blank" href="https://github.com/ConfigurationProperties" title="@ConfigurationProperties" class="at-link">@ConfigurationProperties</a>实例</strong></p> 
+ <p><em>文件：GlobalProperties.java</em></p> 
+ <pre><code class="lang-java">import org.springframework.boot.context.properties.ConfigurationProperties;
+
+@Component
+@PropertySource("classpath:global.properties")
+@ConfigurationProperties
+public class GlobalProperties {
+
+    private int threadPool;
+    private String email;
+
+    //getters and setters
+
+}
+</code></pre> 
+ <h2 id="h2-2-"><a name="2.复杂属性文件" class="reference-link"></a><span class="header-link octicon octicon-link"></span>2.复杂属性文件</h2>
+ <p>2.1. 查看复杂的结构<code>.properties</code>文件，如何通过<code><a target="_blank" href="https://github.com/Value" title="@Value" class="at-link">@Value</a></code>注释映射值。</p> 
+ <p><em>文件：application.properties </em></p> 
+ <pre><code>#Logging
+logging.level.org.springframework.web=ERROR
+logging.level.com.yiibai=DEBUG
+
+#Global
+email=test@yiibai.com
+thread-pool=10
+
+#App
+app.menus[0].title=Home
+app.menus[0].name=Home
+app.menus[0].path=/
+app.menus[1].title=Login
+app.menus[1].name=Login
+app.menus[1].path=/login
+
+app.compiler.timeout=5
+app.compiler.output-folder=/temp/
+
+app.error=/error/
+</code></pre>
+ <p>或YAML中的下面配置， <em>文件： application.yml </em></p> 
+ <pre><code class="lang-yaml">logging:
+  level:
+    org.springframework.web: ERROR
+    com.yiibai: DEBUG
+email: test@yiibai.com
+thread-pool: 10
+app:
+  menus:
+    - title: Home
+      name: Home
+      path: /
+    - title: Login
+      name: Login
+      path: /login
+  compiler:
+    timeout: 5
+    output-folder: /temp/
+  error: /error/
+</code></pre> 
+ <blockquote> 
+  <p>注意：<code><a target="_blank" href="https://github.com/ConfigurationProperties" title="@ConfigurationProperties" class="at-link">@ConfigurationProperties</a></code>支持<code>.properties</code>和<code>.yml</code>文件。</p> 
+ </blockquote> 
+ <p>下面可使用<code><a target="_blank" href="https://github.com/ConfigurationProperties" title="@ConfigurationProperties" class="at-link">@ConfigurationProperties</a></code>来配置完成，创建一个<code><a target="_blank" href="https://github.com/ConfigurationProperties" title="@ConfigurationProperties" class="at-link">@ConfigurationProperties</a> bean</code>，如下所示：</p> 
+ <p><em>文件： AppProperties.java</em> -</p> 
+ <pre><code class="lang-java">package com.yiibai;
+
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@Component
+@ConfigurationProperties("app") // prefix app, find app.* values
+public class AppProperties {
+
+    private String error;
+    private List&lt;Menu&gt; menus = new ArrayList&lt;&gt;();
+    private Compiler compiler = new Compiler();
+
+    public static class Menu {
+        private String name;
+        private String path;
+        private String title;
+
+        //getters and setters
+
+        @Override
+        public String toString() {
+            return "Menu{" +
+                    "name='" + name + '\'' +
+                    ", path='" + path + '\'' +
+                    ", title='" + title + '\'' +
+                    '}';
+        }
+    }
+
+    public static class Compiler {
+        private String timeout;
+        private String outputFolder;
+
+        //getters and setters
+
+        @Override
+        public String toString() {
+            return "Compiler{" +
+                    "timeout='" + timeout + '\'' +
+                    ", outputFolder='" + outputFolder + '\'' +
+                    '}';
+        }
+
+    }
+
+    //getters and setters
+}
+</code></pre> 
+ <p><em>文件：GlobalProperties.java</em> -</p> 
+ <pre><code class="lang-java">package com.yiibai;
+
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
+
+@Component
+@ConfigurationProperties // no prefix, find root level values.
+public class GlobalProperties {
+
+    private int threadPool;
+    private String email;
+
+    //getters and setters
+}
+`
+</code></pre> 
+ <h2 id="h2-u6F14u793Au5B9Eu4F8B"><a name="演示实例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>演示实例</h2>
+ <p>测试以确保<code>.properties</code>值正确映射到对象。<em>文件：WelcomeController.java</em> - </p>   
+ <pre><code class="lang-java">package com.yiibai;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import java.util.Map;
+
+@Controller
+public class WelcomeController {
+
+    private static final Logger logger = LoggerFactory.getLogger(WelcomeController.class);
+
+    private AppProperties app;
+    private GlobalProperties global;
+
+    @Autowired
+    public void setApp(AppProperties app) {
+        this.app = app;
+    }
+
+    @Autowired
+    public void setGlobal(GlobalProperties global) {
+        this.global = global;
+    }
+
+    @RequestMapping("/")
+    public String welcome(Map&lt;String, Object&gt; model) {
+
+        String appProperties = app.toString();
+        String globalProperties = global.toString();
+
+        logger.debug("Welcome {}, {}", app, global);
+
+        model.put("message", appProperties + globalProperties);
+        return "welcome";
+    }
+
+}
+</code></pre> 
+ <p><em>文件：SpringBootWebApplication.java</em> -</p> 
+ <pre><code class="lang-java">package com.yiibai;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class SpringBootWebApplication {
+
+    public static void main(String[] args) throws Exception {
+        SpringApplication.run(SpringBootWebApplication.class, args);
+    }
+
+}
+</code></pre> 
+ <p>使用Maven命令<code>mvn spring-boot:run</code>启动Spring Boot，运行成功后访问默认/控制器，查看控制台输出：</p> 
+ <pre><code class="lang-shell">Welcome
+    AppProperties{error='/error/',
+        menus=[
+            Menu{name='Home', path='/', title='Home'},
+            Menu{name='Login', path='/login', title='Login'}
+        ],
+        compiler=Compiler{timeout='5', outputFolder='/temp/'}},
+
+    GlobalProperties{threadPool=10, email='test@yiibai.com'}
+</code></pre> 
+ <h3 id="h3--configurationproperties-"><a name="@ConfigurationProperties验证" class="reference-link"></a><span class="header-link octicon octicon-link"></span><a target="_blank" href="https://github.com/ConfigurationProperties" title="@ConfigurationProperties" class="at-link">@ConfigurationProperties</a>验证</h3>
+ <p>让这个<code><a target="_blank" href="https://github.com/ConfigurationProperties" title="@ConfigurationProperties" class="at-link">@ConfigurationProperties</a></code>支持JSR-303 bean验证 - <code>javax.validation</code></p> 
+ <p><em>文件：GlobalProperties.java </em> -</p> 
+ <pre><code class="lang-java">package com.yiibai;
+
+import org.hibernate.validator.constraints.NotEmpty;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
+
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+
+@Component
+@ConfigurationProperties
+public class GlobalProperties {
+
+    @Max(5)
+    @Min(0)
+    private int threadPool;
+
+    @NotEmpty
+    private String email;
+
+    //getters and setters
+}
+</code></pre> 
+ <p>尝试再次使用Maven命令<code>mvn spring-boot:run</code>启动Spring Boot，并查看控制台：</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201703/2703/888190301_11104.png" alt=""></p> 
+ <p>本项目名称为： <strong>spring-boot-properties</strong>， 请找到下载Spring Boot代码下载目录，并下载。</p>
+ <br>      
+</div></body></html>

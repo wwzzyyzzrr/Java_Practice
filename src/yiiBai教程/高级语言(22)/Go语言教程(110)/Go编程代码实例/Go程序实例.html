@@ -1,0 +1,63 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Go程序实例</h1><div style="width:100%;float:left;" class="article-content">   
+ <p><code>goroutine</code>是一个轻量级的执行线程。</p> 
+ <p>假设有一个函数调用<code>f(s)</code>。 下面是以通常的方式调用它，同步运行它。</p> 
+ <p>要在<code>goroutine</code>中调用此函数，请使用<code>go f(s)</code>。 这个新的<code>goroutine</code>将与调用同时执行。</p> 
+ <p>也可以为匿名函数调用启动一个<code>goroutine</code>。</p> 
+ <p>两个函数调用现在在不同的<code>goroutine</code>中异步运行，所以执行到这里。这个ScanIn代码要求我们在程序退出之前按一个键。</p> 
+ <p>当我们运行这个程序时，首先看到阻塞调用的输出，然后是两个<code>gouroutines</code>的交替输出。 这种交替反映了Go运行时并发运行的<code>goroutine</code>。</p> 
+ <p>接下来，我们来看看在并发Go程序中<code>goroutines</code>的一个补充：<code>channels</code>。</p> 
+ <blockquote> 
+  <p>所有的示例代码，都放在 <code>F:\worksp\golang</code> 目录下。安装Go编程环境请参考：<a target="_blank" href="http://www.yiibai.com/go/go_environment.html">http://www.yiibai.com/go/go_environment.html</a> </p> 
+ </blockquote> 
+ <p><code>goroutines.go</code>的完整代码如下所示 -</p> 
+ <pre><code class="lang-go">package main
+
+import "fmt"
+
+func f(from string) {
+    for i := 0; i &lt; 3; i++ {
+        fmt.Println(from, ":", i)
+    }
+}
+
+func main() {
+
+    // Suppose we have a function call `f(s)`. Here's how
+    // we'd call that in the usual way, running it
+    // synchronously.
+    f("direct")
+
+    // To invoke this function in a goroutine, use
+    // `go f(s)`. This new goroutine will execute
+    // concurrently with the calling one.
+    go f("goroutine")
+
+    // You can also start a goroutine for an anonymous
+    // function call.
+    go func(msg string) {
+        fmt.Println(msg)
+    }("going")
+
+    // Our two function calls are running asynchronously in
+    // separate goroutines now, so execution falls through
+    // to here. This `Scanln` code requires we press a key
+    // before the program exits.
+    var input string
+    fmt.Scanln(&amp;input)
+    fmt.Println("done")
+}
+</code></pre> 
+ <p>执行上面代码，将得到以下输出结果 - </p>   
+ <pre><code class="lang-go">F:\worksp\golang&gt;go run goroutines.go
+direct : 0
+direct : 1
+direct : 2
+goroutine : 0
+goroutine : 1
+goroutine : 2
+going
+123456
+done
+</code></pre>
+ <br>      
+</div></body></html>

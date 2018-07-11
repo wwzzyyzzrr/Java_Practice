@@ -1,0 +1,48 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">AWK工作流程</h1><div style="width:100%;float:left;" class="article-content">   
+ <p> 本章将介绍AWK究竟如何工作的。成为一个专家AWK程序员，需要知道它的内部流程。 AWK遵循一个简单的工作流程：读取，执行和重复。下图描述了工作流程。</p> 
+ <img alt="AWK Workflow" src="/uploads/allimg/150105/09492220K-0.jpg"> 
+ <h3> 读取</h3> 
+ <p> AWK从输入流(文件，管道，或标准输入)读取一行，并将其存储在存储器(内存)中。</p> 
+ <h3> 执行</h3> 
+ <p> 所有的AWK命令依次提交输入。默认情况下AWK执行命令每一行，但我们可以通过提供的模式限制。</p> 
+ <h3> 重复</h3> 
+ <p> 重复这个过程，直到该文件被处理完成。</p> 
+ <h2> 程序结构</h2> 
+ <p> 我们已经看到了AWK程序的工作流程。现在来了解AKW程序的结构。</p> 
+ <h3> BEGIN 块</h3> 
+ <p> 以下是BEGIN块语法：</p> 
+ <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+<span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">BEGIN</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">{</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">awk</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">-</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">commands</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">}</span></pre> 
+ <p> 在BEGIN块被在程序启动时执行，且只执行一次。这是一个很好的初始化变量的地方。 BEGIN是AWK关键字，因此它必须是大写。请注意，这个块是可选的。</p> 
+ <h3> Body块</h3> 
+ <p> 以下是主体（Body）块的语法：</p> 
+ <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+<span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">/pattern/</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">{</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">awk</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">-</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">commands</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">}</span></pre> 
+ <p> 主体块适用于AWK的每个输入行命令。默认情况下AWK执行每一行命令，但可以通过提供的模式限制。请注意，没有主体块的关键字。</p> 
+ <h3> END 块</h3> 
+ <p> 以下是END块的语法：</p> 
+ <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+<span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">END</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">{</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">awk</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">-</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">commands</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">}</span></pre> 
+ <p> END块被在程序结束时执行。END是AWK关键字，因此它必须是大写。请注意，此块也是可选的。</p> 
+ <h3> 示例</h3> 
+ <p> 让创建一个包含序列号的学生，名字，科目并标记数量，文件的名称为：marks.txt。</p> 
+ <pre class="result" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+1)&nbsp;&nbsp;&nbsp;&nbsp;Amit&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Physics&nbsp;&nbsp;&nbsp;&nbsp;80
+2)&nbsp;&nbsp;&nbsp;&nbsp;Rahul&nbsp;&nbsp;&nbsp;&nbsp;Maths&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;90
+3)&nbsp;&nbsp;&nbsp;&nbsp;Shyam&nbsp;&nbsp;&nbsp;&nbsp;Biology&nbsp;&nbsp;&nbsp;&nbsp;87
+4)&nbsp;&nbsp;&nbsp;&nbsp;Kedar&nbsp;&nbsp;&nbsp;&nbsp;English&nbsp;&nbsp;&nbsp;&nbsp;85
+5)&nbsp;&nbsp;&nbsp;&nbsp;Hari&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;History&nbsp;&nbsp;&nbsp;&nbsp;89</pre> 
+ <p> 现在用AWK脚本显示包含头文件的内容。</p>   
+ <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+<span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">jerry</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">$ awk </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">'BEGIN{printf "Sr No\tName\tSub\tMarks\n"} {print}'</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> marks</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">txt</span></pre> 
+ <p> 当执行上面的代码时，会产生以下结果。</p> 
+ <pre class="result" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
+Sr No&nbsp;Name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sub&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Marks
+1)&nbsp;&nbsp;&nbsp;&nbsp;Amit&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Physics&nbsp;&nbsp;&nbsp;&nbsp;80
+2)&nbsp;&nbsp;&nbsp;&nbsp;Rahul&nbsp;&nbsp;&nbsp;&nbsp;Maths&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;90
+3)&nbsp;&nbsp;&nbsp;&nbsp;Shyam&nbsp;&nbsp;&nbsp;&nbsp;Biology&nbsp;&nbsp;&nbsp;&nbsp;87
+4)&nbsp;&nbsp;&nbsp;&nbsp;Kedar&nbsp;&nbsp;&nbsp;&nbsp;English&nbsp;&nbsp;&nbsp;&nbsp;85
+5)&nbsp;&nbsp;&nbsp;&nbsp;Hari&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;History&nbsp;&nbsp;&nbsp;&nbsp;89</pre> 
+ <p> 在程序启动时AWK从BEGIN块头打印。然后，在主体块时，它从一个文件读取一行，并执行打印标准输出流的内容，使用AWK的printf命令。这个过程不断重复，直到文件被耗尽。</p> 
+ <br>      
+</div></body></html>

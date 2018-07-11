@@ -1,0 +1,91 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Docker Ubuntu系统安装</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>Docker还允许我们在隔离的容器中安装任何操作系统。在下面的例子中，将演示如何在Docker中安装Ubuntu系统。</p> 
+ <p>1.创建一个目录用来组织安装的操作系统文件。</p> 
+ <pre><code class="lang-shell">yiibai@ubuntu:~$ mkdir -p /home/yiibai/docker/ubuntu-in-docker
+</code></pre> 
+ <p>2.进入工作目录</p> 
+ <pre><code class="lang-shell">yiibai@ubuntu:~$ cd /home/yiibai/docker/ubuntu-in-docker
+</code></pre> 
+ <p>3.创建一个 Dockerfile 文件</p> 
+ <p>在文件中，只使用一个将从Docker中转站拉出Ubuntu映像的指令。</p> 
+ <pre><code class="lang-shell">FROM ubuntu
+</code></pre> 
+ <p>4.创建Docker映像</p> 
+ <pre><code class="lang-scala">yiibai@ubuntu:~/docker/ubuntu-in-docker$ sudo docker build -t ubuntu-in-doker .
+[sudo] password for yiibai:
+Sending build context to Docker daemon  2.048kB
+Step 1/1 : FROM ubuntu
+latest: Pulling from library/ubuntu
+Digest: sha256:ea1d854d38be82f54d39efe2c67000bed1b03348bcc2f3dc094f260855dff368
+Status: Downloaded newer image for ubuntu:latest
+ ---&gt; 7b9b13f7b9c0
+Successfully built 7b9b13f7b9c0
+Successfully tagged ubuntu-in-doker:latest
+yiibai@ubuntu:~/docker/ubuntu-in-docker$
+</code></pre> 
+ <p>5.运行Docker映像</p> 
+ <p>现在，创建这个Ubuntu系统的Docker映像，以下命令用于创建Docker映像。</p> 
+ <pre><code class="lang-shell">yiibai@ubuntu:~/docker/ubuntu-in-docker$ sudo docker run -td ubuntu
+e36afad81d32340536f01898fd81ad33151ee765a26ef635e010b26f12b30f3a
+yiibai@ubuntu:~/docker/ubuntu-in-docker$
+</code></pre> 
+ <p>6.查看当前运行的 Docker映像</p> 
+ <p>使用以下命令查看所有正在运行的Docker容器。</p> 
+ <pre><code class="lang-shell">yiibai@ubuntu:~/docker/ubuntu-in-docker$ sudo docker ps -a
+CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS                   PORTS               NAMES
+e36afad81d32        ubuntu              "/bin/bash"              21 seconds ago      Up 20 seconds                                admiring_bardeen
+cf86a1188de2        ruby-app            "ruby index.rb"          9 days ago          Exited (0) 9 days ago                        angry_bhaskara
+be0eed0c9c84        perl-app            "perl index.pl"          9 days ago          Exited (0) 9 days ago                        trusting_snyder
+b89d59fd1d2d        774aa9644b86        "perl index.pl"          9 days ago          Exited (0) 9 days ago                        competent_wing
+05360c63fbc0        774aa9644b86        "perl index.pl"          9 days ago          Exited (0) 9 days ago                        elegant_ardinghelli
+38421563452a        scala-app           "scala /home/yiiba..."   9 days ago          Exited (0) 9 days ago                        fervent_curie
+14d84bd35af1        3b6d4c56eefe        "java"                   9 days ago          Exited (1) 9 days ago                        stupefied_engelbart
+cee6b601cdf2        3b6d4c56eefe        "java"                   9 days ago          Exited (1) 9 days ago                        wizardly_pasteur
+20e511a331ff        1562335544a3        "java"                   9 days ago          Exited (1) 9 days ago                        trusting_stallman
+ad7e2665f4f2        1562335544a3        "java"                   9 days ago          Exited (1) 9 days ago                        zen_payne
+d480e715d048        1562335544a3        "java"                   9 days ago          Exited (1) 9 days ago                        vigorous_leavitt
+0a48d6a92b74        4f6372b49671        "/bin/bash"              9 days ago          Exited (0) 9 days ago                        focused_curie
+a442819877c2        4f6372b49671        "/bin/bash"              9 days ago          Exited (0) 9 days ago                        vigilant_lumiere
+a8ce493bd731        4f6372b49671        "/bin/bash"              9 days ago          Exited (0) 9 days ago                        nifty_meninsky
+c14344cddb6d        4f6372b49671        "/bin/bash"              9 days ago          Exited (0) 9 days ago                        brave_snyder
+432b82d9a89b        1d786cf20101        "/bin/bash"              9 days ago          Exited (0) 9 days ago                        sad_kirch
+0f7380223ace        1d786cf20101        "/bin/bash"              9 days ago          Exited (0) 9 days ago                        practical_nightingale
+693b0835b814        python-app          "python /src/index.py"   9 days ago          Exited (0) 9 days ago                        frosty_mclean
+0db2a61f1ad0        php-app             "docker-php-entryp..."   11 days ago         Exited (0) 9 days ago                        dazzling_joliot
+12d76c89d7de        0420419feb44        "docker-php-entryp..."   11 days ago         Exited (0) 11 days ago                       priceless_swanson
+ad76da990bc0        0420419feb44        "docker-php-entryp..."   11 days ago         Exited (0) 11 days ago                       jovial_mcnulty
+8ad82d85154a        0420419feb44        "docker-php-entryp..."   11 days ago         Exited (0) 11 days ago                       friendly_gates
+55d0303126a1        ca59a5a4f3fb        "docker-php-entryp..."   11 days ago         Exited (0) 11 days ago                       blissful_raman
+f392d8d38d0e        c2e626f9d9c6        "docker-php-entryp..."   11 days ago         Exited (0) 11 days ago                       determined_nightingale
+c59065c26414        c2e626f9d9c6        "docker-php-entryp..."   11 days ago         Exited (0) 11 days ago                       dreamy_goldwasser
+f0abe5b8969f        c2e626f9d9c6        "docker-php-entryp..."   11 days ago         Exited (0) 11 days ago                       eloquent_payne
+c7772607fcf9        java-app            "java Hello"             12 days ago         Exited (0) 12 days ago                       awesome_lewin
+30ef57b84864        hello-world         "/hello"                 12 days ago         Exited (0) 12 days ago                       frosty_benz
+0415f34bb21e        hello-world         "/hello"                 12 days ago         Exited (0) 12 days ago                       zen_lalande
+yiibai@ubuntu:~/docker/ubuntu-in-docker$
+</code></pre> 
+ <p>7.进入Docker容器</p> 
+ <p>可以进入运行容器，并可以检查容器内的文件和应用程序。</p>   
+ <pre><code class="lang-shell">yiibai@ubuntu:~/docker/ubuntu-in-docker$ sudo docker exec -it e36afad81d32 bash
+</code></pre> 
+ <p>8.请参阅Ubuntu操作系统目录结构</p> 
+ <p>进入后，如下所示 - </p> 
+ <pre><code class="lang-shell">yiibai@ubuntu:~/docker/ubuntu-in-docker$ sudo docker exec -it e36afad81d32 bash
+root@e36afad81d32:/# pwd
+/
+root@e36afad81d32:/#
+</code></pre> 
+ <p>9.执行命令</p> 
+ <pre><code class="lang-shell">root@e36afad81d32:/# apt-get update
+Get:1 http://security.ubuntu.com/ubuntu xenial-security InRelease [102 kB]
+Get:2 http://security.ubuntu.com/ubuntu xenial-security/universe Sources [39.4 kB]
+Get:3 http://archive.ubuntu.com/ubuntu xenial InRelease [247 kB]
+Get:4 http://security.ubuntu.com/ubuntu xenial-security/main amd64 Packages [355 kB]
+Get:5 http://security.ubuntu.com/ubuntu xenial-security/restricted amd64 Packages [12.8 kB]
+Get:6 http://security.ubuntu.com/ubuntu xenial-security/universe amd64 Packages [170 kB]
+Get:7 http://archive.ubuntu.com/ubuntu xenial-updates InRelease [102 kB]
+0% [7 InRelease 55.6 kB/102 kB 54%] [6 Packages 129 kB/170 kB 76%]
+....
+</code></pre>
+ <br>      
+</div></body></html>

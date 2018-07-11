@@ -1,0 +1,274 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">JSP服务器响应</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>在本章中，我们将讨论JSP中的服务器响应。当Web服务器响应HTTP请求时，响应通常由状态行，一些响应头，空行和文档组成。典型的响应看起来如下 -</p> 
+ <pre><code class="lang-html">HTTP/1.1 200 OK
+Content-Type: text/html
+Header2: ...
+...
+HeaderN: ...
+   (Blank Line)
+&lt;!doctype ...&gt;
+
+&lt;html&gt;
+   &lt;head&gt;...&lt;/head&gt;
+   &lt;body&gt;
+      ...
+   &lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>状态行由HTTP版本(示例中为<em>HTTP/1.1</em>)，状态码(示例中为<code>200</code>)和与状态代码相对应的非常短的消息(示例中为<code>“OK”</code>)组成。</p> 
+ <p>以下是从Web服务器返回浏览器的最有用的<em>HTTP 1.1</em>响应头的摘要。 这些头文件经常用于Web编程 -</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>编号</th> 
+    <th>响应头</th> 
+    <th>描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>1</td> 
+    <td><code>Allow</code></td> 
+    <td>此响应头指定服务器支持的请求方法(<code>GET</code>，<code>POST</code>等)。</td> 
+   </tr> 
+   <tr> 
+    <td>2</td> 
+    <td><code>Cache-Control</code></td> 
+    <td>此响应头指定响应文档可以安全地缓存的情况。它的值可以是<code>public</code>，<code>private</code>或<code>no-cache</code>等等。<code>public</code>则表示文档是可缓存的，<code>private</code>则表示文档是针对单个用户，只能存储在私有(非共享)缓存中，而<code>no-cache</code>则表示文档不应该被缓存。</td> 
+   </tr> 
+   <tr> 
+    <td>3</td> 
+    <td><code>Connection</code></td> 
+    <td>此响应头指示浏览器是否使用持久HTTP连接。<code>close</code>值指示浏览器不使用持久HTTP连接，而<code>keep-alive</code>表示使用持久连接。</td> 
+   </tr> 
+   <tr> 
+    <td>4</td> 
+    <td><code>Content-Disposition</code></td> 
+    <td>此响应头允许请求浏览器要求用户将响应保存到给定名称的文件中。</td> 
+   </tr> 
+   <tr> 
+    <td>5</td> 
+    <td><code>Content-Encoding</code></td> 
+    <td>此响应头指定在传输期间页面被编码的方式。</td> 
+   </tr> 
+   <tr> 
+    <td>6</td> 
+    <td><code>Content-Language</code></td> 
+    <td>此响应头表示文档写入的语言。例如，<code>en</code>，<code>en-us</code>，<code>ru</code>等</td> 
+   </tr> 
+   <tr> 
+    <td>7</td> 
+    <td><code>Content-Length</code></td> 
+    <td>此响应头指示响应中的字节数。仅当浏览器使用持久(保持活动)HTTP连接时，才需要此信息。</td> 
+   </tr> 
+   <tr> 
+    <td>8</td> 
+    <td><code>Content-Type</code></td> 
+    <td>此响应头给出响应文档的<code>MIME</code>(多用途Internet邮件扩展)类型。</td> 
+   </tr> 
+   <tr> 
+    <td>9</td> 
+    <td><code>Expires</code></td> 
+    <td>此响应头指定内容应被视为过期的时间，因此不再被缓存。</td> 
+   </tr> 
+   <tr> 
+    <td>10</td> 
+    <td><code>Last-Modified</code></td> 
+    <td>此响应头指示文档何时上次更改。客户端可以缓存文档，并在稍后的请求中通过<code>If-Modified-Since</code>请求头提供日期。</td> 
+   </tr> 
+   <tr> 
+    <td>11</td> 
+    <td><code>Location</code></td> 
+    <td>此响应头应该在<code>300s</code>内包含在状态代码的所有响应中。它通知浏览器文档地址。 浏览器自动重新连接到此位置并检索新文档。</td> 
+   </tr> 
+   <tr> 
+    <td>12</td> 
+    <td><code>Refresh</code></td> 
+    <td>此响应头指定浏览器应该要求更新页面的时间。可以指定时间，之后它将指定秒数刷新页面。</td> 
+   </tr> 
+   <tr> 
+    <td>13</td> 
+    <td><code>Retry-After</code></td> 
+    <td>此响应头可以与<code>503</code>(服务不可用)响应一起使用，以便告诉客户端可以多久重复其请求。</td> 
+   </tr> 
+   <tr> 
+    <td>14</td> 
+    <td><code>Set-Cookie</code></td> 
+    <td>此响应头指定与该页面相关联的<code>cookie</code>。</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h2 id="h2-httpservletresponse-"><a name="HttpServletResponse对象" class="reference-link"></a><span class="header-link octicon octicon-link"></span>HttpServletResponse对象</h2>
+ <p><code>response</code>对象是<code>javax.servlet.http.HttpServletResponse</code>对象的一个实例。就像服务器创建请求对象一样，它还创建一个对象来表示对客户端的响应。</p> 
+ <p><code>response</code>对象还定义了处理创建新HTTP头的接口。通过此对象，JSP程序员可以添加新的Cookie或日期戳，HTTP状态代码等。</p> 
+ <p>可以使用以下方法在servlet程序中设置HTTP响应头。这些方法可用于<code>HttpServletResponse</code>对象。此对象表示服务器响应。</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>编号</th> 
+    <th>方法</th> 
+    <th>描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>1</td> 
+    <td><code>String encodeRedirectURL(String url)</code></td> 
+    <td>对指定的URL进行编码，以在<code>sendRedirect()</code>方法中使用，或者如果不需要编码，则返回URL。</td> 
+   </tr> 
+   <tr> 
+    <td>2</td> 
+    <td><code>String encodeURL(String url)</code></td> 
+    <td>通过在其中包含会话ID来对指定的URL进行编码，或者如果不需要编码，则不会更改URL。</td> 
+   </tr> 
+   <tr> 
+    <td>3</td> 
+    <td><code>boolean containsHeader(String name)</code></td> 
+    <td>返回一个布尔值，表示是否已经设置了命名的响应头。</td> 
+   </tr> 
+   <tr> 
+    <td>4</td> 
+    <td><code>boolean isCommitted()</code></td> 
+    <td>返回一个布尔值，表示响应是否已提交。</td> 
+   </tr> 
+   <tr> 
+    <td>5</td> 
+    <td><code>void addCookie(Cookie cookie)</code></td> 
+    <td>将指定的<code>cookie</code>添加到响应。</td> 
+   </tr> 
+   <tr> 
+    <td>6</td> 
+    <td><code>void addDateHeader(String name, long date)</code></td> 
+    <td>添加具有给定名称和日期值的响应头。</td> 
+   </tr> 
+   <tr> 
+    <td>7</td> 
+    <td><code>void addHeader(String name, String value)</code></td> 
+    <td>添加具有给定名称和值的响应头。</td> 
+   </tr> 
+   <tr> 
+    <td>8</td> 
+    <td><code>void addIntHeader(String name, int value)</code></td> 
+    <td>添加具有给定名称和整数值的响应头。</td> 
+   </tr> 
+   <tr> 
+    <td>9</td> 
+    <td><code>void flushBuffer()</code></td> 
+    <td>强制将缓冲区中的所有内容写入客户端。</td> 
+   </tr> 
+   <tr> 
+    <td>10</td> 
+    <td><code>void reset()</code></td> 
+    <td>清除缓冲区中存在的所有数据以及状态代码和标头。</td> 
+   </tr> 
+   <tr> 
+    <td>11</td> 
+    <td><code>void resetBuffer()</code></td> 
+    <td>在响应中清除底层缓冲区的内容，而不清除标头或状态代码。</td> 
+   </tr> 
+   <tr> 
+    <td>12</td> 
+    <td><code>void sendError(int sc)</code></td> 
+    <td>使用指定的状态代码向客户端发送错误响应并清除缓冲区。</td> 
+   </tr> 
+   <tr> 
+    <td>13</td> 
+    <td><code>void sendError(int sc, String msg)</code></td> 
+    <td>使用指定的状态向客户端发送错误响应。</td> 
+   </tr> 
+   <tr> 
+    <td>14</td> 
+    <td><code>void sendRedirect(String location)</code></td> 
+    <td>使用指定的重定向位置URL向客户端发送临时重定向响应。</td> 
+   </tr> 
+   <tr> 
+    <td>15</td> 
+    <td><code>void setBufferSize(int size)</code></td> 
+    <td>设置响应正文的首选缓冲区大小。</td> 
+   </tr> 
+   <tr> 
+    <td>16</td> 
+    <td><code>void setCharacterEncoding(String charset)</code></td> 
+    <td>设置发送给客户端的响应的字符编码(MIME字符集)，例如：<code>UTF-8</code>，<code>GB2312</code>。</td> 
+   </tr> 
+   <tr> 
+    <td>17</td> 
+    <td><code>void setContentLength(int len)</code></td> 
+    <td>设置响应中内容正文的长度在HTTP servlet中; 此方法还可以设置HTTP <code>Content-Length</code>头。</td> 
+   </tr> 
+   <tr> 
+    <td>18</td> 
+    <td><code>void setContentType(String type)</code></td> 
+    <td>如果尚未提交响应，请设置要发送给客户端的响应的内容类型。</td> 
+   </tr> 
+   <tr> 
+    <td>19</td> 
+    <td><code>void setDateHeader(String name, long date)</code></td> 
+    <td>设置具有给定名称和日期值的响应头。</td> 
+   </tr> 
+   <tr> 
+    <td>20</td> 
+    <td><code>void setHeader(String name, String value)</code></td> 
+    <td>设置具有给定名称和值的响应头。</td> 
+   </tr> 
+   <tr> 
+    <td>21</td> 
+    <td><code>void setIntHeader(String name, int value)</code></td> 
+    <td>设置具有给定名称和整数值的响应头。</td> 
+   </tr> 
+   <tr> 
+    <td>22</td> 
+    <td><code>void setLocale(Locale loc)</code></td> 
+    <td>如果响应尚未提交，则设置响应的区域设置。</td> 
+   </tr> 
+   <tr> 
+    <td>23</td> 
+    <td><code>void setStatus(int sc)</code></td> 
+    <td>设置此响应的状态代码。</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h2 id="h2-http-"><a name="HTTP头响应示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>HTTP头响应示例</h2>
+ <p>打开Eclipse创建一个动态Web项目：<em>ServerResponse</em>，其项目结构如下所示 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/1910/462161043_35471.png" alt=""></p> 
+ <p>以下示例将使用<code>setIntHeader()</code>方法设置<code>Refresh</code>头来模拟数字时钟，请参考以下代码实现。</p> 
+ <p>文件：<em>index.jsp</em> - </p>   
+ <pre><code class="lang-html">&lt;%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%&gt;
+&lt;%@ page import = "java.io.*,java.util.*" %&gt;
+&lt;!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;meta http-equiv="Content-Type" content="text/html; charset=UTF-8"&gt;
+&lt;title&gt;服务器响应示例&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div style="margin: auto; width: 80%;"&gt;
+        &lt;h2&gt;自动刷新HTTP标头示例&lt;/h2&gt;
+        &lt;%
+            // Set refresh, autoload time as 5 seconds
+            response.setIntHeader("Refresh", 3);
+
+            // Get current time
+            Calendar calendar = new GregorianCalendar();
+
+            String am_pm;
+            int hour = calendar.get(Calendar.HOUR);
+            int minute = calendar.get(Calendar.MINUTE);
+            int second = calendar.get(Calendar.SECOND);
+
+            if (calendar.get(Calendar.AM_PM) == 0)
+                am_pm = "AM";
+            else
+                am_pm = "PM";
+            String CT = hour + ":" + minute + ":" + second + " " + am_pm;
+            out.println("Current Time is: " + CT + "\n");
+        %&gt;
+    &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>在上面代码编写完成后，部署这个Web项目，打开浏览器访问URL： <a target="_blank" href="http://localhost:8080/ServerResponse/">http://localhost:8080/ServerResponse/</a> ， 每<code>3</code>秒钟显示当前系统时间，如下所示 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/1910/783161045_17235.png" alt=""></p>
+ <br>      
+</div></body></html>

@@ -1,0 +1,58 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">SQL临时表</h1><div style="width:100%;float:left;" class="article-content">   
+ <p> RDBMS有支持临时表。 临时表是一个伟大的功能，让您存储和使用如：选择，更新过程中间结果，并加入功能，可以与典型的SQL Server表使用。</p> 
+ <p> 临时表可能是非常有用的在某些情况下，以保持临时数据。这应该被称为临时表的最重要的事情是，当当前客户端会话终止，它们将被删除。</p> 
+ <p> 临时表可在MySQL版本3.23以上使用。如果你使用MySQL的旧版本比3.23，则不能使用临时表，但可以使用堆表。</p> 
+ <p> 如前所述，临时表将只要会话持续就活着。如果在一个PHP脚本运行的代码，当脚本执行完毕后，临时表将被自动销毁。如果您是通过MySQL客户端程序连接到MySQL数据库服务器， 那么临时表会一直存在，直到您关闭客户端或者手动销毁表。</p> 
+ <h2> 例子：</h2> 
+ <p> 下面是一个例子，显示临时表的用法：</p> 
+ <pre class="prettyprint" style="border-radius: 0px; font-size: 12px; overflow: auto;">
+mysql&gt; CREATE TEMPORARY TABLE SALESSUMMARY (
+    -&gt; product_name VARCHAR(50) NOT NULL
+    -&gt; , total_sales DECIMAL(12,2) NOT NULL DEFAULT 0.00
+    -&gt; , avg_unit_price DECIMAL(7,2) NOT NULL DEFAULT 0.00
+    -&gt; , total_units_sold INT UNSIGNED NOT NULL DEFAULT 0
+);
+Query OK, 0 rows affected (0.00 sec)
+
+mysql&gt; INSERT INTO SALESSUMMARY
+    -&gt; (product_name, total_sales, avg_unit_price, total_units_sold)
+    -&gt; VALUES
+    -&gt; ('cucumber', 100.25, 90, 2);
+
+mysql&gt; SELECT * FROM SALESSUMMARY;
++--------------+-------------+----------------+------------------+
+| product_name | total_sales | avg_unit_price | total_units_sold |
++--------------+-------------+----------------+------------------+
+| cucumber     |      100.25 |          90.00 |                2 |
++--------------+-------------+----------------+------------------+
+1 row in set (0.00 sec)&nbsp;</pre> 
+ <p> 当你发出一个SHOW TABLES命令，临时表不会被列在列表中。现在，如果注销MySQL的会话，然后发出SELECT命令，这时你会发现在数据库中没有可用的数据。 临时表也就不存在了。</p> 
+ <h2> 删除临时表：</h2> 
+ <p> 默认情况下，当你的数据库连接被终止，所有的临时表被MySQL删除。您如果还是想要删除的他们，那么可发出DROP TABLE命令。</p> 
+ <p> 下面是删除一个临时表的例子。</p>   
+ <pre class="prettyprint" style="border-radius: 0px; font-size: 12px; overflow: auto;">
+mysql&gt; CREATE TEMPORARY TABLE SALESSUMMARY (
+    -&gt; product_name VARCHAR(50) NOT NULL
+    -&gt; , total_sales DECIMAL(12,2) NOT NULL DEFAULT 0.00
+    -&gt; , avg_unit_price DECIMAL(7,2) NOT NULL DEFAULT 0.00
+    -&gt; , total_units_sold INT UNSIGNED NOT NULL DEFAULT 0
+);
+Query OK, 0 rows affected (0.00 sec)
+
+mysql&gt; INSERT INTO SALESSUMMARY
+    -&gt; (product_name, total_sales, avg_unit_price, total_units_sold)
+    -&gt; VALUES
+    -&gt; ('cucumber', 100.25, 90, 2);
+
+mysql&gt; SELECT * FROM SALESSUMMARY;
++--------------+-------------+----------------+------------------+
+| product_name | total_sales | avg_unit_price | total_units_sold |
++--------------+-------------+----------------+------------------+
+| cucumber     |      100.25 |          90.00 |                2 |
++--------------+-------------+----------------+------------------+
+1 row in set (0.00 sec)
+mysql&gt; DROP TABLE SALESSUMMARY;
+mysql&gt;  SELECT * FROM SALESSUMMARY;
+ERROR 1146: Table 'TUTORIALS.SALESSUMMARY' doesn't exist</pre> 
+ <br>      
+</div></body></html>

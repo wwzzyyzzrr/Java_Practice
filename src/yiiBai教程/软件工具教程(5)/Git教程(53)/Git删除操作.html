@@ -1,0 +1,44 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Git删除操作</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>其他开发人员在更新他的本地存储库后，在<code>src</code>目录中找到一个<code>module.py</code>文件。查看提交消息后，了解到<code>module.py</code>文件是由<code>maxsu</code>添加的。</p> 
+ <pre><code class="lang-shell">yiibai@ubuntu:~/git/sample$ pwd
+/home/yiibai/git/sample
+yiibai@ubuntu:~/git/sample$ ls
+README.md  src
+yiibai@ubuntu:~/git/sample$ ls src/
+main.py
+yiibai@ubuntu:~/git/sample$ git pull
+Updating 186df84..6bdbf82
+Fast-forward
+ src/{main.py =&gt; module.py} | 0
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+ rename src/{main.py =&gt; module.py} (100%)
+yiibai@ubuntu:~/git/sample$ ls src/
+module.py
+yiibai@ubuntu:~/git/sample$ git log
+commit 6bdbf8219c60d8da9ad352c23628600faaefbe13
+Author: maxsu &lt;your_email@mail.com&gt;
+Date:   Mon Jul 10 20:34:28 2017 +0800
+
+    renamed main.py to module.py
+
+......
+</code></pre> 
+ <p>现在，假设要对上面的项目中代码结构进行重构，代码文件：<em>module.py</em> 已经不再使用了，要将它删除，那么应该怎么做？请参考以下命令 - </p> 
+ <pre><code class="lang-shell">yiibai@ubuntu:~/git/sample$ pwd
+/home/yiibai/git/sample
+yiibai@ubuntu:~/git/sample$ ls
+README.md  src
+yiibai@ubuntu:~/git/sample$ git rm src/module.py
+rm 'src/module.py'
+yiibai@ubuntu:~/git/sample$ git commit -a -m "remove/delete module.py"
+[master 7d8162d] remove/delete module.py
+ 1 file changed, 26 deletions(-)
+ delete mode 100644 src/module.py
+yiibai@ubuntu:~/git/sample$
+</code></pre> 
+ <h2 id="h2-u9A8Cu8BC1u5220u9664u7ED3u679C"><a name="验证删除结果" class="reference-link"></a><span class="header-link octicon octicon-link"></span>验证删除结果</h2>
+ <p>在另外一台电脑上，执行以下命令更新当前工作区，查看 <code>sample/src</code> 目录中的文件是否还存在？</p>   
+ <pre><code class="lang-shell">$ git pull
+</code></pre>
+ <br>      
+</div></body></html>

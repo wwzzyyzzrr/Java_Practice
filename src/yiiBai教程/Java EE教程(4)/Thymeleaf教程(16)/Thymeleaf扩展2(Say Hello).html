@@ -1,0 +1,241 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Thymeleaf扩展2(Say Hello)</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>这篇文章是“Thymeleaf扩展“的后续教程。 本文中的代码来自相同的示例应用程序，您可以从其GitHub仓库查看或下载该应用程序。</p> 
+ <h2 id="h2-1-hello-"><a name="1. 对 hello 方言改进" class="reference-link"></a><span class="header-link octicon octicon-link"></span>1. 对 hello 方言改进</h2>
+ <p>到目前为止，HelloDialect允许将此变为:</p> 
+ <pre><code class="lang-html">&lt;p hello:sayto="World"&gt;Hi ya!&lt;/p&gt;
+</code></pre> 
+ <p>它工作得很好，但这里需要添加一些附加功能，作为学习演示。 例如:</p> 
+ <ul> 
+  <li>允许Spring EL表达式作为属性值，就像Spring Thymeleaf Dialect中的大多数标签一样。 例如:<pre><code class="lang-jsp">hello:sayto="${user.name}"
+</code></pre> </li>
+ </ul> 
+ <p>国际化输出:对英语说“Hello”，对西班牙语说“Hola”，对葡萄牙语说“Olá”等。<br>上面已经准备好了所有的工作，这里希望能够创建一个名为“saytoplanet”的新属性，并向太阳系中的所有行星问候，其模板如下:</p> 
+ <pre><code class="lang-html">&lt;ul&gt;
+  &lt;li th:each="planet : ${planets}" hello:saytoplanet="${planet}"&gt;Hello Planet!&lt;/li&gt;
+&lt;/ul&gt;
+</code></pre> 
+ <p>它由一个Spring MVC控制器支持，该控制器包括所有这些行星作为一个叫作<code>planets</code>的模型属性:</p> 
+ <pre><code class="lang-java">@Controller
+public class SayHelloController {
+
+  public SayHelloController() {
+    super();
+  }
+
+  @ModelAttribute("planets")
+  public List&lt;String&gt; populatePlanets() {
+    return Arrays.asList(new String[] {
+        "Mercury", "Venus", "Earth", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune"
+    });
+  }
+
+  @RequestMapping({"/","/sayhello"})
+  public String showSayHello() {
+    return "sayhello";
+  }
+
+}
+</code></pre> 
+ <h2 id="h2-2-"><a name="2. 为方言添加一个新的处理器" class="reference-link"></a><span class="header-link octicon octicon-link"></span>2. 为方言添加一个新的处理器</h2>
+ <p>这里做的第一件事是添加一个新的处理器到现有的<code>HelloDialect</code>中。 为此，需要修改方言的<code>getProcessors()</code>方法，以包含新的<code>SayToPlanetAttrProcessor</code>类:</p> 
+ <pre><code class="lang-java">public class HelloDialect extends AbstractProcessorDialect {
+  ...
+  /*
+   * Initialize the dialect's processors.
+   *
+   * Note the dialect prefix is passed here because, although we set
+   * "hello" to be the dialect's prefix at the constructor, that only
+   * works as a default, and at engine configuration time the user
+   * might have chosen a different prefix to be used.
+   */
+  public Set&lt;IProcessor&gt; getProcessors(final String dialectPrefix) {
+      final Set&lt;IProcessor&gt; processors = new HashSet&lt;IProcessor&gt;();
+      processors.add(new SayToAttributeTagProcessor(dialectPrefix));
+      processors.add(new SayToPlanetAttributeTagProcessor(dialectPrefix));
+      return processors;
+  }
+  ...
+}
+</code></pre> 
+ <h2 id="h2-3-"><a name="3. 使用表达式作为属性值" class="reference-link"></a><span class="header-link octicon octicon-link"></span>3. 使用表达式作为属性值</h2>
+ <p>现在想要在新处理器中添加解析和执行表达式的能力，就像在<code>Standard</code>和<code>SpringStandard</code>方言中所做的那样，下面是<code>Thymeleaf</code>标准表达式:</p> 
+ <ul> 
+  <li><code>${...}</code> - Spring EL变量表达式。</li>
+  <li><code>#{...}</code> - 消息的外部化。</li>
+  <li><code>@{...}</code> - 链接规范。</li>
+  <li><code>(cond)? (then) : (else)</code> - 条件/默认表达式。</li>
+ </ul> 
+ <p>为了实现这一点，将使用标准表达式解析器，它将解析属性值为一个可执行的表达式对象:</p> 
+ <pre><code class="lang-java">public class SayToPlanetAttributeTagProcessor extends AbstractAttributeTagProcessor {
+
+    private static final String ATTR_NAME = "saytoplanet";
+    private static final int PRECEDENCE = 10000;
+
+    private static final String SAYTO_PLANET_MESSAGE = "msg.helloplanet";
+
+    public SayToPlanetAttributeTagProcessor(final String dialectPrefix) {
+        super(
+            TemplateMode.HTML, // This processor will apply only to HTML mode
+            dialectPrefix,     // Prefix to be applied to name for matching
+            null,              // No tag name: match any tag name
+            false,             // No prefix to be applied to tag name
+            ATTR_NAME,         // Name of the attribute that will be matched
+            true,              // Apply dialect prefix to attribute name
+            PRECEDENCE,        // Precedence (inside dialect's precedence)
+            true);             // Remove the matched attribute afterwards
+    }
+
+    protected void doProcess(
+            final ITemplateContext context, final IProcessableElementTag tag,
+            final AttributeName attributeName, final String attributeValue,
+            final IElementTagStructureHandler structureHandler) {
+
+        /*
+         * In order to evaluate the attribute value as a Thymeleaf Standard Expression,
+         * we first obtain the parser, then use it for parsing the attribute value into
+         * an expression object, and finally execute this expression object.
+         */
+        final IEngineConfiguration configuration = context.getConfiguration();
+
+        final IStandardExpressionParser parser =
+                StandardExpressions.getExpressionParser(configuration);
+
+        final IStandardExpression expression = parser.parseExpression(context, attributeValue);
+
+        final String planet = (String) expression.execute(context);
+        /*
+         * Set the salutation as the body of the tag, HTML-escaped and
+         * non-processable (hence the 'false' argument)
+         */
+        structureHandler.setBody("Hello, planet " + planet, false);
+    }
+}
+</code></pre> 
+ <p>请注意，正如在前一篇文章中所做的，扩展<code>AbstractAttributeTagProcessor</code>抽象类。</p> 
+ <h2 id="h2-4-"><a name="4. 添加国际化" class="reference-link"></a><span class="header-link octicon octicon-link"></span>4. 添加国际化</h2>
+ <p>现在要将属性处理器返回的消息国际化。这意味着替换这个仅是英文的消息构建代码:</p> 
+ <pre><code class="lang-jsp">"Hello, planet " + planet;
+</code></pre> 
+ <p>从外部化的字符串构建的消息，x必须以某种方式从代码中获得。 上下文对象(ITemplateContext)提供需要的东西:</p> 
+ <pre><code class="lang-java">public String getMessage(
+            final Class&lt;?&gt; origin, 
+            final String key, 
+            final Object[] messageParameters, 
+            final boolean useAbsentMessageRepresentation);
+</code></pre> 
+ <p>它的参数有以下含义:</p> 
+ <ul> 
+  <li><em>origin</em> - 用于消息解析的起源类。 从处理器调用时，通常是处理器类本身。</li>
+  <li><em>key</em> - 要检索的消息的键。</li>
+  <li><em>messageParameters</em> - 要应用于请求的消息的参数。</li>
+  <li><em>origin</em> - 在消息不存在或不存在的情况下是否应该返回缺少指定消息表示。</li>
+ </ul> 
+ <p>所以下面用它来实现一些国际化。 首先，需要一些<code>.properties</code>文件，如西班牙语的<code>SayToPlanetAttributeTagProcessor_es.properties</code>:</p>   
+ <pre><code class="lang-shell">msg.helloplanet=¡Hola, planeta {0}!
+</code></pre> 
+ <p>葡萄牙语的<code>SayToPlanetAttributeTagProcessor_pt.properties</code>:</p> 
+ <pre><code class="lang-shell">msg.helloplanet=Olá, planeta {0}!
+</code></pre> 
+ <p>等等，其它语言。</p> 
+ <p>现在将不得不修改<code>SayToPlanetAttributeTagProcessor</code>处理器类来使用这些消息:</p> 
+ <pre><code class="lang-java">protected void doProcess(
+        final ITemplateContext context, final IProcessableElementTag tag,
+        final AttributeName attributeName, final String attributeValue,
+        final IElementTagStructureHandler structureHandler) {
+
+    /*
+     * In order to evaluate the attribute value as a Thymeleaf Standard Expression,
+     * we first obtain the parser, then use it for parsing the attribute value into
+     * an expression object, and finally execute this expression object.
+     */
+    final IEngineConfiguration configuration = context.getConfiguration();
+
+    final IStandardExpressionParser parser =
+            StandardExpressions.getExpressionParser(configuration);
+
+    final IStandardExpression expression = parser.parseExpression(context, attributeValue);
+
+    final String planet = (String) expression.execute(context);
+
+    /*
+     * This 'getMessage(...)' method will first try to resolve the message
+     * from the configured Spring Message Sources (because this is a Spring
+     * -enabled application).
+     * 
+     * If not found, it will try to resolve it from a classpath-bound
+     * .properties with the same name as the specified 'origin', which
+     * in this case is this processor's class itself. This allows resources
+     * to be packaged if needed in the same .jar files as the processors
+     * they are used in.
+     */
+    final String i18nMessage =
+            context.getMessage(
+                    SayToPlanetAttributeTagProcessor.class,
+                    SAYTO_PLANET_MESSAGE,
+                    new Object[] {planet},
+                    true);
+
+    /*
+     * Set the computed message as the body of the tag, HTML-escaped and
+     * non-processable (hence the 'false' argument)
+     */
+    structureHandler.setBody(HtmlEscape.escapeHtml5(i18nMessage), false);
+
+}protected void doProcess(
+        final ITemplateContext context, final IProcessableElementTag tag,
+        final AttributeName attributeName, final String attributeValue,
+        final IElementTagStructureHandler structureHandler) {
+
+    /*
+     * In order to evaluate the attribute value as a Thymeleaf Standard Expression,
+     * we first obtain the parser, then use it for parsing the attribute value into
+     * an expression object, and finally execute this expression object.
+     */
+    final IEngineConfiguration configuration = context.getConfiguration();
+
+    final IStandardExpressionParser parser =
+            StandardExpressions.getExpressionParser(configuration);
+
+    final IStandardExpression expression = parser.parseExpression(context, attributeValue);
+
+    final String planet = (String) expression.execute(context);
+
+    /*
+     * This 'getMessage(...)' method will first try to resolve the message
+     * from the configured Spring Message Sources (because this is a Spring
+     * -enabled application).
+     * 
+     * If not found, it will try to resolve it from a classpath-bound
+     * .properties with the same name as the specified 'origin', which
+     * in this case is this processor's class itself. This allows resources
+     * to be packaged if needed in the same .jar files as the processors
+     * they are used in.
+     */
+    final String i18nMessage =
+            context.getMessage(
+                    SayToPlanetAttributeTagProcessor.class,
+                    SAYTO_PLANET_MESSAGE,
+                    new Object[] {planet},
+                    true);
+
+    /*
+     * Set the computed message as the body of the tag, HTML-escaped and
+     * non-processable (hence the 'false' argument)
+     */
+    structureHandler.setBody(HtmlEscape.escapeHtml5(i18nMessage), false);
+
+}
+</code></pre> 
+ <p>接下来看看使用西班牙语区域设置执行模板的结果:</p> 
+ <ul> 
+  <li>¡Hola, planeta Mercury!</li>
+  <li>¡Hola, planeta Venus!</li>
+  <li>¡Hola, planeta Earth!</li>
+  <li>¡Hola, planeta Mars!</li>
+  <li>¡Hola, planeta Jupiter!</li>
+  <li>¡Hola, planeta Saturn!</li>
+  <li>¡Hola, planeta Uranus!</li>
+  <li>¡Hola, planeta Neptune!</li>
+ </ul>
+ <br>      
+</div></body></html>

@@ -1,0 +1,74 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">创建参数化测试</h1><div style="width:100%;float:left;" class="article-content">   
+ <p> 在本节中，我们将学习如何创建参数测试。为此，我们将使用前面章节中提供的一个公共方法添加整数。因此，这是要进行的测试类。 </p> 
+ <p> 但是，一个测试类也可以被看作是一个参数化测试类？当然，但它要满足下列所有要求： </p> 
+ <ul> 
+  <li> 该类被注解为&nbsp;@RunWith(Parameterized.class).<br> 如前一节中所说明的,&nbsp;@RunWith&nbsp;注解让JUnit来调用其中的注释来运行测试类，代替使用内置的JUnit运行器，Parameterized&nbsp;是一个在JUnit内的运行器将运行相同的测试用例组在不同的输入。 </li> 
+  <li> 这个类有一个构造函数，存储测试数据。 </li> 
+  <li> 这个类有一个静态方法生成并返回测试数据，并注明@Parameters注解。 </li> 
+  <li> 这个类有一个测试，它需要注解@Test到方法。 </li> 
+ </ul> 
+ <p> 现在，我们将创建一个名为&nbsp;CalculateTest.java&nbsp;的一个新的测试类, 遵循上述指导原则。这个类的源代码如下。 </p> 
+ <p> CalculateTest.java </p> 
+ <div> 
+  <div> 
+   <div> 
+    <pre class="prettyprint lang-java">package com.yiibai.junit;
+
+import static org.junit.Assert.assertEquals;
+import java.util.Arrays;
+import java.util.Collection;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
+
+@RunWith(Parameterized.class)
+public class CalculateTest {
+
+	private int expected;
+	private int first;
+	private int second;
+
+	public CalculateTest(int expectedResult, int firstNumber, int secondNumber) {
+		this.expected = expectedResult;
+		this.first = firstNumber;
+		this.second = secondNumber;
+	}
+
+	@Parameters
+	public static Collection addedNumbers() {
+		return Arrays.asList(new Integer[][] { { 3, 1, 2 }, { 5, 2, 3 },
+				{ 7, 3, 4 }, { 9, 4, 5 }, });
+	}
+
+	@Test
+	public void sum() {
+		Calculate add = new Calculate();
+		System.out.println("Addition with parameters : " + first + " and "
+				+ second);
+		assertEquals(expected, add.sum(first, second));
+	}
+}</pre> 
+   </div> 
+  </div> 
+ </div> 
+ <p> 正如我们观察上面的类，它满足上述所有要求。addedNumbers方法使用注释@Parameters返回数组的集合。每个数组包括每个测试执行输入/输出数字。每个数组中的元素数必须相同以在构造参数的数目。所以，在这种特定的情况下，每个数组包括三个元素，即表示要加入的数字两个元素和一个元素结果。 </p> 
+ <p> 如果我们运行 CalculateTest 测试用例，控制台输出如下： </p> 
+ <div> 
+  <div> 
+  </div> 
+  <div>   
+   <pre class="prettyprint lang-java">Addition with parameters : 1 and 2
+Adding values: 1 + 2
+Addition with parameters : 2 and 3
+Adding values: 2 + 3
+Addition with parameters : 3 and 4
+Adding values: 3 + 4
+Addition with parameters : 4 and 5
+Adding values: 4 + 5</pre> 
+  </div> 
+ </div> 
+ <p> 正如我们在输出中看到，测试用例被执行4次，这是在方法的输入注解为@Parameters的数量。 </p>
+ <br>      
+</div></body></html>

@@ -1,0 +1,125 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Ruby连接MongoDB操作</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>MongoDB Ruby驱动程序是MongoDB官方支持的Ruby驱动程序。它是用纯Ruby编写的，为了简化而进行了优化。它可以自己使用，但它也可以作为几个对象映射库的基础。</p> 
+ <h2 id="h2-1-"><a name="1.安装驱动程序" class="reference-link"></a><span class="header-link octicon octicon-link"></span>1.安装驱动程序</h2>
+ <p>Ruby驱动程序是作为一个<code>gem</code>绑定的，并且托管在<a target="_blank" href="http://rubygems.org/gems/mongo" title="Rubygems">Rubygems</a>上。</p> 
+ <p><strong>安装gem</strong></p> 
+ <p>驱动程序可以手动或捆绑式安装。手动安装<code>gem</code>：</p> 
+ <pre><code class="lang-ruby">gem install mongo
+</code></pre> 
+ <p>要使用捆绑安装<code>gem</code>，请在<code>Gemfile</code>中包含以下内容：</p> 
+ <pre><code class="lang-shell">gem 'mongo', '~&gt; 2.4'
+</code></pre> 
+ <h2 id="h2-2-"><a name="2.前提条件" class="reference-link"></a><span class="header-link octicon octicon-link"></span>2.前提条件</h2>
+ <ul> 
+  <li>MongoDB实例在<code>localhost</code>上运行使用默认端口<code>27017</code>。</li>
+  <li>Ruby MongoDB驱动程序。有关如何安装MongoDB驱动程序的说明，请参阅安装。</li>
+  <li>代码顶部的以下语句：</li>
+ </ul> 
+ <pre><code class="lang-ruby">require 'mongo'
+</code></pre> 
+ <h2 id="h2-3-ruby-mongodb"><a name="3.Ruby连接MongoDB" class="reference-link"></a><span class="header-link octicon octicon-link"></span>3.Ruby连接MongoDB</h2>
+ <p>使用<code>Mongo::Client</code>建立与正在运行的<code>MongoDB</code>实例的连接。</p> 
+ <pre><code class="lang-ruby">require 'mongo'
+client = Mongo::Client.new([ '127.0.0.1:27017' ], :database =&gt; 'test')
+</code></pre> 
+ <p>还可以使用URI连接字符串：</p> 
+ <pre><code class="lang-ruby">require 'mongo'
+client = Mongo::Client.new('mongodb://127.0.0.1:27017/test')
+</code></pre> 
+ <h2 id="h2-4-"><a name="4.访问数据库和集合" class="reference-link"></a><span class="header-link octicon octicon-link"></span>4.访问数据库和集合</h2>
+ <p>以下示例演示如何访问指定数据库并显示其集合：</p> 
+ <pre><code class="lang-ruby">client = Mongo::Client.new([ '127.0.0.1:27017' ], :database =&gt; 'test')
+db = client.database
+
+db.collections # returns a list of collection objects
+db.collection_names # returns a list of collection names
+</code></pre> 
+ <p>要访问一个集合，请按名称查看。</p> 
+ <pre><code class="lang-ruby">collection = client[:restaurants]
+</code></pre> 
+ <p>如果集合不存在，服务器将在第一次放入数据时创建。</p> 
+ <h2 id="h2-u63D2u5165u6587u6863"><a name="插入文档" class="reference-link"></a><span class="header-link octicon octicon-link"></span>插入文档</h2>
+ <p>要将单个文档插入到集合中，请使用<code>insert_one</code>方法。</p> 
+ <pre><code class="lang-ruby">client = Mongo::Client.new('mongodb://127.0.0.1:27017/test')
+
+collection = client[:people]
+
+doc = { name: 'Steve', hobbies: [ 'hiking', 'tennis', 'fly fishing' ] }
+
+result = collection.insert_one(doc)
+result.n # returns 1, because one document was inserted
+</code></pre> 
+ <p>要将多个文档插入到集合中，请使用<code>insert_many</code>方法。</p> 
+ <pre><code class="lang-shell">docs = [ { _id: 1, name: 'Steve', hobbies: [ 'hiking', 'tennis', 'fly fishing' ] },
+         { _id: 2, name: 'Sally', hobbies: ['skiing', 'stamp collecting' ] } ]
+
+result = collection.insert_many(docs)
+result.inserted_count # returns 2 because two documents were inserted
+</code></pre> 
+ <h2 id="h2-u67E5u8BE2u96C6u5408"><a name="查询集合" class="reference-link"></a><span class="header-link octicon octicon-link"></span>查询集合</h2>
+ <p>使用<code>find</code>方法查询集合。一个空的查询过滤器返回集合中的所有文档。</p> 
+ <pre><code class="lang-ruby">client = Mongo::Client.new('mongodb://127.0.0.1:27017/test')
+collection = client[:people]
+
+collection.find.each do |document|
+  #=&gt; Yields a BSON::Document.
+end
+</code></pre> 
+ <p>使用查询过滤器只找到匹配的文档。</p> 
+ <pre><code class="lang-ruby">client = Mongo::Client.new('mongodb://127.0.0.1:27017/test')
+collection = client[:people]
+
+puts collection.find( { name: 'Sally' } ).first
+</code></pre> 
+ <p>该示例应该会打印以下内容：</p> 
+ <pre><code class="lang-shell">{"_id" =&gt; 2, "name" =&gt; "Sally", "hobbies" =&gt; ["skiing", "stamp collecting"]}
+</code></pre> 
+ <h2 id="h2-u66F4u65B0u6587u4EF6"><a name="更新文件" class="reference-link"></a><span class="header-link octicon octicon-link"></span>更新文件</h2>
+ <p>有几种更新方法，包括：<code>update_one</code>和<code>update_many</code>。 <code>update_one</code>更新单个文档，而<code>update_many</code>会一次更新多个文档。</p> 
+ <p>这两种方法都将查询过滤器作为第一个参数，以及更新文档的数据作为第二个参数。 使用<code>$set</code>来添加或更新特定的字段。如果没有<code>$set</code>，则会将所有文档更新为给定的更新数据。</p>   
+ <pre><code class="lang-ruby">client = Mongo::Client.new('mongodb://127.0.0.1:27017/test')
+collection = client[:people]
+
+result = collection.update_one( { 'name' =&gt; 'Sally' }, { '$set' =&gt; { 'phone_number' =&gt; "555-555-5555" } } )
+
+puts collection.find( { 'name' =&gt; 'Sally' } ).first
+</code></pre> 
+ <h2 id="h2-u5220u9664u6587u6863"><a name="删除文档" class="reference-link"></a><span class="header-link octicon octicon-link"></span>删除文档</h2>
+ <p>使用<code>delete_one</code>或<code>delete_many</code>方法从集合中删除文档(单个或多个)。</p> 
+ <pre><code class="lang-ruby">client = Mongo::Client.new('mongodb://127.0.0.1:27017/test')
+collection = client[:people]
+
+result = collection.delete_one( { name: 'Steve' } )
+
+puts result.deleted_count # returns 1 because one document was deleted
+</code></pre> 
+ <p>以下示例将两个记录插入到集合中，然后使用与正则表达式匹配<code>name</code>字段查询，删除那些以“<code>S</code>”开头的字符串的所有文档。</p> 
+ <pre><code class="lang-ruby">client = Mongo::Client.new('mongodb://127.0.0.1:27017/test')
+collection = client[:people]
+
+collection.insert_many([ { _id: 3, name: "Arnold" }, { _id: 4, name: "Susan" } ])
+
+puts collection.count # counts all documents in collection
+
+result = collection.delete_many({ name: /$S*/ })
+
+puts result.deleted_count # returns the number of documents deleted
+</code></pre> 
+ <h2 id="h2-u521Bu5EFAu7D22u5F15"><a name="创建索引" class="reference-link"></a><span class="header-link octicon octicon-link"></span>创建索引</h2>
+ <p>使用<code>create_one</code>或<code>create_many</code>方法一次创建一个索引或多个索引。</p> 
+ <pre><code class="lang-ruby">client = Mongo::Client.new('mongodb://127.0.0.1:27017/test')
+collection = client[:people]
+
+collection.indexes.create_one({ name: 1 }, unique: true)
+</code></pre> 
+ <p>使用<code>create_many</code>方法使用一个语句创建多个索引。 请注意，使用<code>create_many</code>时，语法与<code>create_one</code>不同。</p> 
+ <pre><code class="lang-ruby">client = Mongo::Client.new('mongodb://127.0.0.1:27017/test')
+collection = client[:people]
+
+collection.indexes.create_many([
+    { key: { name: 1 } , unique: true },
+    { key:  { hobbies: 1 } },
+  ])
+</code></pre>
+ <br>      
+</div></body></html>

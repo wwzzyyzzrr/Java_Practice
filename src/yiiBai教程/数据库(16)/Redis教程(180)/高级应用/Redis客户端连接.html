@@ -1,0 +1,58 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Redis客户端连接</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>Redis在配置的监听TCP端口和Unix套接字上等待和接受客户端的连接(如果已启用)。 当接受新的客户端连接时，执行以下操作 -</p> 
+ <ul> 
+  <li>由于Redis使用复用和非阻塞<code>I/O</code>，因此客户端套接字处于非阻塞状态。</li>
+  <li>设置<code>TCP_NODELAY</code>选项是为了确保连接不延迟。</li>
+  <li>创建可读文件事件，以便Redis能够在套接字上读取新数据时收集客户端查询。</li>
+ </ul> 
+ <h2 id="h2-u6700u5927u5BA2u6237u6570"><a name="最大客户数" class="reference-link"></a><span class="header-link octicon octicon-link"></span>最大客户数</h2>
+ <p>在Redis配置文件(<code>redis.conf</code>)中，有一个名称为<code>maxclients</code>的属性，它描述了可以连接到Redis的客户端的最大数量。</p> 
+ <p>以下是命令的基本语法。</p> 
+ <pre><code class="lang-shell">127.0.0.1:6379&gt; config get maxclients
+1) "maxclients"
+2) "3984"
+</code></pre> 
+ <p>默认情况下，此属性设置为<code>10000</code>(取决于操作系统的文件描述符限制的最大数量)，但您可以更改此属性。</p> 
+ <h2 id="h2-u793Au4F8B"><a name="示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例</h2>
+ <p>在以下示例中，我们已将客户端的最大数目设置为<code>100000</code>，并启动服务器。</p> 
+ <pre><code class="lang-shell">yiibai@ubuntu:~$ redis-server --maxclients 100000
+</code></pre> 
+ <h2 id="h2-u5BA2u6237u7AEFu547Du4EE4"><a name="客户端命令" class="reference-link"></a><span class="header-link octicon octicon-link"></span>客户端命令</h2>
+ <table> 
+  <thead> 
+   <tr> 
+    <th>编号</th> 
+    <th>命令</th> 
+    <th>描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>1</td> 
+    <td>CLIENT LIST</td> 
+    <td>返回连接到Redis服务器的客户端列表</td> 
+   </tr> 
+   <tr> 
+    <td>2</td> 
+    <td>CLIENT SETNAME</td> 
+    <td>为当前连接分配/设置新的名称</td> 
+   </tr> 
+   <tr> 
+    <td>3</td> 
+    <td>CLIENT GETNAME</td> 
+    <td>返回由<code>CLIENT SETNAME</code>设置的当前连接的名称</td> 
+   </tr> 
+   <tr> 
+    <td>4</td> 
+    <td>CLIENT PAUSE</td> 
+    <td>这是一个连接控制命令，能够将所有Redis客户端按指定的时间量(以毫秒为单位)挂起</td> 
+   </tr> 
+   <tr> 
+    <td>5</td> 
+    <td>CLIENT KILL</td> 
+    <td>此命令关闭指定的客户端连接。</td> 
+   </tr> 
+  </tbody> 
+ </table>
+ <br>      
+</div></body></html>

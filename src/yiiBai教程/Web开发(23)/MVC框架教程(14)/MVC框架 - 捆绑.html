@@ -1,0 +1,35 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">MVC框架 - 捆绑</h1><div style="width:100%;float:left;" class="article-content">   
+ <p> 捆绑和缩小是两个性能改进提高应用程序在请求负载时的技术。目前大多数的主流浏览器限制每个主机同时连接到六个数量。这意味着，在一个时间，所有的其他请求将被浏览器排队。</p> 
+ <h2> 启用捆绑和缩小</h2> 
+ <p> 为使捆绑和缩小MVC应用程序，打开Web.config文件的配置解决。 在该文件中搜索System.Web编译设置：</p> 
+ <pre class="prettyprint prettyprinted" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+<span class="tag" style="box-sizing: border-box; color: rgb(0, 0, 136);">&lt;system.web&gt;</span><span class="pln" style="box-sizing: border-box;">
+    </span><span class="tag" style="box-sizing: border-box; color: rgb(0, 0, 136);">&lt;compilation</span><span class="pln" style="box-sizing: border-box;"> </span><span class="atn" style="box-sizing: border-box; color: rgb(127, 0, 85);">debug</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">=</span><span class="atv" style="box-sizing: border-box; color: rgb(0, 136, 0);">"true"</span><span class="pln" style="box-sizing: border-box;"> </span><span class="tag" style="box-sizing: border-box; color: rgb(0, 0, 136);">/&gt;</span><span class="pln" style="box-sizing: border-box;">
+</span><span class="tag" style="box-sizing: border-box; color: rgb(0, 0, 136);">&lt;/system.web&gt;</span></pre> 
+ <p> 默认情况下，调试参数设置为true，这意味着捆绑和缩小被禁用。请将此参数设置为false。</p> 
+ <h2> 捆绑</h2> 
+ <p> 为了提高应用程序的性能，ASP.NET MVC提供了内置的功能来捆绑多个文件合并为一个文件，进而改善较少的HTTP请求的页面加载并提高性能。</p> 
+ <p> 捆绑是文件的一个简单的逻辑组，可以通过唯一的名称来参照和加载一个HTTP请求。</p> 
+ <p> 默认情况下，MVC应用程序的BundleConfig(位于App_Start文件夹中)使用下面的代码：</p> 
+ <pre class="prettyprint prettyprinted" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+<span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">public</span><span class="pln" style="box-sizing: border-box;"> </span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">static</span><span class="pln" style="box-sizing: border-box;"> </span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">void</span><span class="pln" style="box-sizing: border-box;"> </span><span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">RegisterBundles</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span><span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">BundleCollection</span><span class="pln" style="box-sizing: border-box;"> bundles</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">)</span><span class="pln" style="box-sizing: border-box;">
+        </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">{</span><span class="pln" style="box-sizing: border-box;">
+            </span><span class="com" style="box-sizing: border-box; color: rgb(136, 0, 0);">// Following is the sample code to bundle all the css files in the project 		     </span><span class="pln" style="box-sizing: border-box;">
+            </span><span class="com" style="box-sizing: border-box; color: rgb(136, 0, 0);">// The code to bundle other javascript files will also be similar to this	</span><span class="pln" style="box-sizing: border-box;">
+            bundles</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">Add</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">new</span><span class="pln" style="box-sizing: border-box;"> </span><span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">StyleBundle</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"~/Content/themes/base/css"</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">).</span><span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">Include</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span><span class="pln" style="box-sizing: border-box;">
+                        </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"~/Content/themes/base/jquery.ui.core.css"</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">,</span><span class="pln" style="box-sizing: border-box;">
+                        </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"~/Content/themes/base/jquery.ui.tabs.css"</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">,</span><span class="pln" style="box-sizing: border-box;">
+                        </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"~/Content/themes/base/jquery.ui.datepicker.css"</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">,</span><span class="pln" style="box-sizing: border-box;">
+                        </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"~/Content/themes/base/jquery.ui.progressbar.css"</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">,</span><span class="pln" style="box-sizing: border-box;">
+                        </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"~/Content/themes/base/jquery.ui.theme.css"</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">));</span><span class="pln" style="box-sizing: border-box;">
+         </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">}</span></pre> 
+ <p> 上面的代码基本上所有的捆绑中存在于Content/themes/base 文件夹中的CSS文件到一个文件中。</p> 
+ <h2> 缩小</h2> 
+ <p> 缩小是通过缩短变量名优化JavaScript，CSS代码，另一个性能改进的技术，去除不必要的空格，换行和注释等这反过来又降低文件的大小，并有助于应用程序加载速度。</p> 
+ <h2> 缩小使用Visual Studio和Web扩展</h2> 
+ <p> 对于使用这个选项，Visual Studio先安装Web要点扩展。在此之后，当鼠标右键点击任何CSS或JavaScript文件，它会显示你创建该文件的版本缩小的选择。</p> 
+ <img alt="mvc_bundling_minify" src="/uploads/allimg/150603/10360054T-0.jpg" style="box-sizing: border-box; vertical-align: middle; max-width: 100%; display: block; margin-left: auto; margin-right: auto; padding-bottom: 4px; color: rgb(49, 49, 49);  font-size: 14px; line-height: 22px;"> 
+ <p> 所以，如果有一个名为Site.css的CSS文件，它会创建其精缩版本Site.min.css。</p> 
+ <p> 现在，下一次当应用程序将在浏览器中运行，它会捆绑并运行如下所有的CSS和JS文件，从而提高应用程序的性能。</p> 
+ <br>      
+</div></body></html>

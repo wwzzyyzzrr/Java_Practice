@@ -1,0 +1,93 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Java并发newCachedThreadPool方法</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>通过调用<code>Executors</code>类的静态<code>newCachedThreadPool()</code>方法可以获得缓存的线程池。</p> 
+ <p><strong>语法</strong></p> 
+ <pre><code class="lang-java">ExecutorService executor = Executors.newCachedThreadPool();
+</code></pre> 
+ <p>其中，</p> 
+ <ul> 
+  <li><code>newCachedThreadPool()</code>方法创建一个具有可扩展线程池的执行器。</li>
+  <li>这样的执行者适合于发起许多短命的任务的应用程序。</li>
+ </ul> 
+ <h2 id="h2-u793Au4F8B"><a name="示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例</h2>
+ <p>以下<code>TestThread</code>程序在线程环境中显示了<code>newCachedThreadPool()</code>方法的用法。</p> 
+ <pre><code class="lang-java">import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+
+public class TestThread {
+
+   public static void main(final String[] arguments) throws InterruptedException {
+      ExecutorService executor = Executors.newCachedThreadPool();
+
+      // Cast the object to its class type
+      ThreadPoolExecutor pool = (ThreadPoolExecutor) executor;
+
+      //Stats before tasks execution
+      System.out.println("Core threads: " + pool.getCorePoolSize());
+      System.out.println("Largest executions: "
+         + pool.getLargestPoolSize());
+      System.out.println("Maximum allowed threads: "
+         + pool.getMaximumPoolSize());
+      System.out.println("Current threads in pool: "
+         + pool.getPoolSize());
+      System.out.println("Currently executing threads: "
+         + pool.getActiveCount());
+      System.out.println("Total number of threads(ever scheduled): "
+         + pool.getTaskCount());
+
+      executor.submit(new Task());
+      executor.submit(new Task());
+
+      //Stats after tasks execution
+      System.out.println("Core threads: " + pool.getCorePoolSize());
+      System.out.println("Largest executions: "
+         + pool.getLargestPoolSize());
+      System.out.println("Maximum allowed threads: "
+         + pool.getMaximumPoolSize());
+      System.out.println("Current threads in pool: "
+         + pool.getPoolSize());
+      System.out.println("Currently executing threads: "
+         + pool.getActiveCount());
+      System.out.println("Total number of threads(ever scheduled): "
+         + pool.getTaskCount());
+
+      executor.shutdown();
+   }  
+
+   static class Task implements Runnable {
+
+      public void run() {
+         try {
+            Long duration = (long) (Math.random() * 5);
+            System.out.println("Running Task! Thread Name: " + Thread.currentThread().getName());
+               TimeUnit.SECONDS.sleep(duration);
+            System.out.println("Task Completed! Thread Name: "+ Thread.currentThread().getName());
+         } 
+         catch (InterruptedException e) {
+            e.printStackTrace();
+         }
+      }
+   }
+}
+</code></pre> 
+ <p>这将产生以下结果 -</p>   
+ <pre><code class="lang-shell">Core threads: 0
+Largest executions: 0
+Maximum allowed threads: 2147483647
+Current threads in pool: 0
+Currently executing threads: 0
+Total number of threads(ever scheduled): 0
+Core threads: 0
+Largest executions: 2
+Maximum allowed threads: 2147483647
+Current threads in pool: 2
+Currently executing threads: 2
+Total number of threads(ever scheduled): 2
+Running Task! Thread Name: pool-1-thread-1
+Running Task! Thread Name: pool-1-thread-2
+Task Completed! Thread Name: pool-1-thread-2
+Task Completed! Thread Name: pool-1-thread-1
+</code></pre>
+ <br>      
+</div></body></html>

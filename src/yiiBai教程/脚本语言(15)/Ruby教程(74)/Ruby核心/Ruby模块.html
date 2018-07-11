@@ -1,0 +1,95 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Ruby模块</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>Ruby模块是方法和常量的集合。 模块方法可以是实例方法或模块方法。实例方法是包含模块的类中的方法。</p> 
+ <p>可以在不创建封装对象的情况下调用模块方法，但是实例方法不能这么直接调用。</p> 
+ <p>Ruby模块类似于类，因为它们包含方法，类定义，常量和其他模块的集合。Ruby模块可定义为类。但无法使用模块来创建对象或子类。也没有继承的模块层次结构。</p> 
+ <p>模块基本上主要有两个目的：</p> 
+ <ul> 
+  <li>它们作为命名空间，防止对象名字冲突。</li>
+  <li>它们允许<code>mixin</code>工具在类之间共享功能。</li>
+ </ul> 
+ <p><strong>语法</strong></p> 
+ <pre><code class="lang-shell">module ModuleName  
+   statement1  
+   statement2  
+   ...........  
+end
+</code></pre> 
+ <p>模块名称应以大写字母开头。</p> 
+ <h2 id="h2-u6A21u5757u547Du540Du7A7Au95F4"><a name="模块命名空间" class="reference-link"></a><span class="header-link octicon octicon-link"></span>模块命名空间</h2>
+ <p>在编写较大的文件时，需要生成大量可重用的代码。 这些代码被组织成类，可以插入到一个文件中。</p> 
+ <p>例如，如果两个人在不同的文件中具有相同的方法名称。 并且这两个文件都需要包含在第三个文件中。 那么它可能会产生问题，因为这两个包含的文件中的方法名称是相同的。</p> 
+ <p>这里，模块机制发挥作用。 模块定义一个命名空间，您可以在命名空间中定义方法和常量，而不用管其他方法和常量执行。</p> 
+ <p><strong>示例：</strong></p> 
+ <p>假设在<code>modules-file1.rb</code>中，定义了不同类型的图书馆书籍，如小说，恐怖等。</p> 
+ <p>在<code>modules-file2.rb</code>中，定义了阅读的小说数量，包括小说小说。</p> 
+ <p>在<code>modules-file3.rb</code>中，需要加载文件<code>modules-file1.rb</code>和<code>modules-file2.rb</code>。这里我们将使用模块机制。</p> 
+ <p>创建文件：<em>modules-file1.rb</em> ，其代码如下所示 - </p> 
+ <pre><code class="lang-ruby">#!/usr/bin/ruby   
+
+# Module defined in file1.rb file   
+
+module Library   
+   num_of_books = 300   
+   def Library.fiction(120)   
+   # ..   
+   end   
+   def Library.horror(180)   
+   # ..   
+   end   
+end
+</code></pre> 
+ <p>创建文件：<em>modules-file2.rb</em> ，其代码如下所示 - </p> 
+ <pre><code class="lang-ruby">#!/usr/bin/ruby   
+
+# Module defined in file2.rb file   
+
+module Novel   
+   total = 123   
+   read = 25   
+   def Novel.fiction(left)   
+   # ...   
+   end   
+end
+</code></pre> 
+ <p>创建文件：<em>modules-file3.rb</em> ，其代码如下所示 - </p>   
+ <pre><code class="lang-ruby">require "Library"   
+require "Novel"   
+
+x = Library.fiction(Library::num_of_books)   
+y = Novel.fiction(Novel::total)
+</code></pre> 
+ <p>通过在模块名称后带点(<code>.</code>)符号来调用模块方法，并使用模块名称和两个冒号引用常量。</p> 
+ <h2 id="h2-u6A21u5757u6DF7u5408"><a name="模块混合" class="reference-link"></a><span class="header-link octicon octicon-link"></span>模块混合</h2>
+ <p>Ruby不支持多重继承。 模块消除了在Ruby中使用mixin的多重继承的需要。模块没有实例，因为它不是一个类。 但是，一个模块可以包含在一个类中。</p> 
+ <p>当您在类中包含模块时，该类将可以访问模块的方法。</p> 
+ <p><strong>示例：</strong></p> 
+ <pre><code class="lang-ruby">module Name   
+   def bella   
+   end   
+   def ana   
+   end   
+end   
+module Job   
+   def editor   
+   end   
+   def writer   
+   end   
+end   
+
+class Combo   
+include Name   
+include Job   
+   def f   
+   end   
+end   
+
+final=Combo.new   
+final.bella   
+final.ana   
+final.editor   
+final.writer   
+final.f
+</code></pre> 
+ <p>这里，模块<code>Name</code>由方法<code>bella</code>和<code>ana</code>组成。 模块<code>Job</code>由方法<code>editor</code>和<code>writer</code>组成。<code>Combo</code>类包括两个模块，由于<code>Combo</code>可以访问所有四种方法。 因此，<code>Combo</code>类作为<code>mixin</code>混合类型使用。</p>
+ <br>      
+</div></body></html>

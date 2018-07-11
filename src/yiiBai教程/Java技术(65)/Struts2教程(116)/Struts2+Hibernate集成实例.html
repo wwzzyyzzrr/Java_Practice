@@ -1,0 +1,334 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Struts2+Hibernate集成实例</h1><div style="width:100%;float:left;" class="article-content">   
+ <div class="__kindeditor_paste__"> 
+  <div> 
+   <div>
+     在 Struts2 中，没有官方的插件集成Hibernate框架。但是，可以通过以下步骤解决方法： 
+   </div> 
+  </div> 
+  <div> 
+   <ol> 
+    <li> 注册一个自定义的&nbsp;ServletContextListener </li> 
+    <li> 在&nbsp;ServletContextListener&nbsp;类,&nbsp;初始化Hibernate会话，并将其存储到servlet上下文。 </li> 
+    <li> 在动作类,&nbsp;可以通过servlet上下文的Hibernate会话，并执行任务正常的Hibernate操作。 </li> 
+   </ol> 
+   <div>
+     请参阅它们的关系： 
+   </div> 
+   <pre>Struts 2 &lt;-- (Servlet Context) ---&gt; Hibernate &lt;-----&gt; Database &nbsp;</pre> 
+   <p> 在本教程中，在Struts中2开发我们显示了一个简单的客户模块(添加和列表功能)，并使用 Hibernate 进行数据库操作。使用上述部分机制集成(存储和检索在servlet上下文Hibernate的Session)。 </p> 
+   <h2> 1. 工程目录结构 </h2> 
+   <div>
+     来看看这个完整的项目文件夹结构。
+    <br> 
+    <img src="/uploads/tutorial/20151202/1-151202215046245.png" alt="">
+    <img src="file://E:/data/youdao/qq24B39E2329F08D9F4C3146A571A415EF/99aaeefce53a4724905bfa956bc557e3/clipboard.png"> 
+   </div> 
+   <h2> 2. MySQL表结构脚本 </h2> 
+   <div>
+     创建一个客户(customer)表。下面是SQL表脚本。
+    <br> 
+    <pre class="prettyprint">CREATE TABLE `customer` (
+  `customer_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(45) NOT NULL,
+  `address` varchar(255) NOT NULL,
+  `create_date` datetime NOT NULL,
+  PRIMARY KEY (`customer_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;</pre> 
+   </div> 
+   <h2> 4. Hibernate 相关配置 </h2> 
+   <div>
+     Hibernate的模型和配置的东西。 
+   </div> 
+   <p> Customer.java&nbsp;–&nbsp;创建客户表对应的一个类。 </p> 
+   <pre>package com.yiibai.customer.model;
+
+import java.util.Date;
+
+public class Customer implements java.io.Serializable {
+
+	private Long customerId;
+	private String name;
+	private String address;
+	private Date createdDate;
+
+	//getter and setter methods
+}</pre> 
+   <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:16px;"> <strong>Customer.hbm.xml</strong>&nbsp;–&nbsp;<span style="background-color:inherit;font-family:微软雅黑;font-size:14px;line-height:1.5;">Hibernate映射文件客户表。</span> </p> 
+   <pre>&lt;?xml version="1.0"?&gt;
+&lt;!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd"&gt;
+&lt;hibernate-mapping&gt;
+    &lt;class name="com.yiibai.customer.model.Customer" 
+	table="customer" catalog="yiibai"&gt;
+
+        &lt;id name="customerId" type="java.lang.Long"&gt;
+            &lt;column name="CUSTOMER_ID" /&gt;
+            &lt;generator class="identity" /&gt;
+        &lt;/id&gt;
+        &lt;property name="name" type="string"&gt;
+            &lt;column name="NAME" length="45" not-null="true" /&gt;
+        &lt;/property&gt;
+        &lt;property name="address" type="string"&gt;
+            &lt;column name="ADDRESS" not-null="true" /&gt;
+        &lt;/property&gt;
+        &lt;property name="createdDate" type="timestamp"&gt;
+            &lt;column name="CREATED_DATE" length="19" not-null="true" /&gt;
+        &lt;/property&gt;
+    &lt;/class&gt;
+&lt;/hibernate-mapping&gt;</pre> 
+   <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:16px;"> <strong>hibernate.cfg.xml</strong>&nbsp;– Hibernate数据库配置文件 </p> 
+   <pre>&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;!DOCTYPE hibernate-configuration PUBLIC
+"-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd"&gt;
+&lt;hibernate-configuration&gt;
+  &lt;session-factory&gt;
+    &lt;property name="hibernate.bytecode.use_reflection_optimizer"&gt;false&lt;/property&gt;
+    &lt;property name="hibernate.connection.password"&gt;password&lt;/property&gt;
+    &lt;property name="hibernate.connection.url"&gt;jdbc:mysql://localhost:3306/yiibai&lt;/property&gt;
+    &lt;property name="hibernate.connection.username"&gt;root&lt;/property&gt;
+    &lt;property name="hibernate.dialect"&gt;org.hibernate.dialect.MySQLDialect&lt;/property&gt;
+    &lt;property name="show_sql"&gt;true&lt;/property&gt;
+    &lt;property name="format_sql"&gt;true&lt;/property&gt;
+    &lt;property name="use_sql_comments"&gt;false&lt;/property&gt;
+    &lt;mapping resource="com/yiibai/customer/hibernate/Customer.hbm.xml" /&gt;
+  &lt;/session-factory&gt;
+&lt;/hibernate-configuration&gt;</pre> 
+   <h2> 5. Hibernate ServletContextListener </h2> 
+   <p> 创建一个类&nbsp;ServletContextListener,&nbsp;并初始化Hibernate会话，并将其存储到servlet上下文。 </p> 
+   <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:16px;"> <strong>HibernateListener .java</strong> </p> 
+   <pre>package com.yiibai.listener;
+
+import java.net.URL;
+
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
+
+import org.hibernate.SessionFactory;
+import org.hibernate.cfg.Configuration;
+ 
+public class HibernateListener implements ServletContextListener{
+ 
+    private Configuration config;
+    private SessionFactory factory;
+    private String path = "/hibernate.cfg.xml";
+    private static Class clazz = HibernateListener.class;
+ 
+    public static final String KEY_NAME = clazz.getName();
+
+	public void contextDestroyed(ServletContextEvent event) {
+	  //
+	}
+ 
+	public void contextInitialized(ServletContextEvent event) {
+ 
+	 try { 
+	        URL url = HibernateListener.class.getResource(path);
+	        config = new Configuration().configure(url);
+	        factory = config.buildSessionFactory();
+	         
+	        //save the Hibernate session factory into serlvet context
+	        event.getServletContext().setAttribute(KEY_NAME, factory);
+	  } catch (Exception e) {
+	         System.out.println(e.getMessage());
+	   }
+	}
+}</pre> 
+   <div>
+     在 web.xml 文件中注册监听器。 
+   </div> 
+   <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:16px;"> <strong>web.xml</strong> </p> 
+   <pre>&lt;!DOCTYPE web-app PUBLIC
+ "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+ "http://java.sun.com/dtd/web-app_2_3.dtd" &gt;
+
+&lt;web-app&gt;
+  &lt;display-name&gt;Struts 2 Web Application&lt;/display-name&gt;
+  
+  &lt;filter&gt;
+	&lt;filter-name&gt;struts2&lt;/filter-name&gt;
+	&lt;filter-class&gt;
+	  org.apache.struts2.dispatcher.ng.filter.StrutsPrepareAndExecuteFilter
+	&lt;/filter-class&gt;
+  &lt;/filter&gt;
+  
+  &lt;filter-mapping&gt;
+	&lt;filter-name&gt;struts2&lt;/filter-name&gt;
+	&lt;url-pattern&gt;/*&lt;/url-pattern&gt;
+  &lt;/filter-mapping&gt;
+ 
+  &lt;listener&gt;
+    &lt;listener-class&gt;
+	  com.yiibai.listener.HibernateListener
+    &lt;/listener-class&gt;
+  &lt;/listener&gt;
+ 
+&lt;/web-app&gt;</pre> 
+   <h2> 6. Action </h2> 
+   <p> 在动作类,&nbsp;可以通过servlet上下文的Hibernate会话和执行正常的Hibernate任务。 </p> 
+   <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:16px;"> <strong>CustomerAction.java</strong> </p> 
+   <pre>package com.yiibai.customer.action;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import org.apache.struts2.ServletActionContext;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+
+import com.yiibai.customer.model.Customer;
+import com.yiibai.listener.HibernateListener;
+import com.opensymphony.xwork2.ActionSupport;
+import com.opensymphony.xwork2.ModelDriven;
+ 
+public class CustomerAction extends ActionSupport 
+	implements ModelDriven{
+
+	Customer customer = new Customer();
+	List&lt;Customer&gt; customerList = new ArrayList&lt;Customer&gt;();
+	
+	public String execute() throws Exception {
+		return SUCCESS;
+	}
+
+	public Object getModel() {
+		return customer;
+	}
+	
+	public List&lt;Customer&gt; getCustomerList() {
+		return customerList;
+	}
+
+	public void setCustomerList(List&lt;Customer&gt; customerList) {
+		this.customerList = customerList;
+	}
+
+	//save customer
+	public String addCustomer() throws Exception{
+		
+		//get hibernate session from the servlet context
+		SessionFactory sessionFactory = 
+	         (SessionFactory) ServletActionContext.getServletContext()
+                     .getAttribute(HibernateListener.KEY_NAME);
+
+		Session session = sessionFactory.openSession();
+
+		//save it
+		customer.setCreatedDate(new Date());
+	 
+		session.beginTransaction();
+		session.save(customer);
+		session.getTransaction().commit();
+	 
+		//reload the customer list
+		customerList = null;
+		customerList = session.createQuery("from Customer").list();
+		
+		return SUCCESS;
+	
+	}
+	
+	//list all customers
+	public String listCustomer() throws Exception{
+		
+		//get hibernate session from the servlet context
+		SessionFactory sessionFactory = 
+	         (SessionFactory) ServletActionContext.getServletContext()
+                     .getAttribute(HibernateListener.KEY_NAME);
+
+		Session session = sessionFactory.openSession();
+
+		customerList = session.createQuery("from Customer").list();
+		
+		return SUCCESS;
+	
+	}	
+}</pre> 
+   <h2> 7. JSP 页面 </h2> 
+   <div>
+     JSP页面用来添加和列出的客户。 
+   </div> 
+   <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:16px;"> <strong>customer.jsp</strong> </p>   
+   <pre>&lt;%@ taglib prefix="s" uri="/struts-tags" %&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;/head&gt;
+ 
+&lt;body&gt;
+&lt;h1&gt;Struts 2 + Hibernate integration example&lt;/h1&gt;
+
+&lt;h2&gt;Add Customer&lt;/h2&gt;
+&lt;s:form action="addCustomerAction" &gt;
+  &lt;s:textfield name="name" label="Name" value="" /&gt;
+  &lt;s:textarea name="address" label="Address" value="" cols="50" rows="5" /&gt;
+  &lt;s:submit /&gt;
+&lt;/s:form&gt;
+
+&lt;h2&gt;All Customers&lt;/h2&gt;
+
+&lt;s:if test="customerList.size() &gt; 0"&gt;
+&lt;table border="1px" cellpadding="8px"&gt;
+	&lt;tr&gt;
+		&lt;th&gt;Customer Id&lt;/th&gt;
+		&lt;th&gt;Name&lt;/th&gt;
+		&lt;th&gt;Address&lt;/th&gt;
+		&lt;th&gt;Created Date&lt;/th&gt;
+	&lt;/tr&gt;
+	&lt;s:iterator value="customerList" status="userStatus"&gt;
+		&lt;tr&gt;
+			&lt;td&gt;&lt;s:property value="customerId" /&gt;&lt;/td&gt;
+			&lt;td&gt;&lt;s:property value="name" /&gt;&lt;/td&gt;
+			&lt;td&gt;&lt;s:property value="address" /&gt;&lt;/td&gt;
+			&lt;td&gt;&lt;s:date name="createdDate" format="dd/MM/yyyy" /&gt;&lt;/td&gt;
+		&lt;/tr&gt;
+	&lt;/s:iterator&gt;
+&lt;/table&gt;
+&lt;/s:if&gt;
+&lt;br/&gt;
+&lt;br/&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;</pre> 
+   <h2 style="color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:24px;font-weight:500;"> 8. struts.xml </h2> 
+   <pre>&lt;?xml version="1.0" encoding="UTF-8" ?&gt;
+&lt;!DOCTYPE struts PUBLIC
+"-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+"http://struts.apache.org/dtds/struts-2.0.dtd"&gt;
+ 
+&lt;struts&gt;
+  &lt;constant name="struts.devMode" value="true" /&gt;
+ 	
+  &lt;package name="default" namespace="/" extends="struts-default"&gt;
+		
+    &lt;action name="addCustomerAction" 
+	class="com.yiibai.customer.action.CustomerAction" method="addCustomer" &gt;
+       &lt;result name="success"&gt;pages/customer.jsp&lt;/result&gt;
+    &lt;/action&gt;
+	
+    &lt;action name="listCustomerAction" 
+	class="com.yiibai.customer.action.CustomerAction" method="listCustomer" &gt;
+        &lt;result name="success"&gt;pages/customer.jsp&lt;/result&gt;
+    &lt;/action&gt;		
+
+  &lt;/package&gt;	
+&lt;/struts&gt;</pre> 
+   <h2> 9. 实例测试执行 </h2> 
+   <p> 访问客户模块：http://localhost:8080/struts2hibernate/listCustomerAction.action<br> <img src="/uploads/tutorial/20151202/1-1512022151453V.png" alt=""> </p> 
+   <div>
+     在名称和地址字段填写，点击提交按钮，插入的客户的详细信息会马上列出结果。
+    <br> 
+    <img src="/uploads/tutorial/20151202/1-151202215203J6.png" alt="">
+    <br> 
+   </div> 
+   <h2> 参考 </h2> 
+   <ol> 
+    <li> <a target="_blank" href="http://www.yiibai.com/struts_2/struts-2-hibernate-integration-with-full-hibernate-plugin.html">Struts2 + Hibernate使用“Full Hibernate Plugin"集成</a> </li> 
+    <li> <a target="_blank" href="http://java.sun.com/products/servlet/2.3/javadoc/javax/servlet/ServletContextListener.html">ServletContextListener 文档</a> </li> 
+    <li> <a target="_blank" href="http://www.yiibai.com/struts/struts-hibernate-integration-example/">Struts + Hibernate集成实例</a> </li> 
+   </ol> 
+  </div> 
+ </div> 代码下载 - 
+ <a target="_blank" href="http://pan.baidu.com/s/1hqhQJ7A">http://pan.baidu.com/s/1hqhQJ7A</a>
+ <br>      
+</div></body></html>

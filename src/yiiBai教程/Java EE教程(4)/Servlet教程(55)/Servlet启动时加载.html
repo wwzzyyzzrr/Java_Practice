@@ -1,0 +1,41 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Servlet启动时加载</h1><div style="width:100%;float:left;" class="article-content">   
+ <p><strong>在web.xml文件中指定启动时加载</strong></p> 
+ <p>如果<code>load-on-startup</code>元素值为正，则会在Web应用程序部署或服务器启动时加载servlet。 它也被称为servlet的预初始化。</p> 
+ <p>可以指定传递servlet的值(<code>load-on-startup</code>元素指定的值)为正或为负。</p> 
+ <p><strong>load-on-startup元素的优点</strong></p> 
+ <p>servlet在第一个请求时被加载。这意味着它会在第一次请求时消耗更多的时间。 如果在<code>web.xml</code>中指定启动加载，则servlet将在项目部署时间或服务器启动时加载。 所以，响应第一个请求需要较少的时间。</p> 
+ <p>下面来看一个简单的<em>web.xml</em>配置<code>load-on-startup</code>元素的示例代码 - </p> 
+ <pre><code class="lang-xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+    xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
+    id="WebApp_ID" version="3.1"&gt;
+    &lt;display-name&gt;helloworld&lt;/display-name&gt;
+    &lt;welcome-file-list&gt;
+        &lt;welcome-file&gt;index.html&lt;/welcome-file&gt;
+        &lt;welcome-file&gt;index.html&lt;/welcome-file&gt;
+        &lt;welcome-file&gt;index.jsp&lt;/welcome-file&gt;
+        &lt;welcome-file&gt;home.jsp&lt;/welcome-file&gt;
+    &lt;/welcome-file-list&gt;
+    &lt;servlet&gt;
+        &lt;servlet-name&gt;com.yiibai.MyServlet&lt;/servlet-name&gt;
+        &lt;servlet-class&gt;MyServlet&lt;/servlet-class&gt;
+        &lt;load-on-startup&gt;0&lt;/load-on-startup&gt;  
+    &lt;/servlet&gt;
+    &lt;servlet&gt;
+        &lt;servlet-name&gt;com.yiibai.BServlet&lt;/servlet-name&gt;
+        &lt;servlet-class&gt;BServlet&lt;/servlet-class&gt;
+        &lt;load-on-startup&gt;1&lt;/load-on-startup&gt;  
+    &lt;/servlet&gt;
+
+    &lt;servlet-mapping&gt;
+        &lt;servlet-name&gt;MyServlet&lt;/servlet-name&gt;
+        &lt;url-pattern&gt;/index&lt;/url-pattern&gt;
+    &lt;/servlet-mapping&gt;
+&lt;/web-app&gt;
+</code></pre> 
+ <p>定义了<code>2</code>个servlet，这两个servlet将在项目部署或服务器启动时加载。但是，首先将<code>MyServlet</code>加载，然后再加载<code>BServlet</code>。</p> 
+ <p><strong>传递负值</strong></p> 
+ <p>如果传递<code>load-on-startup</code>元素为负值，则此servlet将请求时第一个加载。</p>
+ <br>      
+</div></body></html>

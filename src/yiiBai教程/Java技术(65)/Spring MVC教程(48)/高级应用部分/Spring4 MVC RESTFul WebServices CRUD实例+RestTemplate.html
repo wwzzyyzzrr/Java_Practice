@@ -1,0 +1,797 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Spring4 MVC RESTFul WebServices CRUD实例+RestTemplate</h1><div style="width:100%;float:left;" class="article-content">   
+ <span style="font-family:微软雅黑;font-size:14px;line-height:21px;background-color:#FFFFFF;"> 
+  <div> 
+   <br> 
+  </div> 
+  <div>
+    在这篇文章中，我们将使用Spring4&nbsp;MVC编写一个CRUD&nbsp;RESTful&nbsp;Web服务，写一个REST客户端RestTemplate来使用这些服务。我们也将利用外部客户端测试的服务。 
+  </div> 
+  <div> 
+   <hr> 
+   <h3> 
+    <div>
+      简单介绍REST 
+    </div> </h3> 
+   <p> <a target="_blank" href="http://stackoverflow.com/questions/671118/what-exactly-is-restful-programming">REST</a>&nbsp;表示状态传输。这是一个体系结构样式，可用于设计网络服务，可以被各种客户端消耗。核心思想是，不使用如CORBA，RPC或SOAP复杂的机制在机器之间进行连接，简单的 HTTP 用于使它们之间调用。 </p> 
+   <div>
+     在基于 REST 的设计中，资源被一套通用动词操作使用。 
+   </div> 
+   <ul> 
+    <li> 
+     <div>
+       创建资源：应该使用&nbsp;HTTP&nbsp;POST 
+     </div> </li> 
+    <li> 
+     <div>
+       要获取资源：应该使用HTTP&nbsp;GET 
+     </div> </li> 
+    <li> 
+     <div>
+       更新资源：应使用HTTP&nbsp;PUT 
+     </div> </li> 
+    <li> 
+     <div>
+       要删除资源：应使用HTTP&nbsp;DELETE 
+     </div> </li> 
+   </ul> 
+   <div>
+     这意味着，作为一个 REST 服务开发人员或客户端，应符合上述标准，以便 REST 操作。 
+   </div> 
+   <p> 通常Rest&nbsp;是基于Web服务返回JSON或XML数据格式作为响应，虽然它并不仅仅限于这些类型。客户端可以指定(使用 HTTP&nbsp;Accept 报头)，他们所感兴趣的资源类型，并且服务器可以返回资源，指定它所服务的内容类型资源。&nbsp; </p> 
+   <h2> 
+    <div>
+      基于REST的控制器 
+    </div> </h2> 
+   <p> 下面是一个可能基于 REST 的控制器，实现REST&nbsp;API。这里所说的“可能”，这意味着可以以另一种方式实现它，还是(或者更纯粹的方式)符合REST风格。 </p> 
+   <div>
+     这就是我们的 REST&nbsp;API 功能/作用： 
+   </div> 
+   <ul> 
+    <li> GET&nbsp;请求&nbsp;/api/user/&nbsp;返回用户的列表 </li> 
+    <li> GET&nbsp;请求&nbsp;&nbsp;/api/user/1&nbsp;返回ID为1的用户 </li> 
+    <li> POST&nbsp;请求&nbsp;/api/user/&nbsp;以用户对象的JSON格式创建新的用户 </li> 
+    <li> PUT&nbsp;请求&nbsp;/api/user/3&nbsp;以用户对象作为JSON更新ID为3的用户 </li> 
+    <li> DELETE&nbsp;请求&nbsp;/api/user/4&nbsp;删除ID为4的用户 </li> 
+    <li> DELETE&nbsp;请求&nbsp;/api/user/ 删除所有的用户 </li> 
+   </ul> 
+   <pre>package com.yiibai.springmvc.controller;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.util.UriComponentsBuilder;
+
+import com.yiibai.springmvc.model.User;
+import com.yiibai.springmvc.service.UserService;
+
+@RestController
+public class HelloWorldRestController {
+
+	@Autowired
+	UserService userService;  //Service which will do all data retrieval/manipulation work
+
+	
+	//-------------------Retrieve All Users--------------------------------------------------------
+	
+	@RequestMapping(value = "/user/", method = RequestMethod.GET)
+	public ResponseEntity&lt;List&lt;User&gt;&gt; listAllUsers() {
+		List&lt;User&gt; users = userService.findAllUsers();
+		if(users.isEmpty()){
+			return new ResponseEntity&lt;List&lt;User&gt;&gt;(HttpStatus.NO_CONTENT);//You many decide to return HttpStatus.NOT_FOUND
+		}
+		return new ResponseEntity&lt;List&lt;User&gt;&gt;(users, HttpStatus.OK);
+	}
+
+
+	//-------------------Retrieve Single User--------------------------------------------------------
+	
+	@RequestMapping(value = "/user/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity&lt;User&gt; getUser(@PathVariable("id") long id) {
+		System.out.println("Fetching User with id " + id);
+		User user = userService.findById(id);
+		if (user == null) {
+			System.out.println("User with id " + id + " not found");
+			return new ResponseEntity&lt;User&gt;(HttpStatus.NOT_FOUND);
+		}
+		return new ResponseEntity&lt;User&gt;(user, HttpStatus.OK);
+	}
+
+	
+	
+	//-------------------Create a User--------------------------------------------------------
+	
+	@RequestMapping(value = "/user/", method = RequestMethod.POST)
+	public ResponseEntity&lt;Void&gt; createUser(@RequestBody User user, 	UriComponentsBuilder ucBuilder) {
+		System.out.println("Creating User " + user.getName());
+
+		if (userService.isUserExist(user)) {
+			System.out.println("A User with name " + user.getName() + " already exist");
+			return new ResponseEntity&lt;Void&gt;(HttpStatus.CONFLICT);
+		}
+
+		userService.saveUser(user);
+
+		HttpHeaders headers = new HttpHeaders();
+		headers.setLocation(ucBuilder.path("/user/{id}").buildAndExpand(user.getId()).toUri());
+		return new ResponseEntity&lt;Void&gt;(headers, HttpStatus.CREATED);
+	}
+
+	
+	//------------------- Update a User --------------------------------------------------------
+	
+	@RequestMapping(value = "/user/{id}", method = RequestMethod.PUT)
+	public ResponseEntity&lt;User&gt; updateUser(@PathVariable("id") long id, @RequestBody User user) {
+		System.out.println("Updating User " + id);
+		
+		User currentUser = userService.findById(id);
+		
+		if (currentUser==null) {
+			System.out.println("User with id " + id + " not found");
+			return new ResponseEntity&lt;User&gt;(HttpStatus.NOT_FOUND);
+		}
+
+		currentUser.setName(user.getName());
+		currentUser.setAge(user.getAge());
+		currentUser.setSalary(user.getSalary());
+		
+		userService.updateUser(currentUser);
+		return new ResponseEntity&lt;User&gt;(currentUser, HttpStatus.OK);
+	}
+
+	//------------------- Delete a User --------------------------------------------------------
+	
+	@RequestMapping(value = "/user/{id}", method = RequestMethod.DELETE)
+	public ResponseEntity&lt;User&gt; deleteUser(@PathVariable("id") long id) {
+		System.out.println("Fetching &amp; Deleting User with id " + id);
+
+		User user = userService.findById(id);
+		if (user == null) {
+			System.out.println("Unable to delete. User with id " + id + " not found");
+			return new ResponseEntity&lt;User&gt;(HttpStatus.NOT_FOUND);
+		}
+
+		userService.deleteUserById(id);
+		return new ResponseEntity&lt;User&gt;(HttpStatus.NO_CONTENT);
+	}
+
+	
+	//------------------- Delete All Users --------------------------------------------------------
+	
+	@RequestMapping(value = "/user/", method = RequestMethod.DELETE)
+	public ResponseEntity&lt;User&gt; deleteAllUsers() {
+		System.out.println("Deleting All Users");
+
+		userService.deleteAllUsers();
+		return new ResponseEntity&lt;User&gt;(HttpStatus.NO_CONTENT);
+	}
+
+}</pre> 
+   <div>
+     详细说明： 
+   </div> 
+   <p> @RestController&nbsp;:&nbsp;首先，我们使用 Spring4 的新 @RestController 注释。&nbsp;它的注解消除了注释每个以@ResponseBody的方法。@RestController本身注解为@ResponseBody，并且可以被视为@Controller和@ResponseBody的组合。 </p> 
+   <p> @RequestBody&nbsp;:&nbsp;如果一个方法的参数都注解有@RequestBody，Spring将绑定传入的&nbsp;HTTP&nbsp;请求体(在@RequestMapping提到该法的URL)到这个参数。这样做 Spring 将[在后台]使用HTTP消息转换为HTTP请求主体转换成域对象[反序列化要求主体域对象]的基础上，接受或Content-Type头请求。 </p> 
+   <p> @ResponseBody&nbsp;:如果一个方法被注解为@ResponseBody，Spring将绑定返回值传出的 HTTP 响应体。这样做Spring将[在后台]使用HTTP消息转换器的返回值转换为HTTP响应体[序列化对象响应正文]，根据内容类型出现在请求的HTTP头。&nbsp;前面已经提到，在 Spring4 可能会停止使用此注释。 </p> 
+   <p> ResponseEntity是一个真正处理。&nbsp;它代表了整个HTTP响应。一件好事是你可以控制任何进入它东西。可以指定状态码，头和主体。它自带几个构造函数执行你想要的 HTTP 响应发送的信息。 </p> 
+   <p> @PathVariable&nbsp;这种表示法表示方法参数应绑定到一个 URI 模板变量[“{}”]。 </p> 
+   <p> 基本上，@RestController，@RequestBody，ResponseEntity＆@PathVariable 都是用 Spring&nbsp;4&nbsp;实现&nbsp;REST&nbsp;API&nbsp;需要知道的。此外，Spring提供了一些支持类来帮助你实现一些定制。 </p> 
+   <p> MediaType :&nbsp;通过@RequestMapping注解，你还可以，指定要生产或消费的 MediaType(使用生产或消费属性)，通过特定的控制器的方法，以进一步缩小映射。 </p> 
+   <p> <br> </p> 
+   <h3> 
+    <div>
+      部署并测试API，让我们深入研究这个东西是如何工作的 
+    </div> </h3> 
+   <p> 它只是一个普通的控制器类，可部署的应用程序的一部分。[完整下载的应用程序代码显示在本教程文章最后，你可以直接部署到容器。先部署它，才能有这些可用服务，这里先详细讨论了每一个操作。部署的应用程序并访问：http://localhost:8080/Spring4MVCCRUDRestService. </p> 
+   <p> 为了测试这个API，这里使用一个外部客户端POSTMAN(这是一个&nbsp;Chrome&nbsp;插件，下载安装：<a target="_blank" href="http://www.getpostman.com/">http://www.getpostman.com/</a>)。后面我们也将编写我们自己的客户端，也就几分钟的时间。 </p> 
+   <p> 1.&nbsp;检索所有用户 </p> 
+   <div>
+     打开POSTMAN&nbsp;工具中，选择请求类型[GET这个用例]，指定操作URI。访问：
+    <a target="_blank" href="http://localhost:8080/Spring4MVCCRUDRestService/user/">http://localhost:8080/Spring4MVCCRUDRestService/user/</a> 
+   </div> 
+   <div>
+     请注意，我们这里没有指定任何HTTP标头。点击发送(Send)，您将收到的所有用户的列表。 
+   </div> 
+   <p style="color:#404040;font-size:15px;"> <img src="/uploads/tutorial/20160116/1-1601160T235638.png" alt=""> </p> 
+   <div>
+     还要注意 HTTP 200 响应。此外这里查看一下报头。 
+   </div> 
+   <p style="color:#404040;font-size:15px;"> <img src="/uploads/tutorial/20160116/1-1601160T304K0.png" alt=""> </p> 
+   <p> 你可能想知道的响应是如何发送 JSON 字符串，并在响应中确认Content-Type头。这已在我们的项目Jackson库中实现。 </p> 
+   <pre>&lt;dependency&gt;
+    &lt;groupId&gt;com.fasterxml.jackson.core&lt;/groupId&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;artifactId&gt;jackson-databind&lt;/artifactId&gt;
+    &lt;version&gt;2.5.3&lt;/version&gt;
+&lt;/dependency&gt;</pre> 
+   <div>
+     由于&nbsp;Spring&nbsp;找到这个库在&nbsp;classpath&nbsp;中，它调用内置MappingJackson2HttpMessageConverter&nbsp;转换器转换成JSON响应(对象的列表)。 
+   </div> 
+   <p> 关于Spring内置转换器，大部分的时间他们只需要某些库在类路径中以便进行转换。当然，有时我们也需要去适应我们的 API/应用程序也是如此。举例来说，如果我们想为XML，我们应标注适当JAXB标注User类。 </p> 
+   <p> 2.&nbsp;检索单用户 </p> 
+   <div>
+     指定&nbsp;GET&nbsp;/user/1，点击发送(Send)。 
+   </div> 
+   <p style="color:#404040;font-size:15px;"> <img src="/uploads/tutorial/20160116/1-1601160T353H5.png" alt=""> </p> 
+   <div>
+     如果发送的是无效标识符的GET，您会收到一个HTTP&nbsp;404。 
+   </div> 
+   <p style="color:#404040;font-size:15px;"> <img src="/uploads/tutorial/20160116/1-1601160T414325.png" alt=""> </p> 
+   <p> 3. 创建一个用户 </p> 
+   <div>
+     选择方法POST，指定的URI为/user/，在&nbsp;POSTMAN&nbsp;主体标签中指定主体，选择类型[application/json]。 
+   </div> 
+   <p style="color:#404040;font-size:15px;"> <img src="/uploads/tutorial/20160116/1-1601160T435Y7.png" alt=""> </p> 
+   <div>
+     您可能已经注意到，POSTMAN会自动添加一个头&nbsp;Content-Type&nbsp;。 
+   </div> 
+   <p style="color:#404040;font-size:15px;"> <img src="/uploads/tutorial/20160116/1-1601160T453H2.png" alt=""> </p> 
+   <div>
+     随着POST和PUT请求，客户端将数据发送到服务器，它们应指定正在发送的数据的实际内容类型。 
+   </div> 
+   <p> 发送。您应该看到HTTP200响应，没有主体(如API不发送主体任何东西)。但是，你应该找一个Location头指定位置新创建的用户。 </p> 
+   <p style="color:#404040;font-size:15px;"> <img src="/uploads/tutorial/20160116/1-1601160T513444.png" alt=""> </p> 
+   <div>
+     现在，您可以获取新创建的用户。 
+   </div> 
+   <p style="color:#404040;font-size:15px;"> <img src="/uploads/tutorial/20160116/1-1601160T5333Q.png" alt=""> </p> 
+   <p> 通过这种方式实现是常见的REST。但是，如果你想以 POST/&nbsp;PUT请求的响应主体发送内容，也没有人阻止你。 </p> 
+   <div>
+     无论如何，让我们再次尝试创建相同的用户。应该得到的HTTP响应显示冲突。 
+   </div> 
+   <p style="color:#404040;font-size:15px;"> <img src="/uploads/tutorial/20160116/1-1601160T551339.png" alt=""> </p> 
+   <div>
+     4.更新用户 
+   </div> 
+   <div>
+     发送一个HTTP&nbsp;PUT请求以更新的用户。一并发送新的用户的信息。
+    <br> 
+    <img src="/uploads/tutorial/20160116/1-1601160T62I40.png" alt="">
+    <br> 
+   </div> 
+   <p> </p> 
+   <p> 请注意，我们收到的响应体的这个时候。这是在控制器中的方法的实现发送。同样，可以决定不发送更新信息的响应体，并只发送位置标头(如创建)。 </p> 
+   <p> 5.&nbsp;删除一个用户 </p> 
+   <p style="color:#404040;font-size:15px;"> <img src="/uploads/tutorial/20160116/1-1601160TA25c.png" alt=""> </p> 
+   <p> 6.&nbsp;删除所有用户 </p> 
+   <p style="color:#404040;font-size:15px;"> <img src="/uploads/tutorial/20160116/1-1601160TG0464.png" alt=""> </p> 
+   <p> 7.&nbsp;用户删除后，验证所有用户 </p> 
+   <p style="color:#404040;font-size:15px;"> <img src="/uploads/tutorial/20160116/1-1601160THM06.png" alt=""> </p> 
+   <p style="color:#404040;font-size:15px;"> <br> </p> 
+   <h2> 
+    <div>
+      使用REST模板编写REST客户端 
+    </div> </h2> 
+   <p> 我们上面使用 Postman 是一个很好的客户端测试 REST&nbsp;API&nbsp;工具。但是，如果想从应用程序消耗基于REST的Web服务，需要一个REST客户端的应用程序。其中最流行的 HTTP 客户端就是 Apache&nbsp;HttpComponents&nbsp;HttpClient。&nbsp;但在细节上使用这种访问 REST 服务太低级。 </p> 
+   <p> Spring RestTemplate 可以来补救。&nbsp;RestTemplate 提供对应于六个主要的 HTTP 方法，使许多调用RESTful服务只需要一行代码，就可执行 REST最佳实践的更高层次的方法。 </p> 
+   <div>
+     下面显示的是 HTTP 方法和相应 RestTemplate 方法来处理该类型的 HTTP 请求。 
+   </div> 
+   <div>
+     HTTP方法和相应的 RestTemplate 方法： 
+   </div> 
+   <ul> 
+    <li> HTTP GET : getForObject, getForEntity </li> 
+    <li> HTTP PUT : put(String url, Object request, String…urlVariables) </li> 
+    <li> HTTP DELETE : delete </li> 
+    <li> HTTP POST : postForLocation(String url, Object request, String… urlVariables), postForObject(String url, Object request, Class&nbsp;responseType, String… uriVariables) </li> 
+    <li> HTTP HEAD : headForHeaders(String url, String… urlVariables) </li> 
+    <li> HTTP OPTIONS : optionsForAllow(String url, String… urlVariables) </li> 
+    <li> HTTP PATCH and others : exchange execute </li> 
+   </ul> 
+   <div>
+     自定义REST客户端，消费前面创建的 REST 服务。 
+   </div> 
+   <pre>package com.yiibai.springmvc;
+
+import java.net.URI;
+import java.util.LinkedHashMap;
+import java.util.List;
+
+import org.springframework.web.client.RestTemplate;
+
+import com.yiibai.springmvc.model.User;
+
+public class SpringRestTestClient {
+
+	public static final String REST_SERVICE_URI = "http://localhost:8080/Spring4MVCCRUDRestService";
+	
+	/* GET */
+	@SuppressWarnings("unchecked")
+	private static void listAllUsers(){
+		System.out.println("Testing listAllUsers API-----------");
+		
+		RestTemplate restTemplate = new RestTemplate();
+		List&lt;LinkedHashMap&lt;String, Object&gt;&gt; usersMap = restTemplate.getForObject(REST_SERVICE_URI+"/user/", List.class);
+		
+		if(usersMap!=null){
+			for(LinkedHashMap&lt;String, Object&gt; map : usersMap){
+	            System.out.println("User : id="+map.get("id")+", Name="+map.get("name")+", Age="+map.get("age")+", Salary="+map.get("salary"));;
+	        }
+		}else{
+			System.out.println("No user exist----------");
+		}
+	}
+	
+	/* GET */
+	private static void getUser(){
+		System.out.println("Testing getUser API----------");
+		RestTemplate restTemplate = new RestTemplate();
+        User user = restTemplate.getForObject(REST_SERVICE_URI+"/user/1", User.class);
+        System.out.println(user);
+	}
+	
+	/* POST */
+    private static void createUser() {
+		System.out.println("Testing create User API----------");
+    	RestTemplate restTemplate = new RestTemplate();
+        User user = new User(0,"Sarah",51,134);
+        URI uri = restTemplate.postForLocation(REST_SERVICE_URI+"/user/", user, User.class);
+        System.out.println("Location : "+uri.toASCIIString());
+    }
+
+    /* PUT */
+    private static void updateUser() {
+		System.out.println("Testing update User API----------");
+        RestTemplate restTemplate = new RestTemplate();
+        User user  = new User(1,"Tomy",33, 70000);
+        restTemplate.put(REST_SERVICE_URI+"/user/1", user);
+        System.out.println(user);
+    }
+
+    /* DELETE */
+    private static void deleteUser() {
+		System.out.println("Testing delete User API----------");
+        RestTemplate restTemplate = new RestTemplate();
+        restTemplate.delete(REST_SERVICE_URI+"/user/3");
+    }
+
+
+    /* DELETE */
+    private static void deleteAllUsers() {
+		System.out.println("Testing all delete Users API----------");
+        RestTemplate restTemplate = new RestTemplate();
+        restTemplate.delete(REST_SERVICE_URI+"/user/");
+    }
+
+    public static void main(String args[]){
+		listAllUsers();
+		getUser();
+		createUser();
+		listAllUsers();
+		updateUser();
+		listAllUsers();
+		deleteUser();
+		listAllUsers();
+		deleteAllUsers();
+		listAllUsers();
+    }
+}</pre> 
+   <div>
+     重新启动服务器(在我们的例子中，在服务器端的数据是固定的)。上面的程序运行。 
+   </div> 
+   <div>
+     从上面的客户端程序输出 
+   </div> 
+   <pre>Testing listAllUsers API-----------
+User : id=1, Name=Sam, Age=30, Salary=70000.0
+User : id=2, Name=Tom, Age=40, Salary=50000.0
+User : id=3, Name=Jerome, Age=45, Salary=30000.0
+User : id=4, Name=Silvia, Age=50, Salary=40000.0
+Testing getUser API----------
+User [id=1, name=Sam, age=30, salary=70000.0]
+Testing create User API----------
+Location : http://localhost:8080/Spring4MVCCRUDRestService/user/5
+Testing listAllUsers API-----------
+User : id=1, Name=Sam, Age=30, Salary=70000.0
+User : id=2, Name=Tom, Age=40, Salary=50000.0
+User : id=3, Name=Jerome, Age=45, Salary=30000.0
+User : id=4, Name=Silvia, Age=50, Salary=40000.0
+User : id=5, Name=Sarah, Age=51, Salary=134.0
+Testing update User API----------
+User [id=1, name=Tomy, age=33, salary=70000.0]
+Testing listAllUsers API-----------
+User : id=1, Name=Tomy, Age=33, Salary=70000.0
+User : id=2, Name=Tom, Age=40, Salary=50000.0
+User : id=3, Name=Jerome, Age=45, Salary=30000.0
+User : id=4, Name=Silvia, Age=50, Salary=40000.0
+User : id=5, Name=Sarah, Age=51, Salary=134.0
+Testing delete User API----------
+Testing listAllUsers API-----------
+User : id=1, Name=Tomy, Age=33, Salary=70000.0
+User : id=2, Name=Tom, Age=40, Salary=50000.0
+User : id=4, Name=Silvia, Age=50, Salary=40000.0
+User : id=5, Name=Sarah, Age=51, Salary=134.0
+Testing all delete Users API----------
+Testing listAllUsers API-----------
+No user exist----------</pre> 
+   <hr> 
+   <h1> 完整的实例 </h1> 
+   <h3> 工程结构 </h3> 
+   <p> <img src="/uploads/tutorial/20160116/1-1601160U331432.png" alt=""> </p> 
+   <h3> 
+    <div>
+      声明项目的依赖关系 
+    </div> </h3>   
+   <pre>&lt;project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd"&gt;
+  &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
+  &lt;groupId&gt;com.yiibai.springmvc&lt;/groupId&gt;
+  &lt;artifactId&gt;Spring4MVCCRUDRestService&lt;/artifactId&gt;
+  &lt;packaging&gt;war&lt;/packaging&gt;
+  &lt;version&gt;1.0.0&lt;/version&gt;
+  &lt;name&gt;Spring4MVCCRUDRestService Maven Webapp&lt;/name&gt;
+
+  	&lt;properties&gt;
+		&lt;springframework.version&gt;4.2.0.RELEASE&lt;/springframework.version&gt;
+		&lt;jackson.version&gt;2.5.3&lt;/jackson.version&gt;
+	&lt;/properties&gt;
+
+	&lt;dependencies&gt;
+		&lt;dependency&gt;
+			&lt;groupId&gt;org.springframework&lt;/groupId&gt;
+			&lt;artifactId&gt;spring-webmvc&lt;/artifactId&gt;
+			&lt;version&gt;${springframework.version}&lt;/version&gt;
+		&lt;/dependency&gt;
+		&lt;dependency&gt;
+			&lt;groupId&gt;org.springframework&lt;/groupId&gt;
+			&lt;artifactId&gt;spring-tx&lt;/artifactId&gt;
+			&lt;version&gt;${springframework.version}&lt;/version&gt;
+		&lt;/dependency&gt;
+
+		&lt;dependency&gt;
+			&lt;groupId&gt;com.fasterxml.jackson.core&lt;/groupId&gt;
+		    &lt;artifactId&gt;jackson-databind&lt;/artifactId&gt;
+		    &lt;version&gt;${jackson.version}&lt;/version&gt;
+		&lt;/dependency&gt;
+		&lt;dependency&gt;
+			&lt;groupId&gt;javax.servlet&lt;/groupId&gt;
+			&lt;artifactId&gt;javax.servlet-api&lt;/artifactId&gt;
+			&lt;version&gt;3.1.0&lt;/version&gt;
+		&lt;/dependency&gt;
+			
+	&lt;/dependencies&gt;
+
+
+	&lt;build&gt;
+		&lt;pluginManagement&gt;
+			&lt;plugins&gt;
+				&lt;plugin&gt;
+					&lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+					&lt;artifactId&gt;maven-war-plugin&lt;/artifactId&gt;
+					&lt;version&gt;2.4&lt;/version&gt;
+					&lt;configuration&gt;
+						&lt;warSourceDirectory&gt;src/main/webapp&lt;/warSourceDirectory&gt;
+						&lt;warName&gt;Spring4MVCCRUDRestService&lt;/warName&gt;
+						&lt;failOnMissingWebXml&gt;false&lt;/failOnMissingWebXml&gt;
+					&lt;/configuration&gt;
+				&lt;/plugin&gt;
+			&lt;/plugins&gt;
+		&lt;/pluginManagement&gt;
+
+		&lt;finalName&gt;Spring4MVCCRUDRestService&lt;/finalName&gt;
+	&lt;/build&gt;
+&lt;/project&gt;</pre> 
+   <h3 style="color:#404040;font-size:20px;"> <strong>User Service</strong> </h3> 
+   <pre>package com.yiibai.springmvc.service;
+
+import java.util.List;
+import com.yiibai.springmvc.model.User;
+
+public interface UserService {
+	
+	User findById(long id);
+	
+	User findByName(String name);
+	
+	void saveUser(User user);
+	
+	void updateUser(User user);
+	
+	void deleteUserById(long id);
+
+	List&lt;User&gt; findAllUsers(); 
+	
+	void deleteAllUsers();
+	
+	public boolean isUserExist(User user);
+	
+}</pre> 
+   <pre>package com.yiibai.springmvc.service;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.yiibai.springmvc.model.User;
+
+@Service("userService")
+@Transactional
+public class UserServiceImpl implements UserService{
+	
+	private static final AtomicLong counter = new AtomicLong();
+	
+	private static List&lt;User&gt; users;
+	
+	static{
+		users= populateDummyUsers();
+	}
+
+	public List&lt;User&gt; findAllUsers() {
+		return users;
+	}
+	
+	public User findById(long id) {
+		for(User user : users){
+			if(user.getId() == id){
+				return user;
+			}
+		}
+		return null;
+	}
+	
+	public User findByName(String name) {
+		for(User user : users){
+			if(user.getName().equalsIgnoreCase(name)){
+				return user;
+			}
+		}
+		return null;
+	}
+	
+	public void saveUser(User user) {
+		user.setId(counter.incrementAndGet());
+		users.add(user);
+	}
+
+	public void updateUser(User user) {
+		int index = users.indexOf(user);
+		users.set(index, user);
+	}
+
+	public void deleteUserById(long id) {
+		
+		for (Iterator&lt;User&gt; iterator = users.iterator(); iterator.hasNext(); ) {
+		    User user = iterator.next();
+		    if (user.getId() == id) {
+		        iterator.remove();
+		    }
+		}
+	}
+
+	public boolean isUserExist(User user) {
+		return findByName(user.getName())!=null;
+	}
+
+	private static List&lt;User&gt; populateDummyUsers(){
+		List&lt;User&gt; users = new ArrayList&lt;User&gt;();
+		users.add(new User(counter.incrementAndGet(),"Sam",30, 70000));
+		users.add(new User(counter.incrementAndGet(),"Tom",40, 50000));
+		users.add(new User(counter.incrementAndGet(),"Jerome",45, 30000));
+		users.add(new User(counter.incrementAndGet(),"Silvia",50, 40000));
+		return users;
+	}
+
+	public void deleteAllUsers() {
+		users.clear();
+	}
+
+}</pre> 
+   <h3 style="color:#404040;font-size:20px;"> <strong>Model class</strong> </h3> 
+   <pre>package com.yiibai.springmvc.model;
+
+public class User {
+
+	private long id;
+	
+	private String name;
+	
+	private int age;
+	
+	private double salary;
+
+	public User(){
+		id=0;
+	}
+	
+	public User(long id, String name, int age, double salary){
+		this.id = id;
+		this.name = name;
+		this.age = age;
+		this.salary = salary;
+	}
+	
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public int getAge() {
+		return age;
+	}
+
+	public void setAge(int age) {
+		this.age = age;
+	}
+
+	public double getSalary() {
+		return salary;
+	}
+
+	public void setSalary(double salary) {
+		this.salary = salary;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + (int) (id ^ (id &gt;&gt;&gt; 32));
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		User other = (User) obj;
+		if (id != other.id)
+			return false;
+		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "User [id=" + id + ", name=" + name + ", age=" + age
+				+ ", salary=" + salary + "]";
+	}
+}</pre> 
+   <h3 style="color:#404040;font-size:20px;"> <strong>Configuration class</strong> </h3> 
+   <pre>package com.yiibai.springmvc.configuration;
+
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+
+@Configuration
+@EnableWebMvc
+@ComponentScan(basePackages = "com.yiibai.springmvc")
+public class HelloWorldConfiguration {
+	
+}</pre> 
+   <h3 style="color:#404040;font-size:20px;"> <strong>Initialization Class</strong> </h3> 
+   <pre>package com.yiibai.springmvc.configuration;
+
+import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
+
+public class HelloWorldInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
+ 
+    @Override
+    protected Class&lt;?&gt;[] getRootConfigClasses() {
+        return new Class[] { HelloWorldConfiguration.class };
+    }
+  
+    @Override
+    protected Class&lt;?&gt;[] getServletConfigClasses() {
+        return null;
+    }
+  
+    @Override
+    protected String[] getServletMappings() {
+        return new String[] { "/" };
+    }
+ 
+}</pre> 
+   <h3 style="color:#404040;font-size:20px;"> 
+    <div style="background-color:inherit;">
+      添加CORS支持REST&nbsp;API 
+    </div> </h3> 
+   <div style="background-color:inherit;">
+     当访问 REST&nbsp;API 时，可能会面临关于
+    <a target="_blank" href="https://en.wikipedia.org/wiki/Same-origin_policy">同源策略</a>的问题。 
+   </div> 
+   <div style="background-color:inherit;">
+     可能会出现这样的错误： 
+   </div> 
+   <p style="color:#404040;font-size:15px;"> ” No ‘Access-Control-Allow-Origin’ 的<span style="background-color:inherit;font-family:微软雅黑;font-size:14px;line-height:1.5;">头存在于所请求的资源。</span><span style="line-height:1.5;">&nbsp;Origin ‘http://127.0.0.1:8080′ is therefore not allowed access.” OR</span><span style="line-height:1.5;">” XMLHttpRequest cannot load http://abc.com/bla. Origin http://localhost:12345 is not allowed by Access-Control-Allow-Origin.” are common in such case.</span> </p> 
+   <p style="color:#404040;font-size:15px;"> <span style="background-color:inherit;font-family:微软雅黑;font-size:14px;line-height:1.5;">解决办法是跨域资源共享。</span><span style="background-color:inherit;font-family:微软雅黑;font-size:14px;line-height:1.5;">基本上，在服务器端，我们可以返回更多的CORS系统的访问控制头在响应中，这将最终允许进一步域间的通信。</span> </p> 
+   <div style="background-color:inherit;">
+     借助于Spring，我们可以写一个简单的过滤器，并将这些 CORS 特定的头文件添加到每一个响应中。 
+   </div> 
+   <pre>package com.yiibai.springmvc.configuration;
+
+import java.io.IOException;
+
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletResponse;
+
+
+public class CORSFilter implements Filter {
+
+	public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
+		System.out.println("Filtering on...........................................................");
+		HttpServletResponse response = (HttpServletResponse) res;
+		response.setHeader("Access-Control-Allow-Origin", "*");
+		response.setHeader("Access-Control-Allow-Methods", "POST, GET, PUT, OPTIONS, DELETE");
+		response.setHeader("Access-Control-Max-Age", "3600");
+		response.setHeader("Access-Control-Allow-Headers", "x-requested-with");
+		chain.doFilter(req, res);
+	}
+
+	public void init(FilterConfig filterConfig) {}
+
+	public void destroy() {}
+
+}</pre> 
+   <div style="background-color:inherit;">
+     然后我们可以简单地将其配置在我们的 Spring 配置如下所示： 
+   </div> 
+   <pre>package com.yiibai.springmvc.configuration;
+
+import javax.servlet.Filter;
+
+import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
+
+public class HelloWorldInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
+ 
+    @Override
+    protected Class&lt;?&gt;[] getRootConfigClasses() {
+        return new Class[] { HelloWorldConfiguration.class };
+    }
+  
+    @Override
+    protected Class&lt;?&gt;[] getServletConfigClasses() {
+        return null;
+    }
+  
+    @Override
+    protected String[] getServletMappings() {
+        return new String[] { "/" };
+    }
+    
+    @Override
+    protected Filter[] getServletFilters() {
+    	Filter [] singleton = { new CORSFilter()};
+    	return singleton;
+    }
+ 
+}</pre> 
+   <div style="background-color:inherit;">
+     有了这两个额外的步骤，客户可以与您的 REST&nbsp;API进行通信而无需担心跨域问题。
+    <br> 到些整个示例教程讲解完成，包教不包会。有兴趣的朋友可以下载代码：
+    <a target="_blank" href="http://pan.baidu.com/s/1dEjOnp3">http://pan.baidu.com/s/1dEjOnp3</a> 
+   </div> 
+  </div> </span>
+ <br>      
+</div></body></html>

@@ -1,0 +1,121 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Struts2 &lt;s:texttag&gt;标签示例</h1><div style="width:100%;float:left;" class="article-content">   
+ <div>
+   Struts2&nbsp;&lt;s:text&gt;标签是用来从资源包获取捆绑动作类的消息。并按照三个序列： 
+ </div> 
+ <p> <br> </p> 
+ <ol> 
+  <li> 显示来自资源包的消息，按照<a target="_blank" href="http://www.yiibai.com/struts2/struts-2-resource-bundle-example/">Struts2的资源包搜索顺序</a>。 </li> 
+  <li> 
+   <div>
+     如果未在资源包中找到消息，则标签的本身会被显示。 
+   </div> </li> 
+  <li> 
+   <div>
+     如果标记的主体是空的，在&lt;s:text&gt;标签“name”属性的值将被显示。 
+   </div> </li> 
+ </ol> 
+ <div>
+   一个完整的例子： 
+ </div> 
+ <h2> 1. 动作 </h2> 
+ <div>
+   Action类转发请求。 
+ </div> 
+ <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:16px;"> <strong>TextTagAction.java</strong> </p> 
+ <pre>package com.yiibai.common.action;
+
+import com.opensymphony.xwork2.ActionSupport;
+ 
+public class TextTagAction extends ActionSupport{
+
+	public String execute() throws Exception {
+		
+		return SUCCESS;
+	}
+}</pre> 
+ <h2> 2.&nbsp;属性文件 </h2> 
+ <div>
+   一个简单的属性文件有两个键“name.msg”和“name.msg.param”。 
+ </div> 
+ <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:16px;"> <strong>TextTagAction.properies</strong> </p> 
+ <pre>name.msg = "This is a message from properties file"
+name.msg.param = "This is a message from properties file - param : {0}"</pre> 
+ <h2> 3. &lt;s:text&gt;标签示例 </h2> 
+ <div>
+   它显示了&lt;s:text&gt;标签的使用。 
+ </div> 
+ <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:16px;"> <strong>text.jsp</strong> </p> 
+ <pre>&lt;%@ taglib prefix="s" uri="/struts-tags" %&gt;
+&lt;html&gt;
+&lt;head&gt;&lt;title&gt;www.yiibai.com&lt;/title&gt;
+&lt;/head&gt;
+ 
+&lt;body&gt;
+&lt;h1&gt;Struts2 text标签示例&lt;/h1&gt;
+
+&lt;h2&gt;1.&lt;s:text name="name.msg" /&gt;&lt;/h2&gt; 
+Output : &lt;s:text name="name.msg" /&gt;
+
+&lt;h2&gt;2. &lt;s:text name="name.msg.unknow"&gt;message doesn't exists&lt;/s:text&gt;&lt;/h2&gt; 
+Output : &lt;s:text name="name.msg.unknow"&gt;message doesn't exists&lt;/s:text&gt;
+
+&lt;h2&gt;3. &lt;s:text name="name.msg.unknow" /&gt;&lt;/h2&gt; 
+Output : &lt;s:text name="name.msg.unknow" /&gt;
+
+&lt;h2&gt;4. &lt;s:text name="name.msg.param" &gt;&lt;s:param &gt;yiibai&lt;/s:param&gt;
+&lt;/s:text&gt;&lt;/h2&gt; 
+Output :
+&lt;s:text name="name.msg.param" &gt;
+	&lt;s:param &gt;yiibai&lt;/s:param&gt;
+&lt;/s:text&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;</pre> 
+ <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:16px;"> <strong>它是如何工作的？</strong><br> 1. &lt;s:text name=”name.msg” /&gt; </p> 
+ <p> 从资源包获取并显示消息(TextTagAction.properies)关联当前动作类&nbsp;(TextTagAction.action). </p>   
+ <pre>"This is a message from properties file"</pre> 
+ <p> 2. &lt;s:text name=”name.msg.unknow”&gt;message doesn’t exists&lt;/s:text&gt; </p> 
+ <div>
+   键不在资源包“TextTagAction.properies”或搜索顺序中，所以显示标记的主体。 
+ </div> 
+ <pre>message doesn't exists</pre> 
+ <p> 3. &lt;s:text name=”name.msg.unknow” /&gt; </p> 
+ <div>
+   标签的资源包和主体的消息未找到，所以显示在“name”属性的值。 
+ </div> 
+ <pre>name.msg.unknow</pre> 
+ <p> 4. &lt;s:text name=”name.msg.param” &gt;&lt;s:param &gt;yiibai&lt;/s:param&gt;&lt;/s:text&gt; </p> 
+ <div>
+   通过&lt;s:param&gt;标记传递参数到资源包。 
+ </div> 
+ <pre>"This is a message from properties file - param : yiibai"</pre> 
+ <h2> 4. struts.xml </h2> 
+ <pre>&lt;?xml version="1.0" encoding="UTF-8" ?&gt;
+&lt;!DOCTYPE struts PUBLIC
+"-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+"http://struts.apache.org/dtds/struts-2.0.dtd"&gt;
+ 
+&lt;struts&gt;
+ 	&lt;constant name="struts.devMode" value="true" /&gt;
+	&lt;package name="default" namespace="/" extends="struts-default"&gt;
+	
+		&lt;action name="textTagAction" 
+			class="com.yiibai.common.action.TextTagAction" &gt;
+			&lt;result name="success"&gt;/pages/text.jsp&lt;/result&gt;
+		&lt;/action&gt;
+		
+	&lt;/package&gt;
+&lt;/struts&gt;</pre> 
+ <h2> 5. 执行结果 </h2> 
+ <p> http://localhost:8080/struts2texttag/textTagAction.action </p> 
+ <p> 在浏览器中打开上面的网址，显示结果如下所示： </p> 
+ <h2> 参考 </h2> 
+ <ol> 
+  <li> <a target="_blank" href="http://struts.apache.org/2.0.14/docs/text.html">Struts2 &lt;s:text&gt;标签文档</a> </li> 
+ </ol> 
+ <p> <br> </p> 
+ <div>
+   下载代码 -&nbsp; 
+ </div>
+ <br>      
+</div></body></html>

@@ -1,0 +1,114 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">人工智能无监督学习：聚类</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>无监督机器学习算法没有任何监督者提供任何指导。 这就是为什么它们与真正的人工智能紧密结合的原因。</p> 
+ <p>在无人监督的学习中，没有正确的答案，也没有监督者指导。 算法需要发现用于学习的有趣数据模式。</p> 
+ <h2 id="h2--"><a name="什么是聚类？" class="reference-link"></a><span class="header-link octicon octicon-link"></span>什么是聚类？</h2>
+ <p>基本上，它是一种无监督学习方法，也是用于许多领域的统计数据分析的常用技术。 聚类主要是将观测集合划分为子集(称为聚类)的任务，以同一聚类中的观测在一种意义上相似并且与其他聚类中的观测不相似的方式。 简而言之，可以说聚类的主要目标是根据相似性和不相似性对数据进行分组。</p> 
+ <p>例如，下图显示了不同群集中的类似数据 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201806/0406/682090648_56682.jpg" alt=""></p> 
+ <h2 id="h2-u6570u636Eu805Au7C7Bu7B97u6CD5"><a name="数据聚类算法" class="reference-link"></a><span class="header-link octicon octicon-link"></span>数据聚类算法</h2>
+ <p>以下是数据聚类的几种常用算法 - </p> 
+ <p><strong>K-Means算法</strong><br>K均值聚类算法是众所周知的数据聚类算法之一。 我们需要假设簇的数量已经是已知的。 这也被称为平面聚类。 它是一种迭代聚类算法。 该算法需要遵循以下步骤 - </p> 
+ <p><strong>第1步</strong> - 需要指定所需的K个子组的数量。<br><strong>第2步</strong> - 修复群集数量并将每个数据点随机分配到群集。 换句话说，我们需要根据群集数量对数据进行分类。</p> 
+ <p>在这一步中，计算聚类质心。</p> 
+ <p>由于这是一种迭代算法，因此需要在每次迭代中更新K个质心的位置，直到找到全局最优值或换句话说质心到达其最佳位置。</p> 
+ <p>以下代码将有助于在Python中实现K-means聚类算法。 我们将使用<code>Scikit-learn</code>模块。</p> 
+ <p>导入必需的软件包 -</p> 
+ <pre><code class="lang-python">import matplotlib.pyplot as plt
+import seaborn as sns; sns.set()
+import numpy as np
+from sklearn.cluster import KMeans
+</code></pre> 
+ <p>以下代码行将通过使用<code>sklearn.dataset</code>包中的<code>make_blob</code>来生成包含四个blob的二维数据集。</p> 
+ <pre><code class="lang-python">from sklearn.datasets.samples_generator import make_blobs
+
+X, y_true = make_blobs(n_samples = 500, centers = 4,
+            cluster_std = 0.40, random_state = 0)
+</code></pre> 
+ <p>可以使用下面的代码可视化数据集 -</p> 
+ <pre><code class="lang-python">plt.scatter(X[:, 0], X[:, 1], s = 50);
+plt.show()
+</code></pre> 
+ <p>得到以下结果 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201806/0406/821090652_88455.jpg" alt=""></p> 
+ <p>在这里，将kmeans初始化为KMeans算法，以及多少个群集(<code>n_clusters</code>)所需的参数。</p> 
+ <pre><code class="lang-python">kmeans = KMeans(n_clusters = 4)
+</code></pre> 
+ <p>需要用输入数据训练K-means模型。</p> 
+ <pre><code class="lang-python">kmeans.fit(X)
+y_kmeans = kmeans.predict(X)
+plt.scatter(X[:, 0], X[:, 1], c = y_kmeans, s = 50, cmap = 'viridis')
+
+centers = kmeans.cluster_centers_
+</code></pre> 
+ <p>下面给出的代码将根据数据绘制和可视化机器的发现，并根据要找到的聚类数量进行拟合。</p> 
+ <pre><code class="lang-python">plt.scatter(centers[:, 0], centers[:, 1], c = 'black', s = 200, alpha = 0.5);
+plt.show()
+</code></pre> 
+ <p>得到以下结果 -<br><img src="http://www.yiibai.com/uploads/images/201806/0406/184090654_51956.jpg" alt=""></p> 
+ <p><strong>均值偏移算法</strong></p> 
+ <p>它是另一种在无监督学习中使用的流行和强大的聚类算法。 它不做任何假设，因此它是非参数算法。 它也被称为分层聚类或均值聚类分析。 以下将是该算法的基本步骤 -</p> 
+ <ul> 
+  <li>首先，需要从分配给它们自己的集群的数据点开始。</li>
+  <li>现在，它计算质心并更新新质心的位置。</li>
+  <li>通过重复这个过程，向簇的顶点靠近，即朝向更高密度的区域移动。</li>
+  <li>该算法停止在质心不再移动的阶段。</li>
+ </ul> 
+ <p>在下面的代码的帮助下，在Python中实现了Mean Shift聚类算法。使用Scikit-learn模块。</p> 
+ <p>导入必要的软件包 -</p> 
+ <pre><code class="lang-python">import numpy as np
+from sklearn.cluster import MeanShift
+import matplotlib.pyplot as plt
+from matplotlib import style
+style.use("ggplot")
+</code></pre> 
+ <p>以下代码将通过使用<code>sklearn.dataset</code>包中的make_blob来生成包含四个blob的二维数据集。</p> 
+ <pre><code class="lang-python">from sklearn.datasets.samples_generator import make_blobs
+</code></pre> 
+ <p>可以用下面的代码可视化数据集 - </p>   
+ <pre><code class="lang-python">centers = [[2,2],[4,5],[3,10]]
+X, _ = make_blobs(n_samples = 500, centers = centers, cluster_std = 1)
+plt.scatter(X[:,0],X[:,1])
+plt.show()
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201806/0406/440100609_41663.jpg" alt=""></p> 
+ <p>现在，我们需要用输入数据来训练Mean Shift聚类模型。</p> 
+ <pre><code class="lang-python">ms = MeanShift()
+ms.fit(X)
+labels = ms.labels_
+cluster_centers = ms.cluster_centers_
+</code></pre> 
+ <p>以下代码将按照输入数据打印聚类中心和预期的聚类数量 -</p> 
+ <pre><code class="lang-python">print(cluster_centers)
+n_clusters_ = len(np.unique(labels))
+print("Estimated clusters:", n_clusters_)
+[[ 3.23005036 3.84771893]
+[ 3.02057451 9.88928991]]
+Estimated clusters: 2
+</code></pre> 
+ <p>下面给出的代码将有助于根据数据绘制和可视化机器的发现，并根据要找到的聚类数量进行装配。</p> 
+ <pre><code class="lang-python">colors = 10*['r.','g.','b.','c.','k.','y.','m.']
+   for i in range(len(X)):
+   plt.plot(X[i][0], X[i][1], colors[labels[i]], markersize = 10)
+plt.scatter(cluster_centers[:,0],cluster_centers[:,1],
+   marker = "x",color = 'k', s = 150, linewidths = 5, zorder = 10)
+plt.show()
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201806/0506/980120645_22086.jpg" alt=""></p> 
+ <h2 id="h2-u6D4Bu91CFu7FA4u96C6u6027u80FD"><a name="测量群集性能" class="reference-link"></a><span class="header-link octicon octicon-link"></span>测量群集性能</h2>
+ <p>现实世界的数据不是自然地组织成许多独特的群集。 由于这个原因，要想象和推断推理并不容易。 这就是为什么需要测量聚类性能及其质量。 它可以在轮廓分析的帮助下完成。</p> 
+ <p><strong>轮廓分析</strong></p> 
+ <p>该方法可用于通过测量群集之间的距离来检查聚类的质量。 基本上，它提供了一种通过给出轮廓分数来评估像集群数量这样的参数的方法。 此分数是衡量一个群集中每个点与相邻群集中的点的距离的度量。</p> 
+ <p><strong>分析轮廓分数</strong><br>得分范围为<code>[-1，1]</code>。 以下是对这个分数的分析 -</p> 
+ <ul> 
+  <li>得分为+1分 - 得分接近+1表示样本距离相邻集群很远。</li>
+  <li>得分为0分 - 得分0表示样本与两个相邻群集之间的决策边界处于或非常接近。</li>
+  <li>得分为-1分 - 得分为负分数表示样本已分配到错误的群集。</li>
+ </ul> 
+ <h2 id="h2-u8BA1u7B97u8F6Eu5ED3u5206u6570"><a name="计算轮廓分数" class="reference-link"></a><span class="header-link octicon octicon-link"></span>计算轮廓分数</h2>
+ <p>在本节中，我们将学习如何计算轮廓分数。</p> 
+ <p>轮廓分数可以通过使用以下公式来计算 -<br><img src="http://www.yiibai.com/uploads/images/201806/0506/242120647_39576.png" alt=""></p> 
+ <p>这里，`</p>
+ <br>      
+</div></body></html>

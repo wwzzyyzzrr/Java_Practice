@@ -1,0 +1,257 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Hive内置运算符</h1><div style="width:100%;float:left;" class="article-content">   
+ <p> 本章介绍Hive的内置运算符。在Hive有四种类型的运算符：</p> 
+ <ul> 
+  <li> 关系运算符</li> 
+  <li> 算术运算符</li> 
+  <li> 逻辑运算符</li> 
+  <li> 复杂运算符</li> 
+ </ul> 
+ <h2> 关系运算符</h2> 
+ <p> 这些操作符被用来比较两个操作数。下表描述了在Hive中可用的关系运算符：</p> 
+ <table class="table table-bordered" style="box-sizing: border-box; border-collapse: collapse; border-spacing: 0px; width: 496px; max-width: 100%; margin-bottom: 20px;  border-color: rgb(221, 221, 221); color: rgb(49, 49, 49);  font-size: 14px; line-height: 22px; background-color: transparent;"> 
+  <tbody style="box-sizing: border-box;"> 
+   <tr style="box-sizing: border-box;"> 
+    <th style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221); width: 99px; background: rgb(238, 238, 238);"> 运算符</th> 
+    <th style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221); width: 89px; background: rgb(238, 238, 238);"> 操作</th> 
+    <th style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221); background: rgb(238, 238, 238);"> 描述</th> 
+   </tr> 
+   <tr> 
+    <td> A = B</td> 
+    <td> 所有基本类型</td> 
+    <td> 如果表达A等于表达B，结果TRUE ，否则FALSE。</td> 
+   </tr> 
+   <tr> 
+    <td> A != B</td> 
+    <td> 所有基本类型</td> 
+    <td> 如果A不等于表达式B表达返回TRUE ，否则FALSE。</td> 
+   </tr> 
+   <tr> 
+    <td> A &lt; B</td> 
+    <td> 所有基本类型</td> 
+    <td> TRUE，如果表达式A小于表达式B，否则FALSE。</td> 
+   </tr> 
+   <tr> 
+    <td> A &lt;= B</td> 
+    <td> 所有基本类型</td> 
+    <td> TRUE，如果表达式A小于或等于表达式B，否则FALSE。</td> 
+   </tr> 
+   <tr> 
+    <td> A &gt; B</td> 
+    <td> 所有基本类型</td> 
+    <td> TRUE，如果表达式A大于表达式B，否则FALSE。</td> 
+   </tr> 
+   <tr> 
+    <td> A &gt;= B</td> 
+    <td> 所有基本类型</td> 
+    <td> TRUE，如果表达式A大于或等于表达式B，否则FALSE。</td> 
+   </tr> 
+   <tr> 
+    <td> A IS NULL</td> 
+    <td> 所有类型</td> 
+    <td> TRUE，如果表达式的计算结果为NULL，否则FALSE。</td> 
+   </tr> 
+   <tr> 
+    <td> A IS NOT NULL</td> 
+    <td> 所有类型</td> 
+    <td> FALSE，如果表达式A的计算结果为NULL，否则TRUE。</td> 
+   </tr> 
+   <tr> 
+    <td> A LIKE B</td> 
+    <td> 字符串</td> 
+    <td> TRUE，如果字符串模式A匹配到B，否则FALSE。</td> 
+   </tr> 
+   <tr> 
+    <td> A RLIKE B</td> 
+    <td> 字符串</td> 
+    <td> NULL，如果A或B为NULL；TRUE，如果A任何子字符串匹配Java正则表达式B；否则FALSE。</td> 
+   </tr> 
+   <tr> 
+    <td> A REGEXP B</td> 
+    <td> 字符串</td> 
+    <td> 等同于RLIKE.</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h3> 示例</h3> 
+ <p> 让我们假设employee表由字段：Id, Name, Salary, Designation, 和Dept组成，如下图所示。生成一个查询检索员工详细信息 - ID为1205。</p> 
+ <pre class="result notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 496.1875px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
++-----+--------------+--------+---------------------------+------+
+| Id  | Name         | Salary | Designation               | Dept |
++-----+--------------+------------------------------------+------+
+|1201 | Gopal        | 45000  | Technical manager         | TP   |
+|1202 | Manisha      | 45000  | Proofreader               | PR   |
+|1203 | Masthanvali  | 40000  | Technical writer          | TP   |
+|1204 | Krian        | 40000  | Hr Admin                  | HR   |
+|1205 | Kranthi      | 30000  | Op Admin                  | Admin|
++-----+--------------+--------+---------------------------+------+</pre> 
+ <p> 以下查询执行检索使用上述表中的雇员的详细信息：</p> 
+ <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 496.1875px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+<span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">hive</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">&gt;</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> SELECT </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">*</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> FROM employee WHERE </span><span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">Id</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">=</span><span class="lit" style="box-sizing: border-box; color: rgb(0, 102, 102);">1205</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">;</span></pre> 
+ <p> 成功执行的查询，能看到以下回应：</p> 
+ <pre class="result notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 496.1875px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
++-----+-----------+-----------+----------------------------------+
+| ID  | Name      | Salary    | Designation              | Dept  |
++-----+---------------+-------+----------------------------------+
+|1205 | Kranthi   | 30000     | Op Admin                 | Admin |
++-----+-----------+-----------+----------------------------------+</pre> 
+ <p> 下面的查询执行以检索薪水大于或等于40000卢比的雇员的详细信息。</p> 
+ <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 496.1875px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+<span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">hive</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">&gt;</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> SELECT </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">*</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> FROM employee WHERE </span><span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">Salary</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">&gt;=</span><span class="lit" style="box-sizing: border-box; color: rgb(0, 102, 102);">40000</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">;</span></pre> 
+ <p> 成功执行的查询，能看到以下回应：</p> 
+ <pre class="result notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 496.1875px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
++-----+------------+--------+----------------------------+------+
+| ID  | Name       | Salary | Designation                | Dept |
++-----+------------+--------+----------------------------+------+
+|1201 | Gopal      | 45000  | Technical manager          | TP   |
+|1202 | Manisha    | 45000  | Proofreader                | PR   |
+|1203 | Masthanvali| 40000  | Technical writer           | TP   |
+|1204 | Krian      | 40000  | Hr Admin                   | HR   |
++-----+------------+--------+----------------------------+------+</pre> 
+ <h2> 算术运算符</h2> 
+ <p> 这些运算符支持的操作数各种常见的算术运算。所有这些返回数字类型。下表描述了在Hive中可用的算术运算符：</p> 
+ <table class="table table-bordered" style="box-sizing: border-box; border-collapse: collapse; border-spacing: 0px; width: 496px; max-width: 100%; margin-bottom: 20px;  border-color: rgb(221, 221, 221); color: rgb(49, 49, 49);  font-size: 14px; line-height: 22px; background-color: transparent;"> 
+  <tbody style="box-sizing: border-box;"> 
+   <tr style="box-sizing: border-box;"> 
+    <th style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221); background: rgb(238, 238, 238);"> 运算符</th> 
+    <th style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221); background: rgb(238, 238, 238);"> 操作</th> 
+    <th style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221); background: rgb(238, 238, 238);"> 描述</th> 
+   </tr> 
+   <tr> 
+    <td> A + B</td> 
+    <td> 所有数字类型</td> 
+    <td> A加B的结果</td> 
+   </tr> 
+   <tr> 
+    <td> A - B</td> 
+    <td> 所有数字类型</td> 
+    <td> A减去B的结果</td> 
+   </tr> 
+   <tr> 
+    <td> A * B</td> 
+    <td> 所有数字类型</td> 
+    <td> A乘以B的结果</td> 
+   </tr> 
+   <tr> 
+    <td> A / B</td> 
+    <td> 所有数字类型</td> 
+    <td> A除以B的结果</td> 
+   </tr> 
+   <tr> 
+    <td> A % B</td> 
+    <td> 所有数字类型</td> 
+    <td> A除以B.产生的余数</td> 
+   </tr> 
+   <tr> 
+    <td> A &amp; B</td> 
+    <td> 所有数字类型</td> 
+    <td> A和B的按位与结果</td> 
+   </tr> 
+   <tr> 
+    <td> A | B</td> 
+    <td> 所有数字类型</td> 
+    <td> A和B的按位或结果</td> 
+   </tr> 
+   <tr> 
+    <td> A ^ B</td> 
+    <td> 所有数字类型</td> 
+    <td> A和B的按位异或结果</td> 
+   </tr> 
+   <tr> 
+    <td> ~A</td> 
+    <td> 所有数字类型</td> 
+    <td> A按位非的结果</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h3> 示例</h3> 
+ <p> 下面的查询相加两个数字，20和30。</p> 
+ <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 496.1875px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+<span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">hive</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">&gt;</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> SELECT </span><span class="lit" style="box-sizing: border-box; color: rgb(0, 102, 102);">20</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">+</span><span class="lit" style="box-sizing: border-box; color: rgb(0, 102, 102);">30</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> ADD FROM temp</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">;</span></pre> 
+ <p> 在成功执行查询后，能看到以下回应：</p>   
+ <pre class="result notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 496.1875px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
++--------+
+|   ADD  |
++--------+
+|   50   |
++--------+</pre> 
+ <h2> 逻辑运算符</h2> 
+ <p> 运算符是逻辑表达式。所有这些返回TRUE或FALSE。</p> 
+ <table class="table table-bordered" style="box-sizing: border-box; border-collapse: collapse; border-spacing: 0px; width: 496px; max-width: 100%; margin-bottom: 20px;  border-color: rgb(221, 221, 221); color: rgb(49, 49, 49);  font-size: 14px; line-height: 22px; background-color: transparent;"> 
+  <tbody style="box-sizing: border-box;"> 
+   <tr style="box-sizing: border-box;"> 
+    <th style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221); background: rgb(238, 238, 238);"> 运算符</th> 
+    <th style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221); background: rgb(238, 238, 238);"> 操作</th> 
+    <th style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221); background: rgb(238, 238, 238);"> 描述</th> 
+   </tr> 
+   <tr> 
+    <td> A AND B</td> 
+    <td> boolean</td> 
+    <td> TRUE，如果A和B都是TRUE，否则FALSE。</td> 
+   </tr> 
+   <tr> 
+    <td> A &amp;&amp; B</td> 
+    <td> boolean</td> 
+    <td> 类似于 A AND B.</td> 
+   </tr> 
+   <tr> 
+    <td> A OR B</td> 
+    <td> boolean</td> 
+    <td> TRUE，如果A或B或两者都是TRUE，否则FALSE。</td> 
+   </tr> 
+   <tr> 
+    <td> A || B</td> 
+    <td> boolean</td> 
+    <td> 类似于&nbsp;A OR B.</td> 
+   </tr> 
+   <tr> 
+    <td> NOT A</td> 
+    <td> boolean</td> 
+    <td> TRUE，如果A是FALSE，否则FALSE。</td> 
+   </tr> 
+   <tr> 
+    <td> !A</td> 
+    <td> boolean</td> 
+    <td> 类似于&nbsp;NOT A.</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h3> 示例</h3> 
+ <p> 下面的查询用于检索部门是TP并且工资超过40000卢比的员工详细信息。</p> 
+ <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 496.1875px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+<span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">hive</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">&gt;</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> SELECT </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">*</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> FROM employee WHERE </span><span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">Salary</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">&gt;</span><span class="lit" style="box-sizing: border-box; color: rgb(0, 102, 102);">40000</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">&amp;&amp;</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="typ" style="box-sizing: border-box; color: rgb(127, 0, 85);">Dept</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">=</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">TP</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">;</span></pre> 
+ <p> 成功执行查询后，能看到以下回应：</p> 
+ <pre class="result notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 496.1875px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
++------+--------------+-------------+-------------------+--------+
+| ID   | Name         | Salary      | Designation       | Dept   |
++------+--------------+-------------+-------------------+--------+
+|1201  | Gopal        | 45000       | Technical manager | TP     |
++------+--------------+-------------+-------------------+--------+</pre> 
+ <h2> 复杂的运算符</h2> 
+ <p> 这些运算符提供一个表达式来接入复杂类型的元素。</p> 
+ <table class="table table-bordered" style="box-sizing: border-box; border-collapse: collapse; border-spacing: 0px; width: 496px; max-width: 100%; margin-bottom: 20px;  border-color: rgb(221, 221, 221); color: rgb(49, 49, 49);  font-size: 14px; line-height: 22px; background-color: transparent;"> 
+  <tbody style="box-sizing: border-box;"> 
+   <tr style="box-sizing: border-box;"> 
+    <th style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221); background: rgb(238, 238, 238);"> 运算符</th> 
+    <th style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221); background: rgb(238, 238, 238);"> 操作</th> 
+    <th style="box-sizing: border-box; padding: 8px; line-height: 1.42857143; vertical-align: top;  border-color: rgb(221, 221, 221); background: rgb(238, 238, 238);"> 描述</th> 
+   </tr> 
+   <tr> 
+    <td> A[n]</td> 
+    <td> A是一个数组，n是一个int</td> 
+    <td> 它返回数组A的第n个元素，第一个元素的索引0。</td> 
+   </tr> 
+   <tr> 
+    <td> M[key]</td> 
+    <td> M 是一个&nbsp;Map&lt;K, V&gt; 并 key 的类型为K</td> 
+    <td> 它返回对应于映射中关键字的值。</td> 
+   </tr> 
+   <tr> 
+    <td> S.x</td> 
+    <td> S 是一个结构</td> 
+    <td> 它返回S的s字段</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <br> 
+ <br>      
+</div></body></html>

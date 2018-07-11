@@ -1,0 +1,60 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">.NET Core包的引用</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>在本章中，我们将讨论如何在.NET Core应用程序中添加包以及如何查找特定的包。 我们可以直接去NuGet并添加包，但是在这里可以从其他一些地方查找加入。</p> 
+ <p>现在让我们来看看位于下面链接的.NET Core的源代码 - <a target="_blank" href="http://github.com/dotnet/corefx">http://github.com/dotnet/corefx</a> </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201712/1212/464141222_60120.jpg" alt=""></p> 
+ <p>在CoreFx repo中，打开<code>src</code>文件夹 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201712/1212/436141223_57771.jpg" alt=""></p> 
+ <p>会看到对应于不同包的文件夹的整个列表。现在搜索<code>Json</code> -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201712/1212/820141224_44132.jpg" alt=""></p> 
+ <p>还有另外一种方法可以找到软件包，如果熟悉.NET Framework，那么您可能会知道各种类型的软件包，但是在.NET Core中组装软件包是完全不同的，可能您不知道软件包在哪里。</p> 
+ <p>如果知道该类型，则可以打开 <a target="_blank" href="http://packagesearch.azurewebsites.net/">http://packagesearch.azurewebsites.net/</a> 搜索以反向搜索包。</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201712/1212/904141226_75807.jpg" alt=""></p> 
+ <p>在这里，您可以输入任何类型并找到包。 然后，这个网站将扫描NuGet并找到相关的包。现在假设要搜索：<code>DataContractJson</code>。</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201712/1212/181141229_37637.jpg" alt=""></p> 
+ <p>现在会看到搜索得到相关的包; 点击这些包查看详细。如下图所示 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201712/1212/398141231_51106.jpg" alt=""></p> 
+ <p>现在将看到NuGet页面; 需要确认需要这个包。 您可以使用几种方法将其添加到应用程序中。打开<code>project.json</code>文件。</p> 
+ <pre><code class="lang-json">{ 
+   "version": "1.0.0-*", 
+   "buildOptions": { 
+      "emitEntryPoint": true 
+   }, 
+   "dependencies": { 
+      "Microsoft.NETCore.App": { 
+         "type": "platform", 
+         "version": "1.0.1" 
+      } 
+   }, 
+   "frameworks": { 
+      "netcoreapp1.0": { 
+         "imports": "dnxcore50" 
+      } 
+   } 
+}
+</code></pre> 
+ <p>这是新的项目格式，在这个文件里会看到依赖关系部分。添加一个新的依赖关系，如下所示。</p>   
+ <pre><code class="lang-json">{ 
+   "version": "1.0.0-*", 
+   "buildOptions": { 
+      "emitEntryPoint": true 
+   }, 
+   "dependencies": { 
+      "Microsoft.NETCore.App": { 
+         "type": "platform", 
+         "version": "1.0.1" 
+      }, 
+      "System.Runtime.Serialization.Json": "4.0.2" 
+   }, 
+   "frameworks": { 
+      "netcoreapp1.0": { 
+         "imports": "dnxcore50" 
+      } 
+   } 
+}
+</code></pre> 
+ <p>现在，如果看看项目的引用，那么会看到<code>System.Runtime.Serialization.Json</code>包被添加到项目中了。如下图所示 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201712/1212/963141233_71353.jpg" alt=""></p> 
+ <p>另一种方法是使用NuGet管理器，浏览想添加的包。如下图所示 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201712/1212/941141234_69522.jpg" alt=""></p>
+ <br>      
+</div></body></html>

@@ -1,0 +1,69 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Go时间格式化/解析实例</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>Go支持通过基于模式的布局进行时间格式化和解析。这里是根据<code>RFC333</code>9格式化时间的一个基本示例，使用相应的布局常量。</p> 
+ <p>时间解析使用<code>Format</code>相同的布局值。</p> 
+ <p>具体的 <code>epoch</code> 用法，可参考示例中的代码 -</p> 
+ <blockquote> 
+  <p>所有的示例代码，都放在 <code>F:\worksp\golang</code> 目录下。安装Go编程环境请参考：<a target="_blank" href="http://www.yiibai.com/go/go_environment.html">http://www.yiibai.com/go/go_environment.html</a> </p> 
+ </blockquote> 
+ <p><code>json.go</code>的完整代码如下所示 -</p> 
+ <pre><code class="lang-go">package main
+
+import "fmt"
+import "time"
+
+func main() {
+    p := fmt.Println
+
+    // Here's a basic example of formatting a time
+    // according to RFC3339, using the corresponding layout
+    // constant.
+    t := time.Now()
+    p(t.Format(time.RFC3339))
+
+    // Time parsing uses the same layout values as `Format`.
+    t1, e := time.Parse(
+        time.RFC3339,
+        "2012-11-01T22:08:41+00:00")
+    p(t1)
+
+    // `Format` and `Parse` use example-based layouts. Usually
+    // you'll use a constant from `time` for these layouts, but
+    // you can also supply custom layouts. Layouts must use the
+    // reference time `Mon Jan 2 15:04:05 MST 2006` to show the
+    // pattern with which to format/parse a given time/string.
+    // The example time must be exactly as shown: the year 2006,
+    // 15 for the hour, Monday for the day of the week, etc.
+    p(t.Format("3:04PM"))
+    p(t.Format("Mon Jan _2 15:04:05 2006"))
+    p(t.Format("2006-01-02T15:04:05.999999-07:00"))
+    form := "3 04 PM"
+    t2, e := time.Parse(form, "8 41 PM")
+    p(t2)
+
+    // For purely numeric representations you can also
+    // use standard string formatting with the extracted
+    // components of the time value.
+    fmt.Printf("%d-%02d-%02dT%02d:%02d:%02d-00:00\n",
+        t.Year(), t.Month(), t.Day(),
+        t.Hour(), t.Minute(), t.Second())
+
+    // `Parse` will return an error on malformed input
+    // explaining the parsing problem.
+    ansic := "Mon Jan _2 15:04:05 2006"
+    _, e = time.Parse(ansic, "8:41PM")
+    p(e)
+}
+</code></pre> 
+ <p>执行上面代码，将得到以下输出结果 - </p>   
+ <pre><code class="lang-go">F:\worksp\golang&gt;go run time-formatting-parsing.go
+2017-01-21T09:22:42+08:00
+2012-11-01 22:08:41 +0000 +0000
+9:22AM
+Sat Jan 21 09:22:42 2017
+2017-01-21T09:22:42.809652+08:00
+0000-01-01 20:41:00 +0000 UTC
+2017-01-21T09:22:42-00:00
+parsing time "8:41PM" as "Mon Jan _2 15:04:05 2006": cannot parse "8:41PM" as "Mon"
+</code></pre>
+ <br>      
+</div></body></html>

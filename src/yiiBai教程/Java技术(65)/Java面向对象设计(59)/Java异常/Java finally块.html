@@ -1,0 +1,144 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Java finally块</h1><div style="width:100%;float:left;" class="article-content">   
+ <p><code>try</code>块也可以有零个或一个<code>finally</code>块。 <code>finally</code>块总是与<code>try</code>块一起使用。</p> 
+ <h2 id="h2-u8BEDu6CD5"><a name="语法" class="reference-link"></a><span class="header-link octicon octicon-link"></span>语法</h2>
+ <p><code>finally</code>块的语法是：</p> 
+ <pre><code class="lang-java">finally  {
+    // Code for finally block 
+}
+</code></pre> 
+ <p><code>finally</code>块以关键字<code>finally</code>开始，后面紧跟一个大括号和一个大括号。<code>finally</code>块的代码放在大括号内。</p> 
+ <p><code>try</code>，<code>catch</code>和<code>finally</code>块有两种可能的组合：<code>try-catch-finally</code>或<code>try-finally</code>。<code>try</code>块可以后跟零个或多个<code>catch</code>块。<code>try</code>块最多可以有一个<code>finally</code>块。<code>try</code>块必须有一个<code>catch</code>块和一个<code>finally</code>块或两者都有。<code>try-catch-finally</code>块的语法是：</p> 
+ <pre><code class="lang-java">try  {
+    // Code for try block
+}
+catch(Exception1 e1)  {
+    // Code for catch block
+}
+finally  {
+    // Code for finally block
+}
+</code></pre> 
+ <p><code>try-finally</code>块的语法是：</p> 
+ <pre><code class="lang-java">try  {
+    // Code for try block
+}
+finally  {
+    // Code for finally block
+}
+</code></pre> 
+ <p>无论在相关联的<code>try</code>块和/或<code>catch</code>块中发生什么，<code>finally</code>块中的代码都保证执行。所以，一般使用<code>finally</code>块来写清理代码。<br>例如，可能用来释放一些资源，如数据库连接的关闭，文件的关闭等，当完成它们时，必须释放。</p> 
+ <p>在<code>try-finally</code>块允许实现这个逻辑。代码结构将如下所示：</p> 
+ <pre><code class="lang-java">try  {
+    // Obtain   and  use  some resources here
+}
+finally  {
+    // Release the   resources that were  obtained in the   try  block
+}
+</code></pre> 
+ <h2 id="h2--1"><a name="示例-1" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例-1</h2>
+ <p>下面的代码演示了<code>finally</code>块的使用。</p> 
+ <pre><code class="lang-java">public class Main {
+  public static void main(String[] args) {
+    int x = 10, y = 0, z = 0;
+    try {
+      System.out.println("Before dividing x  by  y.");
+      z = x / y;
+      System.out.println("After dividing x  by  y.");
+    } catch (ArithmeticException e) {
+      System.out.println("Inside  catch block a.");
+    } finally {
+      System.out.println("Inside finally  block a.");
+    }
+
+    try {
+      System.out.println("Before setting  z  to 2.");
+      z = 2;
+      System.out.println("After setting  z  to 2.");
+    }
+    catch (Exception e) {
+      System.out.println("Inside  catch block b.");
+    } finally {
+      System.out.println("Inside finally  block b.");
+    }
+    try {
+      System.out.println("Inside try block c.");
+    }
+    finally {
+      System.out.println("Inside finally  block c.");
+    }
+
+    try {
+      System.out.println("Before  executing System.exit().");
+      System.exit(0);
+      System.out.println("After  executing System.exit().");
+
+    } finally {
+      // This finally block will not be executed
+      // because application exits in try block
+      System.out.println("Inside finally  block d.");
+    }
+  }
+}
+</code></pre> 
+ <p>上面的代码生成以下结果。</p>   
+ <pre><code class="lang-java">Before dividing x  by  y.
+Inside  catch block a.
+Inside finally  block a.
+Before setting  z  to 2.
+After setting  z  to 2.
+Inside finally  block b.
+Inside try block c.
+Inside finally  block c.
+Before  executing System.exit().
+</code></pre> 
+ <h2 id="h2-u91CDu65B0u629Bu51FAu4E00u4E2Au5F02u5E38"><a name="重新抛出一个异常" class="reference-link"></a><span class="header-link octicon octicon-link"></span>重新抛出一个异常</h2>
+ <p>捕获的异常可以被重新抛出。</p> 
+ <pre><code class="lang-java">public class Main {
+  public static void main(String[] args) {
+    try {
+      m1();
+    } catch (MyException e) {
+      // Print the stack trace 
+      e.printStackTrace();
+    }
+  }
+
+  public static void m1() throws MyException {
+    try {
+      m2();
+    } catch (MyException e) {
+      e.fillInStackTrace();
+      throw e;
+    }
+  }
+
+  public static void m2() throws MyException {
+    throw new MyException("An  error has  occurred.");
+  }
+}
+
+class MyException extends Exception {
+  public MyException() {
+    super();
+  }
+
+  public MyException(String message) {
+    super(message);
+  }
+
+  public MyException(String message, Throwable cause) {
+    super(message, cause);
+  }
+
+  public MyException(Throwable cause) {
+    super(cause);
+  }
+}
+</code></pre> 
+ <p>上面的代码生成以下结果。</p> 
+ <pre><code class="lang-java">MyException: An  error has  occurred.
+    at Main.m1(Main.java:14)
+    at Main.main(Main.java:4)
+</code></pre>
+ <br>      
+</div></body></html>

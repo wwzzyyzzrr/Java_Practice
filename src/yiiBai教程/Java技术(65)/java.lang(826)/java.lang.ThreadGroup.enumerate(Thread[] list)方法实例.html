@@ -1,0 +1,84 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">java.lang.ThreadGroup.enumerate(Thread[] list)方法实例</h1><div style="width:100%;float:left;" class="article-content">   
+ <p> <strong>java.lang.ThreadGroup.enumerate(Thread[] list)&nbsp;</strong>方法复制该线程组及其子组中的所有活动线程到指定的数组。</p> 
+ <h2> 声明</h2> 
+ <p> 以下是<strong>java.lang.ThreadGroup.enumerate()</strong>方法的声明</p> 
+ <pre class="prettyprint" style="border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; font-size: 12px; overflow: auto;">
+public int enumerate(Thread[] list)</pre> 
+ <h2> 参数</h2> 
+ <ul> 
+  <li> <p> list&nbsp;-- 此是一个数组，把线程列表。</p> </li> 
+ </ul> 
+ <h2> 返回值</h2> 
+ <p> 此方法返回放入数组中的线程的数目。</p> 
+ <h2> 异常</h2> 
+ <ul> 
+  <li> <p> SecurityException&nbsp;-- 如果当前线程没有权限来枚举此线程组。</p> </li> 
+ </ul> 
+ <h2> 例子</h2> 
+ <p> 下面的例子显示java.lang.ThreadGroup.enumerate()方法的使用。</p> 
+ <pre class="prettyprint" style="border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; font-size: 12px; overflow: auto;">
+package com.yiibai;
+
+import java.lang.*;
+
+public class ThreadGroupDemo implements Runnable
+{
+   public static void main(String[] args) {
+      ThreadGroupDemo tg = new ThreadGroupDemo();
+      tg.func();
+   }
+
+   public void func() {
+      try {     
+         // create a parent ThreadGroup
+         ThreadGroup pGroup = new ThreadGroup("Parent ThreadGroup");
+    
+         // create a child ThreadGroup for parent ThreadGroup
+         ThreadGroup cGroup = new ThreadGroup(pGroup, "Child ThreadGroup");
+
+         // create a thread
+         Thread t1 = new Thread(pGroup, this);
+         System.out.println("Starting " + t1.getName() + "...");
+         t1.start();
+            
+         // create another thread
+         Thread t2 = new Thread(cGroup, this);
+         System.out.println("Starting " + t2.getName() + "...");
+         t2.start();
+            
+         // returns the number of threads put into the array
+         Thread[] list = new Thread[pGroup.activeCount()];
+         int count = pGroup.enumerate(list);
+         for (int i = 0; i &lt; count; i++) {
+            System.out.println("Thread " + list[i].getName() + " found");
+         }
+
+         // block until the other threads finish
+         t1.join();
+         t2.join();
+      }
+      catch (InterruptedException ex) {
+         System.out.println(ex.toString());
+      }
+   }
+
+   // implements run()
+   public void run() {
+
+      for(int i = 0; i &lt; 1000; i++) {
+         i++;
+      }
+      System.out.println(Thread.currentThread().getName() + 
+      " finished executing.");
+   }
+} </pre> 
+ <p> 让我们来编译和运行上面的程序，这将产生以下结果：</p>   
+ <pre class="prettyprint" style="border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; font-size: 12px; overflow: auto;">
+Starting Thread-0...
+Starting Thread-1...
+Thread Thread-0 found
+Thread Thread-1 found
+Thread-0 finished executing.
+Thread-1 finished executing.</pre> 
+ <br>      
+</div></body></html>

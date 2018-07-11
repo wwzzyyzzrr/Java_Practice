@@ -1,0 +1,95 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Java并发AtomicBoolean类</h1><div style="width:100%;float:left;" class="article-content">   
+ <p><code>java.util.concurrent.atomic.AtomicBoolean</code>类提供了可以原子读取和写入的底层布尔值的操作，并且还包含高级原子操作。 <code>AtomicBoolean</code>支持基础布尔变量上的原子操作。 它具有获取和设置方法，如在<code>volatile</code>变量上的读取和写入。 也就是说，一个集合与同一变量上的任何后续<code>get</code>相关联。 原子<code>compareAndSet</code>方法也具有这些内存一致性功能。</p> 
+ <h2 id="h2-atomicboolean-"><a name="AtomicBoolean类中的方法" class="reference-link"></a><span class="header-link octicon octicon-link"></span>AtomicBoolean类中的方法</h2>
+ <p>以下是<code>AtomicBoolean</code>类中可用的重要方法的列表。</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>序号</th> 
+    <th>方法</th> 
+    <th>描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>1</td> 
+    <td><code>public boolean compareAndSet(boolean expect, boolean update)</code></td> 
+    <td>如果当前值<code>==</code>期望值，则将该值原子设置为给定的更新值。</td> 
+   </tr> 
+   <tr> 
+    <td>2</td> 
+    <td><code>public boolean get()</code></td> 
+    <td>返回当前值。</td> 
+   </tr> 
+   <tr> 
+    <td>3</td> 
+    <td><code>public boolean getAndSet(boolean newValue)</code></td> 
+    <td>将原子设置为给定值并返回上一个值。</td> 
+   </tr> 
+   <tr> 
+    <td>4</td> 
+    <td><code>public void lazySet(boolean newValue)</code></td> 
+    <td>最终设定为给定值。</td> 
+   </tr> 
+   <tr> 
+    <td>5</td> 
+    <td><code>public void set(boolean newValue)</code></td> 
+    <td>无条件地设置为给定的值。</td> 
+   </tr> 
+   <tr> 
+    <td>6</td> 
+    <td><code>public String toString()</code></td> 
+    <td>返回当前值的<code>String</code>表示形式。</td> 
+   </tr> 
+   <tr> 
+    <td>7</td> 
+    <td><code>public boolean weakCompareAndSet(boolean expect, boolean update)</code></td> 
+    <td>如果当前值<code>==</code>期望值，则将该值原子设置为给定的更新值。</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h2 id="h2-u5B9Eu4F8B"><a name="实例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实例</h2>
+ <p>以下<code>TestThread</code>程序显示了基于线程的环境中<code>AtomicBoolean</code>变量的使用。</p> 
+ <pre><code class="lang-java">import java.util.concurrent.atomic.AtomicBoolean;
+
+public class TestThread {
+
+   public static void main(final String[] arguments) throws InterruptedException {
+      final AtomicBoolean atomicBoolean = new AtomicBoolean(false);
+      new Thread("Thread 1") {
+         public void run() {
+            while(true){
+               System.out.println(Thread.currentThread().getName() 
+                  +" Waiting for Thread 2 to set Atomic variable to true. Current value is "
+                  + atomicBoolean.get());
+               if(atomicBoolean.compareAndSet(true, false)) {
+                  System.out.println("Done!");
+                  break;
+               }
+            }};
+      }.start();
+
+      new Thread("Thread 2") {
+         public void run() {
+            System.out.println(Thread.currentThread().getName() + ", Atomic Variable: " +atomicBoolean.get()); 
+            System.out.println(Thread.currentThread().getName() +" is setting the variable to true ");
+            atomicBoolean.set(true);
+            System.out.println(Thread.currentThread().getName() + ", Atomic Variable: " +atomicBoolean.get()); 
+         };
+      }.start();
+   }  
+}
+</code></pre> 
+ <p>这将产生以下结果 - </p>   
+ <pre><code class="lang-shell">Thread 1 Waiting for Thread 2 to set Atomic variable to true. Current value is false
+Thread 1 Waiting for Thread 2 to set Atomic variable to true. Current value is false
+Thread 1 Waiting for Thread 2 to set Atomic variable to true. Current value is false
+Thread 2, Atomic Variable: false
+Thread 1 Waiting for Thread 2 to set Atomic variable to true. Current value is false
+Thread 2 is setting the variable to true
+Thread 2, Atomic Variable: true
+Thread 1 Waiting for Thread 2 to set Atomic variable to true. Current value is false
+Done!
+</code></pre>
+ <br>      
+</div></body></html>

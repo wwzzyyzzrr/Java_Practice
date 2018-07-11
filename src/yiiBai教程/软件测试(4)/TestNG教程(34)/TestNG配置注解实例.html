@@ -1,0 +1,194 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">TestNG配置注解实例</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>在TestNG中，我们可以使用以下注释来执行测试类的配置，如设置/清理数据库，准备虚拟数据，部署/关闭服务器等。</p> 
+ <ul> 
+  <li><code><a target="_blank" href="https://github.com/BeforeSuite" title="@BeforeSuite" class="at-link">@BeforeSuite</a></code> - 对于套件测试，在此套件中的所有测试运行之前运行。</li>
+  <li><p><code><a target="_blank" href="https://github.com/AfterSuite" title="@AfterSuite" class="at-link"></a><a target="_blank" href="https://github.com/AfterSuite" title="@AfterSuite" class="at-link">@AfterSuite</a></code> - 对于套件测试，在此套件中的所有测试运行之后运行。</p> </li>
+  <li><p><code><a target="_blank" href="https://github.com/BeforeTest" title="@BeforeTest" class="at-link"></a><a target="_blank" href="https://github.com/BeforeTest" title="@BeforeTest" class="at-link">@BeforeTest</a></code> - 对于套件测试，在运行属于<code>&lt;test&gt;</code>标签内的类的任何测试方法之前运行。</p> </li>
+  <li><p><code><a target="_blank" href="https://github.com/AfterTest" title="@AfterTest" class="at-link"></a><a target="_blank" href="https://github.com/AfterTest" title="@AfterTest" class="at-link">@AfterTest</a></code> - 对于套件测试，在运行属于<code>&lt;test&gt;</code>标签内的类的所有测试方法都已运行之后运行。</p> </li>
+  <li><p><code><a target="_blank" href="https://github.com/BeforeGroups" title="@BeforeGroups" class="at-link"></a><a target="_blank" href="https://github.com/BeforeGroups" title="@BeforeGroups" class="at-link">@BeforeGroups</a></code>：在调用属于该组的第一个测试方法之前运行。</p> </li>
+  <li><p><code><a target="_blank" href="https://github.com/AfterGroups" title="@AfterGroups" class="at-link"></a><a target="_blank" href="https://github.com/AfterGroups" title="@AfterGroups" class="at-link">@AfterGroups</a></code>：在调用属于组的最后一个测试方法之后运行。</p> </li>
+  <li><p><code><a target="_blank" href="https://github.com/BeforeClass" title="@BeforeClass" class="at-link"></a><a target="_blank" href="https://github.com/BeforeClass" title="@BeforeClass" class="at-link">@BeforeClass</a></code>- 在当前类的第一个测试方法之前运行。</p> </li>
+  <li><p><code><a target="_blank" href="https://github.com/AfterClass" title="@AfterClass" class="at-link"></a><a target="_blank" href="https://github.com/AfterClass" title="@AfterClass" class="at-link">@AfterClass</a></code> - 运行当前类中的所有测试方法之后都运行。</p> </li>
+  <li><p><code><a target="_blank" href="https://github.com/BeforeMethod" title="@BeforeMethod" class="at-link"></a><a target="_blank" href="https://github.com/BeforeMethod" title="@BeforeMethod" class="at-link">@BeforeMethod</a></code> - 在每个测试方法之前运行。</p> </li>
+  <li><code><a target="_blank" href="https://github.com/AfterMethod" title="@AfterMethod" class="at-link">@AfterMethod</a></code> - 在每个测试方法之后运行。</li>
+ </ul> 
+ <blockquote> 
+  <p>注： 套件测试是什么东西？ - 套件测试是一起运行的多个测试类。</p> 
+ </blockquote> 
+ <p>查看以下示例以查看执行顺序 - 首先调用哪个方法，接下来又是哪一个。</p> 
+ <p>创建一个名称为：<code>ConfigurationAnnotations</code> 的 Maven 项目，其结构如下所示 - </p> 
+ <h2 id="h2-1-"><a name="1. 单测试类" class="reference-link"></a><span class="header-link octicon octicon-link"></span>1. 单测试类</h2>
+ <p>运行单个测试用例，演示如何使用 <code>group</code>, <code>class</code> 和 <code>method</code> 之前/之后。</p> 
+ <p>创建文件：<em>TestDBConnection.java</em> ，其代码如下所示 -</p> 
+ <pre><code class="lang-java">package com.yiibai;
+
+import org.testng.annotations.Test;
+
+public class TestDBConnection {
+
+    @Test
+    public void runOtherTest1() {
+        System.out.println("@Test - runOtherTest1");
+    }
+
+    @Test
+    public void runOtherTest2() {
+        System.out.println("@Test - runOtherTest2");
+    }
+
+}
+</code></pre> 
+ <p>执行上面测试类，输出结果如下 -</p> 
+ <pre><code class="lang-shell">[TestNG] Running:
+  C:\Users\Administrator\AppData\Local\Temp\testng-eclipse-634199298\testng-customsuite.xml
+
+@BeforeClass
+@BeforeGroups
+@BeforeMethod
+@Test - runTest1
+@AfterMethod
+@AfterGroups
+@BeforeMethod
+@Test - runTest2
+@AfterMethod
+@AfterClass
+PASSED: runTest1
+PASSED: runTest2
+
+===============================================
+    Default test
+    Tests run: 2, Failures: 0, Skips: 0
+===============================================
+
+
+===============================================
+Default suite
+Total tests run: 2, Failures: 0, Skips: 0
+===============================================
+
+[TestNG] Time taken by org.testng.reporters.XMLReporter@1b40d5f0: 14 ms
+[TestNG] Time taken by org.testng.reporters.SuiteHTMLReporter@6ea6d14e: 50 ms
+[TestNG] Time taken by org.testng.reporters.EmailableReporter2@4563e9ab: 6 ms
+[TestNG] Time taken by [FailedReporter passed=0 failed=0 skipped=0]: 0 ms
+[TestNG] Time taken by org.testng.reporters.jq.Main@2aaf7cc2: 42 ms
+[TestNG] Time taken by org.testng.reporters.JUnitReportReporter@45c8e616: 3 ms
+</code></pre> 
+ <h2 id="h2-2-"><a name="2. 套件测试类" class="reference-link"></a><span class="header-link octicon octicon-link"></span>2. 套件测试类</h2>
+ <p>再创建<code>2</code>个测试类来演示如何使用之前/之后的套件和测试。</p> 
+ <p>创建文件：<em>DBConfig.java</em> ，其代码如下所示 -</p>   
+ <pre><code class="lang-java">package com.yiibai;
+
+import org.testng.annotations.AfterSuite;
+import org.testng.annotations.AfterTest;
+import org.testng.annotations.BeforeSuite;
+import org.testng.annotations.BeforeTest;
+
+public class DBConfig {
+
+    @BeforeSuite()
+    public void beforeSuite() {
+        System.out.println("@BeforeSuite");
+    }
+
+    @AfterSuite()
+    public void afterSuite() {
+        System.out.println("@AfterSuite");
+    }
+
+    @BeforeTest()
+    public void beforeTest() {
+        System.out.println("@BeforeTest");
+    }
+
+    @AfterTest()
+    public void afterTest() {
+        System.out.println("@AfterTest");
+    }
+
+}
+</code></pre> 
+ <p>创建文件：<em>TestDBConnection.java</em> ，其代码如下所示 -</p> 
+ <pre><code class="lang-java">package com.yiibai;
+
+import org.testng.annotations.Test;
+
+public class TestDBConnection {
+
+    @Test
+    public void runOtherTest1() {
+        System.out.println("@Test - runOtherTest1");
+    }
+
+    @Test
+    public void runOtherTest2() {
+        System.out.println("@Test - runOtherTest2");
+    }
+
+}
+</code></pre> 
+ <p>创建一个XML文件以一起运行多个测试用例。 阅读XML的注释，很容易就明白了。</p> 
+ <p>创建文件：<em>testng.xml</em> ，其代码如下所示 - </p> 
+ <pre><code class="lang-xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" &gt;
+
+&lt;!-- @BeforeSuite --&gt;
+&lt;suite name="TestAll"&gt;
+
+    &lt;!-- @BeforeTest --&gt;
+    &lt;test name="case1"&gt;
+      &lt;classes&gt;
+        &lt;class name="com.yiibai.TestConfiguration" /&gt;
+        &lt;class name="com.yiibai.TestDBConnection" /&gt;
+        &lt;class name="com.yiibai.DBConfig" /&gt;
+      &lt;/classes&gt;
+    &lt;/test&gt;
+    &lt;!-- @AfterTest --&gt;
+
+    &lt;!-- @BeforeTest --&gt;
+    &lt;test name="case2"&gt;
+      &lt;classes&gt;
+        &lt;class name="com.yiibai.TestDBConnection" /&gt;
+        &lt;class name="com.yiibai.DBConfig" /&gt;
+      &lt;/classes&gt;
+    &lt;/test&gt;
+    &lt;!-- @AfterTest --&gt;
+
+&lt;/suite&gt;
+&lt;!-- @AfterSuite --&gt;
+</code></pre> 
+ <p>执行上面代码，在文件：<em>TestDBConnection.java</em> 右键，在弹出的菜单项中选择 “<strong>Run As </strong>” =&gt; <strong> Run Configures…</strong> ，如下图所示 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201705/0205/334140528_42763.png" alt=""></p> 
+ <p>在新弹出框中输入对应的 <strong>testng.xml</strong> 文件，如下所示 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201705/0205/971140530_53317.png" alt=""></p> 
+ <p>输出结果如下 -</p> 
+ <pre><code class="lang-shell">[TestNG] Running:
+  F:\worksp\testng\ConfigurationAnnotations\src\main\java\com\yiibai\testng.xml
+
+@BeforeSuite
+@BeforeTest
+@BeforeClass
+@BeforeGroups
+@BeforeMethod
+@Test - runTest1
+@AfterMethod
+@AfterGroups
+@BeforeMethod
+@Test - runTest2
+@AfterMethod
+@AfterClass
+@Test - runOtherTest1
+@Test - runOtherTest2
+@AfterTest
+@BeforeTest
+@Test - runOtherTest1
+@Test - runOtherTest2
+@AfterTest
+@AfterSuite
+
+===============================================
+TestAll
+Total tests run: 6, Failures: 0, Skips: 0
+===============================================
+</code></pre>
+ <br>      
+</div></body></html>

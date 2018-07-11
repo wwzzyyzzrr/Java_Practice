@@ -1,0 +1,196 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Struts2本地化和国际化</h1><div style="width:100%;float:left;" class="article-content">   
+ <div> 
+  <div>
+    Struts&nbsp;2的国际化(I18N)和本地化(i10n)或多语言的例子，来说明如何使用资源包来显示不同语言的消息。在这个例子中，您将创建一个简单的登录屏幕，通过Struts&nbsp;2的UI组件显示来自资源包的消息，&nbsp;并更改基于所选的语言选项的语言环境。 
+  </div> 
+ </div> 
+ <p> <br> </p> 
+ <h2> 1. 工程结构 </h2> 
+ <p> 项目结构，如下图片显示： </p> 
+ <p> <img src="/uploads/tutorial/20151123/1-151123212500C9.png" alt=""> </p> 
+ <h2> 2. Properties文件 </h2> 
+ <div>
+   确保属性文件命名为国家指定的代码。 
+ </div> 
+ <div>
+   在一些“非欧洲”或“非英语”之类的字符，应该始终编码的内容&nbsp;
+  <a target="_blank" href="http://www.yiibai.com/java/java-convert-chinese-character-to-unicode-with-native2ascii.html">native2ascii属性</a> 
+ </div> 
+ <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:16px;"> <strong>global.properties</strong> </p> 
+ <pre>#Global messages
+global.username = Username
+global.password = Password
+global.submit = Submit</pre> 
+ <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:16px;"> <strong>global_zh_CN.properties</strong> </p> 
+ <pre>#Global messages
+global.username = \u7528\u6237\u540d
+global.password = \u5bc6\u7801
+global.submit=\u63d0\u4ea4</pre> 
+ <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:16px;"> <strong>global_fr.properties</strong> </p> 
+ <pre>#Global messages
+global.username = Nom d'utilisateur
+global.password = Mot de passe
+global.submit = Soumettre</pre> 
+ <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:16px;"> <strong>global_de.properties</strong> </p> 
+ <pre>#Global messages
+global.username = Benutzername
+global.password = Kennwort
+global.submit = Einreichen&nbsp;</pre> 
+ <div>
+   请仔细阅读
+  <a target="_blank" href="http://www.yiibai.com/struts_2/struts-2-resource-bundle-example.html">Struts2资源包</a>的例子来了解Struts&nbsp;2的自动搜索属性文件。 
+ </div> 
+ <h2> 3. 动作类 </h2> 
+ <p> 两个动作类，LocaleAction基本上是什么都不做，&nbsp;而 LoginAction 会做一个简单的验证和通过gettext()显示来自资源包错误信息。 </p> 
+ <p> LocaleAction.java </p> 
+ <pre>package com.yiibai.common.action;
+
+import com.opensymphony.xwork2.ActionSupport;
+
+public class LocaleAction extends ActionSupport{
+
+	//business logic
+	public String execute() {
+		return "SUCCESS";
+	}
+}</pre> 
+ <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:16px;"> <strong>LoginAction.java</strong> </p> 
+ <pre>package com.yiibai.user.action;
+
+import com.opensymphony.xwork2.ActionSupport;
+
+public class LoginAction extends ActionSupport{
+
+	private String username;
+	private String password;
+	 
+	//...getter and setter methods
+
+	//business logic
+	public String execute() {
+		return "SUCCESS";
+	}
+
+	//simple validation
+	public void validate(){
+		if("".equals(getUsername())){
+			addFieldError("username", getText("username.required"));
+		}
+		if("".equals(getPassword())){
+			addFieldError("password", getText("password.required"));
+		}
+	}
+}</pre> 
+ <h2> 4. 视图页面 </h2> 
+ <div>
+   一个登录页面带有一个文本框，密码和提交UI组件。 
+ </div> 
+ <div>
+   为了支持Struts2&nbsp;本地化，必须声明&nbsp;&lt;%@&nbsp;page&nbsp;contentType=”text/html;charset=UTF-8″&nbsp;%&gt;在您的视图页面，否则能将有问题的“UTF-8数据”正确显示，尤其是中国汉字。阅读这篇文章，关于
+  <a target="_blank" href="http://www.yiibai.com/struts_2/struts-2-chinese-localization-issue.html">Struts2中国本土化问题</a>。 
+ </div> 
+ <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:16px;"> <strong>login.jsp</strong> </p> 
+ <pre>&lt;%@ page contentType="text/html;charset=UTF-8" %&gt;
+&lt;%@ taglib prefix="s" uri="/struts-tags" %&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;/head&gt;
+
+&lt;body&gt;
+&lt;h1&gt;Struts 2 localization example&lt;/h1&gt;
+
+&lt;s:form action="validateUser" namespace="/user"&gt;
+
+	&lt;s:textfield key="global.username" name="username" /&gt;
+	&lt;s:password key="global.password" name="password"/&gt;	
+	&lt;s:submit key="global.submit" name="submit" /&gt;
+	
+&lt;/s:form&gt;
+
+&lt;s:url id="localeEN" namespace="/" action="locale" &gt;
+   &lt;s:param name="request_locale" &gt;en&lt;/s:param&gt;
+&lt;/s:url&gt;
+&lt;s:url id="localezhCN" namespace="/" action="locale" &gt;
+   &lt;s:param name="request_locale" &gt;zh_CN&lt;/s:param&gt;
+&lt;/s:url&gt;
+&lt;s:url id="localeDE" namespace="/" action="locale" &gt;
+   &lt;s:param name="request_locale" &gt;de&lt;/s:param&gt;
+&lt;/s:url&gt;
+&lt;s:url id="localeFR" namespace="/" action="locale" &gt;
+   &lt;s:param name="request_locale" &gt;fr&lt;/s:param&gt;
+&lt;/s:url&gt;
+
+&lt;s:a href="%{localeEN}" &gt;English&lt;/s:a&gt;
+&lt;s:a href="%{localezhCN}" &gt;Chinese&lt;/s:a&gt;
+&lt;s:a href="%{localeDE}" &gt;German&lt;/s:a&gt;
+&lt;s:a href="%{localeFR}" &gt;France&lt;/s:a&gt;
+ 
+&lt;/body&gt;
+&lt;/html&gt;&nbsp;</pre> 
+ <div>
+   要更改默认的语言环境，只需要声明“request_locale”参数，设置你喜欢的语言代码，并传递给一个Action类。在 Struts2中，com.opensymphony.xwork2.interceptor.I18nInterceptor&nbsp;拦截器,&nbsp;在 struts-default.xml中声明将拦截Action类，并相应地处理语言环境。 
+ </div> 
+ <h2> 5.&nbsp;显示资源包的消息？ </h2> 
+ <div>
+   在Struts2，有很多的方式来显示所选择的语言或语言环境的资源包的信息。有关示例， 
+ </div>   
+ <pre>&lt;s:textfield key="global.username" name="username" /&gt;
+&lt;s:text name="global.username" /&gt;	
+&lt;s:property value="getText('global.username')" /&gt;
+&lt;s:text name="global.password" /&gt;&nbsp;</pre> 
+ <div>
+   在Struts1，有一个标准的&nbsp;bean:message&nbsp;来显示资源包的消息。但是在Struts&nbsp;2中，有这么多相当于显示资源包的消息(甚至内部的工作不同)方式，基本上，无论选择的是什么，在 Struts2 也将显示正确的资源包的消息。 
+ </div> 
+ <h2> 6. struts.xml </h2> 
+ <div>
+   Struts2 的配置文件，链接一起。 
+ </div> 
+ <pre>&lt;?xml version="1.0" encoding="UTF-8" ?&gt;
+&lt;!DOCTYPE struts PUBLIC
+"-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+"http://struts.apache.org/dtds/struts-2.0.dtd"&gt;
+ 
+&lt;struts&gt;
+
+	&lt;constant name="struts.custom.i18n.resources" value="global" /&gt;
+ 	&lt;constant name="struts.devMode" value="true" /&gt;
+ 	
+	&lt;package name="user" namespace="/user" extends="struts-default"&gt;
+	   &lt;action name="login"&gt;
+		&lt;result&gt;/pages/login.jsp&lt;/result&gt;
+	   &lt;/action&gt;
+	   &lt;action name="validateUser" class="com.yiibai.user.action.LoginAction"&gt;
+		&lt;result name="SUCCESS"&gt;/pages/welcome.jsp&lt;/result&gt;
+		&lt;result name="input"&gt;/pages/login.jsp&lt;/result&gt;
+	   &lt;/action&gt;
+	&lt;/package&gt;
+	
+	&lt;package name="default" namespace="/" extends="struts-default"&gt;
+	   &lt;action name="locale" class="com.yiibai.common.action.LocaleAction"&gt;
+		&lt;result name="SUCCESS"&gt;/user/pages/login.jsp&lt;/result&gt;
+	   &lt;/action&gt;
+	&lt;/package&gt;
+	
+&lt;/struts&gt;</pre> 
+ <h2 style="color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:24px;font-weight:500;"> 7. 示例 </h2> 
+ <p> http://localhost:8080/i18nlocalization/user/login.action </p> 
+ <p> <img src="/uploads/tutorial/20151123/1-151123212634922.png" alt=""> </p> 
+ <p> http://localhost:8080/i18nlocalization/locale.action?request_locale=en </p> 
+ <p> <img src="/uploads/tutorial/20151123/1-151123212634922.png" alt=""> </p> 
+ <p> <br> </p> 
+ <p> http://localhost:8080/i18nlocalization/locale.action?request_locale=zh_CN </p> 
+ <p> <img src="http://www.yiibai.com/uploads/tutorial/20151123/1-151123212A23S.png" alt=""> </p> 
+ <p> http://localhost:8080/i18nlocalization/locale.action?request_locale=de </p> 
+ <p> <img src="/uploads/tutorial/20151123/1-151123212G62C.png" alt=""> </p> 
+ <p> http://localhost:8080/i18nlocalization/locale.action?request_locale=fr </p> 
+ <p> <img src="/uploads/tutorial/20151123/1-151123212TWC.png" alt=""> </p> 
+ <h2> 参考 </h2> 
+ <ol> 
+  <li> <a target="_blank" href="http://struts.apache.org/2.1.8/docs/localization.html">http://struts.apache.org/2.1.8/docs/localization.html<br> </a> </li> 
+  <li> <a target="_blank" href="http://www.yiibai.com/java/java-convert-chinese-character-to-unicode-with-native2ascii.html">http://www.yiibai.com/java/java-convert-chinese-character-to-unicode-with-native2ascii/</a> </li> 
+  <li> <a target="_blank" href="http://www.yiibai.com/struts_2/struts-2-resource-bundle-example.html">http://www.yiibai.com/struts2/struts-2-resource-bundle-example/</a> </li> 
+  <li> <a target="_blank" href="http://www.yiibai.com/struts_2/struts-internationalizing-or-localization-example.html">http://www.yiibai.com/struts/struts-internationalizing-or-localization-example/</a> </li> 
+ </ol> 
+ <p> 代码下载 -&nbsp;<a target="_blank" href="http://pan.baidu.com/s/1jGCUaJ8">http://pan.baidu.com/s/1jGCUaJ8</a> </p>
+ <br>      
+</div></body></html>

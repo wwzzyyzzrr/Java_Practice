@@ -1,0 +1,63 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Java国际化(i18n)UTC</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>UTC代表协调世界时。 这是时间标准，并在全世界普遍使用。 所有时区的计算都与UTC的时差相当。 例如，丹麦哥本哈根的时间是<code>UTC + 1</code>表示UTC时间加上一个小时。用于在数据库中存储日期和时间。</p> 
+ <h2 id="h2-u65F6u533Au8F6Cu6362"><a name="时区转换" class="reference-link"></a><span class="header-link octicon octicon-link"></span>时区转换</h2>
+ <p>以下示例将展示各种时区的转换。 我们将以毫秒为单位打印一天中的小时和时间。 第一次将会有所不同，第二次将保持不变。</p> 
+ <p>文件:<em>IOTester.java</em> - </p> 
+ <pre><code class="lang-java">import java.text.ParseException;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.TimeZone;
+
+public class I18NTester {
+   public static void main(String[] args) throws ParseException {
+
+      Calendar date = new GregorianCalendar();
+
+      date.setTimeZone(TimeZone.getTimeZone("Etc/UTC"));
+      date.set(Calendar.HOUR_OF_DAY, 12);
+
+      System.out.println("UTC: " + date.get(Calendar.HOUR_OF_DAY));
+      System.out.println("UTC: " + date.getTimeInMillis());
+
+      date.setTimeZone(TimeZone.getTimeZone("Europe/Copenhagen"));
+      System.out.println("CPH: " + date.get(Calendar.HOUR_OF_DAY));
+      System.out.println("CPH: " + date.getTimeInMillis());
+
+      date.setTimeZone(TimeZone.getTimeZone("America/New_York"));
+      System.out.println("NYC: " + date.get(Calendar.HOUR_OF_DAY));
+      System.out.println("NYC: " + date.getTimeInMillis());
+   }
+}
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 - </p>   
+ <pre><code class="lang-shell">UTC: 12
+UTC: 1511956997540
+CPH: 13
+CPH: 1511956997540
+NYC: 7
+NYC: 1511956997540
+</code></pre> 
+ <h2 id="h2-u53EFu7528u65F6u533A"><a name="可用时区" class="reference-link"></a><span class="header-link octicon octicon-link"></span>可用时区</h2>
+ <p>以下示例将展示系统可用的时区。</p> 
+ <p>文件:<em>IOTester.java</em> - </p> 
+ <pre><code class="lang-java">import java.text.ParseException;
+import java.util.TimeZone;
+
+public class I18NTester {
+   public static void main(String[] args) throws ParseException {
+      String[] availableIDs = TimeZone.getAvailableIDs();
+
+      for(String id : availableIDs) {
+         System.out.println("Timezone = " + id);
+      }
+   }
+}
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 - </p> 
+ <pre><code class="lang-shell">Timezone = Africa/Abidjan
+Timezone = Africa/Accra
+...
+Timezone = VST
+</code></pre>
+ <br>      
+</div></body></html>

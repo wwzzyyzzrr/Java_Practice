@@ -1,0 +1,46 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">测试用例：列表</h1><div style="width:100%;float:left;" class="article-content">   
+ <h4 id="1221-testcase-list"> <span style="font-size:16px;">测试用例：列表</span></h4> 
+ <p> <span style="font-size:16px;">为元素实现 <em>fmt::Display</em>，必须按顺序分别处理的结构是棘手的。问题是，每一个 <em>write! </em>生成 <em>fmt::Result</em>。妥善处理这需要处理所有的结果。&nbsp;Rust 提供<em> try! </em>宏正是为这个目的。</span></p> 
+ <p> <span style="font-size:16px;">用 try! 在 write! 看起来是这样的：</span></p> 
+ <pre style="box-sizing: border-box; -webkit-tap-highlight-color: transparent; -webkit-font-smoothing: antialiased; Consolas, 'Liberation Mono', Menlo, Courier, monospace; font-size: 13.6000003814697px; overflow: auto; margin-bottom: 16px; padding: 16px; line-height: 1.45; border: 0px; border-radius: 3px; word-wrap: normal; color: rgb(51, 51, 51); background-color: rgb(247, 247, 247);">
+<code class="lang-rust" style="box-sizing: border-box; -webkit-tap-highlight-color: transparent; -webkit-font-smoothing: antialiased; Consolas, 'Liberation Mono', Menlo, Courier, monospace; font-size: 13.6000003814697px; padding: 0px; margin: 0px; border-radius: 3px; white-space: pre; border: 0px; display: inline; max-width: initial; overflow: initial; line-height: inherit; word-wrap: normal; background: transparent;"><span class="hljs-comment" style="box-sizing: border-box; -webkit-tap-highlight-color: transparent; -webkit-font-smoothing: antialiased; color: rgb(142, 144, 140);">// Try `write!` to see if it errors. If it errors, return</span>
+<span class="hljs-comment" style="box-sizing: border-box; -webkit-tap-highlight-color: transparent; -webkit-font-smoothing: antialiased; color: rgb(142, 144, 140);">// the error. Otherwise continue.</span>
+<span class="hljs-built_in" style="box-sizing: border-box; -webkit-tap-highlight-color: transparent; -webkit-font-smoothing: antialiased; color: rgb(245, 135, 31);">try!</span>(<span class="hljs-built_in" style="box-sizing: border-box; -webkit-tap-highlight-color: transparent; -webkit-font-smoothing: antialiased; color: rgb(245, 135, 31);">write!</span>(f, <span class="hljs-string" style="box-sizing: border-box; -webkit-tap-highlight-color: transparent; -webkit-font-smoothing: antialiased; color: rgb(113, 140, 0);">"{}"</span>, value));
+</code></pre> 
+ <p style="box-sizing: border-box; -webkit-tap-highlight-color: transparent; -webkit-font-smoothing: antialiased; margin-top: 0px; margin-bottom: 16px; color: rgb(51, 51, 51);  'Clear Sans', 'Helvetica Neue', Helvetica,   font-size: 16px; line-height: 25.6000003814697px;"> 随着try! 可用，实现 fmt::Display 让 Vec 很简单：</p>   
+ <pre>
+use std::fmt; // Import the `fmt` module.
+
+// Define a structure named `List` containing a `Vec`.
+struct List(Vec
+  <i32>
+   );
+
+impl fmt::Display for List {
+    fn fmt(&amp;self, f: &amp;mut fmt::Formatter) -&gt; fmt::Result {
+        // Dereference `self` and create a reference to `vec`
+        // via destructuring.
+        let List(ref vec) = *self;
+        let len = vec.len(); // Save the vector length in `len`.
+
+        // Iterate over `vec` in `v` while enumerating the iteration
+        // count in `count`.
+        for (count, v) in vec.iter().enumerate() {
+            // For every element except the last, format `write!`
+            // with a comma. Use `try!` to return on errors.
+            if count &lt; len - 1 { try!(write!(f, "{}, ", v)) }
+        }
+
+        // `write!` the last value without special formatting.
+        write!(f, "{}", vec[len-1])
+    }
+}
+
+fn main() {
+    let v = List(vec![1, 2, 3]);
+    println!("{}", v);
+}
+
+  </i32></pre> 
+ <br>      
+</div></body></html>

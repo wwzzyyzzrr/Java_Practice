@@ -1,0 +1,88 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">ASP.NET安全</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>在网站中实现安全性有以下几个方面：</p> 
+ <ul> 
+  <li><strong>认证</strong>：这是确保用户身份和真实性的过程。ASP.NET允许四种类型的认证：
+   <ul> 
+    <li>Windows身份验证</li>
+    <li>表单认证</li>
+    <li>通行证认证</li>
+    <li>自定义验证</li>
+   </ul> </li>
+  <li><strong>授权</strong>：是为特定用户定义和分配特定角色的过程。</li>
+  <li><strong>保密性</strong>：它涉及加密客户端浏览器和网络服务器之间的通道。</li>
+  <li><strong>完整性</strong>：涉及维护数据的完整性。例如，实施数字签名。</li>
+ </ul> 
+ <h2 id="h2-u57FAu4E8Eu8868u5355u7684u8EABu4EFDu9A8Cu8BC1"><a name="基于表单的身份验证" class="reference-link"></a><span class="header-link octicon octicon-link"></span>基于表单的身份验证</h2>
+ <p>传统上，基于表单的身份验证涉及编辑<code>web.config</code>文件并添加具有适当的验证代码的登录页面。</p> 
+ <p>可以编辑<code>web.config</code>文件并在其上编写以下代码：</p> 
+ <pre><code class="lang-aspnet">&lt;configuration&gt;
+
+&lt;system.web&gt;
+   &lt;authentication mode="Forms"&gt;
+      &lt;forms loginUrl ="login.aspx"/&gt;
+   &lt;/authentication&gt;
+
+   &lt;authorization&gt;
+      &lt;deny users="?"/&gt;
+   &lt;/authorization&gt;
+&lt;/system.web&gt;
+...
+...
+&lt;/configuration&gt;
+</code></pre> 
+ <p>在上面的代码片段中提到的<code>login.aspx</code>页面具有以下代码文件，其中用户名(<code>username</code>)和密码(<code>password</code>)是硬编码的身份验证。</p> 
+ <pre><code class="lang-csharp">
+
+</code></pre> 
+ <p>注意<code>FormsAuthentication</code>类负责认证过程。</p> 
+ <p><em>Visual Studio</em>允许通过Web站点管理工具无缝地轻松实现用户创建，身份验证和授权，而无需编写任何代码。这个工具允许创建用户和角色。</p> 
+ <p>除此之外，ASP.NET还提供了现成的登录控件集，它具有控制执行所有工作的控件。</p> 
+ <h2 id="h2-u5B9Eu73B0u57FAu4E8Eu8868u5355u7684u5B89u5168u6027"><a name="实现基于表单的安全性" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实现基于表单的安全性</h2>
+ <p>要设置基于表单的身份验证，需要以下内容：</p> 
+ <ul> 
+  <li>支持认证过程的用户数据库</li>
+  <li>使用数据库的网站</li>
+  <li>用户帐户</li>
+  <li>角色</li>
+  <li>限制用户和小组活动</li>
+  <li>默认页面，显示用户的登录状态等信息。</li>
+  <li>登录页面，允许用户登录，检索密码或更改密码</li>
+ </ul> 
+ <h2 id="h2-iis-ssl"><a name="IIS身份验证：SSL" class="reference-link"></a><span class="header-link octicon octicon-link"></span>IIS身份验证：SSL</h2>
+ <p>安全套接字层或SSL是用于确保安全连接的协议。 启用SSL后，浏览器会加密发送到服务器的所有数据，并解密来自服务器的所有数据。同时，服务器加密和解密来自浏览器的所有数据。</p> 
+ <p>安全连接的URL从HTTPS而不是HTTP开始。浏览器使用安全连接显示小锁图标。 当浏览器使用SSL通过安全连接初次尝试与服务器通信时，服务器通过发送其数字证书来验证自身。</p> 
+ <p>要使用SSL，您需要从受信任的认证中心(CA)购买数字安全证书，并将其安装在Web服务器中。 以下是一些值得信赖和知名的认证机构：</p> 
+ <ul> 
+  <li>www.verisign.com</li>
+  <li>www.geotrust.com</li>
+  <li>www.thawte.com</li>
+ </ul> 
+ <p>SSL内置于所有主流浏览器和服务器中。要启用SSL，需要安装数字证书。 各种数字证书的强度取决于加密期间生成的密钥的长度。 更多的长度，更安全的是证书，因此连接。</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>编号</th> 
+    <th>强度</th> 
+    <th>描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>1</td> 
+    <td>40位</td> 
+    <td>大多数浏览器支持，但很容易中断。</td> 
+   </tr> 
+   <tr> 
+    <td>2</td> 
+    <td>56位</td> 
+    <td>强于40位</td> 
+   </tr> 
+   <tr> 
+    <td>3</td> 
+    <td>128位</td> 
+    <td>非常难破解，但所有的浏览器不支持它。</td> 
+   </tr> 
+  </tbody> 
+ </table>
+ <br>      
+</div></body></html>

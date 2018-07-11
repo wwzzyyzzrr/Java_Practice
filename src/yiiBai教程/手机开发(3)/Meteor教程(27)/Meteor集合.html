@@ -1,0 +1,199 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Meteor集合</h1><div style="width:100%;float:left;" class="article-content">   
+ <div> 
+  <div>
+    在本教程中，我们将学习如何使用 MongoDB集合。 
+  </div> 
+ </div> 
+ <div> 
+  <h2> 
+   <div>
+     创建集合 
+   </div> </h2> 
+  <div>
+    我们可以使用以下代码来创建一个新的集合- 
+  </div> 
+  <h3> meteorApp/client/main.js </h3> 
+  <pre>MyCollection = new Mongo.Collection('myCollection');</pre> 
+  <h2> 添加数据 </h2> 
+  <div>
+    当集合被创建以后，我们可以通过使用 insert() 方法添加数据。 
+  </div> 
+  <h3> </h3> 
+  <h3> meteorApp/client/main.js </h3> 
+  <pre>MyCollection = new Mongo.Collection('myCollection');
+
+var myData = {
+   key1: "value 1...",
+   key2: "value 2...",
+   key3: "value 3...",
+   key4: "value 4...",
+   key5: "value 5..."
+}
+
+MyCollection.insert(myData);</pre> 
+  <h2> 查找数据 </h2> 
+  <div>
+    我们可以使用 find 方法来搜索集合中的数据。 
+  </div> 
+  <h3> </h3> 
+  <h3> meteorApp/client/main.js </h3> 
+  <pre>MyCollection = new Mongo.Collection('myCollection');
+
+var myData = {
+   key1: "value 1...",
+   key2: "value 2...",
+   key3: "value 3...",
+   key4: "value 4...",
+   key5: "value 5..."
+}
+
+MyCollection.insert(myData);
+
+var findCollection = MyCollection.find().fetch();
+console.log(findCollection);</pre> 
+  <div>
+    控制台将在插入之前显示数据。
+   <br> 
+   <img src="/uploads/tutorial/20160423/1-160423160615925.jpg" alt="">
+   <br> 
+  </div> 
+  <img src="file://E:/data/youdao/qq24B39E2329F08D9F4C3146A571A415EF/24e18e3e6744467a8bd4508d3814ff48/ctions-find.jpeg" alt="Meteor Collection Find"> 
+  <div>
+    我们可以通过搜索参数得到同样的结果。 
+  </div> 
+  <h3> </h3> 
+  <h3> meteorApp/client/main.js </h3> 
+  <pre>MyCollection = new Mongo.Collection('myCollection');
+
+var myData = {
+   key1: "value 1...",
+   key2: "value 2...",
+   key3: "value 3...",
+   key4: "value 4...",
+   key5: "value 5..."
+}
+
+MyCollection.insert(myData);
+
+var findCollection = MyCollection.find({key1: "value 1..."}).fetch();
+console.log(findCollection);</pre> 
+  <h2> 更新数据 </h2> 
+  <div>
+    下一个步骤是更新我们的数据。我们创建了收集并插入新的数据后，就可以使用 update() 方法。 
+  </div> 
+  <h3> </h3> 
+  <h3> meteorApp/client/main.js </h3> 
+  <pre>MyCollection = new Mongo.Collection('myCollection');
+
+var myData = {
+   key1: "value 1...",
+   key2: "value 2...",
+   key3: "value 3...",
+   key4: "value 4...",
+   key5: "value 5..."
+}
+
+MyCollection.insert(myData);
+
+var findCollection = MyCollection.find().fetch();
+var myId = findCollection[0]._id;
+
+var updatedData = {
+   key1: "updated value 1...",
+   key2: "updated value 2...",
+   key3: "updated value 3...",
+   key4: "updated value 4...",
+   key5: "updated value 5..."
+}
+
+MyCollection.update(myId, updatedData);
+
+var findUpdatedCollection = MyCollection.find().fetch();
+console.log(findUpdatedCollection);</pre> 
+  <div>
+    控制台将显示被我们更新的集合。
+   <br> 
+   <img src="/uploads/tutorial/20160423/1-16042316064E48.jpg" alt="">
+   <br> 
+  </div> 
+  <img src="file://E:/data/youdao/qq24B39E2329F08D9F4C3146A571A415EF/4a6084a4e1de4ba9a4e44560e81d0c3c/ions-update.jpeg" alt="Meteor Collections Update"> 
+  <h2> 删除数据 </h2> 
+  <p> 要从集合中删除数据可以通过remove()方法来完成。我们在这个例子设置ID作为参数来删除特定数据。 </p> 
+  <h3> </h3> 
+  <h3> meteorApp/client/main.js </h3> 
+  <pre>MyCollection = new Mongo.Collection('myCollection');
+
+var myData = {
+   key1: "value 1...",
+   key2: "value 2...",
+   key3: "value 3...",
+   key4: "value 4...",
+   key5: "value 5..."
+}
+
+MyCollection.insert(myData);
+
+var findCollection = MyCollection.find().fetch();
+var myId = findCollection[0]._id;
+
+MyCollection.remove(myId);
+
+var findDeletedCollection = MyCollection.find().fetch();
+console.log(findDeletedCollection);</pre> 
+  <div>
+    控制台将显示空数组。 
+  </div> 
+  <img src="file://E:/data/youdao/qq24B39E2329F08D9F4C3146A571A415EF/a6552a37c22346b5860d092166466631/ions-remove.jpeg" alt="Meteor Collections Remove"> 
+  <p> 如果我们想<span>从集合</span>删除一切，可以用同样的方法，但不是ID，这里使用空对象{}.&nbsp;出于服务器安全原因我们需要做这个。<br> <img src="/uploads/tutorial/20160423/1-160423160GQT.jpg" alt=""> </p> 
+  <h3> </h3> 
+  <h3> meteorApp/client/main.js </h3>   
+  <pre>if (Meteor.isServer) {
+
+   MyCollection = new Mongo.Collection('myCollection');
+
+   var myData = {
+      key1: "value 1...",
+      key2: "value 2...",
+      key3: "value 3...",
+      key4: "value 4...",
+      key5: "value 5..."
+   }
+
+   MyCollection.insert(myData);
+   MyCollection.remove({});
+	
+   var findDeletedCollection = MyCollection.find().fetch();
+   console.log(findDeletedCollection);
+}&nbsp;</pre> 
+  <p> 我们还可以通过使用其它的参数来删除数据。&nbsp;如在前面的例子中，Meteor将强制我们在服务器上这样做。 </p> 
+  <h3> </h3> 
+  <h3> meteorApp/client/main.js </h3> 
+  <pre>if (Meteor.isServer) {
+
+   MyCollection = new Mongo.Collection('myCollection');
+
+   var myData = {
+      key1: "value 1...",
+      key2: "value 2...",
+      key3: "value 3...",
+      key4: "value 4...",
+      key5: "value 5..."
+   }
+
+   MyCollection.insert(myData);
+   MyCollection.remove({key1: "value 1..."});
+	
+   var findDeletedCollection = MyCollection.find().fetch();
+   console.log(findDeletedCollection);
+}</pre> 
+  <div>
+    你可以看到，在命令窗口中删除的数据。
+   <br> 
+   <img src="/uploads/tutorial/20160423/1-160423160I9153.jpg" alt="">
+   <br> 
+  </div> 
+  <img src="file://E:/data/youdao/qq24B39E2329F08D9F4C3146A571A415EF/40b1393d18564c5b8dbca611ecd25d87/move-server.jpeg" alt="Meteor Collections Remove Server">
+  <br> 
+ </div>
+ <br>      
+</div></body></html>

@@ -1,0 +1,156 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">git branch命令</h1><div style="width:100%;float:left;" class="article-content">   
+ <p><code>git branch</code>命令用于列出，创建或删除分支。</p> 
+ <p><strong>简介</strong></p> 
+ <pre><code class="lang-shell">git branch [--color[=&lt;when&gt;] | --no-color] [-r | -a]
+    [--list] [-v [--abbrev=&lt;length&gt; | --no-abbrev]]
+    [--column[=&lt;options&gt;] | --no-column] [--sort=&lt;key&gt;]
+    [(--merged | --no-merged) [&lt;commit&gt;]]
+    [--contains [&lt;commit]] [--no-contains [&lt;commit&gt;]]
+    [--points-at &lt;object&gt;] [--format=&lt;format&gt;] [&lt;pattern&gt;…​]
+git branch [--set-upstream | --track | --no-track] [-l] [-f] &lt;branchname&gt; [&lt;start-point&gt;]
+git branch (--set-upstream-to=&lt;upstream&gt; | -u &lt;upstream&gt;) [&lt;branchname&gt;]
+git branch --unset-upstream [&lt;branchname&gt;]
+git branch (-m | -M) [&lt;oldbranch&gt;] &lt;newbranch&gt;
+git branch (-d | -D) [-r] &lt;branchname&gt;…
+git branch --edit-description [&lt;branchname&gt;]
+</code></pre> 
+ <h2 id="h2-u63CFu8FF0"><a name="描述" class="reference-link"></a><span class="header-link octicon octicon-link"></span>描述</h2>
+ <p>如果给出了<code>--list</code>，或者如果没有非选项参数，则列出现有的分支; 当前分支将以星号突出显示。 选项<code>-r</code>导致远程跟踪分支被列出，而选项<code>-a</code>显示本地和远程分支。 如果给出了一个<code>&lt;pattern&gt;</code>，它将被用作一个shell通配符，将输出限制为匹配的分支。 如果给出多个模式，如果匹配任何模式，则显示分支。 请注意，提供<code>&lt;pattern&gt;</code>时，必须使用<code>--list</code>; 否则命令被解释为分支创建。</p> 
+ <p>使用<code>--contains</code>，仅显示包含命名提交的分支(换句话说，提示提交的分支是指定的提交的后代)，<code>--no-contains</code>会反转它。 随着已经有了，只有分支合并到命名提交(即从提交提交可以提前提交的分支)将被列出。 使用<code>--no</code>合并只会将未合并到命名提交中的分支列出。 如果缺少<code>&lt;commit&gt;</code>参数，则默认为<code>HEAD</code>(即当前分支的提示)。</p> 
+ <h2 id="h2-u793Au4F8B"><a name="示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例</h2>
+ <p>以下是一些示例 -</p> 
+ <p><strong>1. 查看当前有哪些分支</strong></p> 
+ <pre><code class="lang-shell">$ git branch
+  master
+* wchar_support
+</code></pre> 
+ <p>上面显示结果中，当前有两个分支：<em>master</em> 和 <em>wchar_support</em>，当前在 <em>wchar_support</em> 分支上，它前面有个星号(<code>*</code>)。</p> 
+ <p><strong>2. 新建一个分支</strong></p> 
+ <p>下面命令将创建一个分支：<em>dev2</em> - </p> 
+ <pre><code class="lang-shell">$ git branch dev2
+</code></pre> 
+ <p><strong>3. 切换到指定分支</strong></p> 
+ <p>下面命令将切换到指定分支：<em>dev2</em> - </p> 
+ <pre><code class="lang-shell">$ git checkout dev2
+$ # 再次查看分支
+$ git branch
+* dev2
+  master
+  wchar_support
+</code></pre> 
+ <p><strong>4. 查看本地和远程分支</strong></p> 
+ <pre><code class="lang-shell">$ git branch -a
+* dev2
+  master
+  wchar_support
+  remotes/origin/HEAD -&gt; origin/master
+  remotes/origin/master
+  remotes/origin/wchar_support
+</code></pre> 
+ <p><strong>5. 将更改添加到新建分支上</strong></p> 
+ <pre><code class="lang-shell">$ git status
+On branch dev2
+Untracked files:
+  (use "git add &lt;file&gt;..." to include in what will be committed)
+
+        newfile.txt
+
+nothing added to commit but untracked files present (use "git add" to track)
+
+Administrator@MY-PC /D/worksp/sample (dev2)
+
+$ git add newfile.txt
+
+Administrator@MY-PC /D/worksp/sample (dev2)
+
+$ git commit newfile.txt -m "commit a new file: newfile.txt"
+[dev2 c5f8a25] commit a new file: newfile.txt
+ 1 file changed, 2 insertions(+)
+ create mode 100644 newfile.txt
+
+Administrator@MY-PC /D/worksp/sample (dev2)
+
+$ git push origin dev2
+Username for 'http://git.oschina.net': 769728683@qq.com
+Password for 'http://769728683@qq.com@git.oschina.net':
+Counting objects: 12, done.
+Delta compression using up to 4 threads.
+Compressing objects: 100% (8/8), done.
+Writing objects: 100% (11/11), 965 bytes | 0 bytes/s, done.
+Total 11 (delta 3), reused 0 (delta 0)
+To http://git.oschina.net/yiibai/sample.git
+ * [new branch]      dev2 -&gt; dev2
+
+Administrator@MY-PC /D/worksp/sample (dev2)
+$
+</code></pre> 
+ <p><strong>6. 修改分支的名字</strong></p>   
+ <pre><code class="lang-shell">$ git branch
+* dev2
+  master
+  wchar_support
+
+Administrator@MY-PC /D/worksp/sample (dev2)
+$ git branch -m dev2 version.2
+
+Administrator@MY-PC /D/worksp/sample (version.2)
+$ git branch -r
+  origin/HEAD -&gt; origin/master
+  origin/dev2
+  origin/master
+  origin/wchar_support
+
+Administrator@MY-PC /D/worksp/sample (version.2)
+$ git branch
+  master
+* version.2
+  wchar_support
+</code></pre> 
+ <p><strong>7. 删除远程分支</strong></p> 
+ <p>删除一个名称为：<em>dev2</em> 的远客</p> 
+ <pre><code class="lang-shell">$ git branch
+  master
+* version.2
+  wchar_support
+
+Administrator@MY-PC /D/worksp/sample (version.2)
+$ git push origin --delete dev2
+Username for 'http://git.oschina.net': 769728683@qq.com
+Password for 'http://769728683@qq.com@git.oschina.net':
+To http://git.oschina.net/yiibai/sample.git
+ - [deleted]         dev2
+</code></pre> 
+ <p><strong>8. 合并某个分支到当前分支</strong></p> 
+ <p>合并分支：<em>version.2</em>到当前分支(<em>master</em>)，如下 - </p> 
+ <pre><code class="lang-shell">$ git branch
+  master
+* version.2
+  wchar_support
+
+Administrator@MY-PC /D/worksp/sample (version.2)
+$ git checkout master
+Switched to branch 'master'
+Your branch is up-to-date with 'origin/master'.
+
+Administrator@MY-PC /D/worksp/sample (master)
+$ git status
+On branch master
+Your branch is up-to-date with 'origin/master'.
+
+nothing to commit, working directory clean
+
+Administrator@MY-PC /D/worksp/sample (master)
+$ git merge version.2
+Updating e7d1734..c5f8a25
+Fast-forward
+ mydir/text.txt | 0
+ newfile.txt    | 2 ++
+ src/string.py  | 5 ++++-
+ 3 files changed, 6 insertions(+), 1 deletion(-)
+ create mode 100644 mydir/text.txt
+ create mode 100644 newfile.txt
+
+$
+</code></pre>
+ <br>      
+</div></body></html>

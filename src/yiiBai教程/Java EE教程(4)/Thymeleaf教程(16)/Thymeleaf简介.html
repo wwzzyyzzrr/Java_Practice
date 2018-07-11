@@ -1,0 +1,37 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Thymeleaf简介</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>Thymeleaf是用于Web和独立环境的现代服务器端Java模板引擎。</p> 
+ <p>Thymeleaf的主要目标是将优雅的自然模板带到您的开发工作流程中—HTML能够在浏览器中正确显示，并且可以作为静态原型，从而在开发团队中实现更强大的协作。Thymeleaf能够处理HTML，XML，JavaScript，CSS甚至纯文本。</p> 
+ <p>Thymeleaf的主要目标是提供一个优雅和高度可维护的创建模板的方式。 为了实现这一点，它建立在自然模板的概念之上，以不影响模板作为设计原型的方式将其逻辑注入到模板文件中。 这改善了设计沟通，弥合了前端设计和开发人员之间的理解偏差。</p> 
+ <p>Thymeleaf也是从一开始就设计(特别是HTML5)允许创建完全验证的模板。</p> 
+ <h2 id="h2-thymeleaf-"><a name="Thymeleaf可以处理什么样的模板？" class="reference-link"></a><span class="header-link octicon octicon-link"></span>Thymeleaf可以处理什么样的模板？</h2>
+ <p>开箱即用，Thymeleaf可以处理六种模板，每种模板都称为模板模式:</p> 
+ <ul> 
+  <li>HTML</li>
+  <li>XML</li>
+  <li>TEXT</li>
+  <li>JAVASCRIPT</li>
+  <li>CSS</li>
+  <li>RAW</li>
+ </ul> 
+ <p>有两种标记模板模式(HTML和XML)，三种文本模板模式(TEXT，JAVASCRIPT和CSS)和一种无操作模板模式(RAW)。</p> 
+ <p>HTML模板模式将允许任何类型的HTML输入，包括HTML5，HTML4和XHTML。 将不会执行验证或格式检查，并且在输出中尽可能地遵守模板代码/结构。</p> 
+ <p>XML模板模式将允许XML输入。 在这种情况下，代码应该是格式良好的 - 没有未封闭的标签，没有未加引号的属性等等，如果发现格式错误，解析器将会抛出异常。 请注意，将不会执行验证(针对DTD或XML模式)。</p> 
+ <p>TEXT模板模式将允许对非标记性质的模板使用特殊语法。 这种模板的例子可能是文本电子邮件或模板文档。 请注意，HTML或XML模板也可以作为TEXT处理，在这种情况下，它们不会被解析为标记，而每个标记，DOCTYPE，注释等都将被视为纯文本。</p> 
+ <p>JAVASCRIPT模板模式将允许处理Thymeleaf应用程序中的JavaScript文件。这意味着能够像在HTML文件中一样使用JavaScript文件中的模型数据，但是使用特定于JavaScript的集成(例如专门转义或自然脚本)。 JAVASCRIPT模板模式被认为是文本模式，因此使用与TEXT模板模式相同的特殊语法。</p> 
+ <p>CSS模板模式将允许处理Thymeleaf应用程序中涉及的CSS文件。类似于JAVASCRIPT模式，CSS模板模式也是文本模式，并使用TEXT模板模式中的特殊处理语法。</p> 
+ <p>RAW模板模式根本不会处理模板。它意味着用于将未触及的资源(文件，URL响应等)插入正在处理的模板中。例如，可以将HTML格式的外部非受控资源包含在应用程序模板中，从而安全地知道这些资源可能包含的任何Thymeleaf代码都不会被执行。</p> 
+ <h2 id="h2--"><a name="方言:标准方言" class="reference-link"></a><span class="header-link octicon octicon-link"></span>方言:标准方言</h2>
+ <p>Thymeleaf是一个非常容易扩展的模板引擎(事实上，它可以被称为模板引擎框架)，允许您定义和定制模板将被处理到一个很好的细节水平的方式。</p> 
+ <p>一个将某些逻辑应用于标记工件(标签，一些文本，注释或者仅仅是模板不是标记的占位符)的对象被称为处理器，而这些处理器的集合(可能还有一些额外的工件)是方言组成。 开箱即用，Thymeleaf的核心库提供了一种称为<strong>“标准方言”</strong>的方言，对大多数用户来说应该是足够的。</p> 
+ <p>本教程涵盖了标准方言。 您将在后面的页面中了解的每个属性和语法功能均由该方言定义，即使未明确提及。</p> 
+ <p>当然，如果用户想利用库的高级功能定义自己的处理逻辑，用户可以创建自己的方言(甚至扩展标准方言)。Thymeleaf也可以配置为一次使用几种方言。</p> 
+ <p>标准方言的大多数处理器是属性处理器。 这允许浏览器甚至在被处理之前正确显示HTML模板文件，因为它们将简单地忽略附加属性。 例如，虽然使用标记库的JSP可能包含不能直接由浏览器显示的代码片段，例如:</p>   
+ <pre><code class="lang-html">&lt;form:inputText name="userName" value="${user.name}" /&gt;
+</code></pre> 
+ <p>Thymeleaf标准方言将允许实现相同的功能:</p> 
+ <pre><code class="lang-html">&lt;input type="text" name="userName" value="Yiibai" th:value="${user.name}" /&gt;
+</code></pre> 
+ <p>这不仅可以被浏览器正确显示，而且还允许(可选地)在浏览器中静态打开原型时指定一个值属性(本例中为<em>“Yiibai”</em>)，在处理模板期间被<code>${user.name}</code>的评估结果值所取代。</p> 
+ <p>这有助于设计人员和开发人员使用完全相同的模板文件，并减少将静态原型转换为工作模板文件所需的工作量。 这样做的能力是一个称为自然模板的功能。</p>
+ <br>      
+</div></body></html>

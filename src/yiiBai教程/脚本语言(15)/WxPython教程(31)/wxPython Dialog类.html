@@ -1,0 +1,725 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">wxPython Dialog类</h1><div style="width:100%;float:left;" class="article-content">   
+ <div> 
+  <div>
+    虽然Dialog类对象将显示像Frame，它通常被用作上的父框架的顶部上的弹出窗口。Dialog的目的是从用户收集一些数据并将其发送到父frame。对话框 Dialog 可以模态(它阻止父帧)或无模式(对话框架可被绕过)。&nbsp;ShowModal()方法显示模态方式对话框frame，Show()&nbsp;使得它无模式。 
+  </div> 
+ </div> 
+ <div> 
+  <div>
+    wxPython中有一些预配置对话框控件，如：MessageDialog，FileDialog，FontDialog类等。 
+  </div> 
+  <div>
+    wx.Dialog支持使用Sizers&nbsp;仅仅作为一个wx.Frame对象。因此，定制的Dialog可设计。 
+  </div> 
+  <div> 
+   <div>
+     wx.Dialog类的构造函数如下常用的参数&nbsp;- 
+   </div> 
+  </div> 
+  <pre>wx.Dialog(parent, id, title, pos, size, style)&nbsp;</pre> 
+  <p style="text-align:justify;"> Dialog控件的默认外观显示在标题栏中只关闭对话框。但是，它可以用下面的风格参数的组合进行定制− </p> 
+  <div style="color:#313131;font-family:Verdana, Geneva, Tahoma,  Helvetica, background-color:inherit;"> 
+   <table border="1" cellpadding="2" cellspacing="0" style="font-size:14px;color:#313131;"> 
+    <tbody> 
+     <tr> 
+      <th style="border:1px solid #999999;background-color:#EEEEEE;"> S.N. </th> 
+      <th style="border:1px solid #999999;background-color:#EEEEEE;text-align:center;"> 参数 &amp; 描述 </th> 
+     </tr> 
+     <tr> 
+      <td style="border:1px solid #999999;background-color:inherit;"> 1 </td> 
+      <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>wx.CAPTION</b> </p> 
+       <div style="background-color:inherit;">
+         对话框的文字说明 
+       </div> </td> 
+     </tr> 
+     <tr> 
+      <td style="border:1px solid #999999;background-color:inherit;"> 2 </td> 
+      <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>wx.DEFAULT_DIALOG_STYLE</b> </p> 
+       <div style="background-color:inherit;">
+         相当于wxCAPTION，wxCLOSE_BOX和wxSYSTEM_MENU的组合 
+       </div> </td> 
+     </tr> 
+     <tr> 
+      <td style="border:1px solid #999999;background-color:inherit;"> 3 </td> 
+      <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>wx.RESIZE_BORDER</b> </p> 
+       <div style="background-color:inherit;">
+         显示可调框架窗口的大小 
+       </div> </td> 
+     </tr> 
+     <tr> 
+      <td style="border:1px solid #999999;background-color:inherit;"> 4 </td> 
+      <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>wxSYSTEM_MENU</b> </p> 
+       <div style="background-color:inherit;">
+         显示系统菜单 
+       </div> </td> 
+     </tr> 
+     <tr> 
+      <td style="border:1px solid #999999;background-color:inherit;"> 5 </td> 
+      <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>wx.CLOSE_BOX</b> </p> 
+       <div style="background-color:inherit;">
+         框架(frame)上显示一个关闭 
+       </div> </td> 
+     </tr> 
+     <tr> 
+      <td style="border:1px solid #999999;background-color:inherit;"> 6 </td> 
+      <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>wx.MAXIMIZE_BOX</b> </p> 
+       <div style="background-color:inherit;">
+         在对话框中显示一个最大化框 
+       </div> </td> 
+     </tr> 
+     <tr> 
+      <td style="border:1px solid #999999;background-color:inherit;"> 7 </td> 
+      <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>wx.MINIMIZE_BOX</b> </p> 
+       <div style="background-color:inherit;">
+         在对话框中显示一个最小化框(frame) 
+       </div> </td> 
+     </tr> 
+     <tr> 
+      <td style="border:1px solid #999999;background-color:inherit;"> 8 </td> 
+      <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>wx.STAY_ON_TOP</b> </p> 
+       <div style="background-color:inherit;">
+         确保对话框停留在所有其他窗口的顶部 
+       </div> </td> 
+     </tr> 
+     <tr> 
+      <td style="border:1px solid #999999;background-color:inherit;"> 9 </td> 
+      <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>wx.DIALOG_NO_PARENT</b> </p> 
+       <div style="background-color:inherit;">
+         为防止产生无看管对话框。不推荐用于模态对话框 
+       </div> </td> 
+     </tr> 
+    </tbody> 
+   </table> 
+  </div> 
+  <div>
+    两个事件由绑定器定义该类- 
+  </div> 
+  <div style="color:#313131;font-family:Verdana, Geneva, Tahoma,  Helvetica, background-color:inherit;"> 
+   <table border="1" cellpadding="2" cellspacing="0" style="font-size:14px;color:#313131;"> 
+    <tbody> 
+     <tr> 
+      <th style="border:1px solid #999999;background-color:#EEEEEE;"> S.N. </th> 
+      <th style="border:1px solid #999999;background-color:#EEEEEE;text-align:center;"> 
+       <div style="background-color:inherit;">
+         事件和说明 
+       </div> </th> 
+     </tr> 
+     <tr> 
+      <td style="border:1px solid #999999;background-color:inherit;"> 1 </td> 
+      <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>EVT_CLOSE</b> </p> 
+       <div style="background-color:inherit;">
+         当用户或编程对话框的关闭 
+       </div> </td> 
+     </tr> 
+     <tr> 
+      <td style="border:1px solid #999999;background-color:inherit;"> 2 </td> 
+      <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>EVT_INIT_DIALOG</b> </p> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> When the dialog is being initialized </p> </td> 
+     </tr> 
+    </tbody> 
+   </table> 
+  </div> 
+  <p style="text-align:justify;"> 如上所述，对话的目的是收集数据并返回到父窗口。然而，一些有用的方法可用于 Dialog类。 </p> 
+  <div style="color:#313131;font-family:Verdana, Geneva, Tahoma,  Helvetica, background-color:inherit;"> 
+   <table border="1" cellpadding="2" cellspacing="0" style="font-size:14px;color:#313131;"> 
+    <tbody> 
+     <tr> 
+      <th style="border:1px solid #999999;background-color:#EEEEEE;"> S.N. </th> 
+      <th style="border:1px solid #999999;background-color:#EEEEEE;text-align:center;"> 
+       <div style="background-color:inherit;">
+         方法和说明 
+       </div> </th> 
+     </tr> 
+     <tr> 
+      <td style="border:1px solid #999999;background-color:inherit;"> 1 </td> 
+      <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>DoOK()</b> </p> 
+       <div style="background-color:inherit;">
+         当对话框中的OK按钮被按下时调用 
+       </div> </td> 
+     </tr> 
+     <tr> 
+      <td style="border:1px solid #999999;background-color:inherit;"> 2 </td> 
+      <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>ShowModal()</b> </p> 
+       <div style="background-color:inherit;">
+         显示了在应用程序模态方式的对话框 
+       </div> </td> 
+     </tr> 
+     <tr> 
+      <td style="border:1px solid #999999;background-color:inherit;"> 3 </td> 
+      <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>ShowWindowModal()</b> </p> 
+       <div style="background-color:inherit;">
+         对话框只顶层父窗口的模式 
+       </div> </td> 
+     </tr> 
+     <tr> 
+      <td style="border:1px solid #999999;background-color:inherit;"> 4 </td> 
+      <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>EndModal()</b> </p> 
+       <div style="background-color:inherit;">
+         ShowModal调用传递值结束一个对话框模式 
+       </div> </td> 
+     </tr> 
+    </tbody> 
+   </table> 
+  </div> 
+  <p style="text-align:justify;"> 一个预配置的对话框是MessageDialog。它用于显示的一条或多条线用具有标准ID的按钮的消息。&nbsp;下面是对MessageDialog标准按钮选择列表。 </p> 
+  <div style="color:#313131;font-family:Verdana, Geneva, Tahoma,  Helvetica, background-color:inherit;"> 
+   <table border="1" cellpadding="2" cellspacing="0" style="font-size:14px;color:#313131;"> 
+    <tbody> 
+     <tr> 
+      <th style="border:1px solid #999999;background-color:#EEEEEE;"> S.N. </th> 
+      <th style="border:1px solid #999999;background-color:#EEEEEE;text-align:center;"> 
+       <div style="background-color:inherit;">
+         按钮和说明 
+       </div> </th> 
+     </tr> 
+     <tr> 
+      <td style="border:1px solid #999999;background-color:inherit;"> 1 </td> 
+      <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>wx.OK</b> </p> 
+       <div style="background-color:inherit;">
+         显示OK按钮 
+       </div> </td> 
+     </tr> 
+     <tr> 
+      <td style="border:1px solid #999999;background-color:inherit;"> 2 </td> 
+      <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>wx.CANCEL</b> </p> 
+       <div style="background-color:inherit;">
+         显示取消(Cancel)按钮 
+       </div> </td> 
+     </tr> 
+     <tr> 
+      <td style="border:1px solid #999999;background-color:inherit;"> 3 </td> 
+      <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>wx.YES_NO</b> </p> 
+       <div style="background-color:inherit;">
+         显示“是”，“否”按钮 
+       </div> </td> 
+     </tr> 
+     <tr> 
+      <td style="border:1px solid #999999;background-color:inherit;"> 4 </td> 
+      <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>wx.YES_DEFAULT</b> </p> 
+       <div style="background-color:inherit;">
+         使Yes按钮为默认 
+       </div> </td> 
+     </tr> 
+     <tr> 
+      <td style="border:1px solid #999999;background-color:inherit;"> 5 </td> 
+      <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>wx.NO_DEFAULT</b> </p> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <span style="color:#313131;font-family:Verdana, Geneva, Tahoma,  Helvetica, font-size:14px;">使No按钮为默认</span> </p> </td> 
+     </tr> 
+     <tr> 
+      <td style="border:1px solid #999999;background-color:inherit;"> 6 </td> 
+      <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>wx.ICON_EXCLAMATION</b> </p> 
+       <div style="background-color:inherit;">
+         显示警告图标 
+       </div> </td> 
+     </tr> 
+     <tr> 
+      <td style="border:1px solid #999999;background-color:inherit;"> 7 </td> 
+      <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>wx.ICON_ERROR</b> </p> 
+       <div style="background-color:inherit;">
+         显示错误图标 
+       </div> </td> 
+     </tr> 
+     <tr> 
+      <td style="border:1px solid #999999;background-color:inherit;"> 8 </td> 
+      <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>wx.ICON_HAND</b> </p> 
+       <div style="background-color:inherit;">
+         同wx.ICON_ERROR 
+       </div> </td> 
+     </tr> 
+     <tr> 
+      <td style="border:1px solid #999999;background-color:inherit;"> 9 </td> 
+      <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>wx.ICON_INFORMATION</b> </p> 
+       <div style="background-color:inherit;">
+         显示一个信息图标 
+       </div> </td> 
+     </tr> 
+     <tr> 
+      <td style="border:1px solid #999999;background-color:inherit;"> 10 </td> 
+      <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>wx.ICON_QUESTION</b> </p> 
+       <div style="background-color:inherit;">
+         显示一个问题图标 
+       </div> </td> 
+     </tr> 
+    </tbody> 
+   </table> 
+  </div> 
+  <h2> MessageDialog </h2> 
+  <div>
+    此声明使用下面的构造&nbsp;- 
+  </div> 
+  <pre>wx.MessageDialog(parent, message, caption, style, pos)&nbsp;</pre> 
+  <p style="text-align:justify;"> 一个或多个消息参数要显示文本的行，文字说明显示在标题栏。默认style参数是wx.OK|&nbsp;wx.ECNRE。&nbsp;其他样式style参数允许消息框进行定制。 </p> 
+  <div>
+    wx.MessageBox是一个方便的功能，使用MessageDialog构建代替消息框。 
+  </div> 
+  <h3> 实例 </h3> 
+  <p style="text-align:justify;"> 下面给出的是对话的模式和无模式的行为简单的演示。父窗口是wx.Frame对象带有两个按钮。Click事件的第一个按钮将显示在模态的方式的对话框。因此，防止父窗口上的任何操作，直到对话框关闭。第二个按钮，将显示一个无模式对话框，这并不妨碍访问父窗口。第三个按钮会显示一个消息框。 </p> 
+  <div>
+    整个代码如下&nbsp;- 
+  </div> 
+  <pre>import wx
+  
+class MyDialog(wx.Dialog): 
+   def __init__(self, parent, title): 
+      super(MyDialog, self).__init__(parent, title = title, size = (250,150)) 
+      panel = wx.Panel(self) 
+      self.btn = wx.Button(panel, wx.ID_OK, label = "ok", size = (50,20), pos = (75,50))
+		
+class Mywin(wx.Frame): 
+            
+   def __init__(self, parent, title): 
+      super(Mywin, self).__init__(parent, title = title, size = (250,150))  
+      self.InitUI() 
+         
+   def InitUI(self):    
+      panel = wx.Panel(self) 
+      btn = wx.Button(panel, label = "Modal Dialog", pos = (75,10)) 
+      btn1 = wx.Button(panel, label = "Modeless Dialog", pos = (75,40)) 
+      btn2 = wx.Button(panel, label = "MessageBox", pos = (75,70)) 
+      btn.Bind(wx.EVT_BUTTON, self.OnModal)
+		
+      a = btn1.Bind(wx.EVT_BUTTON, self.OnModeless) 
+      print a 
+      btn2.Bind(wx.EVT_BUTTON, self.Onmsgbox) 
+      self.Centre() 
+      self.Show(True) 
+		
+   def OnModal(self, event): 
+      a = MyDialog(self, "Dialog").ShowModal() 
+      print a 
+		
+   def OnModeless(self, event): 
+      a = MyDialog(self, "Dialog").Show()
+		
+   def Onmsgbox(self, event): 
+      wx.MessageBox("This is a Message Box", "Message" ,wx.OK | wx.ICON_INFORMATION)  
+		
+ex  =  wx.App() 
+Mywin(None,'Dialog Demo - www.yiibai.com') 
+ex.MainLoop()</pre> 
+  <div>
+    上面的代码产生下面的输出&nbsp;- 
+  </div> 
+  <img src="file://E:/data/youdao/qq24B39E2329F08D9F4C3146A571A415EF/a97a41f6dd4249c6bb94f8e059267076/clipboard.png"> 
+ </div> 
+ <div> 
+  <img src="file://E:/data/youdao/qq24B39E2329F08D9F4C3146A571A415EF/31826ce3a591429984d88d816c7282c8/clipboard.png"> 
+ </div> 
+ <p> <img src="/uploads/tutorial/20151207/1-15120H1144V20.png" alt=""><br> <br> <img src="/uploads/tutorial/20151207/1-15120H1150G61.png" alt=""> </p> 
+ <h2> wx.TextEntryDialog </h2> 
+ <div>
+   这个类的对象显示一个文本字段，可定制的标签，提示用户输入以及两个按钮使用预定义样式的对话框。 
+ </div> 
+ <div>
+   虽然这个对话框要求一行输入，文本框可以通过使用TextCtrl风格，如密码和多进行定制。 
+ </div> 
+ <div>
+   文本字段收集内容，当用户点击OK按钮返回相应值。TextEntryDialog构造如下&nbsp;- 
+ </div> 
+ <pre>wx.TextEntryDialog(parent, id, message, caption, value, style, pos)&nbsp;</pre> 
+ <p style="text-align:justify;"> 在对话窗口传递的消息参数要显示的文字。caption&nbsp;参数是要显示在标题栏的字符串。在文本框中默认字符串值value参数。TextCtrl在对话框可以设置显示密码字符(wx.TE_PASSWORD)和/或多行(wx.TE_MULTILINE)。 </p> 
+ <div>
+   TextEntry 类的其他方法如下列表中 - 
+ </div> 
+ <div style="color:#313131;font-family:Verdana, Geneva, Tahoma,  Helvetica, background-color:inherit;"> 
+  <table border="1" cellpadding="2" cellspacing="0" style="font-size:14px;color:#313131;"> 
+   <tbody> 
+    <tr> 
+     <th style="border:1px solid #999999;background-color:#EEEEEE;"> S.N. </th> 
+     <th style="border:1px solid #999999;background-color:#EEEEEE;text-align:center;"> 
+      <div style="background-color:inherit;">
+        方法和说明 
+      </div> </th> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 1 </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>SetMaxLength()</b> </p> 
+      <div style="background-color:inherit;">
+        设置用户可以输入到文本框
+       <span style="font-family:Verdana, Geneva, Tahoma,  Helvetica, font-size:14px;">最大字符数</span> 
+      </div> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 2 </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>SetValue()</b> </p> 
+      <div style="background-color:inherit;">
+        设置文本框的值编程 
+      </div> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 3 </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>GetValue()</b> </p> 
+      <div style="background-color:inherit;">
+        返回该文本框的内容 
+      </div> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 4 </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>ShowModal()</b> </p> 
+      <div style="background-color:inherit;">
+        显示对话框模态。返回&nbsp;wx.ID_OK&nbsp;如果用户确认输入，以及&nbsp;wx.ID_CANCEL&nbsp;如果对话框被拒绝 
+      </div> </td> 
+    </tr> 
+   </tbody> 
+  </table> 
+ </div> 
+ <h3> 实例 </h3> 
+ <div>
+   在下面的例子中顶层帧示出了按钮和一个只读 TextCtrl 插件。 
+ </div> 
+ <pre>self.text = wx.TextCtrl(pnl, size = (250, 25),style = wx.TE_READONLY) 
+self.btn1 = wx.Button(pnl, label = "Enter Text")</pre> 
+ <div>
+   响应按钮点击并调用&nbsp;OnClick()函数。 
+ </div> 
+ <pre>self.Bind(wx.EVT_BUTTON, self.OnClick, self.btn1)</pre> 
+ <div>
+   OnClick()函数显示一个 TextEntryDialog。 
+ </div> 
+ <pre>dlg = wx.TextEntryDialog(self, 'Enter Your Name','Text Entry Dialog')</pre> 
+ <div>
+   对话框的返回值是 getValue()函数的值，并在顶层框架的TextCtrl对象中显示。 
+ </div> 
+ <pre>if dlg.ShowModal() == wx.ID_OK: 
+   self.text.SetValue("Name entered:"+dlg.GetValue())</pre> 
+ <div>
+   完整的代码如下&nbsp;- 
+ </div> 
+ <pre>import wx 
+ 
+class Mywin(wx.Frame): 
+            
+   def __init__(self, parent, title): 
+      super(Mywin, self).__init__(parent, title = title,size = (300,200))  
+         
+      self.InitUI() 
+         
+   def InitUI(self):    
+      self.count = 0 
+      pnl = wx.Panel(self) 
+      vbox = wx.BoxSizer(wx.VERTICAL) 
+		
+      hbox1 = wx.BoxSizer(wx.HORIZONTAL) 
+      hbox2 = wx.BoxSizer(wx.HORIZONTAL) 
+		
+      self.text = wx.TextCtrl(pnl, size = (250, 25),style = wx.TE_READONLY) 
+      self.btn1 = wx.Button(pnl, label = "Enter Text") 
+      self.Bind(wx.EVT_BUTTON, self.OnClick, self.btn1) 
+		
+      hbox1.Add(self.text, proportion = 1, flag = wx.ALIGN_CENTRE) 
+      hbox2.Add(self.btn1, proportion = 1, flag = wx.RIGHT, border = 10)
+		
+      vbox.Add((0, 30)) 
+      vbox.Add(hbox1, flag = wx.ALIGN_CENTRE) 
+      vbox.Add((0, 20)) 
+      vbox.Add(hbox2, proportion = 1, flag = wx.ALIGN_CENTRE) 
+		
+      pnl.SetSizer(vbox) 
+      self.Centre() 
+      self.Show(True)
+		
+   def OnClick(self, e): 
+      dlg = wx.TextEntryDialog(self, 'Enter Your Name','Text Entry Dialog') 
+		
+      if dlg.ShowModal() == wx.ID_OK: 
+         self.text.SetValue("Name entered:"+dlg.GetValue()) 
+      dlg.Destroy() 
+                                    
+ex = wx.App() 
+Mywin(None,'TextEntry Demo - www.yiibai.com') 
+ex.MainLoop()</pre> 
+ <div>
+   上面的代码产生下面的输出&nbsp;- 
+ </div> 
+ <img src="file://E:/data/youdao/qq24B39E2329F08D9F4C3146A571A415EF/0c326c995d7f4c009d2f3de4b87cf23b/clipboard.png"> 
+ <p> <img src="/uploads/tutorial/20151207/1-15120H11154225.png" alt=""> </p> 
+ <p> <br> </p> 
+ <p> <img src="/uploads/tutorial/20151207/1-15120H112103G.png" alt=""> </p> 
+ <div> 
+  <br> 
+ </div> 
+ <p> <img src="file://E:/data/youdao/qq24B39E2329F08D9F4C3146A571A415EF/70a1a21bdc174fb1a0cc7fd9c3821824/clipboard.png"> </p> 
+ <h2> wx.FileDialog类 </h2> 
+ <p style="text-align:justify;"> 此类表示一个文件选择对话框。它使用户可以浏览文件系统并选择要打开文件或保存。对话框的外观是由操作系统特定的。 </p> 
+ <div>
+   文件滤波器也可以应用到只显示指定扩展名的文件。启动目录和默认的文件名也可以设置。 
+ </div> 
+ <div>
+   FileDialog的构造函数的原型是这样的&nbsp;- 
+ </div>   
+ <pre>wx.FileDialog(parent, message, DefaultDir, DefaultFile, wildcard, style, pos, size)&nbsp;</pre> 
+ <p style="font-family:Verdana, Geneva, Tahoma,  Helvetica, text-align:justify;font-size:15px !important;background-color:inherit;"> <span style="background-color:inherit;font-family:微软雅黑;font-size:14px;line-height:1.5;">该消息表示将要显示的文本。&nbsp;DefaultDir是初始目录。</span><span style="background-color:inherit;font-family:微软雅黑;font-size:14px;line-height:1.5;">一个或多个类型的文件可以被设置为通过通配符参数所表示的文件的过滤器。</span> </p> 
+ <div style="background-color:inherit;">
+   FileDialog定义风格参数&nbsp;- 
+ </div> 
+ <div style="color:#313131;font-family:Verdana, Geneva, Tahoma,  Helvetica, background-color:inherit;"> 
+  <table border="1" cellpadding="2" cellspacing="0" style="font-size:14px;color:#313131;"> 
+   <tbody> 
+    <tr> 
+     <th style="border:1px solid #999999;background-color:#EEEEEE;"> S.N. </th> 
+     <th style="border:1px solid #999999;background-color:#EEEEEE;text-align:center;"> 
+      <div style="background-color:inherit;">
+        参数和说明 
+      </div> </th> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 1 </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>wx.FD_DEFAULT_STYLE</b> </p> 
+      <div style="background-color:inherit;">
+        相当于wxFD_OPEN 
+      </div> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 2 </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>wx.FD_OPEN</b> </p> 
+      <div style="background-color:inherit;">
+        这是一个打开的对话框;该对话框的默认按钮的标签是“打开” 
+      </div> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 3 </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>wx.FD_SAVE</b> </p> 
+      <div style="background-color:inherit;">
+        这是一个保存对话框;该对话框的默认按钮的标签是“保存” 
+      </div> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 4 </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>wx.FD_OVERWRITE_PROMPT</b> </p> 
+      <div style="background-color:inherit;">
+        对于只保存对话框：提示进行确认，如果一个文件将被覆盖 
+      </div> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 5 </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>wx.FD_MULTIPLE</b> </p> 
+      <div style="background-color:inherit;">
+        仅适用于打开的对话框：允许选择多个文件 
+      </div> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 6 </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>wx.FD_CHANGE_DIR</b> </p> 
+      <div style="background-color:inherit;">
+        更改当前工作目录到用户选择的文件是目录 
+      </div> </td> 
+    </tr> 
+   </tbody> 
+  </table> 
+ </div> 
+ <div style="background-color:inherit;">
+   wx.FileDialog类的成员函数&nbsp;- 
+ </div> 
+ <div style="color:#313131;font-family:Verdana, Geneva, Tahoma,  Helvetica, background-color:inherit;"> 
+  <table border="1" cellpadding="2" cellspacing="0" style="font-size:14px;color:#313131;"> 
+   <tbody> 
+    <tr> 
+     <th style="border:1px solid #999999;background-color:#EEEEEE;"> S.N. </th> 
+     <th style="border:1px solid #999999;background-color:#EEEEEE;text-align:center;"> 
+      <div style="background-color:inherit;">
+        函数与说明 
+      </div> </th> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 1 </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>GetDirectory()</b> </p> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> 返回默认目录 </p> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 2 </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>GetFileName()</b> </p> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> 返回默认文件名 </p> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 3 </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>GetPath()</b> </p> 
+      <div style="background-color:inherit;">
+        返回选定文件的完整路径 
+      </div> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 4 </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>SetDirectory()</b> </p> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> 设置默认目录 </p> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 5 </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>SetFilename()</b> </p> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> 设置默认文件 </p> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 6 </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>SetPath()</b> </p> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> 设置文件路径 </p> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 7 </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>ShowModal()</b> </p> 
+      <div style="background-color:inherit;">
+        显示对话框，如果用户单击OK按钮返回wx.ID_OK，否则 wx.ID_CANCEL 
+      </div> </td> 
+    </tr> 
+   </tbody> 
+  </table> 
+ </div> 
+ <h3 style="font-family:Verdana, Geneva, Tahoma,  Helvetica, font-size:1.3em;font-weight:normal;background-color:inherit;"> 实例 </h3> 
+ <div style="background-color:inherit;">
+   在下面的例子中，顶层帧显示按钮和一个多行TextCtrl。 
+ </div> 
+ <pre>self.text = wx.TextCtrl(pnl, size = (-1,200), style = wx.TE_MULTILINE) 
+self.btn1 = wx.Button(pnl, label = "Open a File")</pre> 
+ <div style="background-color:inherit;">
+   EVT_BUTTON事件绑定注册&nbsp;OnClick()函数到按钮。 
+ </div> 
+ <pre>self.Bind(wx.EVT_BUTTON, self.OnClick, self.btn1)&nbsp;</pre> 
+ <p style="font-family:Verdana, Geneva, Tahoma,  Helvetica, text-align:justify;font-size:15px !important;background-color:inherit;"> <span style="background-color:inherit;font-family:微软雅黑;font-size:14px;line-height:1.5;">OnClick()函数显示一个FileDialog的打开模式。</span><span style="background-color:inherit;font-family:微软雅黑;font-size:14px;line-height:1.5;">其选择返回为dlg。通过GetPath()函数获得的选定文件和它的内容显示在父窗口的TextCtrl框。</span> </p> 
+ <pre>def OnClick(self, e): 
+   wildcard = "Text Files (*.txt)|*.txt" 
+   dlg = wx.FileDialog(self, "Choose a file", os.getcwd(), "", wildcard, wx.OPEN) 
+	
+   if dlg.ShowModal() == wx.ID_OK:
+      f = open(dlg.GetPath(), 'r') 
+      with f: 
+         data = f.read() 
+         self.text.SetValue(data) </pre> 
+ <div style="background-color:inherit;">
+   完整的代码如下&nbsp;- 
+ </div> 
+ <pre>import wx 
+import os 
+
+class Mywin(wx.Frame): 
+            
+   def __init__(self, parent, title): 
+      super(Mywin, self).__init__(parent, title = title)  
+         
+      self.InitUI() 
+         
+   def InitUI(self):    
+      self.count = 0 
+      pnl = wx.Panel(self) 
+      vbox = wx.BoxSizer(wx.VERTICAL) 
+      hbox1 = wx.BoxSizer(wx.HORIZONTAL) 
+      hbox2 = wx.BoxSizer(wx.HORIZONTAL) 
+		
+      self.text = wx.TextCtrl(pnl, size = (-1,200),style = wx.TE_MULTILINE) 
+      self.btn1 = wx.Button(pnl, label = "Open a File") 
+      self.Bind(wx.EVT_BUTTON, self.OnClick, self.btn1) 
+		
+      hbox1.Add(self.text, proportion = 1, flag = wx.ALIGN_CENTRE) 
+      hbox2.Add(self.btn1, proportion = 1, flag = wx.RIGHT, border = 10) 
+		
+      vbox.Add(hbox2, proportion = 1, flag = wx.ALIGN_CENTRE) 
+         
+      vbox.Add(hbox1, proportion = 1, flag = wx.EXPAND|wx.ALIGN_CENTRE) 
+         
+      pnl.SetSizer(vbox) 
+      self.Centre() 
+      self.Show(True)   
+		
+   def OnClick(self, e): 
+      wildcard = "Text Files (*.txt)|*.txt" 
+      dlg = wx.FileDialog(self, "Choose a file", os.getcwd(), "", wildcard, wx.OPEN)
+		
+      if dlg.ShowModal() == wx.ID_OK: 
+         f = open(dlg.GetPath(), 'r') 
+			
+         with f: 
+            data = f.read() 
+            self.text.SetValue(data)  
+      dlg.Destroy() 
+                                    
+ex = wx.App() 
+Mywin(None, 'FileDialog Demo - www.yiibai.com') 
+ex.MainLoop()</pre> 
+ <div style="background-color:inherit;">
+   上面的代码产生下面的输出&nbsp;-
+  <br> 
+  <p> <img src="http://www.yiibai.com/uploads/tutorial/20151207/1-15120H10JT06.png" alt=""> </p> 
+  <p> <img src="http://www.yiibai.com/uploads/tutorial/20151207/1-15120H10P5216.png" alt=""><br> <img src="http://www.yiibai.com/uploads/tutorial/20151207/1-15120H10R3317.png" alt=""> </p> 
+  <br> 
+ </div> 
+ <img src="file://E:/data/youdao/qq24B39E2329F08D9F4C3146A571A415EF/3bb8f1425a544e97b7a18badef328d94/clipboard.png">
+ <img src="file://E:/data/youdao/qq24B39E2329F08D9F4C3146A571A415EF/4e5ae36cc58b4eb7b3225952880b98e6/clipboard.png">
+ <img src="file://E:/data/youdao/qq24B39E2329F08D9F4C3146A571A415EF/8da6a8591628463db1d3c11fcd4aff1e/clipboard.png"> 
+ <h2 style="color:#121214;font-family:Verdana, Geneva, Tahoma,  Helvetica, font-size:1.7em;font-weight:normal;background-color:inherit;"> wx.FontDialog 类 </h2> 
+ <p style="font-family:Verdana, Geneva, Tahoma,  Helvetica, text-align:justify;font-size:15px !important;background-color:inherit;"> <span style="background-color:inherit;font-family:微软雅黑;font-size:14px;line-height:1.5;">这个类的对象是一个字体选择对话框。</span><span style="background-color:inherit;font-family:微软雅黑;font-size:14px;line-height:1.5;">这个对话框的外观也为操作系统特有的。属性，例如名称，大小，权重等。</span><span style="background-color:inherit;font-family:微软雅黑;font-size:14px;line-height:1.5;">所选字体的形式返回作为此对话框的返回值。</span> </p> 
+ <div style="background-color:inherit;">
+   需要这种类构造Fontdata参数用于初始化这些属性。 
+ </div> 
+ <pre>wx.FontDialog(parent, data)</pre> 
+ <div style="background-color:inherit;">
+   此类的GetFontData()方法包含所选字体的参数。 
+ </div> 
+ <div style="background-color:inherit;">
+   下面的代码展示了如何使用FontDialog类的有一个按钮和一个标签(静态文本对象)。 
+ </div> 
+ <pre>self.text = wx.StaticText(pnl, label = "hello") 
+self.btn1 = wx.Button(pnl, label = "Choose Font")</pre> 
+ <div style="background-color:inherit;">
+   单击时按钮触发 OnClick()函数处理事件。 
+ </div> 
+ <pre>def OnClick(self, e): 
+   dlg = wx.FontDialog(self,wx.FontData()) 
+	
+   if dlg.ShowModal() == wx.ID_OK: 
+      data = dlg.GetFontData() 
+      font = data.GetChosenFont() 
+      self.text.SetFont(font) 
+		
+   dlg.Destroy()</pre> 
+ <div style="background-color:inherit;">
+   选择字体，然后应用到标签的文本。 
+ </div> 
+ <div style="background-color:inherit;"> 
+  <span style="background-color:inherit;line-height:1.5;">FileDialog-2.py&nbsp;</span>完整的代码如下&nbsp;- 
+ </div> 
+ <pre>import wx 
+import os 
+
+class Mywin(wx.Frame): 
+            
+   def __init__(self, parent, title): 
+      super(Mywin, self).__init__(parent, title = title, size = (400, 300))  
+         
+      self.InitUI() 
+         
+   def InitUI(self):    
+      self.count = 0 
+      pnl = wx.Panel(self) 
+		
+      vbox = wx.BoxSizer(wx.VERTICAL) 
+      hbox1 = wx.BoxSizer(wx.HORIZONTAL) 
+      hbox2 = wx.BoxSizer(wx.HORIZONTAL)
+		
+      self.text = wx.StaticText(pnl, label = "hello") 
+      self.btn1 = wx.Button(pnl, label = "Choose Font")
+      self.Bind(wx.EVT_BUTTON, self.OnClick, self.btn1) 
+		
+      hbox1.Add(self.text, proportion = 1, flag = wx.ALIGN_CENTRE) 
+      hbox2.Add(self.btn1, proportion = 1, flag = wx.ALIGN_CENTRE, border = 10) 
+		
+      vbox.Add(hbox2, flag = wx.ALIGN_CENTRE) 
+         
+      vbox.Add(hbox1, proportion = 1, flag = wx.ALIGN_CENTRE) 
+         
+      pnl.SetSizer(vbox) 
+      self.Centre() 
+      self.Show(True) 
+      
+   def OnClick(self, e): 
+      dlg = wx.FontDialog(self,wx.FontData()) 
+		
+      if dlg.ShowModal() == wx.ID_OK: 
+         data = dlg.GetFontData() 
+         font = data.GetChosenFont() 
+         self.text.SetFont(font)
+			
+      dlg.Destroy() 
+		
+ex = wx.App() 
+Mywin(None,'FileDialog Demo - www.yiibai.com') 
+ex.MainLoop()</pre> 
+ <p style="background-color:inherit;"> 上面的代码产生下面的输出&nbsp;- </p> 
+ <p style="background-color:inherit;"> <img src="/uploads/tutorial/20151207/1-15120H11244113.png" alt=""> </p> 
+ <p style="background-color:inherit;"> <img src="/uploads/tutorial/20151207/1-15120H1130UK.png" alt=""> </p> 
+ <img src="file://E:/data/youdao/qq24B39E2329F08D9F4C3146A571A415EF/e96f243ecb79480bb22c846e72c1e08c/clipboard.png"> 
+ <p> <br> </p> 
+ <div style="font-family:微软雅黑;font-size:14px;background-color:#FFFFFF;"> 
+  <img src="file://E:/data/youdao/qq24B39E2329F08D9F4C3146A571A415EF/94ce3114d2e54a8590a71b853ffeba41/clipboard.png"> 
+ </div>
+ <br>      
+</div></body></html>

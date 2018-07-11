@@ -1,0 +1,205 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Spring MVC错误处理</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>以下示例显示如何在使用<strong>Spring Web MVC</strong>框架的表单中使用错误处理和验证器。首先使用Eclipse IDE来创建一个WEB工程，实现一个输入用户信息提交验证提示的功能。并按照以下步骤使用<strong>Spring Web Framework</strong>开发基于动态表单的Web应用程序：</p> 
+ <ol> 
+  <li>创建一个名称为 <strong>ErrorHandling</strong> 的动态WEB项目。</li>
+  <li>在 <code>com.yiibai.springmvc</code> 包下创建三个Java类<code>Student</code>，<code>StudentController</code>和<code>StudentValidator</code>。</li>
+  <li>在<code>jsp</code>子文件夹下创建两个视图文件：<code>addStudent.jsp</code>，<code>result.jsp</code>。</li>
+  <li>最后一步是创建所有源和配置文件的内容并运行应用程序，详细如下所述。</li>
+ </ol> 
+ <p>完整的项目文件目录结构如下所示 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201701/2001/715090157_80956.png" alt=""></p> 
+ <p><strong>Student.java</strong> 的代码如下所示 -</p> 
+ <pre><code class="lang-java">package com.yiibai.springmvc;
+
+public class Student {
+   private Integer age;
+   private String name;
+   private Integer id;
+
+   public void setAge(Integer age) {
+      this.age = age;
+   }
+   public Integer getAge() {
+      return age;
+   }
+
+   public void setName(String name) {
+      this.name = name;
+   }
+   public String getName() {
+      return name;
+   }
+
+   public void setId(Integer id) {
+      this.id = id;
+   }
+   public Integer getId() {
+      return id;
+   }
+}
+</code></pre> 
+ <p><strong>StudentValidator.java</strong> 的代码如下所示 -</p> 
+ <pre><code class="lang-java">package com.yiibai.springmvc;
+
+import org.springframework.validation.Errors;
+import org.springframework.validation.ValidationUtils;
+import org.springframework.validation.Validator;
+
+public class StudentValidator implements Validator {
+
+   @Override
+   public boolean supports(Class&lt;?&gt; clazz) {
+      return Student.class.isAssignableFrom(clazz);
+   }
+
+   @Override
+   public void validate(Object target, Errors errors) {        
+      ValidationUtils.rejectIfEmptyOrWhitespace(errors, 
+         "name", "required.name","Field name is required.");
+   }
+}
+</code></pre> 
+ <p><strong>StudentController.java</strong> 的代码如下所示 -</p> 
+ <pre><code class="lang-java">package com.yiibai.springmvc;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.Validator;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
+
+@Controller
+public class StudentController {
+
+   @Autowired
+   @Qualifier("studentValidator")
+   private Validator validator;
+
+   @InitBinder
+   private void initBinder(WebDataBinder binder) {
+      binder.setValidator(validator);
+   }
+
+   @RequestMapping(value = "/addStudent", method = RequestMethod.GET)
+   public ModelAndView student() {
+      return new ModelAndView("addStudent", "command", new Student());
+   }
+
+   @ModelAttribute("student")
+   public Student createStudentModel() {    
+      return new Student();
+   }
+
+   @RequestMapping(value = "/addStudent", method = RequestMethod.POST)
+   public String addStudent(@ModelAttribute("student") @Validated Student student, 
+      BindingResult bindingResult, Model model) {
+
+      if (bindingResult.hasErrors()) {
+         return "addStudent";
+      }
+      model.addAttribute("name", student.getName());
+      model.addAttribute("age", student.getAge());
+      model.addAttribute("id", student.getId());
+
+      return "result";
+   }
+}
+</code></pre> 
+ <p>这里的第一个服务方法<code>student()</code>，我们已经在<code>ModelAndView</code>对象中传递了一个名称为“<code>command</code>”的空<code>Student</code>对象，因为如果在JSP文件中使用<code>&lt;form:form&gt;</code>标签，<strong>spring</strong>框架需要一个名称为“<code>command</code>”的对象。 所以当调用<code>student()</code>方法时，它返回<code>student.jsp</code>视图。</p> 
+ <p>第二个服务方法<code>addStudent()</code>将根据URL =&gt; <code>ErrorHandling/addStudent</code> 上的POST方法请求时调用。根据提交的信息准备模型对象。 最后从服务方法返回“<code>result</code>”视图，这将呈现<code>result.jsp</code>视图。</p> 
+ <p><strong>addStudent.jsp</strong> 的代码如下所示 -</p> 
+ <pre><code class="lang-html">&lt;%@ page contentType="text/html; charset=UTF-8"%&gt;
+&lt;%@taglib uri="http://www.springframework.org/tags/form" prefix="form"%&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;Spring MVC表单错误处理&lt;/title&gt;
+&lt;/head&gt;
+&lt;style&gt;
+.error {
+    color: #ff0000;
+}
+
+.errorStyle {
+    color: #000;
+    background-color: #ffEEEE;
+    border: 3px solid #ff0000;
+    padding: 8px;
+    margin: 16px;
+}
+&lt;/style&gt;
+&lt;body&gt;
+
+    &lt;h2&gt;学生信息&lt;/h2&gt;
+    &lt;form:form method="POST" action="/ErrorHandling/addStudent"
+        commandName="student"&gt;
+        &lt;form:errors path="*" cssClass="errorStyle" element="div" /&gt;
+        &lt;table&gt;
+            &lt;tr&gt;
+                &lt;td&gt;&lt;form:label path="name"&gt;姓名：&lt;/form:label&gt;&lt;/td&gt;
+                &lt;td&gt;&lt;form:input path="name" /&gt;&lt;/td&gt;
+                &lt;td&gt;&lt;form:errors path="name" cssClass="error" /&gt;&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+                &lt;td&gt;&lt;form:label path="age"&gt;年龄：&lt;/form:label&gt;&lt;/td&gt;
+                &lt;td&gt;&lt;form:input path="age" /&gt;&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+                &lt;td&gt;&lt;form:label path="id"&gt;编号：&lt;/form:label&gt;&lt;/td&gt;
+                &lt;td&gt;&lt;form:input path="id" /&gt;&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+                &lt;td colspan="2"&gt;&lt;input type="submit" value="提交" /&gt;&lt;/td&gt;
+            &lt;/tr&gt;
+        &lt;/table&gt;
+    &lt;/form:form&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>这里使用<code>&lt;form:errors /&gt;</code>标签来呈现HTML隐藏字段域。 例如 - </p>   
+ <pre><code class="lang-html">&lt;form:errors path="*" cssClass="errorblock" element="div" /&gt;
+</code></pre> 
+ <p>它将呈现所有输入验证的错误消息。<br>使用带有<code>path =“name”</code>的<code>&lt;form：errors /&gt;</code>标记来渲染<code>name</code>字段的错误消息。</p> 
+ <pre><code class="lang-html">&lt;form:errors path="name" cssClass="error" /&gt;
+</code></pre> 
+ <p>它将呈现名称字段验证的错误消息。</p> 
+ <p><strong>result.jsp</strong> 的代码如下所示 -</p> 
+ <pre><code class="lang-html">&lt;%@ page contentType="text/html; charset=UTF-8"%&gt;
+&lt;%@taglib uri="http://www.springframework.org/tags/form" prefix="form"%&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;title&gt;Spring MVC表单错误处理&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;h2&gt;Submitted Student Information&lt;/h2&gt;
+   &lt;table&gt;
+    &lt;tr&gt;
+        &lt;td&gt;姓名：&lt;/td&gt;
+        &lt;td&gt;${name}&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+        &lt;td&gt;年龄：&lt;/td&gt;
+        &lt;td&gt;${age}&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+        &lt;td&gt;编号：&lt;/td&gt;
+        &lt;td&gt;${id}&lt;/td&gt;
+    &lt;/tr&gt;
+&lt;/table&gt;  
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>完成创建源和配置文件后，发布应用程序到Tomcat服务器。</p> 
+ <p>现在启动Tomcat服务器，现在尝试访问URL =&gt; <a target="_blank" href="http://localhost:8080/ErrorHandling/addStudent">http://localhost:8080/ErrorHandling/addStudent</a> ，如果<strong>Spring Web</strong>应用程序没有问题，应该看到以下结果：</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201701/2001/911090154_86993.png" alt=""></p> 
+ <p>提交所需信息后，点击提交按钮提交表单。 如果 <strong>Spring Web</strong> 应用程序没有问题，应该看到以下结果：</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201701/2001/183090156_51865.png" alt=""></p>
+ <br>      
+</div></body></html>

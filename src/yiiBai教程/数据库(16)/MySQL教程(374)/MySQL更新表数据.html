@@ -1,0 +1,159 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">MySQL更新表数据</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>更新数据是使用数据库时最重要的任务之一。 在本教程中，您将学习如何使用MySQL <code>UPDATE</code>语句来更新表中的数据。</p> 
+ <h2 id="h2-1-mysql-update-"><a name="1. MySQL UPDATE语句简介" class="reference-link"></a><span class="header-link octicon octicon-link"></span>1. MySQL UPDATE语句简介</h2>
+ <p>我们使用<code>UPDATE</code>语句来更新表中的现有数据。也可以使用<code>UPDATE</code>语句来更改表中单个行，一组行或所有行的列值。</p> 
+ <p>下面说明了MySQL <code>UPDATE</code>语句的语法：</p> 
+ <pre><code class="lang-sql">UPDATE [LOW_PRIORITY] [IGNORE] table_name 
+SET 
+    column_name1 = expr1,
+    column_name2 = expr2,
+    ...
+WHERE
+    condition;
+</code></pre> 
+ <p>在上面<code>UPDATE</code>语句中：</p> 
+ <ul> 
+  <li>首先，在<code>UPDATE</code>关键字后面指定要更新数据的表名。</li>
+  <li>其次，<code>SET</code>子句指定要修改的列和新值。要更新多个列，请使用以逗号分隔的列表。以字面值，表达式或<a target="_blank" href="http://www.yiibai.com/mysql/subquery.html" title="子查询">子查询</a>的形式在每列的赋值中来提供要设置的值。</li>
+  <li>第三，使用<a target="_blank" href="http://www.yiibai.com/mysql/where.html" title="WHERE子句">WHERE子句</a>中的条件指定要更新的行。<code>WHERE</code>子句是可选的。 如果省略<code>WHERE</code>子句，则<code>UPDATE</code>语句将更新表中的所有行。</li>
+ </ul> 
+ <p>请注意，<code>WHERE</code>子句非常重要，所以不应该忘记指定更新的条件。 有时，您可能只想改变一行; 但是，可能会忘记写上<code>WHERE</code>子句，导致意外更新表中的所有行。</p> 
+ <p>MySQL在<code>UPDATE</code>语句中支持两个修饰符。</p> 
+ <ul> 
+  <li><code>LOW_PRIORITY</code>修饰符指示<code>UPDATE</code>语句延迟更新，直到没有从表中读取数据的连接。 <code>LOW_PRIORITY</code>对仅使用表级<a target="_blank" href="http://www.yiibai.com/mysql/table-locking.html" title="锁">锁</a>定的<a target="_blank" href="http://www.yiibai.com/understand-mysql-table-types-innodb-myisam.html" title="存储引擎">存储引擎</a>(例如<em>MyISAM</em>，<em>MERGE</em>，<em>MEMORY</em>)生效。</li>
+  <li>即使发生错误，<em>IGNORE</em>修饰符也可以使<em>UPDATE</em>语句继续更新行。导致错误(如重复键冲突)的行不会更新。</li>
+ </ul> 
+ <h2 id="h2-2-mysql-update-"><a name="2. MySQL UPDATE示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>2. MySQL UPDATE示例</h2>
+ <p>我们使用MySQL<a target="_blank" href="http://www.yiibai.com/mysql/sample-database.html" title="示例数据库(yiibaidb)">示例数据库(yiibaidb)</a>中的一些表来练习使用<code>UPDATE</code>语句。</p> 
+ <p><strong>2.1 MySQL UPDATE一个单列示例</strong></p> 
+ <p>在这个例子中，我们将把 <em>Mary Patterson</em> 的电子邮件更新为新的电子邮件<code><a target="_blank" href="mailto:mary.patterso@yiibai.com">mary.patterso@yiibai.com</a></code>。</p> 
+ <p>首先，为了确保更新电子邮件成功，使用以下<a target="_blank" href="http://www.yiibai.com/mysql/select-statement-query-data.html" title="SELECT语句">SELECT语句</a>从<code>employees</code>表查询<code>Mary</code>的电子邮件：</p> 
+ <pre><code class="lang-sql">SELECT 
+    firstname, lastname, email
+FROM
+    employees
+WHERE
+    employeeNumber = 1056;
+</code></pre> 
+ <p>执行上面的查询语句，得到以下结果 - </p> 
+ <pre><code class="lang-sql">+-----------+-----------+----------------------+
+| firstname | lastname  | email                |
++-----------+-----------+----------------------+
+| Mary      | Patterson | mpatterso@yiibai.com |
++-----------+-----------+----------------------+
+1 row in set
+</code></pre> 
+ <p><strong>第二步</strong>，使用<code>UPDATE</code>语句将<code>Mary</code>的电子邮件更新为新的电子邮件：<code><a target="_blank" href="mailto:mary.new@yiibai.com">mary.new@yiibai.com</a></code>，如下查询所示：</p> 
+ <pre><code class="lang-sql">UPDATE employees 
+SET 
+    email = 'mary.new@yiibai.com'
+WHERE
+    employeeNumber = 1056;
+</code></pre> 
+ <p>因为上面语句中，只想更新一行，所以使用<code>WHERE</code>子句来指定更新的是员工编号<code>1056</code>的行。<code>SET</code>子句将电子邮件列的值设置为新的电子邮件。</p> 
+ <p><strong>第三</strong>，再次执行<code>SELECT</code>语句来验证更改。</p> 
+ <pre><code class="lang-sql">SELECT 
+    firstname, lastname, email
+FROM
+    employees
+WHERE
+    employeeNumber = 1056;
+</code></pre> 
+ <p>再次执行上面的查询语句，得到以下结果 - </p> 
+ <pre><code class="lang-sql">+-----------+-----------+---------------------+
+| firstname | lastname  | email               |
++-----------+-----------+---------------------+
+| Mary      | Patterson | mary.new@yiibai.com |
++-----------+-----------+---------------------+
+1 row in set
+</code></pre> 
+ <p><strong>2.2 MySQL UPDATE多列 </strong></p> 
+ <p>要更新多列中的值，需要在<code>SET</code>子句中指定分配。例如，以下语句更新了员工编号<code>1056</code>的姓氏和电子邮件列：</p> 
+ <pre><code class="lang-sql">UPDATE employees 
+SET 
+    lastname = 'Hill',
+    email = 'mary.hill@yiibai.com'
+WHERE
+    employeeNumber = 1056;
+</code></pre> 
+ <p>在执行上面语句之后，查询员工编号为：<code>1056</code>的记录，如下所示 - </p> 
+ <pre><code class="lang-sql">+-----------+----------+----------------------+
+| firstname | lastname | email                |
++-----------+----------+----------------------+
+| Mary      | Hill     | mary.hill@yiibai.com |
++-----------+----------+----------------------+
+1 row in set
+</code></pre> 
+ <p><strong>2.3 使用SELECT语句的MySQL UPDATE示例</strong></p> 
+ <p>可以使用<code>SELECT</code>语句查询来自其他表的数据来提供给<code>SET</code>子句的值。</p> 
+ <p>例如，在<code>customers</code>表中，有些客户没有任何销售代表。 <code>salesRepEmployeeNumber</code>列的值为<code>NULL</code>，如下所示：</p>   
+ <pre><code class="lang-sql">mysql&gt; SELECT 
+    customername, salesRepEmployeeNumber
+FROM
+    customers
+WHERE
+    salesRepEmployeeNumber IS NULL;
++--------------------------------+------------------------+
+| customername                   | salesRepEmployeeNumber |
++--------------------------------+------------------------+
+| Havel &amp; Zbyszek Co             | NULL                   |
+| Porto Imports Co.              | NULL                   |
+| Asian Shopping Network, Co     | NULL                   |
+| Natrlich Autos                 | NULL                   |
+| ANG Resellers                  | NULL                   |
+| Messner Shopping Network       | NULL                   |
+| Franken Gifts, Co              | NULL                   |
+| BG&amp;E Collectables              | NULL                   |
+| Schuyler Imports               | NULL                   |
+| Der Hund Imports               | NULL                   |
+| Cramer Spezialitten, Ltd       | NULL                   |
+| Asian Treasures, Inc.          | NULL                   |
+| SAR Distributors, Co           | NULL                   |
+| Kommission Auto                | NULL                   |
+| Lisboa Souveniers, Inc         | NULL                   |
+| Stuttgart Collectable Exchange | NULL                   |
+| Feuer Online Stores, Inc       | NULL                   |
+| Warburg Exchange               | NULL                   |
+| Anton Designs, Ltd.            | NULL                   |
+| Mit Vergngen &amp; Co.             | NULL                   |
+| Kremlin Collectables, Co.      | NULL                   |
+| Raanan Stores, Inc             | NULL                   |
++--------------------------------+------------------------+
+22 rows in set
+</code></pre> 
+ <p>我们可以为这些客户提供销售代表和更新。</p> 
+ <p>为此，需要从<code>employees</code>表中随机选择一个职位为<code>Sales Rep</code>的雇员，并将其更新到<code>employees</code>表中。<br>下面的查询语句是从<code>employees</code>表中随机选择一个其职位是<code>Sales Rep</code>的员工。</p> 
+ <pre><code class="lang-sql">SELECT 
+    employeeNumber
+FROM
+    employees
+WHERE
+    jobtitle = 'Sales Rep'
+ORDER BY RAND()
+LIMIT 1;
+</code></pre> 
+ <p>要更新<code>customers</code>表中的销售代表员工编号(<code>employeeNumber</code>)列，我们将上面的查询放在<code>UPDATE</code>语句的<code>SET</code>子句中，如下所示：</p> 
+ <pre><code class="lang-sql">UPDATE customers 
+SET 
+    salesRepEmployeeNumber = (SELECT 
+            employeeNumber
+        FROM
+            employees
+        WHERE
+            jobtitle = 'Sales Rep'
+        LIMIT 1)
+WHERE
+    salesRepEmployeeNumber IS NULL;
+</code></pre> 
+ <p>如果在执行上面更新语句后，查询<code>customers</code>表中的数据，将看到每个客户都有一个销售代表。 换句话说，以下查询不返回任何行数据。</p> 
+ <pre><code class="lang-sql">SELECT 
+     salesRepEmployeeNumber
+FROM
+    customers
+WHERE
+    salesRepEmployeeNumber IS NULL;
+`
+</code></pre> 
+ <p>在本教程中，您已经学会了如何使用MySQL <code>UPDATE</code>语句来更新数据库表中的数据。</p>
+ <br>      
+</div></body></html>

@@ -1,0 +1,67 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">PHP上传文件</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>在PHP中，只需要通过几行代码，就能完成上传单个和多个文件的处理。</p> 
+ <p>PHP文件上传功能允许上传二进制和文本文件。 此外，您可以通过PHP身份验证和文件操作功能完全控制要上传的文件。</p> 
+ <h2 id="h2-php-_files"><a name="PHP $_FILES" class="reference-link"></a><span class="header-link octicon octicon-link"></span>PHP $_FILES</h2>
+ <p>PHP全局<code>$_FILES</code>包含文件的所有信息。 在<code>$_FILES</code>全局变量的帮助下，我们可以得到文件名，文件类型，文件大小，临时文件名和与文件相关的错误。</p> 
+ <p>这里，我们假设文件名是<code>filename</code>。请参考下表 -</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>变量名称</th> 
+    <th>描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td><code>$_FILES['filename']['name']</code></td> 
+    <td>返回文件名称</td> 
+   </tr> 
+   <tr> 
+    <td><code>$_FILES['filename']['type']</code></td> 
+    <td>返回文件的MIME类型</td> 
+   </tr> 
+   <tr> 
+    <td><code>$_FILES['filename']['size']</code></td> 
+    <td>返回文件的大小(以字节为单位)</td> 
+   </tr> 
+   <tr> 
+    <td><code>$_FILES['filename']['tmp_name']</code></td> 
+    <td>返回存储在服务器上的文件的临时文件名。</td> 
+   </tr> 
+   <tr> 
+    <td><code>$_FILES['filename']['error']</code></td> 
+    <td>返回与此文件相关联的错误代码。</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h2 id="h2-move_uploaded_file-"><a name="move_uploaded_file()函数" class="reference-link"></a><span class="header-link octicon octicon-link"></span>move_uploaded_file()函数</h2>
+ <p><code>move_uploaded_file()</code>函数将上传的文件移动到新位置。 <code>move_uploaded_file()</code>函数在内部检查文件是否通过<code>POST</code>请求上传。 如果文件是通过<code>POST</code>请求上传的，它将移动文件。</p> 
+ <p><strong>语法</strong></p> 
+ <pre><code class="lang-php">bool move_uploaded_file ( string $filename , string $destination )
+</code></pre> 
+ <h2 id="h2-php-"><a name="PHP文件上传示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>PHP文件上传示例</h2>
+ <p><em>文件：uploadform.html</em></p>   
+ <pre><code class="lang-php">&lt;form action="uploader.php" method="post" enctype="multipart/form-data"&gt;  
+    选择上传的文件:  
+    &lt;input type="file" name="fileToUpload"/&gt;  
+    &lt;input type="submit" value="Upload Image" name="submit"/&gt;  
+&lt;/form&gt;
+</code></pre> 
+ <blockquote> 
+  <p>注意：上面代码中，一定要在 <code>&lt;form&gt;</code> 标签中添加 <code>enctype="multipart/form-data"</code>属性，否则PHP代码无法获取上传的文件内容。</p> 
+ </blockquote> 
+ <p><em>文件：uploader.php</em></p> 
+ <pre><code class="lang-php">&lt;?php  
+$target_path = "D:/";  
+$target_path = $target_path.basename( $_FILES['fileToUpload']['name']);   
+
+if(move_uploaded_file($_FILES['fileToUpload']['tmp_name'], $target_path)) {  
+    echo "File uploaded successfully!";  
+} else{  
+    echo "Sorry, file not uploaded, please try again!";  
+}  
+?&gt;
+</code></pre> 
+ <p>上面示例代码执行后，应该能在 <code>D:/</code> 下找到上传的文件。</p>
+ <br>      
+</div></body></html>

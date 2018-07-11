@@ -1,0 +1,111 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Elasticsearch映射</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>映射是存储在索引中的文档的大纲。它定义数据类型，如<code>geo_point</code>或文档和规则中存在的字段的字符串和格式，以控制动态添加的字段的映射。 例如，</p> 
+ <pre><code>POST http://localhost:9200/bankaccountdetails
+</code></pre>
+ <p><strong>请求正文</strong></p> 
+ <pre><code class="lang-json">{
+   "mappings":{
+      "report":{
+         "_all":{
+            "enabled":true
+         },
+
+         "properties":{
+            "name":{ "type":"string"}, "date":{ "type":"date"},
+            "balance":{ "type":"double"}, "liability":{ "type":"double"}
+         }
+      }
+   }
+}
+</code></pre> 
+ <p><strong>响应</strong></p> 
+ <pre><code class="lang-json">{"acknowledged":true}
+</code></pre> 
+ <p><strong>字段数据类型</strong><br>Elasticsearch支持文档中字段的多种不同数据类型。以下数据类型用于在Elasticsearch中存储字段 -</p> 
+ <ul> 
+  <li><strong>核心数据类型</strong> - 这些是几乎所有系统支持的基本数据类型，如整数，长整数，双精度，短整型，字节，双精度，浮点型，字符串，日期，布尔和二进制。</li>
+  <li><strong>复杂数据类型</strong> - 这些数据类型是核心数据类型的组合。类似数组，JSON对象和嵌套数据类型。以下是嵌套数据类型的示例 -</li>
+ </ul> 
+ <pre><code>POST http://localhost:9200/tabletennis/team/1
+</code></pre>
+ <p><strong>请求正文</strong></p> 
+ <pre><code class="lang-json">{
+   "group" : "players",
+   "user" : [
+      {
+         "first" : "dave", "last" : "jones"
+      },
+
+      {
+         "first" : "kevin", "last" : "morris"
+      }
+   ]
+}
+</code></pre> 
+ <p><strong>响应</strong></p> 
+ <pre><code class="lang-json">{
+   "_index":"tabletennis", "_type":"team", "_id":"1", "_version":1, 
+   "_shards":{"total":2, "successful":1, "failed":0}, "created":true
+}
+</code></pre> 
+ <ul> 
+  <li><p><strong>地理数据类型</strong><br>这些数据类型用于定义地理属性。 例如，<code>geo_point</code>用于定义经度和纬度，<code>geo_shape</code>用于定义不同的几何形状，如矩形。</p> </li>
+  <li><p><strong>专用数据类型</strong><br>这些数据类型用于特殊目的，如IPv4(“ip”)接受IP地址，完成数据类型用于支持自动完成建议，<code>token_count</code>用于计算字符串中的令牌数量。</p> </li>
+ </ul> 
+ <h2 id="h2-u6620u5C04u7C7Bu578B"><a name="映射类型" class="reference-link"></a><span class="header-link octicon octicon-link"></span>映射类型</h2>
+ <p>每个索引都具有一个或多个映射类型，用于将索引的文档划分为逻辑组。 映射可以基于以下参数有些不同 -</p> 
+ <ul> 
+  <li><p><strong>元字段</strong><br>这些字段提供有关映射和与其关联的其他对象的信息。 例如<code>_index</code>，<code>_type</code>，<code>_id</code>和<code>_source</code>字段。</p> </li>
+  <li><p><strong>字段</strong><br>不同的映射包含不同数量的字段和具有不同数据类型的字段。</p> </li>
+ </ul> 
+ <h2 id="h2-u52A8u6001u6620u5C04"><a name="动态映射" class="reference-link"></a><span class="header-link octicon octicon-link"></span>动态映射</h2>
+ <p>Elasticsearch为自动创建映射提供了一个用户友好的机制。用户可以将数据直接发布到任何未定义的映射，Elasticsearch将自动创建映射，这称为动态映射。 例如，</p>   
+ <pre><code>POST http://localhost:9200/accountdetails/tansferreport
+</code></pre>
+ <p><strong>请求正文</strong></p> 
+ <pre><code class="lang-json">{
+   "from_acc":"7056443341", "to_acc":"7032460534",
+   "date":"11/1/2016", "amount":10000
+}
+</code></pre> 
+ <p><strong>响应</strong></p> 
+ <pre><code class="lang-json">{
+   "_index":"accountdetails", "_type":"tansferreport",
+   "_id":"AVI3FeH0icjGpNBI4ake", "_version":1,
+   "_shards":{"total":2, "successful":1, "failed":0},
+   "created":true
+}
+</code></pre> 
+ <h2 id="h2-u6620u5C04u53C2u6570"><a name="映射参数" class="reference-link"></a><span class="header-link octicon octicon-link"></span>映射参数</h2>
+ <p>映射参数定义映射的结构，关于字段和关于存储的信息以及如何在搜索时分析映射的数据。 这些是以下映射参数 -</p> 
+ <ul> 
+  <li>analyzer</li>
+  <li>boost</li>
+  <li>coerce</li>
+  <li>copy_to</li>
+  <li>doc_values</li>
+  <li>dynamic</li>
+  <li>enabled</li>
+  <li>fielddata</li>
+  <li>geohash</li>
+  <li>geohash_precision</li>
+  <li>geohash_prefix</li>
+  <li>format</li>
+  <li>ignore_above</li>
+  <li>ignore_malformed</li>
+  <li>include_in_all</li>
+  <li>index_options</li>
+  <li>lat_lon</li>
+  <li>index</li>
+  <li>fields</li>
+  <li>norms</li>
+  <li>null_value</li>
+  <li>position_increment_gap</li>
+  <li>properties</li>
+  <li>search_analyzer</li>
+  <li>similarity</li>
+  <li>store</li>
+  <li>term_vector</li>
+ </ul>
+ <br>      
+</div></body></html>

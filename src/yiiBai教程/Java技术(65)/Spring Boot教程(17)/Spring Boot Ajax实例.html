@@ -1,0 +1,439 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Spring Boot Ajax实例</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>本文将展示如何使用<code>jQuery.ajax</code>将HTML表单请求发送到<code>Spring REST API</code>并返回JSON响应。</p> 
+ <p>使用的工具 ：</p> 
+ <ol> 
+  <li>Spring Boot 1.5.1.RELEASE</li>
+  <li>Spring 4.3.6.RELEASE</li>
+  <li>Maven 3</li>
+  <li>jQuery</li>
+  <li>Bootstrap 3</li>
+ </ol> 
+ <h2 id="h2-1-"><a name="1. 项目结构" class="reference-link"></a><span class="header-link octicon octicon-link"></span>1. 项目结构</h2>
+ <p>创建一个标准的Maven项目：<code>ajax-example</code>，用于演示在Spring Boot中使用Ajax技术，搜索用户信息。其结构如下图所示 -</p> 
+ <h2 id="h2-2-"><a name="2. 项目依赖" class="reference-link"></a><span class="header-link octicon octicon-link"></span>2. 项目依赖</h2>
+ <p><em>文件：pom.xml </em></p> 
+ <pre><code class="lang-xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+    http://maven.apache.org/maven-v4_0_0.xsd"&gt;
+&lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
+
+&lt;groupId&gt;com.yiibai&lt;/groupId&gt;
+&lt;artifactId&gt;ajax-example&lt;/artifactId&gt;
+&lt;packaging&gt;jar&lt;/packaging&gt;
+&lt;version&gt;1.0-SNAPSHOT&lt;/version&gt;
+
+&lt;parent&gt;
+    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-boot-starter-parent&lt;/artifactId&gt;
+    &lt;version&gt;1.5.1.RELEASE&lt;/version&gt;
+&lt;/parent&gt;
+
+&lt;properties&gt;
+    &lt;java.version&gt;1.8&lt;/java.version&gt;
+&lt;/properties&gt;
+
+&lt;dependencies&gt;
+
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-boot-starter-thymeleaf&lt;/artifactId&gt;
+    &lt;/dependency&gt;
+
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-boot-devtools&lt;/artifactId&gt;
+        &lt;optional&gt;true&lt;/optional&gt;
+    &lt;/dependency&gt;
+
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.webjars&lt;/groupId&gt;
+        &lt;artifactId&gt;jquery&lt;/artifactId&gt;
+        &lt;version&gt;2.2.4&lt;/version&gt;
+    &lt;/dependency&gt;
+
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.webjars&lt;/groupId&gt;
+        &lt;artifactId&gt;bootstrap&lt;/artifactId&gt;
+        &lt;version&gt;3.3.7&lt;/version&gt;
+    &lt;/dependency&gt;
+
+&lt;/dependencies&gt;
+
+&lt;build&gt;
+    &lt;plugins&gt;
+        &lt;!-- Package as an executable jar/war --&gt;
+        &lt;plugin&gt;
+            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-boot-maven-plugin&lt;/artifactId&gt;
+        &lt;/plugin&gt;
+    &lt;/plugins&gt;
+&lt;/build&gt;
+&lt;/project&gt;
+</code></pre> 
+ <h2 id="h2-3-spring-rest-api"><a name="3. Spring REST API" class="reference-link"></a><span class="header-link octicon octicon-link"></span>3. Spring REST API</h2>
+ <p><code>REST</code>控制器，接受一个SearchCriteria并返回一个<code>ResponseEntity</code>。</p> 
+ <p>一个正常的Spring Boot依赖和一些<code>webjars</code>资源。<em>文件：SearchController.java</em> 如下所示 -</p> 
+ <pre><code class="lang-java">package com.yiibai.controller;
+
+import com.yiibai.model.AjaxResponseBody;
+import com.yiibai.model.SearchCriteria;
+import com.yiibai.model.User;
+import com.yiibai.services.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.Errors;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+
+import javax.validation.Valid;
+import java.util.List;
+import java.util.stream.Collectors;
+
+@RestController
+public class SearchController {
+
+    UserService userService;
+
+    @Autowired
+    public void setUserService(UserService userService) {
+        this.userService = userService;
+    }
+
+    @PostMapping("/api/search")
+    public ResponseEntity&lt;?&gt; getSearchResultViaAjax(@Valid @RequestBody SearchCriteria search, Errors errors) {
+
+        AjaxResponseBody result = new AjaxResponseBody();
+
+        //If error, just return a 400 bad request, along with the error message
+        if (errors.hasErrors()) {
+
+            result.setMsg(errors.getAllErrors().stream().map(x -&gt; x.getDefaultMessage()).collect(Collectors.joining(",")));
+            return ResponseEntity.badRequest().body(result);
+
+        }
+
+        List&lt;User&gt; users = userService.findByUserNameOrEmail(search.getUsername());
+        if (users.isEmpty()) {
+            result.setMsg("no user found!");
+        } else {
+            result.setMsg("success");
+        }
+        result.setResult(users);
+
+        return ResponseEntity.ok(result);
+    }
+}
+</code></pre> 
+ <p>一些其它的POJO类，它们分别如下所示 -<br><em>文件：AjaxResponseBody.java</em></p> 
+ <pre><code class="lang-java">package com.yiibai.model;
+
+import java.util.List;
+
+public class AjaxResponseBody {
+
+    String msg;
+    List&lt;User&gt; result;
+
+    public String getMsg() {
+        return msg;
+    }
+
+    public void setMsg(String msg) {
+        this.msg = msg;
+    }
+
+    public List&lt;User&gt; getResult() {
+        return result;
+    }
+
+    public void setResult(List&lt;User&gt; result) {
+        this.result = result;
+    }
+}
+</code></pre> 
+ <p><em>文件：User.java</em></p> 
+ <pre><code class="lang-java">package com.yiibai.model;
+
+public class User {
+
+    String username;
+    String password;
+    String email;
+
+    public User(String username, String password, String email) {
+        this.username = username;
+        this.password = password;
+        this.email = email;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", email='" + email + '\'' +
+                '}';
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+}
+</code></pre> 
+ <p><em>验证器类：SearchCriteria.java</em></p> 
+ <pre><code class="lang-java">package com.yiibai.model;
+
+import org.hibernate.validator.constraints.NotBlank;
+
+public class SearchCriteria {
+
+    @NotBlank(message = "username can't empty!")
+    String username;
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+}
+</code></pre> 
+ <p>用于初始化一些用户进行搜索的服务。<em>文件：UserService.java</em> 如下所示 -</p> 
+ <pre><code class="lang-java">package com.yiibai.services;
+
+import com.yiibai.model.User;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.PostConstruct;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Service
+public class UserService {
+
+    private List&lt;User&gt; users;
+
+    // Love Java 8
+    public List&lt;User&gt; findByUserNameOrEmail(String username) {
+
+        List&lt;User&gt; result = users.stream().filter(x -&gt; x.getUsername().equalsIgnoreCase(username)).collect(Collectors.toList());
+
+        return result;
+
+    }
+    /*public List&lt;User&gt; findByUserNameOrEmail(String username, String email) {
+
+        List&lt;User&gt; result = new ArrayList&lt;User&gt;();
+
+        for (User user : users) {
+
+            if ((!StringUtils.isEmpty(username)) &amp;&amp; (!StringUtils.isEmpty(email))) {
+
+                if (username.equals(user.getUsername()) &amp;&amp; email.equals(user.getEmail())) {
+                    result.add(user);
+                    continue;
+                } else {
+                    continue;
+                }
+
+            }
+            if (!StringUtils.isEmpty(username)) {
+                if (username.equals(user.getUsername())) {
+                    result.add(user);
+                    continue;
+                }
+            }
+
+            if (!StringUtils.isEmpty(email)) {
+                if (email.equals(user.getEmail())) {
+                    result.add(user);
+                    continue;
+                }
+            }
+        }
+        return result;
+
+    }*/
+
+    // Init some users for testing
+    @PostConstruct
+    private void iniDataForTesting() {
+        users = new ArrayList&lt;User&gt;();
+        User user1 = new User("maxsu", "password111", "maxsu@yahoo.com");
+        User user2 = new User("yiflow", "password222", "yflow@yahoo.com");
+        User user3 = new User("minaxu", "password333", "minaxu@yahoo.com");
+        User user4 = new User("minalee", "password333", "minalee@yahoo.com");
+        User user5 = new User("yiiflow", "password333", "yiiflow@gmail.com");
+
+        users.add(user1);
+        users.add(user2);
+        users.add(user3);
+        users.add(user4);
+        users.add(user5);
+    }
+}
+</code></pre> 
+ <p>Spring Boot启动器(程序入口)，参考以下代码实现。文件：<em>SpringBootWebApplication.java</em> 如下所示 - </p> 
+ <pre><code class="lang-java">package com.yiibai;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class SpringBootWebApplication {
+
+    public static void main(String[] args) throws Exception {
+        SpringApplication.run(SpringBootWebApplication.class, args);
+    }
+}
+</code></pre> 
+ <h2 id="h2-4-html-jquery-ajax"><a name="4. HTML表单+ jQuery Ajax" class="reference-link"></a><span class="header-link octicon octicon-link"></span>4. HTML表单+ jQuery Ajax</h2>
+ <p>一个简单的HTML表单，用 bootstrap 框架装饰。<br><em>文件：ajax.html</em></p>   
+ <pre><code class="lang-html">&lt;!DOCTYPE html&gt;
+&lt;html xmlns:th="http://www.thymeleaf.org"&gt;
+&lt;head&gt;
+    &lt;title&gt;Spring Boot Ajax实例&lt;/title&gt;
+    &lt;meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/&gt;
+
+    &lt;link rel="stylesheet" type="text/css"
+          href="webjars/bootstrap/3.3.7/css/bootstrap.min.css"/&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;nav class="navbar navbar-inverse"&gt;
+    &lt;div class="container"&gt;
+        &lt;div class="navbar-header"&gt;
+            &lt;a class="navbar-brand" href="http://www.yiibai.com"&gt;易百教程&lt;/a&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/nav&gt;
+
+&lt;div class="container" style="min-height: 500px"&gt;
+    &lt;div class="starter-template"&gt;
+        &lt;h1&gt;Spring Boot AJAX 示例&lt;/h1&gt;
+        &lt;div id="feedback"&gt;&lt;/div&gt;
+        &lt;form class="form-horizontal" id="search-form"&gt;
+            &lt;div class="form-group form-group-lg"&gt;
+                &lt;label class="col-sm-2 control-label"&gt;用户名：&lt;/label&gt;
+                &lt;div class="col-sm-10"&gt;
+                    &lt;input type="text" class="form-control" id="username"/&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+
+            &lt;div class="form-group"&gt;
+                &lt;div class="col-sm-offset-2 col-sm-10"&gt;
+                    &lt;button type="submit" id="bth-search"
+                            class="btn btn-primary btn-lg"&gt;搜索
+                    &lt;/button&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+        &lt;/form&gt;
+    &lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="container"&gt;
+    &lt;footer&gt;
+        &lt;p&gt;
+            © &lt;a href="http://www.yiibai.com"&gt;Yiibai.com&lt;/a&gt; 2017
+        &lt;/p&gt;
+    &lt;/footer&gt;
+&lt;/div&gt;
+&lt;script type="text/javascript"
+        src="webjars/jquery/2.2.4/jquery.min.js"&gt;&lt;/script&gt;
+&lt;script type="text/javascript" src="js/main.js"&gt;&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>获取HTML表单，并通过<code>JSON.stringify</code>将搜索条件转换为JSON格式，并通过<code>jQuery.ajax</code>发送POST请求。<br>文件：<em>main.js</em> 如下所示 -</p> 
+ <pre><code class="lang-js">$(document).ready(function () {
+    $("#search-form").submit(function (event) {
+        //stop submit the form, we will post it manually.
+        event.preventDefault();
+        fire_ajax_submit();
+    });
+
+});
+
+function fire_ajax_submit() {
+    var search = {}
+    search["username"] = $("#username").val();
+    //search["email"] = $("#email").val();
+    $("#btn-search").prop("disabled", true);
+    $.ajax({
+        type: "POST",
+        contentType: "application/json",
+        url: "/api/search",
+        data: JSON.stringify(search),
+        dataType: 'json',
+        cache: false,
+        timeout: 600000,
+        success: function (data) {
+            var json = "&lt;h4&gt;Ajax Response&lt;/h4&gt;&lt;pre&gt;"
+                + JSON.stringify(data, null, 4) + "&lt;/pre&gt;";
+            $('#feedback').html(json);
+            console.log("SUCCESS : ", data);
+            $("#btn-search").prop("disabled", false);
+        },
+        error: function (e) {
+            var json = "&lt;h4&gt;Ajax Response&lt;/h4&gt;&lt;pre&gt;"
+                + e.responseText + "&lt;/pre&gt;";
+            $('#feedback').html(json);
+            console.log("ERROR : ", e);
+            $("#btn-search").prop("disabled", false);
+        }
+    });
+}
+</code></pre> 
+ <h2 id="h2-5-"><a name="5. 运行示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>5. 运行示例</h2>
+ <p>启动 <strong>Spring Boot</strong> 运行项目并测试结果。打开终端，进入到项目目录下(pom.xml文件所在目录)，执行以下命令 -</p> 
+ <pre><code>F:\worksp\springboot\ajax-example&gt; mvn spring-boot:run
+... ...
+02:57:41,425 |-INFO in ch.qos.logback.core.joran.action.AppenderRefAction - Attaching appender named [STDOUT] to Logger[ROOT]
+02:57:41,425 |-INFO in ch.qos.logback.classic.joran.action.ConfigurationAction - End of configuration.
+02:57:41,425 |-INFO in ch.qos.logback.classic.joran.JoranConfigurator@7cf10a6f - Registering current configuration as safe fallback point
+
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+::Spring Boot::       (v1.5.1.RELEASE)
+
+2017-03-28 02:57:42 INFO  com.yiibai.SpringBootWebApplication - Starting SpringBootWebApplication on MY-PC with PID 7656 (F:\worksp\springboot\ajax-example\target\classes started by Administrator in F:\worksp\springboot\ajax-example)
+2017-03-28 02:57:42 DEBUG com.yiibai.SpringBootWebApplication - Running with Spring Boot v1.5.1.RELEASE, Spring v4.3.6.RELEASE
+2017-03-28 02:57:42 INFO  com.yiibai.SpringBootWebApplication - No active profile set, falling back to default profiles: default
+2017-03-28 02:57:46 INFO  com.yiibai.SpringBootWebApplication - Started SpringBootWebApplication in 5.007 seconds (JVM running for 6.084)
+</code></pre>
+ <p>打开浏览器，访问以下地址：<a target="_blank" href="http://localhost:8080/">http://localhost:8080/</a> ， 应该会看到如下页面 -<br><img src="http://www.yiibai.com/uploads/images/201703/2803/915140359_95739.png" alt=""></p> 
+ <p>如果没有输入用户名，直接点击“<strong>搜索</strong>”，那么应该会看到以下结果 -<br><img src="http://www.yiibai.com/uploads/images/201703/2803/601150301_81615.png" alt=""></p> 
+ <p>如果输入一个存在的用户名:<code>maxsu</code>，直接点击“<strong>搜索</strong>”，那么应该会看到以下结果 -<br><img src="http://www.yiibai.com/uploads/images/201703/2803/479150302_72276.png" alt=""></p> 
+ <h2 id="h2-6-"><a name="6. 下载示例代码" class="reference-link"></a><span class="header-link octicon octicon-link"></span>6. 下载示例代码</h2>
+ <p>要下载代码，请参考下载页面。</p>
+ <br>      
+</div></body></html>

@@ -1,0 +1,111 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">JUnit注解</h1><div style="width:100%;float:left;" class="article-content">   
+ <p> 在本节中，我们将提到支持在JUnit4基本注释，下表列出了这些注释的概括： </p> 
+ <table border="1" cellpadding="2" cellspacing="0" style="font-size:15px;color:#333333;'Bitstream Vera Sans', Helvetica, Verdana, background-color:#F9F9F9;"> 
+  <tbody> 
+   <tr> 
+    <th style="border:1px solid #999999;background-color:#DEDEDE;color:#555555;font-family:Georgia, 'Times New Roman', 'Bitstream Charter', Times, serif;font-size:14px;font-weight:normal;"> <strong>注解</strong> </th> 
+    <th style="border:1px solid #999999;background-color:#DEDEDE;color:#555555;font-family:Georgia, 'Times New Roman', 'Bitstream Charter', Times, serif;font-size:14px;font-weight:normal;"> <strong>描述</strong> </th> 
+   </tr> 
+   <tr> 
+    <td style="border:1px solid #999999;color:#555555;background-color:inherit;"> <strong>@Test</strong><br> public void method() </td> 
+    <td style="border:1px solid #999999;color:#555555;background-color:inherit;"> 测试注释指示该公共无效方法它所附着可以作为一个测试用例。 </td> 
+   </tr> 
+   <tr> 
+    <td style="border:1px solid #999999;color:#555555;background-color:inherit;"> <strong>@Before</strong><br> public void method() </td> 
+    <td style="border:1px solid #999999;color:#555555;background-color:inherit;"> Before注释表示，该方法必须在类中的每个测试之前执行，以便执行测试某些<span style="'Bitstream Vera Sans', Helvetica, Verdana, ">必要的</span>先决条件。 </td> 
+   </tr> 
+   <tr> 
+    <td style="border:1px solid #999999;color:#555555;background-color:inherit;"> <strong>@BeforeClass</strong><br> public static void method() </td> 
+    <td style="border:1px solid #999999;color:#555555;background-color:inherit;"> BeforeClass注释指出这是附着在静态方法必须执行一次并在类的所有测试之前。发生这种情况时一般是测试计算共享配置<span style="'Bitstream Vera Sans', Helvetica, Verdana, ">方法</span>(如连接到数据库)。 </td> 
+   </tr> 
+   <tr> 
+    <td style="border:1px solid #999999;color:#555555;background-color:inherit;"> <strong>@After</strong><br> public void method() </td> 
+    <td style="border:1px solid #999999;color:#555555;background-color:inherit;"> After 注释指示，该方法在执行每项测试后执行(如执行每一个测试后重置某些变量，删除临时变量等) </td> 
+   </tr> 
+   <tr> 
+    <td style="border:1px solid #999999;color:#555555;background-color:inherit;"> <strong>@AfterClass</strong><br> public static void method() </td> 
+    <td style="border:1px solid #999999;color:#555555;background-color:inherit;"> 当需要执行所有的测试在JUnit测试用例类后执行，<span style="'Bitstream Vera Sans', Helvetica, Verdana, ">AfterClass注解可以使用</span>以清理建立方法，(从数据库如断开连接)。注意：附有此批注(类似于BeforeClass)的方法必须定义为静态。 </td> 
+   </tr> 
+   <tr> 
+    <td style="border:1px solid #999999;color:#555555;background-color:inherit;"> <strong>@Ignore</strong><br> public static void method() </td> 
+    <td style="border:1px solid #999999;color:#555555;background-color:inherit;"> 当想暂时禁用特定的测试执行<span style="'Bitstream Vera Sans', Helvetica, Verdana, ">可以使用忽略</span>注释。每个被注解为@Ignore的方法将不被执行。 </td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p style="color:#333333;font-family:Tahoma,  Verdana, font-size:15px;background-color:#FFFFFF;"> &nbsp;<br> 让我们看看一个测试类，在上面提到的一些注解的一个例子。 </p> 
+ <p style="color:#333333;font-family:Tahoma,  Verdana, font-size:15px;background-color:#FFFFFF;"> <em>AnnotationsTest.java</em> </p> 
+ <div style="color:#333333;font-size:15px;font-family:Consolas, 'Bitstream Vera Sans Mono', 'Courier New', Courier, monospace !important;background-color:#FFFFFF;"> 
+  <div style="background-color:inherit;font-size:1em !important;"> 
+   <div style="background-color:inherit;font-size:1em !important;">   
+    <pre>package com.yiibai.junit;
+
+import static org.junit.Assert.*;
+import java.util.*;
+import org.junit.*;
+
+public class AnnotationsTest {
+
+	private ArrayList testList;
+
+	@BeforeClass
+	public static void onceExecutedBeforeAll() {
+		System.out.println("@BeforeClass: onceExecutedBeforeAll");
+	}
+
+	@Before
+	public void executedBeforeEach() {
+		testList = new ArrayList();
+		System.out.println("@Before: executedBeforeEach");
+	}
+
+	@AfterClass
+	public static void onceExecutedAfterAll() {
+		System.out.println("@AfterClass: onceExecutedAfterAll");
+	}
+
+	@After
+	public void executedAfterEach() {
+		testList.clear();
+		System.out.println("@After: executedAfterEach");
+	}
+
+	@Test
+	public void EmptyCollection() {
+		assertTrue(testList.isEmpty());
+		System.out.println("@Test: EmptyArrayList");
+
+	}
+
+	@Test
+	public void OneItemCollection() {
+		testList.add("oneItem");
+		assertEquals(1, testList.size());
+		System.out.println("@Test: OneItemArrayList");
+	}
+
+	@Ignore
+	public void executionIgnored() {
+
+		System.out.println("@Ignore: This execution is ignored");
+	}
+}</pre> 
+   </div> 
+  </div> 
+ </div> 
+ <p> 如果我们运行上面的测试，控制台输出将是以下几点： </p> 
+ <div style="color:#333333;font-size:15px;font-family:Consolas, 'Bitstream Vera Sans Mono', 'Courier New', Courier, monospace !important;background-color:#FFFFFF;"> 
+  <div style="background-color:inherit;font-size:1em !important;"> 
+   <div style="background-color:inherit;font-size:1em !important;"> 
+    <pre>@BeforeClass: onceExecutedBeforeAll
+@Before: executedBeforeEach
+@Test: EmptyArrayList
+@After: executedAfterEach
+@Before: executedBeforeEach
+@Test: OneItemArrayList
+@After: executedAfterEach
+@AfterClass: onceExecutedAfterAll</pre> 
+   </div> 
+  </div> 
+ </div>
+ <br>      
+</div></body></html>

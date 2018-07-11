@@ -1,0 +1,186 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Yii数据提供者</h1><div style="width:100%;float:left;" class="article-content">   
+ <div>
+   Yii提供了一组封装了分页和排序数据提供程序类。数据提供者实现了&nbsp;yii\data\DataProviderInterface&nbsp;接口。它支持检索排序和分页数据。数据提供者通常是窗口小部件一起使用。 
+ </div> 
+ <div> 
+  <div>
+    Yii 包括&nbsp;- 
+  </div> 
+  <ul> 
+   <li> <p style="text-align:justify;"> ActiveDataProvider&nbsp;−&nbsp;使用&nbsp;yii\db\ActiveQuery&nbsp;或&nbsp;yii\db\Query&nbsp;来从数据库中查询数据。 </p> </li> 
+   <li> <p style="text-align:justify;"> SqlDataProvider&nbsp;−&nbsp;执行SQL语句并返回数组形式的数据。 </p> </li> 
+   <li> <p style="text-align:justify;"> ArrayDataProvider&nbsp;−&nbsp;使用一个大的数组，并返回它的一个切片。 </p> </li> 
+  </ul> 
+  <p style="text-align:justify;"> 您可以通过配置分页和排序的属性来定义数据提供者的排序和分页的行为。数据窗口小部件，如：yii\grid\GridView，它有一个&nbsp;dataProvider&nbsp;属性，它需要一个数据提供者实例，并在屏幕上显示的数据。 </p> 
+  <h2> 
+   <div>
+     准备数据库 
+   </div> </h2> 
+  <div>
+    第1步&nbsp;-&nbsp;创建一个新的数据库。数据库可以通过以下两种方式进行。 
+  </div> 
+  <ul> 
+   <li> <p style="text-align:justify;"> 在终端运行&nbsp;mysql -u root –p </p> </li> 
+   <li> <p style="text-align:justify;"> 登录数据后，通过执行&nbsp;CREATE DATABASE mystudy CHARACTER SET utf8 COLLATE utf8_general_ci;&nbsp;创建一个新的数据库; </p> </li> 
+  </ul> 
+  <div>
+    第2步&nbsp;-&nbsp;在&nbsp;config/db.php&nbsp;文件中配置数据库连接。下面的配置可根据自己的实际情况配置。 
+  </div> 
+  <pre>&lt;?php
+   return [
+      'class' =&gt; 'yii\db\Connection',
+      'dsn' =&gt; 'mysql:host = localhost;dbname = mystudy',
+      'username' =&gt; 'root',
+      'password' =&gt; '',
+      'charset' =&gt; 'utf8',
+   ];
+?&gt;</pre> 
+  <p style="font-family:Verdana, Geneva, Tahoma, Arial, Helvetica, sans-serif;text-align:justify;font-size:15px !important;background-color:inherit;"> <b></b> </p> 
+  <p style="text-align:justify;"> 第3步&nbsp;-&nbsp;在项目根文件夹执行：yii migrate/create test_table 。此命令将用于创建管理数据库数据库迁移。&nbsp;migrations文件会出现在项目的根的&nbsp;migrations&nbsp;文件夹中。<br> <img src="/uploads/tutorial/20160602/1-16060223000G33.png" alt=""> </p> 
+  <div>
+    第4步&nbsp;-&nbsp;修改迁移文件（在本示例中生成的是：m160529_014611_test_table.php），并使用以下这些代码。 
+  </div> 
+  <pre>&lt;?php
+   use yii\db\Schema;
+   use yii\db\Migration;
+   class m160529_014611_test_table extends Migration {
+      public function up() {
+         $this-&gt;createTable("user", [
+            "id" =&gt; Schema::TYPE_PK,
+            "name" =&gt; Schema::TYPE_STRING,
+            "email" =&gt; Schema::TYPE_STRING,
+         ]);
+         $this-&gt;batchInsert("user", ["name", "email"], [
+            ["User1", "user11@gmail.com"],
+            ["User2", "user22@gmail.com"],
+            ["User3", "user33@gmail.com"],
+            ["User4", "user44@gmail.com"],
+            ["User5", "user55@gmail.com"],
+            ["User6", "user66@gmail.com"],
+            ["User7", "user77@gmail.com"],
+            ["User8", "user88@gmail.com"],
+            ["User9", "user99@gmail.com"],
+            ["User10", "user1010@gmail.com"],
+            ["User11", "user1111@gmail.com"],
+         ]);
+      }
+      public function down() {
+         //$this-&gt;dropTable('user');
+      }
+   }
+?&gt;</pre> 
+  <div>
+    上述迁移创建用户表，它包含了以下这些字段：id,&nbsp;name,&nbsp;和&nbsp;email。它还增加了一些演示用户帐号。 
+  </div> 
+  <div>
+    第5步&nbsp;-&nbsp;在项目的根目录内运行：&nbsp;yii&nbsp;migrate&nbsp; 来迁移应用到数据库。执行结果如下图所示：
+   <br> 
+  </div> 
+  <img src="/uploads/tutorial/20160602/1-16060223003D21.png" width="628" height="345" title="Yii数据提供者" alt="Yii数据提供者">
+  <br> 
+  <p style="text-align:justify;"> 第6步-现在，我们需要为user表创建模型。为了简便起见，我们将使用GII代码生成工具。在浏览器中打开&nbsp;url:&nbsp;<a target="_blank" href="http://localhost:8080/index.php?r=gii">http://localhost:8080/index.php?r=gii</a>&nbsp;。<br> 然后，点击&nbsp;“Model&nbsp;generator”&nbsp;下的&nbsp;“Start”按钮。&nbsp;填写表名（“user”）和模型类（“MyUser”），单击“Preview”按钮，最后点击&nbsp;“Generate”&nbsp;按钮。 </p> 
+  <img src="/uploads/tutorial/20160602/1-160602230100G9.png" alt="">
+  <br> 
+  <div> 
+   <img src="/uploads/tutorial/20160602/1-160602230125M2.png" alt="">
+   <br> MyUser 文件忆经生成在&nbsp;models&nbsp;目录。 
+  </div> 
+  <h2> 
+   <div>
+     Active数据提供者 
+   </div> </h2> 
+  <div>
+    第1步&nbsp;-&nbsp;创建一个&nbsp;activeDataProvider() 方法在&nbsp;SiteController&nbsp;中。 
+  </div>   
+  <pre>public function actionDataProvider(){
+   $query = MyUser::find();
+   $provider = new ActiveDataProvider([
+      'query' =&gt; $query,
+      'pagination' =&gt; [
+         'pageSize' =&gt; 2,
+      ],
+   ]);
+   // returns an array of users objects
+   $users = $provider-&gt;getModels();
+   var_dump($users);
+}&nbsp;</pre> 
+  <p style="text-align:justify;"> 在上面的代码中，我们定义&nbsp;ActiveDataProvider&nbsp;类的一个实例并显示第一页的用户信息。yii\data\ActiveDataProvider&nbsp;类使用DB应用程序组件作为数据库连接。 </p> 
+  <div>
+    第2步&nbsp;-&nbsp;如果在浏览器中打开URL:&nbsp;
+   <a target="_blank" href="http://localhost:8080/index.php?r=site/data-provider">http://localhost:8080/index.php?r=site/data-provider</a>， 会看到下面的输出。
+   <br> 
+   <img src="/uploads/tutorial/20160602/1-160602230202A7.png" alt="">
+   <br> 
+  </div> 
+  <h2> SQL数据提供者 </h2> 
+  <div>
+    yii\data\SqlDataProvider&nbsp;类是使用原始的SQL语句方式工作的。 
+  </div> 
+  <div>
+    第1步&nbsp;-&nbsp;使用以下这种方式修改&nbsp;DataProvider()&nbsp;方法。 
+  </div> 
+  <pre>public function actionDataProvider() {
+   $count = Yii::$app-&gt;db-&gt;createCommand('SELECT COUNT(*) FROM user')-&gt;queryScalar();
+   $provider = new SqlDataProvider([
+      'sql' =&gt; 'SELECT * FROM user',
+      'totalCount' =&gt; $count,
+      'pagination' =&gt; [
+         'pageSize' =&gt; 5,
+      ],
+      'sort' =&gt; [
+         'attributes' =&gt; [
+            'id',
+            'name',
+            'email',
+         ],
+      ],
+   ]);
+   // returns an array of data rows
+   $users = $provider-&gt;getModels();
+   var_dump($users);
+}</pre> 
+  <div>
+    第2步&nbsp;-&nbsp;在Web浏览器的地址栏输入：
+   <a target="_blank" href="http://localhost:8080/index.php?r=site/data-provider">http://localhost:8080/index.php?r=site/data-provider</a>&nbsp;，会看到下面的输出。
+   <br> 
+   <img src="/uploads/tutorial/20160602/1-160602230222628.png" alt="">
+   <br> 
+  </div> 
+  <h2> 
+   <div>
+     数组数据提供者 
+   </div> </h2> 
+  <div>
+    yii\data\ArrayDataProvider&nbsp;类是使用大数组是最好的方式。此数组中元素可以是&nbsp;DAO&nbsp;的任何查询结果或&nbsp;ActiveRecord&nbsp;的实例。 
+  </div> 
+  <div>
+    第1步&nbsp;-&nbsp;使用以下这种方式修改&nbsp;DataProvider()&nbsp;方法。 
+  </div> 
+  <pre>public function actionDataProvider() {
+   $data = MyUser::find()-&gt;asArray()-&gt;all();
+   $provider = new ArrayDataProvider([
+      'allModels' =&gt; $data,
+      'pagination' =&gt; [
+         'pageSize' =&gt; 3,
+      ],
+      'sort' =&gt; [
+         'attributes' =&gt; ['id', 'name'],
+      ],
+   ]);
+   // get the rows in the currently requested page
+   $users = $provider-&gt;getModels();
+   var_dump($users);
+}</pre> 
+  <div style="background-color:inherit;">
+    第2步&nbsp;-&nbsp;打开网络浏览器并访问地址&nbsp;
+   <a target="_blank" href="http://localhost:8080/index.php?r=site/data-provider">http://localhost:8080/index.php?r=site/data-provider</a>&nbsp;，会看到下面的输出。
+   <br> 
+   <img src="/uploads/tutorial/20160602/1-160602230241L1.png" alt="">
+   <br> 
+  </div> 
+  <div style="background-color:inherit;">
+    请注意，不同于SQL数据提供者和Active数据提供者，数组数据提供程序会加载所有数据到内存中，所以它是效率较低。 
+  </div> 
+ </div>
+ <br>      
+</div></body></html>

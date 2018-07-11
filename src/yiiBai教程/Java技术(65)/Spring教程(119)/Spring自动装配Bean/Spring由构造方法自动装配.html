@@ -1,0 +1,67 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Spring由构造方法自动装配</h1><div style="width:100%;float:left;" class="article-content">   
+ <div> 
+  <div>
+    在Spring中，可以使用“通过构造自动装配”，实际上是按构造函数的参数
+   <a target="_blank" href="http://www.yiibai.com/spring/spring-autowiring-by-type/">类型自动装配</a>。&nbsp;这意味着，如果一个bean的数据类型与其他bean的构造器参数的数据类型是相同的，那么将自动装配。 
+  </div> 
+ </div> 
+ <div> 
+  <div>
+    下面看看Spring构造函数自动装配的一个完整例子。 
+  </div> 
+  <h2> 1. Beans </h2> 
+  <p> 这里有两个 beans, 分别是：developer 和 language </p> 
+  <pre>package com.yiibai.common;
+
+public class Developer {
+	private Language language;
+
+	//autowire by constructor
+	public Developer(Language language) {
+		this.language = language;
+	}
+
+	//...
+
+}</pre> 
+  <pre>package com.yiibai.common;
+
+public class Language {
+	private String name;
+	//...
+}</pre> 
+  <h2> 2. Spring装配 </h2> 
+  <div>
+    通常情况下，你可以通过构造这样自动装配 Bean： 
+  </div> 
+  <pre>&lt;bean id="developer" class="com.yiibai.common.Developer"&gt;
+		&lt;constructor-arg&gt;
+			&lt;ref bean="language" /&gt;
+		&lt;/constructor-arg&gt;
+	&lt;/bean&gt;
+		
+	&lt;bean id="language" class="com.yiibai.common.Language" &gt;
+		&lt;property name="name" value="Java" /&gt;
+	&lt;/bean&gt;</pre> 
+  <p> 输出 </p>   
+  <pre>Developer [language=Language [name=Java]]</pre> 
+  <div>
+    随着自动装配用构造函数启用后，你可以不设置构造器属性。Spring会找到兼容的数据类型，并自动装配它。 
+  </div> 
+  <pre>&lt;bean id="developer" class="com.yiibai.common.Developer" autowire="constructor" /&gt;
+		
+	&lt;bean id="language" class="com.yiibai.common.Language" &gt;
+		&lt;property name="name" value="Java" /&gt;
+	&lt;/bean&gt;</pre> 
+  <p> 输出 </p> 
+  <pre>Developer [language=Language [name=Java]]</pre> 
+  <div style="color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:16px;background-color:inherit;"> 
+   <br> 
+  </div> 
+  <div>
+    下载代码 –&nbsp;&nbsp;
+   <a target="_blank" href="http://pan.baidu.com/s/1c1lKhTA">http://pan.baidu.com/s/1c1lKhTA</a> 
+  </div> 
+ </div>
+ <br>      
+</div></body></html>

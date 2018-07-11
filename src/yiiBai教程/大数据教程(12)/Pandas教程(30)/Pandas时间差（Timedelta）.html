@@ -1,0 +1,80 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Pandas时间差（Timedelta）</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>时间差(Timedelta)是时间上的差异，以不同的单位来表示。例如：日，小时，分钟，秒。它们可以是正值，也可以是负值。<br>可以使用各种参数创建<code>Timedelta</code>对象，如下所示 -</p> 
+ <h2 id="h2-u5B57u7B26u4E32"><a name="字符串" class="reference-link"></a><span class="header-link octicon octicon-link"></span>字符串</h2>
+ <p>通过传递字符串，可以创建一个<code>timedelta</code>对象。参考以下示例代码 - </p> 
+ <pre><code class="lang-python">import pandas as pd
+
+timediff = pd.Timedelta('2 days 2 hours 15 minutes 30 seconds')
+print(timediff)
+</code></pre> 
+ <p>执行上面救命代码，得到以下结果 - </p> 
+ <pre><code class="lang-shell">2 days 02:15:30
+</code></pre> 
+ <h2 id="h2-u6574u6570"><a name="整数" class="reference-link"></a><span class="header-link octicon octicon-link"></span>整数</h2>
+ <p>通过传递一个整数值与指定单位，这样的一个参数也可以用来创建<code>Timedelta</code>对象。</p> 
+ <pre><code class="lang-python">import pandas as pd
+
+timediff = pd.Timedelta(6,unit='h')
+print(timediff)
+</code></pre> 
+ <p>执行上面救命代码，得到以下结果 - </p> 
+ <pre><code class="lang-shell">0 days 06:00:00
+</code></pre> 
+ <h2 id="h2-u6570u636Eu504Fu79FB"><a name="数据偏移" class="reference-link"></a><span class="header-link octicon octicon-link"></span>数据偏移</h2>
+ <p>例如 - 周，天，小时，分钟，秒，毫秒，微秒，纳秒的数据偏移也可用于构建。</p> 
+ <pre><code class="lang-python">import pandas as pd
+
+timediff = pd.Timedelta(days=2)
+print(timediff)
+</code></pre> 
+ <p>执行上面救命代码，得到以下结果 - </p> 
+ <pre><code class="lang-shell">2 days 00:00:00
+</code></pre> 
+ <h2 id="h2-u8FD0u7B97u64CDu4F5C"><a name="运算操作" class="reference-link"></a><span class="header-link octicon octicon-link"></span>运算操作</h2>
+ <p>可以在Series/DataFrames上执行运算操作，并通过在<code>datetime64 [ns]</code>系列或在时间戳上减法操作来构造<code>timedelta64 [ns]</code>系列。参考以下示例代码 - </p> 
+ <pre><code class="lang-python">import pandas as pd
+
+s = pd.Series(pd.date_range('2012-1-1', periods=3, freq='D'))
+td = pd.Series([ pd.Timedelta(days=i) for i in range(3) ])
+df = pd.DataFrame(dict(A = s, B = td))
+print(df)
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 - </p>   
+ <pre><code class="lang-shell">           A      B
+0 2012-01-01 0 days
+1 2012-01-02 1 days
+2 2012-01-03 2 days
+</code></pre> 
+ <h4 id="h4-u76F8u52A0u64CDu4F5C"><a name="相加操作" class="reference-link"></a><span class="header-link octicon octicon-link"></span>相加操作</h4>
+ <pre><code class="lang-python">import pandas as pd
+
+s = pd.Series(pd.date_range('2018-1-1', periods=3, freq='D'))
+td = pd.Series([ pd.Timedelta(days=i) for i in range(3) ])
+df = pd.DataFrame(dict(A = s, B = td))
+df['C']=df['A']+df['B']
+print(df)
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 - </p> 
+ <pre><code class="lang-shell">           A      B          C
+0 2018-01-01 0 days 2018-01-01
+1 2018-01-02 1 days 2018-01-03
+2 2018-01-03 2 days 2018-01-05
+</code></pre> 
+ <h4 id="h4-u76F8u51CFu64CDu4F5C"><a name="相减操作" class="reference-link"></a><span class="header-link octicon octicon-link"></span>相减操作</h4>
+ <pre><code class="lang-python">import pandas as pd
+
+s = pd.Series(pd.date_range('2012-1-1', periods=3, freq='D'))
+td = pd.Series([ pd.Timedelta(days=i) for i in range(3) ])
+df = pd.DataFrame(dict(A = s, B = td))
+df['C']=df['A']+df['B']
+df['D']=df['C']-df['B']
+print(df)
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 - </p> 
+ <pre><code class="lang-shell">           A      B          C          D
+0 2018-01-01 0 days 2018-01-01 2018-01-01
+1 2018-01-02 1 days 2018-01-03 2018-01-02
+2 2018-01-03 2 days 2018-01-05 2018-01-03
+</code></pre>
+ <br>      
+</div></body></html>

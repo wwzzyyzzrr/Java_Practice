@@ -1,0 +1,92 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Cordova加速度传感器</h1><div style="width:100%;float:left;" class="article-content">   
+ <div> 
+  <div>
+    该插件也被称为设备运动。&nbsp;它用来在三个维度来跟踪设备的运动。 
+  </div> 
+ </div> 
+ <div> 
+  <h2> 
+   <div>
+     第1步&nbsp;-&nbsp;安装加速度传感器插件 
+   </div> </h2> 
+  <p style="text-align:justify;"> 我们将用cordova-CLI来安装这个插件。在命令提示符窗口键入下面的代码。 </p> 
+  <pre class="prettyprint lang-bsh">D:\worksp\cordova\CordovaProject&gt;cordova plugin add cordova-plugin-device-motion</pre> 
+  <h2> 
+   <div>
+     第2步&nbsp;-&nbsp;添加按钮 
+   </div> </h2> 
+  <p style="text-align:justify;"> 我们需要做的下一件事就是在 index.html 文件中添加两个按钮。一个将被用于获取当前加速度并其他将观察加速度的变化。 </p> 
+  <pre class="prettyprint lang-html">&lt;body&gt;
+        &lt;div class="app"&gt;
+            &lt;h1&gt;Cordova加速度传感器&lt;/h1&gt;
+            &lt;button id = "getAcceleration"&gt;GET ACCELERATION&lt;/button&gt;
+            &lt;button id = "watchAcceleration"&gt;WATCH ACCELERATION&lt;/button&gt;
+
+        &lt;/div&gt;
+        &lt;script type="text/javascript" src="cordova.js"&gt;&lt;/script&gt;
+        &lt;script type="text/javascript" src="js/index.js"&gt;&lt;/script&gt;
+&lt;/body&gt;</pre> 
+  <h2> 
+   <div>
+     第3步&nbsp;-&nbsp;添加事件监听器 
+   </div> </h2> 
+  <div>
+    将按钮添加到 index.js 中的事件侦听器 onDeviceReady 函数内部(放在前面)。 
+  </div> 
+  <pre>document.getElementById("getAcceleration").addEventListener("click", getAcceleration);
+document.getElementById("watchAcceleration").addEventListener("click", watchAcceleration);</pre> 
+  <h2> 
+   <div>
+     第4步&nbsp;-&nbsp;创建函数 
+   </div> </h2> 
+  <p> 我们将创建两个函数。第一个将被用来获取当前加速度，第二个会看加速度并每隔三秒钟告知我们。我们也通过添加clearWatch&nbsp;setTimeout函数包装停止指定的时间帧之后监视加速度。频率(frequency)参数用于每三秒触发回调函数。 </p> 
+  <pre>function getAcceleration(){
+   navigator.accelerometer.getCurrentAcceleration(accelerometerSuccess, accelerometerError);
+
+   function accelerometerSuccess(acceleration) {
+      alert('Acceleration X: ' + acceleration.x + '\n' +
+         'Acceleration Y: ' + acceleration.y + '\n' +
+         'Acceleration Z: ' + acceleration.z + '\n' +
+         'Timestamp: '      + acceleration.timestamp + '\n');
+   };
+
+   function accelerometerError() {
+      alert('onError!');
+   };
+	
+}
+
+function watchAcceleration(){
+    
+   var accelerometerOptions = {
+      frequency: 3000
+   }
+
+   var watchID = navigator.accelerometer.watchAcceleration(accelerometerSuccess, accelerometerError, accelerometerOptions);
+
+   function accelerometerSuccess(acceleration) {
+      alert('Acceleration X: ' + acceleration.x + '\n' +
+         'Acceleration Y: ' + acceleration.y + '\n' +
+         'Acceleration Z: ' + acceleration.z + '\n' +
+         'Timestamp: '      + acceleration.timestamp + '\n');
+
+      setTimeout(function() {
+         navigator.accelerometer.clearWatch(watchID);
+      }, 10000);
+
+   };
+
+   function accelerometerError() {
+      alert('onError!');
+   };
+	
+}&nbsp;</pre> 
+  <p> 现在，如果我们按GET&nbsp;ACCELERATION按钮将获得当前加速度值。如果我们按WATCH&nbsp;ACCELERATION警告提示将每三秒钟触发。第三警告提示显示后，clearWatch函数将被调用，因为我们设置超时时间为10000毫秒，所以不会得到任何更多的警报。 </p> 
+  <img src="/uploads/tutorial/20160220/1-160220102356103.png" alt="">
+  <br> 
+ </div> 
+ <div style="font-family:微软雅黑;font-size:14px;background-color:#FFFFFF;"> 
+  <br> 
+ </div>
+ <br>      
+</div></body></html>

@@ -1,0 +1,54 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Quartz列出调度器所有作业</h1><div style="width:100%;float:left;" class="article-content">   
+ <p> 下面是两个代码片段展示如何列出所有Quartz的作业。Quartz2 API都发生了很大变化，所以语法和Quartz1.x是不同的</p> 
+ <h4> 1. Quartz 2.2.1 示例</h4> 
+ <div class="wp_syntax" style="color: rgb(60, 60, 60);   font-size: 14px; line-height: 21px;"> 
+  <div class="code"> 
+   <pre class="java" style="padding: 10px; font-size: 13px; color: rgb(51, 51, 51); border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 4px; border-bottom-left-radius: 4px; line-height: 1.5; border-color: rgb(209, 209, 232); margin-bottom: 20px; overflow-x: auto; background-color: rgb(247, 247, 249);">
+Scheduler scheduler <span style="color: rgb(51, 153, 51);">=</span> <span style="color: rgb(0, 0, 0); font-weight: bold;">new</span> StdSchedulerFactory<span style="color: rgb(0, 153, 0);">(</span><span style="color: rgb(0, 153, 0);">)</span>.<span style="color: rgb(0, 102, 51);">getScheduler</span><span style="color: rgb(0, 153, 0);">(</span><span style="color: rgb(0, 153, 0);">)</span><span style="color: rgb(51, 153, 51);">;</span>
+&nbsp;
+   <span style="color: rgb(0, 0, 0); font-weight: bold;">for</span> <span style="color: rgb(0, 153, 0);">(</span><span style="color: rgb(0, 51, 153);">String</span> groupName <span style="color: rgb(51, 153, 51);">:</span> scheduler.<span style="color: rgb(0, 102, 51);">getJobGroupNames</span><span style="color: rgb(0, 153, 0);">(</span><span style="color: rgb(0, 153, 0);">)</span><span style="color: rgb(0, 153, 0);">)</span> <span style="color: rgb(0, 153, 0);">{</span>
+&nbsp;
+     <span style="color: rgb(0, 0, 0); font-weight: bold;">for</span> <span style="color: rgb(0, 153, 0);">(</span>JobKey jobKey <span style="color: rgb(51, 153, 51);">:</span> scheduler.<span style="color: rgb(0, 102, 51);">getJobKeys</span><span style="color: rgb(0, 153, 0);">(</span>GroupMatcher.<span style="color: rgb(0, 102, 51);">jobGroupEquals</span><span style="color: rgb(0, 153, 0);">(</span>groupName<span style="color: rgb(0, 153, 0);">)</span><span style="color: rgb(0, 153, 0);">)</span><span style="color: rgb(0, 153, 0);">)</span> <span style="color: rgb(0, 153, 0);">{</span>
+&nbsp;
+	  <span style="color: rgb(0, 51, 153);">String</span> jobName <span style="color: rgb(51, 153, 51);">=</span> jobKey.<span style="color: rgb(0, 102, 51);">getName</span><span style="color: rgb(0, 153, 0);">(</span><span style="color: rgb(0, 153, 0);">)</span><span style="color: rgb(51, 153, 51);">;</span>
+	  <span style="color: rgb(0, 51, 153);">String</span> jobGroup <span style="color: rgb(51, 153, 51);">=</span> jobKey.<span style="color: rgb(0, 102, 51);">getGroup</span><span style="color: rgb(0, 153, 0);">(</span><span style="color: rgb(0, 153, 0);">)</span><span style="color: rgb(51, 153, 51);">;</span>
+&nbsp;
+	  <span style="color: rgb(102, 102, 102); font-style: italic;">//get job's trigger</span>
+	  List<span style="color: rgb(51, 153, 51);">&lt;</span>Trigger<span style="color: rgb(51, 153, 51);">&gt;</span> triggers <span style="color: rgb(51, 153, 51);">=</span> <span style="color: rgb(0, 153, 0);">(</span>List<span style="color: rgb(51, 153, 51);">&lt;</span>Trigger<span style="color: rgb(51, 153, 51);">&gt;</span><span style="color: rgb(0, 153, 0);">)</span> scheduler.<span style="color: rgb(0, 102, 51);">getTriggersOfJob</span><span style="color: rgb(0, 153, 0);">(</span>jobKey<span style="color: rgb(0, 153, 0);">)</span><span style="color: rgb(51, 153, 51);">;</span>
+	  <span style="color: rgb(0, 51, 153);">Date</span> nextFireTime <span style="color: rgb(51, 153, 51);">=</span> triggers.<span style="color: rgb(0, 102, 51);">get</span><span style="color: rgb(0, 153, 0);">(</span><span style="color: rgb(204, 102, 204);">0</span><span style="color: rgb(0, 153, 0);">)</span>.<span style="color: rgb(0, 102, 51);">getNextFireTime</span><span style="color: rgb(0, 153, 0);">(</span><span style="color: rgb(0, 153, 0);">)</span><span style="color: rgb(51, 153, 51);">;</span> 
+&nbsp;
+		<span style="color: rgb(0, 51, 153);">System</span>.<span style="color: rgb(0, 102, 51);">out</span>.<span style="color: rgb(0, 102, 51);">println</span><span style="color: rgb(0, 153, 0);">(</span><span style="color: rgb(0, 0, 255);">"[jobName] : "</span> <span style="color: rgb(51, 153, 51);">+</span> jobName <span style="color: rgb(51, 153, 51);">+</span> <span style="color: rgb(0, 0, 255);">" [groupName] : "</span>
+			<span style="color: rgb(51, 153, 51);">+</span> jobGroup <span style="color: rgb(51, 153, 51);">+</span> <span style="color: rgb(0, 0, 255);">" - "</span> <span style="color: rgb(51, 153, 51);">+</span> nextFireTime<span style="color: rgb(0, 153, 0);">)</span><span style="color: rgb(51, 153, 51);">;</span>
+&nbsp;
+	  <span style="color: rgb(0, 153, 0);">}</span>
+&nbsp;
+    <span style="color: rgb(0, 153, 0);">}</span></pre> 
+  </div> 
+ </div> 
+ <h4> 2. Quartz 1.8.6 示例</h4> 
+ <div class="wp_syntax" style="color: rgb(60, 60, 60);   font-size: 14px; line-height: 21px;"> 
+  <div class="code"> 
+   <pre class="java" style="padding: 10px; font-size: 13px; color: rgb(51, 51, 51); border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 4px; border-bottom-left-radius: 4px; line-height: 1.5; border-color: rgb(209, 209, 232); margin-bottom: 20px; overflow-x: auto; background-color: rgb(247, 247, 249);">
+    Scheduler scheduler <span style="color: rgb(51, 153, 51);">=</span> <span style="color: rgb(0, 0, 0); font-weight: bold;">new</span> StdSchedulerFactory<span style="color: rgb(0, 153, 0);">(</span><span style="color: rgb(0, 153, 0);">)</span>.<span style="color: rgb(0, 102, 51);">getScheduler</span><span style="color: rgb(0, 153, 0);">(</span><span style="color: rgb(0, 153, 0);">)</span><span style="color: rgb(51, 153, 51);">;</span>
+&nbsp;
+    <span style="color: rgb(102, 102, 102); font-style: italic;">//loop all group</span>
+    <span style="color: rgb(0, 0, 0); font-weight: bold;">for</span> <span style="color: rgb(0, 153, 0);">(</span><span style="color: rgb(0, 51, 153);">String</span> groupName <span style="color: rgb(51, 153, 51);">:</span> scheduler.<span style="color: rgb(0, 102, 51);">getJobGroupNames</span><span style="color: rgb(0, 153, 0);">(</span><span style="color: rgb(0, 153, 0);">)</span><span style="color: rgb(0, 153, 0);">)</span> <span style="color: rgb(0, 153, 0);">{</span>
+&nbsp;
+	<span style="color: rgb(102, 102, 102); font-style: italic;">//loop all jobs by groupname</span>
+	<span style="color: rgb(0, 0, 0); font-weight: bold;">for</span> <span style="color: rgb(0, 153, 0);">(</span><span style="color: rgb(0, 51, 153);">String</span> jobName <span style="color: rgb(51, 153, 51);">:</span> scheduler.<span style="color: rgb(0, 102, 51);">getJobNames</span><span style="color: rgb(0, 153, 0);">(</span>groupName<span style="color: rgb(0, 153, 0);">)</span><span style="color: rgb(0, 153, 0);">)</span> <span style="color: rgb(0, 153, 0);">{</span>
+&nbsp;
+          <span style="color: rgb(102, 102, 102); font-style: italic;">//get job's trigger</span>
+	  Trigger<span style="color: rgb(0, 153, 0);">[</span><span style="color: rgb(0, 153, 0);">]</span> triggers <span style="color: rgb(51, 153, 51);">=</span> scheduler.<span style="color: rgb(0, 102, 51);">getTriggersOfJob</span><span style="color: rgb(0, 153, 0);">(</span>jobName,groupName<span style="color: rgb(0, 153, 0);">)</span><span style="color: rgb(51, 153, 51);">;</span>
+	  <span style="color: rgb(0, 51, 153);">Date</span> nextFireTime <span style="color: rgb(51, 153, 51);">=</span> triggers<span style="color: rgb(0, 153, 0);">[</span><span style="color: rgb(204, 102, 204);">0</span><span style="color: rgb(0, 153, 0);">]</span>.<span style="color: rgb(0, 102, 51);">getNextFireTime</span><span style="color: rgb(0, 153, 0);">(</span><span style="color: rgb(0, 153, 0);">)</span><span style="color: rgb(51, 153, 51);">;</span>
+&nbsp;
+	  <span style="color: rgb(0, 51, 153);">System</span>.<span style="color: rgb(0, 102, 51);">out</span>.<span style="color: rgb(0, 102, 51);">println</span><span style="color: rgb(0, 153, 0);">(</span><span style="color: rgb(0, 0, 255);">"[jobName] : "</span> <span style="color: rgb(51, 153, 51);">+</span> jobName <span style="color: rgb(51, 153, 51);">+</span> <span style="color: rgb(0, 0, 255);">" [groupName] : "</span>
+			<span style="color: rgb(51, 153, 51);">+</span> groupName <span style="color: rgb(51, 153, 51);">+</span> <span style="color: rgb(0, 0, 255);">" - "</span> <span style="color: rgb(51, 153, 51);">+</span> nextFireTime<span style="color: rgb(0, 153, 0);">)</span><span style="color: rgb(51, 153, 51);">;</span>
+&nbsp;
+	<span style="color: rgb(0, 153, 0);">}</span>
+&nbsp;
+    <span style="color: rgb(0, 153, 0);">}</span></pre> 
+  </div> 
+ </div> 
+ <br> 
+ <br>      
+</div></body></html>

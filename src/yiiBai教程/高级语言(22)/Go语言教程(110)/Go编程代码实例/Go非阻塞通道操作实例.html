@@ -1,0 +1,58 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Go非阻塞通道操作实例</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>通道的基本发送和接收都阻塞。但是，可以使用<code>select</code>和<code>default</code>子句来实现非阻塞发送，接收，甚至非阻塞多路选择(<code>select</code>)。</p> 
+ <p>这里是一个非阻塞接收。如果消息上有可用的值，则选择将使用该值的<code>&lt;-message</code>大小写。如果不是，它会立即采用默认情况。<br>非阻塞发送工作类似。</p> 
+ <p>可以使用多个上面的默认子句来实现多路非阻塞选择(<code>select</code>)。这里尝试对消息(<code>message</code>)和信号(<code>signals</code>)的非阻塞接收。</p> 
+ <blockquote> 
+  <p>所有的示例代码，都放在 <code>F:\worksp\golang</code> 目录下。安装Go编程环境请参考：<a target="_blank" href="http://www.yiibai.com/go/go_environment.html">http://www.yiibai.com/go/go_environment.html</a> </p> 
+ </blockquote> 
+ <p><code>non-blocking-channel-operations.go</code>的完整代码如下所示 -</p> 
+ <pre><code class="lang-go">package main
+
+import "fmt"
+
+func main() {
+    messages := make(chan string)
+    signals := make(chan bool)
+
+    // Here's a non-blocking receive. If a value is
+    // available on `messages` then `select` will take
+    // the `&lt;-messages` `case` with that value. If not
+    // it will immediately take the `default` case.
+    select {
+    case msg := &lt;-messages:
+        fmt.Println("received message", msg)
+    default:
+        fmt.Println("no message received")
+    }
+
+    // A non-blocking send works similarly.
+    msg := "hi"
+    select {
+    case messages &lt;- msg:
+        fmt.Println("sent message", msg)
+    default:
+        fmt.Println("no message sent")
+    }
+
+    // We can use multiple `case`s above the `default`
+    // clause to implement a multi-way non-blocking
+    // select. Here we attempt non-blocking receives
+    // on both `messages` and `signals`.
+    select {
+    case msg := &lt;-messages:
+        fmt.Println("received message", msg)
+    case sig := &lt;-signals:
+        fmt.Println("received signal", sig)
+    default:
+        fmt.Println("no activity")
+    }
+}
+</code></pre> 
+ <p>执行上面代码，将得到以下输出结果 - </p>   
+ <pre><code class="lang-go">F:\worksp\golang&gt;go run non-blocking-channel-operations.go
+no message received
+no message sent
+no activity
+</code></pre>
+ <br>      
+</div></body></html>

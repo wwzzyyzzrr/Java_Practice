@@ -1,0 +1,84 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Apache通用集合BidiMap接口</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>新接口被添加到支持双向映射。 使用双向映射，可以使用值查找键，并且可以使用键轻松查找值。</p> 
+ <h2 id="h2-u63A5u53E3u58F0u660E"><a name="接口声明" class="reference-link"></a><span class="header-link octicon octicon-link"></span>接口声明</h2>
+ <p>以下是<code>org.apache.commons.collections4.BidiMap &lt;K，V&gt;</code>接口的声明 -</p> 
+ <pre><code class="lang-java">public interface BidiMap&lt;K,V&gt;
+   extends IterableMap&lt;K,V&gt;
+</code></pre> 
+ <p>以下是接口的方法列表 - </p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>编号</th> 
+    <th>方法</th> 
+    <th>描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>1</td> 
+    <td><code>K getKey(Object value)</code></td> 
+    <td>获取当前映射到指定值的键。</td> 
+   </tr> 
+   <tr> 
+    <td>2</td> 
+    <td><code>BidiMap&lt;V,K&gt; inverseBidiMap()</code></td> 
+    <td>获取该映射的键和值的键视图。</td> 
+   </tr> 
+   <tr> 
+    <td>3</td> 
+    <td><code>V put(K key, V value)</code></td> 
+    <td>将键值对放入映射中，替换之前的任何一对。</td> 
+   </tr> 
+   <tr> 
+    <td>4</td> 
+    <td><code>K removeValue(Object value)</code></td> 
+    <td>删除当前映射到指定值的键值对(可选操作)。</td> 
+   </tr> 
+   <tr> 
+    <td>5</td> 
+    <td><code>Set&lt;V&gt; values()</code></td> 
+    <td>返回此映射中包含的值的<code>Set</code>视图。</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h2 id="h2-u65B9u6CD5u7EE7u627F"><a name="方法继承" class="reference-link"></a><span class="header-link octicon octicon-link"></span>方法继承</h2>
+ <p>该接口继承了以下接口的方法 -</p> 
+ <ul> 
+  <li><code>org.apache.commons.collections4.Get</code></li>
+  <li><code>org.apache.commons.collections4.IterableGet</code></li>
+  <li><code>org.apache.commons.collections4.Put</code></li>
+  <li><code>java.util.Map</code></li>
+ </ul> 
+ <p><strong>BidiMap接口实例</strong></p>   
+ <pre><code class="lang-java">import org.apache.commons.collections4.BidiMap;
+import org.apache.commons.collections4.bidimap.TreeBidiMap;
+
+public class BidiMapTester {
+   public static void main(String[] args) {
+      BidiMap&lt;String, String&gt; bidi = new TreeBidiMap&lt;&gt;();
+
+      bidi.put("One", "1");
+      bidi.put("Two", "2");
+      bidi.put("Three", "3");
+
+      System.out.println(bidi.get("One")); 
+      System.out.println(bidi.getKey("1"));
+      System.out.println("Original Map: " + bidi);
+
+      bidi.removeValue("1"); 
+      System.out.println("Modified Map: " + bidi);
+      BidiMap&lt;String, String&gt; inversedMap = bidi.inverseBidiMap();  
+      System.out.println("Inversed Map: " + inversedMap);
+   }
+}
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 - </p> 
+ <pre><code class="lang-shell">1
+One
+Original Map: {One=1, Three=3, Two=2}
+Modified Map: {Three=3, Two=2}
+Inversed Map: {2=Two, 3=Three}
+</code></pre>
+ <br>      
+</div></body></html>

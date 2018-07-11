@@ -1,0 +1,66 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Struts2拦截器栈的例子</h1><div style="width:100%;float:left;" class="article-content">   
+ <div style="font-family:微软雅黑;font-size:14px;background-color:#FFFFFF;"> 
+  <div style="background-color:inherit;"> 
+   <span style="line-height:1.5;background-color:inherit;">很多时候，相同的一组拦截器可以适用于不同的动作类，例如，</span> 
+  </div> 
+ </div> 
+ <div> 
+  <pre>&lt;package name="default" namespace="/" extends="struts-default"&gt;
+	
+    &lt;action name="checkInAction" 
+	class="com.yiibai.common.action.CheckInAction" &gt;
+	&lt;interceptor-ref name="timer"/&gt;
+        &lt;interceptor-ref name="logger"/&gt;
+	&lt;interceptor-ref name="defaultStack" /&gt;
+	&lt;result name="success"&gt;/pages/checkIn.jsp&lt;/result&gt;
+    &lt;/action&gt;
+	
+    &lt;action name="checkOutAction" 
+	class="com.yiibai.common.action.CheckOutAction" &gt;
+	&lt;interceptor-ref name="timer"/&gt;
+        &lt;interceptor-ref name="logger"/&gt;
+	&lt;interceptor-ref name="defaultStack" /&gt;
+	&lt;result name="success"&gt;/pages/checkOut.jsp&lt;/result&gt;
+    &lt;/action&gt;
+		
+&lt;/package&gt;</pre> 
+  <div>
+    在上述情况下，它有许多重复工作以及不能重复使用。 
+  </div> 
+  <p> 幸运的是，在Struts&nbsp;2自带的拦截器栈，使开发人员建立一组拦截到一个单元名为“栈名字”，&nbsp;和可以通过“栈名字”引用操作它。 </p> 
+  <div> 
+   <div>
+     最佳做法 
+   </div> 建议组合相同的一组拦截器到一个拦截器栈摆脱重复的工作，并增加了项目的可重用性。 
+  </div> 
+  <pre>&lt;package name="default" namespace="/" extends="struts-default"&gt;
+	
+     &lt;interceptors&gt;
+       	&lt;interceptor-stack name="defaultStackWithLog"&gt;
+             &lt;interceptor-ref name="timer"/&gt;
+             &lt;interceptor-ref name="logger"/&gt;
+	     &lt;interceptor-ref name="defaultStack" /&gt;
+        &lt;/interceptor-stack&gt;
+    &lt;/interceptors&gt;
+		
+    &lt;action name="checkInAction" 
+	class="com.yiibai.common.action.CheckInAction" &gt;
+	&lt;interceptor-ref name="defaultStackWithLog"/&gt;
+	&lt;result name="success"&gt;/pages/checkIn.jsp&lt;/result&gt;
+    &lt;/action&gt;
+	
+    &lt;action name="checkOutAction" 
+	class="com.yiibai.common.action.CheckOutAction" &gt;
+	&lt;interceptor-ref name="defaultStackWithLog"/&gt;
+	&lt;result name="success"&gt;/pages/checkOut.jsp&lt;/result&gt;
+    &lt;/action&gt;
+		
+&lt;/package&gt;&nbsp;</pre> 
+  <p> 在上面的例子更新，声明一个拦截器栈，命名为“defaultStackWithLog”其中包括“timer“,&nbsp;“logger”&nbsp;和&nbsp;“defaultStack”&nbsp;拦截器，并且它通过“interceptor-ref”元素引用一个正常的拦截器。 </p> 
+  <h2> 参考 </h2> 
+  <ol> 
+   <li> <a target="_blank" href="http://struts.apache.org/2.1.8/docs/interceptors.html">Struts2拦截器文档</a> </li> 
+  </ol> 
+ </div>
+ <br>      
+</div></body></html>

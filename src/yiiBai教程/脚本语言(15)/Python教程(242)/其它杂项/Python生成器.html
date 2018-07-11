@@ -1,0 +1,212 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Python生成器</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>在本文中，将学习如何使用Python生成器来创建迭代，了解它与迭代器和常规函数有什么区别，以及为什么要使用它。</p> 
+ <p>在Python中构建迭代器有很多开销; 必须使用<code>__iter__()</code>和<code>__next__()</code>方法实现一个类，跟踪内部状态，当没有值被返回时引发<code>StopIteration</code>异常。</p> 
+ <p>Python生成器是创建迭代器的简单方法。上面提到的所有开销都由Python中的生成器自动处理。</p> 
+ <p>简单来说，生成器是返回一个可以迭代的对象(迭代器)的函数(一次一个值)。</p> 
+ <h2 id="h2--python-"><a name="如何在Python中创建生成器？" class="reference-link"></a><span class="header-link octicon octicon-link"></span>如何在Python中创建生成器？</h2>
+ <p>在Python中创建生成器是相当简单的。 它使用<code>yield</code>语句而不是<code>return</code>语句来定义，与正常函数一样简单。</p> 
+ <p>如果函数包含至少一个<code>yield</code>语句(它可能包含其他<code>yield</code>或<code>return</code>语句)，那么它将成为一个生成器函数。 <code>yield</code>和<code>return</code>都将从函数返回一些值。</p> 
+ <p>不同的是，<code>return</code>语句完全终止函数，但<code>yield</code>语句会暂停函数保存其所有状态，并在以后的连续调用中继续执行(有点像线程挂起的意思)。</p> 
+ <h3 id="h3-u751Fu6210u5668u51FDu6570u4E0Eu6B63u5E38u51FDu6570u7684u5DEEu5F02"><a name="生成器函数与正常函数的差异" class="reference-link"></a><span class="header-link octicon octicon-link"></span>生成器函数与正常函数的差异</h3>
+ <p>下面列出的是生成器函数与正常函数的区别 - </p> 
+ <ul> 
+  <li>生成器函数包含一个或多个<code>yield</code>语句。</li>
+  <li>当被调用时，它返回一个对象(迭代器)，但不会立即开始执行。</li>
+  <li><code>__iter__()</code>和<code>__next__()</code>之类的方法将自动实现。所以可以使用<code>next()</code>迭代项目。</li>
+  <li>一旦函数退让(<code>yields</code>)，该函数将被暂停，并将该控制权交给调用者。</li>
+  <li>局部变量及其状态在连续调用之间被记住。</li>
+  <li>最后，当函数终止时，<code>StopIteration</code>会在进一步的调用时自动引发。</li>
+ </ul> 
+ <p>下面的例子用来说明上述所有要点。 我们有一个名为<code>my_gen()</code>的生成器函数和几个<code>yield</code>语句。</p> 
+ <pre><code class="lang-python">#!/usr/bin/python3
+#coding=utf-8
+
+def my_gen():
+    n = 1
+    print('This is printed first, n= ', n)
+    # Generator function contains yield statements
+    yield n
+
+    n += 1
+    print('This is printed second, n= ', n)
+    yield n
+
+    n += 1
+    print('This is printed at last, n= ', n)
+    yield n
+</code></pre> 
+ <p>下面给出了交互式运行结果。 在Python shell中运行它们以查看输出 - </p> 
+ <pre><code class="lang-shell">&gt;&gt;&gt; # It returns an object but does not start execution immediately.
+&gt;&gt;&gt; a = my_gen()
+
+&gt;&gt;&gt; # We can iterate through the items using next().
+&gt;&gt;&gt; next(a)
+This is printed first, n = 1
+1
+&gt;&gt;&gt; # Once the function yields, the function is paused and the control is transferred to the caller.
+
+&gt;&gt;&gt; # Local variables and theirs states are remembered between successive calls.
+&gt;&gt;&gt; next(a)
+This is printed second, n = 2
+2
+
+&gt;&gt;&gt; next(a)
+This is printed at last, n = 3
+3
+
+&gt;&gt;&gt; # Finally, when the function terminates, StopIteration is raised automatically on further calls.
+&gt;&gt;&gt; next(a)
+Traceback (most recent call last):
+...
+StopIteration
+&gt;&gt;&gt; next(a)
+Traceback (most recent call last):
+...
+StopIteration
+</code></pre> 
+ <p>在上面的例子中需要注意的是，在每个调用之间函数会保持住变量<code>n</code>的值。<br>与正常函数不同，当函数产生时，局部变量不会被销毁。 此外，生成器对象只能重复一次。</p> 
+ <p>要重新启动该过程，需要使用类似于<code>a = my_gen()</code>的方法创建另一个生成器对象。</p> 
+ <blockquote> 
+  <p>注意：最后要注意的是，可以直接使用带有<code>for</code>循环的生成器。</p> 
+ </blockquote> 
+ <p>这是因为，<code>for</code>循环需要一个迭代器，并使用<code>next()</code>函数进行迭代。 当<code>StopIteration</code>被引发时，它会自动结束。 请查看这里了解一个<a target="_blank" href="http://www.yiibai.com/python/iterator.html#for-loop-working" title="for循环">for循环</a>是如何在Python中实际实现的。</p> 
+ <pre><code class="lang-python"># A simple generator function
+def my_gen():
+    n = 1
+    print('This is printed first')
+    # Generator function contains yield statements
+    yield n
+
+    n += 1
+    print('This is printed second')
+    yield n
+
+    n += 1
+    print('This is printed at last')
+    yield n
+
+# Using for loop
+for item in my_gen():
+    print(item)
+</code></pre> 
+ <p>当运行程序时，将输出结果为：</p> 
+ <pre><code class="lang-python">This is printed first
+1
+This is printed second
+2
+This is printed at last
+3
+</code></pre> 
+ <h2 id="h2--python-"><a name="具有循环的Python生成器" class="reference-link"></a><span class="header-link octicon octicon-link"></span>具有循环的Python生成器</h2>
+ <p>上面的例子没有什么用，我们研究它只是为了了解在后台发生了什么。通常，生成器功能用具有适当终止条件的循环实现。</p> 
+ <p>我们举一个反转字符串的生成器的例子 - </p> 
+ <pre><code class="lang-python"> length = len(my_str)
+    for i in range(length - 1,-1,-1):
+        yield my_str[i]
+
+# For loop to reverse the string
+# Output:
+# o
+# l
+# l
+# e
+# h
+for char in rev_str("hello"):
+     print(char)def rev_str(my_str):
+</code></pre> 
+ <p>在这个例子中，使用<code>range()</code>函数使用<code>for</code>循环以相反的顺序获取索引。事实证明，这个生成函数不仅可以使用字符串，还可以使用其他类型的列表，元组等迭代。</p> 
+ <h2 id="h2-python-"><a name="Python生成器表达式" class="reference-link"></a><span class="header-link octicon octicon-link"></span>Python生成器表达式</h2>
+ <p>使用生成器表达式，可以轻松创建简单的生成器。 它使构建生成器变得容易。</p> 
+ <p>与<code>lambda</code>函数一样创建一个匿名函数，生成器表达式创建一个匿名生成函数。生成器表达式的语法与Python中的列表解析类似。 但方圆<code>[]</code>替换为圆括号<code>()</code>。</p> 
+ <p>列表推导和生成器表达式之间的主要区别是：列表推导产生整个列表，生成器表达式一次生成一个项目。</p> 
+ <p>它们是处理方式是懒惰的，只有在被要求时才能生产项目。 因此，生成器表达式的存储器效率高于等效列表的值。</p>   
+ <pre><code class="lang-python"># Initialize the list
+my_list = [1, 3, 6, 10]
+
+# square each term using list comprehension
+# Output: [1, 9, 36, 100]
+[x**2 for x in my_list]
+
+# same thing can be done using generator expression
+# Output: &lt;generator object &lt;genexpr&gt; at 0x0000000002EBDAF8&gt;
+(x**2 for x in my_list)
+</code></pre> 
+ <p>我们可以看到，生成器表达式没有立即生成所需的结果。 相反，它返回一个发生器对象，并根据需要生成项目。</p> 
+ <pre><code class="lang-python"># Intialize the list
+my_list = [1, 3, 6, 10]
+
+a = (x**2 for x in my_list)
+# Output: 1
+print(next(a))
+
+# Output: 9
+print(next(a))
+
+# Output: 36
+print(next(a))
+
+# Output: 100
+print(next(a))
+
+# Output: StopIteration
+next(a)
+</code></pre> 
+ <p>生成器表达式可以在函数内部使用。当以这种方式使用时，圆括号可以丢弃。</p> 
+ <pre><code class="lang-shell">&gt;&gt;&gt; sum(x**2 for x in my_list)
+146
+
+&gt;&gt;&gt; max(x**2 for x in my_list)
+100
+</code></pre> 
+ <h2 id="h2--python-"><a name="为什么在Python中使用生成器？" class="reference-link"></a><span class="header-link octicon octicon-link"></span>为什么在Python中使用生成器？</h2>
+ <p>有几个原因使得生成器成为有吸引力。</p> 
+ <h3 id="h3-1-"><a name="1. 容易实现" class="reference-link"></a><span class="header-link octicon octicon-link"></span>1. 容易实现</h3>
+ <p>与其迭代器类相比，发生器可以以清晰简洁的方式实现。 以下是使用迭代器类来实现<code>2</code>的幂次序的例子。</p> 
+ <pre><code class="lang-python">class PowTwo:
+    def __init__(self, max = 0):
+        self.max = max
+
+    def __iter__(self):
+        self.n = 0
+        return self
+
+    def __next__(self):
+        if self.n &gt; self.max:
+            raise StopIteration
+
+        result = 2 ** self.n
+        self.n += 1
+        return result
+</code></pre> 
+ <p>上面代码有点长，可以使用一个生成器函数实现同样的功能。</p> 
+ <pre><code class="lang-python">def PowTwoGen(max = 0):
+    n = 0
+    while n &lt; max:
+        yield 2 ** n
+        n += 1
+</code></pre> 
+ <p>因为，生成器自动跟踪的细节，它更简洁，更干净。</p> 
+ <h3 id="h3-2-"><a name="2.内存高效" class="reference-link"></a><span class="header-link octicon octicon-link"></span>2.内存高效</h3>
+ <p>返回序列的正常函数将在返回结果之前会在内存中的创建整个序列。如果序列中的项目数量非常大，这可是要消耗内存的。</p> 
+ <p>序列的生成器实现是内存友好的，并且是推荐使用的，因为它一次仅产生一个项目。</p> 
+ <h3 id="h3-3-"><a name="3. 表未无限流" class="reference-link"></a><span class="header-link octicon octicon-link"></span>3. 表未无限流</h3>
+ <p>生成器是表示无限数据流的绝佳媒介。 无限流不能存储在内存中，由于生成器一次只能生成一个项目，因此可以表示无限数据流。</p> 
+ <p>以下示例可以生成所有偶数(至少在理论上)。</p> 
+ <pre><code class="lang-python">def all_even():
+    n = 0
+    while True:
+        yield n
+        n += 2
+</code></pre> 
+ <h3 id="h3-4-"><a name="4.管道生成器" class="reference-link"></a><span class="header-link octicon octicon-link"></span>4.管道生成器</h3>
+ <p>生成器可用于管理一系列操作，下面使用一个例子说明。</p> 
+ <p>假设我们有一个快餐连锁店的日志文件。 日志文件有一列(第<code>4</code>列)，用于跟踪每小时销售的比萨饼数量，我们想算出在<code>5</code>年内销售的总萨饼数量。</p> 
+ <p>假设一切都是字符串，不可用的数字标记为“<code>N / A</code>”。 这样做的生成器实现可以如下。</p> 
+ <pre><code class="lang-python">with open('sells.log') as file:
+    pizza_col = (line[3] for line in file)
+    per_hour = (int(x) for x in pizza_col if x != 'N/A')
+    print("Total pizzas sold = ",sum(per_hour))
+</code></pre> 
+ <p>这种管道的方式是更高效和易于阅读的。</p>
+ <br>      
+</div></body></html>

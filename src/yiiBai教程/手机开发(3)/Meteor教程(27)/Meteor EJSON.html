@@ -1,0 +1,168 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Meteor EJSON</h1><div style="width:100%;float:left;" class="article-content">   
+ <div> 
+  <div>
+    EJSON是JSON语法的扩展，支持日期和二进制类型。 
+  </div> 
+ </div> 
+ <p> <br> </p> 
+ <h2> 安装EJSON </h2> 
+ <div>
+   要安装JSON包，我们需要从命令提示符窗口中添加，执行如下命令： 
+ </div> 
+ <pre>C:\Users\Administrator\Desktop\meteorApp&gt;meteor add ejson</pre> 
+ <h2> Date示例 </h2> 
+ <div>
+   我们可以用解析&nbsp;parse&nbsp;方法反序列化日期。 
+ </div> 
+ <pre>if (Meteor.isClient) {
+   var myEjsonDate = '{"$date": <span style="font-family:Monaco, Consolas, Courier, 'Lucida Console', monospace;line-height:1.5;">1455039732453</span><span style="font-family:Monaco, Consolas, Courier, 'Lucida Console', monospace;line-height:1.5;">}';</span> var myDate = EJSON.parse(myEjsonDate);
+   console.log(myDate);
+}</pre> 
+ <div>
+   控制台将记录正确的日期值。
+  <br> 
+  <img src="/uploads/tutorial/20160425/1-160425220102951.png" alt="">
+  <br> 
+ </div> 
+ <img src="file://E:/data/youdao/qq24B39E2329F08D9F4C3146A571A415EF/757730610510454ab4207ef7de5ef97d/clipboard.png">
+ <br> 
+ <h2> Binary示例 </h2> 
+ <div>
+   同样可以应用到二进制类型。 
+ </div> 
+ <pre>if (Meteor.isClient) {
+   var myEjsonBinary = '{"$binary": "c3VyZS4="}';
+   var myBinary = EJSON.parse(myEjsonBinary);
+   console.log(myBinary);
+}</pre> 
+ <p> 可以看到控制台日志记录新的序列化的值。 </p> 
+ <p> <img src="/uploads/tutorial/20160425/1-1604252201555X.png" alt=""> </p> 
+ <img src="file://E:/data/youdao/qq24B39E2329F08D9F4C3146A571A415EF/494145ad0a5248e099fff1b589fd916d/clipboard.png">
+ <br> 
+ <h2> Stringify </h2> 
+ <div>
+   我们可以通过使用字符串化的方法序列化对象。这是上面的例子的逆过程。 
+ </div> 
+ <pre>if (Meteor.isClient) {
+
+   var myObject = {
+      myDate : new Date(),
+      myBinary : new Uint8Array([115, 117, 114, 101, 46])
+   }
+
+   var myEjosnData = EJSON.stringify(myObject);
+   console.log(myEjosnData);
+}</pre> 
+ <div>
+   我们可以在控制台看到新的值。
+  <br> 
+  <img src="/uploads/tutorial/20160425/1-160425220222226.png" alt="">
+  <br> 
+ </div> 
+ <img src="file://E:/data/youdao/qq24B39E2329F08D9F4C3146A571A415EF/d4de48660c964512a141cd78f19a3c03/clipboard.png">
+ <br> 
+ <table border="1" cellpadding="2" cellspacing="0" style="font-size:14px;color:#313131;font-family:Verdana, Geneva, Tahoma,  Helvetica, background-color:inherit;"> 
+  <tbody> 
+   <tr> 
+    <th style="border:1px solid #999999;background-color:#EEEEEE;"> S.No. </th> 
+    <th style="border:1px solid #999999;background-color:#EEEEEE;text-align:center;"> 
+     <div style="background-color:inherit;">
+       方法与细则 
+     </div> </th> 
+   </tr> 
+   <tr> 
+    <td style="border:1px solid #999999;background-color:inherit;"> 1 </td> 
+    <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>EJSON.parse(string)</b> </p> 
+     <div style="background-color:inherit;">
+       用于将解析字符串成JSON值 
+     </div> </td> 
+   </tr> 
+   <tr> 
+    <td style="border:1px solid #999999;background-color:inherit;"> 2 </td> 
+    <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>EJSON.stringify(value)</b> </p> 
+     <div style="background-color:inherit;">
+       用于序列化值的字符串 
+     </div> </td> 
+   </tr> 
+   <tr> 
+    <td style="border:1px solid #999999;background-color:inherit;"> 3 </td> 
+    <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>EJSON.fromJSONValue(value)</b> </p> 
+     <div style="background-color:inherit;">
+       用于从JSON反序列化成一个 JSON 值 
+     </div> </td> 
+   </tr> 
+   <tr> 
+    <td style="border:1px solid #999999;background-color:inherit;"> 4 </td> 
+    <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>EJSON.toJSONValue(value)</b> </p> 
+     <div style="background-color:inherit;">
+       用于序列化EJSON值成JSON 
+     </div> </td> 
+   </tr> 
+   <tr> 
+    <td style="border:1px solid #999999;background-color:inherit;"> 5 </td> 
+    <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>EJSON.equals(value1, value2)</b> </p> 
+     <div style="background-color:inherit;">
+       用于比较两个值是否相等 
+     </div> </td> 
+   </tr> 
+   <tr> 
+    <td style="border:1px solid #999999;background-color:inherit;"> 6 </td> 
+    <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>EJSON.clone(value)</b> </p> 
+     <div style="background-color:inherit;">
+       用于返回深层复制的值 
+     </div> </td> 
+   </tr> 
+   <tr> 
+    <td style="border:1px solid #999999;background-color:inherit;"> 7 </td> 
+    <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>EJSON.newBinary</b> </p> 
+     <div style="background-color:inherit;">
+       用于分配二进制数据让EJSON可序列化 
+     </div> </td> 
+   </tr> 
+   <tr> 
+    <td style="border:1px solid #999999;background-color:inherit;"> 8 </td> 
+    <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>EJSON.isBinary(x)</b> </p> 
+     <div style="background-color:inherit;">
+       用于检查值是否一个二进制数据 
+     </div> </td> 
+   </tr> 
+   <tr> 
+    <td style="border:1px solid #999999;background-color:inherit;"> 9 </td> 
+    <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>EJSON.addType(name, factory)</b> </p> 
+     <div style="background-color:inherit;">
+       用于创建一个自定义的JSON类型 
+     </div> </td> 
+   </tr> 
+   <tr> 
+    <td style="border:1px solid #999999;background-color:inherit;"> 10 </td> 
+    <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>customType.typeName()</b> </p> 
+     <div style="background-color:inherit;">
+       用于返回自定义类型的名称 
+     </div> </td> 
+   </tr> 
+   <tr> 
+    <td style="border:1px solid #999999;background-color:inherit;"> 11 </td> 
+    <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>customType.toJSONValue()</b> </p> 
+     <div style="background-color:inherit;">
+       用于序列化的自定义类型 
+     </div> </td> 
+   </tr> 
+   <tr> 
+    <td style="border:1px solid #999999;background-color:inherit;"> 12 </td> 
+    <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>customType.clone()</b> </p> 
+     <div style="background-color:inherit;">
+       用于返回自定义类型的深层复制。 
+     </div> </td> 
+   </tr> 
+   <tr> 
+    <td style="border:1px solid #999999;background-color:inherit;"> 13 </td> 
+    <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>customType.equals(otherValue)</b> </p> 
+     <div style="background-color:inherit;">
+       用于自定义类型值和其他类型值之间的比较。 
+     </div> </td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p> <br> </p>
+ <br>      
+</div></body></html>

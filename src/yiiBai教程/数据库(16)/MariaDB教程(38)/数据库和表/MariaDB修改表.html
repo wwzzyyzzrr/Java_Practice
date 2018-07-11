@@ -1,0 +1,134 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">MariaDB修改表</h1><div style="width:100%;float:left;" class="article-content">   
+ <p><code>ALTER TABLE</code>命令是用于更改现有表的结构。 例如，可以添加或删除列，创建或销毁索引，更改现有列的类型或重命名列或表本身。也可以更改表的注释和表的存储引擎。</p> 
+ <p>如果另一个连接正在使用该表，则元数据锁将处于活动状态，并且此语句将等待，直到释放该锁。对于非事务性表也是如此。</p> 
+ <p>在具有重复值的列(或一组列)上添加一个<code>UNIQUE</code>索引时，将会产生一个错误，并且该语句将被停止。要抑制错误并强制创建<code>UNIQUE</code>索引，丢弃重复项，可以指定<code>IGNORE</code>选项。 如果一列(或一组列)应该是唯一的，但是它包含重复的值，这有时可能是有用的; 然而，这种技术不能控制哪些行被保存，哪些被删除。</p> 
+ <h4 id="h4-1-"><a name="1. 添加一列" class="reference-link"></a><span class="header-link octicon octicon-link"></span>1. 添加一列</h4>
+ <p>要在原有的表上添加一列，可参考以下语法 - </p> 
+ <pre><code class="lang-sql">ALTER TABLE xxxx ADD COLUMN [IF NOT EXISTS]  (col_name column_definition,...)
+</code></pre> 
+ <p><strong>示例</strong></p> 
+ <pre><code class="lang-sql">CREATE TABLE t(id INT PRIMARY KEY, u INT UNSIGNED NOT NULL UNIQUE)
+ENGINE=InnoDB;
+
+INSERT INTO t(id,u) VALUES(1,1),(2,2),(3,3);
+
+ALTER TABLE t ADD COLUMN
+(d DATETIME DEFAULT current_timestamp(),
+ p POINT NOT NULL DEFAULT ST_GeomFromText('POINT(0 0)'),
+ t TEXT CHARSET utf8 DEFAULT 'The quick brown fox jumps over the lazy dog');
+
+UPDATE t SET t=NULL WHERE id=3;
+
+SELECT id,u,d,ST_AsText(p),t FROM t;
+
+SELECT variable_value FROM information_schema.global_status
+WHERE variable_name = 'innodb_instant_alter_column';
+</code></pre> 
+ <h4 id="h4-2-"><a name="2. 删除一列" class="reference-link"></a><span class="header-link octicon octicon-link"></span>2. 删除一列</h4>
+ <p><strong>语法</strong></p> 
+ <pre><code class="lang-sql">ALTER TABLE xxxx DROP COLUMN [IF EXISTS] col_name [CASCADE|RESTRICT]
+</code></pre> 
+ <p>删除属于多列<code>UNIQUE</code>约束的列是不允许的。例如：</p> 
+ <pre><code class="lang-sql">CREATE TABLE a (
+  a int,
+  b int,
+  primary key (a,b)
+);
+
+ALTER TABLE x DROP COLUMN a;
+[42000][1072] Key column 'A' doesn't exist in table
+</code></pre> 
+ <p>原因是，删除列<code>a</code>将导致新的约束，即列<code>b</code>中的所有值都是唯一的。 为了删除该列，将需要明确的<code>DROP PRIMARY KEY</code>和<code>ADD PRIMARY KEY</code>。从MariaDB 10.2.7版本起，该列被删除，并应用了额外的约束，导致以下结构：</p> 
+ <pre><code class="lang-sql">ALTER TABLE x DROP COLUMN a;
+Query OK, 0 rows affected (0.46 sec)
+
+DESC x;
++-------+---------+------+-----+---------+-------+
+| Field | Type    | Null | Key | Default | Extra |
++-------+---------+------+-----+---------+-------+
+| b     | int(11) | NO   | PRI | NULL    |       |
++-------+---------+------+-----+---------+-------+
+</code></pre> 
+ <h4 id="h4-3-modify-column-"><a name="3. MODIFY COLUMN修改列" class="reference-link"></a><span class="header-link octicon octicon-link"></span>3. MODIFY COLUMN修改列</h4>
+ <p>允许修改列的类型。该列与原始列位于同一位置，列中的所有索引都将保留。 请注意，修改列时，应指定新列的所有属性。</p> 
+ <pre><code class="lang-sql">CREATE TABLE t1 (a INT UNSIGNED AUTO_INCREMENT, PRIMARY KEY((a));
+ALTER TABLE t1 MODIFY a BIGINT UNSIGNED AUTO_INCREMENT;
+</code></pre> 
+ <p>除了改变列的名字。该列与原始列位于同一位置，列中的所有索引都将保留。</p> 
+ <pre><code class="lang-sql">CREATE TABLE t1 (a INT UNSIGNED AUTO_INCREMENT, PRIMARY KEY(a));
+ALTER TABLE t1 CHANGE a b BIGINT UNSIGNED AUTO_INCREMENT;
+</code></pre> 
+ <h4 id="h4-4-add-constraint"><a name="4. 添加约束 - ADD CONSTRAINT" class="reference-link"></a><span class="header-link octicon octicon-link"></span>4. 添加约束 - ADD CONSTRAINT</h4>
+ <p>修改在表的特定列或列上添加约束。</p> 
+ <p><strong>语法</strong></p> 
+ <pre><code class="lang-sql">ALTER TABLE table_name 
+ADD CONSTRAINT [constraint_name] CHECK(expression);
+</code></pre> 
+ <p>在插入或更新行之前，所有约束都将按照它们定义的顺序进行评估。如果任何约束失败，那么该行将不会被更新。</p> 
+ <p><strong>示例</strong></p>   
+ <pre><code class="lang-sql">CREATE TABLE account_ledger (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    transaction_name VARCHAR(100),
+    credit_account VARCHAR(100),
+    credit_amount INT,
+    debit_account VARCHAR(100),
+    debit_amount INT);
+
+ALTER TABLE account_ledger 
+ADD CONSTRAINT is_balanced 
+    CHECK((debit_amount + credit_amount) = 0);
+</code></pre> 
+ <p><strong>删除DROP CONSTRAINT</strong></p> 
+ <p>修改表结构，删除给定的约束。</p> 
+ <pre><code class="lang-sql">ALTER TABLE table_name
+DROP CONSTRAINT constraint_name;
+</code></pre> 
+ <p>向表中添加约束时，无论是通过<code>CREATE TABLE</code>还是<code>ALTER TABLE ... ADD CONSTRAINT</code>语句，都可以自己设置<code>constraint_name</code>，或者允许MariaDB自动为您生成一个约束。例如，</p> 
+ <pre><code class="lang-sql">CREATE TABLE t (
+   a INT,
+   b INT,
+   c INT,
+   CONSTRAINT CHECK(a &gt; b),
+   CONSTRAINT check_equals CHECK(a = c)); 
+
+SELECT CONSTRAINT_NAME, TABLE_NAME, CONSTRAINT_TYPE 
+FROM information_schema.TABLE_CONSTRAINTS
+WHERE TABLE_NAME = 't';
+
++-----------------+----------------+-----------------+
+| CONSTRAINT_NAME | TABLE_NAME     | CONSTRAINT_TYPE |
++-----------------+----------------+-----------------+
+| check_equals    | t              | CHECK           |
+| CONSTRAINT_1    | t              | CHECK           |
++-----------------+----------------+-----------------+
+</code></pre> 
+ <p>要从表中删除约束，请使用<code>ALTER TABLE ... DROP CONSTRAINT</code>语句。 例如，</p> 
+ <pre><code class="lang-sql">ALTER TABLE t DROP CONSTRAINT is_unique;
+</code></pre> 
+ <h4 id="h4-4-"><a name="4. 常用语句" class="reference-link"></a><span class="header-link octicon octicon-link"></span>4. 常用语句</h4>
+ <p>添加一个新的列：</p> 
+ <pre><code class="lang-sql">ALTER TABLE t1 ADD x INT;
+</code></pre> 
+ <p>删除一个列：</p> 
+ <pre><code class="lang-sql">ALTER TABLE t1 DROP x;
+</code></pre> 
+ <p>修改列的类型：</p> 
+ <pre><code class="lang-sql">ALTER TABLE t1 MODIFY x bigint unsigned;
+</code></pre> 
+ <p>更改列的名称和类型：</p> 
+ <pre><code class="lang-sql">ALTER TABLE t1 CHANGE a b bigint unsigned auto_increment;
+</code></pre> 
+ <p>更改列的名称和类型：</p> 
+ <pre><code class="lang-sql">ALTER TABLE t1 CHANGE a b bigint unsigned auto_increment;
+</code></pre> 
+ <p>在单个<code>ALTER TABLE</code>语句中组合多个子句，用逗号分隔：</p> 
+ <pre><code class="lang-sql">ALTER TABLE t1 DROP x, ADD x2 INT,  CHANGE y y2 INT;
+</code></pre> 
+ <p>更改存储引擎：</p> 
+ <pre><code class="lang-sql">ALTER TABLE t1 ENGINE = InnoDB;
+</code></pre> 
+ <p>重建表(前面的例子也将重建表，如果它已经是InnoDB)：</p> 
+ <pre><code class="lang-sql">ALTER TABLE t1 FORCE;
+</code></pre>
+ <br>      
+</div></body></html>

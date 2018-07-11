@@ -1,0 +1,117 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">SQL DATE_ADD()和DATE_SUB()方法</h1><div style="width:100%;float:left;" class="article-content">   
+ <h2> DATE_ADD(date,INTERVAL expr unit), DATE_SUB(date,INTERVAL expr unit)</h2> 
+ <p> 这些函数执行日期运算。日期是一个DATETIME或DATE值，指定起始日期。expr是一个表达式，指定要添加或从开始日期减去的间隔值。 expr是一个字符串;它可能会开始一个“ - ”的负区间值。unit是一个关键字，指示该单元中的表达应被解释。</p> 
+ <p> INTERVAL关键字指定unit不区分大小写。</p> 
+ <p> 下表显示了expr参数的每个单位值的预期形式;</p> 
+ <table class="src" style="margin: 8px 0px; padding: 0px;  border-color: rgb(214, 214, 214); width: 560px; border-collapse: collapse; vertical-align: top; color: rgb(0, 0, 0);  background-color: rgb(247, 247, 247);"> 
+  <tbody style="margin: 0px; padding: 0px;"> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> <span style="margin: 0px; padding: 0px;">unit&nbsp;<strong style="margin: 0px; padding: 0px;">值</strong></span></td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> <b>期望的&nbsp;</b>expr 格式</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> MICROSECOND</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> MICROSECONDS</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> SECOND</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> SECONDS</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> MINUTE</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> MINUTES</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> HOUR</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> HOURS</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> DAY</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> DAYS</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> WEEK</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> WEEKS</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> MONTH</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> MONTHS</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> QUARTER</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> QUARTERS</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> YEAR</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> YEARS</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> SECOND_MICROSECOND</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 'SECONDS.MICROSECONDS'</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> MINUTE_MICROSECOND</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 'MINUTES.MICROSECONDS'</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> MINUTE_SECOND</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 'MINUTES:SECONDS'</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> HOUR_MICROSECOND</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 'HOURS.MICROSECONDS'</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> HOUR_SECOND</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 'HOURS:MINUTES:SECONDS'</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> HOUR_MINUTE</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 'HOURS:MINUTES'</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> DAY_MICROSECOND</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 'DAYS.MICROSECONDS'</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> DAY_SECOND</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 'DAYS HOURS:MINUTES:SECONDS'</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> DAY_MINUTE</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 'DAYS HOURS:MINUTES'</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> DAY_HOUR</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 'DAYS HOURS'</td> 
+   </tr> 
+   <tr style="margin: 0px; padding: 0px;"> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> YEAR_MONTH</td> 
+    <td style="margin: 0px; padding: 5px; border-collapse: collapse;  border-color: rgb(214, 214, 214);"> 'YEARS-MONTHS'</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p> QUARTER 值和WEEK可使用在MySQL5.0.0以上版本中。</p> 
+ <div style="float:left;margin-bottom: 10px;">  
+ </div>
+ <div style="float:left;margin-bottom: 10px;">  
+ </div>
+ <pre class="prettyprint prettyprinted" style="border-radius: 0px; font-size: 12px; overflow: auto;">
+<span class="pln" style="margin: 0px; padding: 0px;">mysql</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">&gt;</span><span class="pln" style="margin: 0px; padding: 0px;"> SELECT DATE_ADD</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="str" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">'1997-12-31 23:59:59'</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">,</span><span class="pln" style="margin: 0px; padding: 0px;"> 
+    </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">-&gt;</span><span class="pln" style="margin: 0px; padding: 0px;"> INTERVAL </span><span class="str" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">'1:1'</span><span class="pln" style="margin: 0px; padding: 0px;"> MINUTE_SECOND</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">);</span><span class="pln" style="margin: 0px; padding: 0px;">
+</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">+---------------------------------------------------------+</span><span class="pln" style="margin: 0px; padding: 0px;">
+</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">|</span><span class="pln" style="margin: 0px; padding: 0px;"> DATE_ADD</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="str" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">'1997-12-31 23:59:59'</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">,</span><span class="pln" style="margin: 0px; padding: 0px;"> INTERVAL</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">...</span><span class="pln" style="margin: 0px; padding: 0px;">             </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">|</span><span class="pln" style="margin: 0px; padding: 0px;">
+</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">+---------------------------------------------------------+</span><span class="pln" style="margin: 0px; padding: 0px;">
+</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">|</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">1998</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">-</span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">01</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">-</span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">01</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">00</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">:</span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">01</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">:</span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">00</span><span class="pln" style="margin: 0px; padding: 0px;">                                     </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">|</span><span class="pln" style="margin: 0px; padding: 0px;">
+</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">+---------------------------------------------------------+</span><span class="pln" style="margin: 0px; padding: 0px;">
+</span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">1</span><span class="pln" style="margin: 0px; padding: 0px;"> row </span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">in</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">set</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">0.00</span><span class="pln" style="margin: 0px; padding: 0px;"> sec</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">)</span><span class="pln" style="margin: 0px; padding: 0px;">
+
+mysql</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">&gt;</span><span class="pln" style="margin: 0px; padding: 0px;"> SELECT DATE_ADD</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="str" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">'1999-01-01'</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">,</span><span class="pln" style="margin: 0px; padding: 0px;"> INTERVAL </span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">1</span><span class="pln" style="margin: 0px; padding: 0px;"> HOUR</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">);</span><span class="pln" style="margin: 0px; padding: 0px;">
+</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">+---------------------------------------------------------+</span><span class="pln" style="margin: 0px; padding: 0px;">
+</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">|</span><span class="pln" style="margin: 0px; padding: 0px;"> DATE_ADD</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="str" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">'1999-01-01'</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">,</span><span class="pln" style="margin: 0px; padding: 0px;"> INTERVAL </span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">1</span><span class="pln" style="margin: 0px; padding: 0px;"> HOUR</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">)</span><span class="pln" style="margin: 0px; padding: 0px;">                 </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">|</span><span class="pln" style="margin: 0px; padding: 0px;">
+</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">+---------------------------------------------------------+</span><span class="pln" style="margin: 0px; padding: 0px;">
+</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">|</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">1999</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">-</span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">01</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">-</span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">01</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">01</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">:</span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">00</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">:</span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">00</span><span class="pln" style="margin: 0px; padding: 0px;">                                     </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">|</span><span class="pln" style="margin: 0px; padding: 0px;">
+</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">+---------------------------------------------------------+</span><span class="pln" style="margin: 0px; padding: 0px;">
+</span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">1</span><span class="pln" style="margin: 0px; padding: 0px;"> row </span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">in</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">set</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">0.00</span><span class="pln" style="margin: 0px; padding: 0px;"> sec</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">)</span></pre> 
+ <br>      
+</div></body></html>

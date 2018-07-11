@@ -1,0 +1,33 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Django Apache配置</h1><div style="width:100%;float:left;" class="article-content">   
+ <div> 
+  <div>
+    到目前为止，在我们的例子中，都是使用&nbsp;Django&nbsp;开发的web服务器。但这种服务器只是用于测试和不适合生产环境。一旦程序发布投入生产，就需要如Apache，Nginx等一个真正的服务器，我们在这一节中讨论Apache的配置。 
+  </div> 
+ </div> 
+ <div> 
+  <p style="text-align:justify;"> 服务Django应用程序是通过Apache使用mod_wsgi的完成。&nbsp;因此，第一件事情就是要确保你已经安装了Apache和mod_wsgi。请记住，当我们创建我们的项目，项目结构它看起来应该如下所示 - </p> 
+  <pre>myproject/
+   manage.py
+   myproject/
+      __init__.py
+      settings.py
+      urls.py
+      wsgi.py</pre> 
+  <div>
+    wsgi.py文件是一个考虑Django和Apache之间的联系和处理。 
+  </div> 
+  <p style="text-align:justify;"> 比方说，我们希望分享项目(myproject)在Apache中。&nbsp;我们只需要设置Apache来访问这个文件夹。假设我们把myproject的文件夹在&nbsp;"/var/www/html".&nbsp;在此阶段，访问该项目将经由&nbsp;<a target="_blank" href="http://127.0.0.1/myproject">http://127.0.0.1/myproject</a>&nbsp;来完成。&nbsp;这将导致Apache&nbsp;列出文件夹显示如在下面的快照。<br> <img src="/uploads/tutorial/20160130/1-160130222152123.jpg" alt=""> </p> 
+  <p style="text-align:justify;"> 可以看出，Apache不需要处理Django的东西。&nbsp;对于需要处理的，需要在Apache的httpd.conf配置。&nbsp;于是打开httpd.conf并添加以下行&nbsp;− </p>   
+  <pre>WSGIScriptAlias / /var/www/html/myproject/myproject/wsgi.py
+WSGIPythonPath /var/www/html/myproject/
+
+&lt;Directory /var/www/html/myproject/&gt;
+   &lt;Files wsgi.py&gt;
+      Order deny,allow
+      Allow from all
+   &lt;/Files&gt;
+&lt;/Directory&gt;&nbsp;</pre> 
+  <p style="text-align:justify;"> 如果可以访问登录页面：&nbsp;http://127.0.0.1/myapp/connection,&nbsp;你将看到如下页面&nbsp;-<br> <img src="/uploads/tutorial/20160130/1-16013022211CW.jpg" alt=""> </p> 
+ </div>
+ <br>      
+</div></body></html>

@@ -1,0 +1,146 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Kotlin编译器插件</h1><div style="width:100%;float:left;" class="article-content">   
+ <h2 id="h2-u5168u5F00u653Eu7F16u8BD1u5668u63D2u4EF6"><a name="全开放编译器插件" class="reference-link"></a><span class="header-link octicon octicon-link"></span>全开放编译器插件</h2>
+ <p>Kotlin 有类及其默认为 <code>final</code> 的成员，这使得像 Spring AOP 这样需要类为 <code>open</code> 的框架和库用起来很不方便。<br>这个 <code>all-open</code> 编译器插件会适配 Kotlin 以满足那些框架的需求，并使用指定的注解标注类而其成员无需显式使用 <code>open</code> 关键字打开。<br>例如，当你使用 Spring 时，你不需要打开所有的类，而只需要使用特定的注解标注，如<br><code><a target="_blank" href="https://github.com/Configuration" title="@Configuration" class="at-link">@Configuration</a></code> 或 <code><a target="_blank" href="https://github.com/Service" title="@Service" class="at-link">@Service</a></code>。<br><code>all-open</code> 插件允许指定这些注解。</p> 
+ <p>我们为全开放插件提供 Gradle 和 Maven 以及 IDE 集成的支持。<br>对于 Spring，你可以使用 <code>kotlin-spring</code> 编译器插件(<a target="_blank" href="compiler-plugins.html#kotlin-spring-编译器插件">见下文</a>)。</p> 
+ <h3 id="h3-u5982u4F55u4F7Fu7528u5168u5F00u653Eu63D2u4EF6"><a name="如何使用全开放插件" class="reference-link"></a><span class="header-link octicon octicon-link"></span>如何使用全开放插件</h3>
+ <p>在 <code>build.gradle</code> 中添加插件：</p> 
+ <pre><code class="lang-groovy">buildscript {
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-allopen:$kotlin_version"
+    }
+}
+
+apply plugin: "kotlin-allopen"
+</code></pre> 
+ <p>或者，如果你使用 Gradle 插件 DSL，将其添加到 <code>plugins</code> 块：</p> 
+ <pre><code class="lang-groovy">plugins {
+  id "org.jetbrains.kotlin.plugin.allopen" version "＜使用的版本＞"
+}
+</code></pre> 
+ <p>然后指定会打开该类的注解：</p> 
+ <pre><code class="lang-groovy">allOpen {
+    annotation("com.my.Annotation")
+}
+</code></pre> 
+ <p>如果类(或任何其超类)标有 <code>com.my.Annotation</code> 注解，类本身及其所有成员会变为开放。</p> 
+ <p>它也适用于元注解：</p> 
+ <pre><code class="lang-kotlin">@com.my.Annotation
+annotation class MyFrameworkAnnotation
+
+@MyFrameworkAnnotation
+class MyClass // 将会全开放
+</code></pre> 
+ <p><code>MyFrameworkAnnotation</code> 也是使类打开的注解，因为它标有 <code>com.my.Annotation</code> 注解。</p> 
+ <p>下面是全开放与 Maven 一起使用的用法：</p> 
+ <pre><code class="lang-xml">&lt;plugin&gt;
+    &lt;artifactId&gt;kotlin-maven-plugin&lt;/artifactId&gt;
+    &lt;groupId&gt;org.jetbrains.kotlin&lt;/groupId&gt;
+    &lt;version&gt;${kotlin.version}&lt;/version&gt;
+
+    &lt;configuration&gt;
+        &lt;compilerPlugins&gt;
+            &lt;!-- 或者 "spring" 对于 Spring 支持 --&gt;
+            &lt;plugin&gt;all-open&lt;/plugin&gt;
+        &lt;/compilerPlugins&gt;
+
+        &lt;pluginOptions&gt;
+            &lt;!-- 每个注解都放在其自己的行上 --&gt;
+            &lt;option&gt;all-open:annotation=com.my.Annotation&lt;/option&gt;
+            &lt;option&gt;all-open:annotation=com.their.AnotherAnnotation&lt;/option&gt;
+        &lt;/pluginOptions&gt;
+    &lt;/configuration&gt;
+
+    &lt;dependencies&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.jetbrains.kotlin&lt;/groupId&gt;
+            &lt;artifactId&gt;kotlin-maven-allopen&lt;/artifactId&gt;
+            &lt;version&gt;${kotlin.version}&lt;/version&gt;
+        &lt;/dependency&gt;
+    &lt;/dependencies&gt;
+&lt;/plugin&gt;
+</code></pre> 
+ <h3 id="h3-kotlin-spring-"><a name="Kotlin-spring 编译器插件" class="reference-link"></a><span class="header-link octicon octicon-link"></span>Kotlin-spring 编译器插件</h3>
+ <p>你无需手动指定 Spring 注解，你可以使用 <code>kotlin-spring</code> 插件，它根据 Spring 的要求自动配置全开放插件。</p> 
+ <pre><code class="lang-groovy">buildscript {
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-allopen:$kotlin_version"
+    }
+}
+
+apply plugin: "kotlin-spring"
+</code></pre> 
+ <p>或者使用 Gradle 插件 DSL：</p> 
+ <pre><code class="lang-groovy">plugins {
+  id "org.jetbrains.kotlin.plugin.spring" version "＜使用的版本＞"
+}
+</code></pre> 
+ <p>其 Maven 示例与上面的类似。</p> 
+ <p>该插件指定了以下注解：<br><a target="_blank" href="http://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/stereotype/Component.html" "><code>@Component</code></a>、<br><a target="_blank" href="http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/scheduling/annotation/Async.html" "><code>@Async</code></a>、<br><a target="_blank" href="http://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/transaction/annotation/Transactional.html" "><code>@Transactional</code></a>、<br><a target="_blank" href="http://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/cache/annotation/Cacheable.html" "><code>@Cacheable</code></a>。<br>由于元注解的支持，标注有 <code><a target="_blank" href="https://github.com/Configuration" title="@Configuration" class="at-link">@Configuration</a></code>、 <code><a target="_blank" href="https://github.com/Controller" title="@Controller" class="at-link">@Controller</a></code>、 <code><a target="_blank" href="https://github.com/RestController" title="@RestController" class="at-link">@RestController</a></code>、 <code><a target="_blank" href="https://github.com/Service" title="@Service" class="at-link">@Service</a></code> 或者 <code><a target="_blank" href="https://github.com/Repository" title="@Repository" class="at-link">@Repository</a></code> 的类会自动打开，因为这些注解标注有元注解 <code><a target="_blank" href="https://github.com/Component" title="@Component" class="at-link">@Component</a></code>。</p> 
+ <p>当然，你可以在同一个项目中同时使用 <code>kotlin-allopen</code> 和 <code>kotlin-spring</code>。<br>请注意，如果你使用 <a target="_blank" href="http://start.spring.io/#!language=kotlin">start.spring.io</a>，<code>kotlin-spring</code> 插件将默认启用。</p> 
+ <h2 id="h2-u65E0u53C2u7F16u8BD1u5668u63D2u4EF6"><a name="无参编译器插件" class="reference-link"></a><span class="header-link octicon octicon-link"></span>无参编译器插件</h2>
+ <p>无参(no-arg)编译器插件为具有特定注解的类生成一个额外的零参数构造函数。<br>这个生成的构造函数是合成的，因此不能从 Java 或 Kotlin 中直接调用，但可以使用反射调用。<br>这允许 Java Persistence API(JPA)实例化 <code>data</code> 类，虽然它从 Kotlin 或 Java 的角度看没有无参构造函数(参见<a target="_blank" href="compiler-plugins.html#kotlin-jpa-编译器插件">下面</a>的 <code>kotlin-jpa</code> 插件的描述)。</p> 
+ <h3 id="h3-u5982u4F55u4F7Fu7528u65E0u53C2u63D2u4EF6"><a name="如何使用无参插件" class="reference-link"></a><span class="header-link octicon octicon-link"></span>如何使用无参插件</h3>
+ <p>其用法非常类似于全开放插件。<br>添加该插件并指定注解的列表，这些注解一定会导致被标注的类生成无参构造函数。</p> 
+ <p>在 Gradle 中使用无参插件方法：</p>   
+ <pre><code class="lang-groovy">buildscript {
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-noarg:$kotlin_version"
+    }
+}
+
+apply plugin: "kotlin-noarg"
+</code></pre> 
+ <p>或者使用 Gradle 插件 DSL：</p> 
+ <pre><code class="lang-groovy">plugins {
+  id "org.jetbrains.kotlin.plugin.noarg" version "＜使用的版本＞"
+}
+</code></pre> 
+ <p>然后指定注解类型：</p> 
+ <pre><code class="lang-groovy">noArg {
+    annotation("com.my.Annotation")
+}
+</code></pre> 
+ <p>在 Maven 中使用无参插件方法：</p> 
+ <pre><code class="lang-xml">&lt;plugin&gt;
+    &lt;artifactId&gt;kotlin-maven-plugin&lt;/artifactId&gt;
+    &lt;groupId&gt;org.jetbrains.kotlin&lt;/groupId&gt;
+    &lt;version&gt;${kotlin.version}&lt;/version&gt;
+
+    &lt;configuration&gt;
+        &lt;compilerPlugins&gt;
+            &lt;!-- 或者 "jpa" 对于 JPA 支持 --&gt;
+            &lt;plugin&gt;no-arg&lt;/plugin&gt;
+        &lt;/compilerPlugins&gt;
+
+        &lt;pluginOptions&gt;
+            &lt;option&gt;no-arg:annotation=com.my.Annotation&lt;/option&gt;
+        &lt;/pluginOptions&gt;
+    &lt;/configuration&gt;
+
+    &lt;dependencies&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.jetbrains.kotlin&lt;/groupId&gt;
+            &lt;artifactId&gt;kotlin-maven-noarg&lt;/artifactId&gt;
+            &lt;version&gt;${kotlin.version}&lt;/version&gt;
+        &lt;/dependency&gt;
+    &lt;/dependencies&gt;
+&lt;/plugin&gt;
+</code></pre> 
+ <h3 id="h3-kotlin-jpa-"><a name="Kotlin-jpa 编译器插件" class="reference-link"></a><span class="header-link octicon octicon-link"></span>Kotlin-jpa 编译器插件</h3>
+ <p>该插件指定<br><a target="_blank" href="http://docs.oracle.com/javaee/7/api/javax/persistence/Entity.html" "><code>@Entity</code></a><br>和 <a target="_blank" href="http://docs.oracle.com/javaee/7/api/javax/persistence/Embeddable.html" "><code>@Embeddable</code></a><br>注解作为应该为一个类生成无参构造函数的标记。<br>这就是如何在 Gradle 中添加该插件的方法：</p> 
+ <pre><code class="lang-groovy">buildscript {
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-noarg:$kotlin_version"
+    }
+}
+
+apply plugin: "kotlin-jpa"
+</code></pre> 
+ <p>或者使用 Gradle 插件 DSL：</p> 
+ <pre><code class="lang-groovy">plugins {
+  id "org.jetbrains.kotlin.plugin.jpa" version "＜使用的版本＞"
+}
+</code></pre> 
+ <p>其 Maven 示例与上面的类似。</p>
+ <br>      
+</div></body></html>

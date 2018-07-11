@@ -1,0 +1,86 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">.NET Core创建.NET标准库</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>类库定义了可以从任何应用程序调用的类型和方法。</p> 
+ <ul> 
+  <li>使用.NET Core开发的类库支持.NET标准库，该标准库允许您的库由任何支持该版本的.NET标准库的.NET平台调用。</li>
+  <li>当完成类库时，可以决定是将其作为第三方组件来分发，还是要将其作为与一个或多个应用程序捆绑在一起的组件进行包含。</li>
+ </ul> 
+ <p>现在开始在控制台应用程序中添加一个类库项目(以前创建的<em>FirstApp</em>项目为基础); 右键单击<em>解决方案资源管理器</em> ，然后选择：<em>添加</em> -&gt; <em>新建项目…</em>，如下图所示 - </p> 
+ <p>在<em>“添加新项目”</em>对话框中，选择<em>“.NET Core”</em>节点，然后选择<em>“类库”(.NET Core)</em>项目模板。</p> 
+ <p>在项目名称文本框中，输入<em>“UtilityLibrary”</em>作为项目的名称，如下图所示 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201712/1212/823111239_18797.png" alt=""></p> 
+ <p>单击确定以创建类库项目。项目创建完成后，让我们添加一个新的类。在<em>解决方案资源管理器</em> 中右键单击项目名称，然后选择：<em>添加</em> -&gt; <em>类…</em>，如下图所示 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201712/1212/969111247_36263.png" alt=""></p> 
+ <p>在中间窗格中选择类并在名称和字段中输入<code>StringLib.cs</code>，然后单击<em>添加</em>。 当类添加了之后，打<em>StringLib.cs</em> 文件，并编写下面的代码。参考代码 - </p> 
+ <pre><code class="lang-csharp">using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace UtilityLibrary
+{
+    public static class StringLib
+    {
+        public static bool StartsWithUpper(this String str)
+        {
+            if (String.IsNullOrWhiteSpace(str))
+                return false;
+            Char ch = str[0];
+            return Char.IsUpper(ch);
+        }
+        public static bool StartsWithLower(this String str)
+        {
+            if (String.IsNullOrWhiteSpace(str))
+                return false;
+            Char ch = str[0];
+            return Char.IsLower(ch);
+        }
+        public static bool StartsWithNumber(this String str)
+        {
+            if (String.IsNullOrWhiteSpace(str))
+                return false;
+            Char ch = str[0];
+            return Char.IsNumber(ch);
+        }
+    }
+}
+</code></pre> 
+ <ul> 
+  <li>类库<code>UtilityLibrary.StringLib</code>包含一些方法，例如：<code>StartsWithUpper</code>，<code>StartsWithLower</code>和<code>StartsWithNumber</code>，它们返回一个布尔值，指示当前字符串实例是否分别以大写，小写和数字开头。</li>
+  <li>在.NET Core中，如果字符是大写字符，则<code>Char.IsUpper</code>方法返回<code>true</code>;如果字符是小写字符，则<code>Char.IsLower</code>方法返回<code>true</code>;如果字符是数字字符，则<code>Char.IsNumber</code>方法返回<code>true</code>。</li>
+  <li>在菜单栏上，选择Build，Build Solution。 该项目应该编译没有错误。</li>
+  <li>.NET Core控制台项目无法访问这个类库。</li>
+  <li>现在要使用这个类库，需要在控制台项目中添加这个类库的引用。</li>
+ </ul> 
+ <p>为此，展开<code>FirstApp</code>并右键单击在弹出的菜单中选择：<em>添加</em> -&gt; <em>引用</em> 并选择：<em>添加引用…</em>，如下图所示 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201712/1212/871111248_81739.png" alt=""></p> 
+ <p>在<em>“引用管理器”</em>对话框中，选择类库项目<code>UtilityLibrary</code>，然后单击【<em>确定</em>】。<br>现在打开控制台项目的<code>Program.cs</code>文件，并用下面的代码替换所有的代码。</p>   
+ <pre><code class="lang-csharp">using System; 
+using System.Collections.Generic; 
+using System.Linq; 
+using System.Threading.Tasks; 
+using UtilityLibrary; 
+
+namespace FirstApp { 
+   public class Program { 
+      public static void Main(string[] args) { 
+         int rows = Console.WindowHeight; 
+         Console.Clear(); 
+         do { 
+            if (Console.CursorTop &gt;= rows || Console.CursorTop == 0) { 
+               Console.Clear(); 
+               Console.WriteLine("\nPress &lt;Enter&gt; only to exit; otherwise, enter a string and press &lt;Enter&gt;:\n"); 
+            } 
+            string input = Console.ReadLine(); 
+
+            if (String.IsNullOrEmpty(input)) break; 
+            Console.WriteLine("Input: {0} {1,30}: {2}\n", input, "Begins with uppercase? ", 
+            input.StartsWithUpper() ? "Yes" : "No"); 
+         } while (true); 
+      } 
+   } 
+}
+</code></pre> 
+ <p>现在运行应用程序，将看到以下输出。如下所示 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201712/1212/896111249_20107.png" alt=""></p> 
+ <p>为了更好的理解，在接下来的章节中也会涉及到如何在项目中使用类库的其他扩展方法。</p>
+ <br>      
+</div></body></html>

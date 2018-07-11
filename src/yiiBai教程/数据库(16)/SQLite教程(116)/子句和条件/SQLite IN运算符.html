@@ -1,0 +1,69 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">SQLite IN运算符</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>SQLite <code>IN</code>运算符用于确定值是否匹配列表或子查询中的任何值。 <code>IN</code>运算符的语法如下：</p> 
+ <pre><code class="lang-sql">expression [NOT] IN (value_list|subquery);
+</code></pre> 
+ <p><code>expression</code>可以是任何有效的表达式。 它可以是表中的某一列。</p> 
+ <p>值的列表(<code>value_list</code>)是固定值列表或子查询返回的一列的结果集。表的返回类型和列表中的值必须相同。</p> 
+ <p><code>IN</code>运算符根据表达式是否匹配值列表中的任何值，返回<code>true</code>或<code>false</code>。要查询非列表中的值匹配，请使用<code>NOT IN</code>运算符。</p> 
+ <h2 id="h2-sqlite-in-"><a name="SQLite IN运算符示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>SQLite IN运算符示例</h2>
+ <p>假设有一个名为<code>STUDENT</code>的表，并具有以下数据：</p> 
+ <pre><code class="lang-shell">sqlite&gt; SELECT * FROM STUDENT ;
+1|Maxsu|27|Shengzheng|20000.0
+2|Minsu|25|Beijing|15000.0
+3|Avgsu|23|Shanghai|2000.0
+4|Linsu|25|Guangzhou|65000.0
+5|Sqlsu|26|Hainan|25000.0
+6|Javasu|21|Shengzheng|18000.0
+sqlite&gt;
+</code></pre> 
+ <p>若要查询ID为<code>1</code>，<code>3</code>，<code>5</code>的学生信息，可参考以下语句 - </p> 
+ <pre><code class="lang-sql">SELECT ID,AGE,NAME,ADDRESS FROM student WHERE ID IN(1,3,5);
+</code></pre> 
+ <p>执行上面查询语句，得到以下结果 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201705/3105/260090628_11061.png" alt=""></p> 
+ <p>上面的查询语句，与下面的OR条件语句效果一样 - </p> 
+ <pre><code class="lang-sql">SELECT ID,AGE,NAME,ADDRESS FROM student WHERE ID = 1 OR ID=3 OR ID=5;
+</code></pre> 
+ <p><strong>IN语句和子查询</strong></p> 
+ <p>假设有一个名称为：<code>department</code>的表，记录每个学生的所在的部门。</p> 
+ <pre><code class="lang-sql">sqlite&gt; select id ,dept,emp_id from department;
+1|财务部|1
+2|技术部|2
+3|技术部|3
+4|市场部|4
+5|市场部|5
+sqlite&gt;
+</code></pre> 
+ <p>其中，<code>emp_id</code>字段引用<code>student</code>表的<code>ID</code>字段，现在查询每个分配了部门的学生的信息，参考以下语句 - </p>   
+ <pre><code class="lang-sql">SELECT ID,AGE,NAME,ADDRESS FROM student WHERE ID IN (
+    SELECT emp_id FROM  department );
+</code></pre> 
+ <p>执行上面语句，得到如下结果 - </p> 
+ <pre><code>sqlite&gt; select id ,dept,emp_id from department;
+1|财务部|1
+2|技术部|2
+3|技术部|3
+4|市场部|4
+5|市场部|5
+sqlite&gt;
+sqlite&gt; SELECT ID,AGE,NAME,ADDRESS FROM student WHERE ID IN (
+   ...&gt;     SELECT emp_id FROM  department );
+1|27|Maxsu|Shengzhen
+2|25|Minsu|Beijing
+3|23|Avgsu|Shanghai
+4|25|Linsu|Guangzhou
+5|26|Sqlsu|Haikou
+sqlite&gt;
+</code></pre>
+ <p><strong>SQLite NOT IN示例</strong></p> 
+ <p>查询那些<code>ID</code>不是<code>1</code>，<code>3</code>，<code>5</code>学生的信息，参考以下语句 - </p> 
+ <pre><code class="lang-sql">SELECT ID,AGE,NAME,ADDRESS FROM student WHERE ID NOT IN(1,3,5);
+</code></pre> 
+ <p>查询那些未分配部门的学生的信息，参考以下语句 - </p> 
+ <pre><code class="lang-sql">SELECT ID,AGE,NAME,ADDRESS FROM student WHERE ID NOT IN (
+    SELECT emp_id FROM  department );
+</code></pre> 
+ <p>执行上面查询语句，得到以下结果 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201705/3105/341090640_94910.png" alt=""></p>
+ <br>      
+</div></body></html>

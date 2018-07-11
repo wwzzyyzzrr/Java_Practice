@@ -1,0 +1,62 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">ReactJS键(Key)</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>在使用动态创建的组件或用户更改列表时，React键很有用。 设置键值将会保持组件在更改后的唯一标识。</p> 
+ <h2 id="h2-u4F7Fu7528u952E"><a name="使用键" class="reference-link"></a><span class="header-link octicon octicon-link"></span>使用键</h2>
+ <p>这里将动态创建具有唯一索引(<code>i</code>)的内容元素。 <code>map</code>函数将从数据数组中创建三个元素。 由于键值对于每个元素都是唯一的，因此把<code>i</code>作为每个创建元素的键。</p> 
+ <p>文件：<em>App.jsx</em> - </p> 
+ <pre><code class="lang-js">import React from 'react';
+
+class App extends React.Component {
+   constructor() {
+      super();
+
+      this.state = {
+         data:[
+            {
+               component: 'First...',
+               id: 1
+            },
+            {
+               component: 'Second...',
+               id: 2
+            },
+            {
+               component: 'Third...',
+               id: 3
+            }
+         ]
+      }
+   }
+   render() {
+      return (
+         &lt;div&gt;
+            &lt;div&gt;
+               {this.state.data.map((dynamicComponent, i) =&gt; &lt;Content 
+                  key = {i} componentData = {dynamicComponent}/&gt;)}
+            &lt;/div&gt;
+         &lt;/div&gt;
+      );
+   }
+}
+class Content extends React.Component {
+   render() {
+      return (
+         &lt;div&gt;
+            &lt;div&gt;{this.props.componentData.component}&lt;/div&gt;
+            &lt;div&gt;{this.props.componentData.id}&lt;/div&gt;
+         &lt;/div&gt;
+      );
+   }
+}
+export default App;
+</code></pre> 
+ <p>文件：<em>main.js</em> - </p>   
+ <pre><code class="lang-js">import React from 'react';
+import ReactDOM from 'react-dom';
+import App from './App.jsx';
+
+ReactDOM.render(&lt;App/&gt;, document.getElementById('app'));
+</code></pre> 
+ <p>将得到每个元素的键值，如下所示 -<br><img src="http://www.yiibai.com/uploads/images/201801/0201/669110123_44613.png" alt=""></p> 
+ <p>如果在将来添加或删除一些元素或者改变动态创建元素的顺序，React将使用键值来跟踪每个元素。</p>
+ <br>      
+</div></body></html>

@@ -1,0 +1,241 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">JavaFX DatePicker</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>JavaFX <code>DatePicker</code>允许从给定日历中选择一天。<code>DatePicker</code>控件包含一个带有日期字段和日期选择器的组合框。JavaFX DatePicker控件使用JDK8日期时间API。</p> 
+ <pre><code class="lang-java">import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.scene.control.DatePicker;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+
+public class Main extends Application {
+  public static void main(String[] args) {
+    launch(args);
+  }
+  @Override
+  public void start(Stage stage) {
+    VBox vbox = new VBox(20);
+    Scene scene = new Scene(vbox, 400, 400);
+    stage.setScene(scene);
+
+    DatePicker checkInDatePicker = new DatePicker();
+
+    vbox.getChildren().add(checkInDatePicker);
+
+    stage.show();
+  }
+}
+</code></pre> 
+ <p>上面的代码生成以下结果。</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201701/18/832100121_55264.png" alt=""></p> 
+ <h2 id="h2-datepicker-"><a name="DatePicker创建" class="reference-link"></a><span class="header-link octicon octicon-link"></span>DatePicker创建</h2>
+ <p>我们可以创建一个<code>DatePicker</code>并在类构造函数中设置一个特定的日期值。</p> 
+ <pre><code class="lang-java">dateP = new DatePicker(LocalDate.of(2018, 10, 8));
+</code></pre> 
+ <p>还可以使用<code>setValue()</code>方法设置日期值。</p> 
+ <pre><code class="lang-java">checkInDatePicker.setValue(LocalDate.of(2014, 10, 8));
+checkInDatePicker.setValue(LocalDate.now());
+</code></pre> 
+ <p>以下代码使用<code>setValue()</code>向结束<code>DatePicker</code>添加更多时间。</p> 
+ <pre><code class="lang-java">import java.time.LocalDate;
+
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.Label;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+
+public class Main extends Application {
+  public static void main(String[] args) {
+    launch(args);
+  }
+
+  @Override
+  public void start(Stage stage) {
+    VBox vbox = new VBox(20);
+    Scene scene = new Scene(vbox, 400, 400);
+    stage.setScene(scene);
+    DatePicker startDatePicker = new DatePicker();
+    DatePicker endDatePicker = new DatePicker();
+
+    startDatePicker.setValue(LocalDate.now());
+    endDatePicker.setValue(startDatePicker.getValue().plusDays(1));
+
+    vbox.getChildren().add(new Label("Start Date:"));
+    vbox.getChildren().add(startDatePicker);
+    vbox.getChildren().add(new Label("End Date:"));
+    vbox.getChildren().add(endDatePicker);
+    stage.show();
+  }
+}
+</code></pre> 
+ <p>上面的代码生成以下结果。</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201701/18/585100123_22387.png" alt=""></p> 
+ <h2 id="h2-u81EAu5B9Au4E49u65E5u671Fu9009u62E9u5668"><a name="自定义日期选择器" class="reference-link"></a><span class="header-link octicon octicon-link"></span>自定义日期选择器</h2>
+ <p>可以通过使用<code>setShowWeekNumbers()</code>方法来启用和禁用在<code>DatePicker</code>中显示ISO周数。</p> 
+ <pre><code class="lang-java">dateP.setShowWeekNumbers(true);
+</code></pre> 
+ <p>默认情况下，<code>DatePicker</code>使用系统区域设置和ISO日历系统定义的日期格式。</p> 
+ <pre><code class="lang-java">import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.scene.control.DatePicker;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+import javafx.util.StringConverter;
+
+public class Main extends Application {
+
+  public static void main(String[] args) {
+    launch(args);
+  }
+
+  @Override
+  public void start(Stage stage) {
+    String pattern = "yyyy-MM-dd";
+    VBox vbox = new VBox(20);
+    Scene scene = new Scene(vbox, 400, 400);
+    stage.setScene(scene);
+    DatePicker checkInDatePicker = new DatePicker();
+    StringConverter&lt;LocalDate&gt; converter = new StringConverter&lt;LocalDate&gt;() {
+      DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern(pattern);
+
+      @Override
+      public String toString(LocalDate date) {
+        if (date != null) {
+          return dateFormatter.format(date);
+        } else {
+          return "";
+        }
+      }
+
+      @Override
+      public LocalDate fromString(String string) {
+        if (string != null &amp;&amp; !string.isEmpty()) {
+          return LocalDate.parse(string, dateFormatter);
+        } else {
+          return null;
+        }
+      }
+    };
+    checkInDatePicker.setConverter(converter);
+    checkInDatePicker.setPromptText(pattern.toLowerCase());
+
+    vbox.getChildren().add(checkInDatePicker);
+    checkInDatePicker.requestFocus();
+    stage.show();
+  }
+}
+</code></pre> 
+ <p>上面的代码生成以下结果。</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201701/18/284100136_62376.png" alt=""></p> 
+ <h2 id="h2-datecell"><a name="DateCell" class="reference-link"></a><span class="header-link octicon octicon-link"></span>DateCell</h2>
+ <p>默认情况下，日历元素中的所有单元格都可供选择。可以使用日期单元工厂禁用单元格。</p> 
+ <pre><code class="lang-java">import java.time.LocalDate;
+
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.scene.control.DateCell;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.Label;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+import javafx.util.Callback;
+
+public class Main extends Application {
+  public static void main(String[] args) {
+    launch(args);
+  }
+
+  @Override
+  public void start(Stage stage) {
+    VBox vbox = new VBox(20);
+    Scene scene = new Scene(vbox, 400, 400);
+    stage.setScene(scene);
+    DatePicker startDatePicker = new DatePicker();
+    DatePicker endDatePicker = new DatePicker();
+    startDatePicker.setValue(LocalDate.now());
+    final Callback&lt;DatePicker, DateCell&gt; dayCellFactory = new Callback&lt;DatePicker, DateCell&gt;() {
+      @Override
+      public DateCell call(final DatePicker datePicker) {
+        return new DateCell() {
+          @Override
+          public void updateItem(LocalDate item, boolean empty) {
+            super.updateItem(item, empty);
+
+            if (item.isBefore(startDatePicker.getValue().plusDays(1))) {
+              setDisable(true);
+              setStyle("-fx-background-color: #EEEEEE;");
+            }
+          }
+        };
+      }
+    };
+    endDatePicker.setDayCellFactory(dayCellFactory);
+    endDatePicker.setValue(startDatePicker.getValue().plusDays(1));
+    vbox.getChildren().add(new Label("Start Date:"));
+    vbox.getChildren().add(startDatePicker);
+    vbox.getChildren().add(new Label("End Date:"));
+    vbox.getChildren().add(endDatePicker);
+    stage.show();
+  }
+}
+</code></pre> 
+ <p>上面的代码生成以下结果。</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201701/18/834100138_78558.png" alt=""></p> 
+ <h2 id="h2-u793Au4F8B"><a name="示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例</h2>
+ <p>为每个日期单元格安装工具提示。</p>   
+ <pre><code class="lang-java">import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.scene.control.DateCell;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+import javafx.util.Callback;
+
+public class Main extends Application {
+  public static void main(String[] args) {
+    launch(args);
+  }
+
+  @Override
+  public void start(Stage stage) {
+    VBox vbox = new VBox(20);
+    Scene scene = new Scene(vbox, 400, 400);
+    stage.setScene(scene);
+    final DatePicker startDatePicker = new DatePicker();
+    DatePicker endDatePicker = new DatePicker();
+    startDatePicker.setValue(LocalDate.now());
+    final Callback&lt;DatePicker, DateCell&gt; dayCellFactory = new Callback&lt;DatePicker, DateCell&gt;() {
+      @Override
+      public DateCell call(final DatePicker datePicker) {
+        return new DateCell() {
+          @Override
+          public void updateItem(LocalDate item, boolean empty) {
+            super.updateItem(item, empty);
+
+            long p = ChronoUnit.DAYS.between(startDatePicker.getValue(), item);
+            setTooltip(new Tooltip("You're about to stay for " + p + " days"));
+          }
+        };
+      }
+    };
+    endDatePicker.setDayCellFactory(dayCellFactory);
+    endDatePicker.setValue(startDatePicker.getValue().plusDays(1));
+    vbox.getChildren().add(new Label("Start Date:"));
+    vbox.getChildren().add(startDatePicker);
+    vbox.getChildren().add(new Label("End Date:"));
+    vbox.getChildren().add(endDatePicker);
+    stage.show();
+  }
+}
+</code></pre> 
+ <p>上面的代码生成以下结果。</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201701/18/322100139_99292.png" alt=""></p>
+ <br>      
+</div></body></html>

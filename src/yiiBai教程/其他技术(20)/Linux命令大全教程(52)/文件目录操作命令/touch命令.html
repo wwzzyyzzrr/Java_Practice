@@ -1,0 +1,100 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">touch命令</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>linux中的<strong>touch</strong>命令不常用，一般用来修改文件时间戳，或者新建一个不存在的文件。</p> 
+ <h2 id="h2-1-"><a name="1．命令格式" class="reference-link"></a><span class="header-link octicon octicon-link"></span>1．命令格式</h2>
+ <p> touch [选项]… 文件…</p> 
+ <h2 id="h2-2-"><a name="2．命令参数" class="reference-link"></a><span class="header-link octicon octicon-link"></span>2．命令参数</h2>
+ <ul> 
+  <li><code>-a</code>，<code>--time=atime</code>，<code>--time=access</code>或<code>--time=use</code> 只更改存取时间。</li>
+  <li><code>-c</code> 或<code>--no-create</code>不建立任何文档。</li>
+  <li><code>-d</code> 使用指定的日期时间，而非现在的时间。</li>
+  <li><code>-f</code> 此参数将忽略不予处理，仅负责解决BSD版本<code>touch</code>指令的兼容性问题。</li>
+  <li><code>-m</code> 或<code>--time=mtime</code>或<code>--time=modify</code> 　只更改变动时间。</li>
+  <li><code>-r</code> 把指定文档或目录的日期时间，统统设成和参考文档或目录的日期时间相同。</li>
+  <li><code>-t</code> 使用指定的日期时间，而非现在的时间。</li>
+ </ul> 
+ <h2 id="h2-3-"><a name="3．命令功能" class="reference-link"></a><span class="header-link octicon octicon-link"></span>3．命令功能</h2>
+ <p><code>touch</code>命令参数可更改文档或目录的日期时间，包括存取时间和更改时间。 </p> 
+ <h2 id="h2-4-"><a name="4．使用范例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>4．使用范例</h2>
+ <h3 id="h3-u5B9Eu4F8Bu4E00"><a name="实例一" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实例一</h3>
+ <p>创建不存在的文件，用法如下所示 -</p> 
+ <p>命令：</p> 
+ <pre><code class="lang-shell">touch log1.log log2.log
+</code></pre> 
+ <p>输出：</p> 
+ <pre><code class="lang-shell">[yiibai@localhost test]$ ll
+total 4
+-rw-rw-r--. 1 yiibai yiibai 25 Feb 12 22:43 log2.txt
+-rw-rw-r--. 1 yiibai yiibai  0 Feb 12 22:44 log3.txt
+[yiibai@localhost test]$ touch log1.log log2.log
+[yiibai@localhost test]$ ll
+total 4
+-rw-rw-r--. 1 yiibai yiibai  0 Feb 13 01:42 log1.log
+-rw-rw-r--. 1 yiibai yiibai  0 Feb 13 01:42 log2.log
+-rw-rw-r--. 1 yiibai yiibai 25 Feb 12 22:43 log2.txt
+-rw-rw-r--. 1 yiibai yiibai  0 Feb 12 22:44 log3.txt
+[yiibai@localhost test]$
+</code></pre> 
+ <p>如果<code>log-noexists.log</code>不存在，则不创建文件</p> 
+ <pre><code class="lang-shell">[yiibai@localhost test]$ ll
+total 4
+-rw-rw-r--. 1 yiibai yiibai  0 Feb 13 01:42 log1.log
+-rw-rw-r--. 1 yiibai yiibai  0 Feb 13 01:42 log2.log
+-rw-rw-r--. 1 yiibai yiibai 25 Feb 12 22:43 log2.txt
+-rw-rw-r--. 1 yiibai yiibai  0 Feb 12 22:44 log3.txt
+[yiibai@localhost test]$ touch -c log-noexists.log
+[yiibai@localhost test]$ ll
+total 4
+-rw-rw-r--. 1 yiibai yiibai  0 Feb 13 01:42 log1.log
+-rw-rw-r--. 1 yiibai yiibai  0 Feb 13 01:42 log2.log
+-rw-rw-r--. 1 yiibai yiibai 25 Feb 12 22:43 log2.txt
+-rw-rw-r--. 1 yiibai yiibai  0 Feb 12 22:44 log3.txt
+[yiibai@localhost test]$
+</code></pre> 
+ <h3 id="h3-u5B9Eu4F8Bu4E8C"><a name="实例二" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实例二</h3>
+ <p>更新<code>log2.log</code>的时间和<code>log2.txt</code>时间戳相同<br>命令：</p> 
+ <pre><code class="lang-shell">touch -r log2.log log2.txt
+</code></pre> 
+ <p>输出：</p> 
+ <pre><code class="lang-shell">[yiibai@localhost test]$ ll
+total 4
+-rw-rw-r--. 1 yiibai yiibai  0 Feb 13 01:42 log1.log
+-rw-rw-r--. 1 yiibai yiibai  0 Feb 13 01:42 log2.log
+-rw-rw-r--. 1 yiibai yiibai 25 Feb 12 22:43 log2.txt
+-rw-rw-r--. 1 yiibai yiibai  0 Feb 12 22:44 log3.txt
+[yiibai@localhost test]$ touch -r log2.log log2.txt
+[yiibai@localhost test]$ ll
+total 4
+-rw-rw-r--. 1 yiibai yiibai  0 Feb 13 01:42 log1.log
+-rw-rw-r--. 1 yiibai yiibai  0 Feb 13 01:42 log2.log
+-rw-rw-r--. 1 yiibai yiibai 25 Feb 13 01:42 log2.txt
+-rw-rw-r--. 1 yiibai yiibai  0 Feb 12 22:44 log3.txt
+[yiibai@localhost test]$
+</code></pre> 
+ <h3 id="h3-u5B9Eu4F8Bu4E09"><a name="实例三" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实例三</h3>
+ <p>设定文件的时间戳<br>命令：</p>   
+ <pre><code class="lang-shell">touch -t 201910102034.50 log1.log
+</code></pre> 
+ <p>输出：</p> 
+ <pre><code class="lang-shell">[yiibai@localhost test]$ ll
+total 4
+-rw-rw-r--. 1 yiibai yiibai  0 Oct 10  2019 log1.log
+-rw-rw-r--. 1 yiibai yiibai  0 Feb 13 01:42 log2.log
+-rw-rw-r--. 1 yiibai yiibai 25 Feb 13 01:42 log2.txt
+-rw-rw-r--. 1 yiibai yiibai  0 Feb 12 22:44 log3.txt
+[yiibai@localhost test]$ [yiibai@localhost test]$ ll
+-rw-rw-r--. 1 yiibai yiibai  0 Feb 13 01:42 log1.log
+-rw-rw-r--. 1 yiibai yiibai  0 Feb 13 01:42 log2.log
+-rw-rw-r--. 1 yiibai yiibai 25 Feb 13 01:42 log2.txt
+-rw-rw-r--. 1 yiibai yiibai  0 Feb 12 22:44 log3.txt
+[yiibai@localhost test]$ touch -t 201910102034.50 log1.log
+[yiibai@localhost test]$ ll
+total 4
+-rw-rw-r--. 1 yiibai yiibai  0 Oct 10  2019 log1.log
+-rw-rw-r--. 1 yiibai yiibai  0 Feb 13 01:42 log2.log
+-rw-rw-r--. 1 yiibai yiibai 25 Feb 13 01:42 log2.txt
+-rw-rw-r--. 1 yiibai yiibai  0 Feb 12 22:44 log3.txt
+[yiibai@localhost test]$
+</code></pre> 
+ <p>说明：<br><code>-t</code> time 使用指定的时间值 time 作为指定文件相应时间戳记的新值。此处的 time 规定为如下形式的十进制数:<br> [[CC]YY]MMDDhhmm[.SS]<br> 这里，CC为年数中的前两位，即”世纪数”；YY为年数的后两位，即某世纪中的年数．如果不给出CC的值，则 <code>touch</code> 将把年数CCYY限定在<code>1969--2068</code>之内．MM为月数，DD为天将把年数CCYY限定在<code>1969--2068</code>之内．<code>MM</code>为月数，<code>DD</code>为天数，<code>hh</code> 为小时数(几点)，<code>mm</code>为分钟数，<code>SS</code>为秒数．此处秒的设定范围是<code>0--61</code>，这样可以处理闰秒．这些数字组成的时间是环境变量TZ指定的时区中的一个时间。由于系统的限制，早于1970年1月1日的时间是错误的。</p>
+ <br>      
+</div></body></html>

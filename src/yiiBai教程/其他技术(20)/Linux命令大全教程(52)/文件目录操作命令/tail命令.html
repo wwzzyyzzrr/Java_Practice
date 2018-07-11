@@ -1,0 +1,93 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">tail命令</h1><div style="width:100%;float:left;" class="article-content">   
+ <p><strong>tail</strong> 命令从指定点开始将文件写到标准输出。使用<code>tail</code>命令的<code>-f</code>选项可以方便的查阅正在改变的日志文件,<code>tail -f filename</code>会把<code>filename</code>里最尾部的内容显示在屏幕上,并且不但刷新，以便看到最新的文件内容。</p> 
+ <h2 id="h2-1-"><a name="1．命令格式" class="reference-link"></a><span class="header-link octicon octicon-link"></span>1．命令格式</h2>
+ <pre><code class="lang-shell">tail[必要参数][选择参数][文件]
+</code></pre> 
+ <h2 id="h2-2-"><a name="2．命令功能" class="reference-link"></a><span class="header-link octicon octicon-link"></span>2．命令功能</h2>
+ <p>用于显示指定文件末尾内容，不指定文件时，作为输入信息进行处理。常用查看日志文件。</p> 
+ <h2 id="h2-3-"><a name="3．命令参数" class="reference-link"></a><span class="header-link octicon octicon-link"></span>3．命令参数</h2>
+ <ul> 
+  <li><code>-f</code> 循环读取</li>
+  <li><code>-q</code> 不显示处理信息</li>
+  <li><code>-v</code> 显示详细的处理信息</li>
+  <li><code>-c</code>&lt;数目&gt; 显示的字节数</li>
+  <li><code>-n</code>&lt;行数&gt; 显示行数</li>
+  <li><code>--pid=PID</code> 与<code>-f</code>合用,表示在进程<code>ID</code>,<code>PID</code>死掉之后结束。</li>
+  <li><code>-q</code>, <code>--quiet</code>, <code>--silent</code> 从不输出给出文件名的首部。</li>
+  <li><code>-s</code>, <code>--sleep-interval=S</code> 与<code>-f</code>合用,表示在每次反复的间隔休眠S秒 </li>
+ </ul> 
+ <h2 id="h2-4-"><a name="4．使用实例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>4．使用实例</h2>
+ <h3 id="h3--1-"><a name="实例1：显示文件末尾内容" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实例1：显示文件末尾内容</h3>
+ <p>命令：</p> 
+ <pre><code class="lang-shell">tail -n 5 log.log
+</code></pre> 
+ <p>演示执行及输出：</p> 
+ <pre><code class="lang-shell">[yiibai@localhost test]$ tail -n 5 log.log
+this is line 20.
+this is line 21.
+this is line 22.
+
+-----------------end
+[yiibai@localhost test]$
+</code></pre> 
+ <blockquote> 
+  <p>说明：显示文件最后5行内容</p> 
+ </blockquote> 
+ <h3 id="h3--2-"><a name="实例2：循环查看文件内容" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实例2：循环查看文件内容</h3>
+ <p>命令：</p> 
+ <pre><code class="lang-shell">tail -f ping.log
+</code></pre> 
+ <p>演示执行及输出：</p> 
+ <pre><code class="lang-shell">[yiibai@localhost test]$ ping www.baidu.com &gt; ping.log &amp;
+[1] 2382
+[yiibai@localhost test]$ tail -f ping.log
+64 bytes from 14.215.177.38 (14.215.177.38): icmp_seq=9 ttl=57 time=13.1 ms
+64 bytes from 14.215.177.38 (14.215.177.38): icmp_seq=10 ttl=57 time=14.7 ms
+64 bytes from 14.215.177.38 (14.215.177.38): icmp_seq=11 ttl=57 time=13.0 ms
+64 bytes from 14.215.177.38 (14.215.177.38): icmp_seq=12 ttl=57 time=16.0 ms
+64 bytes from 14.215.177.38 (14.215.177.38): icmp_seq=13 ttl=57 time=12.9 ms
+64 bytes from 14.215.177.38 (14.215.177.38): icmp_seq=14 ttl=57 time=14.5 ms
+64 bytes from 14.215.177.38 (14.215.177.38): icmp_seq=15 ttl=57 time=13.2 ms
+64 bytes from 14.215.177.38 (14.215.177.38): icmp_seq=16 ttl=57 time=13.3 ms
+64 bytes from 14.215.177.38 (14.215.177.38): icmp_seq=17 ttl=57 time=12.9 ms
+64 bytes from 14.215.177.38 (14.215.177.38): icmp_seq=18 ttl=57 time=13.2 ms
+64 bytes from 14.215.177.38 (14.215.177.38): icmp_seq=19 ttl=57 time=12.8 ms
+
+64 bytes from 14.215.177.38 (14.215.177.38): icmp_seq=20 ttl=57 time=12.4 ms
+
+64 bytes from 14.215.177.38 (14.215.177.38): icmp_seq=21 ttl=57 time=11.7 ms
+64 bytes from 14.215.177.38 (14.215.177.38): icmp_seq=22 ttl=57 time=13.1 ms
+64 bytes from 14.215.177.38 (14.215.177.38): icmp_seq=23 ttl=57 time=12.5 ms
+^C
+[yiibai@localhost test]$
+</code></pre> 
+ <blockquote> 
+  <p>说明：<code>ping www.baidu.com &gt; ping.log &amp;</code>，在后台ping远程主机。并输出文件到<code>ping.log</code>；这种做法也使用于一个以上的档案监视。用<code>Ctrl＋c</code>来终止。</p> 
+ </blockquote> 
+ <h3 id="h3--3-10-"><a name="实例3：从第10行开始显示文件" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实例3：从第10行开始显示文件</h3>
+ <p>命令：</p>   
+ <pre><code class="lang-shell">tail -n +10 log.log
+</code></pre> 
+ <p>演示执行及输出：</p> 
+ <pre><code class="lang-shell">[yiibai@localhost test]$ tail -n +10 log.log
+this is line 8.
+this is line 9.
+this is line 10.
+this is line 11.
+this is line 12.
+this is line 13.
+this is line 14.
+this is line 15.
+this is line 16.
+this is line 17.
+this is line 18.
+this is line 19.
+this is line 20.
+this is line 21.
+this is line 22.
+
+-----------------end
+[yiibai@localhost test]$
+</code></pre>
+ <br>      
+</div></body></html>

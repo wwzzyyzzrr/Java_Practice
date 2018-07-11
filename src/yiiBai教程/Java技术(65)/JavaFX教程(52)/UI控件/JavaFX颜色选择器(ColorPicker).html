@@ -1,0 +1,56 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">JavaFX颜色选择器(ColorPicker)</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>颜色选择器控件允许用户从可用的颜色范围中选择颜色，或通过指定RGB或HSB组合设置其他颜色。JavaFX <strong>ColorPicker</strong>控件具有颜色选择器，调色板和自定义颜色对话框窗口。</p> 
+ <h2 id="h2--colorpicker"><a name="创建ColorPicker" class="reference-link"></a><span class="header-link octicon octicon-link"></span>创建ColorPicker</h2>
+ <p>以下代码使用空构造函数创建一个颜色选择器控件，颜色选择器控件使用默认颜色，即<code>WHITE</code>。</p> 
+ <pre><code class="lang-java">ColorPicker colorPicker1 = new ColorPicker();
+</code></pre> 
+ <p>还可以提供颜色常量作为当前选择的颜色。</p> 
+ <pre><code class="lang-java">ColorPicker colorPicker2 = new ColorPicker(Color.BLUE);
+</code></pre> 
+ <p>还可以提供网络颜色值作为当前选择的颜色</p> 
+ <pre><code class="lang-java">ColorPicker colorPicker3 = new ColorPicker(Color.web("#EEEEEE"));
+</code></pre> 
+ <h2 id="h2-u793Au4F8B"><a name="示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例</h2>
+ <p>如下示例代码 -</p> 
+ <pre><code class="lang-java">import javafx.application.Application;
+import javafx.event.ActionEvent;
+import javafx.scene.Scene;
+import javafx.scene.control.ColorPicker;
+import javafx.scene.layout.HBox;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
+import javafx.stage.Stage;
+
+public class Main extends Application {
+  public static void main(String[] args) {
+    launch(args);
+  }
+
+  @Override
+  public void start(Stage stage) {
+    Scene scene = new Scene(new HBox(20), 400, 100);
+    HBox box = (HBox) scene.getRoot();
+    final ColorPicker colorPicker = new ColorPicker();
+    colorPicker.setValue(Color.RED);
+
+    final Text text = new Text("Color picker:");
+    text.setFill(colorPicker.getValue());
+
+    colorPicker.setOnAction((ActionEvent t) -&gt; {
+      text.setFill(colorPicker.getValue());
+    });
+
+    box.getChildren().addAll(colorPicker, text);
+
+    stage.setScene(scene);
+    stage.show();
+  }
+}
+</code></pre> 
+ <h2 id="h2-u81EAu5B9Au4E49u989Cu8272"><a name="自定义颜色" class="reference-link"></a><span class="header-link octicon octicon-link"></span>自定义颜色</h2>
+ <p><code>getCustomColors()</code>方法返回创建的自定义颜色作为<code>Color</code>对象的<code>ObservableList</code>。</p>   
+ <pre><code class="lang-java">ObservableList&lt;Color&gt; customColors = colorPicker.getCustomColors();
+colorPicker.setValue(customColors.get(index));
+</code></pre>
+ <br>      
+</div></body></html>

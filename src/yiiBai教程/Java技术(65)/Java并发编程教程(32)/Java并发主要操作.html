@@ -1,0 +1,161 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Java并发主要操作</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>核心Java提供对多线程程序的完全控制。 也可以开发一个可以根据您的要求完全暂停，恢复或停止的多线程程序。 有各种静态方法可以用于线程对象来控制它们的行为。 下表列出了这些方法 -</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>编号</th> 
+    <th>方法</th> 
+    <th>说明描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>1</td> 
+    <td><code>public void suspend()</code></td> 
+    <td>该方法使线程处于挂起状态，可以使用<code>resume()</code>方法恢复。</td> 
+   </tr> 
+   <tr> 
+    <td>2</td> 
+    <td><code>public void stop()</code></td> 
+    <td>该方法使线程完全停止。</td> 
+   </tr> 
+   <tr> 
+    <td>3</td> 
+    <td><code>public void resume()</code></td> 
+    <td>该方法恢复使用<code>suspend()</code>方法挂起的线程。</td> 
+   </tr> 
+   <tr> 
+    <td>4</td> 
+    <td><code>public void wait()</code></td> 
+    <td>导致当前线程等到另一个线程调用<code>notify()</code>。</td> 
+   </tr> 
+   <tr> 
+    <td>5</td> 
+    <td><code>public void notify()</code></td> 
+    <td>唤醒在此对象监视器上等待的单个线程。</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p>请注意，最新版本的Java已经不再使用<code>suspend()</code>，<code>resume()</code>和<code>stop()</code>方法，因此您需要使用可用的替代方法。</p> 
+ <h2 id="h2-u4F7Fu7528u793Au4F8B"><a name="使用示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>使用示例</h2>
+ <pre><code class="lang-java">class RunnableDemo implements Runnable {
+   public Thread t;
+   private String threadName;
+   boolean suspended = false;
+
+   RunnableDemo( String name) {
+      threadName = name;
+      System.out.println("Creating " +  threadName );
+   }
+
+   public void run() {
+      System.out.println("Running " +  threadName );
+      try {
+         for(int i = 10; i &gt; 0; i--) {
+            System.out.println("Thread: " + threadName + ", " + i);
+            // Let the thread sleep for a while.
+            Thread.sleep(300);
+            synchronized(this) {
+               while(suspended) {
+                  wait();
+               }
+            }
+         }
+      }catch (InterruptedException e) {
+         System.out.println("Thread " +  threadName + " interrupted.");
+      }
+      System.out.println("Thread " +  threadName + " exiting.");
+   }
+
+   public void start () {
+      System.out.println("Starting " +  threadName );
+      if (t == null) {
+         t = new Thread (this, threadName);
+         t.start ();
+      }
+   }
+
+   void suspend() {
+      suspended = true;
+   }
+
+   synchronized void resume() {
+      suspended = false;
+      notify();
+   }
+}
+
+public class TestThread {
+
+   public static void main(String args[]) {
+
+      RunnableDemo R1 = new RunnableDemo( "Thread-1");
+      R1.start();
+
+      RunnableDemo R2 = new RunnableDemo( "Thread-2");
+      R2.start();
+
+      try {
+         Thread.sleep(1000);
+         R1.suspend();
+         System.out.println("Suspending First Thread");
+         Thread.sleep(1000);
+         R1.resume();
+         System.out.println("Resuming First Thread");
+
+         R2.suspend();
+         System.out.println("Suspending thread Two");
+         Thread.sleep(1000);
+         R2.resume();
+         System.out.println("Resuming thread Two");
+      }catch (InterruptedException e) {
+         System.out.println("Main thread Interrupted");
+      }try {
+         System.out.println("Waiting for threads to finish.");
+         R1.t.join();
+         R2.t.join();
+      }catch (InterruptedException e) {
+         System.out.println("Main thread Interrupted");
+      }
+      System.out.println("Main thread exiting.");
+   }
+}
+</code></pre> 
+ <p>执行上面程序后产生以下输出 -</p>   
+ <pre><code class="lang-shell">Creating Thread-1
+Starting Thread-1
+Creating Thread-2
+Starting Thread-2
+Running Thread-1
+Thread: Thread-1, 10
+Running Thread-2
+Thread: Thread-2, 10
+Thread: Thread-1, 9
+Thread: Thread-2, 9
+Thread: Thread-1, 8
+Thread: Thread-2, 8
+Thread: Thread-1, 7
+Thread: Thread-2, 7
+Suspending First Thread
+Thread: Thread-2, 6
+Thread: Thread-2, 5
+Thread: Thread-2, 4
+Resuming First Thread
+Suspending thread Two
+Thread: Thread-1, 6
+Thread: Thread-1, 5
+Thread: Thread-1, 4
+Thread: Thread-1, 3
+Resuming thread Two
+Thread: Thread-2, 3
+Waiting for threads to finish.
+Thread: Thread-1, 2
+Thread: Thread-2, 2
+Thread: Thread-1, 1
+Thread: Thread-2, 1
+Thread Thread-1 exiting.
+Thread Thread-2 exiting.
+Main thread exiting.
+</code></pre>
+ <br>      
+</div></body></html>

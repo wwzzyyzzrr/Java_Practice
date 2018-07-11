@@ -1,0 +1,59 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Scala try-catch语句</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>Scala提供<code>try</code>和<code>catch</code>块来处理异常。<code>try</code>块用于包含可疑代码。<code>catch</code>块用于处理<code>try</code>块中发生的异常。可以根据需要在程序中有任意数量的<code>try...catch</code>块。</p> 
+ <p><strong>Scala try catch示例1</strong></p> 
+ <p>在下面的程序中，我们将可疑代码封装在<code>try</code>块中。 在<code>try</code>块之后使用了一个<code>catch</code>处理程序来捕获异常。如果发生任何异常，<code>catch</code>处理程序将处理它，程序将不会异常终止。</p> 
+ <pre><code class="lang-scala">class ExceptionExample{  
+    def divide(a:Int, b:Int) = {  
+        try{  
+            a/b  
+        }catch{  
+            case e: ArithmeticException =&gt; println(e)  
+        }  
+        println("Rest of the code is executing...")  
+    }  
+}  
+object Demo{  
+    def main(args:Array[String]){  
+        var e = new ExceptionExample()  
+        e.divide(100,0)  
+
+    }  
+}
+</code></pre> 
+ <p>将上面代码保存到源文件：<em>Demo.scala</em>中，使用以下命令编译并执行代码 - </p> 
+ <pre><code class="lang-shell">D:\software\scala-2.12.3\bin&gt;scalac Demo.scala
+D:\software\scala-2.12.3\bin&gt;scala Demo.scal
+java.lang.ArithmeticException: / by zero
+Rest of the code is executing...
+</code></pre> 
+ <p><strong>Scala Try Catch示例2</strong></p> 
+ <p>在这个例子中，<code>catch</code>处理程序有两种情况。 第一种情况将只处理算术类型异常。 第二种情况有<code>Throwable</code>类，它是异常层次结构中的超类。第二种情况可以处理任何类型的异常在程序代码中。有时当不知道异常的类型时，可以使用超类 - <code>Throwable</code>类。</p>   
+ <pre><code class="lang-scala">class ExceptionExample{  
+    def divide(a:Int, b:Int) = {  
+        try{  
+            a/b  
+            var arr = Array(1,2)  
+            arr(10)  
+        }catch{  
+            case e: ArithmeticException =&gt; println(e)  
+            case ex: Throwable =&gt;println("found a unknown exception"+ ex)  
+        }  
+        println("Rest of the code is executing...")  
+    }  
+}  
+object Demo{  
+    def main(args:Array[String]){  
+        var e = new ExceptionExample()  
+        e.divide(100,10)  
+
+    }  
+}
+</code></pre> 
+ <p>将上面代码保存到源文件：<em>Demo.scala</em>中，使用以下命令编译并执行代码 - </p> 
+ <pre><code class="lang-shell">D:\software\scala-2.12.3\bin&gt;scalac Demo.scala
+D:\software\scala-2.12.3\bin&gt;scala Demo.scal
+found a unknown exceptionjava.lang.ArrayIndexOutOfBoundsException: 10
+Rest of the code is executing...
+</code></pre>
+ <br>      
+</div></body></html>

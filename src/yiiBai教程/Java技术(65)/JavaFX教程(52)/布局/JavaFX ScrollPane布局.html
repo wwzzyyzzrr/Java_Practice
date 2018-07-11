@@ -1,0 +1,142 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">JavaFX ScrollPane布局</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>滚动窗口提供UI元素的可滚动视图。<br>我们使用可滚动面板，当需要显示有限的空间大内容。可滚动窗格视口，其将显示内容的一部分，并且在必要时提供滚动条。</p> 
+ <pre><code class="lang-java">import javafx.application.Application;
+import javafx.scene.Group;
+import javafx.scene.Scene;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebView;
+import javafx.stage.Stage;
+
+public class Main extends Application {
+    @Override
+    public void start(Stage stage) {
+        stage.setWidth(500);
+        stage.setHeight(500);
+        Scene scene = new Scene(new Group());
+
+        VBox root = new VBox();     
+
+        final WebView browser = new WebView();
+        final WebEngine webEngine = browser.getEngine();
+
+
+        ScrollPane scrollPane = new ScrollPane();
+        scrollPane.setContent(browser);
+        webEngine.loadContent("&lt;b&gt;yes? this is default content load.&lt;/b&gt;");
+
+        root.getChildren().addAll(scrollPane);
+        scene.setRoot(root);
+
+        stage.setScene(scene);
+        stage.show();
+    }
+    public static void main(String[] args) {
+        launch(args);
+    }
+}
+</code></pre> 
+ <p>上面的代码生成以下结果。</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201701/13/131140131_58291.png" alt=""></p> 
+ <h2 id="h2-u521Bu5EFAu6EDAu52A8u7A97u683C"><a name="创建滚动窗格" class="reference-link"></a><span class="header-link octicon octicon-link"></span>创建滚动窗格</h2>
+ <p>以下代码使用<code>jpg</code>文件创建一个图像，并将该图像添加到滚动窗格。如果图像较大，滚动窗格将显示滚动条，我们可以使用它来查看隐藏的部分。</p> 
+ <pre><code class="lang-java">Image img = new Image(getClass().getResourceAsStream("yourImage.jpg"));
+ScrollPane sp = new ScrollPane();
+sp.setContent(new ImageView(img));
+</code></pre> 
+ <h2 id="h2--scrollpane"><a name="可滚动ScrollPane" class="reference-link"></a><span class="header-link octicon octicon-link"></span>可滚动ScrollPane</h2>
+ <p>调用<code>setPannable(true)</code>方法通过单击并移动鼠标光标来预览图像。</p> 
+ <pre><code class="lang-java">import javafx.application.Application;
+import javafx.scene.Group;
+import javafx.scene.Scene;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
+import javafx.stage.Stage;
+
+public class Main extends Application {
+    @Override
+    public void start(Stage stage) {
+        Group root = new Group();
+        Scene scene = new Scene(root, 500, 200);
+        stage.setScene(scene);// =&gt;  w w W .Y I I B  A I .c O  M
+
+        Rectangle rect = new Rectangle(200, 200, Color.RED);
+        ScrollPane s1 = new ScrollPane();
+        s1.setPannable(true);
+        s1.setPrefSize(120, 120);
+        s1.setContent(rect);
+
+        root.getChildren().add(s1);
+        stage.show();
+    }
+    public static void main(String[] args) {
+        launch(args);
+    }
+}
+</code></pre> 
+ <p>上面的代码生成以下结果。</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201701/13/352140132_12131.png" alt=""></p> 
+ <h2 id="h2-u6EDAu52A8u6761u7B56u7565"><a name="滚动条策略" class="reference-link"></a><span class="header-link octicon octicon-link"></span>滚动条策略</h2>
+ <p>我们可以控制何时显示滚动条的策略：</p> 
+ <ul> 
+  <li>总是</li>
+  <li>决不</li>
+  <li>必要时</li>
+ </ul> 
+ <p><strong>setHbar</strong>策略和<strong>setar</strong>策略方法分别为水平和垂直滚动条指定滚动条策略。</p>   
+ <pre><code class="lang-java">sp.setHbarPolicy(ScrollBarPolicy.NEVER);
+sp.setVbarPolicy(ScrollBarPolicy.ALWAYS);
+</code></pre> 
+ <h2 id="h2-u8C03u6574u6EDAu52A8u7A97u683Cu4E2Du7684u7EC4u4EF6u5927u5C0F"><a name="调整滚动窗格中的组件大小" class="reference-link"></a><span class="header-link octicon octicon-link"></span>调整滚动窗格中的组件大小</h2>
+ <p>将<code>setFitToWidth</code>或<code>setFitToHeight</code>方法设置为<code>true</code>以匹配特定维度。</p> 
+ <p>默认情况下，<code>FIT_TO_WIDTH</code>和<code>FIT_TO_HEIGHT</code>属性都为<code>false</code>，可调整大小的内容保持其原始大小。</p> 
+ <p>以下代码显示如何设置<code>JScrollPane</code>以适合宽度。</p> 
+ <pre><code class="lang-java">import javafx.application.Application;
+import javafx.scene.Group;
+import javafx.scene.Scene;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebView;
+import javafx.stage.Stage;
+// from =&gt; Ww w . yI i  baI.C O  m 
+public class Main extends Application {
+
+    @Override
+    public void start(Stage stage) {
+        stage.setWidth(500);
+        stage.setHeight(500);
+        Scene scene = new Scene(new Group());
+
+        VBox root = new VBox();     
+
+        final WebView browser = new WebView();
+        final WebEngine webEngine = browser.getEngine();
+
+
+        ScrollPane scrollPane = new ScrollPane();
+        scrollPane.setFitToWidth(true);
+
+        scrollPane.setContent(browser);
+        webEngine.loadContent("&lt;b&gt;asdf&lt;/b&gt;");
+
+        root.getChildren().addAll(scrollPane);
+        scene.setRoot(root);
+
+        stage.setScene(scene);
+        stage.show();
+    }
+
+    public static void main(String[] args) {
+        launch(args);
+    }
+}
+</code></pre> 
+ <p>上面的代码生成以下结果。</p> 
+ <h2 id="h2-u6EDAu52A8u64CDu4F5C"><a name="滚动操作" class="reference-link"></a><span class="header-link octicon octicon-link"></span>滚动操作</h2>
+ <p><code>ScrollPane</code>类允许检索和设置水平和垂直方向上的内容的当前值，最小值和最大值。<br>以下代码显示如何处理<code>JScrollPane</code>垂直值和水平值更改事件。</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201701/13/216140137_94112.png" alt=""></p>
+ <br>      
+</div></body></html>

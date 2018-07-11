@@ -1,0 +1,75 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Cordova设备方向</h1><div style="width:100%;float:left;" class="article-content">   
+ <div> 
+  <div>
+    指南针是用来显示相对于地理北极的基本点的方向。 
+  </div> 
+ </div> 
+ <div> 
+  <h2> 
+   <div>
+     第1步&nbsp;-&nbsp;安装设备的方向插件 
+   </div> </h2> 
+  <div>
+    打开命令提示符窗口，并运行以下命令。 
+  </div> 
+  <pre>C:\Users\username\Desktop\CordovaProject&gt;cordova plugin add cordova-plugin-device-orientation</pre> 
+  <h2> 
+   <div>
+     第2步&nbsp;-&nbsp;添加按钮 
+   </div> </h2> 
+  <p style="text-align:justify;"> 如果你有学习我们前面教程，你可能会注意到，这个插件它类似于加速度插件。我们在本教程中使用的是同一个概念。让我们在&nbsp;index.html&nbsp;文件中创建两个按钮 </p> 
+  <pre>&lt;button id = "getOrientation"&gt;GET ORIENTATION&lt;/button&gt;
+&lt;button id = "watchOrientation"&gt;WATCH ORIENTATION&lt;/button&gt;</pre> 
+  <h2> 
+   <div>
+     第3步&nbsp;-&nbsp;添加事件监听器 
+   </div> </h2> 
+  <div>
+    现在，我们将在index.js中的&nbsp;onDeviceReady函数内部添加事件侦听器。 
+  </div> 
+  <pre>document.getElementById("getOrientation").addEventListener("click", getOrientation);
+document.getElementById("watchOrientation").addEventListener("click", watchOrientation);</pre> 
+  <h2> 
+   <div>
+     第4步&nbsp;-&nbsp;创建函数 
+   </div> </h2> 
+  <p style="text-align:justify;"> 我们将创建两个函数，一个来获取当前加速度，另外一个用来监视方向的变化。可以看到再次使用频率选项，因为我们希望每三秒钟观察其变化。 </p> 
+  <pre>function getOrientation(){
+   navigator.compass.getCurrentHeading(compassSuccess, compassError);
+
+   function compassSuccess(heading) {
+      alert('Heading: ' + heading.magneticHeading);
+   };
+
+   function compassError(error) {
+      alert('CompassError: ' + error.code);
+   };
+	
+}
+
+function watchOrientation(){
+    
+   var compassOptions = {
+      frequency: 3000
+   }
+
+   var watchID = navigator.compass.watchHeading(compassSuccess, compassError, compassOptions);
+
+   function compassSuccess(heading) {
+      alert('Heading: ' + heading.magneticHeading);
+
+      setTimeout(function() {
+         navigator.compass.clearWatch(watchID);
+      }, 10000);
+
+   };
+
+   function compassError(error) {
+      alert('CompassError: ' + error.code);
+   };
+	
+}&nbsp;</pre> 
+  <p style="text-align:justify;"> 由于指南针插件几乎与加速度插件是一样的，这次我们告诉你错误代码。一些设备不具有指南针工作所需要的磁传感器。如果您的设备没有，会得到下面的错误。<br> <img src="/uploads/tutorial/20160220/1-16022010260Y60.jpg" alt=""> </p> 
+ </div>
+ <br>      
+</div></body></html>

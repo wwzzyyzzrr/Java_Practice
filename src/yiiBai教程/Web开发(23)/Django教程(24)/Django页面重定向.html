@@ -1,0 +1,71 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Django页面重定向</h1><div style="width:100%;float:left;" class="article-content">   页面重定向在Web应用程序有很多原因是必要的。您可能希望将用户重定向到另一个页面，当一个特定的动作发生，或者有错误的情况下。例如，当用户登录网站，他经常被重定向到他的主页或个人的仪表板。在Django中，定向使用“redirect”的方法来实现。 
+ <div> 
+  <div>
+    在“redirect”方法需要作为参数：URL要被重定向到的字符串的视图名字。 
+  </div> 
+  <p style="text-align:justify;"> myapp/views&nbsp;到现在为止如下所示&nbsp;− </p> 
+  <pre>def hello(request):
+   today = datetime.datetime.now().date()
+   daysOfWeek = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+   return render(request, "hello.html", {"today" : today, "days_of_week" : daysOfWeek})
+	
+def viewArticle(request, articleId):
+   """ A view that display an article based on his ID"""
+   text = "Displaying article Number : %s" %articleId
+   return HttpResponse(text)
+	
+def viewArticles(request, year, month):
+   text = "Displaying articles of : %s/%s"%(year, month)
+   return HttpResponse(text)&nbsp;</pre> 
+  <p style="text-align:justify;"> 让我们修改hello，以重定向到&nbsp;djangoproject.com&nbsp;，以及&nbsp;viewArticle&nbsp;重定向到我们内部的&nbsp;'/myapp/articles'。myapp/view.py将修改为如下：&nbsp; </p> 
+  <pre>from django.shortcuts import render, redirect
+from django.http import HttpResponse
+import datetime
+
+# Create your views here.
+def hello(request):
+   today = datetime.datetime.now().date()
+   daysOfWeek = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+   return redirect("https://www.djangoproject.com")
+	
+def viewArticle(request, articleId):
+   """ A view that display an article based on his ID"""
+   text = "Displaying article Number : %s" %articleId
+   return redirect(viewArticles, year = "2045", month = "02")
+	
+def viewArticles(request, year, month):
+   text = "Displaying articles of : %s/%s"%(year, month)
+   return HttpResponse(text)&nbsp;</pre> 
+  <p> 在上面的例子中，我们首先从Django导入重定向(redirect)。快捷方式并重定向到Django的官方网站上，我们只需使用完整URL到“redirect”方法作为字符串，在第二例子(在viewArticle视图)'redirect'方法取视图名字和它的参数作为参数。 </p> 
+  <div>
+    访问/myapp/hello，会显示如下的屏幕-
+   <br> 
+   <img src="/uploads/tutorial/20160130/1-1601301HI4457.jpg" alt="">
+   <br> 
+  </div> 
+  <div>
+    并访问&nbsp;/myapp/article/42，会给出下面的屏幕-
+   <br> 
+   <img src="/uploads/tutorial/20160130/1-1601301HK2V4.jpg" alt="">
+   <br> 
+  </div> 
+  <p> 也可以指定“redirect”是否是暂时的还是永久性的，加入permanent&nbsp;=&nbsp;True参数。用户看到不会有什么区别，但这些都是细节，搜索引擎网站排名时考虑到。 </p> 
+  <p> 我们在url.py定义“name”参数在映射URL时− </p>   
+  <pre>url(r'^articles/(?P\d{2})/(?P\d{4})/', 'viewArticles', name = 'articles'),&nbsp;</pre> 
+  <p> 该名称(这里的文章)可以被用作“redirect”方法的实参，那么 viewArticle 重定向可以修改 - </p> 
+  <pre>def viewArticle(request, articleId):
+   """ A view that display an article based on his ID"""
+   text = "Displaying article Number : %s" %articleId
+   return redirect(viewArticles, year = "2045", month = "02")</pre> 
+  <p> 修改为&nbsp;− </p> 
+  <pre>def viewArticle(request, articleId):
+   """ A view that display an article based on his ID"""
+   text = "Displaying article Number : %s" %articleId
+   return redirect(articles, year = "2045", month = "02")&nbsp;</pre> 
+  <p> <strong>注</strong>&nbsp;-&nbsp;还有一个函数生成 URL; 它是用在相同的方式重定向;&nbsp;“reverse”方法(django.core.urlresolvers.reverse)。这个函数不返回HttpResponseRedirect对象，而仅仅包含URL和任何传入的参数编译视图的字符串。 </p> 
+  <div> 
+   <span style="background-color:inherit;font-family:微软雅黑;font-size:14px;line-height:1.5;"><br> </span> 
+  </div> 
+ </div>
+ <br>      
+</div></body></html>

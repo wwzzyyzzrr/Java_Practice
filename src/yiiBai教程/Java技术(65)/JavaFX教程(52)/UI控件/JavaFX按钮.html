@@ -1,0 +1,235 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">JavaFX按钮</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>当用户单击按钮时，JavaFX <code>Button</code>类可以触发事件。<code>Button</code>类扩展了<code>Labeled</code>类，可以显示文本，图像或两者都可以。<br>以下代码显示了如何向<code>Button</code>添加单击操作侦听器。</p> 
+ <pre><code class="lang-java">import javafx.application.Application;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.layout.StackPane;
+import javafx.stage.Stage;
+
+public class Main extends Application {
+    public static void main(String[] args) {
+        launch(args);
+    }
+    @Override
+    public void start(Stage primaryStage) {
+        primaryStage.setTitle("Hello World!");
+        Button btn = new Button();
+        btn.setText("Say 'Hello World'");
+        btn.setOnAction(new EventHandler&lt;ActionEvent&gt;() {
+            @Override
+            public void handle(ActionEvent event) {
+                System.out.println("Hello World!");
+            }
+        });
+
+        StackPane root = new StackPane();
+        root.getChildren().add(btn);
+        primaryStage.setScene(new Scene(root, 300, 250));
+        primaryStage.show();
+    }
+}
+</code></pre> 
+ <p>上面的代码生成以下结果。</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201701/16/744090107_16543.png" alt=""></p> 
+ <h2 id="h2-u521Bu5EFAu6309u94AE"><a name="创建按钮" class="reference-link"></a><span class="header-link octicon octicon-link"></span>创建按钮</h2>
+ <p>我们使用以下构造函数在JavaFX中创建一个<code>Button</code>。<br>创建带有空文本标题的按钮。</p> 
+ <pre><code class="lang-java">Button button = new Button();
+</code></pre> 
+ <p>创建具有指定文本的按钮。</p> 
+ <pre><code class="lang-java">Button button = new Button("OK");
+</code></pre> 
+ <p>要创建带有文本和图标的按钮。</p> 
+ <pre><code class="lang-java">Image imageOk = new Image(getClass().getResourceAsStream("OK.png"));
+Button button = new Button("OK", new ImageView(imageOk));
+</code></pre> 
+ <h2 id="h2-u6309u94AEu5185u5BB9"><a name="按钮内容" class="reference-link"></a><span class="header-link octicon octicon-link"></span>按钮内容</h2>
+ <p>创建JavaFX <code>Button</code>对象后，我们可以使用以下方法设置文本并设置安装图标。</p> 
+ <ul> 
+  <li><code>setText(String text)</code> - 设置按钮的文本标题</li>
+  <li><code>setGraphic(Node graphic)</code> - 设置图标</li>
+ </ul> 
+ <p>除了<code>ImageView</code>对象，我们可以使用<code>javafx.scene.shape</code>包中的形状作为<code>Button</code>中的图形元素。</p> 
+ <p><code>setGraphicTextGap</code>方法设置文本和图形内容之间的差距。</p> 
+ <p>以下代码将图像安装到按钮。</p> 
+ <pre><code class="lang-java">Image okImage = new Image(getClass().getResourceAsStream("OK.png"));
+button.setGraphic(new ImageView(okImage));
+</code></pre> 
+ <h2 id="h2-u6309u94AEu64CDu4F5C"><a name="按钮操作" class="reference-link"></a><span class="header-link octicon octicon-link"></span>按钮操作</h2>
+ <p>我们可以使用<code>Button</code>类的<code>setOnAction</code>方法为用户单击事件添加点击事件处理程序。</p> 
+ <pre><code class="lang-java">button.setOnAction((ActionEvent e) -&gt; {
+    System.out.println("clicked");
+});
+</code></pre> 
+ <h2 id="h2-u6309u94AEu6548u679C"><a name="按钮效果" class="reference-link"></a><span class="header-link octicon octicon-link"></span>按钮效果</h2>
+ <p>我们可以将<code>javafx.scene.effect</code>包中的效果应用到按钮。</p> 
+ <p>以下代码将<code>DropShadow</code>效果应用于按钮。</p> 
+ <pre><code class="lang-java">DropShadow shadow = new DropShadow();
+button.setEffect(shadow);
+button.setEffect(null);//remove the effect
+</code></pre> 
+ <p>以下代码显示了如何为<code>Button</code>设置阴影效果。</p> 
+ <pre><code class="lang-java">import javafx.application.Application;
+import javafx.event.EventHandler;
+import javafx.scene.Group;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.effect.DropShadow;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+
+public class Main extends Application {
+    DropShadow shadow = new DropShadow();
+
+    public static void main(String[] args) {
+        launch(args);
+    }
+
+    @Override
+    public void start(Stage stage) {
+        Scene scene = new Scene(new Group());
+        stage.setTitle("Button Sample");
+        stage.setWidth(300);
+        stage.setHeight(190);
+
+        VBox vbox = new VBox();
+        vbox.setLayoutX(20);
+        vbox.setLayoutY(20);
+
+        final Button button1 = new Button("Accept");
+
+        button1.addEventHandler(MouseEvent.MOUSE_ENTERED, new EventHandler&lt;MouseEvent&gt;() {
+            @Override
+            public void handle(MouseEvent e) {
+                button1.setEffect(shadow);
+            }
+        });
+
+        button1.addEventHandler(MouseEvent.MOUSE_EXITED, new EventHandler&lt;MouseEvent&gt;() {
+            @Override
+            public void handle(MouseEvent e) {
+                button1.setEffect(null);
+            }
+        });
+
+        vbox.getChildren().add(button1);
+        vbox.setSpacing(10);
+        ((Group) scene.getRoot()).getChildren().add(vbox);
+
+        stage.setScene(scene);
+        stage.show();
+    }
+}
+</code></pre> 
+ <p>上面的代码生成以下结果。</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201701/16/923090117_19750.png" alt=""></p> 
+ <h2 id="h2-u6309u94AEu6837u5F0F"><a name="按钮样式" class="reference-link"></a><span class="header-link octicon octicon-link"></span>按钮样式</h2>
+ <p>我们可以使用CSS样式来改变按钮的外观和感觉。在单独的<code>CSS</code>文件中定义样式，并通过使用<code>getStyleClass</code>方法应用CSS文件。<br>下面的代码是一个CSS文件，它改变了按钮的字体和颜色。</p>   
+ <pre><code class="lang-css">.button1{
+    -fx-font: 30 arial; 
+    -fx-base: #ee2211;    
+}
+</code></pre> 
+ <p>然后我们使用下面的代码来安装CSS。</p> 
+ <pre><code class="lang-java">button.getStyleClass().add("button1");
+</code></pre> 
+ <p><code>-fx-font</code>属性设置<code>button1</code>的字体名称和大小。 <code>-fx-base</code>属性覆盖默认颜色。</p> 
+ <p>下面的代码显示了如何使用CSS来改变<code>Button</code>的外观。</p> 
+ <pre><code class="lang-java">import javafx.application.Application;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.scene.Group;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+
+public class Main extends Application {
+
+    public static void main(String[] args) {
+        launch(args);
+    }
+
+    @Override
+    public void start(Stage stage) {
+        Scene scene = new Scene(new Group());
+        stage.setWidth(300);
+        stage.setHeight(190);
+
+        VBox vbox = new VBox();
+        vbox.setLayoutX(20);
+        vbox.setLayoutY(20);
+
+        Button button1 = new Button("Accept");
+        button1.setStyle("-fx-font: 30 arial; -fx-base: #ee2211;");
+
+
+        vbox.getChildren().add(button1);
+        vbox.setSpacing(10);
+        ((Group)scene.getRoot()).getChildren().add(vbox);
+
+        stage.setScene(scene);
+        stage.show();
+    }
+}
+</code></pre> 
+ <p>上面的代码生成以下结果。</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201701/16/923090120_68269.png" alt=""></p> 
+ <h2 id="h2-u6309u94AEu9F20u6807u4E8Bu4EF6"><a name="按钮鼠标事件" class="reference-link"></a><span class="header-link octicon octicon-link"></span>按钮鼠标事件</h2>
+ <p>以下代码显示了如何处理<code>Button</code>的<strong>Mouse in</strong>和<strong>Mouse out</strong>(鼠标移入和移出)事件。</p> 
+ <pre><code class="lang-java">import javafx.application.Application;
+import javafx.event.EventHandler;
+import javafx.scene.Group;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+
+public class Main extends Application {
+  public static void main(String[] args) {
+    launch(args);
+  }
+
+  @Override
+  public void start(Stage stage) {
+    Scene scene = new Scene(new Group());
+    stage.setWidth(300);
+    stage.setHeight(190);
+
+    VBox vbox = new VBox();
+    vbox.setLayoutX(20);
+    vbox.setLayoutY(20);
+
+    final Button button1 = new Button("OK");
+
+    button1.addEventHandler(MouseEvent.MOUSE_ENTERED,
+        new EventHandler&lt;MouseEvent&gt;() {
+          @Override
+          public void handle(MouseEvent e) {
+            System.out.println("mouse entered");
+          }
+        });
+
+    button1.addEventHandler(MouseEvent.MOUSE_EXITED,
+        new EventHandler&lt;MouseEvent&gt;() {
+          @Override
+          public void handle(MouseEvent e) {
+            System.out.println("mouse out");
+          }
+        });
+
+    vbox.getChildren().add(button1);
+    ((Group) scene.getRoot()).getChildren().add(vbox);
+
+    stage.setScene(scene);
+    stage.show();
+  }
+}
+</code></pre> 
+ <p>上面的代码生成以下结果。</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201701/16/851090122_27996.png" alt=""></p>
+ <br>      
+</div></body></html>

@@ -1,0 +1,96 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Struts2 &lt;s:bean&gt;标签示例</h1><div style="width:100%;float:left;" class="article-content">   
+ <div> 
+  <div> 
+   <span style="line-height:1.5;">Struts2的&lt;s:bean&gt;标签用于在JSP页面中实例化一个类。</span>
+   <span style="line-height:1.5;">在本教程中，将使用&lt;s:bean&gt;标签，以实例化一个&nbsp;helloBean&nbsp;的类，</span>
+   <span style="line-height:1.5;">通过“param”元素设置其属性，并打印出它的值。</span> 
+  </div> 
+ </div> 
+ <h2> 1. 简单Bean </h2> 
+ <div>
+   一个简单的类，后面使用bean标签来实例化。 
+ </div> 
+ <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:16px;"> <strong>HelloBean.java</strong> </p> 
+ <pre>package com.yiibai.common.action;
+
+public class HelloBean{
+	
+	private String msg;
+
+	public String getMsg() {
+		return msg;
+	}
+
+	public void setMsg(String msg) {
+		this.msg = msg;
+	}
+
+}</pre> 
+ <h2> 2. 动作 - Action </h2> 
+ <div>
+   Action类转发请求。 
+ </div> 
+ <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:16px;"> <strong>BeanTagAction.java</strong> </p> 
+ <pre>package com.yiibai.common.action;
+
+import com.opensymphony.xwork2.ActionSupport;
+ 
+public class BeanTagAction extends ActionSupport{
+	
+	public String execute() {
+		return SUCCESS;
+	}
+	
+}</pre> 
+ <h2> 2. &lt;s:bean&gt;标签示例 </h2> 
+ <div>
+   在这个JSP页面将显示如何使用&lt;s:bean&gt;标签来实例化helloBean。 
+ </div> 
+ <div>
+   在&lt;s:bean&gt;标签，可以通过&nbsp;var&nbsp;属性分配一个Bean的名称，以后可以通过&nbsp;#var_bean_name&nbsp;访问这个 Bean, 或者通过&nbsp;#var_bean_name.property 来访问属性。 
+ </div> 
+ <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:16px;"> <strong>bean.jsp</strong> </p> 
+ <pre>&lt;%@ taglib prefix="s" uri="/struts-tags" %&gt;
+ &lt;html&gt;
+&lt;head&gt;
+&lt;/head&gt;
+ 
+&lt;body&gt;
+&lt;h1&gt;Struts2 &lt;s:bean&gt;标签示例&lt;/h1&gt;
+
+&lt;s:bean name="com.yiibai.common.action.HelloBean" var="hello"&gt;
+  &lt;s:param name="msg"&gt;Hello Bean Tag&lt;/s:param&gt;
+&lt;/s:bean&gt;
+
+The HelloBean's msg property value : &lt;s:property value="#hello.msg"/&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;</pre> 
+ <h2> 3. struts.xml </h2>   
+ <pre>&lt;?xml version="1.0" encoding="UTF-8" ?&gt;
+&lt;!DOCTYPE struts PUBLIC
+"-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+"http://struts.apache.org/dtds/struts-2.0.dtd"&gt;
+ 
+&lt;struts&gt;
+    &lt;constant name="struts.devMode" value="true" /&gt;
+    &lt;package name="default" namespace="/" extends="struts-default"&gt;
+	
+	&lt;action name="beanTagAction" 
+	    class="com.yiibai.common.action.BeanTagAction" &gt;
+	    &lt;result name="success"&gt;pages/bean.jsp&lt;/result&gt;
+	&lt;/action&gt;
+		
+    &lt;/package&gt;
+&lt;/struts&gt;</pre> 
+ <h2> 4. 示例 </h2> 
+ <p> <a target="_blank" href="http://localhost:8080/struts2beantag/beanTagAction.action">http://localhost:8080/struts2beantag/beanTagAction.action</a> </p> 
+ <p> 在浏览器中打开上面的网址，结果如下所示： </p> 
+ <p> <img src="/uploads/tutorial/20151120/1-1511201R3113a.png" alt=""> </p> 
+ <h2> 参考 </h2> 
+ <ol> 
+  <li> <a target="_blank" href="http://struts.apache.org/2.0.14/docs/bean.html">Struts2 &lt;s:bean&gt;标签文档</a> </li> 
+ </ol> 
+ <p> 代码下载 -&nbsp;<a target="_blank" href="http://pan.baidu.com/s/1jGJFv86">http://pan.baidu.com/s/1jGJFv86</a> </p>
+ <br>      
+</div></body></html>

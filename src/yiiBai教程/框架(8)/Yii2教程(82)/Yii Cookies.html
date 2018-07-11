@@ -1,0 +1,68 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Yii Cookies</h1><div style="width:100%;float:left;" class="article-content">   
+ <div> 
+  <div>
+    Cookie是存储在客户端上的纯文本文件。可以使用它们作为跟踪的目的。 
+  </div> 
+ </div> 
+ <div> 
+  <div>
+    一般使用三个步骤来识别老用户&nbsp;- 
+  </div> 
+  <ul> 
+   <li> 
+    <div>
+      服务器发送一组Cookie到客户端(浏览器)；例如，ID或令牌 
+    </div> </li> 
+   <li> 
+    <div>
+      浏览器将其存储 
+    </div> </li> 
+   <li> 
+    <div>
+      下一次当浏览器发送请求到Web服务器时，它也发送那些cookies，以便服务器可以使用该信息来识别用户。 
+    </div> </li> 
+  </ul> 
+  <div>
+    Cookie通常设置在HTTP标头,如下面的代码。 
+  </div> 
+  <pre>HTTP/1.1 200 OK
+Date: Fri, 05 Feb 2015 21:03:38 GMT
+Server: Apache/1.3.9 (UNIX) PHP/4.0b3
+Set-Cookie: name = myname; expires = Monday, 06-Feb-16 22:03:38 GMT;
+   path = /; domain = yiibai.com 
+Connection: close
+Content-Type: text/html</pre> 
+  <div>
+    PHP 提供 setcookie()函数来设置 Cookie&nbsp;- 
+  </div> 
+  <pre>setcookie(name, value, expire, path, domain, security);</pre> 
+  <p style="text-align:justify;"> 在这里− </p> 
+  <ul> 
+   <li> <p style="text-align:justify;"> name&nbsp;−&nbsp;设置&nbsp;cookie&nbsp;的名称，并存储在&nbsp;HTTP_COOKIE_VARS&nbsp;的环境变量。 </p> </li> 
+   <li> <p style="text-align:justify;"> value&nbsp;−&nbsp;设置上面命名变量的值。 </p> </li> 
+   <li> <p style="text-align:justify;"> expiry&nbsp;−&nbsp;cookie指定从GMT在1970年1月1日&nbsp;00:00:00&nbsp;这段时间后的秒数，超过设置的时间后变量的值将不可访问。 </p> </li> 
+   <li> <p style="text-align:justify;"> path&nbsp;−&nbsp;指定&nbsp;cookie&nbsp;的有效目录。 </p> </li> 
+   <li> <p style="text-align:justify;"> domain&nbsp;−&nbsp;可用于定义域名。所有&nbsp;Cookie&nbsp;仅适用于产生它的主机和域名。 </p> </li> 
+   <li> <p style="text-align:justify;"> security&nbsp;−如果设置，这意味着&nbsp;Cookie&nbsp;应仅由&nbsp;HTTPS&nbsp;发送，否则当设置为0时，cookies&nbsp;可以通过常规的HTTP发送。 </p> </li> 
+  </ul> 
+  <div>
+    在&nbsp;PHP&nbsp;中访问&nbsp;cookie，可以使用&nbsp;$_COOKIE&nbsp;或&nbsp;$HTTP_COOKIE_VARS&nbsp;变量来实现。 
+  </div>   
+  <pre>&lt;?php 
+   echo $_COOKIE["token"]. "&lt;br /&gt;"; 
+   /* is equivalent to */ 
+   echo $HTTP_COOKIE_VARS["token"]. "&lt;br /&gt;"; 
+   echo $_COOKIE["id"] . "&lt;br /&gt;"; 
+   /* is equivalent to */ 
+   echo $HTTP_COOKIE_VARS["id"] . "&lt;br /&gt;"; 
+?&gt;</pre> 
+  <div>
+    若要删除&nbsp;cookie，应该使用已过期日期设置&nbsp;cookie ，如下代码所示： 
+  </div> 
+  <pre>&lt;?php 
+   setcookie( "token", "", time()- 60, "/","", 0); 
+   setcookie( "id", "", time()- 60, "/","", 0); 
+?&gt;</pre> 
+ </div>
+ <br>      
+</div></body></html>

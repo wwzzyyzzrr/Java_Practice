@@ -1,0 +1,39 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Servlet生命周期</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>Web容器维护servlet实例的生命周期。下面来看看servlet的生命周期，主要分为以下几个步骤：</p> 
+ <ol> 
+  <li>加载Servlet类，如前面小节中的示例代码：<em>MyServlet.java</em>。</li>
+  <li>创建Servlet实例。</li>
+  <li>调用Servlet类的<code>init</code>方法。</li>
+  <li>调用Servlet类的<code>service</code>方法。</li>
+  <li>调用Servlet类的<code>destroy</code>方法。</li>
+ </ol> 
+ <p>模型流程图如下所示 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/0910/840091054_31912.jpg" alt=""></p> 
+ <p>如上图所示，servlet有三种状态：新，就绪和结束。 如果servlet实例被创建，则servlet处于新状态。 调用<code>init()</code>方法后，Servlet进入就绪状态。 在就绪状态下，servlet执行所有任务。当web容器调用<code>destroy()</code>方法时，它转移到结束状态。</p> 
+ <p><strong>1.加载Servlet类</strong></p> 
+ <p>类加载器负责加载servlet类。 当Web容器接收到servlet的第一个请求时，将加载servlet类。</p> 
+ <p><strong>2.创建Servlet实例</strong></p> 
+ <p>Web容器在加载servlet类之后创建一个servlet的实例。servlet实例在servlet生命周期中只创建一次。</p> 
+ <p><strong>3.调用init方法</strong></p> 
+ <p>Web容器在创建servlet实例后调用<code>init</code>方法一次。 <code>init</code>方法用于初始化servlet。 它是<code>javax.servlet.Servlet</code>接口的生命周期方法。<code>init</code>方法的语法如下：</p> 
+ <pre><code class="lang-java">public void init(ServletConfig config) throws ServletException
+</code></pre> 
+ <p><strong>4.调用service方法</strong></p> 
+ <p>每当接收到servlet的请求时，Web容器都会调用<code>service</code>方法。如果servlet未初始化，则遵循上述前三个步骤，然后调用<code>service</code>方法。 如果servlet被初始化，它调用<code>service</code>方法。 请注意，servlet仅初始化一次。 Servlet接口的<code>service</code>方法的语法如下：</p>   
+ <pre><code class="lang-java">public void service(ServletRequest request, ServletResponse response)   
+  throws ServletException, IOException
+</code></pre> 
+ <p><strong>5.调用destroy方法</strong></p> 
+ <p>从服务中删除servlet实例之前，Web容器调用<code>destroy</code>方法。它使servlet有机会清理所有资源，例如内存，线程等。Servlet接口的<code>destroy</code>方法的语法如下：</p> 
+ <pre><code class="lang-java">public void destroy()
+</code></pre> 
+ <h2 id="h2-u67B6u6784u56FE"><a name="架构图" class="reference-link"></a><span class="header-link octicon octicon-link"></span>架构图</h2>
+ <p>下图描述了一个典型的servlet生命周期场景。</p> 
+ <ul> 
+  <li>首先将来到服务器的HTTP请求委托给servlet容器。</li>
+  <li>servlet容器在调用<code>service()</code>方法之前加载servlet。</li>
+  <li>然后，servlet容器通过产生多个线程来处理多个请求，每个线程执行servlet的单个实例的<code>service()</code>方法。</li>
+ </ul> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/0910/732101005_31794.jpg" alt=""></p>
+ <br>      
+</div></body></html>

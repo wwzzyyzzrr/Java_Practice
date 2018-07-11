@@ -1,0 +1,50 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">JSP自动刷新</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>在本章中，我们将讨论JSP中的如何实现自动刷新。典型的自动刷新示例是：显示现场比赛得分或股票市场状况或货币兑换配给的网页。对于所有这些类型的页面，需要使用浏览器刷新或重新加载按钮定期刷新网页以更新(获取)最新的数据信息。</p> 
+ <p>JSP可以为您提供一种机制，使我们能够指定一个时间间隔自动刷新网页。</p> 
+ <p>刷新网页的最简单的方法是使用响应对象的<code>setIntHeader()</code>方法。以下是这种方法的签名 -</p> 
+ <pre><code class="lang-html">public void setIntHeader(String header, int headerValue)
+</code></pre> 
+ <p>此方法将标题“刷新”发送回浏览器以及指定时间间隔(以秒为单位)的整数值。</p> 
+ <h2 id="h2-u81EAu52A8u9875u9762u5237u65B0u793Au4F8B"><a name="自动页面刷新示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>自动页面刷新示例</h2>
+ <p>打开Eclipse，创建一个动态Web项目：<em>AutoRefresh</em>，其项目中的JSP文件及代码如下所示- </p> 
+ <p>文件：<em>index.jsp</em> - </p> 
+ <pre><code class="lang-html">&lt;%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%&gt;
+&lt;%@ page import="java.io.*,java.util.*"%&gt;
+&lt;!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;meta http-equiv="Content-Type" content="text/html; charset=UTF-8"&gt;
+&lt;title&gt;自动涮新示例&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div style="margin: auto; width: 80%"&gt;
+        &lt;h2&gt;JSP自动涮新示例&lt;/h2&gt;
+        &lt;%
+            // Set refresh, autoload time as 2 seconds
+            response.setIntHeader("Refresh", 2);
+
+            // Get current time
+            Calendar calendar = new GregorianCalendar();
+            String am_pm;
+
+            int hour = calendar.get(Calendar.HOUR);
+            int minute = calendar.get(Calendar.MINUTE);
+            int second = calendar.get(Calendar.SECOND);
+
+            if (calendar.get(Calendar.AM_PM) == 0)
+                am_pm = "AM";
+            else
+                am_pm = "PM";
+            String CT = hour + ":" + minute + ":" + second + " " + am_pm;
+            out.println("当前时间: " + CT + "\n");
+        %&gt;
+    &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>在上面的例子中，将使用<code>setIntHeader()</code>方法来设置刷新响应头。这将有助于模拟数字时钟。</p> 
+ <p>编写完成上面代码，部署并打开浏览器尝试访问URL： <code>http://localhost:8080/AutoRefresh/</code>。 这将在每<code>2</code>秒钟后显示当前系统时间，如下所示。 只需运行JSP并等待查看结果 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201710/2210/399101030_38726.png" alt=""></p>
+ <br>      
+</div></body></html>

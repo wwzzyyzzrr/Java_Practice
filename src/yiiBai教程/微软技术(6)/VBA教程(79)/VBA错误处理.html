@@ -1,0 +1,97 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">VBA错误处理</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>在(VBScript/VBA)编程中有三种类型的错误：</p> 
+ <ul> 
+  <li>语法错误</li>
+  <li>运行时错误</li>
+  <li>逻辑错误</li>
+ </ul> 
+ <h2 id="h2-u8BEDu6CD5u9519u8BEF"><a name="语法错误" class="reference-link"></a><span class="header-link octicon octicon-link"></span>语法错误</h2>
+ <p>语法错误(也称为解析错误)发生在VBScript的解释时间。 例如，下面一行导致语法错误，因为它缺少一个右括号。</p> 
+ <pre><code class="lang-vb">Function ErrorHanlding_Demo()
+   dim x,y
+   x = "Yiibai Yiibai"
+   y = Ucase(x
+End Function
+</code></pre> 
+ <h2 id="h2-u8FD0u884Cu65F6u9519u8BEF"><a name="运行时错误" class="reference-link"></a><span class="header-link octicon octicon-link"></span>运行时错误</h2>
+ <p>运行时错误(也称为异常)在执行期间发生，在解释之后。</p> 
+ <p>例如，下面的行会导致运行时错误，因为这里的语法是正确的，但是在运行时它正在尝试调用<code>fnmultiply</code>，但这是一个不存在的函数。</p> 
+ <pre><code class="lang-vb">Function ErrorHanlding_Demo1()
+   Dim x,y
+   x = 10
+   y = 20
+   z = fnadd(x,y)
+   a = fnmultiply(x,y)
+End Function
+
+Function fnadd(x,y)
+   fnadd = x + y
+End Function
+</code></pre> 
+ <h2 id="h2-u903Bu8F91u9519u8BEF"><a name="逻辑错误" class="reference-link"></a><span class="header-link octicon octicon-link"></span>逻辑错误</h2>
+ <p>逻辑错误可能是最难追查的错误类型。这些错误不是语法或运行时错误的结果。 相反，当您在驱动脚本的逻辑中犯了一个错误，并且没有得到预期的结果时，就会发生这种情况。</p> 
+ <p>你可能无法捕捉到这些错误，因为这取决于业务需求，在程序中加入什么类型的逻辑。</p> 
+ <p>例如，将一个数字除以零，或写入一个进入无限循环的脚本。</p> 
+ <h2 id="h2-error-"><a name="Error对象" class="reference-link"></a><span class="header-link octicon octicon-link"></span>Error对象</h2>
+ <p>假设我们有一个运行时错误，那么通过显示错误信息来停止执行。作为开发人员，如果想捕获错误，那么使用<code>Error</code>对象。</p> 
+ <p><strong>例子</strong></p> 
+ <p>在下面的例子中，<code>Err.Number</code>给出错误号，<code>Err.Description</code>给出错误描述。</p> 
+ <pre><code class="lang-vb">Err.Raise 6   ' Raise an overflow error.
+MsgBox "Error # " &amp; CStr(Err.Number) &amp; " " &amp; Err.Description
+Err.Clear   ' Clear the error.
+</code></pre> 
+ <h2 id="h2-u9519u8BEFu5904u7406"><a name="错误处理" class="reference-link"></a><span class="header-link octicon octicon-link"></span>错误处理</h2>
+ <p>VBA启用错误处理例程，也可以用来禁用错误处理例程。没有<code>On Error</code>语句，发生的任何运行时错误都是致命的：显示错误消息，并且执行突然停止。</p>   
+ <pre><code class="lang-vb">On Error { GoTo [ line | 0 | -1 ] | Resume Next }
+</code></pre> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>编号</th> 
+    <th>关键字</th> 
+    <th>描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>1</td> 
+    <td><em>GoTo line</em></td> 
+    <td>启用在所需的行参数中指定的行开始的错误处理例程。指定的行必须与<code>On Error</code>语句在相同的过程中，否则将发生编译时错误。</td> 
+   </tr> 
+   <tr> 
+    <td>2</td> 
+    <td><em>GoTo 0</em></td> 
+    <td>禁用当前过程中启用的错误处理程序并将其重置为<code>Nothing</code>。</td> 
+   </tr> 
+   <tr> 
+    <td>3</td> 
+    <td><em>GoTo -1</em></td> 
+    <td>禁用当前过程中启用的异常并将其重置为<code>Nothing</code>。</td> 
+   </tr> 
+   <tr> 
+    <td>4</td> 
+    <td><em>Resume Next</em></td> 
+    <td>指定发生运行时错误时，控制权转到发生错误的语句之后的语句，并从该点继续执行。</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p><strong>例子</strong></p> 
+ <pre><code class="lang-vb">Public Sub OnErrorDemo()
+   On Error GoTo ErrorHandler   ' Enable error-handling routine.
+   Dim x, y, z As Integer
+   x = 50
+   y = 0
+   z = x / y   ' Divide by ZERO Error Raises
+
+   ErrorHandler:    ' Error-handling routine.
+   Select Case Err.Number   ' Evaluate error number.
+      Case 10   ' Divide by zero error
+         MsgBox ("You attempted to divide by zero!")
+      Case Else
+         MsgBox "UNKNOWN ERROR  - Error# " &amp; Err.Number &amp; " : " &amp; Err.Description
+   End Select
+   Resume Next
+End Sub
+</code></pre>
+ <br>      
+</div></body></html>

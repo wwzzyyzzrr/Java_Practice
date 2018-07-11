@@ -1,0 +1,70 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Gson入门程序</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>在进入学习Google Gson库的细节之前，让我们先来看看一个使用Gson的应用程序的实际应用。 在这个例子中，创建了一个<code>Student</code>类。 将创建一个带有学生详细信息的JSON字符串，并将其反序列化为学生对象，然后将其序列化为JSON字符串。</p> 
+ <p><strong>示例</strong></p> 
+ <p>打开Eclipse，创建一个Java应用程序项目。然后创建一个Java文件:<em>GsonFirstApp.java</em> - </p> 
+ <pre><code class="lang-java">package com.yiibai;
+
+import com.google.gson.Gson; 
+import com.google.gson.GsonBuilder;  
+
+public class GsonFirstApp { 
+   public static void main(String[] args) { 
+      String jsonString = "{\"name\":\"Maxsu\", \"age\":24}"; 
+
+      GsonBuilder builder = new GsonBuilder(); 
+      builder.setPrettyPrinting(); 
+
+      Gson gson = builder.create(); 
+      Student student = gson.fromJson(jsonString, Student.class); 
+      System.out.println(student);    
+
+      jsonString = gson.toJson(student); 
+      System.out.println(jsonString);  
+   } 
+}  
+class Student { 
+   private String name; 
+   private int age; 
+   public Student(){} 
+
+   public String getName() { 
+      return name; 
+   } 
+   public void setName(String name) { 
+      this.name = name; 
+   } 
+   public int getAge() { 
+      return age; 
+   } 
+   public void setAge(int age) { 
+      this.age = age; 
+   } 
+   public String toString() { 
+      return "Student [ name: "+name+", age: "+ age+ " ]"; 
+   }  
+}
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 - </p> 
+ <pre><code class="lang-shell">Student [ name: Maxsu, age: 24 ]
+{
+  "name": "Maxsu",
+  "age": 24
+}
+</code></pre> 
+ <p><strong>要记住的步骤</strong></p> 
+ <p>以下是这里要考虑的重要步骤。</p> 
+ <p><strong>第1步:</strong>使用<code>GsonBuilder</code>创建Gson对象<br>创建一个Gson对象。 它是一个可重用的对象。</p>   
+ <pre><code class="lang-java">GsonBuilder builder = new GsonBuilder(); 
+builder.setPrettyPrinting(); 
+Gson gson = builder.create();
+</code></pre> 
+ <p><strong>第2步:</strong> 将JSON反序列化为对象<br>使用<code>fromJson()</code>方法从JSON获取对象。 传递Json字符串/Json字符串的源和对象类型作为参数。</p> 
+ <pre><code class="lang-java">//Object to JSON Conversion 
+Student student = gson.fromJson(jsonString, Student.class);
+</code></pre> 
+ <p><strong>第3步:</strong> 将对象序列化为JSON<br>使用<code>toJson()</code>方法获取对象的JSON字符串表示形式。</p> 
+ <pre><code class="lang-java">//Object to JSON Conversion   
+jsonString = gson.toJson(student);
+</code></pre>
+ <br>      
+</div></body></html>

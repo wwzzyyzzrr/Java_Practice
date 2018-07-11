@@ -1,0 +1,96 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Spring Bean init-method 和 destroy-method实例</h1><div style="width:100%;float:left;" class="article-content">   
+ <div> 
+  <div>
+    在Spring中，可以使用&nbsp;init-method&nbsp;和&nbsp;destroy-method&nbsp;在bean&nbsp;配置文件属性用于在bean初始化和销毁某些动作时。这是用来替代&nbsp;
+   <a target="_blank" href="http://www.yiibai.com/spring/spring-initializingbean-and-disposablebean-example.html">InitializingBean和DisposableBean接口</a>。 
+  </div> 
+ </div> 
+ <div> 
+  <h2> 示例 </h2> 
+  <div>
+    这里有一个例子向您展示如何使用 init-method 和 destroy-method。 
+  </div> 
+  <pre>package com.yiibai.customer.services;
+
+public class CustomerService
+{
+	String message;
+	
+	public String getMessage() {
+	  return message;
+	}
+
+	public void setMessage(String message) {
+	  this.message = message;
+	}
+	
+	public void initIt() throws Exception {
+	  System.out.println("Init method after properties are set : " + message);
+	}
+	
+	public void cleanUp() throws Exception {
+	  System.out.println("Spring Container is destroy! Customer clean up");
+	}
+	
+}</pre> 
+  <p style="color:#333333;font-family:'Helvetica Neue', Helvetica,  font-size:16px;"> <em>File : applicationContext.xml</em>,&nbsp;在bean中定义了init-method和destroy-method属性。 </p> 
+  <pre>&lt;beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-2.5.xsd"&gt;
+
+	&lt;bean id="customerService" class="com.yiibai.customer.services.CustomerService" 
+		init-method="initIt" destroy-method="cleanUp"&gt;
+   		
+		&lt;property name="message" value="i'm property message" /&gt;
+	&lt;/bean&gt;
+		
+&lt;/beans&gt;</pre> 
+  <p> 执行下面的程序代码： </p> 
+  <pre>package com.yiibai.common;
+
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import com.yiibai.customer.services.CustomerService;
+
+public class App 
+{
+    public static void main( String[] args )
+    {
+    	ConfigurableApplicationContext context = 
+		new ClassPathXmlApplicationContext(new String[] {"applicationContext.xml"});
+	
+    	CustomerService cust = (CustomerService)context.getBean("customerService");
+    	
+    	System.out.println(cust);
+    	
+    	context.close();
+    }
+}</pre> 
+  <div>
+    ConfigurableApplicationContext.close将关闭应用程序上下文，释放所有资源，并销毁所有缓存的单例bean。 
+  </div> 
+  <p> <br> 输出<br>   </p>
+  <pre class="prettyprint lang-bsh">Init method after properties are set : I'm property message
+com.yiibai.customer.services.CustomerService@5f49d886 
+Spring Container is destroy! Customer clean up</pre> 
+  <p></p> 
+  <div>
+    &nbsp;initIt()方法被调用，消息属性设置后，在 context.close()调用后，执行&nbsp;cleanUp()方法； 
+  </div> 
+  <div> 
+   <div>
+     建议使用init-method&nbsp;和&nbsp;destroy-methodbean&nbsp;在Bena配置文件，而不是执行 InitializingBean 和 DisposableBean 接口，也会造成不必要的耦合代码在Spring。 
+   </div> 
+  </div> 
+  <div> 
+   <br> 
+  </div> 
+  <div>
+    下载源代码 – 
+   <a target="_blank" href="http://pan.baidu.com/s/1hreksq4">http://pan.baidu.com/s/1hreksq4</a> 
+  </div> 
+ </div>
+ <br>      
+</div></body></html>

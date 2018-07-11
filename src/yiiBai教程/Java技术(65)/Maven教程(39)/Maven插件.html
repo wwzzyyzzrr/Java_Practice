@@ -1,0 +1,134 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Maven插件</h1><div style="width:100%;float:left;" class="article-content">   
+ <h2> 什么是 Maven 的插件？ </h2> 
+ <p> Maven 是一个执行插件的框架，每一个任务实际上是由插件完成的。Maven 插件通常用于： </p> 
+ <ul> 
+  <li> <p> 创建 jar 文件 </p> </li> 
+  <li> <p> 创建 war 文件&nbsp; </p> </li> 
+  <li> <p> 编译代码文件 </p> </li> 
+  <li> <p> 进行<span>代码</span>单元测试 </p> </li> 
+  <li> <p> 创建项目文档 </p> </li> 
+  <li> <p> 创建项目报告 </p> </li> 
+ </ul> 
+ <p> 一个插件通常提供了一组目标，可使用以下语法来执行： </p> 
+ <pre class="result">mvn [plugin-name]:[goal-name]</pre> 
+ <p> 例如，一个 Java 项目可以使用 Maven 编译器插件来编译目标，通过运行以下命令编译 </p> 
+ <pre class="result">mvn compiler:compile</pre> 
+ <h2> 插件类型 </h2> 
+ <p> Maven 提供以下两种类型插件： </p> 
+ <table class="src" style="margin:8px 0px;padding:0px;width:560px;border-collapse:collapse;background-color:#F7F7F7;color:#000000;font-family:Helvetica, Arial, sans-serif;"> 
+  <tbody> 
+   <tr> 
+    <th> 类型 </th> 
+    <th> 描述 </th> 
+   </tr> 
+   <tr> 
+    <td> 构建插件 </td> 
+    <td> 在生成过程中执行，并在 pom.xml 中的&lt;build/&gt; 元素进行配置 </td> 
+   </tr> 
+   <tr> 
+    <td> 报告插件 </td> 
+    <td> 在网站生成期间执行，在 pom.xml 中的 &lt;reporting/&gt; 元素进行配置 </td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p> 以下是一些常见的插件列表： </p> 
+ <table class="src" style="margin:8px 0px;padding:0px;width:560px;border-collapse:collapse;background-color:#F7F7F7;color:#000000;font-family:Helvetica, Arial, sans-serif;"> 
+  <tbody> 
+   <tr> 
+    <th> 插件 </th> 
+    <th> 描述 </th> 
+   </tr> 
+   <tr> 
+    <td> clean </td> 
+    <td> 编译后的清理目标，删除目标目录<br> </td> 
+   </tr> 
+   <tr> 
+    <td> compiler </td> 
+    <td> 编译 Java 源文件 </td> 
+   </tr> 
+   <tr> 
+    <td> surefile </td> 
+    <td> 运行JUnit单元测试，创建测试报告 </td> 
+   </tr> 
+   <tr> 
+    <td> jar </td> 
+    <td> 从当前项目构建 JAR 文件 </td> 
+   </tr> 
+   <tr> 
+    <td> war </td> 
+    <td> 从当前项目构建 WAR 文件 </td> 
+   </tr> 
+   <tr> 
+    <td> javadoc </td> 
+    <td> 产生用于该项目的&nbsp;Javadoc<br> </td> 
+   </tr> 
+   <tr> 
+    <td> antrun </td> 
+    <td> 从构建所述的任何阶段运行一组 Ant 任务 </td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h2> 例子 </h2> 
+ <p> 我们使用 maven-antrun-plugin 插件在例子中来在控制台<span>打印</span>数据。现在<span>在 C:\MVN\project&nbsp;文件夹&nbsp;</span>创建一个 pom.xml 文件，内容如下：&nbsp; </p> 
+ <pre class="prettyprint">&lt;project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+    http://maven.apache.org/xsd/maven-4.0.0.xsd"&gt;
+&lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
+&lt;groupId&gt;com.companyname.projectgroup&lt;/groupId&gt;
+&lt;artifactId&gt;project&lt;/artifactId&gt;
+&lt;version&gt;1.0&lt;/version&gt;
+&lt;build&gt;
+&lt;plugins&gt;
+   &lt;plugin&gt;
+   &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+   &lt;artifactId&gt;maven-antrun-plugin&lt;/artifactId&gt;
+   &lt;version&gt;1.1&lt;/version&gt;
+   &lt;executions&gt;
+      &lt;execution&gt;
+         &lt;id&gt;id.clean&lt;/id&gt;
+         &lt;phase&gt;clean&lt;/phase&gt;
+         &lt;goals&gt;
+            &lt;goal&gt;run&lt;/goal&gt;
+         &lt;/goals&gt;
+         &lt;configuration&gt;
+            &lt;tasks&gt;
+               &lt;echo&gt;clean phase&lt;/echo&gt;
+            &lt;/tasks&gt;
+         &lt;/configuration&gt;
+      &lt;/execution&gt;     
+   &lt;/executions&gt;
+   &lt;/plugin&gt;
+&lt;/plugins&gt;
+&lt;/build&gt;
+&lt;/project&gt;</pre> 
+ <p style="text-align:justify;"> 接下来，打开命令控制台，并转到包含 pom.xml 的<span>文件夹</span>并执行以下命令 mvn 命令。 </p>   
+ <pre class="result">C:\MVN\project&gt;mvn clean</pre> 
+ <p style="text-align:justify;"> Maven 将开始处理并显示清洁周期/阶段，如下图中输出： </p> 
+ <pre class="result">[INFO] Scanning for projects...
+[INFO] ------------------------------------------------------------------
+[INFO] Building Unnamed - com.companyname.projectgroup:project:jar:1.0
+[INFO]    task-segment: [post-clean]
+[INFO] ------------------------------------------------------------------
+[INFO] [clean:clean {execution: default-clean}]
+[INFO] [antrun:run {execution: id.clean}]
+[INFO] Executing tasks
+     [echo] clean phase
+[INFO] Executed tasks
+[INFO] ------------------------------------------------------------------
+[INFO] BUILD SUCCESSFUL
+[INFO] ------------------------------------------------------------------
+[INFO] Total time: &lt; 1 second
+[INFO] Finished at: Sat Jul 07 13:38:59 IST 2012
+[INFO] Final Memory: 4M/44M
+[INFO] ------------------------------------------------------------------</pre> 
+ <p> 上面的例子说明了以下关键概念： </p> 
+ <ul> 
+  <li> <p> 插件可在<span>&nbsp;pom.xml&nbsp;</span>使用的 <span>plugin&nbsp;</span>元素来<span>指定；</span>&nbsp; </p> </li> 
+  <li> <p> 每个插件可以有多个目标； </p> </li> 
+  <li> <p> 从插件应使用它的相位元素开始处理定义阶段。这里已经使用 clean&nbsp;阶段； </p> </li> 
+  <li> <p> 可以通过将它们绑定到插件的目标来执行配置任务。这里已经绑定 echo 任务到 maven-antrun-plugin&nbsp;的运行目标； </p> </li> 
+  <li> <p> 就这样，Maven将处理其余部分。如果没有可用的本地存储库，<span>它会下载这个插件；</span> </p> </li> 
+ </ul>
+ <br>      
+</div></body></html>

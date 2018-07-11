@@ -1,0 +1,453 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Spring初学快速入门</h1><div style="width:100%;float:left;" class="article-content">   
+ <h1> 1- 介绍 </h1> 
+ <div>
+   本教程文章是基于以下编写的： 
+ </div> 
+ <div> 
+  <ul> 
+   <li> Spring Framework 4.0.4 RELEASE </li> 
+   <li> Eclipse 4.5 MARS (ok for Eclipse 4.4 LUNA) </li> 
+  </ul> 
+ </div> 
+ <div>
+   在本文中使用Maven来声明Spring库，而不是下载Spring库，并以正常的方式来声明。 
+ </div> 
+ <a target="_blank" href="http://www.yiibai.com/maven/">Maven</a>是一个工具，可以帮你自动，高效地管理您的库，它已成为惯例，所有 Java 程序员必须知道。如果你不知道如何使用Maven，可以花10分钟就学会如何使用它： 
+ <ul> 
+  <li> 
+   <div> 
+    <a target="_blank" href="http://www.yiibai.com/maven/">http://www.yiibai.com/maven/</a> 
+   </div> </li> 
+ </ul> 
+ <div>
+   如果你想下载Spring和声明库，您可以用传统的方式见附录在文件的结尾。 
+ </div> 
+ <h1> 2- Spring框架 </h1> 
+ <div>
+   下图显示了Spring框架的结构。
+  <br> 
+  <img src="/uploads/tutorial/20160117/1-16011F95Uc02.png" alt="">
+  <br> 
+ </div> 
+ <div> 
+ </div> 
+ <ol> 
+  <li> IoC Container:&nbsp;这是最重要的，也是最基础的，&nbsp;Spring的基础。它的作用是配置和Java对象的生命周期管理。这篇教程中我们将学习这一部分。 </li> 
+  <li> DAO, ORM, AOP, WEB:&nbsp;该模块可用于将工具或框架集成到了Spring。 </li> 
+ </ol> 
+ <h2> 2.1-&nbsp;反转控制和依赖注入 </h2> 
+ <div>
+   要了解这个问题，我们使用以下几类： 
+ </div> 
+ <div> 
+  <div> 
+   <pre class="prettyprint lang-java">// Interface HelloWorld
+public interface HelloWorld {
+    public void sayHello();
+}
+ 
+// Class implements HelloWorld
+public class SpringHelloWorld implements HelloWorld {
+   public void sayHello()  {
+           System.out.println("Spring say Hello!");
+   }
+}
+ 
+// Other class implements HelloWorld
+public class StrutsHelloWorld implements HelloWorld {
+   public void sayHello()  {
+           System.out.println("Struts say Hello!");
+   }
+}
+ 
+ 
+// And Service class
+public class HelloWorldService {
+    
+     // Field type HelloWorld
+     private HelloWorld helloWorld;
+    
+     // Constructor HelloWorldService
+     // It initializes the values for the field 'helloWorld'
+     public HelloWorldService()  {
+           this.helloWorld = new StrutsHelloWorld();
+     }
+ 
+}</pre> 
+  </div> 
+ </div> 
+ <div>
+   显而易见的是&nbsp;HelloWorldService 类管理创建&nbsp;HelloWorld 对象。 
+ </div> -&nbsp;另外，在上述情况下，当 HelloWorldService 对象从它的构造创建时，HelloWorld对象也被创建了。&nbsp;它是从StrutsHelloWorld&nbsp;创建。
+ <br> 
+ <div>
+   现在的问题是，您要创建一个HelloWorldService对象，HelloWorld对象也同时被创建，但它必须是SpringHelloWorld。 
+ </div> 所以 HelloWorldService 是控制“对象创建” Hello&nbsp;World 的。我们为什么不创建 Hello&nbsp;World 转让由第三方， 
+ <div>
+   而是使用 HelloWorldService ？因为我们有“反转控制”(IOC)的定义。 
+ </div> 
+ <div>
+   并且IoC容器将充当管理者角色，创建了HelloWorldService&nbsp;和&nbsp;HelloWorld&nbsp;。 
+ </div> 
+ <blockquote style="background-color:#FFFF99;font-style:italic;"> 
+  <p style="background-color:inherit;"> IoC = Inversion of Control </p> 
+ </blockquote> 
+ <div style="background-color:inherit;"> 
+ </div> 
+ <span style="font-size:14.4px;line-height:1.5;"><br> <br> <br> <img src="/uploads/tutorial/20160117/1-16011G00251346.png" alt=""><br> IoC容器创建&nbsp;HelloWorldService&nbsp;对象，是通过&nbsp;setter&nbsp;方法传递&nbsp;HelloWorld&nbsp;对象到HelloWorldService。</span>
+ <span style="font-size:14.4px;line-height:1.5;">IoC容器做的是“依赖注入”到HelloWorldService。</span>
+ <span style="font-size:14.4px;line-height:1.5;">这里的相关性是指对象之间的依赖关系：</span>
+ <span style="font-size:14.4px;line-height:1.5;">&nbsp;HelloWorldService 和 helloWorld.</span>
+ <br> 
+ <div style="background-color:inherit;">
+   在这一点上，我们已经明确了什么是&nbsp;IoC和DI。让我们举个例子来更好的理解。 
+ </div> 
+ <h1 style="background-color:inherit;font-size:25px;font-weight:lighter;"> 3- 创建项目 </h1> 
+ <div style="background-color:inherit;"> 
+  <ul style="background-color:inherit;"> 
+   <li style="background-color:inherit;"> <strong>File/New/Other...</strong> </li> 
+  </ul> 
+ </div> 
+ <div style="background-color:inherit;"> 
+  <img src="/uploads/tutorial/20160117/1-16011G00332129.png" alt="">
+  <br> 
+  <img src="/uploads/tutorial/20160117/1-16011G0035YJ.png" alt="">
+  <br> 
+  <strong>输入：</strong> 
+ </div> 
+ <div style="background-color:inherit;"> 
+  <ul style="background-color:inherit;"> 
+   <li style="background-color:inherit;"> <strong>Group Id:</strong>&nbsp;com.yiibai </li> 
+   <li style="background-color:inherit;"> <strong>Artifact Id:</strong>&nbsp;HelloSpring </li> 
+  </ul> 
+ </div> 
+ <div style="background-color:inherit;"> 
+  <img src="/uploads/tutorial/20160117/1-16011G0042L27.png" alt="">
+  <br> 您的项目已创建：
+  <br> 
+  <img src="/uploads/tutorial/20160117/1-16011G00505448.png" alt="">
+  <br> 
+ </div> 
+ <div>
+   确保您的项目是建立在Java7或更高版本。右键单击该项目并选择属性。
+  <br> 
+  <img src="/uploads/tutorial/20160117/1-16011G00614914.png" alt="">
+  <br> 
+  <img src="/uploads/tutorial/20160117/1-16011G006304A.png" alt="">
+  <br> 
+ </div> 
+ <h1> 4-&nbsp;声明Spring的基础库 </h1> 
+ <div>
+   这是&nbsp;Spring的&nbsp;HelloWorld&nbsp;例子，所以我们只使用基本的Spring库(核心)。打开pom.xml文件来将使用的库声明： 
+ </div> 
+ <div> 
+  <ul> 
+   <li> pom.xml 使用以下内容重新覆盖原上面的内容。 </li> 
+  </ul> 
+ </div> 
+ <div style="background-color:#E5EECC;"> 
+  <div style="background-color:white !important;"> 
+   <pre class="prettyprint lang-xml">&lt;project xmlns="http://maven.apache.org/POM/4.0.0"
+     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                         http://maven.apache.org/xsd/maven-4.0.0.xsd"&gt;
+      
+  &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
+  &lt;groupId&gt;com.yiibai&lt;/groupId&gt;
+  &lt;artifactId&gt;HelloSpring&lt;/artifactId&gt;
+  &lt;version&gt;0.0.1-SNAPSHOT&lt;/version&gt;
+  
+  
+      &lt;dependencies&gt;
+ 
+        &lt;!-- Spring Core --&gt;
+        &lt;!-- http://mvnrepository.com/artifact/org.springframework/spring-core --&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-core&lt;/artifactId&gt;
+            &lt;version&gt;4.1.4.RELEASE&lt;/version&gt;
+        &lt;/dependency&gt;
+         
+        &lt;!-- Spring Context --&gt;
+        &lt;!-- http://mvnrepository.com/artifact/org.springframework/spring-context --&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-context&lt;/artifactId&gt;
+            &lt;version&gt;4.1.4.RELEASE&lt;/version&gt;
+        &lt;/dependency&gt;
+         
+    &lt;/dependencies&gt;
+  
+&lt;/project&gt;</pre> 
+  </div> 
+ </div> 
+ <h1> 5- 工程代码 </h1> 
+ <img src="/uploads/tutorial/20160117/1-16011G01912253.png" alt="">
+ <br> 
+ <div> 
+ </div> 
+ <div> 
+  <ul> 
+   <li> HelloWorld.java </li> 
+  </ul> 
+ </div> 
+ <div style="background-color:#E1EAED;"> 
+  <div style="background-color:white !important;"> 
+   <pre class="prettyprint lang-java">package com.yiibai.tutorial.spring.helloworld;
+ 
+public interface HelloWorld {
+     
+    public void sayHello();
+     
+}</pre> 
+  </div> 
+ </div> 
+ <div style="background-color:inherit;"> 
+  <ul style="background-color:inherit;"> 
+   <li style="background-color:inherit;"> <strong>HelloWorldService.java</strong> </li> 
+  </ul> 
+ </div> 
+ <div style="background-color:#E1EAED;"> 
+  <div style="background-color:white !important;"> 
+   <pre class="prettyprint lang-java">package com.yiibai.tutorial.spring.helloworld;
+  
+public class HelloWorldService {
+  
+    private HelloWorld helloWorld;
+  
+    public HelloWorldService() {
+  
+    }
+  
+    public void setHelloWorld(HelloWorld helloWorld) {
+        this.helloWorld = helloWorld;
+    }
+  
+    public HelloWorld getHelloWorld() {
+        return this.helloWorld;
+    }
+  
+}</pre> 
+  </div> 
+ </div> 
+ <div style="background-color:inherit;"> 
+  <ul style="background-color:inherit;"> 
+   <li style="background-color:inherit;"> <strong>SpringHelloWorld.java</strong> </li> 
+  </ul> 
+ </div> 
+ <div style="background-color:#E1EAED;"> 
+  <div style="background-color:white !important;"> 
+   <pre class="prettyprint lang-java">package com.yiibai.tutorial.spring.helloworld.impl;
+  
+import com.yiibai.tutorial.spring.helloworld.HelloWorld;
+  
+public class SpringHelloWorld implements HelloWorld {
+  
+    @Override
+    public void sayHello() {
+        System.out.println("Spring Say Hello!!");
+    }
+  
+}</pre> 
+  </div> 
+ </div> 
+ <div style="background-color:inherit;"> 
+  <ul style="background-color:inherit;"> 
+   <li style="background-color:inherit;"> <strong>StrutsHelloWorld.java</strong> </li> 
+  </ul> 
+ </div> 
+ <div style="background-color:#E1EAED;"> 
+  <div style="background-color:white !important;"> 
+   <pre class="prettyprint lang-java">package com.yiibai.tutorial.spring.helloworld.impl;
+  
+import com.yiibai.tutorial.spring.helloworld.HelloWorld;
+  
+public class StrutsHelloWorld implements HelloWorld {
+  
+    @Override
+    public void sayHello() {
+        System.out.println("Struts Say Hello!!");
+    }
+  
+}</pre> 
+  </div> 
+ </div> 
+ <div style="background-color:inherit;"> 
+  <ul style="background-color:inherit;"> 
+   <li style="background-color:inherit;"> <strong>HelloProgram.java</strong> </li> 
+  </ul> 
+ </div> 
+ <div style="background-color:#E1EAED;"> 
+  <div style="background-color:white !important;">   
+   <pre class="prettyprint lang-java">package com.yiibai.tutorial.spring;
+  
+import com.yiibai.tutorial.spring.helloworld.HelloWorld;
+import com.yiibai.tutorial.spring.helloworld.HelloWorldService;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+  
+public class HelloProgram {
+  
+     
+    public static void main(String[] args) {
+         
+        ApplicationContext context =
+                new ClassPathXmlApplicationContext("beans.xml");
+         
+        HelloWorldService service =
+             (HelloWorldService) context.getBean("helloWorldService");
+          
+        HelloWorld hw= service.getHelloWorld();
+         
+        hw.sayHello();
+    }
+}</pre> 
+  </div> 
+ </div> 
+ <div style="background-color:inherit;"> 
+ </div> 
+ <div style="background-color:inherit;"> 
+  <ul style="background-color:inherit;"> 
+   <li style="background-color:inherit;"> <strong>beans.xml<br> <img src="/uploads/tutorial/20160117/1-16011G020345S.png" alt=""><br> </strong> </li> 
+  </ul> 
+ </div> 
+ <div style="background-color:#E5EECC;"> 
+  <div style="background-color:white !important;"> 
+   <pre class="prettyprint lang-xml">&lt;beansxmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+                        http://www.springframework.org/schema/beans/spring-beans.xsd"&gt;
+  
+    &lt;beanid="springHelloWorld"
+        class="com.yiibai.tutorial.spring.helloworld.impl.SpringHelloWorld"&gt;&lt;/bean&gt;
+    &lt;beanid="strutsHelloWorld"
+        class="com.yiibai.tutorial.spring.helloworld.impl.StrutsHelloWorld"&gt;&lt;/bean&gt;
+  
+  
+    &lt;beanid="helloWorldService"
+        class="com.yiibai.tutorial.spring.helloworld.HelloWorldService"&gt;
+        &lt;propertyname="helloWorld"ref="springHelloWorld"/&gt;
+    &lt;/bean&gt;
+  
+&lt;/beans&gt;</pre> 
+  </div> 
+ </div> 
+ <h1> 6-&nbsp;运行示例 </h1> 
+ <div>
+   运行&nbsp;HelloProgram.java 
+ </div> 
+ <div> 
+ </div> 
+ <div> 
+  <img src="/uploads/tutorial/20160117/1-16011G02110344.png" alt="">
+  <br> 
+ </div> 
+ <div>
+   运行&nbsp;HelloProgram&nbsp;类的结果如下：
+  <br> 
+  <img src="/uploads/tutorial/20160117/1-16011G021362Y.png" alt="">
+  <br> 
+ </div> 
+ <div>
+   打开 beans.xml 文件并更改配置： 
+ </div> 
+ <div style="background-color:#E5EECC;"> 
+  <div style="background-color:white !important;"> 
+   <pre class="prettyprint lang-xml">&lt;!-- Original --&gt;
+&lt;beanid="helloWorldService"
+    class="com.yiibai.tutorial.spring.helloworld.HelloWorldService"&gt;
+   &lt;propertyname="helloWorld"ref="springHelloWorld"/&gt;
+&lt;/bean&gt;
+ 
+&lt;!-- Change to: --&gt;
+&lt;beanid="helloWorldService"
+    class="com.yiibai.tutorial.spring.helloworld.HelloWorldService"&gt;
+   &lt;propertyname="helloWorld"ref="strutsHelloWorld"/&gt;
+&lt;/bean&gt;</pre> 
+  </div> 
+ </div> 
+ <div>
+   重新运行&nbsp;HelloProgram&nbsp;类并得到以下结果。
+  <br> 
+  <img src="/uploads/tutorial/20160117/1-16011G022003H.png" alt="">
+  <br> 
+ </div> 
+ <h1> 7-&nbsp;Spring的工作原理 </h1> 
+ <div>
+   Spring在这个例子中，工作原理说明如下图所示：
+  <br> 
+  <img src="/uploads/tutorial/20160117/1-16011G02TM02.png" alt="">
+  <br> 
+ </div> 
+ <div> 
+ </div> 
+ <div>
+   beans.xml 
+ </div> 
+ <ul> 
+  <li> 
+   <div>
+     这是一个配置文件，您可以在这里声明Java&nbsp;bean。 
+   </div> </li> 
+ </ul> 
+ <div>
+   可以通过读取beans.xml 文件来创建一个应用程序上下文对象 
+ </div> 
+ <div style="background-color:#E1EAED;"> 
+  <div style="background-color:white !important;"> 
+   <pre class="prettyprint lang-xml">ApplicationContext context =
+                newClassPathXmlApplicationContext("beans.xml");</pre> 
+  </div> 
+ </div> IoC容器中，其作用是作为第三种角色，它的任务是创建 beans.xml 文件中声明的 Java&nbsp;Bean 对象。并通过setter方法注入依赖
+ <br> 
+ <div>
+   在这个例子中，HelloWorldService 是一个 java&nbsp;bean 注入依赖。 
+ </div> 
+ <div style="background-color:#E5EECC;"> 
+  <div style="background-color:white !important;"> 
+   <pre class="prettyprint lang-xml">&lt;!-- beans.xml --&gt;
+ 
+&lt;beanid="helloWorldService"
+    class="com.yiibai.tutorial.spring.helloworld.HelloWorldService"&gt;
+    
+    &lt;!-- Call: helloWorldService.setHelloWorld(springHelloWorld) --&gt;
+    &lt;propertyname="helloWorld"ref="springHelloWorld"/&gt;
+ 
+&lt;/bean&gt;</pre> 
+  </div> 
+ </div> 
+ <h1> 8-&nbsp;使用Spring&nbsp;MVC - 编写Web应用程序 </h1> 
+ <div>
+   接下来，你可以学习使用Spring&nbsp;MVC编写Web应用程序： 
+ </div> 
+ <ul> 
+  <li> 
+   <div> 
+    <a target="_blank" href="http://www.yiibai.com/spring_mvc/spring-mvc-tutorial-for-beginners.html">http://www.yiibai.com/spring_mvc/spring-mvc-tutorial-for-beginners.html</a> 
+   </div> </li> 
+ </ul> 
+ <h1> 9-&nbsp;附：下载Spring&nbsp;库 </h1> 
+ <div>
+   您可以下载&nbsp;Spring&nbsp;从以下网址： 
+ </div> 
+ <div> 
+  <ul> 
+   <li> <a target="_blank" href="http://maven.springframework.org/release/org/springframework/spring/">http://maven.springframework.org/release/org/springframework/spring/</a> </li> 
+  </ul> 
+ </div> 
+ <div> 
+  <img src="/uploads/tutorial/20160117/1-16011G02242438.png" alt="">
+  <br> 解压下载的zip文件到硬盘驱动器文件夹，如下： 
+ </div> 
+ <div> 
+ </div> 
+ <div> 
+  <img src="/uploads/tutorial/20160117/1-16011G0232X49.png" alt="">
+  <br> 
+ </div> 
+ <div>
+   代码下载：
+  <a target="_blank" href="http://pan.baidu.com/s/1bwgce6">http://pan.baidu.com/s/1bwgce6</a> 
+ </div>
+ <br>      
+</div></body></html>

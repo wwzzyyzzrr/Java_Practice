@@ -1,0 +1,137 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">JSF &lt;h:panelGrid&gt;标签</h1><div style="width:100%;float:left;" class="article-content">   
+ <p><code>&lt;h:panelGrid&gt;</code>标签呈现HTML “<code>table</code>”元素。</p> 
+ <p>以下JSF标签 -</p> 
+ <pre><code class="lang-html">&lt;h:panelGrid id="panel" columns="2" border="1"
+   cellpadding="10" cellspacing="1"&gt;
+      &lt;f:facet name="header"&gt;
+         &lt;h:outputText value="Login"/&gt;
+      &lt;/f:facet&gt;
+      &lt;h:outputLabel value="Username" /&gt;
+      &lt;h:inputText  /&gt;
+      &lt;h:outputLabel value="Password" /&gt;
+      &lt;h:inputSecret /&gt;
+      &lt;f:facet name="footer"&gt;
+         &lt;h:panelGroup style="display:block; text-align:center"&gt;
+            &lt;h:commandButton id="submit" value="Submit" /&gt;
+         &lt;/h:panelGroup&gt;
+      &lt;/f:facet&gt;
+&lt;/h:panelGrid&gt;
+</code></pre> 
+ <p>被渲染成以下HTML标签 - </p> 
+ <pre><code>&lt;table id="j_idt10:panel" border="1" cellpadding="10" cellspacing="1"&gt;
+&lt;thead&gt;
+   &lt;tr&gt;&lt;th colspan="2" scope="colgroup"&gt;Login&lt;/th&gt;&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tfoot&gt;
+   &lt;tr&gt;
+      &lt;td colspan="2"&gt;
+      &lt;span style="display:block; text-align:center"&gt;
+      &lt;input id="j_idt10:submit" type="submit"
+      name="j_idt10:submit" value="Submit" /&gt;
+      &lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;/tfoot&gt;
+&lt;tbody&gt;
+   &lt;tr&gt;
+      &lt;td&gt;&lt;label&gt;Username&lt;/label&gt;&lt;/td&gt;
+      &lt;td&gt;&lt;input type="text" name="j_idt10:j_idt17" /&gt;&lt;/td&gt;
+   &lt;/tr&gt;
+   &lt;tr&gt;
+      &lt;td&gt;&lt;label&gt;Password&lt;/label&gt;&lt;/td&gt;
+      &lt;td&gt;&lt;input type="password" name="j_idt10:j_idt21" value="" /&gt;&lt;/td&gt;
+   &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+</code></pre>
+ <h2 id="h2-u5B9Eu4F8B"><a name="实例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实例</h2>
+ <p>以下是文件：<em>result.xhtml</em> 中的代码 - </p> 
+ <pre><code class="lang-html">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"&gt;
+&lt;html xmlns="http://www.w3.org/1999/xhtml"   
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:c="http://java.sun.com/jsp/jstl/core"&gt;
+    &lt;h:body&gt;
+  Number :  &lt;h:outputText value="#{user.number}" /&gt;
+
+    &lt;/h:body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>以下是文件：<em>index.xhtml</em> 中的代码 - </p> 
+ <pre><code class="lang-html">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"&gt;
+&lt;html xmlns="http://www.w3.org/1999/xhtml"   
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:c="http://java.sun.com/jsp/jstl/core"
+      &gt;
+    &lt;h:body&gt;
+    &lt;h:form&gt;
+      &lt;h:panelGrid columns="3"&gt;
+        Enter a number : 
+        &lt;h:inputText id="number" value="#{user.number}" 
+          size="20" required="true"
+          label="Number" &gt;
+          &lt;f:convertNumber /&gt;
+        &lt;/h:inputText&gt;
+        &lt;h:message for="number" style="color:red" /&gt;
+      &lt;/h:panelGrid&gt;
+      &lt;h:commandButton value="Submit" action="result" /&gt;
+    &lt;/h:form&gt;
+    &lt;/h:body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>以下是文件：<em>UserBean.java</em> 中的代码 - </p>   
+ <pre><code class="lang-java">package com.yiibai;
+
+import java.io.Serializable;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.SessionScoped;
+
+@ManagedBean(name="user")
+@SessionScoped
+public class UserBean implements Serializable{
+
+  int number;
+
+  public int getNumber() {
+    return number;
+  }
+
+  public void setNumber(int number) {
+    this.number = number;
+  }
+
+}
+</code></pre> 
+ <h2 id="h2-u6D4Bu8BD5u8FD0u884C"><a name="测试运行" class="reference-link"></a><span class="header-link octicon octicon-link"></span>测试运行</h2>
+ <p>打开 <strong>NetBeans</strong>创建一个Web工程：<strong>PanelGrid</strong>，并使用上面的文件代码。Tomcat启动完成后，在浏览器地址栏中输入以下URL。</p> 
+ <pre><code>http://localhost:8084/PanelGrid
+</code></pre>
+ <p>如果程序没有错误，应该会看到以下结果 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201704/2404/641080454_94108.png" alt=""></p> 
+ <p>生成的HTML源代码如下所示 - </p> 
+ <pre><code class="lang-html">
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;!DOCTYPE html&gt;
+&lt;html xmlns="http://www.w3.org/1999/xhtml"&gt;&lt;body&gt;
+&lt;form id="j_idt3" name="j_idt3" method="post" action="/panelGrid/faces/index.xhtml" enctype="application/x-www-form-urlencoded"&gt;
+&lt;input type="hidden" name="j_idt3" value="j_idt3" /&gt;
+&lt;table&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;
+                Enter a number : 
+                &lt;/td&gt;
+&lt;td&gt;&lt;input id="j_idt3:number" type="text" name="j_idt3:number" value="4" size="20" /&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;input type="submit" name="j_idt3:j_idt7" value="Submit" /&gt;&lt;input type="hidden" name="javax.faces.ViewState" id="j_id1:javax.faces.ViewState:0" value="-8284978550398349110:8223611473065586830" autocomplete="off" /&gt;
+&lt;/form&gt;&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+ <br>      
+</div></body></html>

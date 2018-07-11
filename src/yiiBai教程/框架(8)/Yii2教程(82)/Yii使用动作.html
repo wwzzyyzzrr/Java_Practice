@@ -1,0 +1,214 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Yii使用动作</h1><div style="width:100%;float:left;" class="article-content">   
+ <div>
+   要创建一个控制器类的动作，应该定义一个公共方法，其名称以单词&nbsp;action&nbsp;开头。动作的返回数据表示要发送到终端用户的响应。 
+ </div> 
+ <div> 
+  <div>
+    第1步&nbsp;-&nbsp;让我们在&nbsp;ExampleController&nbsp;控制器定义一个&nbsp;hello-world&nbsp;的动作。 
+  </div> 
+  <pre>&lt;?php 
+   namespace app\controllers; 
+   use yii\web\Controller; 
+   class ExampleController extends Controller { 
+      public function actionIndex() { 
+         $message = "index action of the ExampleController"; 
+         return $this-&gt;render("example",[ 
+            'message' =&gt; $message 
+         ]); 
+      } 
+      public function actionHelloWorld() { 
+         return "Hello world!"; 
+      } 
+   } 
+?&gt;</pre> 
+  <div>
+    第2步&nbsp;-&nbsp;在Web浏览器的地址栏中输入URL=&gt;
+   <a target="_blank" href="http://localhost:8080/index.php?r=example/hello-world">http://localhost:8080/index.php?r=example/hello-world</a>&nbsp;会看到以下内容。
+   <br> 
+   <img src="/uploads/tutorial/20160518/1-16051P64529450.png" width="635" height="243" title="Yii使用动作" alt="Yii使用动作">
+   <br> 
+  </div> 
+  <p> 动作ID通常是动词，如&nbsp;create,&nbsp;update,&nbsp;delete&nbsp;等。这是因为动作通常被设计来执行在一个特定资源发生变化时。 </p> 
+  <p> 动作ID应该只包含这些字符&nbsp;−&nbsp;小写字母，数字，连字符和下划线英文字母。 </p> 
+  <div>
+    有两种类型的动作：内联和独立。 
+  </div> 
+  <div>
+    内联动作在控制器类中定义。动作的名称是这样从动作ID来源 - 
+  </div> 
+  <ul> 
+   <li> 
+    <div>
+      转换动作ID的所有单词的第一个字母转换成大写 
+    </div> </li> 
+   <li> 
+    <div>
+      删除连字符 
+    </div> </li> 
+   <li> 
+    <div>
+      添加&nbsp;action&nbsp;前缀 
+    </div> </li> 
+  </ul> 
+  <p> 示例− </p> 
+  <ul> 
+   <li> index&nbsp;变成&nbsp;actionIndex. </li> 
+   <li> hello-world(如在上面的例子)&nbsp;变成&nbsp;actionHelloWorld. </li> 
+  </ul> 
+  <div>
+    如果您打算在不同的地方重用相同的动作，应该把它定义为一个独立的动作。 
+  </div> 
+  <h2> 
+   <div>
+     创建一个独立的Action类 
+   </div> </h2> 
+  <div>
+    要创建一个独立的action类，则应扩展 yii\base\Action 或其子类，并实现&nbsp;run()方法。 
+  </div> 
+  <p> 第1步-&nbsp;在项目根内创建&nbsp;components&nbsp;文件夹。在文件夹内创建一个名为&nbsp;GreetingAction.php&nbsp;的文件，并使用下面的代码。 </p> 
+  <pre>&lt;?php 
+   namespace app\components;
+   use yii\base\Action;
+   class GreetingAction extends Action {
+      public function run() {
+         return "Greeting,This from GreetingAction.";
+      }
+   }
+?&gt;</pre> 
+  <p> 我们刚刚创建一个可重复使用的动作。在&nbsp;ExampleController&nbsp;中使用它，我们应该通过重写&nbsp;actions()&nbsp;方法通过映射动作来声明动作。 </p> 
+  <div>
+    第2步&nbsp;-&nbsp;修改&nbsp;ExampleController.php&nbsp;文件使用这种方式。 
+  </div> 
+  <pre>&lt;?php
+   namespace app\controllers;
+   use yii\web\Controller;
+   class ExampleController extends Controller {
+      public function actions() {
+         return [
+            'greeting' =&gt; 'app\components\GreetingAction',
+         ];
+      }
+      public function actionIndex() {
+         $message = "index action of the ExampleController";
+         
+         return $this-&gt;render("example",[
+            'message' =&gt; $message
+         ]);
+      }
+      public function actionHelloWorld() {
+         return "Hello world!";
+      }
+   }
+?&gt;</pre> 
+  <div>
+    actions()&nbsp;方法返回一个数组，键是动作ID而其值是类的名称。 
+  </div> 
+  <div>
+    第3步&nbsp;-&nbsp;访问URL=&gt;&nbsp;
+   <a target="_blank" href="http://localhost:8080/index.php?r=example/greeting">http://localhost:8080/index.php?r=example/greeting</a>，会看到下面的输出。
+   <br> 
+   <img src="/uploads/tutorial/20160518/1-16051P64555352.png" alt="">
+   <br> 
+  </div> 
+  <div>
+    第4步&nbsp;-&nbsp;也可以用行动将用户重定向到其他URL。添加下面的动作到&nbsp;ExampleController.php&nbsp;如下。 
+  </div> 
+  <pre>public function actionOpenGoogle() {
+   // redirect the user browser to http://yiibai.com
+   return $this-&gt;redirect('http://www.yiibai.com');
+} &nbsp;</pre> 
+  <p> 现在，如果打开URL =&gt;&nbsp;http://localhost:8080/index.php?r=example/open-google,&nbsp;将被重定向到&nbsp;<a target="_blank" href="http://www.yiibai.com/">http://www.yiibai.com</a>。 </p> 
+  <div>
+    动作方法可以带参数，它被称作动作参数。它们的值是从$_GET检索，并使用参数名称作为键。 
+  </div> 
+  <div>
+    第5步&nbsp;-&nbsp;以下动作添加到&nbsp;ExampleController&nbsp;控制器。 
+  </div>   
+  <pre>public function actionTestParams($first, $second) {
+   return "$first &amp; $second";
+}</pre> 
+  <div>
+    第6步&nbsp;-&nbsp;在Web浏览器的地址栏中访问URL=&gt;&nbsp;
+   <a target="_blank" href="http://localhost:8080/index.php?r=example/test-params&amp;first=hello&amp;second=world">http://localhost:8080/index.php?r=example/test-params&amp;first=hello&amp;second=world</a>&nbsp;，会看到下面的输出。
+   <br> 
+   <img src="/uploads/tutorial/20160518/1-16051P64614310.png" alt="">
+   <br> 
+  </div> 
+  <p> 每个控制器都有一个默认动作。当路由仅包含控制器ID，就意味着将自动请求默认动作。默认情况下，系统默认的操作是：index。可以很容易在控制覆盖掉这个属性。 </p> 
+  <div>
+    第7步-&nbsp;使用以下方式来修改&nbsp;ExampleController&nbsp;。 
+  </div> 
+  <pre>&lt;?php
+   namespace app\controllers;
+   use yii\web\Controller;
+   class ExampleController extends Controller {
+      public $defaultAction = "hello-world";
+      /* other actions */
+   }
+?&gt;</pre> 
+  <div>
+    第8步&nbsp;-&nbsp;现在打开URL=&gt;&nbsp;
+   <a target="_blank" href="http://localhost:8080/index.php?r=example">http://localhost:8080/index.php?r=example</a>&nbsp;，将看到以下内容。
+   <br> 
+   <img src="/uploads/tutorial/20160518/1-16051P64634644.png" alt="">
+   <br> 
+  </div> 
+  <div>
+    为了满足请求，控制器将经历以下生命周期&nbsp;- 
+  </div> 
+  <ul> 
+   <li> <p style="text-align:justify;"> yii\base\Controller:init()&nbsp;被调用 </p> </li> 
+   <li> 
+    <div>
+      控制器将基于动作ID来创建动作 
+    </div> </li> 
+   <li> <p style="text-align:justify;"> 控制器顺序地调用Web应用程序，模块和控制器的&nbsp;beforeAction()方法 </p> </li> 
+   <li> 
+    <div>
+      控制器运行操作 
+    </div> </li> 
+   <li> 
+    <div>
+      控制器顺序地调用Web应用程序，模块，和控制器的afterAction()方法。 
+    </div> </li> 
+   <li> 
+    <div>
+      应用程序分配动作结果到响应 
+    </div> </li> 
+  </ul> 
+  <h2> 
+   <div>
+     重要事项 
+   </div> </h2> 
+  <div>
+    控制器应该&nbsp;- 
+  </div> 
+  <ul> 
+   <li> 
+    <div>
+      每一个动作都应该包含的代码只有几行，尽量小 
+    </div> </li> 
+   <li> 
+    <div>
+      用于响应视图 
+    </div> </li> 
+   <li> 
+    <div>
+      不要嵌入HTML 
+    </div> </li> 
+   <li> 
+    <div>
+      访问请求数据 
+    </div> </li> 
+   <li> 
+    <div>
+      调用模型的方法 
+    </div> </li> 
+   <li> 
+    <div>
+      不处理请求数据。这些应在模型中进行处理 
+    </div> </li> 
+  </ul> 
+ </div>
+ <br>      
+</div></body></html>

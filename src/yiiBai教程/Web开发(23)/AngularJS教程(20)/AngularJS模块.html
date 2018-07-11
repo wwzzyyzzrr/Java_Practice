@@ -1,0 +1,131 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">AngularJS模块</h1><div style="width:100%;float:left;" class="article-content">   
+ <p> AngularJS支持模块化的方法。模块用于单独的逻辑表示服务，控制器，应用程序等，并保持代码的整洁。我们在单独的js文件中定义的模块，并将其命名为按照module.js文件形式。在这个例子中，我们要创建两个模块。</p> 
+ <ul> 
+  <li> <p> Application Module&nbsp;- 用于初始化控制器应用程序</p> </li> 
+  <li> <p> Controller Module&nbsp;- 用于定义控制器</p> </li> 
+ </ul> 
+ <h2> 应用模块</h2> 
+ <p> mainApp.js</p> 
+ <pre class="prettyprint" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+var mainApp = angular.module("mainApp", []);</pre> 
+ <p> 在这里，我们已经声明使用 angular.module 功能的应用程序 mainApp 模块。我们已经通过了一个空数组给它。此数组通常包含从属模块。</p> 
+ <h2> 控制器模块</h2> 
+ <p> studentController.js</p> 
+ <pre class="prettyprint" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+mainApp.controller("studentController", function($scope) {
+   $scope.student = {
+      firstName: "Mahesh",
+      lastName: "Parashar",
+      fees:500,
+      subjects:[
+         {name:'Physics',marks:70},
+         {name:'Chemistry',marks:80},
+         {name:'Math',marks:65},
+         {name:'English',marks:75},
+         {name:'Hindi',marks:67}
+      ],
+      fullName: function() {
+         var studentObject;
+         studentObject = $scope.student;
+         return studentObject.firstName + " " + studentObject.lastName;
+      }
+   };
+});</pre> 
+ <p> 在这里，我们已经声明采用studentController模块的mainApp.controller功能的控制器。</p> 
+ <h2> 使用模块</h2> 
+ <pre class="prettyprint" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+&lt;div ng-app="mainApp" ng-controller="studentController"&gt;
+..
+&lt;script src="mainApp.js"&gt;&lt;/script&gt;
+&lt;script src="studentController.js"&gt;&lt;/script&gt;</pre> 
+ <p> 在这里，我们使用 ng-app 指令和控制器采用ng-controller指令应用模块。我们已经在主要的HTML页面导入mainApp.js和studentController.js。</p> 
+ <h2> 示例</h2> 
+ <p> 下面的例子将展示上述所有模块。</p> 
+ <p> <i>testAngularJS.htm</i></p> 
+ <pre>
+&lt;html&gt;
+    &lt;head&gt;
+	&lt;title&gt;Angular JS Modules&lt;/title&gt;
+	&lt;style&gt;
+	table, th , td {
+	&nbsp; border: 1px solid grey;
+	&nbsp; border-collapse: collapse;
+	&nbsp; padding: 5px;
+	}
+	table tr:nth-child(odd) {
+	&nbsp; background-color: #f2f2f2;
+	}
+	table tr:nth-child(even) {
+	&nbsp; background-color: #ffffff;
+	}
+	&lt;/style&gt;
+	&lt;/head&gt;
+	&lt;body&gt;
+	&lt;h2&gt;AngularJS Sample Application&lt;/h2&gt;
+	&lt;div ng-app="mainApp" ng-controller="studentController"&gt;
+	&lt;table border="0"&gt;
+	&lt;tr&gt;&lt;td&gt;Enter first name:&lt;/td&gt;&lt;td&gt;&lt;input type="text" ng-model="student.firstName"&gt;&lt;/td&gt;&lt;/tr&gt;
+	&lt;tr&gt;&lt;td&gt;Enter last name: &lt;/td&gt;&lt;td&gt;&lt;input type="text" ng-model="student.lastName"&gt;&lt;/td&gt;&lt;/tr&gt;
+	&lt;tr&gt;&lt;td&gt;Name: &lt;/td&gt;&lt;td&gt;{{student.fullName()}}&lt;/td&gt;&lt;/tr&gt;
+	&lt;tr&gt;&lt;td&gt;Subject:&lt;/td&gt;&lt;td&gt;
+	&lt;table&gt;
+	&nbsp; &nbsp;&lt;tr&gt;
+	&nbsp; &nbsp; &nbsp; &lt;th&gt;Name&lt;/th&gt;
+	&nbsp; &nbsp; &nbsp; &lt;th&gt;Marks&lt;/th&gt;
+	&nbsp; &nbsp;&lt;/tr&gt;
+	&nbsp; &nbsp;&lt;tr ng-repeat="subject in student.subjects"&gt;
+	&nbsp; &nbsp; &nbsp; &lt;td&gt;{{ subject.name }}&lt;/td&gt;
+	&nbsp; &nbsp; &nbsp; &lt;td&gt;{{ subject.marks }}&lt;/td&gt;
+	&nbsp; &nbsp;&lt;/tr&gt;
+	&lt;/table&gt;
+	&lt;/td&gt;&lt;/tr&gt;
+	&lt;/table&gt;
+	&lt;/div&gt;
+	&lt;script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.15/angular.min.js"&gt;&lt;/script&gt;
+	&lt;script src="mainApp.js"&gt;&lt;/script&gt;
+	&lt;script src="studentController.js"&gt;&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre> 
+ <i style="box-sizing: border-box; color: rgb(49, 49, 49); font-family: 'Open Sans', Arial, sans-serif; font-size: 14px; line-height: 22px;">mainApp.js</i> 
+ <pre class="prettyprint prettyprinted" id="mainApp_js" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+<span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">var</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> mainApp </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">=</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> angular</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">module</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"mainApp"</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">,</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[]);</span></pre> 
+ <i style="box-sizing: border-box; color: rgb(49, 49, 49); font-family: 'Open Sans', Arial, sans-serif; font-size: 14px; line-height: 22px;">studentController.js</i> 
+ <pre class="prettyprint prettyprinted" id="studentController_js" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
+<span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">mainApp</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">controller</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"studentController"</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">,</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">function</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">(</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">$scope</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">)</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">{</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+   $scope</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">student </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">=</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">{</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+      firstName</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">:</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"Mahesh"</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">,</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+      lastName</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">:</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">"Parashar"</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">,</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+      fees</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">:</span><span class="lit" style="box-sizing: border-box; color: rgb(0, 102, 102);">500</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">,</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+      subjects</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">:[</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+         </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">{</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">name</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">:</span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">'Physics'</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">,</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">marks</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">:</span><span class="lit" style="box-sizing: border-box; color: rgb(0, 102, 102);">70</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">},</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+         </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">{</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">name</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">:</span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">'Chemistry'</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">,</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">marks</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">:</span><span class="lit" style="box-sizing: border-box; color: rgb(0, 102, 102);">80</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">},</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+         </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">{</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">name</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">:</span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">'Math'</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">,</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">marks</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">:</span><span class="lit" style="box-sizing: border-box; color: rgb(0, 102, 102);">65</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">},</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+         </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">{</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">name</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">:</span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">'English'</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">,</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">marks</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">:</span><span class="lit" style="box-sizing: border-box; color: rgb(0, 102, 102);">75</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">},</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+         </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">{</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">name</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">:</span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">'Hindi'</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">,</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">marks</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">:</span><span class="lit" style="box-sizing: border-box; color: rgb(0, 102, 102);">67</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">}</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+      </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">],</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+      fullName</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">:</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">function</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">()</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">{</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+         </span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">var</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> studentObject</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">;</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+         studentObject </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">=</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> $scope</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">student</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">;</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+         </span><span class="kwd" style="box-sizing: border-box; color: rgb(0, 0, 136);">return</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> studentObject</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">firstName </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">+</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">" "</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">+</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> studentObject</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">lastName</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">;</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+      </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">}</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+   </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">};</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">
+</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">});</span></pre> 
+ <h2> 输出</h2> 
+ <p> 在Web浏览器打开textAngularJS.htm。看到结果如下。<br> <img alt="" src="/uploads/allimg/141103/1-141103204441638.png" style="width: 644px; height: 450px;"></p> 
+ <br> 
+ <br> 
+ <br> 
+ <style type="text/css">
+table, th , td {
+  border: 1px solid grey;
+  border-collapse: collapse;
+  padding: 5px;
+}
+table tr:nth-child(odd) {
+  background-color: #f2f2f2;
+}
+table tr:nth-child(even) {
+  background-color: #ffffff;
+}</style> 
+ <br>      
+</div></body></html>

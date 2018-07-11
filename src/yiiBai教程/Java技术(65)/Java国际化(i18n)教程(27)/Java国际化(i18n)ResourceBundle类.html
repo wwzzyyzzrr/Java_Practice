@@ -1,0 +1,48 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Java国际化(i18n)ResourceBundle类</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>ResourceBundle类用于存储区域设置敏感的文本和对象。 通常使用属性文件来存储特定于语言环境的文本，然后使用<code>ResourceBundle</code>对象来表示它们。 以下是在基于Java的应用程序中使用特定于语言环境的属性文件的步骤。</p> 
+ <h2 id="h2--1-"><a name="第1步:创建属性文件" class="reference-link"></a><span class="header-link octicon octicon-link"></span>第1步:创建属性文件</h2>
+ <p>假设我们需要英文语言环境的属性文件。创建属性文件名称为:<code>XXX_en_US.properties</code>，其中<code>XXX</code>是文件的名称，<code>en_US</code>表示英语(美国)的语言环境。</p> 
+ <p>文件:<em>Messages_en_US.properties</em> - </p> 
+ <pre><code>message=Welcome to Yiibai.COM!
+</code></pre>
+ <p>现在为法语区域设置创建属性文件。创建一个属性文件名称为:<code>XXX_fr_FR.properties</code>，其中<code>XXX</code>是文件的名称，<code>fr_FR</code>表示法语(法国)的语言环境。</p> 
+ <p>文件:<em>Messages_fr_FR.properties</em> -</p> 
+ <pre><code>message=Bienvenue sur Yiibai.COM!
+</code></pre>
+ <p>在这里可以看到键(<code>message</code>)是相同的，但是这个值在属性文件中是特定于语言环境的。</p> 
+ <h2 id="h2--2-resourcebundle-"><a name="第2步:创建ResourceBundle对象" class="reference-link"></a><span class="header-link octicon octicon-link"></span>第2步:创建ResourceBundle对象</h2>
+ <p>使用以下语法创建具有属性文件名和区域设置的<code>ResourceBundle</code>对象。</p> 
+ <pre><code class="lang-java">ResourceBundle bundle = ResourceBundle.getBundle("Messages", Locale.US);
+</code></pre> 
+ <h2 id="h2--3-resourcebundle-"><a name="第3步:从ResourceBundle对象获取值。" class="reference-link"></a><span class="header-link octicon octicon-link"></span>第3步:从ResourceBundle对象获取值。</h2>
+ <p>通过传递键，然后从<code>ResourceBundle</code>对象获取值。</p> 
+ <pre><code class="lang-java">String value = bundle.getString("message");
+</code></pre> 
+ <h2 id="h2-u793Au4F8B"><a name="示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例</h2>
+ <p>以下示例说明如何使用<code>ResourceBundle</code>对象来显示来自属性文件的特定于区域的值。</p> 
+ <p>文件:<em>IOTester.java</em> - </p>   
+ <pre><code class="lang-java">import java.util.Locale;
+import java.util.ResourceBundle;
+
+public class I18NTester {
+   public static void main(String[] args) {
+      ResourceBundle bundle = ResourceBundle.getBundle("Messages", Locale.US);  
+      System.out.println("Message in "+Locale.US +": "+bundle.getString("message"));  
+
+      bundle = ResourceBundle.getBundle("Messages", Locale.FRANCE);  
+      System.out.println("Message in "+Locale.FRANCE +": "+bundle.getString("message"));
+   }
+}
+</code></pre> 
+ <p>它会打印下面的结果 - </p> 
+ <pre><code class="lang-shell">Message in en_US: Welcome to Yiibai.COM!
+Message in fr_FR: Bienvenue sur Yiibai.COM!
+</code></pre> 
+ <p><strong>命名约定注意事项</strong></p> 
+ <p>以下是属性文件的命名约定。</p> 
+ <ul> 
+  <li>对于映射到默认语言环境的属性文件，不需要前缀。 <code>message_en_US.properties</code>等同于<code>message.properties</code>。</li>
+  <li>对于映射到语言环境的属性文件，可以通过两种方式附加前缀。 <code>message_fr.properties</code>等同于<code>message_fr_FR.properties</code>。</li>
+ </ul>
+ <br>      
+</div></body></html>

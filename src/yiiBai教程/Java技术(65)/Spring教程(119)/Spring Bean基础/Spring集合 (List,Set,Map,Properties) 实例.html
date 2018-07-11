@@ -1,0 +1,175 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Spring集合 (List,Set,Map,Properties) 实例</h1><div style="width:100%;float:left;" class="article-content">   
+ <div> 
+  <div>
+    下面例子向您展示Spring如何注入值到集合类型(List,&nbsp;Set,&nbsp;Map,&nbsp;and&nbsp;Properties)。&nbsp;支持4个主要的集合类型： 
+  </div> 
+ </div> 
+ <div> 
+  <ul> 
+   <li> List – &lt;list/&gt; </li> 
+   <li> Set – &lt;set/&gt; </li> 
+   <li> Map – &lt;map/&gt; </li> 
+   <li> Properties – &lt;props/&gt; </li> 
+  </ul> 
+  <h2> Spring beans </h2> 
+  <div>
+    一个Customer对象，有四个集合属性。 
+  </div> 
+  <pre>package com.yiibai.common;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+
+public class Customer 
+{
+	private List&lt;Object&gt; lists;
+	private Set&lt;Object&gt; sets;
+	private Map&lt;Object, Object&gt; maps;
+	private Properties pros;
+	
+	//...
+}</pre> 
+  <div>
+    在bean配置文件中不同的代码片段用来声明集合。 
+  </div> 
+  <h2> 1. List示例 </h2> 
+  <pre>&lt;property name="lists"&gt;
+		&lt;list&gt;
+			&lt;value&gt;1&lt;/value&gt;
+			&lt;ref bean="PersonBean" /&gt;
+			&lt;bean class="com.yiibai.common.Person"&gt;
+				&lt;property name="name" value="yiibaiList" /&gt;
+				&lt;property name="address" value="Hainan" /&gt;
+				&lt;property name="age" value="28" /&gt;
+			&lt;/bean&gt;
+		&lt;/list&gt;
+	&lt;/property&gt;</pre> 
+  <h2> 2. Set示例 </h2> 
+  <pre>&lt;property name="sets"&gt;
+		&lt;set&gt;
+			&lt;value&gt;1&lt;/value&gt;
+			&lt;ref bean="PersonBean" /&gt;
+			&lt;bean class="com.yiibai.common.Person"&gt;
+				&lt;property name="name" value="yiibaiSet" /&gt;
+				&lt;property name="address" value="Hainan" /&gt;
+				&lt;property name="age" value="28" /&gt;
+			&lt;/bean&gt;
+		&lt;/set&gt;
+	&lt;/property&gt;</pre> 
+  <h2> 3. Map示例 </h2> 
+  <pre>&lt;property name="maps"&gt;
+		&lt;map&gt;
+			&lt;entry key="Key 1" value="1" /&gt;
+			&lt;entry key="Key 2" value-ref="PersonBean" /&gt;
+			&lt;entry key="Key 3"&gt;
+				&lt;bean class="com.yiibai.common.Person"&gt;
+					&lt;property name="name" value="yiibaiMap" /&gt;
+					&lt;property name="address" value="Hainan" /&gt;
+					&lt;property name="age" value="28" /&gt;
+				&lt;/bean&gt;
+			&lt;/entry&gt;
+		&lt;/map&gt;
+	&lt;/property&gt;</pre> 
+  <h2> 4. Properties示例 </h2> 
+  <pre>&lt;property name="pros"&gt;
+		&lt;props&gt;
+			&lt;prop key="admin"&gt;admin@yiibai.com&lt;/prop&gt;
+			&lt;prop key="support"&gt;support@yiibai.com&lt;/prop&gt;
+		&lt;/props&gt;
+	&lt;/property&gt;</pre> 
+  <div>
+    Spring完整的 bean 配置文件。 
+  </div> 
+  <pre>&lt;beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-2.5.xsd"&gt;
+
+	&lt;bean id="CustomerBean" class="com.yiibai.common.Customer"&gt;
+
+		&lt;!-- java.util.List --&gt;
+		&lt;property name="lists"&gt;
+			&lt;list&gt;
+				&lt;value&gt;1&lt;/value&gt;
+				&lt;ref bean="PersonBean" /&gt;
+				&lt;bean class="com.yiibai.common.Person"&gt;
+					&lt;property name="name" value="yiibaiList" /&gt;
+					&lt;property name="address" value="Hainan Haikou" /&gt;
+					&lt;property name="age" value="28" /&gt;
+				&lt;/bean&gt;
+			&lt;/list&gt;
+		&lt;/property&gt;
+
+		&lt;!-- java.util.Set --&gt;
+		&lt;property name="sets"&gt;
+			&lt;set&gt;
+				&lt;value&gt;1&lt;/value&gt;
+				&lt;ref bean="PersonBean" /&gt;
+				&lt;bean class="com.yiibai.common.Person"&gt;
+					&lt;property name="name" value="yiibaiSet" /&gt;
+					&lt;property name="address" value="Hainan Haikou" /&gt;
+					&lt;property name="age" value="28" /&gt;
+				&lt;/bean&gt;
+			&lt;/set&gt;
+		&lt;/property&gt;
+
+		&lt;!-- java.util.Map --&gt;
+		&lt;property name="maps"&gt;
+			&lt;map&gt;
+				&lt;entry key="Key 1" value="1" /&gt;
+				&lt;entry key="Key 2" value-ref="PersonBean" /&gt;
+				&lt;entry key="Key 3"&gt;
+					&lt;bean class="com.yiibai.common.Person"&gt;
+						&lt;property name="name" value="yiibaiMap" /&gt;
+						&lt;property name="address" value="Hainan Haikou" /&gt;
+						&lt;property name="age" value="28" /&gt;
+					&lt;/bean&gt;
+				&lt;/entry&gt;
+			&lt;/map&gt;
+		&lt;/property&gt;
+
+		&lt;!-- java.util.Properties --&gt;
+		&lt;property name="pros"&gt;
+			&lt;props&gt;
+				&lt;prop key="admin"&gt;admin@yiibai.com&lt;/prop&gt;
+				&lt;prop key="support"&gt;support@yiibai.com&lt;/prop&gt;
+			&lt;/props&gt;
+		&lt;/property&gt;
+
+	&lt;/bean&gt;
+
+	&lt;bean id="PersonBean" class="com.yiibai.common.Person"&gt;
+		&lt;property name="name" value="yiibai1" /&gt;
+		&lt;property name="address" value="Hainan Haikou 1" /&gt;
+		&lt;property name="age" value="28" /&gt;
+	&lt;/bean&gt;
+
+&lt;/beans&gt;</pre> 
+  <p> 执行程序 </p>   
+  <pre>package com.yiibai.common;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+public class App 
+{
+    public static void main( String[] args )
+    {
+    	ApplicationContext context = new ClassPathXmlApplicationContext("applicationContext.xml");
+
+    	Customer cust = (Customer)context.getBean("CustomerBean");
+    	System.out.println(cust);
+    	
+    }
+}</pre> 
+  <p> 输出 </p> 
+  <pre><span style="line-height:1.5;background-color:inherit;">Customer&nbsp;[lists=[1,&nbsp;</span><a target="_blank" href="mailto:com.yiibai.common.Person@4e4ee70b">com.yiibai.common.Person@4e4ee70b</a><span style="line-height:1.5;background-color:inherit;">,&nbsp;</span><a target="_blank" href="mailto:com.yiibai.common.Person@1e1867d2">com.yiibai.common.Person@1e1867d2</a><span style="line-height:1.5;background-color:inherit;">],&nbsp;sets=[1,&nbsp;</span><a target="_blank" href="mailto:com.yiibai.common.Person@4e4ee70b">com.yiibai.common.Person@4e4ee70b</a><span style="line-height:1.5;background-color:inherit;">,&nbsp;</span><a target="_blank" href="mailto:com.yiibai.common.Person@52f644b4">com.yiibai.common.Person@52f644b4</a><span style="line-height:1.5;background-color:inherit;">],&nbsp;maps={Key&nbsp;1=1,&nbsp;Key&nbsp;2=</span><a target="_blank" href="mailto:com.yiibai.common.Person@4e4ee70b">com.yiibai.common.Person@4e4ee70b</a><span style="line-height:1.5;background-color:inherit;">,&nbsp;Key&nbsp;3=</span><a target="_blank" href="mailto:com.yiibai.common.Person@54481b6d">com.yiibai.common.Person@54481b6d</a><span style="line-height:1.5;background-color:inherit;">},&nbsp;pros={admin=</span><a target="_blank" href="mailto:admin@yiibai.com">admin@yiibai.com</a><span style="line-height:1.5;background-color:inherit;">,&nbsp;support=</span><a target="_blank" href="mailto:support@yiibai.com">support@yiibai.com</a><span style="line-height:1.5;background-color:inherit;">}]</span></pre> 
+  <div>
+    下载代码 – 
+   <a target="_blank" href="http://pan.baidu.com/s/1c0T3i5i">http://pan.baidu.com/s/1c0T3i5i</a> 
+  </div> 
+ </div>
+ <br>      
+</div></body></html>

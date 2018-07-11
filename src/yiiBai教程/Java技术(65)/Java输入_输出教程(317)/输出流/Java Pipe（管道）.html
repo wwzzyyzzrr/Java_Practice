@@ -1,0 +1,93 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Java Pipe（管道）</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>管道连接输入流和输出流。</p> 
+ <p>管道<code>I/O</code>基于<strong>生产者 - 消费者</strong>模式，其中生产者产生数据，而消费者消费数据。在管道<code>I/O</code>中，创建两个流代表管道的两端。 <code>PipedOutputStream</code>对象表示流的一端，<code>PipedInputStream</code>对象则表示流的另一端。使用两个对象的<code>connect()</code>方法连接两端。</p> 
+ <p>还可以通过在创建另一个对象时将一个对象传递给构造函数来连接它们。以下代码显示了创建和连接管道两端的两种方法：</p> 
+ <p>第一种方法创建管道输入和输出流并连接它们。 它使用<code>connect()</code>方法连接两个流。</p> 
+ <pre><code class="lang-java">PipedInputStream pis  = new PipedInputStream(); 
+PipedOutputStream pos  = new PipedOutputStream(); 
+pis.connect(pos); /* Connect  the   two  ends  */
+</code></pre> 
+ <p>第二种方法创建管道输入和输出流并连接它们。 它通过将输入管道流传递到输出流构造器来连接两个流。</p> 
+ <pre><code class="lang-java">PipedInputStream pis  = new PipedInputStream(); 
+PipedOutputStream pos  = new PipedOutputStream(pis);
+</code></pre> 
+ <p>可以在连接管道的两端后生成和使用数据。通过使用<code>PipedOutputStream</code>对象的<code>write()</code>方法产生数据。无论对管道输出流写入什么，可自动使用管道输入流对象进行读取。</p> 
+ <p>使用<code>PipedInputStream</code>的<code>read()</code>方法从管道读取数据。如果数据在尝试从管道读取时不可用，则管道输入流被阻止。</p> 
+ <p>管道流具有固定容量的缓冲器，以在写入管道和从管道读取之间存储数据。</p> 
+ <p>当创建管道时，可以设置管道容量。 如果管道的缓冲区已满，则尝试在管道上写入将会被阻止。<br>以下代码创建缓冲区容量为<code>2048</code>字节的管道输入和输出流。</p> 
+ <pre><code class="lang-java">PipedOutputStream pos  = new PipedOutputStream(); 
+PipedInputStream pis  = new PipedInputStream(pos, 2048);
+</code></pre> 
+ <p>管道用于将数据从一个线程传输到另一个线程。两个线程之间的同步由阻塞读和写来处理。</p> 
+ <h2 id="h2-u793Au4F8B"><a name="示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例</h2>
+ <p>以下代码演示如何使用管道<code>I/O</code>。</p>   
+ <pre><code class="lang-java">import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
+
+public class Main {
+  public static void main(String[] args) throws Exception {
+    PipedInputStream pis = new PipedInputStream();
+    PipedOutputStream pos = new PipedOutputStream();
+    pos.connect(pis);
+
+    Runnable producer = () -&gt; produceData(pos);
+    Runnable consumer = () -&gt; consumeData(pis);
+    new Thread(producer).start();
+    new Thread(consumer).start();
+  }
+
+  public static void produceData(PipedOutputStream pos) {
+    try {
+      for (int i = 1; i &lt;= 50; i++) {
+        pos.write((byte) i);
+        pos.flush();
+        System.out.println("Writing: " + i);
+        Thread.sleep(500);
+      }
+      pos.close();
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+  public static void consumeData(PipedInputStream pis) {
+    try {
+      int num = -1;
+      while ((num = pis.read()) != -1) {
+        System.out.println("Reading: " + num);
+      }
+      pis.close();
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+
+  }
+}
+</code></pre> 
+ <p>上面的代码生成以下结果。</p> 
+ <pre><code class="lang-java">Reading: 1
+Writing: 1
+Writing: 2
+Reading: 2
+Reading: 3
+Writing: 3
+Writing: 4
+Reading: 4
+Writing: 5
+Reading: 5
+Writing: 6
+Reading: 6
+Reading: 7
+Writing: 7
+Writing: 8
+Reading: 8
+Reading: 9
+Writing: 9
+Writing: 10
+Reading: 10
+Writing: 11
+Reading: 11
+Writing: 12
+... ...
+</code></pre>
+ <br>      
+</div></body></html>

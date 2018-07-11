@@ -1,0 +1,72 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">MongoDB Map Reduce</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>根据MongoDB文档的说明，<em>Map-reduce</em>是将大量数据合并为有用的聚合结果的数据处理范例。 MongoDB使用<code>mapReduce</code>命令进行<code>map-reduce</code>操作。MapReduce通常用于处理大型数据集。</p> 
+ <h2 id="h2-mapreduce-"><a name="MapReduce命令" class="reference-link"></a><span class="header-link octicon octicon-link"></span>MapReduce命令</h2>
+ <p>以下是基本 <code>mapReduce</code> 命令的语法 -</p> 
+ <pre><code class="lang-shell">&gt;db.collection.mapReduce(
+   function() {emit(key,value);},  //map function
+   function(key,values) {return reduceFunction}, {   //reduce function
+      out: collection,
+      query: document,
+      sort: document,
+      limit: number
+   }
+)
+</code></pre> 
+ <p><code>map-reduce</code>函数首先查询集合，然后将结果文档映射到发出的键值对，然后根据具有多个值的键进行减少。</p> 
+ <p>在上面的语法 -</p> 
+ <ul> 
+  <li><code>map</code>是一个JavaScript函数，它将一个值与一个键映射并发出一个键值对；</li>
+  <li><code>reduce</code>是一个javascript功能，可以减少或分组具有相同键的所有文档；</li>
+  <li><code>out</code>指定<code>map-reduce</code>查询结果的位置；</li>
+  <li><code>query</code>指定选择文档的可选选择条件；</li>
+  <li><code>sort</code>指定可选的排序条件；</li>
+  <li><code>limit</code>指定可选的最大文档数；</li>
+ </ul> 
+ <h2 id="h2--mapreduce"><a name="使用MapReduce" class="reference-link"></a><span class="header-link octicon octicon-link"></span>使用MapReduce</h2>
+ <p>请考虑存储用户帖子的以下文档结构。 该文档存储用户的<code>user_name</code>和帖子的状态(<code>status</code>)。</p> 
+ <pre><code class="lang-shell">{
+   "post_text": "yiibai tutorials is an awesome website for tutorials",
+   "user_name": "maxsu",
+   "status":"active"
+}
+</code></pre> 
+ <p>现在，我们将在<code>posts</code>集上使用<code>mapReduce</code>函数来选择所有<code>status</code>的值为<code>active</code>的帖子，并根据<code>user_name</code>分组，然后使用以下代码对每个用户的帖子数进行计数 -</p> 
+ <pre><code class="lang-shell">&gt;db.posts.mapReduce( 
+   function() { emit(this.user_id,1); }, 
+   function(key, values) {return Array.sum(values)}, {  
+      query:{status:"active"},  
+      out:"post_total" 
+   }
+)
+</code></pre> 
+ <p>以上<code>mapReduce</code>查询输出以下结果 -</p>   
+ <pre><code class="lang-shell">{
+   "result" : "post_total",
+   "timeMillis" : 9,
+   "counts" : {
+      "input" : 4,
+      "emit" : 4,
+      "reduce" : 2,
+      "output" : 2
+   },
+   "ok" : 1,
+}
+</code></pre> 
+ <p>结果表明，共有<code>4</code>个文档与查询(<code>status</code>的值为<code>active</code>)匹配，映射函数发出<code>4</code>个具有键值对的文档，最后将具有相同键的<code>reduce</code>函数分组的映射文档分解为<code>2</code>。</p> 
+ <p>要查看此 mapReduce 查询的结果，请使用 <code>find</code> 运算符 -</p> 
+ <pre><code class="lang-shell">&gt;db.posts.mapReduce( 
+   function() { emit(this.user_id,1); }, 
+   function(key, values) {return Array.sum(values)}, {  
+      query:{status:"active"},  
+      out:"post_total" 
+   }
+
+).find()
+</code></pre> 
+ <p>上述查询给出以下结果，表明用户 <code>tom</code> 和 <code>maxsu</code> 有两个活动状态的帖子 -</p> 
+ <pre><code class="lang-shell">{ "_id" : "tom", "value" : 2 }
+{ "_id" : "maxsu", "value" : 2 }
+</code></pre> 
+ <p>以类似的方式，<code>MapReduce</code>查询可用于构建大型复杂聚合查询。 使用自定义JavaScript函数可以使用MapReduce，它非常灵活和强大。</p>
+ <br>      
+</div></body></html>

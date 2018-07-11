@@ -1,0 +1,105 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Java文件锁</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>NIO支持文件锁定以同步对文件的访问。我们可以锁定文件或整个文件的区域。文件锁定机制由操作系统处理。有两种文件锁定：排他和共享。</p> 
+ <p>只有一个程序可以保存文件区域上的排它锁。多个程序可以在文件的同一区域上保存共享锁。不能在文件的同一区域混合排它锁和共享锁。<br><code>java.nio.channels.FileLock</code>类表示文件锁。</p> 
+ <p>通过使用<code>FileChannel</code>对象的<code>lock()</code>或<code>tryLock()</code>方法获取对文件的锁。<code>lock()</code>方法阻止所请求区域上的锁是否不可用。<code>tryLock()</code>方法不阻塞; 如果获取锁，它立即返回<code>FileLock</code>类的对象; 否则返回<code>null</code>。</p> 
+ <p><code>lock()</code>和<code>tryLock()</code>方法有两个版本：一个没有参数，另一个有参数。不带参数的版本方法锁定整个文件。<br>带有参数的版本接受要锁定的区域的起始位置，要锁定的字节数以及用于指示锁是否共享的布尔标志。如果锁是共享的，<code>FileLock</code>对象的<code>isShared()</code>方法返回<code>true</code>; 否则返回<code>false</code>。</p> 
+ <p>以下代码显示了获取文件锁的不同方法。</p> 
+ <pre><code class="lang-java">import java.io.RandomAccessFile;
+import java.nio.channels.FileChannel;
+import java.nio.channels.FileLock;
+
+public class Main {
+  public static void main(String[] args) throws Exception {
+    RandomAccessFile raf = new RandomAccessFile("test.txt", "rw");
+    FileChannel fileChannel = raf.getChannel();
+
+    FileLock lock = fileChannel.lock();
+
+  }
+}
+</code></pre> 
+ <h2 id="h2-u793Au4F8B"><a name="示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例</h2>
+ <p>获得前<code>10</code>个字节的独占锁，如下代码 - </p> 
+ <pre><code class="lang-java">import java.io.RandomAccessFile;
+import java.nio.channels.FileChannel;
+import java.nio.channels.FileLock;
+
+public class Main {
+  public static void main(String[] args) throws Exception {
+    RandomAccessFile raf = new RandomAccessFile("test.txt", "rw");
+    FileChannel fileChannel = raf.getChannel();
+    // Get an exclusive lock on first 10 bytes
+    FileLock lock = fileChannel.lock(0, 10, false);
+
+  }
+}
+</code></pre> 
+ <p>尝试获取整个文件的独占锁 - </p> 
+ <pre><code class="lang-java">import java.io.RandomAccessFile;
+import java.nio.channels.FileChannel;
+import java.nio.channels.FileLock;
+
+public class Main {
+  public static void main(String[] args) throws Exception {
+    RandomAccessFile raf = new RandomAccessFile("test.txt", "rw");
+    FileChannel fileChannel = raf.getChannel();
+    FileLock lock = fileChannel.tryLock();
+    if (lock == null) {
+      // Could not get the lock
+    } else {
+      // Got the lock
+    }
+
+  }
+}
+</code></pre> 
+ <p>尝试在共享模式下从第<code>11</code>个字节开始锁定<code>100</code>个字节。</p>   
+ <pre><code class="lang-java">import java.io.RandomAccessFile;
+import java.nio.channels.FileChannel;
+import java.nio.channels.FileLock;
+
+public class Main {
+  public static void main(String[] args) throws Exception {
+    RandomAccessFile raf = new RandomAccessFile("test.txt", "rw");
+    FileChannel fileChannel = raf.getChannel();
+    FileLock lock = fileChannel.tryLock(11, 100, true);
+    if (lock == null) {
+      // Could not get the lock
+    } else {
+      // Got the lock
+    }
+
+  }
+}
+</code></pre> 
+ <p>以下代码显示如何使用<code>try-catch-finally</code>块来获取和释放文件锁定，如下所示：</p> 
+ <pre><code class="lang-java">import java.io.IOException;
+import java.io.RandomAccessFile;
+import java.nio.channels.FileChannel;
+import java.nio.channels.FileLock;
+
+public class Main {
+  public static void main(String[] args) throws Exception {
+    RandomAccessFile raf = new RandomAccessFile("test.txt", "rw");
+    FileChannel fileChannel = raf.getChannel();
+    FileLock lock = null;
+    try {
+      lock = fileChannel.lock(0, 10, true);
+
+    } catch (IOException e) {
+      // Handle the exception
+    } finally {
+      if (lock != null) {
+        try {
+          lock.release();
+        } catch (IOException e) {
+          // Handle the exception
+        }
+      }
+    }
+
+  }
+}
+</code></pre>
+ <br>      
+</div></body></html>

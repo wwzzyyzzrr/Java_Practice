@@ -1,0 +1,249 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Python网络编程（Sockets）</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>Python提供了两个级别的访问网络服务。 在低级别，可以访问底层操作系统中的基本套接字支持，这允许您实现面向连接和无连接协议的客户端和服务器。</p> 
+ <p>Python还具有提供对特定应用级网络协议(如FTP，HTTP等)的更高级别访问的库。</p> 
+ <p>本章将了解和学习网络中最着名的概念 - 套接字编程。</p> 
+ <h2 id="h2-1-"><a name="1.什么是套接字？" class="reference-link"></a><span class="header-link octicon octicon-link"></span>1.什么是套接字？</h2>
+ <p>套接字(Sockets)是双向通信信道的端点。 套接字可以在一个进程内，在同一机器上的进程之间，或者在不同主机的进程之间进行通信，主机可以是任何一台有连接互联网的机器。</p> 
+ <p>套接字可以通过多种不同的通道类型实现：Unix域套接字，TCP，UDP等。 套接字库提供了处理公共传输的特定类，以及一个用于处理其余部分的通用接口。</p> 
+ <p>套接字有自己的术语 -</p> 
+ <ul> 
+  <li><p><em>domain</em> - 用作传输机制的协议族。这些值是常量，例如：<code>AF_INET</code>，<code>PF_INET</code>，<code>PF_UNIX</code>，<code>PF_X25</code>等。</p> </li>
+  <li><p><em>type</em> - 两个端点之间的通信类型，通常用于面向连接的协议的<code>SOCK_STREAM</code>和用于无连接协议的<code>SOCK_DGRAM</code>。</p> </li>
+  <li><em>protocol</em> - 通常为<code>0</code>，这可以用于标识域和类型中的协议的变体。</li>
+  <li><em>hostname</em> - 网络接口的标识符 -
+   <ul> 
+    <li>一个字符串，可以是一个主机名，一个有四个点符号的IP地址，或一个冒号中的IPV6地址(可能是点)符号。</li>
+    <li>一个字符串“<code>&lt;broadcast&gt;</code>”，它指定一个<code>INADDR_BROADCAST</code>地址。</li>
+    <li>零长度字符串，指定<code>INADDR_ANY</code>，或</li>
+    <li>整数，以主机字节顺序解释为二进制地址。</li>
+   </ul> </li>
+  <li><em>port</em> - 每个服务器监听一个或多个端口的客户端的调用。端口可能是<code>Fixnum</code>端口号，包含端口号的字符串或服务名称。</li>
+ </ul> 
+ <h2 id="h2-2-socket-"><a name="2. socket模块" class="reference-link"></a><span class="header-link octicon octicon-link"></span>2. socket模块</h2>
+ <p>要创建套接字，必须使用套接字模块中的<code>socket.socket()</code>函数，该函数具有一般语法 -</p> 
+ <pre><code class="lang-python">s = socket.socket (socket_family, socket_type, protocol = 0)
+</code></pre> 
+ <p>这里是上述参数的描述 -</p> 
+ <ul> 
+  <li><em>socket_family</em> - 它的值可以是：<code>AF_UNIX</code>或<code>AF_INET</code>，如前所述。</li>
+  <li><em>socket_type</em> - 它的值可以是：<code>SOCK_STREAM</code>或<code>SOCK_DGRAM</code>。</li>
+  <li><em>protocol</em> - 这通常被省略，默认为<code>0</code>。</li>
+ </ul> 
+ <p>当创建了套接字对象这后，就可以使用所需的函数来创建客户端或服务器程序。 以下是所需函数的列表：</p> 
+ <p><strong>服务器套接字方法</strong></p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>编号</th> 
+    <th>方法</th> 
+    <th>描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>1</td> 
+    <td><code>s.bind()</code></td> 
+    <td>此方法将地址(主机名，端口号对)绑定到套接字。</td> 
+   </tr> 
+   <tr> 
+    <td>2</td> 
+    <td><code>s.listen()</code></td> 
+    <td>此方法设置并启动TCP侦听器。</td> 
+   </tr> 
+   <tr> 
+    <td>3</td> 
+    <td><code>s.accept()</code></td> 
+    <td>这被动地接受TCP客户端连接，等待直到连接到达(阻塞)。</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p><strong>客户端套接字方法</strong></p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>编号</th> 
+    <th>方法</th> 
+    <th>描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>1</td> 
+    <td><code>s.connect()</code></td> 
+    <td>此方法主动启动TCP服务器连接。</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p><strong>通用套接字方法</strong></p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>编号</th> 
+    <th>方法</th> 
+    <th>描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>1</td> 
+    <td><code>s.recv()</code></td> 
+    <td>此方法接收TCP消息。</td> 
+   </tr> 
+   <tr> 
+    <td>2</td> 
+    <td><code>s.send()</code></td> 
+    <td>该方法发送TCP消息</td> 
+   </tr> 
+   <tr> 
+    <td>3</td> 
+    <td><code>s.recvfrom()</code></td> 
+    <td>此方法接收UDP消息</td> 
+   </tr> 
+   <tr> 
+    <td>4</td> 
+    <td><code>s.sendto()</code></td> 
+    <td>此方法发送UDP消息</td> 
+   </tr> 
+   <tr> 
+    <td>5</td> 
+    <td><code>s.close()</code></td> 
+    <td>此方法关闭套接字</td> 
+   </tr> 
+   <tr> 
+    <td>6</td> 
+    <td><code>socket.gethostname()</code></td> 
+    <td>返回主机名</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h2 id="h2-3-"><a name="3.一个简单的服务器" class="reference-link"></a><span class="header-link octicon octicon-link"></span>3.一个简单的服务器</h2>
+ <p>要编写互联网服务器，可使用<code>socket</code>模块中可用的<code>socket()</code>来创建套接字对象。 然后使用套接字对象调用其他函数来设置套接字服务器。</p> 
+ <p>现在调用<code>bind(hostname，port)</code>函数来指定主机上服务的端口。</p> 
+ <p>接下来，调用返回对象的<code>accept()</code>方法。 此方法在您指定的端口等待客户端连接，连接成功后返回一个连接(<code>connection</code>)对象，该对象表示与该客户端的连接。</p> 
+ <pre><code class="lang-python">#!/usr/bin/python3           # This is server.py file
+import socket
+
+# create a socket object
+serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
+
+# get local machine name
+host = socket.gethostname()                           
+
+port = 8088
+
+# bind to the port
+serversocket.bind((host, port))                                  
+print("Server start at port: 8088")
+# queue up to 5 requests
+serversocket.listen(5)                                           
+
+while True:
+    # establish a connection
+    clientsocket,addr = serversocket.accept()      
+
+    print("Got a connection from %s" % str(addr))
+
+    msg='Thank you for connecting'+ "\r\n"
+    clientsocket.send(msg.encode('ascii'))
+    clientsocket.close()
+</code></pre> 
+ <h2 id="h2-4-"><a name="4.一个简单的客户端" class="reference-link"></a><span class="header-link octicon octicon-link"></span>4.一个简单的客户端</h2>
+ <p>下面接着编写一个非常简单的客户端程序，打开与给定端口<code>8088</code>与上面的服务器程序主机的连接。 使用Python的<code>socket</code>模块功能创建套接字客户端非常简单。</p> 
+ <p><code>socket.connect(hosname，port)</code>函数打开<code>hostname</code>上的<code>port</code>的TCP连接。当打开了一个套接字，就可以像任何IO对象一样读取它。 完成后，请记住关闭它，就像关闭文件一样。</p> 
+ <p><strong>示例</strong></p> 
+ <p>以下代码是连接到给定主机和端口的非常简单的客户端，从套接字读取任何可用数据，然后退出 -</p>   
+ <pre><code class="lang-python">#!/usr/bin/python3           # This is client.py file
+
+import socket
+
+# create a socket object
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
+
+# get local machine name
+host = socket.gethostname()
+
+port = 8088
+
+# connection to hostname on the port.
+s.connect((host, port))
+
+# Receive no more than 1024 bytes
+msg = s.recv(1024)
+
+s.close()
+
+print (msg.decode('ascii'))
+</code></pre> 
+ <p>现在在后台运行先运行：<code>server.py</code>，然后运行上面的<code>client.py</code>来查看结果，如果程序没有错误，那么应该得到类似以下以结果 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201706/2606/928080651_52327.png" alt=""></p> 
+ <h2 id="h2-5-python-"><a name="5. Python互联网模块" class="reference-link"></a><span class="header-link octicon octicon-link"></span>5. Python互联网模块</h2>
+ <p>Python网络/互联网编程中的一些重要模块的列表如下：</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>协议</th> 
+    <th>通用功能</th> 
+    <th>端口号</th> 
+    <th>对应Python模块</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>HTTP</td> 
+    <td>网页服务</td> 
+    <td>80</td> 
+    <td>httplib, urllib, xmlrpclib</td> 
+   </tr> 
+   <tr> 
+    <td>NNTP</td> 
+    <td>Usenet新闻</td> 
+    <td>119</td> 
+    <td>nntplib</td> 
+   </tr> 
+   <tr> 
+    <td>FTP</td> 
+    <td>文件传输</td> 
+    <td>20</td> 
+    <td>ftplib, urllib</td> 
+   </tr> 
+   <tr> 
+    <td>SMTP</td> 
+    <td>发送邮件</td> 
+    <td>25</td> 
+    <td>smtplib</td> 
+   </tr> 
+   <tr> 
+    <td>POP3</td> 
+    <td>获取电子邮件</td> 
+    <td>110</td> 
+    <td>poplib</td> 
+   </tr> 
+   <tr> 
+    <td>IMAP4</td> 
+    <td>获取电子邮件</td> 
+    <td>143</td> 
+    <td>imaplib</td> 
+   </tr> 
+   <tr> 
+    <td>Telnet</td> 
+    <td>命令行</td> 
+    <td>23</td> 
+    <td>telnetlib</td> 
+   </tr> 
+   <tr> 
+    <td>Gopher</td> 
+    <td>文档传输</td> 
+    <td>70</td> 
+    <td>gopherlib, urllib</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p>请检查上述所有库，以使用FTP，SMTP，POP和IMAP协议。</p> 
+ <p><strong>进一步阅读</strong></p> 
+ <p>这是Socket编程的一个快速开始。 这是一个广阔的话题。 建议通过以下链接查找更多详细信息 -</p> 
+ <ul> 
+  <li><p><a target="_blank" href="http://www.yiibai.com/unix_sockets/index.html" title="Unix套接字编程">Unix套接字编程</a>。</p> </li>
+  <li><p><a target="_blank" href="http://docs.python.org/3.0/library/socket.html" title="Python套接字库和模块">Python套接字库和模块</a>。</p> </li>
+ </ul>
+ <br>      
+</div></body></html>

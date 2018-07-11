@@ -1,0 +1,105 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Java内部类</h1><div style="width:100%;float:left;" class="article-content">   
+ <h2 id="h2--"><a name="内部类是什么？" class="reference-link"></a><span class="header-link octicon octicon-link"></span>内部类是什么？</h2>
+ <p>作为包的成员的类被称为顶级类。一个类可以在另一个类中声明。 这种类型的类称为内部类。<br>如果在另一个类中声明的类被显式或隐式声明为<code>static</code>，它被称为嵌套类，而不是内部类。<br>包含内部类的类称为封闭类或外部类。</p> 
+ <h2 id="h2-u793Au4F8B"><a name="示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例</h2>
+ <p>下面的代码声明一个内部类。</p> 
+ <pre><code class="lang-java">class Outer {
+  public class Inner {
+    // Members of the Inner class go here
+  }
+  // Other members of the Outer class go here 
+}
+</code></pre> 
+ <p><code>Outer</code>类是一个顶级类。<code>Inner</code>类是一个内部类。 它是外类的成员。<code>Outer</code>类是<code>Inner</code>类的封闭(外部)类。内部类可以是另一个内部类的封闭类。 内部类的嵌套层次没有限制。</p> 
+ <p>内部类的实例只能存在于其封闭类的实例中。</p> 
+ <h2 id="h2-u4F7Fu7528u5185u90E8u7C7Bu7684u4F18u70B9"><a name="使用内部类的优点" class="reference-link"></a><span class="header-link octicon octicon-link"></span>使用内部类的优点</h2>
+ <p>以下是内部类的一些优点：</p> 
+ <ul> 
+  <li>在使用它们的其他类中定义类。</li>
+  <li>提供了一个额外的命名空间来管理类结构。</li>
+  <li>一些设计模式使用内部类更容易实现。</li>
+  <li>实现回调机制使用内部类是优雅和方便的。它有助于在Java中实现闭包。</li>
+ </ul> 
+ <h2 id="h2-u8BBFu95EEu5C40u90E8u53D8u91CFu7684u9650u5236"><a name="访问局部变量的限制" class="reference-link"></a><span class="header-link octicon octicon-link"></span>访问局部变量的限制</h2>
+ <p>下面的代码演示了访问局部内部类中的局部变量的规则。<br><code>main()</code>方法声明两个局部变量：<code>x</code>和<code>y</code>。 这两个变量都是被声明为 <code>final</code>。变量<code>x</code>在被初始化之后不能改变，变量<code>y</code>也不能被改变，因为它被声明为<code>final</code>。</p> 
+ <pre><code class="lang-java">public class Main {
+  public static void main(String... args) {
+    final int x = 1;
+    final int y = 2;
+
+    class LocalInner {
+      void print() {
+        System.out.println("x = " + x);
+        System.out.println("y = " + y);
+      }
+    }
+    /*
+     * Uncomment the following statement will make the variable x no longer
+     * an effectively final variable and the LocalIneer class will not compile.
+     */
+    // x = 100;
+
+    LocalInner li = new LocalInner();
+    li.print();
+  }
+}
+</code></pre> 
+ <p>上面的代码生成以下结果。</p> 
+ <pre><code class="lang-java">x = 1
+y = 2
+</code></pre> 
+ <h2 id="h2-u5185u90E8u7C7Bu548Cu7EE7u627F"><a name="内部类和继承" class="reference-link"></a><span class="header-link octicon octicon-link"></span>内部类和继承</h2>
+ <p>内部类可以继承另一个内部类，顶级类或其封闭类。</p> 
+ <pre><code class="lang-java">class A {
+  public class B {
+  }
+
+  public class C extends B {
+  }
+
+  public class D extends A {
+  }
+}
+
+class E extends A {
+  public class F extends B {
+  }
+}
+</code></pre> 
+ <h2 id="h2-u5185u90E8u7C7Bu4E2Du6CA1u6709u9759u6001u6210u5458"><a name="内部类中没有静态成员" class="reference-link"></a><span class="header-link octicon octicon-link"></span>内部类中没有静态成员</h2>
+ <p>Java中的关键字<code>static</code>使一个构造成为一个顶层结构。因此，不能为内部类声明任何静态成员(字段，方法或初始化器)。<br>允许在内部类中有作为编译时常量的静态字段。</p>   
+ <pre><code class="lang-java">class A {
+  public class B {
+    public final static int DAYS_IN_A_WEEK = 7; // OK
+    public final String str = new String("Hello");
+  }
+}
+</code></pre> 
+ <h2 id="h2-u751Fu6210u7684u5185u90E8u7C7Bu7684u7C7Bu6587u4EF6"><a name="生成的内部类的类文件" class="reference-link"></a><span class="header-link octicon octicon-link"></span>生成的内部类的类文件</h2>
+ <p>每个内部类都被编译成一个单独的类文件。成员内部类和静态内部类的类文件名格式如下：</p> 
+ <pre><code class="lang-java">&lt;outer-class-name&gt;$&lt;member-or-static-inner-class-name&gt;
+</code></pre> 
+ <p>本地内部类的类文件名的格式如下：</p> 
+ <pre><code class="lang-java">&lt;outer-class-name&gt;$&lt;a-number&gt;&lt;local-inner-class-name&gt;
+</code></pre> 
+ <p>匿名类的类文件名的格式如下：</p> 
+ <pre><code class="lang-java">&lt;outer-class-name&gt;$&lt;a-number&gt;
+</code></pre> 
+ <p>类文件名中的<code>&lt;a-number&gt;</code>是从<code>1</code>开始顺序生成的数字，以避免任何名称冲突。</p> 
+ <h2 id="h2-u9759u6001u4E0Au4E0Bu6587u4E2Du7684u5185u90E8u7C7B"><a name="静态上下文中的内部类" class="reference-link"></a><span class="header-link octicon octicon-link"></span>静态上下文中的内部类</h2>
+ <p>可以在静态上下文中定义一个内部类，例如静态方法或静态初始化器。所有静态字段成员都可以访问这样的内部类。</p> 
+ <pre><code class="lang-java">class Outer {
+  static int k = 1;
+  int m = 2;
+
+  public static void staticMethod() {
+    // Class Inner is defined in a static context
+    class Inner {
+      int j = k; // OK. Referencing static field k
+      // int n = m; // An error. Referencing non-static field m
+    }
+  }
+}
+</code></pre>
+ <br>      
+</div></body></html>

@@ -1,0 +1,56 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Go数字解析实例</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>从字符串解析数字是许多程序中的一个基本但常见的任务; 这里是演示如何在Go编程中使用。内置包<code>strconv</code>提供数字解析。</p> 
+ <p>可参考示例中的代码 -</p> 
+ <blockquote> 
+  <p>所有的示例代码，都放在 <code>F:\worksp\golang</code> 目录下。安装Go编程环境请参考：<a target="_blank" href="http://www.yiibai.com/go/go_environment.html">http://www.yiibai.com/go/go_environment.html</a> </p> 
+ </blockquote> 
+ <p><code>number-parsing.go</code>的完整代码如下所示 -</p> 
+ <pre><code class="lang-go">package main
+
+// The built-in package `strconv` provides the number
+// parsing.
+import "strconv"
+import "fmt"
+
+func main() {
+
+    // With `ParseFloat`, this `64` tells how many bits of
+    // precision to parse.
+    f, _ := strconv.ParseFloat("1.234", 64)
+    fmt.Println(f)
+
+    // For `ParseInt`, the `0` means infer the base from
+    // the string. `64` requires that the result fit in 64
+    // bits.
+    i, _ := strconv.ParseInt("123", 0, 64)
+    fmt.Println(i)
+
+    // `ParseInt` will recognize hex-formatted numbers.
+    d, _ := strconv.ParseInt("0x1c8", 0, 64)
+    fmt.Println(d)
+
+    // A `ParseUint` is also available.
+    u, _ := strconv.ParseUint("789", 0, 64)
+    fmt.Println(u)
+
+    // `Atoi` is a convenience function for basic base-10
+    // `int` parsing.
+    k, _ := strconv.Atoi("135")
+    fmt.Println(k)
+
+    // Parse functions return an error on bad input.
+    _, e := strconv.Atoi("wat")
+    fmt.Println(e)
+}
+</code></pre> 
+ <p>执行上面代码，将得到以下输出结果 - </p>   
+ <pre><code class="lang-go">F:\worksp\golang&gt;go run number-parsing.go
+1.234
+123
+456
+789
+135
+strconv.ParseInt: parsing "wat": invalid syntax
+</code></pre>
+ <br>      
+</div></body></html>

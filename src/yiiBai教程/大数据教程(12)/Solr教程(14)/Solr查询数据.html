@@ -1,0 +1,58 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Solr查询数据</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>除了存储数据，<strong>Apache Solr</strong>还提供了一些在需要时查询数据的功能。 Solr提供了一些参数，可以使用它们来在查询存储的数据。</p> 
+ <p>在下表中，我们列出了<strong>Apache Solr</strong>中提供的各种常用的一些查询参数。</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>参数</th> 
+    <th>描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>q</td> 
+    <td>这是<strong>Apache Solr</strong>的主要查询参数，文档根据它们与此参数中的术语的相似性来评分。</td> 
+   </tr> 
+   <tr> 
+    <td>fq</td> 
+    <td>这个参数表示<strong>Apache Solr</strong>的过滤器查询，将结果集限制为与此过滤器匹配的文档。</td> 
+   </tr> 
+   <tr> 
+    <td>start</td> 
+    <td><code>start</code>参数表示页面的起始偏移量，此参数的默认值为<code>0</code>。</td> 
+   </tr> 
+   <tr> 
+    <td>rows</td> 
+    <td>这个参数表示每页要检索的文档的数量。此参数的默认值为<code>10</code>。</td> 
+   </tr> 
+   <tr> 
+    <td>sort</td> 
+    <td>这个参数指定由逗号分隔的字段列表，根据该列表对查询的结果进行排序。</td> 
+   </tr> 
+   <tr> 
+    <td>fl</td> 
+    <td>这个参数为结果集中的每个文档指定返回的字段列表。</td> 
+   </tr> 
+   <tr> 
+    <td>wt</td> 
+    <td>这个参数表示要查看响应结果的写入程序的类型。</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p>您可以查看所有这些参数作为查询<strong>Apache Solr</strong>的选项。访问Apache Solr的主页。 在页面的左侧，单击选项“查询(Query)”。 在这里，可以查看查询参数的字段。</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201702/0402/927120235_77420.png" alt=""></p> 
+ <h2 id="h2-u68C0u7D22u8BB0u5F55"><a name="检索记录" class="reference-link"></a><span class="header-link octicon octicon-link"></span>检索记录</h2>
+ <p>假设我们在 <code>my_core</code> 核心中有<code>3</code>条记录。要从所选核心中检索特定记录，则需要传递特定文档的字段的名称和值对。例如，如果要使用字段<code>id</code>和值来检索记录，则需要将字段的名称 - 值对作为参数<code>q</code>的值传递为 - <code>id:001</code>，然后执行查询。<br><img src="http://www.yiibai.com/uploads/images/201702/0402/361120250_81000.png" alt=""></p> 
+ <p>以同样的方式，您可以通过将<code>*:*</code>作为值传递给参数<code>q</code>来检索索引中的所有记录，如下面的屏幕截图所示。<br><img src="http://www.yiibai.com/uploads/images/201702/0402/820120252_57980.png" alt=""></p> 
+ <h3 id="h3-u4ECEu7B2Cu4E8Cu4E2Au8BB0u5F55u5F00u59CBu68C0u7D22"><a name="从第二个记录开始检索" class="reference-link"></a><span class="header-link octicon octicon-link"></span>从第二个记录开始检索</h3>
+ <p>可以通过将<code>1</code>作为值传递给参数<code>start</code>来从第二条记录中检索记录，如下面的屏幕截图所示。<br><img src="http://www.yiibai.com/uploads/images/201702/0402/731120253_38117.png" alt=""></p> 
+ <h3 id="h3-u9650u5236u8BB0u5F55u6570"><a name="限制记录数" class="reference-link"></a><span class="header-link octicon octicon-link"></span>限制记录数</h3>
+ <p>可以通过在<code>rows</code>参数中指定值来限制记录数。例如，可以通过将值<code>2</code>传递到参数行(<code>row</code>)，将查询结果中的记录总数限制为<code>2</code>，如下面的屏幕截图所示。<br><img src="http://www.yiibai.com/uploads/images/201702/0402/756120254_51384.png" alt=""></p> 
+ <h3 id="h3-u54CDu5E94u5199u5165u5668u7C7Bu578B"><a name="响应写入器类型" class="reference-link"></a><span class="header-link octicon octicon-link"></span>响应写入器类型</h3>
+ <p>可以通过从参数<code>wt</code>的所提供的值中，选择一个来获取所需文档类型的响应。<br>在上面的例子中，我们选择了<code>.csv</code>格式来获取响应。<br><img src="http://www.yiibai.com/uploads/images/201702/0402/326120255_84214.png" alt=""></p> 
+ <h3 id="h3-u5B57u6BB5u5217u8868"><a name="字段列表" class="reference-link"></a><span class="header-link octicon octicon-link"></span>字段列表</h3>
+ <p>如果想在结果文档中显示指定字段，则需要传递必填写的字段列表，用逗号分隔，作为属性<code>fl</code>的值。</p> 
+ <p>在以下示例中，尝试检索以下几个字段： <code>id</code>，<code>phone</code>和<code>first_name</code>。</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201702/0402/589130200_88013.png" alt=""></p>
+ <br>      
+</div></body></html>

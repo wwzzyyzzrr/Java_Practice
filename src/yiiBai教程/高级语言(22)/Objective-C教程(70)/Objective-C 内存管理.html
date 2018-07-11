@@ -1,0 +1,126 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Objective-C 内存管理</h1><div style="width:100%;float:left;" class="article-content">   
+ <p> 内存管理是任何编程语言中最重要的过程之一。它是一个过程，通过该对象的内存时，需要时分配，当不再需要时释放。</p> 
+ <p> 管理对象的内存性能是一个问题，如果一个应用程序没有免费的不需要的对象，其内存占用量的增长和性能将受到影响。</p> 
+ <p> Objective-C的内存管理技术大致可分为两类。</p> 
+ <ul> 
+  <li> <p> “手动保留释放”或MRR</p> </li> 
+  <li> <p> “自动引用计数”或ARC</p> </li> 
+ </ul> 
+ <h2> “手动保留释放”或MRR</h2> 
+ <p> 在 MRR中，我们明确地管理内存，在我们自己的跟踪对象。这是使用一种模式，被称为引用计数，基础类NSObject 提供配合运行环境。</p> 
+ <p> MRR 和 ARC 之间的唯一区别是，保留和释放处理前手动而随后自动处理。</p> 
+ <p> 下图表示如何在Objective-C 内存管理工作的一个例子。</p> 
+ <img alt="Objective-C Memory management" src="/uploads/allimg/131020/1612036444-0.PNG" style="margin: auto; padding: 0px 0px 10px; border: 0px; max-width: 560px; height: auto; display: block; color: rgb(0, 0, 0); font-family: Helvetica, Arial, sans-serif;"> 
+ <p> 在上图中所示的A类对象的存储生命周期。正如可以看到，如下图所示的对象保留计数，当保留计数的对象变为0的，对象是完全释放，其它对象使用的内存被释放。</p> 
+ <p> A类对象第一次被创建，使用分配/ NSObject的init方法。现在，保留计数变为1。</p> 
+ <p> 现在，B类保留A类的对象和保留计数类A的对象变成2。</p> 
+ <p> 然后，C类对象的一个副本。现在，它被创建为A类的实例变量的值相同的另一个实例。在这里，保留计数为1，而不是原来的对象的保留计数。这在图中由虚线表示。</p> 
+ <p> 复制的对象将释放C类使用释放方法，并保留计数变为0，因此对象被销毁。</p> 
+ <p> 在初始A类对象的情况下，保留计数为2，它有两次被释放，以便将其销毁。这是通过类A和B类保留计数递减为1和0，分别使用&nbsp;release&nbsp;语句。最后，对象将被破坏。</p> 
+ <h2> MRR基本规则</h2> 
+ <ul> 
+  <li> <p> 我们拥有我们所创建的任何对象：我们创建了一个对象，使用方法的名字以&nbsp;"alloc", "new", "copy" 或&nbsp;"mutableCopy"开始</p> </li> 
+  <li> <p> 我们可以把一个对象使用保留所有权：接收到的对象通常是保证在收到它的方法仍然有效，并且该方法也可以安全地返回其调用对象。我们使用保留在两种情况下：</p> 
+   <ul> 
+    <li> <p> 在执行存取方法或者一个init方法，采取所有权，我们要存储一个对象的属性值。</p> </li> 
+    <li> <p> 为了防止一个对象被无效的一些其他的操作的一个副作用。</p> </li> 
+   </ul> </li> 
+  <li> <p> 当我们不再需要它，我们必须放弃所有权的对象，我们自己：我们放弃对象的所有权，通过发送一个释放消息或一个自动释放的消息。在可可术语，放弃一个对象的所有权，因此通常被称为“释放”一个对象。</p> </li> 
+  <li> <p> 不能放弃拥有一个对象（不属于自己）：这只是推论明确说明以前的策略规则。</p> </li> 
+ </ul> 
+ <pre class="prettyprint tryit prettyprinted" style="font-size: 12px; cursor: default; background-image: url(http://www.yiibai.com/images/link.png) !important; background-position: 100% 0%; background-repeat: no-repeat no-repeat !important;">
+<span class="com" style="margin: 0px; padding: 0px; color: rgb(136, 0, 0);">#import &lt;Foundation/Foundation.h&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">
+
+</span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">@interface</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="typ" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">SampleClass</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">:</span><span class="typ" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">NSObject</span><span class="pln" style="margin: 0px; padding: 0px;">
+</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">-</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">void</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">)</span><span class="pln" style="margin: 0px; padding: 0px;">sampleMethod</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">;</span><span class="pln" style="margin: 0px; padding: 0px;">
+</span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">@end</span><span class="pln" style="margin: 0px; padding: 0px;">
+
+</span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">@implementation</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="typ" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">SampleClass</span><span class="pln" style="margin: 0px; padding: 0px;">
+
+</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">-</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">void</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">)</span><span class="pln" style="margin: 0px; padding: 0px;">sampleMethod
+</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">{</span><span class="pln" style="margin: 0px; padding: 0px;">
+   </span><span class="typ" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">NSLog</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(@</span><span class="str" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"Hello, World! 
+"</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">);</span><span class="pln" style="margin: 0px; padding: 0px;">
+</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">}</span><span class="pln" style="margin: 0px; padding: 0px;">
+
+</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">-</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">void</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">)</span><span class="pln" style="margin: 0px; padding: 0px;">dealloc 
+</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">{</span><span class="pln" style="margin: 0px; padding: 0px;">
+  </span><span class="typ" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">NSLog</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(@</span><span class="str" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"Object deallocated"</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">);</span><span class="pln" style="margin: 0px; padding: 0px;">
+  </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">[</span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">super</span><span class="pln" style="margin: 0px; padding: 0px;"> dealloc</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">];</span><span class="pln" style="margin: 0px; padding: 0px;">
+</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">}</span><span class="pln" style="margin: 0px; padding: 0px;">
+
+</span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">@end</span><span class="pln" style="margin: 0px; padding: 0px;">
+
+</span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">int</span><span class="pln" style="margin: 0px; padding: 0px;"> main</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">()</span><span class="pln" style="margin: 0px; padding: 0px;">
+</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">{</span><span class="pln" style="margin: 0px; padding: 0px;">
+   </span><span class="com" style="margin: 0px; padding: 0px; color: rgb(136, 0, 0);">/* my first program in Objective-C */</span><span class="pln" style="margin: 0px; padding: 0px;">
+   </span><span class="typ" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">SampleClass</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">*</span><span class="pln" style="margin: 0px; padding: 0px;">sampleClass </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">=</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">[[</span><span class="typ" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">SampleClass</span><span class="pln" style="margin: 0px; padding: 0px;"> alloc</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">]</span><span class="pln" style="margin: 0px; padding: 0px;">init</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">];</span><span class="pln" style="margin: 0px; padding: 0px;">
+   </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">[</span><span class="pln" style="margin: 0px; padding: 0px;">sampleClass sampleMethod</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">];</span><span class="pln" style="margin: 0px; padding: 0px;">
+   </span><span class="typ" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">NSLog</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(@</span><span class="str" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"Retain Count after initial allocation: %d"</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">,</span><span class="pln" style="margin: 0px; padding: 0px;"> 
+   </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">[</span><span class="pln" style="margin: 0px; padding: 0px;">sampleClass retainCount</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">]);</span><span class="pln" style="margin: 0px; padding: 0px;">
+   </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">[</span><span class="pln" style="margin: 0px; padding: 0px;">sampleClass retain</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">];</span><span class="pln" style="margin: 0px; padding: 0px;">
+   </span><span class="typ" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">NSLog</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(@</span><span class="str" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"Retain Count after retain: %d"</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">,</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">[</span><span class="pln" style="margin: 0px; padding: 0px;">sampleClass retainCount</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">]);</span><span class="pln" style="margin: 0px; padding: 0px;">
+   </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">[</span><span class="pln" style="margin: 0px; padding: 0px;">sampleClass release</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">];</span><span class="pln" style="margin: 0px; padding: 0px;">
+   </span><span class="typ" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">NSLog</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(@</span><span class="str" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"Retain Count after release: %d"</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">,</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">[</span><span class="pln" style="margin: 0px; padding: 0px;">sampleClass retainCount</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">]);</span><span class="pln" style="margin: 0px; padding: 0px;">
+   </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">[</span><span class="pln" style="margin: 0px; padding: 0px;">sampleClass release</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">];</span><span class="pln" style="margin: 0px; padding: 0px;">
+   </span><span class="typ" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">NSLog</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(@</span><span class="str" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"SampleClass dealloc will be called before this"</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">);</span><span class="pln" style="margin: 0px; padding: 0px;">
+   </span><span class="com" style="margin: 0px; padding: 0px; color: rgb(136, 0, 0);">// Should set the object to nil</span><span class="pln" style="margin: 0px; padding: 0px;">
+   sampleClass </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">=</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">nil</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">;</span><span class="pln" style="margin: 0px; padding: 0px;">
+   </span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">return</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">0</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">;</span><span class="pln" style="margin: 0px; padding: 0px;">
+</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">}</span></pre> 
+ <p> 当我们编译上面的程序，我们会得到下面的输出。</p> 
+ <pre class="result" style="margin-bottom: 0px; background-color: rgb(241, 241, 241); font-size: 12px;">
+2013-09-28 04:39:52.310 demo[8385] Hello, World!
+2013-09-28 04:39:52.311 demo[8385] Retain Count after initial allocation: 1
+2013-09-28 04:39:52.311 demo[8385] Retain Count after retain: 2
+2013-09-28 04:39:52.311 demo[8385] Retain Count after release: 1
+2013-09-28 04:39:52.311 demo[8385] Object deallocated
+2013-09-28 04:39:52.311 demo[8385] SampleClass dealloc will be called before this
+</pre> 
+ <h2> “自动引用计数”或ARC</h2> 
+ <p> 在自动引用计数或ARC时，系统使用相同的引用计数系统MRR，但它插入相应的内存管理方法要求我们在编译时间。我们强烈鼓励使用ARC新的项目中。如果我们使用ARC，通常是有没有需要了解本文档中描述的底层实现，尽管它可能在某些情况下是有益的。如需更多关于ARC，请参阅&nbsp;<a target="_blank" href="https://developer.apple.com/library/ios/releasenotes/ObjectiveC/RN-TransitioningToARC/Introduction/Introduction.htmll" rel="nofollow">过渡到ARC发布注释.</a></p> 
+ <p> 正如上面所提到的，在ARC中我们需要不加释放和保留的方法，因为这将得到编译器的处理。事实上，底层的 Objective-C 程序仍然是一样的。它使用的保留和释放内部的操作使它更容易为开发人员代码不担心这些操作的情况下，这将减少代码编写量和内存泄漏的可能性。</p> 
+ <p> 还有另一个称为垃圾收集的原则，这是用来在Mac OS-X以及MRR，但其在OS-XMountain Lion 中弃用以来，它已经不随着MRR讨论。此外，iOS 的对象从未有过的垃圾收集特点。较ARC，在OS-X是没有用垃圾收集。</p> 
+ <p> 下面是一个简单的ARC例子</p> 
+ <div style="float:left;margin-bottom: 10px;">  
+ </div>
+ <div style="float:left;margin-bottom: 10px;">  
+ </div>  
+ <pre class="prettyprint prettyprinted" style="font-size: 12px;">
+<span class="com" style="margin: 0px; padding: 0px; color: rgb(136, 0, 0);">#import &lt;Foundation/Foundation.h&gt;</span><span class="pln" style="margin: 0px; padding: 0px;">
+
+</span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">@interface</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="typ" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">SampleClass</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">:</span><span class="typ" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">NSObject</span><span class="pln" style="margin: 0px; padding: 0px;">
+</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">-</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">void</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">)</span><span class="pln" style="margin: 0px; padding: 0px;">sampleMethod</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">;</span><span class="pln" style="margin: 0px; padding: 0px;">
+</span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">@end</span><span class="pln" style="margin: 0px; padding: 0px;">
+
+</span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">@implementation</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="typ" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">SampleClass</span><span class="pln" style="margin: 0px; padding: 0px;">
+
+</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">-</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">void</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">)</span><span class="pln" style="margin: 0px; padding: 0px;">sampleMethod
+</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">{</span><span class="pln" style="margin: 0px; padding: 0px;">
+   </span><span class="typ" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">NSLog</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(@</span><span class="str" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"Hello, World! 
+"</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">);</span><span class="pln" style="margin: 0px; padding: 0px;">
+</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">}</span><span class="pln" style="margin: 0px; padding: 0px;">
+
+</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">-</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(</span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">void</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">)</span><span class="pln" style="margin: 0px; padding: 0px;">dealloc 
+</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">{</span><span class="pln" style="margin: 0px; padding: 0px;">
+  </span><span class="typ" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">NSLog</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">(@</span><span class="str" style="margin: 0px; padding: 0px; color: rgb(0, 136, 0);">"Object deallocated"</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">);</span><span class="pln" style="margin: 0px; padding: 0px;">
+</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">}</span><span class="pln" style="margin: 0px; padding: 0px;">
+
+</span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">@end</span><span class="pln" style="margin: 0px; padding: 0px;">
+
+</span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">int</span><span class="pln" style="margin: 0px; padding: 0px;"> main</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">()</span><span class="pln" style="margin: 0px; padding: 0px;">
+</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">{</span><span class="pln" style="margin: 0px; padding: 0px;">
+   </span><span class="com" style="margin: 0px; padding: 0px; color: rgb(136, 0, 0);">/* my first program in Objective-C */</span><span class="pln" style="margin: 0px; padding: 0px;">
+   </span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">@autoreleasepool</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">{</span><span class="pln" style="margin: 0px; padding: 0px;">
+       </span><span class="typ" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">SampleClass</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">*</span><span class="pln" style="margin: 0px; padding: 0px;">sampleClass </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">=</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">[[</span><span class="typ" style="margin: 0px; padding: 0px; color: rgb(127, 0, 85);">SampleClass</span><span class="pln" style="margin: 0px; padding: 0px;"> alloc</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">]</span><span class="pln" style="margin: 0px; padding: 0px;">init</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">];</span><span class="pln" style="margin: 0px; padding: 0px;">
+       </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">[</span><span class="pln" style="margin: 0px; padding: 0px;">sampleClass sampleMethod</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">];</span><span class="pln" style="margin: 0px; padding: 0px;">
+	   sampleClass </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">=</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">nil</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">;</span><span class="pln" style="margin: 0px; padding: 0px;">
+   </span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">}</span><span class="pln" style="margin: 0px; padding: 0px;">
+   </span><span class="kwd" style="margin: 0px; padding: 0px; color: rgb(0, 0, 136);">return</span><span class="pln" style="margin: 0px; padding: 0px;"> </span><span class="lit" style="margin: 0px; padding: 0px; color: rgb(0, 102, 102);">0</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">;</span><span class="pln" style="margin: 0px; padding: 0px;">
+</span><span class="pun" style="margin: 0px; padding: 0px; color: rgb(102, 102, 0);">}</span></pre> 
+ <p> 当我们编译上面的程序，我们会得到下面的输出。</p> 
+ <pre class="result" style="margin-bottom: 0px; background-color: rgb(241, 241, 241); font-size: 12px;">
+2013-09-28 04:45:47.310 demo[8385] Hello, World!
+2013-09-28 04:45:47.311 demo[8385] Object deallocated</pre> 
+ <br>      
+</div></body></html>

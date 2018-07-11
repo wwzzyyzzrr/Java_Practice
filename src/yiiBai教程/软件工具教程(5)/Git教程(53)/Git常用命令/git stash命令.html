@@ -1,0 +1,169 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">git stash命令</h1><div style="width:100%;float:left;" class="article-content">   
+ <p><code>git stash</code>命令用于将更改储藏在脏工作目录中。</p> 
+ <p><strong>使用语法</strong></p> 
+ <pre><code class="lang-shell">git stash list [&lt;options&gt;]
+git stash show [&lt;stash&gt;]
+git stash drop [-q|--quiet] [&lt;stash&gt;]
+git stash ( pop | apply ) [--index] [-q|--quiet] [&lt;stash&gt;]
+git stash branch &lt;branchname&gt; [&lt;stash&gt;]
+git stash save [-p|--patch] [-k|--[no-]keep-index] [-q|--quiet]
+         [-u|--include-untracked] [-a|--all] [&lt;message&gt;]
+git stash [push [-p|--patch] [-k|--[no-]keep-index] [-q|--quiet]
+         [-u|--include-untracked] [-a|--all] [-m|--message &lt;message&gt;]]
+         [--] [&lt;pathspec&gt;…​]]
+git stash clear
+git stash create [&lt;message&gt;]
+git stash store [-m|--message &lt;message&gt;] [-q|--quiet] &lt;commit&gt;
+</code></pre> 
+ <h2 id="h2-u63CFu8FF0"><a name="描述" class="reference-link"></a><span class="header-link octicon octicon-link"></span>描述</h2>
+ <p>当要记录工作目录和索引的当前状态，但想要返回到干净的工作目录时，则使用<code>git stash</code>。 该命令保存本地修改，并恢复工作目录以匹配<code>HEAD</code>提交。</p> 
+ <p>这个命令所储藏的修改可以使用<code>git stash list</code>列出，使用<code>git stash show</code>进行检查，并使用<code>git stash apply</code>恢复(可能在不同的提交之上)。调用没有任何参数的<code>git stash</code>相当于<code>git stash save</code>。 默认情况下，储藏列表为“分支名称上的WIP”，但您可以在创建一个消息时在命令行上给出更具描述性的消息。</p> 
+ <p>创建的最新储藏存储在<code>refs/stash</code>中; 这个引用的反垃圾邮件中会发现较旧的垃圾邮件，并且可以使用通常的<code>reflog</code>语法命名(例如，<code>stash@{0}</code>是最近创建的垃圾邮件，<code>stash@{1}</code>是<code>stash@{2.hours.ago}</code>之前也是可能的)。也可以通过指定存储空间索引(例如整数<code>n</code>相当于储藏<code>stash@{n}</code>)来引用锁存。</p> 
+ <h2 id="h2-u793Au4F8B"><a name="示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例</h2>
+ <p>以下是一些示例 -</p> 
+ <p><strong>1.拉取到一棵肮脏的树</strong></p> 
+ <p>当你处于某种状态的时候，你会发现有一些上游的变化可能与正在做的事情有关。当您的本地更改不会与上游的更改冲突时，简单的<code>git pull</code>将让您向前。</p> 
+ <p>但是，有些情况下，本地更改与上游更改相冲突，<code>git pull</code>拒绝覆盖您的更改。 在这种情况下，您可以将更改隐藏起来，执行<code>git pull</code>，然后解压缩，如下所示：</p> 
+ <pre><code class="lang-shell"> git pull
+ ...
+file foobar not up to date, cannot merge.
+$ git stash
+$ git pull
+$ git stash pop
+</code></pre> 
+ <p><strong>2.工作流中断</strong></p> 
+ <p>当你处于某种状态的时候，比如你的老板进来，要求立即开会或处理非常紧急的事务。 传统上，应该提交一个临时分支来存储您的更改，并返回到原始(<code>original</code>)分支进行紧急修复，如下所示：</p> 
+ <pre><code class="lang-shell"># ... hack hack hack ...
+$ git checkout -b my_wip
+$ git commit -a -m "WIP"
+$ git checkout master
+$ edit emergency fix # 编辑内容
+$ git commit -a -m "Fix in a hurry"
+$ git checkout my_wip
+$ git reset --soft HEAD^
+# ... continue hacking ...
+</code></pre> 
+ <p>上面过程可以使用<code>git stash</code>来简化上述操作，如下所示：</p> 
+ <pre><code class="lang-shell"># ... hack hack hack ...
+$ git stash
+$ edit emergency fix
+$ git commit -a -m "Fix in a hurry"
+$ git stash pop
+# ... continue hacking ...
+</code></pre> 
+ <p><strong>3.测试部分提交</strong></p> 
+ <p>当要从工作树中的更改中提交两个或多个提交时，可以使用<code>git stash save --keep-index</code>，并且要在提交之前测试每个更改：</p> 
+ <pre><code class="lang-shell"># ... hack hack hack ...
+$ git add --patch foo            # add just first part to the index
+$ git stash save --keep-index    # save all other changes to the stash
+$ edit/build/test first part
+$ git commit -m 'First part'     # commit fully tested change
+$ git stash pop                  # prepare to work on all other changes
+# ... repeat above five steps until one commit remains ...
+$ edit/build/test remaining parts
+$ git commit foo -m 'Remaining parts'
+</code></pre> 
+ <p><strong>4.恢复被错误地清除/丢弃的垃圾</strong></p> 
+ <p>如果你错误地删除或清除了垃圾，就不能通过正常的安全机制来恢复。 但是，您可以尝试以下命令来获取仍在存储库中但仍无法访问的隐藏列表：</p> 
+ <pre><code class="lang-shell">git fsck --unreachable |
+grep commit | cut -d\  -f3 |
+xargs git log --merges --no-walk --grep=WIP
+</code></pre> 
+ <p><strong>5.储藏你的工作</strong></p> 
+ <p>为了演示这一功能，可以进入你的项目，在一些文件上进行工作，有可能还暂存其中一个变更。如果运行<code>git status</code>，可以看到你的中间状态：</p> 
+ <pre><code class="lang-shell">$ git status
+# On branch master
+# Changes to be committed:
+#   (use "git reset HEAD &lt;file&gt;..." to unstage)
+#
+#      modified:   index.html
+#
+# Changes not staged for commit:
+#   (use "git add &lt;file&gt;..." to update what will be committed)
+#
+#      modified:   lib/simplegit.rb
+#
+</code></pre> 
+ <p>现在你想要切换分支，但是还不想提交正在进行中的工作；所以储藏这些变更为了往堆栈推送一个新的储藏，只要运行 <code>git stash</code>：</p> 
+ <pre><code class="lang-shell">$ git stash
+Saved working directory and index state \
+  "WIP on master: 049d078 added the index file"
+HEAD is now at 049d078 added the index file
+(To restore them type "git stash apply")
+</code></pre> 
+ <p>现在，工作目录就干净了：</p> 
+ <pre><code class="lang-shell">$ git status
+# On branch master
+nothing to commit, working directory clean
+</code></pre> 
+ <p>这时，可以方便地切换到其他分支工作；变更都保存在栈上。要查看现有的储藏，可以使用 <code>git stash list</code>，如下所示 -</p> 
+ <pre><code class="lang-shell">$ git stash list
+stash@{0}: WIP on master: 049d078 added the index file
+stash@{1}: WIP on master: c264051 Revert "added file_size"
+stash@{2}: WIP on master: 21d80a5 added number to log
+</code></pre> 
+ <p>在这个案例中，之前已经进行了两次储藏，所以你可以访问到三个不同的储藏。你可以重新应用你刚刚实施的储藏，所采用的命令就是之前在原始的 <code>stash</code> 命令的帮助输出里提示的：<code>git stash apply</code>。如果你想应用更早的储藏，可以通过名字指定它，像这样：<code>git stash apply stash@{2}</code>。如果不指明，Git 默认使用最近的储藏并尝试应用它：</p>   
+ <pre><code class="lang-shell">$ git stash apply
+# On branch master
+# Changes not staged for commit:
+#   (use "git add &lt;file&gt;..." to update what will be committed)
+#
+#      modified:   index.html
+#      modified:   lib/simplegit.rb
+#
+</code></pre> 
+ <p>对文件的变更被重新应用，但是被暂存的文件没有重新被暂存。想那样的话，必须在运行 <code>git stash apply</code> 命令时带上一个 <code>--index</code> 的选项来告诉命令重新应用被暂存的变更。如果是这么做的，应该已经回到原来的位置：</p> 
+ <pre><code class="lang-shell">$ git stash apply --index
+# On branch master
+# Changes to be committed:
+#   (use "git reset HEAD &lt;file&gt;..." to unstage)
+#
+#      modified:   index.html
+#
+# Changes not staged for commit:
+#   (use "git add &lt;file&gt;..." to update what will be committed)
+#
+#      modified:   lib/simplegit.rb
+#
+</code></pre> 
+ <p><code>apply</code> 选项只尝试应用储藏的工作——储藏的内容仍然在栈上。要移除它，可以运行 <code>git stash drop</code> 再加上希望移除的储藏的名字：</p> 
+ <pre><code class="lang-shell">$ git stash list
+stash@{0}: WIP on master: 049d078 added the index file
+stash@{1}: WIP on master: c264051 Revert "added file_size"
+stash@{2}: WIP on master: 21d80a5 added number to log
+$ git stash drop stash@{0}
+Dropped stash@{0} (364e91f3f268f0900bc3ee613f9f733e82aaed43)
+</code></pre> 
+ <p>也可以运行 <code>git stash pop</code> 来重新应用储藏，同时立刻将其从堆栈中移走。</p> 
+ <p><strong>6.取消储藏</strong></p> 
+ <p>在某些情况下，可能想应用储藏的修改，在进行了一些其他的修改后，又要取消之前所应用储藏的修改。Git没有提供类似于 <code>stash unapply</code> 的命令，但是可以通过取消该储藏的补丁达到同样的效果：</p> 
+ <pre><code class="lang-shell">$ git stash show -p stash@{0} | git apply -R
+</code></pre> 
+ <p>同样的，如果沒有指定具体的某个储藏，Git 会选择最近的储藏：</p> 
+ <pre><code class="lang-shell">$ git stash show -p | git apply -R
+</code></pre> 
+ <p>可能会想要新建一个別名，在你的 Git 里增加一个 <code>stash-unapply</code> 命令，这样更有效率。例如：</p> 
+ <pre><code class="lang-shell">$ git config --global alias.stash-unapply '!git stash show -p | git apply -R'
+$ git stash apply
+$ #... work work work
+$ git stash-unapply
+</code></pre> 
+ <p><strong>7.从储藏中创建分支</strong></p> 
+ <p>如果储藏了一些工作，暂时不去理会，然后继续在你储藏工作的分支上工作，在重新应用工作时可能会碰到一些问题。如果尝试应用的变更是针对一个在那之后修改过的文件，会碰到一个归并冲突并且必须去化解它。如果你想用更方便的方法来重新检验储藏的变更，可以运行 <code>git stash branch</code>，这会创建一个新的分支，检出储藏工作时的所处的提交，重新应用你的工作，如果成功，将会丢弃储藏。</p> 
+ <pre><code class="lang-shell">$ git stash branch testchanges
+Switched to a new branch "testchanges"
+# On branch testchanges
+# Changes to be committed:
+#   (use "git reset HEAD &lt;file&gt;..." to unstage)
+#
+#      modified:   index.html
+#
+# Changes not staged for commit:
+#   (use "git add &lt;file&gt;..." to update what will be committed)
+#
+#      modified:   lib/simplegit.rb
+#
+Dropped refs/stash@{0} (f0dfc4d5dc332d1cee34a634182e168c4efc3359)
+</code></pre>
+ <br>      
+</div></body></html>

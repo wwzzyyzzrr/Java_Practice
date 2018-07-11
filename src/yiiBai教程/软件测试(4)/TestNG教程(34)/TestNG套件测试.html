@@ -1,0 +1,263 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">TestNG套件测试</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>测试套件是用于测试软件程序的行为或一组行为的测试用例的集合。 在TestNG中，我们无法在测试源代码中定义一个套件，但它可以由一个XML文件表示，因为套件是执行的功能。 它还允许灵活配置要运行的测试。 套件可以包含一个或多个测试，并由<code>&lt;suite&gt;</code>标记定义。</p> 
+ <p><code>&lt;suite&gt;</code>是<code>testng.xml</code>的根标记。 它描述了一个测试套件，它又由几个<code>&lt;test&gt;</code>部分组成。</p> 
+ <p>下表列出了<code>&lt;suite&gt;</code>接受的所有定义的合法属性。</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>属性</th> 
+    <th>描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>name</td> 
+    <td>套件的名称，这是一个强制属性。</td> 
+   </tr> 
+   <tr> 
+    <td>verbose</td> 
+    <td>运行的级别或详细程度。</td> 
+   </tr> 
+   <tr> 
+    <td>parallel</td> 
+    <td>TestNG是否运行不同的线程来运行这个套件。</td> 
+   </tr> 
+   <tr> 
+    <td>thread-count</td> 
+    <td>如果启用并行模式(忽略其他方式)，则要使用的线程数。</td> 
+   </tr> 
+   <tr> 
+    <td>annotations</td> 
+    <td>在测试中使用的注释类型。</td> 
+   </tr> 
+   <tr> 
+    <td>time-out</td> 
+    <td>在本测试中的所有测试方法上使用的默认超时。</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p>在本教程中，我们将向您展示如何一起运行多个TestNG测试用例(类)，也称为套件测试。</p> 
+ <p>创建一个名称为：<strong>SuiteTest</strong> 的项目，其结构如下所示 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201705/0205/259160559_89899.png" alt=""></p> 
+ <h2 id="h2-1-"><a name="1. 测试类" class="reference-link"></a><span class="header-link octicon octicon-link"></span>1. 测试类</h2>
+ <p>我们来看看以下三个测试类。</p> 
+ <p>创建一个文件：<code>TestConfig.java</code>，其代码如下所示 - </p> 
+ <pre><code class="lang-java">package com.yiibai;
+
+import org.testng.annotations.AfterSuite;
+import org.testng.annotations.AfterTest;
+import org.testng.annotations.BeforeSuite;
+import org.testng.annotations.BeforeTest;
+
+//show the use of @BeforeSuite and @BeforeTest
+public class TestConfig {
+
+    @BeforeSuite
+    public void testBeforeSuite() {
+        System.out.println("testBeforeSuite()");
+    }
+
+    @AfterSuite
+    public void testAfterSuite() {
+        System.out.println("testAfterSuite()");
+    }
+
+    @BeforeTest
+    public void testBeforeTest() {
+        System.out.println("testBeforeTest()");
+    }
+
+    @AfterTest
+    public void testAfterTest() {
+        System.out.println("testAfterTest()");
+    }
+
+}
+</code></pre> 
+ <p>创建一个文件：<code>TestDatabase.java</code>，其代码如下所示 - </p> 
+ <pre><code class="lang-java">package com.yiibai;
+
+import org.testng.annotations.Test;
+
+public class TestDatabase {
+
+    @Test(groups = "db")
+    public void testConnectOracle() {
+        System.out.println("testConnectOracle()");
+    }
+
+    @Test(groups = "db")
+    public void testConnectMsSQL() {
+        System.out.println("testConnectMsSQL");
+    }
+
+    @Test(groups = "db-nosql")
+    public void testConnectMongoDB() {
+        System.out.println("testConnectMongoDB");
+    }
+
+    @Test(groups = { "db", "brokenTests" })
+    public void testConnectMySQL() {
+        System.out.println("testConnectMySQL");
+    }
+
+}
+</code></pre> 
+ <p>创建一个文件：<code>TestOrder.java</code>，其代码如下所示 - </p> 
+ <pre><code class="lang-java">package com.yiibai;
+
+import org.testng.annotations.Test;
+
+public class TestOrder {
+
+    @Test(groups={"orderBo", "save"})
+    public void testMakeOrder() {
+      System.out.println("testMakeOrder");
+    }
+
+    @Test(groups={"orderBo", "save"})
+    public void testMakeEmptyOrder() {
+      System.out.println("testMakeEmptyOrder");
+    }
+
+    @Test(groups="orderBo")
+    public void testUpdateOrder() {
+        System.out.println("testUpdateOrder");
+    }
+
+    @Test(groups="orderBo")
+    public void testFindOrder() {
+        System.out.println("testFindOrder");
+    }
+
+}
+</code></pre> 
+ <h2 id="h2-2-testng-xml"><a name="2. testng.xml" class="reference-link"></a><span class="header-link octicon octicon-link"></span>2. testng.xml</h2>
+ <p>要运行上面的测试类，创建一个XML文件 - <code>testng.xml</code>(可以是任何文件名)文件，并定义以下内容细节：</p> 
+ <pre><code class="lang-xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;suite name="TestAll"&gt;
+
+    &lt;test name="order"&gt;
+        &lt;classes&gt;
+            &lt;class name="com.yiibai.TestConfig" /&gt;
+            &lt;class name="com.yiibai.TestOrder" /&gt;
+        &lt;/classes&gt;
+    &lt;/test&gt;
+
+    &lt;test name="database"&gt;
+        &lt;classes&gt;
+            &lt;class name="com.yiibai.TestConfig" /&gt;
+            &lt;class name="com.yiibai.TestDatabase" /&gt;
+        &lt;/classes&gt;
+    &lt;/test&gt;
+
+&lt;/suite&gt;
+</code></pre> 
+ <p>执行上面代码，得到如下结果 - </p>   
+ <pre><code class="lang-shell">[TestNG] Running:
+  F:\worksp\testng\SuiteTest\src\main\java\com\yiibai\testng.xml
+
+testBeforeSuite()
+testBeforeTest()
+testFindOrder
+testMakeEmptyOrder
+testMakeOrder
+testUpdateOrder
+testAfterTest()
+testBeforeTest()
+testConnectMongoDB
+testConnectMsSQL
+testConnectMySQL
+testConnectOracle()
+testAfterTest()
+testAfterSuite()
+
+===============================================
+TestAll
+Total tests run: 8, Failures: 0, Skips: 0
+===============================================
+</code></pre> 
+ <h2 id="h2-u5176u4ED6u4F8Bu5B50"><a name="其他例子" class="reference-link"></a><span class="header-link octicon octicon-link"></span>其他例子</h2>
+ <p>这里有一些常用的例子。</p> 
+ <p>3.1. 指定包名称而不是类名称：</p> 
+ <p>创建一个XML文件：<code>testng-1.xml</code>，其代码如下所示 -</p> 
+ <pre><code class="lang-xml">&lt;suite name="TestAll"&gt;
+
+    &lt;test name="order"&gt;
+        &lt;packages&gt;
+            &lt;package name="com.yiibai.*" /&gt;
+        &lt;/packages&gt;
+    &lt;/test&gt;
+
+&lt;/suite&gt;
+</code></pre> 
+ <p>3.2. 指定包含或排除的方法，修改上面XML文件：<code>testng-1.xml</code>，其代码如下所示 -</p> 
+ <pre><code class="lang-xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;suite name="TestAll"&gt;
+
+  &lt;test name="order"&gt;
+    &lt;classes&gt;
+        &lt;class name="com.yiibai.TestConfig" /&gt;
+        &lt;class name="com.yiibai.TestOrder"&gt;
+            &lt;methods&gt;
+                &lt;include name="testMakeOrder" /&gt;
+                &lt;include name="testUpdateOrder" /&gt;
+                &lt;!--
+                    &lt;exclude name="testMakeOrder" /&gt;
+                 --&gt;
+            &lt;/methods&gt;
+        &lt;/class&gt;
+    &lt;/classes&gt;
+  &lt;/test&gt;
+
+&lt;/suite&gt;
+</code></pre> 
+ <p>使用以上xml文件执行测试，得到以下结果 -</p> 
+ <pre><code class="lang-shell">[TestNG] Running:
+  F:\worksp\testng\SuiteTest\src\main\java\com\yiibai\testng-1.xml
+
+testBeforeSuite()
+testBeforeTest()
+testMakeOrder
+testUpdateOrder
+testAfterTest()
+testAfterSuite()
+
+===============================================
+TestAll
+Total tests run: 2, Failures: 0, Skips: 0
+===============================================
+</code></pre> 
+ <p>3.3. 指定要包括或排除某个分组，创建一个XML文件：<code>testng-2.xml</code>，其代码如下所示 -</p> 
+ <pre><code class="lang-xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;suite name="TestAll"&gt;
+
+  &lt;test name="database"&gt;
+    &lt;groups&gt;
+        &lt;run&gt;
+            &lt;exclude name="brokenTests" /&gt;
+            &lt;include name="db" /&gt;
+        &lt;/run&gt;
+    &lt;/groups&gt;
+
+    &lt;classes&gt;
+        &lt;class name="com.yiibai.TestDatabase" /&gt;
+    &lt;/classes&gt;
+  &lt;/test&gt;
+
+&lt;/suite&gt;
+</code></pre> 
+ <p>使用以上xml文件执行测试，得到以下结果 -</p> 
+ <pre><code class="lang-shell">[TestNG] Running:
+  F:\worksp\testng\SuiteTest\src\main\java\com\yiibai\testng-2.xml
+
+testConnectMsSQL
+testConnectOracle()
+
+===============================================
+TestAll
+Total tests run: 2, Failures: 0, Skips: 0
+===============================================
+</code></pre>
+ <br>      
+</div></body></html>

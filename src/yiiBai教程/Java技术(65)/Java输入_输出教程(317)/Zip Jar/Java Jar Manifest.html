@@ -1,0 +1,100 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Java Jar Manifest</h1><div style="width:100%;float:left;" class="article-content">   
+ <h2 id="h2-manifest-"><a name="Manifest文件" class="reference-link"></a><span class="header-link octicon octicon-link"></span>Manifest文件</h2>
+ <p>JAR文件可以可选地在<code>META-INF</code>目录中包含名为<code>MANIFEST.MF</code>的<code>Manifest</code>文件。<code>Manifest</code>文件包含有关JAR文件及其条目的信息。<code>Manifest</code>文件可以包含有关JAR文件的<code>CLASSPATH</code>设置及其主条目类的信息。</p> 
+ <p>主条目类是具有启动独立应用程序的<code>main()</code>方法的类，包的版本信息等。</p> 
+ <p><code>manifest</code>文件被分成由空白行分隔的部分。每个部分包含名称 - 值对。 一个新行分隔每个名称/值对。冒号分隔名称及其对应的值。</p> 
+ <p>清单文件必须以新行结束。以下是样本清单文件：</p> 
+ <pre><code class="lang-java">Manifest-Version: 1.0
+Created-By: 1.8.0_20-ea-b05 (Oracle Corporation) 
+Main-Class: com.yiibai.Main
+Profile:  compact1
+</code></pre> 
+ <p>上面的<code>manifest</code>文件有一个具有四个属性的部分：</p> 
+ <ul> 
+  <li>Manifest-Version</li>
+  <li>Created-By</li>
+  <li>Main-Class</li>
+  <li>Profile</li>
+ </ul> 
+ <h2 id="h2-jar-"><a name="Jar清单文件中的部分" class="reference-link"></a><span class="header-link octicon octicon-link"></span>Jar清单文件中的部分</h2>
+ <p><code>manifest</code>文件中有两种类型的部分：主部分和各个部分。</p> 
+ <p>空行必须分隔任何两个部分。主部分中的条目适用于整个JAR文件。单个部分中的条目适用于特定条目。</p> 
+ <p>单个部分中的属性覆盖主部分中的相同属性。单个条目以“Name”属性开头，其值是JAR文件中条目的名称，后面是该条目的其他属性。</p> 
+ <pre><code class="lang-java">Manifest-Version: 1.0
+Created-By: 1.6.0  (Sun  Microsystems Inc.) 
+Main-Class: com.yiibai.Main 
+Sealed: true
+
+Name: book/data/ 
+Sealed: false
+
+Name: images/logo.bmp
+Content-Type: image/bmp
+</code></pre> 
+ <p>上面的清单文件包含三个部分：一个主部分和两个单独部分。<br>在两个部分之间有一个空白行。</p> 
+ <p>第一个单独部分指示包装书/数据未被密封。 这个单独的<code>section</code>属性“<code>Sealed：false</code>”将覆盖主部分的属性“<code>Sealed：true</code>”。</p> 
+ <p>第二个单独部分用于名为<code>images/logo.bmp</code>的条目。它表示条目的内容类型是<code>bmp</code>类型的图片。</p> 
+ <h2 id="h2-jar-manifest-"><a name="Jar Manifest文件中的值" class="reference-link"></a><span class="header-link octicon octicon-link"></span>Jar Manifest文件中的值</h2>
+ <p>jar命令可以创建默认 <code>Manifest</code> 文件并将其添加到JAR文件。默认清单文件仅包含两个属性：<code>Manifest-Version</code>和<code>Created-By</code>。可以使用选项<code>M</code>告诉jar工具忽略默认<code>Manifest</code>文件。<br>以下命令将创建一个<code>test.jar</code>文件，而不添加默认<code>Manifest</code> 文件：</p> 
+ <pre><code class="lang-java">jar cMf test.jar  *
+</code></pre> 
+ <p>jar命令提供了自定义<code>Manifest</code>文件内容的选项。选项<code>m</code>指定具有<code>Manifest</code>文件内容的文件。</p> 
+ <p>jar命令将从指定<code>Manifest</code>文件读取名称/值对，并将其添加到<code>MANIFEST.MF</code>文件。</p> 
+ <p>假设有一个名为<code>manifest.txt</code>的文件，其中有一个属性条目。请确保在文件末尾添加新行。 文件内容如下：</p> 
+ <pre><code class="lang-java">Main-Class: com.yiibai.Main
+</code></pre> 
+ <p>要通过将当前工作目录中的所有类文件包含在新的<code>test.jar</code>文件中，从<code>manifest.txt</code>文件中添加<code>Main-Class</code>属性值，请执行以下命令：</p> 
+ <pre><code class="lang-java">jar cfm test.jar manifest.txt *.class
+</code></pre> 
+ <p>指定选项<code>m</code>时，还必须指定<code>Manifest</code>文件名。指定新JAR文件名和<code>Manifest</code>文件名的顺序必须与选项<code>m</code>和<code>f</code>的顺序匹配。</p> 
+ <p>例如，可以通过以不同的顺序指定<code>f</code>和<code>m</code>选项来更改上述命令，如下所示：</p> 
+ <pre><code class="lang-java">jar cmf manifest.txt test.jar  *.class
+</code></pre> 
+ <p>此命令将向<code>test.jar</code>文件添加具有以下内容的<code>manifest</code>文件：</p> 
+ <pre><code class="lang-java">Manifest-Version: 1.0
+Created-By: 1.8.0_20-ea (Oracle Corporation) 
+Main-Class: com.yiibai.Main
+</code></pre> 
+ <p>如果未在<code>manifest</code>文件中指定<code>manifest</code>文件和创建者属性，这工具将会自己添加它们。它默认的<code>manifest</code>版本为1.0。创建者默认为使用的JDK版本。</p> 
+ <h2 id="h2-u4E3Bu7C7B"><a name="主类" class="reference-link"></a><span class="header-link octicon octicon-link"></span>主类</h2>
+ <p>以下代码显示如何使用java命令运行Java程序，并指定具有<code>main()</code>方法的类名，如下所示：</p> 
+ <pre><code class="lang-java">java com.yiibai.Main
+</code></pre> 
+ <p><code>com.yiibai</code>是包名称。可以使用<code>-jar</code>选项与java命令运行jar文件，如下所示：</p> 
+ <pre><code class="lang-java">java -jar test.jar
+</code></pre> 
+ <p>当运行上述命令时，JVM将在<code>test.jar</code>文件中的<code>MANIFEST.MF</code>文件中查找<code>Main-Class</code>属性的值，并尝试运行该类。<br>如果在<code>test.jar</code>文件中未包含<code>Main-Class</code>属性，则上述命令将生成错误。</p> 
+ <p>还可以在<code>manifest</code>文件中添加<code>Main-Class</code>属性值，而无需创建自己的<code>manifest</code>文件。</p> 
+ <p>在创建/更新<code>jar</code>文件时，使用选项<code>e</code>与jar工具。以下命令将在<code>test.jar</code>文件中的<code>MANIFEST.MF</code>文件中添加<code>com.yiibai.Main</code>作为<code>Main-Class</code>的值：</p>   
+ <pre><code class="lang-java">jar cfe   test.jar com.yiibai.Main *.class
+</code></pre> 
+ <p>以下命令将使用选项<code>u</code> 将<code>com.yiibai.Main</code>用来更新添加到<code>test.jar</code>文件中<code>MANIFEST.MF</code>文件中<code>Main-Class</code>的值：</p> 
+ <pre><code class="lang-java">jar ufe  test.jar com.yiibai.Main
+</code></pre> 
+ <h2 id="h2-u7C7Bu8DEFu5F84"><a name="类路径" class="reference-link"></a><span class="header-link octicon octicon-link"></span>类路径</h2>
+ <p>可以在其<code>manifest</code> 文件中为JAR文件设置<code>CLASSPATH</code>。属性名称叫作类路径，必须在自定义清单文件中指定。 它是一个空格分隔的jar文件，zip文件和目录的列表。 <code>manifest</code>文件中的<code>Class-Path</code>属性看起来像 - </p> 
+ <pre><code class="lang-java">Class-Path: Main.jar  file:/c:/book/  http://www.yiibai.com/tutorial.jar
+</code></pre> 
+ <p>上面的条目有三个<code>CLASSPATH</code>项目：一个<code>JAR</code>文件<code>Main.jar</code>，一个使用文件协议文件的目录：<code>c:/book/</code>和另一个使用HTTP协议的JAR文件<code>http://www.yiibai.com/tutorial.jar</code>。</p> 
+ <pre><code class="lang-java">java -jar test.jar
+</code></pre> 
+ <p>当使用java命令使用<code>-jar</code>选项运行JAR文件时，将忽略JAR文件(在上述情况为<code>test.jar</code>文件)的 <code>manifest</code>文件之外的任何<code>CLASSPATH</code>设置。<br><code>Class-Path</code>属性的另一个用途是使用jar工具的选项<code>i</code>生成所有包的索引。</p> 
+ <p>以下命令将为<code>test.jar</code>文件中清单文件的<code>Class-Path</code>属性中列出的所有JAR文件中的所有包生成索引：</p> 
+ <pre><code class="lang-java">jar i test.jar
+</code></pre> 
+ <h2 id="h2--jar-"><a name="在JAR文件中封装包" class="reference-link"></a><span class="header-link octicon octicon-link"></span>在JAR文件中封装包</h2>
+ <p>在JAR文件中封装包意味着该包中声明的所有类必须存档在同一个JAR文件中。要在JAR文件中封装包，请包括两个属性：<code>Name</code>和<code>Sealed</code>。 <code>Name</code>属性的值是包的名称，<code>Sealed</code>属性的值为<code>true</code>。</p> 
+ <p><code>manifest</code>文件中的以下条目将封装名为<code>com.yiibai</code>的包。 程序包名称必须以正斜杠(/)结尾。</p> 
+ <pre><code class="lang-java">Name: com/yiibai/ Sealed: true
+</code></pre> 
+ <p>默认情况下，JAR文件中的所有包都不会被封装。 如果想要密封JAR文件本身，则可以包含<code>Sealed</code>属性，如下所示：</p> 
+ <pre><code class="lang-java">Sealed: true
+</code></pre> 
+ <p>封装JAR文件将会封装该JAR文件中的所有包。 但是，可以通过不单独密封包装来覆盖它。<code>manifest</code>文件中的以下条目将封装JAR文件中的所有包，除了<code>book/tutorial/package</code>之外：</p> 
+ <pre><code class="lang-java">Sealed: true
+
+Name: book/tutorial/ 
+Sealed: false
+</code></pre>
+ <br>      
+</div></body></html>

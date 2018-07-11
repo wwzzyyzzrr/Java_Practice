@@ -1,0 +1,107 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Spark编程</h1><div style="width:100%;float:left;" class="article-content">   
+ <div> 
+  <div>
+    Spark&nbsp;包含两种不同类型的共享变量&nbsp;-&nbsp;一个是广播变量和第二是累加器 
+  </div> 
+ </div> 
+ <div> 
+  <ul> 
+   <li> <p style="text-align:justify;"> 广播变量&nbsp;−&nbsp;采用高效，分发大值 </p> </li> 
+   <li> <p style="text-align:justify;"> 累加器&nbsp;−&nbsp;用于聚集特定集合的信息 </p> </li> 
+  </ul> 
+  <h2> 
+   <div>
+     广播变量 
+   </div> </h2> 
+  <p style="text-align:justify;"> 广播变量允许程序员保持每台机器上一个只读变量缓存，而不是运输它的一个副本任务。它们可用于，例如，给每一个节点，一个大的输入数据集的副本，以有效的方式。Spark&nbsp;也尝试分发广播变量来使用高效的广播算法来降低通信成本。 </p> 
+  <p style="text-align:justify;"> Spark&nbsp;操作通过一组阶段执行，通过分布式“洗牌”作业分开。Spark&nbsp;会自动广播各阶段任务所需的通用数据。 </p> 
+  <p style="text-align:justify;"> 广播数据缓存到序列化的形式，在运行每个任务之前，反序列化。这意味着显式地创建广播变量，当仅是在多个阶段的任务需要相同的数据或在反序列化形式缓存数据时非常重要的。 </p> 
+  <p style="text-align:justify;"> 广播变量从一个变量v通过调用 SparkContext.broadcast(v)来创建。广播变量是围绕&nbsp;v&nbsp;封装，其值可以通过调用值的方法来访问。下面给出的代码显示了这一点&nbsp;- </p> 
+  <pre>scala&gt; val broadcastVar = sc.broadcast(Array(1, 2, 3))</pre> 
+  <p style="text-align:justify;"> 输出&nbsp;− </p> 
+  <pre>broadcastVar: org.apache.spark.broadcast.Broadcast[Array[Int]] = Broadcast(0)&nbsp;</pre> 
+  <p style="text-align:justify;"> 创建广播变量之后，它应该被用来代替任何函数的值 v 的集群上运行，&nbsp;v&nbsp;不运到节点不止一次。此外，对象&nbsp;v&nbsp;不应在它的广播后修饰，以确保所有节点获得广播变量的相同的值。 </p> 
+  <h2> 
+   <div>
+     累加器 
+   </div> </h2> 
+  <p style="text-align:justify;"> 蓄电池仅是“补充”到通过关联操作变量，因此可以，可以并行有效的支持。它们可以被用来实现计数器(如在MapReduce)或求和。Spark原生支持累加器的数字类型，程序员可以添加支持新类型。如果累加器使用自定义的一个名称创建，它将显示在 Spark 的 UI 中。这对于了解运行阶段和进度很有用(注&nbsp;-&nbsp;这还不支持在Python)。 </p> 
+  <p style="text-align:justify;"> 累加器从初始值v的值是通过调用&nbsp;SparkContext.accumulator(v)&nbsp;创建.&nbsp;在集群上运行任务可以使用 add 方法或 += 运算符(在 Scala 和Python)来添加它。&nbsp;然而无法读取它的值。只有驱动程序可以读取累加器的值，使用 value 方法。 </p> 
+  <p style="text-align:justify;"> 下面给出的代码显示一个累加器，用来相加数组的元素&nbsp;− </p> 
+  <pre>scala<span style="background-color:inherit;color:#666600;">&gt;</span> val accum <span style="background-color:inherit;color:#666600;">=</span> sc<span style="background-color:inherit;color:#666600;">.</span>accumulator<span style="background-color:inherit;color:#666600;">(</span><span style="background-color:inherit;color:#006666;">0</span><span style="background-color:inherit;color:#666600;">)</span> scala<span style="background-color:inherit;color:#666600;">&gt;</span> sc<span style="background-color:inherit;color:#666600;">.</span>parallelize<span style="background-color:inherit;color:#666600;">(</span><span style="background-color:inherit;color:#7F0055;">Array</span><span style="background-color:inherit;color:#666600;">(</span><span style="background-color:inherit;color:#006666;">1</span><span style="background-color:inherit;color:#666600;">,</span><span style="background-color:inherit;color:#006666;">2</span><span style="background-color:inherit;color:#666600;">,</span><span style="background-color:inherit;color:#006666;">3</span><span style="background-color:inherit;color:#666600;">,</span><span style="background-color:inherit;color:#006666;">4</span><span style="background-color:inherit;color:#666600;">)).</span><span style="background-color:inherit;color:#000088;">foreach</span><span style="background-color:inherit;color:#666600;">(</span>x <span style="background-color:inherit;color:#666600;">=&gt;</span> accum <span style="background-color:inherit;color:#666600;">+=</span> x<span style="background-color:inherit;color:#666600;">)</span></pre> 
+  <p style="text-align:justify;"> 如果想看到的上面的代码的输出，可以使用下面的命令&nbsp;− </p> 
+  <pre>scala<span style="background-color:inherit;color:#666600;">&gt;</span> accum<span style="background-color:inherit;color:#666600;">.</span>value </pre> 
+  <h3> 输出 </h3> 
+  <pre>res2: Int = 10 </pre> 
+  <h2> 
+   <div>
+     数字RDD操作 
+   </div> </h2> 
+  <p style="text-align:justify;"> 允许使用预定义的API方法之一做不同数字数据的操作。&nbsp;Spark&nbsp;数字运算是与流传输算法，允许构建模型，一次一个元素实现。 </p> 
+  <div>
+    这些操作被计算，并返回调用一个StatusCounter对象的&nbsp;status()方法。 
+  </div> 
+  <div>
+    下面是在 StatusCounter 可用的数字方法列表。 
+  </div> 
+  <table border="1" cellpadding="2" cellspacing="0" style="font-size:14px;color:#313131;font-family:Verdana, Geneva, Tahoma,  Helvetica, background-color:inherit;"> 
+   <tbody> 
+    <tr> 
+     <th style="border:1px solid #999999;background-color:#EEEEEE;"> S.No </th> 
+     <th style="border:1px solid #999999;background-color:#EEEEEE;text-align:center;"> 方法 &amp; 含义 </th> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 1 </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>count()</b> </p> 
+      <div style="background-color:inherit;">
+        在RDD元素的数量 
+      </div> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 2 </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>Mean()</b> </p> 
+      <div style="background-color:inherit;">
+        在RDD元素的平均值 
+      </div> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 3 </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>Sum()</b> </p> 
+      <div style="background-color:inherit;">
+        在RDD中元素的总和 
+      </div> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 4 </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>Max()</b> </p> 
+      <div style="background-color:inherit;">
+        在RDD中所有元素的最大值 
+      </div> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 5 </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>Min()</b> </p> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <span style="color:#313131;font-family:Verdana, Geneva, Tahoma,  Helvetica, font-size:14px;">在RDD中所有元素的最小值</span> </p> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 6 </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>Variance()</b> </p> 
+      <div style="background-color:inherit;">
+        元素的
+       <span style="font-family:Verdana, Geneva, Tahoma,  Helvetica, font-size:14px;">差异</span> 
+      </div> </td> 
+    </tr> 
+    <tr> 
+     <td style="border:1px solid #999999;background-color:inherit;"> 7 </td> 
+     <td style="border:1px solid #999999;background-color:inherit;"> <p style="color:#000000;text-align:justify;font-size:15px !important;background-color:inherit;"> <b>Stdev()</b> </p> 
+      <div style="background-color:inherit;"> 
+       <span style="font-family:Verdana, Geneva, Tahoma,  Helvetica, font-size:14px;">元素的</span>标准差 
+      </div> </td> 
+    </tr> 
+   </tbody> 
+  </table> 
+  <div>
+    如果你只想要这些方法之一来使用，可以直接调用 RDD 相应的方法。 
+  </div> 
+ </div>
+ <br>      
+</div></body></html>

@@ -1,0 +1,31 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">PostgreSQL截断表（TRUNCATE TABLE语句）</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>PostgreSQL <code>TRUNCATE TABLE</code>命令用于从现有表中删除完整的数据。您也可以使用<code>DROP TABLE</code>命令删除完整的表，但会从数据库中删除完整的表结构，如果希望存储某些数据，则需要重新创建此表。</p> 
+ <p>它和在每个表上使用<code>DELETE</code>语句具有相同的效果，但由于实际上并不扫描表，所以它的速度更快。 此外，它会立即回收磁盘空间，而不需要后续的<code>VACUUM</code>操作。 这在大表上是最有用的。</p> 
+ <p><strong>语法：</strong><br><code>TRUNCATE TABLE</code>的基本语法如下：</p> 
+ <pre><code class="lang-sql">TRUNCATE TABLE  table_name;
+</code></pre> 
+ <h2 id="h2-u793Au4F8B"><a name="示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例</h2>
+ <p>考虑一个表 - <code>Company</code> 有以下记录：</p> 
+ <pre><code class="lang-sql"> id | name  | age | address    | salary
+----+-------+-----+------------+--------
+  1 | Paul  |  32 | California |  20000
+  2 | Allen |  25 | Texas      |  15000
+  3 | Teddy |  23 | Norway     |  20000
+  4 | Mark  |  25 | Rich-Mond  |  65000
+  5 | David |  27 | Texas      |  85000
+  6 | Kim   |  22 | South-Hall |  45000
+  7 | James |  24 | Houston    |  10000
+(7 rows)
+</code></pre> 
+ <p>以下是截断的示例：</p>   
+ <pre><code class="lang-sql">yiibai_db=# TRUNCATE TABLE COMPANY;
+</code></pre> 
+ <p>现在，<code>COMPANY</code>表被截断，以下是执行<code>SELECT</code>语句输出：</p> 
+ <pre><code class="lang-sql">yiibai_db=# SELECT * FROM COMPANY;
+ id | name | age | address | salary
+----+------+-----+---------+--------
+(0 rows)
+</code></pre> 
+ <p>从以上查询结果可以知道，<code>COMPANY</code>表中已经没有了数据记录了。</p>
+ <br>      
+</div></body></html>

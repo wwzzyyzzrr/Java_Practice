@@ -1,0 +1,94 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Hibernate生成器类</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>在Hibernate中，<code>id</code>元素的<code>&lt;generator&gt;</code>子元素用于生成持久化类的对象的唯一标识符。 Hibernate框架中定义了许多生成器类。</p> 
+ <p>所有的生成器类都实现了<code>org.hibernate.id.IdentifierGenerator</code>接口。 应用程序员可以通过实现<code>IdentifierGenerator</code>接口来创建自己的生成器类。 Hibernate框架提供了许多内置的生成器类：</p> 
+ <ol> 
+  <li>assigned</li>
+  <li>increment</li>
+  <li>sequence</li>
+  <li>hilo</li>
+  <li>native</li>
+  <li>identity</li>
+  <li>seqhilo</li>
+  <li>uuid</li>
+  <li>guid</li>
+  <li>select</li>
+  <li>foreign</li>
+  <li>sequence-identity</li>
+ </ol> 
+ <h2 id="h2-1-assigned"><a name="1. assigned" class="reference-link"></a><span class="header-link octicon octicon-link"></span>1. assigned</h2>
+ <p>如果没有使用<code>&lt;generator&gt;</code>元素，<code>assigned</code>是默认的生成器策略。在这种情况下，应用程序为对象分配<code>ID</code>。 例如：</p> 
+ <pre><code class="lang-xml">....  
+ &lt;hibernate-mapping&gt;  
+  &lt;class ...&gt;  
+    &lt;id ...&gt;  
+     &lt;generator class="assigned"&gt;&lt;/generator&gt;  
+    &lt;/id&gt;  
+
+    .....  
+
+  &lt;/class&gt;  
+ &lt;/hibernate-mapping&gt;
+</code></pre> 
+ <h2 id="h2-2-increment"><a name="2. increment" class="reference-link"></a><span class="header-link octicon octicon-link"></span>2. increment</h2>
+ <p>当没有其他进程将数据插入此表时，才会生成唯一的<code>ID</code>。 它生成<code>short</code>，<code>int</code>或<code>long</code>型标识符。 第一个生成的标识符通常为<code>1</code>，然后每次递增为<code>1</code>。语法：</p> 
+ <pre><code class="lang-xml">....  
+ &lt;hibernate-mapping&gt;  
+  &lt;class ...&gt;  
+    &lt;id ...&gt;  
+     &lt;generator class="increment"&gt;&lt;/generator&gt;  
+    &lt;/id&gt;  
+
+    .....  
+
+  &lt;/class&gt;  
+ &lt;/hibernate-mapping&gt;
+</code></pre> 
+ <h2 id="h2-3-sequence"><a name="3. sequence" class="reference-link"></a><span class="header-link octicon octicon-link"></span>3. sequence</h2>
+ <p>它使用数据库的顺序序列。如果没有定义序列，它会自动创建一个序列。 在Oracle数据库的情况下，它将创建一个名为<code>HIBERNATE_SEQUENCE</code>的序列。 在Oracle，DB2，SAP DB，Postgre SQL或McKoi的情况下，它使用序列(sequence)，但在<code>interbase</code>中使用生成器。<br><strong>语法：</strong></p> 
+ <pre><code class="lang-java">.....  
+ &lt;id ...&gt;  
+  &lt;generator class="sequence"&gt;&lt;/generator&gt;  
+ &lt;/id&gt;  
+ .....
+</code></pre> 
+ <p>要定义自己的序列，请使用<code>generator</code>的 <code>param</code> 子元素。</p> 
+ <pre><code class="lang-xml">.....  
+ &lt;id ...&gt;  
+  &lt;generator class="sequence"&gt;  
+      &lt;param name="sequence"&gt;your_sequence_name&lt;/param&gt;  
+  &lt;/generator&gt;  
+ &lt;/id&gt;  
+ .....
+</code></pre> 
+ <h2 id="h2-4-hilo"><a name="4. hilo" class="reference-link"></a><span class="header-link octicon octicon-link"></span>4. hilo</h2>
+ <p>它使用高低算法来生成<code>short</code>，<code>int</code>和<code>long</code>类型的<code>id</code>。 <strong>语法</strong>：</p> 
+ <pre><code class="lang-java">.....  
+ &lt;id ...&gt;  
+  &lt;generator class="hilo"&gt;&lt;/generator&gt;  
+ &lt;/id&gt;  
+ .....
+</code></pre> 
+ <h2 id="h2-5-native"><a name="5. native" class="reference-link"></a><span class="header-link octicon octicon-link"></span>5. native</h2>
+ <p>它使用标识，序列或希洛取决于数据库供应商。 <strong>语法</strong>：</p>   
+ <pre><code class="lang-java">.....  
+ &lt;id ...&gt;  
+  &lt;generator class="native"&gt;&lt;/generator&gt;  
+ &lt;/id&gt;  
+ .....
+</code></pre> 
+ <h2 id="h2-6-identity"><a name="6. identity" class="reference-link"></a><span class="header-link octicon octicon-link"></span>6. identity</h2>
+ <p>它用于Sybase，Mysql，MS SQL Server，DB2和Hypersonic SQL以支持<code>id</code>列。 返回的<code>ID</code>类型为<code>short</code>，<code>int</code>或<code>long</code>。</p> 
+ <h2 id="h2-7-seqhilo"><a name="7. seqhilo" class="reference-link"></a><span class="header-link octicon octicon-link"></span>7. seqhilo</h2>
+ <p>它在指定的序列名称上使用高低算法。 返回的<code>ID</code>类型为<code>short</code>，<code>int</code>或<code>long</code>。</p> 
+ <h2 id="h2-8-uuid"><a name="8. uuid" class="reference-link"></a><span class="header-link octicon octicon-link"></span>8. uuid</h2>
+ <p>它使用<code>128</code>位<code>UUID</code>算法生成<code>id</code>。 返回的<code>ID</code>是<code>String</code>类型，在网络中是唯一的(因为使用了IP)。 <code>UUID</code>以十六进制数字表示，长度为<code>32</code>。</p> 
+ <h2 id="h2-9-guid"><a name="9. guid" class="reference-link"></a><span class="header-link octicon octicon-link"></span>9. guid</h2>
+ <p>它使用由字符串类型的数据库生成的<code>GUID</code>。 它适用于MS SQL Server和MySQL。</p> 
+ <h2 id="h2-10-select"><a name="10.  select" class="reference-link"></a><span class="header-link octicon octicon-link"></span>10. select</h2>
+ <p>它使用数据库触发器返回主键。</p> 
+ <h2 id="h2-11-foreign"><a name="11. foreign" class="reference-link"></a><span class="header-link octicon octicon-link"></span>11. foreign</h2>
+ <p>它使用另一个关联对象的<code>id</code>，主要用于<strong>&lt;一对一&gt;</strong>关联。</p> 
+ <h2 id="h2-12-sequence-identity"><a name="12. sequence-identity" class="reference-link"></a><span class="header-link octicon octicon-link"></span>12. sequence-identity</h2>
+ <p>它使用特殊的序列生成策略。 仅在Oracle 10g驱动程序中支持。</p>
+ <br>      
+</div></body></html>

@@ -1,0 +1,92 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">C语言通过值和引用函数</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>、</p> 
+ <p>将参数值或数据传递给C语言函数有两种方法：通过值调用和通过引用调用。原始值在通过值调用时不修改，但通过引用调用时，在函数中可进行修改。</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201708/1508/144110827_38331.png" alt=""></p> 
+ <p>下面将分别讲解如何通过值调用和通过引用调用，并用使用示例逐个调用演示执行。</p> 
+ <h2 id="h2-u901Au8FC7u503Cu8C03u7528"><a name="通过值调用" class="reference-link"></a><span class="header-link octicon octicon-link"></span>通过值调用</h2>
+ <p>在通过值调用函数时，原始值不被修改。</p> 
+ <p>在通过值调用时，传递给函数的值由函数参数在堆栈内存位置中本地存储。如果更改函数参数的值，则仅对当前调用函数中的值进行临时更改。它不会改变调用者方法(如：<code>main()</code>)中的变量的值。即：函数只是使用参数值的一个副本，函数执行完成副本删除，而原始值不会有任何影响。</p> 
+ <p>我们试着通过下面的例子来了解C语言中的通过值调用的概念，首先创建一个工程：<em>function-call-by-value-reference</em>，并在这个工程下创建一个源文件：<em>call-by-value.c</em>，其代码如下所示- </p> 
+ <pre><code class="lang-c">#include &lt;stdio.h&gt;  
+
+void change(int num) {
+    printf("Before adding value inside function num=%d \n", num);
+    num = num + 10;
+    printf("After adding value inside function num=%d \n", num);
+}
+
+int main() {
+    int x = 10;
+    // 更新之前参数x的值
+    printf("Before function call x=%d \n", x);
+    change(x); // passing value in function  
+    // 更新之后参数x的值
+    printf("After function call x=%d \n", x);
+
+    return 0;
+}
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 - </p> 
+ <pre><code class="lang-shell">Before function call x=10
+Before adding value inside function num=10
+After adding value inside function num=20
+After function call x=10
+</code></pre> 
+ <h2 id="h2-u901Au8FC7u5F15u7528u8C03u7528"><a name="通过引用调用" class="reference-link"></a><span class="header-link octicon octicon-link"></span>通过引用调用</h2>
+ <p>在通过引用的调用中，原始值可被修改并反映到外部调用者。</p> 
+ <p>这里，使用值的地址传递到函数中，所以实际和形式的参数共享相同的地址空间。 因此，函数内部的值被改变，都会反映在函数内部和外部，因为函数内部和外部此时都指向参数的地址空间。</p> 
+ <blockquote> 
+  <p>注意：要了解通过引用调用，您必须具有指针的基本知识。</p> 
+ </blockquote> 
+ <p>让我们通过下面的例子来尝试理解C语言中通过引用调用的概念，创建一个源文件：<em>call-by-reference.c</em>，其代码如下所示- </p>   
+ <pre><code class="lang-c">#include &lt;stdio.h&gt;  
+
+// 定义函数，注意这里的参数名称前加了一个星号(*)
+void change2(int *num) {
+    printf("Before adding value inside function num=%d \n", *num);
+    (*num) += 100;
+    printf("After adding value inside function num=%d \n", *num);
+}
+
+int main() {
+    int x = 200;
+
+    printf("Before function call x=%d \n", x);
+    // 注意，下面传递的参数名称前加了一个符号(&amp;)
+    change2(&amp;x);// passing reference in function  
+    printf("After function call x=%d \n", x);
+
+    return 0;
+}
+</code></pre> 
+ <p>执行上面示例代码，得到以下结果 - </p> 
+ <pre><code class="lang-shell">Before function call x=200
+Before adding value inside function num=200
+After adding value inside function num=300
+After function call x=300
+</code></pre> 
+ <h2 id="h2-c-"><a name="C语言中通过值调用和通过引用调用之间的差异" class="reference-link"></a><span class="header-link octicon octicon-link"></span>C语言中通过值调用和通过引用调用之间的差异</h2>
+ <table> 
+  <thead> 
+   <tr> 
+    <th>通过值调用</th> 
+    <th>通过引用调用</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>将值的副本传递给函数</td> 
+    <td>将值的地址传递给函数</td> 
+   </tr> 
+   <tr> 
+    <td>函数内的更改不会反映在函数外</td> 
+    <td>函数内部的改变也反映在函数的外部</td> 
+   </tr> 
+   <tr> 
+    <td>将在不同的内存位置创建实际和正式的参数</td> 
+    <td>将在相同的内存位置创建实际和正式的参数</td> 
+   </tr> 
+  </tbody> 
+ </table>
+ <br>      
+</div></body></html>

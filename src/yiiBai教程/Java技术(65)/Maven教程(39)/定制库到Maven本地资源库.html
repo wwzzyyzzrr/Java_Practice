@@ -1,0 +1,50 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">定制库到Maven本地资源库</h1><div style="width:100%;float:left;" class="article-content">   
+ <p> 这里有2个案例，需要手动发出Maven命令包括一个 jar 到 Maven 的本地资源库。 </p> 
+ <ol> 
+  <li> 要使用的 jar 不存在于 Maven 的中心储存库中。 </li> 
+  <li> 您创建了一个自定义的 jar ，而另一个 Maven 项目需要使用。 </li> 
+ </ol> 
+ <p> PS，还是有很多 jar 不支持 Maven 的。 </p> 
+ <h2> 案例学习 </h2> 
+ <p> 例如，kaptcha，它是一个流行的第三方Java库，它被用来生成 “验证码” 的图片，以阻止垃圾邮件，但它不在 Maven 的中央仓库中。 </p> 
+ <p> 在本教程中，我们将告诉你如何安装 “kaptcha” jar 到Maven 的本地资源库。 </p> 
+ <h2> 1. mvn 安装 </h2> 
+ <p> 下载 “kaptcha”，将其解压缩并将 kaptcha-version.jar 复制到其他地方，比如：C盘。发出下面的命令： </p> 
+ <pre>mvn <span style="background-color:inherit;color:#DD4A68;">install</span><span style="background-color:inherit;color:#999999;">:</span><span style="background-color:inherit;color:#DD4A68;">install</span><span style="background-color:rgba(255, 255, 255, 0.498039);color:#A67F59;">-</span><span style="background-color:inherit;color:#DD4A68;">file </span><span style="background-color:rgba(255, 255, 255, 0.498039);color:#A67F59;">-</span>Dfile<span style="background-color:rgba(255, 255, 255, 0.498039);color:#A67F59;">=</span>c<span style="background-color:inherit;color:#999999;">:</span>\kaptcha<span style="background-color:rgba(255, 255, 255, 0.498039);color:#A67F59;">-</span><span style="background-color:inherit;color:#999999;">{</span>version<span style="background-color:inherit;color:#999999;">}</span><span style="background-color:inherit;color:#999999;">.</span>jar <span style="background-color:rgba(255, 255, 255, 0.498039);color:#A67F59;">-</span>DgroupId<span style="background-color:rgba(255, 255, 255, 0.498039);color:#A67F59;">=</span>com<span style="background-color:inherit;color:#999999;">.</span>google<span style="background-color:inherit;color:#999999;">.</span>code <span style="background-color:rgba(255, 255, 255, 0.498039);color:#A67F59;">-</span>DartifactId<span style="background-color:rgba(255, 255, 255, 0.498039);color:#A67F59;">=</span>kaptcha <span style="background-color:rgba(255, 255, 255, 0.498039);color:#A67F59;">-</span>Dversion<span style="background-color:rgba(255, 255, 255, 0.498039);color:#A67F59;">=</span><span style="background-color:inherit;color:#999999;">{</span>version<span style="background-color:inherit;color:#999999;">} </span><span style="background-color:rgba(255, 255, 255, 0.498039);color:#A67F59;">-</span>Dpackaging<span style="background-color:rgba(255, 255, 255, 0.498039);color:#A67F59;">=</span>jar</pre> 
+ <p> 示例： </p> 
+ <pre class="prettyprint lang-xml">D:\&gt;mvn install:install-file -Dfile=c:\kaptcha-2.3.jar -DgroupId=com.google.code 
+-DartifactId=kaptcha -Dversion=2.3 -Dpackaging=jar
+[INFO] Scanning for projects...
+[INFO] Searching repository for plugin with prefix: 'install'.
+[INFO] ------------------------------------------------------------------------
+[INFO] Building Maven Default Project
+[INFO]    task-segment: [install:install-file] (aggregator-style)
+[INFO] ------------------------------------------------------------------------
+[INFO] [install:install-file]
+[INFO] Installing c:\kaptcha-2.3.jar to 
+D:\maven_repo\com\google\code\kaptcha\2.3\kaptcha-2.3.jar
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESSFUL
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: &lt; 1 second
+[INFO] Finished at: Tue May 12 13:41:42 SGT 2014
+[INFO] Final Memory: 3M/6M
+[INFO] ------------------------------------------------------------------------</pre> 
+ <p> <br> </p> 
+ <p> 现在，“kaptcha” jar被复制到 Maven 本地存储库。 </p> 
+ <h2> 2. pom.xml </h2> 
+ <p> 安装完毕后，就在 pom.xml 中声明&nbsp;kaptcha 的坐标。 </p>   
+ <pre class="prettyprint lang-xml">&lt;dependency&gt;
+      &lt;groupId&gt;com.google.code&lt;/groupId&gt;
+      &lt;artifactId&gt;kaptcha&lt;/artifactId&gt;
+      &lt;version&gt;2.3&lt;/version&gt;
+ &lt;/dependency&gt;</pre> 
+ <h2> 3. 完成 </h2> 
+ <p> 构建它，现在 “kaptcha” jar 能够从你的 Maven 本地存储库检索了。 </p> 
+ <h2> 参考 </h2> 
+ <ol> 
+  <li> <a target="_blank" href="http://maven.apache.org/plugins/maven-install-plugin/install-file-mojo.html">Maven安装文档</a> </li> 
+  <li> <a target="_blank" href="http://code.google.com/p/kaptcha/">Kaptcha网站</a> </li> 
+ </ol>
+ <br>      
+</div></body></html>

@@ -1,0 +1,366 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">ASP.NET数据绑定</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>每个ASP.NET Web表单控件都从其父级控件类继承<code>DataBind</code>方法，从而使其具有将数据绑定到其至少一个属性。 这被称为简单数据绑定或内联数据绑定。</p> 
+ <p>简单的数据绑定包括将实现<code>IEnumerable</code>接口的任何集合(项目集合)或<code>DataSet</code>和<code>DataTable</code>类附加到控件的<code>DataSource</code>属性。</p> 
+ <p>另一方面，一些控件可以通过<code>DataSource</code>控件将记录，列表或数据列绑定到它们的结构中。 这些控件来自<code>BaseDataBoundControl</code>类，它叫作声明性数据绑定。</p> 
+ <p>数据源控件帮助数据绑定控件实现诸如排序，分页和编辑数据收集等功能。</p> 
+ <p><code>BaseDataBoundControl</code>是一个抽象类，由另外两个抽象类继承：</p> 
+ <ul> 
+  <li><em>DataBoundControl</em></li>
+  <li><em>HierarchicalDataBoundControl</em></li>
+ </ul> 
+ <p>抽象类<code>DataBoundControl</code>再次被两个抽象类继承：</p> 
+ <ul> 
+  <li><em>ListControl</em></li>
+  <li><em>CompositeDataBoundControl</em></li>
+ </ul> 
+ <p>能够进行简单数据绑定的控件是从<code>ListControl</code>抽象类派生的，这些控件是：</p> 
+ <ul> 
+  <li><em>BulletedList</em></li>
+  <li><em>CheckBoxList</em></li>
+  <li><em>DropDownList</em></li>
+  <li><em>ListBox</em></li>
+  <li><em>RadioButtonList</em></li>
+ </ul> 
+ <p>能够声明性数据绑定(更复杂的数据绑定)的控件是从<code>CompositeDataBoundControl</code>抽象类派生的。这些控件是：</p> 
+ <ul> 
+  <li><em>DetailsView</em></li>
+  <li><em>FormView</em></li>
+  <li><em>GridView</em></li>
+  <li><em>RecordList</em></li>
+ </ul> 
+ <h2 id="h2-u7B80u5355u6570u636Eu7ED1u5B9A"><a name="简单数据绑定" class="reference-link"></a><span class="header-link octicon octicon-link"></span>简单数据绑定</h2>
+ <p>简单数据绑定涉及只读选择列表。这些控件可以绑定到数组列表或数据库表的字段。 选择列表从数据库或数据源获取两个值; 一个值显示在列表中，另一个值被视为列相对应的值。</p> 
+ <p>下面通过一个小例子来理解这个概念。创建一个带有项目符号列表和一个<code>SqlDataSource</code>控件的网站。配置数据源控件来从数据库中检索两个值(使用一个<em>Access</em>数据库的一个学生表：<code>student</code>)。打开<em>Visual Studio</em> ，创建一个名称为：<em>DataBinding</em> 的网站项目，参考下图 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201712/0712/111221205_70511.png" alt=""></p> 
+ <p>再创建一个<em>Web窗体</em>页面 - <em>Default.aspx</em> ，如下代码 - </p> 
+ <pre><code class="lang-aspnet">&lt;%@ Page Language="C#" AutoEventWireup="true" CodeFile="Default.aspx.cs" Inherits="_Default" %&gt;
+
+&lt;!DOCTYPE html&gt;
+
+&lt;html xmlns="http://www.w3.org/1999/xhtml"&gt;
+&lt;head runat="server"&gt;
+&lt;meta http-equiv="Content-Type" content="text/html; charset=utf-8"/&gt;
+    &lt;title&gt;简单数据绑定&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;form id="form1" runat="server"&gt;
+        &lt;div&gt;
+            &lt;asp:SqlDataSource ID="SqlDataSource1" runat="server" ConnectionString="&lt;%$ ConnectionStrings:DatabaseConnectionString %&gt;" ProviderName="&lt;%$ ConnectionStrings:DatabaseConnectionString.ProviderName %&gt;" SelectCommand="SELECT [sname], [from] FROM [students]"&gt;&lt;/asp:SqlDataSource&gt;
+            &lt;br /&gt;
+            &lt;asp:ListView ID="ListView1" runat="server" DataSourceID="SqlDataSource1"&gt;
+                &lt;AlternatingItemTemplate&gt;
+                    &lt;li style=""&gt;sname:
+                        &lt;asp:Label ID="snameLabel" runat="server" Text='&lt;%# Eval("sname") %&gt;' /&gt;
+                        &lt;br /&gt;
+                        from:
+                        &lt;asp:Label ID="fromLabel" runat="server" Text='&lt;%# Eval("from") %&gt;' /&gt;
+                        &lt;br /&gt;
+                    &lt;/li&gt;
+                &lt;/AlternatingItemTemplate&gt;
+                &lt;EditItemTemplate&gt;
+                    &lt;li style=""&gt;sname:
+                        &lt;asp:TextBox ID="snameTextBox" runat="server" Text='&lt;%# Bind("sname") %&gt;' /&gt;
+                        &lt;br /&gt;
+                        from:
+                        &lt;asp:TextBox ID="fromTextBox" runat="server" Text='&lt;%# Bind("from") %&gt;' /&gt;
+                        &lt;br /&gt;
+                        &lt;asp:Button ID="UpdateButton" runat="server" CommandName="Update" Text="更新" /&gt;
+                        &lt;asp:Button ID="CancelButton" runat="server" CommandName="Cancel" Text="取消" /&gt;
+                    &lt;/li&gt;
+                &lt;/EditItemTemplate&gt;
+                &lt;EmptyDataTemplate&gt;
+                    未返回数据。
+                &lt;/EmptyDataTemplate&gt;
+                &lt;InsertItemTemplate&gt;
+                    &lt;li style=""&gt;sname:
+                        &lt;asp:TextBox ID="snameTextBox" runat="server" Text='&lt;%# Bind("sname") %&gt;' /&gt;
+                        &lt;br /&gt;from:
+                        &lt;asp:TextBox ID="fromTextBox" runat="server" Text='&lt;%# Bind("from") %&gt;' /&gt;
+                        &lt;br /&gt;
+                        &lt;asp:Button ID="InsertButton" runat="server" CommandName="Insert" Text="插入" /&gt;
+                        &lt;asp:Button ID="CancelButton" runat="server" CommandName="Cancel" Text="清除" /&gt;
+                    &lt;/li&gt;
+                &lt;/InsertItemTemplate&gt;
+                &lt;ItemSeparatorTemplate&gt;
+&lt;br /&gt;
+                &lt;/ItemSeparatorTemplate&gt;
+                &lt;ItemTemplate&gt;
+                    &lt;li style=""&gt;sname:
+                        &lt;asp:Label ID="snameLabel" runat="server" Text='&lt;%# Eval("sname") %&gt;' /&gt;
+                        &lt;br /&gt;
+                        from:
+                        &lt;asp:Label ID="fromLabel" runat="server" Text='&lt;%# Eval("from") %&gt;' /&gt;
+                        &lt;br /&gt;
+                    &lt;/li&gt;
+                &lt;/ItemTemplate&gt;
+                &lt;LayoutTemplate&gt;
+                    &lt;ul id="itemPlaceholderContainer" runat="server" style=""&gt;
+                        &lt;li runat="server" id="itemPlaceholder" /&gt;
+                    &lt;/ul&gt;
+                    &lt;div style=""&gt;
+                    &lt;/div&gt;
+                &lt;/LayoutTemplate&gt;
+                &lt;SelectedItemTemplate&gt;
+                    &lt;li style=""&gt;sname:
+                        &lt;asp:Label ID="snameLabel" runat="server" Text='&lt;%# Eval("sname") %&gt;' /&gt;
+                        &lt;br /&gt;
+                        from:
+                        &lt;asp:Label ID="fromLabel" runat="server" Text='&lt;%# Eval("from") %&gt;' /&gt;
+                        &lt;br /&gt;
+                    &lt;/li&gt;
+                &lt;/SelectedItemTemplate&gt;
+            &lt;/asp:ListView&gt;
+        &lt;/div&gt;
+    &lt;/form&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p>假设Access数据库中的<code>students</code>表有以下数据 -</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201712/0712/876221212_10602.png" alt=""></p> 
+ <p>执行应用程序时，请检查整个<code>sname</code>和<code>from</code>列是否绑定到项目符号列表并显示。<br><img src="http://www.yiibai.com/uploads/images/201712/0712/806081243_29841.png" alt=""></p> 
+ <h2 id="h2-u58F0u660Eu6027u6570u636Eu7ED1u5B9A"><a name="声明性数据绑定" class="reference-link"></a><span class="header-link octicon octicon-link"></span>声明性数据绑定</h2>
+ <p>在前面的教程文章中，我们已经在<code>GridView</code>控件中使用了声明式数据绑定。能够以表格方式显示和操作数据的其他复合数据绑定控件是<code>DetailsView</code>，<code>FormView</code>和<code>RecordList</code>控件。</p> 
+ <p>在下一个教程中，我们将学习处理数据库的技术，即 <em>ADO.NET</em> ，有关<em>ADO.NET</em> 的详细讲解，请参考单独的章节：<a target="_blank" href="http://www.yiibai.com/ado.net">http://www.yiibai.com/ado.net</a> 。</p> 
+ <p>但是，数据绑定涉及以下对象：</p> 
+ <ul> 
+  <li>从数据库检索存储数据的数据集。</li>
+  <li>数据提供者，通过使用命令连接数据库，并从数据库中检索数据。</li>
+  <li>发出存储在<code>Command</code>对象中的<code>select</code>语句的数据适配器; 它也能够通过发出插入，删除和更新语句来更新数据库中的数据。</li>
+ </ul> 
+ <p>数据绑定对象之间的关系，请参考下图：</p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201712/0712/316171249_38151.jpg" alt=""></p> 
+ <h2 id="h2-u793Au4F8B"><a name="示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例</h2>
+ <p>本示例基于上面示例中创建的<em>DataBinding</em> 的网站项目，参考以下实践步骤：</p> 
+ <p><strong>第1步：</strong> 右键单击【<em>解决方案资源管理器</em>】中的解决方案名称，然后从<em>“添加项目”</em>对话框中选择<em>“类”</em>项目，添加一个名为<code>Book</code>的类。将保存文件命名为<code>Book.cs</code>。参考以下实现代码 - </p> 
+ <pre><code class="lang-csharp">using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+
+/// &lt;summary&gt;
+/// Book 的摘要说明
+/// &lt;/summary&gt;
+using System.Data;
+using System.Configuration;
+using System.Web.Security;
+using System.Web.UI;
+using System.Web.UI.HtmlControls;
+using System.Web.UI.WebControls;
+using System.Web.UI.WebControls.WebParts;
+using System.Xml.Linq;
+
+
+    public class booklist
+    {
+        protected String bookname;
+        protected String authorname;
+        public booklist(String bname, String aname)
+        {
+            this.bookname = bname;
+            this.authorname = aname;
+
+        }
+
+        public String Book
+        {
+            get
+            {
+                return this.bookname;
+            }
+            set
+            {
+                this.bookname = value;
+            }
+        }
+
+        public String Author
+        {
+            get
+            {
+                return this.authorname;
+            }
+            set
+            {
+                this.authorname = value;
+            }
+        }
+    }
+</code></pre> 
+ <p><strong>第2步：</strong> 在页面上添加四个列表控件，一个列表框控件，一个单选按钮列表，一个复选框列表，一个下拉列表和四个标签以及这些列表控件。设计视图中的页面应该如下所示：</p> 
+ <p>在这个项目中添加一个窗体：<em>Default2.aspx</em> ，其代码如下所示 -</p>   
+ <pre><code class="lang-aspnet">&lt;%@ Page Language="C#" AutoEventWireup="true" CodeFile="Default2.aspx.cs" Inherits="Default2" %&gt;
+
+&lt;!DOCTYPE html&gt;
+
+&lt;html xmlns="http://www.w3.org/1999/xhtml"&gt;
+&lt;head runat="server"&gt;
+&lt;meta http-equiv="Content-Type" content="text/html; charset=utf-8"/&gt;
+    &lt;title&gt;声明性数据绑定&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;form id="form1" runat="server"&gt;
+        &lt;div&gt;
+
+      &lt;table style="width: 559px"&gt;
+         &lt;tr&gt;
+            &lt;td style="width: 228px; height: 157px;"&gt;
+               &lt;asp:ListBox ID="ListBox1" runat="server" AutoPostBack="True" 
+                  OnSelectedIndexChanged="ListBox1_SelectedIndexChanged"&gt;
+               &lt;/asp:ListBox&gt;
+            &lt;/td&gt;
+
+            &lt;td style="height: 157px"&gt;
+               &lt;asp:DropDownList ID="DropDownList1" runat="server" 
+                  AutoPostBack="True" OnSelectedIndexChanged="DropDownList1_SelectedIndexChanged"&gt;
+               &lt;/asp:DropDownList&gt;
+            &lt;/td&gt;             
+         &lt;/tr&gt;
+
+         &lt;tr&gt;
+            &lt;td style="width: 228px; height: 40px;"&gt;
+               &lt;asp:Label ID="lbllistbox" runat="server"&gt;&lt;/asp:Label&gt;
+            &lt;/td&gt;
+
+            &lt;td style="height: 40px"&gt;
+               &lt;asp:Label ID="lbldrpdown" runat="server"&gt;
+               &lt;/asp:Label&gt;
+            &lt;/td&gt;
+         &lt;/tr&gt;
+
+         &lt;tr&gt;
+            &lt;td style="width: 228px; height: 21px"&gt;
+            &lt;/td&gt;
+
+            &lt;td style="height: 21px"&gt;
+            &lt;/td&gt;              
+         &lt;/tr&gt;
+
+         &lt;tr&gt;
+            &lt;td style="width: 228px; height: 21px"&gt;
+               &lt;asp:RadioButtonList ID="RadioButtonList1" runat="server"
+                  AutoPostBack="True"  OnSelectedIndexChanged="RadioButtonList1_SelectedIndexChanged"&gt;
+               &lt;/asp:RadioButtonList&gt;
+            &lt;/td&gt;
+
+            &lt;td style="height: 21px"&gt;
+               &lt;asp:CheckBoxList ID="CheckBoxList1" runat="server" 
+                  AutoPostBack="True" OnSelectedIndexChanged="CheckBoxList1_SelectedIndexChanged"&gt;
+               &lt;/asp:CheckBoxList&gt;
+            &lt;/td&gt;                
+         &lt;/tr&gt;
+
+         &lt;tr&gt;
+            &lt;td style="width: 228px; height: 21px"&gt;
+               &lt;asp:Label ID="lblrdlist" runat="server"&gt;
+               &lt;/asp:Label&gt;
+            &lt;/td&gt;
+
+            &lt;td style="height: 21px"&gt;
+               &lt;asp:Label ID="lblchklist" runat="server"&gt;
+               &lt;/asp:Label&gt;
+            &lt;/td&gt;           
+         &lt;/tr&gt;
+      &lt;/table&gt;      
+
+   &lt;/div&gt;
+    &lt;/form&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+ <p><strong>第3步：</strong> 最后，将下面的代码写在文件：<em>Default2.aspx.cs</em> ，如下所示 - </p> 
+ <pre><code class="lang-csharp">using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+
+public partial class Default2 : System.Web.UI.Page
+{
+    protected void Page_Load(object sender, EventArgs e)
+    {
+        IList bklist = createbooklist();
+
+        if (!this.IsPostBack)
+        {
+            this.ListBox1.DataSource = bklist;
+            this.ListBox1.DataTextField = "Book";
+            this.ListBox1.DataValueField = "Author";
+
+            this.DropDownList1.DataSource = bklist;
+            this.DropDownList1.DataTextField = "Book";
+            this.DropDownList1.DataValueField = "Author";
+
+            this.RadioButtonList1.DataSource = bklist;
+            this.RadioButtonList1.DataTextField = "Book";
+            this.RadioButtonList1.DataValueField = "Author";
+
+            this.CheckBoxList1.DataSource = bklist;
+            this.CheckBoxList1.DataTextField = "Book";
+            this.CheckBoxList1.DataValueField = "Author";
+
+            this.DataBind();
+        }
+    }
+
+    protected IList createbooklist()
+    {
+        ArrayList allbooks = new ArrayList();
+        booklist bl;
+
+        bl = new booklist("UNIX CONCEPTS", "SUMITABHA DAS");
+        allbooks.Add(bl);
+
+        bl = new booklist("PROGRAMMING IN C", "RICHI KERNIGHAN");
+        allbooks.Add(bl);
+
+        bl = new booklist("DATA STRUCTURE", "TANENBAUM");
+        allbooks.Add(bl);
+
+        bl = new booklist("NETWORKING CONCEPTS", "FOROUZAN");
+        allbooks.Add(bl);
+
+        bl = new booklist("PROGRAMMING IN C++", "B. STROUSTROUP");
+        allbooks.Add(bl);
+
+        bl = new booklist("ADVANCED JAVA", "SUMITABHA DAS");
+        allbooks.Add(bl);
+
+        return allbooks;
+    }
+
+    protected void ListBox1_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        this.lbllistbox.Text = this.ListBox1.SelectedValue;
+    }
+
+    protected void DropDownList1_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        this.lbldrpdown.Text = this.DropDownList1.SelectedValue;
+    }
+
+    protected void RadioButtonList1_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        this.lblrdlist.Text = this.RadioButtonList1.SelectedValue;
+    }
+
+    protected void CheckBoxList1_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        this.lblchklist.Text = this.CheckBoxList1.SelectedValue;
+    }
+}
+</code></pre> 
+ <p>注意以下几点：</p> 
+ <ul> 
+  <li><code>booklist</code>类有两个属性：<code>bookname</code>和<code>authorname</code>。</li>
+  <li><code>createbooklist</code>方法是用户定义的方法，它创建一个名为<code>allbooks</code>包含<code>booklist</code>对象数组。</li>
+  <li><code>Page_Load</code>事件处理程序确保创建<code>booklist</code>。该列表是<code>IList</code>类型，它实现了<code>IEnumerable</code>接口，并且能够绑定到<code>List</code>控件。页面加载事件处理程序将<code>IList</code>对象<code>“bklist”</code>与<code>List</code>控件的绑定。<code>bookname</code>属性将被显示，并且<code>authorname</code>属性被视为值。</li>
+  <li>当页面运行时，如果用户选择了一本书，则其名称被选择并由<code>List</code>控件显示，而相应的标签显示作者姓名，该名称是<code>List</code>控件的所选索引的对应值。</li>
+ </ul> 
+ <p>运行上面项目，得到以下结果 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201712/0712/672091202_80148.png" alt=""></p> 
+ <p>选择上面输出结果的选项，得到以类似下面的结果 - </p> 
+ <p><img src="http://www.yiibai.com/uploads/images/201712/0712/269091204_56549.png" alt=""></p>
+ <br>      
+</div></body></html>

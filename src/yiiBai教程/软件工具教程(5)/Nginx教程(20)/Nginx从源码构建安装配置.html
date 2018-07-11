@@ -1,0 +1,36 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Nginx从源码构建安装配置</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>使用<code>configure</code>命令配置构建。 它定义了系统的各个方面，包括允许使用nginx进行连接处理的方法。 最后它创建一个<code>Makefile</code>。 <code>configure</code>命令支持以下参数：</p> 
+ <ul> 
+  <li><p><code>--prefix = path</code> - 定义将保留服务器文件的目录。 这个同一个目录也将用于由<code>configure</code>(除了库源的路径)和<code>nginx.conf</code>配置文件中设置的所有相关路径。 它默认设置为<code>/usr/local/nginx</code>目录。</p> </li>
+  <li><p><code>--sbin-path = path</code> - 设置nginx可执行文件的名称。此名称仅在安装期间使用。默认情况下文件名为 <code>prefix/sbin/nginx</code>。</p> </li>
+  <li><p><code>--conf-path = path</code> - 设置<code>nginx.conf</code>配置文件的名称。 如果需要，nginx可以始终使用不同的配置文件启动，方法是在命令行参数<code>-c file</code> 指定。 默认情况下，该文件名为：<code>prefix/conf/nginx.conf</code>。</p> </li>
+  <li><p><code>--pid-path = path</code> - 设置将存储主进程的进程ID的<code>nginx.pid</code>文件的名称。 安装后，可以使用pid指令在<code>nginx.conf</code>配置文件中更改文件名。 默认情况下，文件名为：<code>prefix/logs/nginx.pid</code>。</p> </li>
+  <li><p><code>--error-log-path = path</code> - 设置主错误，警告和诊断文件的名称。 安装后，可以在<code>nginx.conf</code>配置文件中使用<code>error_log</code>指令更改文件名。 默认情况下，文件名为：<code>prefix/logs/error.log</code>。</p> </li>
+  <li><p><code>--http-log-path = path</code> - 设置HTTP服务器主要请求日志文件的名称。 安装后，可以使用<code>access_log</code>指令在<code>nginx.conf</code>配置文件中更改文件名。 默认情况下，文件名为：<code>prefix/logs/access.log</code>。</p> </li>
+  <li><p><code>--build = name</code> - 设置一个可选的nginx构建名称。</p> </li>
+  <li><p><code>--user = name</code> - 设置非特权用户的名称，该用户的凭据将由工作进程使用。 安装后，可以使用<code>user</code>指令在<code>nginx.conf</code>配置文件中更改名称。 默认的用户名是：<code>nobody</code>。</p> </li>
+  <li><p><code>--group = name</code> - 设置由工作进程使用其凭据的组的名称。 安装后，可以使用<code>user</code>指令在<code>nginx.conf</code>配置文件中更改名称。 默认情况下，组名称设置为非特权用户的名称。</p> </li>
+  <li><p><code>--with-select_module</code> 和 <code>--without-select_module</code> — 启用或禁用构建允许服务器使用<code>select()</code>方法的模块。 如果平台似乎不支持更合适的方法(如<code>kqueue</code>，<code>epoll</code>或<code>/dev/poll</code>)，则会自动构建该模块。</p> </li>
+  <li><p><code>--with-poll_module</code> 和 <code>--without-poll_module</code> — 启用或禁用构建允许服务器使用<code>poll()</code>方法的模块。 如果平台似乎不支持更合适的方法(如<code>kqueue</code>，<code>epoll</code>或<code>/dev/poll</code>)，则会自动构建该模块。</p> </li>
+  <li><p><code>--without-http_gzip_module</code> - 禁用构建压缩HTTP服务器响应的模块。 需要<code>zlib</code>库来构建和运行此模块。</p> </li>
+  <li><code>--without-http_rewrite_module</code> - 禁用构建一个允许HTTP服务器重定向请求并更改请求URI的模块。 需要PCRE库来构建和运行此模块。</li>
+  <li><code>--without-http_proxy_module</code> - 禁用构建HTTP服务器代理模块。</li>
+  <li><code>--with-http_ssl_module</code> - 可以构建一个将HTTPS协议支持添加到HTTP服务器的模块。 默认情况下不构建此模块。 OpenSSL库是构建和运行该模块所必需的。</li>
+  <li><code>--with-pcre = path</code> - 设置PCRE库源的路径。库发行版(4.4 - 8.40版)需要从<a target="_blank" href="http://www.pcre.org/" title="PCRE站点">PCRE站点</a>下载并提取。 其余的由nginx的<code>./configure</code>和<code>make</code>完成。 该库是 <code>location</code> 指令和<code>ngx_http_rewrite_module</code>模块中正则表达式支持所必需的。</li>
+  <li><code>--with-pcre-jit</code> - 使用“即时编译”支持构建PCRE库。</li>
+  <li><p><code>--with-zlib = path</code> - 设置zlib库的源路径。 库分发(版本1.1.3 - 1.2.11)需要从zlib站点下载并提取。 其余的由nginx的<code>./configure</code>和<code>make</code>完成。 该库是<code>ngx_http_gzip_module</code>模块所必需的。</p> </li>
+  <li><p><code>--with-cc-opt = parameters</code> - 设置将添加到CFLAGS变量的其他参数。 在FreeBSD下使用系统PCRE库时，应指定<code>--with-cc-opt="-I /usr/local/include"</code>。 如果需要增加select()所支持的文件数，那么也可以在这里指定，如：<code>--with-cc-opt="-D FD_SETSIZE=2048"</code>。</p> </li>
+  <li><p><code>--with-ld-opt = parameters</code> - 设置链接过程中使用的其他参数。 当在FreeBSD下使用系统PCRE库时，应指定<code>--with-ld-opt="-L /usr/local/lib"</code>。</p> </li>
+ </ul> 
+ <p>参数使用示例(所有这些都需要在一行中完成)：</p> 
+ <pre><code>./configure
+    --sbin-path=/usr/local/nginx/nginx
+    --conf-path=/usr/local/nginx/nginx.conf
+    --pid-path=/usr/local/nginx/nginx.pid
+    --with-http_ssl_module
+    --with-pcre=../pcre-8.40
+    --with-zlib=../zlib-1.2.11
+</code></pre>
+ <p>配置完成后，使用<code>make</code>编译和安装nginx。</p>
+ <br>      
+</div></body></html>

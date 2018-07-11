@@ -1,0 +1,227 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">JSoup快速入门</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>Jsoup是用于解析HTML，就类似XML解析器用于解析XML。 Jsoup它解析HTML成为真实世界的HTML。 它与jquery选择器的语法非常相似，并且非常灵活容易使用以获得所需的结果。 在本教程中，我们将介绍很多Jsoup的例子。</p> 
+ <p><strong>能用Jsoup实现什么？</strong></p> 
+ <ul> 
+  <li>从URL，文件或字符串中刮取并解析HTML</li>
+  <li>查找和提取数据，使用DOM遍历或CSS选择器</li>
+  <li>操纵HTML元素，属性和文本</li>
+  <li>根据安全的白名单清理用户提交的内容，以防止XSS攻击</li>
+  <li>输出整洁的HTML</li>
+ </ul> 
+ <h2 id="h2--"><a name="安装-运行时依赖关系" class="reference-link"></a><span class="header-link octicon octicon-link"></span>安装-运行时依赖关系</h2>
+ <p>您可以使用下面的maven依赖项将Jsoup jar包含到项目中。</p> 
+ <pre><code class="lang-xml">&lt;dependency&gt;
+  &lt;!-- jsoup HTML parser library @ http://jsoup.org/ --&gt;
+  &lt;groupId&gt;org.jsoup&lt;/groupId&gt;
+  &lt;artifactId&gt;jsoup&lt;/artifactId&gt;
+  &lt;version&gt;1.10.2&lt;/version&gt;
+&lt;/dependency&gt;
+</code></pre> 
+ <h2 id="h2-jsoup-"><a name="JSoup应用的主要类" class="reference-link"></a><span class="header-link octicon octicon-link"></span>JSoup应用的主要类</h2>
+ <p>虽然完整的类库中有很多类，但大多数情况下，下面给出<code>3</code>个类是我们需要重点了解的。</p> 
+ <h3 id="h3-1-org-jsoup-jsoup-"><a name="1. org.jsoup.Jsoup类" class="reference-link"></a><span class="header-link octicon octicon-link"></span>1. org.jsoup.Jsoup类</h3>
+ <p>Jsoup类是任何Jsoup程序的入口点，并将提供从各种来源加载和解析HTML文档的方法。</p> 
+ <p>Jsoup类的一些重要方法如下：</p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>方法</th> 
+    <th>描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td><code>static Connection connect(String url)</code></td> 
+    <td>创建并返回URL的连接。</td> 
+   </tr> 
+   <tr> 
+    <td><code>static Document parse(File in, String charsetName)</code></td> 
+    <td>将指定的字符集文件解析成文档。</td> 
+   </tr> 
+   <tr> 
+    <td><code>static Document parse(String html)</code></td> 
+    <td>将给定的html代码解析成文档。</td> 
+   </tr> 
+   <tr> 
+    <td><code>static String clean(String bodyHtml, Whitelist whitelist)</code></td> 
+    <td>从输入HTML返回安全的HTML，通过解析输入HTML并通过允许的标签和属性的白名单进行过滤。</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h3 id="h3-2-org-jsoup-nodes-document-"><a name="2. org.jsoup.nodes.Document类" class="reference-link"></a><span class="header-link octicon octicon-link"></span>2. org.jsoup.nodes.Document类</h3>
+ <p>该类表示通过Jsoup库加载HTML文档。可以使用此类执行适用于整个HTML文档的操作。</p> 
+ <p>Element类的重要方法可以参见 - <a target="_blank" href="http://jsoup.org/apidocs/org/jsoup/nodes/Document.html">http://jsoup.org/apidocs/org/jsoup/nodes/Document.html</a> 。</p> 
+ <h3 id="h3-3-org-jsoup-nodes-element-"><a name="3. org.jsoup.nodes.Element类" class="reference-link"></a><span class="header-link octicon octicon-link"></span>3. org.jsoup.nodes.Element类</h3>
+ <p>HTML元素是由标签名称，属性和子节点组成。 使用Element类，您可以提取数据，遍历节点和操作HTML。</p> 
+ <p>Element类的重要方法可参见 - <a target="_blank" href="http://jsoup.org/apidocs/org/jsoup/nodes/Element.html">http://jsoup.org/apidocs/org/jsoup/nodes/Element.html</a> 。</p> 
+ <h2 id="h2-u5E94u7528u5B9Eu4F8B"><a name="应用实例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>应用实例</h2>
+ <p>现在我们来看一些使用Jsoup API处理HTML文档的例子。</p> 
+ <h3 id="h3-1-"><a name="1. 载入文件" class="reference-link"></a><span class="header-link octicon octicon-link"></span>1. 载入文件</h3>
+ <p>从URL加载文档，使用<code>Jsoup.connect()</code>方法从URL加载HTML。</p> 
+ <pre><code class="lang-java">try
+{
+    Document document = Jsoup.connect("http://www.yiibai.com").get();
+    System.out.println(document.title());
+} 
+catch (IOException e) 
+{
+    e.printStackTrace();
+}
+</code></pre> 
+ <h3 id="h3-2-"><a name="2. 从文件加载文档" class="reference-link"></a><span class="header-link octicon octicon-link"></span>2. 从文件加载文档</h3>
+ <p>使用<code>Jsoup.parse()</code>方法从文件加载HTML。</p> 
+ <pre><code class="lang-java">try
+{
+    Document document = Jsoup.parse( new File( "D:/temp/index.html" ) , "utf-8" );
+    System.out.println(document.title());
+} 
+catch (IOException e) 
+{
+    e.printStackTrace();
+}
+</code></pre> 
+ <h3 id="h3-3-string-"><a name="3. 从String加载文档" class="reference-link"></a><span class="header-link octicon octicon-link"></span>3. 从String加载文档</h3>
+ <p>使用<code>Jsoup.parse()</code>方法从字符串加载HTML。</p> 
+ <pre><code class="lang-java">try
+{
+    String html = "&lt;html&gt;&lt;head&gt;&lt;title&gt;First parse&lt;/title&gt;&lt;/head&gt;"
+                    + "&lt;body&gt;&lt;p&gt;Parsed HTML into a doc.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;";
+    Document document = Jsoup.parse(html);
+    System.out.println(document.title());
+} 
+catch (IOException e) 
+{
+    e.printStackTrace();
+}
+</code></pre> 
+ <h3 id="h3-4-html-"><a name="4. 从HTML获取标题" class="reference-link"></a><span class="header-link octicon octicon-link"></span>4. 从HTML获取标题</h3>
+ <p>如上图所示，调用<code>document.title()</code>方法获取HTML页面的标题。</p> 
+ <pre><code class="lang-java">try
+{
+    Document document = Jsoup.parse( new File("C:/Users/xyz/Desktop/yiibai-index.html"), "utf-8");
+    System.out.println(document.title());
+} 
+catch (IOException e) 
+{
+    e.printStackTrace();
+}
+</code></pre> 
+ <h3 id="h3-5-html-fav-"><a name="5. 获取HTML页面的Fav图标" class="reference-link"></a><span class="header-link octicon octicon-link"></span>5. 获取HTML页面的Fav图标</h3>
+ <p>假设<code>favicon</code>图像将是HTML文档的<code>&lt;head&gt;</code>部分中的第一个图像，您可以使用下面的代码。</p> 
+ <pre><code class="lang-java">String favImage = "Not Found";
+try {
+    Document document = Jsoup.parse(new File("C:/Users/zkpkhua/Desktop/yiibai-index.html"), "utf-8");
+    Element element = document.head().select("link[href~=.*\\.(ico|png)]").first();
+    if (element == null) 
+    {
+        element = document.head().select("meta[itemprop=image]").first();
+        if (element != null) 
+        {
+            favImage = element.attr("content");
+        }
+    } 
+    else
+    {
+        favImage = element.attr("href");
+    }
+} 
+catch (IOException e) 
+{
+    e.printStackTrace();
+}
+System.out.println(favImage);
+</code></pre> 
+ <h3 id="h3-6-html-"><a name="6. 获取HTML页面中的所有链接" class="reference-link"></a><span class="header-link octicon octicon-link"></span>6. 获取HTML页面中的所有链接</h3>
+ <p>要获取网页中的所有链接，请使用以下代码。</p> 
+ <pre><code class="lang-java">try
+{
+    Document document = Jsoup.parse(new File("C:/Users/zkpkhua/Desktop/yiibai-index.html"), "utf-8");
+    Elements links = document.select("a[href]");  
+    for (Element link : links) 
+    {
+         System.out.println("link : " + link.attr("href"));  
+         System.out.println("text : " + link.text());  
+    }
+} 
+catch (IOException e) 
+{
+    e.printStackTrace();
+}
+</code></pre> 
+ <h3 id="h3-7-html-"><a name="7. 获取HTML页面中的所有图像" class="reference-link"></a><span class="header-link octicon octicon-link"></span>7. 获取HTML页面中的所有图像</h3>
+ <p>要获取网页中显示的所有图像，请使用以下代码。</p>   
+ <pre><code class="lang-java">try
+{
+    Document document = Jsoup.parse(new File("C:/Users/zkpkhua/Desktop/yiibai-index.html"), "utf-8");
+    Elements images = document.select("img[src~=(?i)\\.(png|jpe?g|gif)]");
+    for (Element image : images) 
+    {
+        System.out.println("src : " + image.attr("src"));
+        System.out.println("height : " + image.attr("height"));
+        System.out.println("width : " + image.attr("width"));
+        System.out.println("alt : " + image.attr("alt"));
+    }
+} 
+catch (IOException e) 
+{
+    e.printStackTrace();
+}
+</code></pre> 
+ <h3 id="h3-8-url-"><a name="8. 获取URL的元信息" class="reference-link"></a><span class="header-link octicon octicon-link"></span>8. 获取URL的元信息</h3>
+ <p>元信息包括Google等搜索引擎用来确定网页内容的索引为目的。 它们以HTML页面的<code>HEAD</code>部分中的一些标签的形式存在。 要获取有关网页的元信息，请使用下面的代码。</p> 
+ <pre><code class="lang-java">try
+{
+    Document document = Jsoup.parse(new File("C:/Users/zkpkhua/Desktop/yiibai-index.html"), "utf-8");
+
+    String description = document.select("meta[name=description]").get(0).attr("content");  
+    System.out.println("Meta description : " + description);  
+
+    String keywords = document.select("meta[name=keywords]").first().attr("content");  
+    System.out.println("Meta keyword : " + keywords);  
+} 
+catch (IOException e) 
+{
+    e.printStackTrace();
+}
+</code></pre> 
+ <h3 id="h3-9-html-"><a name="9. 在HTML页面中获取表单属性" class="reference-link"></a><span class="header-link octicon octicon-link"></span>9. 在HTML页面中获取表单属性</h3>
+ <p>在网页中获取表单输入元素非常简单。 使用唯一ID查找FORM元素; 然后找到该表单中存在的所有INPUT元素。</p> 
+ <pre><code class="lang-java">Document doc = Jsoup.parse(new File("c:/temp/yiibai-index.html"),"utf-8");  
+Element formElement = doc.getElementById("loginForm");  
+
+Elements inputElements = formElement.getElementsByTag("input");  
+for (Element inputElement : inputElements) {  
+    String key = inputElement.attr("name");  
+    String value = inputElement.attr("value");  
+    System.out.println("Param name: "+key+" \nParam value: "+value);  
+}
+</code></pre> 
+ <h3 id="h3-10-"><a name="10. 更新元素的属性/内容" class="reference-link"></a><span class="header-link octicon octicon-link"></span>10. 更新元素的属性/内容</h3>
+ <p>只要您使用上述方法找到您想要的元素; 可以使用Jsoup API来更新这些元素的属性或innerHTML。 例如，想更新文档中存在的“<code>rel = nofollow</code>”的所有链接。</p> 
+ <pre><code class="lang-java">try
+{
+    Document document = Jsoup.parse(new File("C:/Users/zkpkhua/Desktop/yiibai.com.html"), "utf-8");
+    Elements links = document.select("a[href]");  
+    links.attr("rel", "nofollow");
+} 
+catch (IOException e) 
+{
+    e.printStackTrace();
+}
+</code></pre> 
+ <h3 id="h3-10-html-xss-"><a name="10. 消除不信任的HTML(以防止XSS)" class="reference-link"></a><span class="header-link octicon octicon-link"></span>10. 消除不信任的HTML(以防止XSS)</h3>
+ <p>假设在应用程序中，想显示用户提交的HTML片段。 例如 用户可以在评论框中放入HTML内容。 这可能会导致非常严重的问题，如果您允许直接显示此HTML。 用户可以在其中放入一些恶意脚本，并将用户重定向到另一个脏网站。</p> 
+ <p>为了清理这个HTML，Jsoup提供<code>Jsoup.clean()</code>方法。 此方法期望HTML格式的字符串，并将返回清洁的HTML。 要执行此任务，Jsoup使用白名单过滤器。 jsoup白名单过滤器通过解析输入HTML(在安全的沙盒环境中)工作，然后遍历解析树，只允许将已知安全的标签和属性(和值)通过清理后输出。</p> 
+ <p>它不使用正则表达式，这对于此任务是不合适的。</p> 
+ <p>清洁器不仅用于避免XSS，还限制了用户可以提供的元素的范围：您可以使用文本，强元素，但不能构造<code>div</code>或表元素。</p> 
+ <pre><code class="lang-java">String dirtyHTML = "&lt;p&gt;&lt;a href='http://www.yiibai.com/' onclick='sendCookiesToMe()'&gt;Link&lt;/a&gt;&lt;/p&gt;";
+
+String cleanHTML = Jsoup.clean(dirtyHTML, Whitelist.basic());
+
+System.out.println(cleanHTML);
+</code></pre> 
+ <p>执行后输出结果如下 -</p> 
+ <pre><code class="lang-java">&lt;p&gt;&lt;a href="http://www.yiibai.com/" rel="nofollow"&gt;Link&lt;/a&gt;&lt;/p&gt;
+</code></pre>
+ <br>      
+</div></body></html>

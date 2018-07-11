@@ -1,0 +1,140 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">SQLite主键</h1><div style="width:100%;float:left;" class="article-content">   
+ <p>SQLite主键是用于唯一定义行记录的一个简单字段或多个字段的组合。一个表只能有一个主键。</p> 
+ <p>主键的值不可以是一个<code>NULL</code>值。</p> 
+ <h2 id="h2-u521Bu5EFAu4E3Bu952E"><a name="创建主键" class="reference-link"></a><span class="header-link octicon octicon-link"></span>创建主键</h2>
+ <p>主键通常在创建表时一同创建。在执行<code>CREATE TABLE</code>语句时可以直接定义主键。</p> 
+ <p><strong>语法：</strong></p> 
+ <pre><code class="lang-sql">CREATE TABLE table_name  
+(  
+    column1 datatype [ NULL | NOT NULL ],  
+    column2 datatype [ NULL | NOT NULL ],  
+    ......  
+    CONSTRAINT constraint_name PRIMARY KEY (pk_col1, pk_col2, ... pk_col_n)  
+);
+</code></pre> 
+ <p><strong>参数说明：</strong></p> 
+ <ul> 
+  <li><em>table_name</em>：指定要创建的表的名称。</li>
+  <li><em>column1</em>，<em>column2</em>：指定要在表中创建的列。</li>
+  <li><em>constraint_name</em>：指定主键的名称。</li>
+  <li><em>pk_col1</em>，<em>pk_col2</em>，<em>… pk_col_n</em>：它指定构成主键的列。</li>
+ </ul> 
+ <p><strong>示例：</strong></p> 
+ <p>创建一个“<code>workers</code>”表，其中<code>worker_id</code>列是表的主键。</p> 
+ <pre><code class="lang-sql">CREATE TABLE workers  
+(
+    worker_id INTEGER PRIMARY KEY,  
+    last_name VARCHAR NOT NULL,  
+    first_name VARCHAR,  
+    join_date DATE  
+);
+</code></pre> 
+ <h2 id="h2-u6DFBu52A0u4E3Bu952E"><a name="添加主键" class="reference-link"></a><span class="header-link octicon octicon-link"></span>添加主键</h2>
+ <p>当没有在<code>CREATE TABLE</code>语句中定义主键时，也可以在创建表后再添加主键。</p> 
+ <p>需要注意的是，不能使用<code>ALTER TABLE</code>语句来创建主键。在SQLite中需要先创建一个与原表一样的新表，并在这个新表上创建主键，然后复制旧表中的所有数据到新表中就可以了。</p> 
+ <p><strong>语法</strong></p> 
+ <pre><code class="lang-sql">PRAGMA foreign_keys=off;  
+BEGIN TRANSACTION;  
+ALTER TABLE table_name RENAME TO old_table;  
+CREATE TABLE table_name  
+(  
+    column1 datatype [ NULL | NOT NULL ],  
+    column2 datatype [ NULL | NOT NULL ],  
+    ...  
+    CONSTRAINT constraint_name PRIMARY KEY (pk_col1, pk_col2, ... pk_col_n)  
+);  
+INSERT INTO table_name SELECT * FROM old_table;  
+COMMIT;  
+PRAGMA foreign_keys=on;
+</code></pre> 
+ <p><strong>参数说明：</strong></p> 
+ <ul> 
+  <li><em>table_name</em>：指定要创建含有主键的表的名称。</li>
+  <li><em>old_table</em>：指定要被修表的名称。</li>
+  <li><em>column1</em>，<em>column2</em>：指定要在表中创建的列。</li>
+  <li><em>constraint_name</em>：指定主键的名称。</li>
+  <li><em>pk_col1</em>，<em>pk_col2</em>，<em>… pk_col_n</em>：它指定构成主键的列。</li>
+ </ul> 
+ <p><strong>示例：</strong></p> 
+ <p>首先创建一个没有主键的表：<code>employees</code>，如下语句 - </p> 
+ <pre><code class="lang-sql">CREATE TABLE employees  
+(
+    employee_id INTEGER,  
+    last_name VARCHAR NOT NULL,  
+    first_name VARCHAR,  
+    hire_date DATE  
+);
+</code></pre> 
+ <p>现在，运行以下命令将“<code>employee_id</code>”列设置成为主键。</p> 
+ <pre><code class="lang-sql">PRAGMA foreign_keys=off;  
+BEGIN TRANSACTION;  
+ALTER TABLE employees RENAME TO old_employees;  
+CREATE TABLE employees  
+(  
+    employee_id INTEGER,  
+    last_name VARCHAR NOT NULL,  
+    first_name VARCHAR,  
+    hire_date DATE,  
+    CONSTRAINT employees_pk PRIMARY KEY (employee_id)  
+);  
+INSERT INTO employees SELECT * FROM old_employees;  
+COMMIT;  
+PRAGMA foreign_keys=on;
+</code></pre> 
+ <p>现在，它会将<code>employees</code>表重命名为<code>old_employees</code>，然后创建一个新表<code>employees</code>并创建主键，然后从<code>old_employees</code>表中将所有数据传输到新表 <code>employees</code>中。</p> 
+ <p>最后删除旧表：<code>old_employees</code>。</p>   
+ <pre><code class="lang-sql">DROP TABLE old_employees;
+</code></pre> 
+ <h2 id="h2-u5220u9664u4E3Bu952E"><a name="删除主键" class="reference-link"></a><span class="header-link octicon octicon-link"></span>删除主键</h2>
+ <p>与添加主键一样，不能使用<code>ALTER TABLE</code>语句来删除主键。需要创建一个没有(删除)主键的新表，并将数据复制到此新表中。</p> 
+ <p><strong>语法</strong></p> 
+ <pre><code class="lang-sql">PRAGMA foreign_keys=off;  
+BEGIN TRANSACTION;  
+ALTER TABLE table_name RENAME TO old_table;  
+CREATE TABLE table_name  
+(  
+    column1 datatype [ NULL | NOT NULL ],  
+    column2 datatype [ NULL | NOT NULL ],  
+    ...  
+);  
+INSERT INTO table_name SELECT * FROM old_table;  
+COMMIT;  
+PRAGMA foreign_keys=on;
+</code></pre> 
+ <p><strong>参数说明</strong></p> 
+ <ul> 
+  <li><em>table_name</em> - 指定要从中删除主键的表的名称。</li>
+  <li><em>old_table</em> - 指定在删除主键后再创建新表时，将要删除拥有主键的表名称。</li>
+ </ul> 
+ <p><strong>示例：</strong></p> 
+ <p>假设有一个表<code>engineers</code>，并有一个主键：<code>engineer_id</code>，现在要删除这个<code>engineer_id</code>主键。</p> 
+ <pre><code class="lang-sql">CREATE TABLE engineers  
+(
+    engineer_id INTEGER,  
+    engineerr_name VARCHAR NOT NULL,  
+    address VARCHAR,  
+    city VARCHAR,  
+    CONSTRAINT engineers_pk PRIMARY KEY (engineer_id)  
+);
+</code></pre> 
+ <p>现在，运行以下命令删除主键。</p> 
+ <pre><code class="lang-sql">PRAGMA foreign_keys=off;  
+BEGIN TRANSACTION;  
+ALTER TABLE engineers RENAME TO old_engineers;  
+CREATE TABLE engineers  
+(  
+    engineer_id INTEGER,  
+    engineer_name VARCHAR NOT NULL,  
+    address VARCHAR,  
+    city VARCHAR  
+);  
+INSERT INTO engineers SELECT * FROM old_engineers;  
+COMMIT;  
+PRAGMA foreign_keys=on;
+</code></pre> 
+ <p>执行上面语句后，主键现在从<code>engineers</code>表中删除。 但是原来的表现在被重命名为<code>old_engineers</code>。</p> 
+ <p>现在删除<code>old_engineers</code>表，如下语句 - </p> 
+ <pre><code class="lang-sql">DROP TABLE old_engineers;
+</code></pre>
+ <br>      
+</div></body></html>

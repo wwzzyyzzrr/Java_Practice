@@ -1,0 +1,159 @@
+<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">JavaFX集合</h1><div style="width:100%;float:left;" class="article-content">   
+ <h2 id="h2-javafx-"><a name="JavaFX集合" class="reference-link"></a><span class="header-link octicon octicon-link"></span>JavaFX集合</h2>
+ <p>JavaFX中的集合由<code>javafx.collections</code>包定义，<code>javafx.collections</code>包由以下接口和类组成：</p> 
+ <p><strong>接口</strong></p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>接口</th> 
+    <th>描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>ObservableList</td> 
+    <td>允许跟踪更改的列表</td> 
+   </tr> 
+   <tr> 
+    <td>ListChangeListener</td> 
+    <td>接收更改通知的接口</td> 
+   </tr> 
+   <tr> 
+    <td>ObservableMap</td> 
+    <td>允许跟踪更改的映射</td> 
+   </tr> 
+   <tr> 
+    <td>MapChangeListener</td> 
+    <td>从<code>ObservableMap</code>接收更改通知的接口</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <p><strong>类</strong></p> 
+ <table> 
+  <thead> 
+   <tr> 
+    <th>类</th> 
+    <th>描述</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr> 
+    <td>FXCollections</td> 
+    <td>实用程序类映射到<code>java.util.Collections</code></td> 
+   </tr> 
+   <tr> 
+    <td>ListChangeListener.Change</td> 
+    <td>表示对<code>ObservableList</code>所做的更改</td> 
+   </tr> 
+   <tr> 
+    <td>MapChangeListener.Change</td> 
+    <td>表示对<code>ObservableMap</code>所做的更改</td> 
+   </tr> 
+  </tbody> 
+ </table> 
+ <h2 id="h2-u793Au4F8B"><a name="示例" class="reference-link"></a><span class="header-link octicon octicon-link"></span>示例</h2>
+ <p>以下代码显示了如何使用<code>ObservableList</code>，<code>ObservableMap</code>和<code>FXCollections</code>。</p> 
+ <pre><code class="lang-java">import java.util.ArrayList;
+import java.util.List;
+
+import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
+
+public class Main {
+
+    public static void main(String[] args) {
+        List&lt;String&gt; list = new ArrayList&lt;String&gt;();
+
+        ObservableList&lt;String&gt; observableList = FXCollections.observableList(list);
+        observableList.addListener(new ListChangeListener() {
+            @Override
+            public void onChanged(ListChangeListener.Change change) {
+                System.out.println("有修改操作!");
+            }
+        });
+        observableList.add("item one");
+        list.add("item two");
+        System.out.println("Size: " + observableList.size());
+
+    }
+}
+</code></pre> 
+ <p>上面的代码生成以下结果。</p> 
+ <pre><code class="lang-java">有修改操作!
+Size: 2
+</code></pre> 
+ <h2 id="h2--2"><a name="实例-2" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实例-2</h2>
+ <p>以下代码显示了如何监听<code>ObservableMap</code>上的更改。</p> 
+ <pre><code class="lang-java">import java.util.HashMap;
+import java.util.Map;
+
+import javafx.collections.FXCollections;
+import javafx.collections.MapChangeListener;
+import javafx.collections.ObservableMap;
+
+public class Main {
+
+  public static void main(String[] args) {
+    Map&lt;String, String&gt; map = new HashMap&lt;String, String&gt;();
+    ObservableMap&lt;String, String&gt; observableMap = FXCollections
+        .observableMap(map);
+    observableMap.addListener(new MapChangeListener() {
+      @Override
+      public void onChanged(MapChangeListener.Change change) {
+        System.out.println("change! ");
+      }
+    });
+    observableMap.put("key 1", "value 1");
+    map.put("key 2", "value 2");
+
+  }
+}
+</code></pre> 
+ <p>上面的代码生成以下结果。</p>   
+ <pre><code class="lang-java">change!
+</code></pre> 
+ <h2 id="h2--3"><a name="实例-3" class="reference-link"></a><span class="header-link octicon octicon-link"></span>实例-3</h2>
+ <p>以下代码显示了如何找出已更改的内容。</p> 
+ <pre><code class="lang-java">import java.util.ArrayList;
+import java.util.List;
+import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
+
+public class Main {
+
+    public static void main(String[] args) {
+        List&lt;String&gt; list = new ArrayList&lt;String&gt;();
+
+        ObservableList&lt;String&gt; observableList = FXCollections.observableList(list);
+        observableList.addListener(new ListChangeListener() {
+
+            @Override
+            public void onChanged(ListChangeListener.Change change) {
+                System.out.println("Detected a change! ");
+                while (change.next()) {
+                    System.out.println("Was added? " + change.wasAdded());
+                    System.out.println("Was removed? " + change.wasRemoved());
+                    System.out.println("Was replaced? " + change.wasReplaced());
+                    System.out.println("Was permutated? " + change.wasPermutated());
+                }
+            }
+        });// =&gt; W W  w . y Ii B aI. CO  M
+        observableList.add("item one");
+        list.add("item two");
+        System.out.println("Size: " + observableList.size());
+
+    }
+}
+</code></pre> 
+ <p>上面的代码生成以下结果。</p> 
+ <pre><code class="lang-java">Detected a change! 
+Was added? true
+Was removed? false
+Was replaced? false
+Was permutated? false
+Size: 2
+</code></pre>
+ <br>      
+</div></body></html>
