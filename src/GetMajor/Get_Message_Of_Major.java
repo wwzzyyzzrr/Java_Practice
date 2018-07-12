@@ -121,7 +121,9 @@ public class Get_Message_Of_Major  {
     }
     public static void main(String[] args) throws Exception {
         Scanner sc=new Scanner(System.in);
+        System.out.println("Input your studentId and the password");
         get_major(sc.next(),sc.next());
+        System.out.println("Input your PassWord Of the DataBase");
         String pass =sc.next();
         insertTel_test(readCSV("C:\\Users\\Metaron\\OneDrive\\Documents\\学生细节.csv"),"major.student_detail",pass);
         insertTel_test(readCSV("C:\\Users\\Metaron\\OneDrive\\Documents\\总览.csv"),"major.major_detail",pass);
@@ -132,15 +134,12 @@ public class Get_Message_Of_Major  {
         try {
             ArrayList<String> list = new ArrayList<String>();
             BufferedReader reader = new BufferedReader(new FileReader(location));// 文件名
-            // reader.readLine();//第一行信息，为标题信息，不用,如果需要，注释掉
             String line = null;
             while ((line = reader.readLine()) != null) {
                 String item[] = line.split("/n");// CSV格式文件为逗号分隔符文件，这里根据逗号切分
                 String last = item[item.length - 1];// 获取到的数据
-                // int value = Integer.parseInt(last);//如果是数值，可以转化为数值
 
                 list.add(last);
-                // System.out.println(last);
             }
             return list;
         } catch (Exception e) {
