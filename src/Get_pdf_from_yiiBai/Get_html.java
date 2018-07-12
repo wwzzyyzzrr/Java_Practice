@@ -9,7 +9,7 @@ import java.io.*;
 import java.util.Arrays;
 
 public class Get_html {
-
+    private static String html;
     private static void root(String url) throws IOException {
         Response rs = Jsoup.connect(url).execute();
         Document doc= rs.parse();
@@ -23,11 +23,13 @@ public class Get_html {
             name[i-1]=Eles.get(i).select("a").text();
         }
         for(int i=0;i<list.length;i++){
-            get_folder_list(list[i],name[i]);
+            html+="<p></p>" +
+                    "<h1 class=\"Tech-title\" style=\"text-align:center;\">"+name[i]+"</h1>";
+            get_folder_list(list[i]);
         }
     }
 
-    private static void get_folder_list(String url, String folder) throws IOException {
+    private static void get_folder_list(String url) throws IOException {
         Response rs = Jsoup.connect(url).execute();
         Document doc= rs.parse();
         Elements Eles= doc.getElementsByClass("pageside").first()
@@ -48,25 +50,23 @@ public class Get_html {
                 name[i-1] += a;
         }
         for(int i=0;i<list.length;i++){
-            get_Artical_list(list[i],folder+"/"+name[i]);
+            html+="<p></p>" +
+                    "<h2 class=\"SubTech-title\" style=\"text-align:center;\">"+name[i]+"</h2>" +
+                    "<h3 class=\"BranchTech-title\" style=\"text-align:center;\">"+name[i]+"</h3>";
+            get_Artical_list(list[i]);
         }
     }
 
-    private static void get_Artical_list(String url,String subfolder) throws IOException {
-        String temp=subfolder;
-        File file=new File("src/"+subfolder);
-        file.mkdirs();
+    private static void get_Artical_list(String url) throws IOException {
         String[] list = get_web_list(url);
         boolean check=false;
 
         for(int i=0;i<list.length;i++){
             if(list[i].charAt(0)=='#') {
-                subfolder =temp+"/"+list[i].substring(1);
-                file=new File("src/"+subfolder);
-                file.mkdirs();
+                html+="<h3 class=\"BranchTech-title\" style=\"text-align:center;\">"+list[i].substring(1)+"</h3>";
             }
             else{
-                get_html_doc(list[i],subfolder);
+                get_html_doc(list[i]);
             }
         }
 
@@ -80,7 +80,12 @@ public class Get_html {
         int n=Eles.size();
         String[] list= new String[n];
         //list[0] = doc.body().getElementsByClass("article-title").first().text();
-        System.out.println(list[0]);
+        try {
+            System.out.println(doc.body().getElementsByClass("article-title").first().text());
+        }
+        catch(Exception e){
+
+        }
         for(int i=0;i<Eles.size();i++){
             if(Eles.get(i).select("a").attr("href").isEmpty())
                 list[i]='#'+Eles.get(i).select("a").text();
@@ -90,14 +95,16 @@ public class Get_html {
         return list;
     }
 
-    private static void get_html_doc( String url, String subfolder)  {
+    private static void get_html_doc( String url)  {
         Response rs = null;
         try {
             rs = Jsoup.connect(url).execute();
             Document doc = rs.parse();
             Element Ele = doc.body().getElementsByClass("article-content").first();
-            Ele.getElementsByTag("input").first().remove();
-            Ele.getElementsByTag("input").first().remove();
+            while (Ele.getElementsByTag("input").size()>0)
+                Ele.getElementsByTag("input").first().remove();
+            while (Ele.getElementsByTag("output").size()>0)
+                Ele.getElementsByTag("output").first().remove();
             Ele.getElementsByTag("ul").last().remove();
             Ele.getElementsByTag("blockquote").last().remove();
             Ele.getElementsByTag("h4").last().remove();
@@ -108,13 +115,23 @@ public class Get_html {
                 E.remove();
             for(Element E:Ele.getElementsByTag("script"))
                 E.remove();
-            String x="<html>" +
-                    "<head><meta charset=\"utf-8\"></meta></head>" +
-                    "<body>";
+            Elements Eles=Ele.getElementsByTag("h3");
+            for(Element E:Eles){
+                E.tagName("h6");
+            }
+            Eles=Ele.getElementsByTag("h2");
+            for(Element E:Eles){
+                E.tagName("h5");
+            }
+            Eles=Ele.getElementsByTag("h1");
+            for(Element E:Eles){
+                E.tagName("h4");
+            }
+            String x="";
             x+=doc.body().getElementsByClass("article-title").first();
             x+=Ele;
-            x+="</body></html>";
-            String folder="";
+            html+=x;
+            /*String folder="";
             if(!subfolder.isEmpty()){
                 folder+="/"+subfolder;
             }
@@ -134,14 +151,22 @@ public class Get_html {
             FileOutputStream fileout=new FileOutputStream(new File(path));
             byte[] bt=x.getBytes();
             fileout.write(bt,0,bt.length);
-            fileout.close();
+            fileout.close();*/
         } catch (Exception e) {
 
         }
     }
 
     public static void main(String[] args) throws IOException {
+        html="<html>" +
+                "<head><meta charset=\"utf-8\"></meta></head>" +
+                "<body>";
         root("https://www.yiibai.com");
-
+        html+="</body></html>";;
+        FileOutputStream fileout=new FileOutputStream(new File("src/yiiBai_教程.html"));
+        byte[] bt=html.getBytes();
+        fileout.write(bt,0,bt.length);
+        fileout.close();
+        //get_html_doc("https://www.yiibai.com/ai_with_python/with_python_getting_started.html","");
     }
 }

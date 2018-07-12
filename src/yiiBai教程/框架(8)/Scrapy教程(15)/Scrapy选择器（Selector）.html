@@ -1,161 +1,0 @@
-<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Scrapy选择器（Selector）</h1><div style="width:100%;float:left;" class="article-content">   
- <div>
-   当刮取网页中的数据，需要通过使用XPath或CSS表达式来实现选择器机制提取HTML源代码的某些部分。选择器是在Python语言的XML和LXML库建成的 
- </div> 
- <div> 
-  <div>
-    我们使用下面的代码片段在本章中来定义选择器不同的概念： 
-  </div> 
-  <pre>&lt;html&gt;
- &lt;head&gt;
-  &lt;title&gt;My Website&lt;/title&gt;
- &lt;/head&gt;
- &lt;body&gt;
-  &lt;span&gt;Scrapy Hello world&lt;/span&gt;
-  &lt;div class='links'&gt;
-   &lt;a href='one.html'&gt;Link 1&lt;img src='image1.jpg'/&gt;&lt;/a&gt;
-   &lt;a href='two.html'&gt;Link 2&lt;img src='image2.jpg'/&gt;&lt;/a&gt;
-   &lt;a href='three.html'&gt;Link 3&lt;img src='image3.jpg'/&gt;&lt;/a&gt;
-  &lt;/div&gt;
- &lt;/body&gt;
-&lt;/html&gt;</pre> 
-  <h2> 
-   <div>
-     构造选择器 
-   </div> </h2> 
-  <p> 可以通过&nbsp;text&nbsp;或&nbsp;TextResponse&nbsp;对象构造选择器类的实例。根据所提供的输入类型，选择器选择以下规则： </p> 
-  <pre>from scrapy.selector import Selector
-from scrapy.http import HtmlResponse</pre> 
-  <div>
-    使用上面的代码，可以从文本建构如下： 
-  </div> 
-  <pre>Selector(text=body).xpath('//span/text()').extract()</pre> 
-  <div>
-    它显示的结果为： 
-  </div> 
-  <pre>[u'Hello world!!!']</pre> 
-  <div>
-    您可以从响应构建： 
-  </div> 
-  <pre>response = HtmlResponse(url='http://yiibai.com', body=body)
-Selector(response=response).xpath('//span/text()').extract()</pre> 
-  <p> 它显示的结果为： </p> 
-  <pre>[u'Hello world!!!']</pre> 
-  <h2> 
-   <div>
-     使用选择器 
-   </div> </h2> 
-  <div>
-    使用上面的示例代码片段，您可以构建XPath选择&nbsp;title&nbsp;标签定义的标题文本，如下图所示： 
-  </div> 
-  <pre>&gt;&gt;response.selector.xpath('//title/text()')&nbsp;</pre> 
-  <p> 现在，您可以通过使用 .extract()方法提取文本数据，如下所示： </p> 
-  <pre>&gt;&gt;response.xpath('//title/text()').extract()</pre> 
-  <div>
-    它将产生结果如下： 
-  </div> 
-  <pre>[u'My Website']</pre> 
-  <div>
-    它显示所有元素的名称，如下所示： 
-  </div> 
-  <pre>&gt;&gt;response.xpath('//div[@class="links"]/a/text()').extract()</pre> 
-  <div>
-    它提供的元素显示如下： 
-  </div> 
-  <pre>Link 1
-Link 2
-Link 3</pre> 
-  <div>
-    如果要提取的第一个元素，那么使用&nbsp;.extract_first()方法，如下图所示： 
-  </div> 
-  <pre>&gt;&gt;response.xpath('//div[@class="links"]/a/text()').extract_first()</pre> 
-  <div>
-    它将显示元素为： 
-  </div> 
-  <pre>Link 1</pre> 
-  <h2> 
-   <div>
-     嵌套选择器 
-   </div> </h2> 
-  <div>
-    使用上面的代码，通过使用.xpath()方法可以嵌套选择器来显示页面的链接和图像源，如下图所示： 
-  </div> 
-  <pre>links = response.xpath('//a[contains(@href, "image")]')
-for index, link in enumerate(links):
-    args = (index, link.xpath('@href').extract(), link.xpath('img/@src').extract())
-    print 'The link %d pointing to url %s and image %s' % args</pre> 
-  <div>
-    它将显示的结果为： 
-  </div> 
-  <pre>Link 1 pointing to url [u'one.html'] and image [u'image1.jpg']
-Link 2 pointing to url [u'two.html'] and image [u'image2.jpg']
-Link 3 pointing to url [u'three.html'] and image [u'image3.jpg']</pre> 
-  <h2> 
-   <div>
-     使用正则表达式选择器 
-   </div> </h2> 
-  <p> Scrapy&nbsp;允许使用&nbsp;.re()&nbsp;方法正则表达式来提取数据。从上面的HTML代码中可提取图像名称，如下图所示： </p> 
-  <pre>&gt;&gt;response.xpath('//a[contains(@href, "image")]/text()').re(r'Name:\s*(.*)')</pre> 
-  <div>
-    上面一行代码显示图像的名称为： 
-  </div>   
-  <pre>[u'Link 1',
- u'Link 2',
- u'Link 3']</pre> 
-  <h2> 
-   <div>
-     用相对的XPaths 
-   </div> </h2> 
-  <p> 当您使用XPaths，它是从 / 开始工作的，嵌套选择器和XPath都关联到文件的绝对路径，而不是选择器的相对路径。 </p> 
-  <div>
-    如果想提取&lt;p&gt;元素，那么首先获得所有 div 元素： 
-  </div> 
-  <pre>&gt;&gt;mydiv = response.xpath('//div')</pre> 
-  <p> 接下来，可以在里面提取所有 'P' 元素，在XPath前缀加上一个句点 .//p ，如下图所示： </p> 
-  <pre>&gt;&gt;for p in mydiv.xpath('.//p').extract()</pre> 
-  <h2> 
-   <div>
-     使用EXSLT扩展 
-   </div> </h2> 
-  <p> EXSLT是一个社区它发出扩展XML文档转换为XHTML文档XSLT(可扩展样式表语言转换)。可以使用 EXSLT 扩展与 XPath 表达式来注册名称空间，如下列表中所示： </p> 
-  <table border="1" cellpadding="2" cellspacing="0"> 
-   <tbody> 
-    <tr> 
-     <th style="border:1px solid #999999;"> S.N. </th> 
-     <th style="border:1px solid #999999;"> 
-      <div>
-        前缀用法 
-      </div> </th> 
-     <th style="border:1px solid #999999;"> 
-      <div>
-        命名空间 
-      </div> </th> 
-    </tr> 
-    <tr> 
-     <td style="border:1px solid #999999;"> 1 </td> 
-     <td style="border:1px solid #999999;"> re<br> 
-      <div>
-        正则表达式 
-      </div> </td> 
-     <td style="border:1px solid #999999;"> <a target="_blank" href="http://exslt.org/regexp/index.html">http://exslt.org/regular-expressions</a> </td> 
-    </tr> 
-    <tr> 
-     <td style="border:1px solid #999999;"> 2 </td> 
-     <td style="border:1px solid #999999;"> set<br> 
-      <div>
-        集合操作 
-      </div> </td> 
-     <td style="border:1px solid #999999;"> <a target="_blank" href="http://exslt.org/set/index.html">http://exslt.org/sets</a> </td> 
-    </tr> 
-   </tbody> 
-  </table> 
-  <div>
-    您可以检查在上一节中使用正则表达式提取数据的代码格式。 
-  </div> 
-  <div>
-    有一些关于 XPath 的提示，使用 XPath 与 Scrapy 选择器时非常有用。欲了解更多信息，请点击此
-   <a target="_blank" href="https://www.yiibai.com/scrapy/xpth_tips.html">链接</a>。 
-  </div> 
- </div>
- <br>      
-</div></body></html>

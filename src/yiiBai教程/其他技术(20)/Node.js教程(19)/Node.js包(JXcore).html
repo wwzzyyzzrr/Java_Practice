@@ -1,50 +1,0 @@
-<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Node.js包(JXcore)</h1><div style="width:100%;float:left;" class="article-content">   
- <p> Node.js的代码是开放的，并准备好被复制像任何其他Javascript代码。但现在它不可能的了。<strong>JXcore</strong>&nbsp;这是一个开源项目，引入了包装和源文件和其他资源加密成JX包一个独特的功能。</p> 
- <p> 考虑大型项目有包括许多文件。<strong>JXcore</strong>非常多能打包它们全部成单个文件，以简化的分布。 本教程会给你一个有关从安装JXcore开始的整个过程快速概述。</p> 
- <h2> JXcore 安装</h2> 
- <p> 安装<strong>JXcore</strong>很简单，只要只需下载并解压包，它提供了JX二进制入手。因此，让我们遵循以下步骤：</p> 
- <h3> 步骤 1</h3> 
- <p> 从&nbsp;<a target="_blank" href="http://jxcore.com/downloads/" rel="nofollow" targte="_blank">http://jxcore.com/downloads/</a>下载JXcore包, 根据您的操作系统和计算机体系结构。我们这里下载的是一个在Cenots在64位机器上运行的包。</p> 
- <pre class="prettyprint notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
-$ wget https://s3.amazonaws.com/nodejx/jx_rh64.zip&nbsp;</pre> 
- <h3> 步骤&nbsp;2</h3> 
- <p> 解压下载的文件&nbsp;jx_rh64.zip&nbsp;复制JX二进制到 /usr/bin 或 根据您的系统设置任何其他目录。</p> 
- <pre class="prettyprint notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
-$ unzip jx_rh64.zip
-$ cp jx_rh64/jx /usr/bin</pre> 
- <h3> 第3步</h3> 
- <p> 最后，设置PATH变量适当地运行JX在你喜欢任何地方。</p> 
- <pre class="prettyprint notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
-$ export PATH=$PATH:/usr/bin</pre> 
- <h3> 第4步</h3> 
- <p> 可以通过发出一个简单的命令验证安装。如果一切正常，那么你会发现它打印其版本号如下：</p> 
- <pre class="prettyprint notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
-$ jx --version
-v0.10.32</pre> 
- <h2> 打包代码</h2> 
- <p> 考虑经过保存的所有文件，包括Node.js的主文件index.js和所有本地安装的模块以下目录项。</p> 
- <pre class="result notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace;  border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
-drwxr-xr-x  2 root root  4096 Nov 13 12:42 images
--rwxr-xr-x  1 root root 30457 Mar  6 12:19 index.html
--rwxr-xr-x  1 root root 30452 Mar  1 12:54 index.js
-drwxr-xr-x 23 root root  4096 Jan 15 03:48 node_modules
-drwxr-xr-x  2 root root  4096 Mar 21 06:10 scripts
-drwxr-xr-x  2 root root  4096 Feb 15 11:56 style</pre> 
- <p> 要打包上面的项目，只需要到这个目录里面并发出以下命令JX，假设index.js是您的Node.js项目项文件：</p>   
- <pre class="result notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace;  border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
-$ jx package index.js index&nbsp;</pre> 
- <p> 在这里，您可以替代索引的任何其他包名，就使用它，因为我不想让我的主文件名为index.jx。然而，上面的命令将包一切，将创建下列两个文件：</p> 
- <ul> 
-  <li> <p> <strong>index.jxp</strong>&nbsp;这是一个中间文件，其中包含编译项目所需的完整的项目细节。</p> </li> 
-  <li> <p> <strong>index.jx</strong>&nbsp;这是具有完整的软件包，并准备发现客户端或生产环境中的二进制文件。</p> </li> 
- </ul> 
- <h2> 启动JX文件</h2> 
- <p> 考虑最初Node.js的项目运行如下：</p> 
- <pre class="result notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace;  border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
-$ node index.js command_line_arguments</pre> 
- <p> 现在，编译使用JXcore包后，就可以开始如下：</p> 
- <pre class="result notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace;  border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
-$ jx index.jx command_line_arguments</pre> 
- <p> 对于进一步的细节JXcore，可以查看其官方网站</p> 
- <br>      
-</div></body></html>

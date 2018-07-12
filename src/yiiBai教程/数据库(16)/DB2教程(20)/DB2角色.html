@@ -1,54 +1,0 @@
-<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">DB2角色</h1><div style="width:100%;float:left;" class="article-content">   
- <p> 角色是一个数据库对象，组织可以通过使用 GRANT 语句分配给用户，组，PUBLIC或其他角色多重权限。</p> 
- <h2> 对角色的限制</h2> 
- <ul> 
-  <li> 角色不能拥有数据库对象。</li> 
-  <li> 授予权限和角色到组在创建以下数据库对象不会考虑。 
-   <ul> 
-    <li> 软件包包含静态SQL</li> 
-    <li> 视图</li> 
-    <li> 物化查询表(MQT)</li> 
-    <li> 触发器</li> 
-    <li> SQL例程</li> 
-   </ul> </li> 
- </ul> 
- <h2> 创建并授予成员角色</h2> 
- <p> <strong>语法：</strong>[创建一个新的角色]</p> 
- <pre class="prettyprint notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
-db2 create role &lt;role_name&gt; </pre> 
- <p> <strong>例如：</strong>[创建一个名为'sales'增加了一些新表的作用，通过某个用户或组来管理]</p> 
- <pre class="prettyprint notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
-db2 create role sales </pre> 
- <p> <strong>输出：</strong></p> 
- <pre class="prettyprint notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
-DB20000I The SQL command completed successfully. </pre> 
- <h2> 从授予DBADM作用于特定的表</h2> 
- <p> <strong>语法：</strong>[授予的角色权限表]</p> 
- <pre class="prettyprint notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
-db2 grant select on table &lt;table_name&gt; to role &lt;role_name&gt; </pre> 
- <p> <strong>例如：</strong>[添加的权限来管理表“shope.books”以角色'sales']</p> 
- <pre class="prettyprint notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
-db2 grant select on table shope.books to role sales </pre> 
- <p> <strong>输出：</strong></p> 
- <pre class="prettyprint notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
-DB20000I  The SQL command completed successfully. </pre> 
- <p> 安全管理员授予角色所要求的用户。 （在使用此命令时，需要创建用户。）</p> 
- <p> <strong>语法：</strong>[将用户添加到角色]</p> 
- <pre class="prettyprint notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
-db2 grant role &lt;role_name&gt; to user &lt;username&gt; </pre> 
- <p> <strong>例如：</strong>[添加用户“mastanvali'一个角色'sales']</p>   
- <pre class="prettyprint notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
-db2 grant sales to user mastanvali  </pre> 
- <p> <strong>输出：</strong></p> 
- <pre class="prettyprint notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
-DB20000I  The SQL command completed successfully. </pre> 
- <h2> 角色层次</h2> 
- <p> 创建层次结构的角色，每个角色被授予的权限/籍着另一个角色。</p> 
- <p> <strong>语法：</strong>[ 语法之前创建一个“生产”的名字一个新的角色 ]</p> 
- <pre class="prettyprint notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
-db2 grant role &lt;roll_name&gt; to role &lt;role_name&gt;</pre> 
- <p> <strong>例如：</strong>[ 提供一个角色“sales”，以另一个角色“production”权限 ]</p> 
- <pre class="prettyprint notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
-db2 grant sales to role production </pre> 
- <br>      
-</div></body></html>

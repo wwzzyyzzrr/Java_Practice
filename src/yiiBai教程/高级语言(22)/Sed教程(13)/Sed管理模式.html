@@ -1,132 +1,0 @@
-<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Sed管理模式</h1><div style="width:100%;float:left;" class="article-content">   
- <p> 我们已经讨论了使用模式和保持缓冲区。现在我们就来探讨更多关于它们使用的例子。</p> 
- <h2> n 命令</h2> 
- <p> n命令打印出模式缓冲区的内容，清除模式缓冲器，读取下一行到模式缓冲区，并在其上施加命令。下面给出的是 n命令的语法。</p> 
- <pre class="result notranslate" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
-[address1[,address2]]n</pre> 
- <p> 下面是一个使用它打印指定的文件的内容n命令一个简单的例子：</p> 
- <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
-<span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">jerry</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">$ sed </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">'n'</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> books</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">txt </span></pre> 
- <p> 当执行上面的代码，它会列出下来的文件 books.text 内容：</p> 
- <pre class="result notranslate" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
-1) A Storm of Swords, George R. R. Martin, 1216 
-2) The Two Towers, J. R. R. Tolkien, 352 
-3) The Alchemist, Paulo Coelho, 197 
-4) The Fellowship of the Ring, J. R. R. Tolkien, 432 
-5) The Pilgrimage, Paulo Coelho, 288 
-6) A Game of Thrones, George R. R. Martin, 864 </pre> 
- <p> 让我们考虑有n个前3个 sed命令和正经过两个sed命令如下：</p> 
- <pre class="result notranslate" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
-Sed command #1 
-Sed command #2 
-Sed command #3 
-n command 
-Sed command #4 
-Sed command #5</pre> 
- <p> 这里，Sed应用于前三个命令对模式缓冲存储器，清除模式缓冲器，读取下一行到模式缓冲区，然后添加在第四和第五指令就可以了。</p> 
- <p> 保持缓冲器保存的数据，但用sed命令不能在保持缓冲器直接应用。因此，我们需要使保持缓冲器数据转换成模式缓冲区。Sed提供了x 命令模式和保持缓冲区的内容。下面的命令说明x命令。</p> 
- <p> 让我们稍微修 改books.txt 文件。该文件包含书名其次是它们的作者名称如下：</p> 
- <pre class="result notranslate" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
-A Storm of Swords 
-George R. R. Martin 
-The Two Towers 
-J. R. R. Tolkien 
-The Alchemist 
-Paulo Coelho 
-The Fellowship of the Ring 
-J. R. R. Tolkien 
-The Pilgrimage 
-Paulo Coelho 
-A Game of Thrones 
-George R. R. Martin </pre> 
- <p> 让我们交换两个缓冲区的内容。例如，下面的示例打印的作者只名称。</p> 
- <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
-<span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">jerry</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">$ sed </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">-</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">n </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">'x;n;p'</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> books</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">txt </span></pre> 
- <p> 在执行上面的代码，会得到如下结果：</p> 
- <pre class="result notranslate" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
-George R. R. Martin 
-J. R. R. Tolkien 
-Paulo Coelho 
-J. R. R. Tolkien 
-Paulo Coelho 
-George R. R. Martin </pre> 
- <p> 让我们来了解此命令的工作原理。</p> 
- <ul> 
-  <li> <p> 最初，Sed读取第一行，即A Storm of Swords入模式缓冲区中。</p> </li> 
-  <li> <p> x&nbsp;命令移动该行保持缓冲区。</p> </li> 
-  <li> <p> n&nbsp;读取下一行，即，George R. R. Martin到模式缓冲区。</p> </li> 
-  <li> <p> 将控制传递到该命令后跟n打印出模式缓冲区的内容。</p> </li> 
-  <li> <p> 这个过程一直重复，直到文件被读完。</p> </li> 
- </ul> 
- <p> 现在让我们印刷，这将导致印刷书籍的标题前交换缓冲区的内容。</p> 
- <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
-<span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">jerry</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">$ sed </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">-</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">n </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">'x;n;x;p'</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> books</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">txt </span></pre> 
- <p> 执行上面的代码，得到如下结果：</p> 
- <pre class="result notranslate" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
-A Storm of Swords
-The Two Towers
-The Alchemist
-The Fellowship of the Ring
-The Pilgrimage
-A Game of Thrones</pre> 
- <h2> h 命令</h2> 
- <p> h命令处理保持缓冲区。从模式缓冲区，以保持它的缓冲区拷贝数据。从保持现有的缓存数据被覆盖。需要注意的是-h命令不动的数据，它只是复制数据。因此，复制的数据保持，因为它是在模式缓冲区。下面给出的是-h命令的语法。</p> 
- <pre class="result notranslate" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
-[address1[,address2]]h </pre> 
- <p> 下面的命令打印标题-作家Paulo Coelho。</p> 
- <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
-<span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">jerry</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">$ sed </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">-</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">n </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">'/Paulo/!h; /Paulo/{x;p}'</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> books</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">txt </span></pre> 
- <p style="box-sizing: border-box; color: rgb(0, 0, 0); line-height: 24px; margin: 0em 0.2em 1em; padding: 0px; text-align: justify; font-family: 'Open Sans', Arial, sans-serif; font-size: 14px;"> 执行上面的代码，得到如下结果：</p> 
- <pre class="result notranslate" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
-The Alchemist 
-The Pilgrimage</pre> 
- <h2> H 命令</h2> 
- <p> h命令破坏了保持缓冲器以前的内容。这并不总是可以接受的，因为有时我们需要保留的内容。为了这个目的，sed提供了通过添加一个新行，在所述端部追加的内容，以保持缓冲器为H命令。 h和H的命令之间的唯一差别是，保持缓冲器前者重写数据，而后来的数据追加到保持缓冲器。它的语法类似于这是如下的h命令：</p> 
- <pre class="result notranslate" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
-[address1[,address2]]H</pre> 
- <p> 让我们再举一个例子。而不是仅打印书名这一次，打印其作者的名字了。下面的例子打印书名后面的作者姓名。</p> 
- <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
-<span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">jerry</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">$ sed </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">-</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">n </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">'/Paulo/!h; /Paulo/{H;x;p}'</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> books</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">txt </span></pre> 
- <p> 执行上面的代码，得到如下结果：</p>   
- <pre class="result notranslate" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
-The Alchemist 
-Paulo Coelho 
-The Pilgrimage
-Paulo Coelho</pre> 
- <h2> g 命令</h2> 
- <p> 我们学会了如何复制/追加模式缓冲区中的内容保存缓冲区。我们可以执行相反的功能呢？肯定是的！为了这个目的，Sed提供 g 命令其副本从保持缓冲器到模式缓冲区中的数据。而复制，从模式空间现有的数据被覆盖。下面给出了g命令的语法。</p> 
- <pre class="result notranslate" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
-[address1[,address2]]g</pre> 
- <p> 让我们考虑相同的例子- 在打印的书名和作者。这一次，我们将首先打印的作者和下一行，相应的题书的名字。下面的命令打印的作者Paulo Coelho，其次是它的书名的名字。</p> 
- <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
-<span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">jerry</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">$ sed </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">-</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">n </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">'/Paulo/!h; /Paulo/{p;g;p}'</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> books</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">txt </span></pre> 
- <p> 执行上面的代码，会得到如下结果：</p> 
- <pre class="result notranslate" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
-Paulo Coelho 
-The Alchemist 
-Paulo Coelho 
-The Pilgrimage</pre> 
- <h2> G 命令</h2> 
- <p> 同样，我们可以追加保持缓冲器中的内容到模式缓冲区。Sed提供G指令它通过添加一个新行，在末尾追加内容到图案缓冲区。它的语法是类似于g命令是如下：</p> 
- <pre class="result notranslate" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
-[address1[,address2]]G</pre> 
- <p> 现在，就让我们来它打印的作者Paulo Coelho随后其书名名称前面的例子。为了达到同样的效果，请执行以下sed命令。</p> 
- <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
-<span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">jerry</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">$ sed </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">-</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">n </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">'/Paulo/!h; /Paulo/{G;p}'</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> books</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">txt</span></pre> 
- <p> 执行上面的代码，会得到如下结果：</p> 
- <pre class="result notranslate" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
-Paulo Coelho 
-The Alchemist 
-Paulo Coelho 
-The Pilgrimage</pre> 
- <p> 可以修改上面的例子中，只需更换G指令之前，缓冲区的内容如下显示书名后面他们的作者：</p> 
- <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
-<span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">jerry</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">$ sed </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">-</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">n </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">'/Paulo/!h; /Paulo/{x;G;p}'</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> books</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">txt</span></pre> 
- <p> 执行上面的代码，会得到如下结果：</p> 
- <pre class="result notranslate" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
-The Alchemist 
-Paulo Coelho 
-The Pilgrimage 
-Paulo Coelho </pre> 
- <br>      
-</div></body></html>

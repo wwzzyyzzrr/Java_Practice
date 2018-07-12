@@ -1,189 +1,0 @@
-<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">AWK格式化打印</h1><div style="width:100%;float:left;" class="article-content">   
- <p style="box-sizing: border-box; color: rgb(0, 0, 0); line-height: 24px; margin: 0em 0.2em 1em; padding: 0px; text-align: justify;  font-size: 14px;"> 到目前为止，我们已经使用AWK的 <strong>print </strong>和 <strong>printf</strong> 函数来显示在标准输出的数据。但 printf 比我们以前见过强大得多。这个函数是从C语言借来的，是非常有帮助的，同时产生格式化输出。下面是 <strong>printf </strong>语句的语法：</p> 
- <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
-<span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">printf fmt</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">,</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> expr</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">-</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">list</span></pre> 
- <p> 在上面的语法fmt是格式规范和常量字符串。 expr-list是对应于格式说明符的参数列表。</p> 
- <h2> 转义序列</h2> 
- <p> 就像任何字符串，格式也可以包含嵌入转义序列。下面是由AWK支持转义序列的列表：</p> 
- <h3> 新的一行</h3> 
- <p> 下面的例子打印Hello 和 World 用换行符分开一行：</p> 
- <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
-<span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">jerry</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">$ awk </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">'BEGIN { printf "Hello\nWorld\n" }'</span></pre> 
- <p> 在执行上面的代码后，会得到以下结果：</p> 
- <pre class="result" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
-Hello
-World</pre> 
- <h3> 水平选项卡</h3> 
- <p> 下面的示例使用水平选项卡来显示在不同的字段中：</p> 
- <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
-<span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">jerry</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">$ awk </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">'BEGIN { printf "Sr No\tName\tSub\tMarks\n" }'</span></pre> 
- <p> 在执行上面的代码后，会得到以下结果：</p> 
- <pre class="result" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
-Sr No&nbsp;&nbsp;&nbsp;&nbsp;Name&nbsp;&nbsp;&nbsp;&nbsp;Sub Marks</pre> 
- <h3> 垂直选项卡</h3> 
- <p> 下面的示例使用在每个垂直选项卡字段后：</p> 
- <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
-<span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">jerry</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">$ awk </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">'BEGIN { printf "Sr No\vName\vSub\vMarks\n" }'</span></pre> 
- <p> 在执行上面的代码后，会得到以下结果：</p> 
- <pre class="result" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
-Sr No
-&nbsp;&nbsp;&nbsp;&nbsp;Name
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sub
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Marks</pre> 
- <h3> 退格键</h3> 
- <p> 下面的例子打印，除了最后一个每个字段后，退格。这将擦除前三个Field的数字。例如Field1显示为Field，因为最后的字符被删除退格。然而，最后一个字段Field4显示，因为我们Field4后没有使用 a \b。</p> 
- <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
-<span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">jerry</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">$ awk </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">'BEGIN { printf "Field 1\bField 2\bField 3\bField 4\n" }'</span></pre> 
- <p> 在执行上面的代码后，会得到以下结果：</p> 
- <pre class="result" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
-Field Field Field Field 4</pre> 
- <h3> 回车</h3> 
- <p> 在下面的例子中，每次打印字段之后，做一个回车并打印对当前印刷值之上的下一个值。这意味着，在最后的输出，会看到只有4字段，因为它是印在前面所有的字段顶部的最后一件事。</p> 
- <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
-<span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">jerry</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">$ awk </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">'BEGIN { printf "Field 1\rField 2\rField 3\rField 4\n" }'</span></pre> 
- <p> 在执行上面的代码后，会得到以下结果：</p> 
- <pre class="result" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
-Field 4</pre> 
- <h3> 换页</h3> 
- <p> 下面的例子使用了换页在打印每个字段之后。</p> 
- <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
-<span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">jerry</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">$ awk </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">'BEGIN { printf "Sr No\fName\fSub\fMarks\n" }'</span></pre> 
- <p> 在执行上面的代码后，会得到以下结果：</p> 
- <pre class="result" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
-Sr No
-&nbsp;&nbsp;&nbsp;&nbsp;Name
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sub
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Marks</pre> 
- <h2> 格式说明</h2> 
- <p> 像C语言AWK也有格式说明。AWK版本的printf语句中接受下列转换规范格式：</p> 
- <h3> %c</h3> 
- <p> 它打印一个字符。如果用于%c的参数是数字，它被视为一个字符和打印。否则，参数被假定为一个字符串，该字符串的唯一第一字符被打印。</p> 
- <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
-<span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">jerry</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">$ awk </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">'BEGIN { printf "ASCII value 65 = character %c\n", 65 }'</span></pre> 
- <p> 在执行上面的代码后，会得到以下结果：</p> 
- <pre class="result" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
-ASCII value 65 = character A</pre> 
- <h3> %d 和 %i</h3> 
- <p> 它打印的十进制数只有整数部分。</p> 
- <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
-<span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">jerry</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">$ awk </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">'BEGIN { printf "Percentags = %d\n", 80.66 }'</span></pre> 
- <p> 在执行上面的代码后，会得到以下结果：</p> 
- <pre class="result" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
-Percentags = 80</pre> 
- <h3> %e 和 %E</h3> 
- <p> 它打印格式的浮点数[-] d.dddddde[+-]dd。</p> 
- <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
-<span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">jerry</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">$ awk </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">'BEGIN { printf "Percentags = %E\n", 80.66 }'</span></pre> 
- <p> 在执行上面的代码后，会得到以下结果：</p> 
- <pre class="result" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
-Percentags = 8.066000e+01</pre> 
- <p> %E格式使用E代替e。</p> 
- <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
-<span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">jerry</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">$ awk </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">'BEGIN { printf "Percentags = %e\n", 80.66 }'</span></pre> 
- <p> 在执行上面的代码后，会得到以下结果：</p> 
- <pre class="result" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
-Percentags = 8.066000E+01</pre> 
- <h3> %f</h3> 
- <p> 它打印格式的浮点数 [-]ddd.dddddd.</p> 
- <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
-<span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">jerry</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">$ awk </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">'BEGIN { printf "Percentags = %f\n", 80.66 }'</span></pre> 
- <p> 在执行上面的代码后，会得到以下结果：</p> 
- <pre class="result" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
-Percentags = 80.660000</pre> 
- <h3> %g 和 %G</h3> 
- <p> 使用%e或%f转换，以较短者为准，具有抑制非显著零。</p> 
- <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
-<span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">jerry</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">$ awk </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">'BEGIN { printf "Percentags = %g\n", 80.66 }'</span></pre> 
- <p> 在执行上面的代码后，会得到以下结果：</p> 
- <pre class="result" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
-Percentags = 80.66</pre> 
- <p style="box-sizing: border-box; color: rgb(0, 0, 0); line-height: 24px; margin: 0em 0.2em 1em; padding: 0px; text-align: justify;  font-size: 14px;"> The&nbsp;<b style="box-sizing: border-box;">%G</b>&nbsp;format uses&nbsp;<b style="box-sizing: border-box;">%E</b>&nbsp;instead of %e.</p> 
- <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
-<span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">jerry</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">$ awk </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">'BEGIN { printf "Percentags = %G\n", 80.66 }'</span></pre> 
- <p> 在执行上面的代码后，会得到以下结果：</p> 
- <pre class="result" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
-Percentags = 80.66</pre> 
- <h3> %o</h3> 
- <p> 它打印一个无符号的八进制数。</p> 
- <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
-<span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">jerry</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">$ awk </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">'BEGIN { printf "Octal representation of decimal number 10 = %o\n", 10}'</span></pre> 
- <p> 在执行上面的代码后，会得到以下结果：</p> 
- <pre class="result" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
-Octal representation of decimal number 10 = 12</pre> 
- <h3> %u</h3> 
- <p> 它打印一个无符号的十进制数。</p> 
- <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
-<span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">jerry</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">$ awk </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">'BEGIN { printf "Unsigned 10 = %u\n", 10 }'</span></pre> 
- <p> 在执行上面的代码后，会得到以下结果：</p>   
- <pre class="result" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
-Unsigned 10 = 10</pre> 
- <h3> %s</h3> 
- <p> 它打印字符串。</p> 
- <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
-<span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">jerry</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">$ awk </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">'BEGIN { printf "Name = %s\n", "Sherlock Holmes" }'</span></pre> 
- <p> 在执行上面的代码后，会得到以下结果：</p> 
- <pre class="result" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
-Name = Sherlock Holmes</pre> 
- <h3> %x 和 %X</h3> 
- <p> 它打印一个无符号的十六进制数。在％X格式使用大写字母而不是小写。</p> 
- <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
-<span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">jerry</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">$ awk </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">'BEGIN { printf "Hexadecimal representation of decimal number 15 = %x\n", 15}'</span></pre> 
- <p> 在执行上面的代码后，会得到以下结果：</p> 
- <pre class="result" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
-Hexadecimal representation of decimal number 15 = f</pre> 
- <p> 现在，让我们使用使用％X和观察结果：</p> 
- <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
-<span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">jerry</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">$ awk </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">'BEGIN { printf "Hexadecimal representation of decimal number 15 = %X\n", 15}'</span></pre> 
- <p> 在执行上面的代码后，会得到以下结果：</p> 
- <pre class="result" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
-Hexadecimal representation of decimal number 15 = F</pre> 
- <h3> %%</h3> 
- <p> 它打印一个字符％，没有参数转换。</p> 
- <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
-<span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">jerry</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">$ awk </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">'BEGIN { printf "Percentags = %d%%\n", 80.66 }'</span></pre> 
- <p> 在执行上面的代码后，会得到以下结果：</p> 
- <pre class="result" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
-Percentags = 80%</pre> 
- <h2> 使用％的可选参数</h2> 
- <p> 使用％，我们可以使用下列可选参数：</p> 
- <h3> 宽度</h3> 
- <p> 该字段将被填充到宽度。默认情况下，字段用空格填充，但是当0标志时，它是用零填充。</p> 
- <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
-<span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">jerry</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">$ awk </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">'BEGIN { num1 = 10; num2 = 20; printf "Num1 = %10d\nNum2 = %10d\n", num1, num2 }'</span></pre> 
- <p> 在执行上面的代码后，会得到以下结果：</p> 
- <pre class="result" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
-Num1 =         10
-Num2 =         20</pre> 
- <h3> 前导零</h3> 
- <p> 前导0（零）作为一个标志，表示输出应用零而不是空格填充。请注意，该标志只具有一个效果时，字段宽度大于要打印的值。下面的例子说明这一点：</p> 
- <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
-<span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">jerry</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">$ awk </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">'BEGIN { num1 = -10; num2 = 20; printf "Num1 = %05d\nNum2 = %05d\n", num1, num2 }'</span></pre> 
- <p> 在执行上面的代码后，会得到以下结果：</p> 
- <pre class="result" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
-Num1 = -0010
-Num2 = 00020</pre> 
- <h3> 左对齐</h3> 
- <p> 表达式应该是左对齐的字段。紧接着％在数字之前- 当输入字符串小于指定的字符数，希望它是左对齐，即通过增加空间向右，使用减号（-）。在下面的例子中，AWK命令的输出管道到cat命令显示END OF LINE（$）字符。</p> 
- <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
-<span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">jerry</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">$ awk </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">'BEGIN { num = 10; printf "Num = %-5d\n", num }'</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">|</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> cat </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">-</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">vte</span></pre> 
- <p> 在执行上面的代码后，会得到以下结果：</p> 
- <pre class="result" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
-Num = 10&nbsp;&nbsp;&nbsp;$</pre> 
- <h3> 前缀符号</h3> 
- <p> 它总是前缀数字值用一个符号，即使该值是正的。</p> 
- <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
-<span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">jerry</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">$ awk </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">'BEGIN { num1 = -10; num2 = 20; printf "Num1 = %+d\nNum2 = %+d\n", num1, num2 }'</span></pre> 
- <p> 在执行上面的代码后，会得到以下结果：</p> 
- <pre class="result" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
-Num1 = -10
-Num2 = +20</pre> 
- <h3> Hash</h3> 
- <p> 对于%o，它提供一个前导零。对于％x和％X，它提供了一个0x或0X分别只有结果是零。对于%e, %E, %f 和%F，结果总是包含一个小数点。对于％g和％G，后边的零不会从结果中删除。下面简单的例子说明这一点：</p> 
- <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
-<span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">jerry</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">$ awk </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">'BEGIN { printf "Octal representation = %#o\nHexadecimal representaion = %#X\n", 10, 10}'</span></pre> 
- <p> 在执行上面的代码后，会得到以下结果：</p> 
- <pre class="result" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
-Octal representation = 012
-Hexadecimal representation = 0XA</pre> 
- <br>      
-</div></body></html>

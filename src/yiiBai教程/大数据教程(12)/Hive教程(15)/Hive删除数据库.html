@@ -1,53 +1,0 @@
-<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Hive删除数据库</h1><div style="width:100%;float:left;" class="article-content">   
- <p> 本章介绍了如何在Hive删除数据库。模式和数据库的使用是一样的。</p> 
- <h2> DROP DATABASE语句</h2> 
- <p> DROP DATABASE是删除所有的表并删除数据库的语句。它的语法如下：</p> 
- <pre class="prettyprint notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 496.1875px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
-DROP DATABASE StatementDROP (DATABASE|SCHEMA) [IF EXISTS] database_name 
-[RESTRICT|CASCADE];</pre> 
- <p> 下面的查询用于删除数据库。假设要删除的数据库名称为userdb。</p> 
- <pre class="prettyprint notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 496.1875px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
-hive&gt; DROP DATABASE IF EXISTS userdb;</pre> 
- <p> 以下是使用CASCADE查询删除数据库。这意味着要全部删除相应的表在删除数据库之前。</p> 
- <pre class="prettyprint notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 496.1875px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
-hive&gt; DROP DATABASE IF EXISTS userdb CASCADE;</pre> 
- <p> 以下使用SCHEMA查询删除数据库。</p> 
- <pre class="prettyprint notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 496.1875px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
-hive&gt; DROP SCHEMA userdb;</pre> 
- <p> 此子句中添加在Hive0.6版本。</p> 
- <h3> JDBC Program</h3> 
- <p> 在JDBC程序来删除数据库如下。</p> 
- <pre class="prettyprint notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 496.1875px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
-import java.sql.SQLException;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.Statement;
-import java.sql.DriverManager;
-
-public class HiveDropDb {
-   private static String driverName = "org.apache.hadoop.hive.jdbc.HiveDriver";
-   
-   public static void main(String[] args) throws SQLException {
-   
-      // Register driver and create driver instance
-      Class.forName(driverName);
-      
-      // get connection
-      Connection con = DriverManager.getConnection("jdbc:hive://localhost:10000/default", "", "");
-      Statement stmt = con.createStatement();
-      stmt.executeQuery("DROP DATABASE userdb");
-      
-      System.out.println(“Drop userdb database successful.”);
-      
-      con.close();
-   }
-}</pre> 
- <p> 将该程序保存在一个名为HiveDropDb.java文件。下面给出的是编译和执行这个程序的命令。</p>   
- <pre class="prettyprint notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 496.1875px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
-$ javac HiveDropDb.java
-$ java HiveDropDb</pre> 
- <h3> Output:</h3> 
- <pre class="result notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 496.1875px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
-Drop userdb database successful.</pre> 
- <br>      
-</div></body></html>

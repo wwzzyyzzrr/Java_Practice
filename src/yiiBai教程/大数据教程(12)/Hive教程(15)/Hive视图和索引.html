@@ -1,64 +1,0 @@
-<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Hive视图和索引</h1><div style="width:100%;float:left;" class="article-content">   
- <p> 本章介绍如何创建和管理视图。根据用户的需求创建视图。可以将任何结果集数据保存为一个视图。视图在Hive的用法和SQL视图用法相同。它是一个标准的RDBMS概念。我们可以在视图上执行所有DML操作。</p> 
- <h2> 创建一个视图</h2> 
- <p> 可以创建一个视图，在执行SELECT语句的时候。语法如下：</p> 
- <pre class="prettyprint notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 496.1875px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
-CREATE VIEW [IF NOT EXISTS] view_name [(column_name [COMMENT column_comment], ...) ]
-[COMMENT table_comment]
-AS SELECT ...</pre> 
- <h2> 示例</h2> 
- <p> 举个例子来看。假设employee表拥有如下字段：Id, Name, Salary, Designation 和 Dept。生成一个查询检索工资超过30000卢比的员工详细信息，我们把结果存储在一个名为视图&nbsp;emp_30000.</p> 
- <pre class="result notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 496.1875px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
-+------+--------------+-------------+-------------------+--------+
-| ID   | Name         | Salary      | Designation       | Dept   |
-+------+--------------+-------------+-------------------+--------+
-|1201  | Gopal        | 45000       | Technical manager | TP     |
-|1202  | Manisha      | 45000       | Proofreader       | PR     |
-|1203  | Masthanvali  | 40000       | Technical writer  | TP     |
-|1204  | Krian        | 40000       | Hr Admin          | HR     |
-|1205  | Kranthi      | 30000       | Op Admin          | Admin  |
-+------+--------------+-------------+-------------------+--------+</pre> 
- <p> 下面使用上述业务情景查询检索员的工详细信息：</p> 
- <pre class="prettyprint notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 496.1875px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
-hive&gt; CREATE VIEW emp_30000 AS
-   &gt; SELECT * FROM employee
-   &gt; WHERE salary&gt;30000;</pre> 
- <h2> 删除一个视图</h2> 
- <p> 使用下面的语法来删除视图：</p> 
- <pre class="prettyprint notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 496.1875px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
-DROP VIEW view_name</pre> 
- <p> 下面的查询删除一个名为emp_30000的视图：</p> 
- <pre class="prettyprint notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 496.1875px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
-hive&gt; DROP VIEW emp_30000;</pre> 
- <h2> 创建索引</h2> 
- <p> 索引也不过是一个表上的一个特定列的指针。创建索引意味着创建一个表上的一个特定列的指针。它的语法如下：</p>   
- <pre class="prettyprint notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 496.1875px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
-CREATE INDEX index_name
-ON TABLE base_table_name (col_name, ...)
-AS 'index.handler.class.name'
-[WITH DEFERRED REBUILD]
-[IDXPROPERTIES (property_name=property_value, ...)]
-[IN TABLE index_table_name]
-[PARTITIONED BY (col_name, ...)]
-[
-   [ ROW FORMAT ...] STORED AS ...
-   | STORED BY ...
-]
-[LOCATION hdfs_path]
-[TBLPROPERTIES (...)]</pre> 
- <h2> 例子</h2> 
- <p> 让我们举个索引例子。使用之前的字段 Id, Name, Salary, Designation, 和 Dept创建一个名为index_salary的索引，对employee 表的salary列索引。</p> 
- <p> 下面的查询创建一个索引：</p> 
- <pre class="prettyprint notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 496.1875px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
-hive&gt; CREATE INDEX inedx_salary ON TABLE employee(salary)
-   &gt; AS 'org.apache.hadoop.hive.ql.index.compact.CompactIndexHandler';</pre> 
- <p> 这是一个指向salary列。如果列被修改，变更使用的索引值存储。</p> 
- <h2> 删除索引</h2> 
- <p> 下面的语法用来删除索引：</p> 
- <pre class="prettyprint notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 496.1875px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
-DROP INDEX &lt;index_name&gt; ON &lt;table_name&gt;</pre> 
- <p> 下面的查询删除名为index_salary索引：</p> 
- <pre class="prettyprint notranslate" style="box-sizing: border-box; Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 496.1875px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
-hive&gt; DROP INDEX index_salary ON employee;</pre> 
- <br>      
-</div></body></html>

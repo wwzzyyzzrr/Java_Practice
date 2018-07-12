@@ -1,55 +1,0 @@
-<html><head><meta charset="utf-8"></meta></head><body><h1 class="article-title" style="text-align:center;">Sed模式范围</h1><div style="width:100%;float:left;" class="article-content">   
- <p> 本教程介绍如何sed处理一个模式范围。模式范围可以是一个简单的文本或复杂的正则表达式。我们将开始使用下列内容的文本文件books.txt：</p> 
- <pre class="result" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
-1) A Storm of Swords, George R. R. Martin, 1216
-2) The Two Towers, J. R. R. Tolkien, 352
-3) The Alchemist, Paulo Coelho, 197
-4) The Fellowship of the Ring, J. R. R. Tolkien, 432
-5) The Pilgrimage, Paulo Coelho, 288
-6) A Game of Thrones, George R. R. Martin, 864</pre> 
- <p> 下面的例子打印的作者所有书籍&nbsp;Paulo Coelho</p> 
- <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
-<span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">jerry</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">$ sed </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">-</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">n </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">'/Paulo/ p'</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> books</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">txt</span></pre> 
- <p> 执行上面的代码，会得到如下结果：</p> 
- <pre class="result" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
-3) The Alchemist, Paulo Coelho, 197 
-5) The Pilgrimage, Paulo Coelho, 288</pre> 
- <p> Sed通常运行在每一行，并只打印那些符合使用模式的给定条件的行。</p> 
- <p> 我们还可以将一个模式范围，地址范围。下面的例子打印起始行具有Alchemist 的第一行匹配，直到第五行。</p> 
- <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
-<span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">jerry</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">$ sed </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">-</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">n </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">'/Alchemist/, 5 p'</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> books</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">txt</span></pre> 
- <p> 执行上面的代码，会得到如下结果：</p> 
- <pre class="result" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
-3) The Alchemist, Paulo Coelho, 197 
-4) The Fellowship of the Ring, J. R. R. Tolkien, 432 
-5) The Pilgrimage, Paulo Coelho, 288</pre> 
- <p> 可以使用美元符号($)发现的模式第一次出现后打印的所有行。下面的示例查找字符串Fellowship的第一次出现，并立即打印该文件中的其余行</p> 
- <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
-<span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">jerry</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">$ sed </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">-</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">n </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">'/The/,$ p'</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> books</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">txt</span></pre> 
- <p> 执行上面的代码，会得到如下结果：</p> 
- <pre class="result" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
-4) The Fellowship of the Ring, J. R. R. Tolkien, 432
-5) The Pilgrimage, Paulo Coelho, 288
-6) A Game of Thrones, George R. R. Martin, 864</pre> 
- <p> 也可以指定多个模式范围使用逗号(，)运算符。下面的例子打印所有模式&nbsp;Two&nbsp;和&nbsp;Pilgrimage&nbsp;之间存在的行。&nbsp;</p>   
- <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
-<span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">jerry</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">$ sed </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">-</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">n </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">'/Two/, /Pilgrimage/ p'</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> books</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">txt </span></pre> 
- <p> 执行上面的代码，会得到如下结果：</p> 
- <pre class="result" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
-2) The Two Towers, J. R. R. Tolkien, 352 
-3) The Alchemist, Paulo Coelho, 197 
-4) The Fellowship of the Ring, J. R. R. Tolkien, 432 
-5) The Pilgrimage, Paulo Coelho, 288</pre> 
- <p> 此外，我们还可以在模式范围使用的加号(+)运算。下面的例子中发现模式Two第一次出现，并打印它之后的下一个4行。</p> 
- <pre class="prettyprint notranslate prettyprinted" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; line-height: 16px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49);">
-<span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">[</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">jerry</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">]</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">$ sed </span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">-</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">n </span><span class="str" style="box-sizing: border-box; color: rgb(0, 136, 0);">'/Two/, +4 p'</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);"> books</span><span class="pun" style="box-sizing: border-box; color: rgb(102, 102, 0);">.</span><span class="pln" style="box-sizing: border-box; color: rgb(0, 0, 0);">txt</span></pre> 
- <p> 执行上面的代码，会得到如下结果：</p> 
- <pre class="result" style="box-sizing: border-box; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; margin-bottom: 0px; border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; width: 604px; font-size: 12px; overflow: auto; color: rgb(49, 49, 49); line-height: 22px; background-color: rgb(241, 241, 241);">
-2) The Two Towers, J. R. R. Tolkien, 352 
-3) The Alchemist, Paulo Coelho, 197 
-4) The Fellowship of the Ring, J. R. R. Tolkien, 432 
-5) The Pilgrimage, Paulo Coelho, 288 
-6) A Game of Thrones, George R. R. Martin, 864 </pre> 
- <p> 在这里，只给出了几个例子来熟悉sed。可以自己结合上面例子写几个例子试试。</p> 
- <br>      
-</div></body></html>
