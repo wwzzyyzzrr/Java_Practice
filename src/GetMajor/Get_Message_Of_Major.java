@@ -128,7 +128,6 @@ public class Get_Message_Of_Major  {
         insertTel_test(readCSV("C:\\Users\\Metaron\\OneDrive\\Documents\\学生细节.csv"),"major.student_detail",pass);
         insertTel_test(readCSV("C:\\Users\\Metaron\\OneDrive\\Documents\\总览.csv"),"major.major_detail",pass);
         System.out.println("Finish");
-
     }
     public static List readCSV(String location) {
         try {
