@@ -1,6 +1,6 @@
 # Java_Practice
 
-## Some practice write by the java. Just to join myself.
+## Some practice write by the java. Just to enjoy myself.
 
 ## Get_Major
 A simple scraping to get the information of the major chosing of sustc.
